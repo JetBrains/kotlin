@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -25,6 +28,8 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
     if (konanConfig.infoArgsOnly) return
 
+    if (!context.frontendPhase()) return
+
     try {
         toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
     } finally {
@@ -36,3 +41,29 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
     }
 }
 
+// returns true if should generate code.
+internal fun Context.frontendPhase(): Boolean {
+    lateinit var analysisResult: AnalysisResult
+
+    do {
+        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(messageCollector,
+                environment.configuration.languageVersionSettings)
+
+        // Build AST and binding info.
+        analyzerWithCompilerReport.analyzeAndReport(environment.getSourceFiles()) {
+            TopDownAnalyzerFacadeForKonan.analyzeFiles(environment.getSourceFiles(), this)
+        }
+        if (analyzerWithCompilerReport.hasErrors()) {
+            throw KonanCompilationException()
+        }
+        analysisResult = analyzerWithCompilerReport.analysisResult
+        if (analysisResult is AnalysisResult.RetryWithAdditionalRoots) {
+            environment.addKotlinSourceRoots(analysisResult.additionalKotlinRoots)
+        }
+    } while(analysisResult is AnalysisResult.RetryWithAdditionalRoots)
+
+    moduleDescriptor = analysisResult.moduleDescriptor
+    bindingContext = analysisResult.bindingContext
+
+    return analysisResult.shouldGenerateCode
+}

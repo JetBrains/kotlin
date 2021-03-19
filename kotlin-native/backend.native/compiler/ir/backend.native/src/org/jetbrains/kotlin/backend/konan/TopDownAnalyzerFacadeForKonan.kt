@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.konan.KotlinResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal object TopDownAnalyzerFacadeForKonan {
 
@@ -64,7 +66,7 @@ internal object TopDownAnalyzerFacadeForKonan {
             additionalPackages += functionInterfacePackageFragmentProvider(projectContext.storageManager, module)
         }
 
-        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), moduleContext, context, additionalPackages)
+        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), moduleContext, context, projectContext, additionalPackages)
     }
 
     fun analyzeFilesWithGivenTrace(
@@ -72,15 +74,16 @@ internal object TopDownAnalyzerFacadeForKonan {
             trace: BindingTrace,
             moduleContext: ModuleContext,
             context: Context,
+            projectContext: ProjectContext,
             additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): AnalysisResult {
 
         // we print out each file we compile if frontend phase is verbose
         files.takeIf {
-            frontendPhase in context.phaseConfig.verbose
+            context.shouldPrintFiles()
         } ?.forEach(::println)
 
-        val analyzerForKonan = createTopDownAnalyzerProviderForKonan(
+        val container = createTopDownAnalyzerProviderForKonan(
                 moduleContext, trace,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 context.config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!,
@@ -89,10 +92,28 @@ internal object TopDownAnalyzerFacadeForKonan {
             initContainer(context.config)
         }.apply {
             postprocessComponents(context, files)
-        }.get<LazyTopDownAnalyzer>()
+        }
 
-        analyzerForKonan.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
-        return AnalysisResult.success(trace.bindingContext, moduleContext.module)
+        val analyzerForKonan = container.get<LazyTopDownAnalyzer>()
+        val project = context.config.project
+        val moduleDescriptor = moduleContext.module
+        val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
+
+        // Mimic the behavior in the jvm frontend. The extensions have 2 chances to override the normal analysis:
+        // * If any of the extensions returns a non-null result, use it. Otherwise do the normal analysis.
+        // * `analysisCompleted` can be used to override the result, too.
+        var result = analysisHandlerExtensions.firstNotNullResult { extension ->
+            extension.doAnalysis(project, moduleDescriptor, projectContext, files, trace, container)
+        } ?: run {
+            analyzerForKonan.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+            AnalysisResult.success(trace.bindingContext, moduleDescriptor)
+        }
+
+        result = analysisHandlerExtensions.firstNotNullResult { extension ->
+            extension.analysisCompleted(project, moduleDescriptor, trace, files)
+        } ?: result
+
+        return result
     }
 
     fun checkForErrors(files: Collection<KtFile>, bindingContext: BindingContext) {

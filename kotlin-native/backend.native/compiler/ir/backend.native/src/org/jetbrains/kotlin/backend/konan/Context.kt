@@ -410,6 +410,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun shouldPrintLocations() = config.configuration.getBoolean(KonanConfigKeys.PRINT_LOCATIONS)
 
+    fun shouldPrintFiles() = config.configuration.getBoolean(KonanConfigKeys.PRINT_FILES)
+
     fun shouldProfilePhases() = config.phaseConfig.needProfiling
 
     fun shouldContainDebugInfo() = config.debug

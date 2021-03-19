@@ -106,6 +106,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("print ir with descriptors")
         val PRINT_LOCATIONS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print locations")
+        val PRINT_FILES: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("print files")
         val PRODUCE: CompilerConfigurationKey<CompilerOutputKind>
                 = CompilerConfigurationKey.create("compiler output kind")
         val PURGE_USER_LIBS: CompilerConfigurationKey<Boolean>
