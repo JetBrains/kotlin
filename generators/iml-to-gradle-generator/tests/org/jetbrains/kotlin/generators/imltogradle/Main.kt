@@ -78,11 +78,11 @@ private data class IntelliJModuleNameToGradleDependencyNotationMappingItem(val m
                 return null // TODO
             }
 
-            fun Regex.group() = matchEntire(jarPath)?.groupValues?.get(1)
+            fun Regex.firstGroup() = matchEntire(jarPath)?.groupValues?.get(1)
 
-            val gradleNotation = pluginsPathToGradleNotationRegex.group()?.let { "intellijPluginDep(\"$it\")" }
-                ?: libPathToGradleNotationRegex.group()?.let { "intellijDep(), { includeJars(\"$it\") }" }
-                ?: jarToGradleNotationRegex.group()?.let { "intellijDep(), { includeJars(\"$it\") }" }
+            val gradleNotation = pluginsPathToGradleNotationRegex.firstGroup()?.let { "intellijPluginDep(\"$it\")" }
+                ?: libPathToGradleNotationRegex.firstGroup()?.let { "intellijDep(), { includeJars(\"$it\") }" }
+                ?: jarToGradleNotationRegex.firstGroup()?.let { "intellijDep(), { includeJars(\"$it\") }" }
                 ?: error("Path $jarPath matches none of the regexes")
 
             return IntelliJModuleNameToGradleDependencyNotationMappingItem(json.get("moduleName").asString, gradleNotation)
