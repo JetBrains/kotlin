@@ -186,8 +186,6 @@ internal class MetadataCompilationRegistry {
             existing?.let { error("native compilation data for fragment $fragment already registered") }
             compilationData
         }
-        nativeCompilationDataPerFragment[fragment]?.let { error("compilation data for fragment $fragment already registered") }
-        nativeCompilationDataPerFragment[fragment] = compilationData
         withAllNativeCallbacks.forEach { it.invoke(compilationData) }
     }
 
