@@ -161,7 +161,10 @@ class IcDeserializer(
             if (signature is IdSignature.FileSignature) continue
 
 
-            if ("$signature" == "private kotlin/KotlinNothingValueException|null[0]:1") {
+            if ("$signature" == "public kotlin.contracts/ContractBuilder.callsInPlace\$default|-8084630878733243362[0]") {
+                1
+            }
+            if ("$signature" == "private kotlin.contracts/ContractBuilder.callsInPlace\$default|-8084630878733243362[0]:10") {
                 2
             }
 
@@ -256,9 +259,11 @@ class IcDeserializer(
                         for (j in 1 until indices.size) {
                             val idSig = icDeserializer.deserializeIdSignature(indices[j])
 
-                            if (idSig !in icDeserializer.visited) continue
+                            val symbol = existingPublicSymbols[idSig] ?: icDeserializer.privateSymbols[idSig]
 
-                            val declaration = icDeserializer.signatureToDeclaration[idSig]!!
+                            val declaration = if (symbol != null && symbol.isBound) symbol.owner as IrDeclaration else icDeserializer.signatureToDeclaration[idSig]
+                            if (declaration == null) continue
+
                             irClass.declarations += declaration
                         }
                     }

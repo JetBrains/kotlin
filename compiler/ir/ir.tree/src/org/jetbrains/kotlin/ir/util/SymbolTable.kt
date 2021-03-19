@@ -963,7 +963,9 @@ class SymbolTable(
 
     override fun referenceTypeParameterFromLinker(sig: IdSignature): IrTypeParameterSymbol {
         require(sig.isLocal)
-        return IrTypeParameterSymbolImpl()
+        return scopedTypeParameterSymbolTable.get(sig) ?: globalTypeParameterSymbolTable.referenced(sig) {
+            IrTypeParameterSymbolImpl()
+        }
     }
 
     fun declareVariable(

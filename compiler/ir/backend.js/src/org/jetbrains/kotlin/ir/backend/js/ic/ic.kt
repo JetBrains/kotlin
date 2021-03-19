@@ -9,19 +9,20 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.StageController
-import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.allUnbound
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import java.io.File
 import java.io.PrintWriter
@@ -103,13 +104,15 @@ fun loadIrForIc(
 
     IcDeserializer(linker, context).injectIcData(module, icData)
 
-    linker.symbolTable.noUnboundLeft("Unbound symbols found")
+//    linker.symbolTable.noUnboundLeft("Unbound symbols found")
 
     val perFactory = context.irFactory as PersistentIrFactory
 
     perFactory.stageController = StageController(100)
 
-
+//    for (file in module.files) {
+//        file.printUnboundSymbols()
+//    }
 
 
 
@@ -123,7 +126,7 @@ fun loadIrForIc(
             try {
                 file.dumpKotlinLike()
             } catch (t: Throwable) {
-//                t.printStackTrace()
+                t.printStackTrace()
             }
         }
         actual += "\n\n"
@@ -141,4 +144,19 @@ fun loadIrForIc(
     perFactory.stageController = StageController(0)
 
 //    TODO("=================== loaded!")
+}
+
+fun IrFile.printUnboundSymbols() {
+    acceptChildrenVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitDeclaration(declaration: IrDeclarationBase) {
+            if (!declaration.symbol.isBound) {
+                println("unbound symbol")
+            }
+            super.visitDeclaration(declaration)
+        }
+    })
 }

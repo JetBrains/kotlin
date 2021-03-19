@@ -1128,7 +1128,7 @@ open class IrFileSerializer(
 
         if (skipMutableState) {
             proto.index = parameter.index
-            proto.isGlobal = parameter.parent is IrClass
+            proto.isGlobal = true // parameter.parent is IrClass
         }
 
         return proto.build()
