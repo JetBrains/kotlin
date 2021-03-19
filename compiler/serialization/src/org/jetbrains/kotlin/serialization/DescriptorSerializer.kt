@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
@@ -148,6 +147,21 @@ class DescriptorSerializer private constructor(
         val typeTableProto = typeTable.serialize()
         if (typeTableProto != null) {
             builder.typeTable = typeTableProto
+        }
+
+        classDescriptor.underlyingRepresentation()?.let { parameter ->
+            builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(parameter.name)
+
+            val property = callableMembers.single {
+                it is PropertyDescriptor && it.extensionReceiverParameter == null && it.name == parameter.name
+            }
+            if (!property.visibility.isPublicAPI) {
+                if (useTypeTable()) {
+                    builder.inlineClassUnderlyingTypeId = typeId(parameter.type)
+                } else {
+                    builder.setInlineClassUnderlyingType(type(parameter.type))
+                }
+            }
         }
 
         if (versionRequirementTable == null) error("Version requirements must be serialized for classes: $classDescriptor")
