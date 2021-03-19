@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-class SyntheticPropertySymbol(
+class FirSyntheticPropertySymbol(
     callableId: CallableId,
     override val accessorId: CallableId
 ) : FirAccessorSymbol(callableId, accessorId), SyntheticSymbol
@@ -109,7 +109,7 @@ class FirSyntheticPropertiesScope(
         val property = buildSyntheticProperty {
             session = this@FirSyntheticPropertiesScope.session
             name = propertyName
-            symbol = SyntheticPropertySymbol(
+            symbol = FirSyntheticPropertySymbol(
                 accessorId = getterSymbol.callableId,
                 callableId = CallableId(packageName, className, propertyName)
             )

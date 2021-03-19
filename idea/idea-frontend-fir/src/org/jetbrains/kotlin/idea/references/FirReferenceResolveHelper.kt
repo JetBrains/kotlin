@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
@@ -86,7 +86,7 @@ internal object FirReferenceResolveHelper {
             }
             is FirResolvedNamedReference -> {
                 val fir = when (val symbol = resolvedSymbol) {
-                    is SyntheticPropertySymbol -> {
+                    is FirSyntheticPropertySymbol -> {
                         val syntheticProperty = symbol.fir as FirSyntheticProperty
                         if (syntheticProperty.getter.delegate.symbol.callableId == symbol.accessorId) {
                             syntheticProperty.getter.delegate
