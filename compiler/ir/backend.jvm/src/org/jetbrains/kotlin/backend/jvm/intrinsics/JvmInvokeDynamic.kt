@@ -111,6 +111,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
                 Opcodes.H_NEWINVOKESPECIAL
             irFun.dispatchReceiverParameter == null ->
                 Opcodes.H_INVOKESTATIC
+            irParentClass.isJvmInterface ->
+                Opcodes.H_INVOKEINTERFACE
             else ->
                 Opcodes.H_INVOKEVIRTUAL
         }
