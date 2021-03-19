@@ -192,8 +192,6 @@ class JvmCachedDeclarations(
             valueParameters = target.valueParameters.map { it.copyTo(this) }
 
             body = context.createIrBuilder(symbol).run {
-                // TODO: if the `@JvmStatic` function is inline, this inlines it into the proxy - not great (?)
-                //   for something that's supposed to be only relevant for Java compatibility.
                 irExprBody(irCall(target).apply {
                     passTypeArgumentsFrom(this@proxy)
                     if (target.dispatchReceiverParameter != null) {
