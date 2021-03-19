@@ -21,11 +21,11 @@ dependencies {
     jpsLikeTestModule(":kotlin-ide:jvm")
     jpsLikeTestModule(":kotlin-ide:tests-common")
     jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeTestJar("intellijDep(), { includeJars("platform-impl") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("intellij-dvcs") }")
-    jpsLikeTestJar("intellijPluginDep("gradle")")
+    jpsLikeTestJar(intellijDep(), { includeJars("platform-impl") })
+    jpsLikeTestJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeTestJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeTestJar(intellijDep(), { includeJars("intellij-dvcs") })
+    jpsLikeTestJar(intellijPluginDep("gradle"))
     jpsLikeTestModule(":kotlin-ide:resources-descriptors")
 }
 

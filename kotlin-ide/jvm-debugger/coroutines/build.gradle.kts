@@ -14,12 +14,12 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
     jpsLikeCompileModule(":kotlin-ide:jvm-debugger:util")
     jpsLikeCompileModule(":kotlin-ide:jvm-debugger:core")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-impl") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijPluginDep("java")")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-core-ui") }")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijPluginDep("java"))
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-core-ui") })
 }
 
 sourceSets {

@@ -13,8 +13,8 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
     jpsLikeCompileModule(":kotlin-ide:j2k:old")
-    jpsLikeCompileJar("intellijPluginDep("java")")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
+    jpsLikeCompileJar(intellijPluginDep("java"))
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
     jpsLikeTestModule(":kotlin-ide:resources-descriptors")
 }
 

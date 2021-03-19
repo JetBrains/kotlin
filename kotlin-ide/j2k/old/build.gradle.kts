@@ -15,9 +15,9 @@ dependencies {
     jpsLikeTestModule(":kotlin-ide:j2k:idea")
     jpsLikeTestModule(":kotlin-ide:tests-common")
     jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar("intellijPluginDep("java")")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
+    jpsLikeCompileJar(intellijPluginDep("java"))
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
     jpsLikeTestModule(":kotlin-ide:resources-descriptors")
 }
 

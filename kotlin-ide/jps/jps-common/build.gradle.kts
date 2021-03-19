@@ -9,11 +9,11 @@ plugins {
 
 dependencies {
     
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("jps-model") }")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("jps-model") })
     jpsLikeTestModule(":kotlin-ide:resources-descriptors")
 }
 

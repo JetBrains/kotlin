@@ -12,9 +12,9 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileModule(":kotlin-ide:jps:jps-common")
     jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijPluginDep("gradle")")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijPluginDep("gradle"))
 }
 
 sourceSets {

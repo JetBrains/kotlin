@@ -9,11 +9,11 @@ plugins {
 
 dependencies {
     
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-impl") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeCompileJar("intellijPluginDep("java")")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeCompileJar(intellijPluginDep("java"))
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
 }
 

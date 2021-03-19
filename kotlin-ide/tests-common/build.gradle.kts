@@ -11,13 +11,13 @@ dependencies {
     
     jpsLikeTestModule(":kotlin-ide:common")
     jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeTestJar("intellijDep(), { includeJars("util") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("bootstrap") }")
-    jpsLikeTestJar("intellijPluginDep("java")")
+    jpsLikeTestJar(intellijDep(), { includeJars("util") })
+    jpsLikeTestJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeTestJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeTestJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeTestJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeTestJar(intellijDep(), { includeJars("bootstrap") })
+    jpsLikeTestJar(intellijPluginDep("java"))
 }
 
 sourceSets {

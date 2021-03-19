@@ -12,14 +12,14 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
     jpsLikeCompileModule(":kotlin-ide:jps:jps-common")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-statistics") }")
-    jpsLikeCompileJar("intellijPluginDep("java")")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-impl") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-xml") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-core-ui") }")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-statistics") })
+    jpsLikeCompileJar(intellijPluginDep("java"))
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-xml") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-core-ui") })
 }
 
 sourceSets {

@@ -9,12 +9,12 @@ plugins {
 
 dependencies {
     
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-impl") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeCompileJar("intellijPluginDep("java")")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeCompileJar(intellijPluginDep("java"))
 }
 
 sourceSets {

@@ -11,7 +11,7 @@ dependencies {
     
     jpsLikeCompileModule(":kotlin-ide:project-wizard:core")
     jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestJar("intellijDep(), { includeJars("testFramework") }")
+    jpsLikeTestJar(intellijDep(), { includeJars("testFramework") })
 }
 
 sourceSets {

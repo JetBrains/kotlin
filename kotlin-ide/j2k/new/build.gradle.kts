@@ -18,7 +18,7 @@ dependencies {
     jpsLikeTestModule(":kotlin-ide:j2k:services")
     jpsLikeTestModule(":kotlin-ide:tests-common")
     jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar("intellijPluginDep("java")")
+    jpsLikeCompileJar(intellijPluginDep("java"))
     jpsLikeTestModule(":kotlin-ide:resources-descriptors")
 }
 

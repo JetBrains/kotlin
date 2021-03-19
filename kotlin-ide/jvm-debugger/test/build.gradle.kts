@@ -20,13 +20,12 @@ dependencies {
     jpsLikeTestModule(":kotlin-ide:jvm-debugger:evaluation")
     jpsLikeTestModule(":kotlin-ide:jvm-debugger:sequence")
     jpsLikeTestModule(":kotlin-ide:jvm-debugger:eval4j")
-    jpsLikeTestJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeTestJar("intellijDep(), { includeJars("platform-impl") }")
-    jpsLikeTestJar("")
-    jpsLikeTestJar("intellijPluginDep("java")")
-    jpsLikeTestJar("intellijPluginDep("stream-debugger")")
+    jpsLikeTestJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeTestJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeTestJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeTestJar(intellijDep(), { includeJars("platform-impl") })
+    jpsLikeTestJar(intellijPluginDep("java"))
+    jpsLikeTestJar(intellijPluginDep("stream-debugger"))
 }
 
 sourceSets {

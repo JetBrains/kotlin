@@ -9,9 +9,9 @@ plugins {
 
 dependencies {
     
-    jpsLikeCompileJar("intellijDep(), { includeJars("util") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
+    jpsLikeCompileJar(intellijDep(), { includeJars("util") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
 }
 
 sourceSets {

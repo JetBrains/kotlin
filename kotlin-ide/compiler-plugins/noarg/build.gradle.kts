@@ -17,10 +17,10 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:compiler-plugins:annotation-based-compiler-support")
     jpsLikeTestModule(":kotlin-ide:tests-common")
     jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar("intellijPluginDep("java")")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeCompileJar("intellijPluginDep("gradle")")
+    jpsLikeCompileJar(intellijPluginDep("java"))
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeCompileJar(intellijPluginDep("gradle"))
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
 }
 

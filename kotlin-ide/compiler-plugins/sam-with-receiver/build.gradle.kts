@@ -15,11 +15,11 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
     jpsLikeCompileModule(":kotlin-ide:gradle:gradle-tooling")
     jpsLikeCompileModule(":kotlin-ide:compiler-plugins:annotation-based-compiler-support")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
-    jpsLikeCompileJar("intellijPluginDep("gradle")")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeCompileJar(intellijPluginDep("gradle"))
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
 }
 

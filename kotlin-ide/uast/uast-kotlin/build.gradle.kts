@@ -14,10 +14,10 @@ dependencies {
     jpsLikeTestModule(":kotlin-ide:frontend-independent")
     jpsLikeTestModule(":kotlin-ide:tests-common")
     jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar("intellijPluginDep("java")")
-    jpsLikeTestJar("intellijDep(), { includeJars("uast-tests") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("intellij-core-analysis-deprecated") }")
+    jpsLikeCompileJar(intellijPluginDep("java"))
+    jpsLikeTestJar(intellijDep(), { includeJars("uast-tests") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
 }
 
 sourceSets {

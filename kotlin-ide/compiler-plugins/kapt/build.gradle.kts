@@ -14,9 +14,9 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:idea")
     jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
     jpsLikeCompileModule(":kotlin-ide:gradle:gradle-tooling")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijPluginDep("gradle")")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijPluginDep("gradle"))
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
 }
 

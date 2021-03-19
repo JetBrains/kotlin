@@ -16,11 +16,10 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:idea")
     jpsLikeCompileModule(":kotlin-ide:jvm")
     jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
-    jpsLikeCompileJar("intellijDep(), { includeJars("platform-api") }")
-    jpsLikeCompileJar("intellijDep(), { includeJars("resources_en") }")
-    jpsLikeCompileJar("intellijPluginDep("gradle-java")")
-    jpsLikeTestJar("intellijDep(), { includeJars("testFramework") }")
-    jpsLikeTestJar("")
+    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
+    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeCompileJar(intellijPluginDep("gradle-java"))
+    jpsLikeTestJar(intellijDep(), { includeJars("testFramework") })
     jpsLikeTestModule(":kotlin-ide:resources-descriptors")
 }
 
