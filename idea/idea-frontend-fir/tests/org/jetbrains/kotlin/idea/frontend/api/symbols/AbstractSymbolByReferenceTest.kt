@@ -27,7 +27,8 @@ abstract class AbstractSymbolByReferenceTest : AbstractKtIdeaTest() {
 
         val actual = TestStructureRenderer.render(
             fileStructure,
-            TestStructureExpectedDataBlock(renderedSymbol)
+            TestStructureExpectedDataBlock(renderedSymbol),
+            renderingMode = TestStructureRenderer.RenderingMode.ALL_BLOCKS_IN_MULTI_LINE_COMMENT,
         )
         KotlinTestUtils.assertEqualsToFile(fileStructure.filePath.toFile(), actual)
     }

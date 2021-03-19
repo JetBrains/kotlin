@@ -1,6 +1,5 @@
 val x = <expr>1 + 2</expr>
-// RESULT
 
+// RESULT
 // expression: 1 + 2
 // type: kotlin.Int
-

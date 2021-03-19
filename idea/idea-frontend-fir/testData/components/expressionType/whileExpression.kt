@@ -1,8 +1,7 @@
 fun x(): Int {
     <expr>while(true) {}</expr>
 }
-// RESULT
 
+// RESULT
 // expression: while(true) {}
 // type: kotlin.Unit
-

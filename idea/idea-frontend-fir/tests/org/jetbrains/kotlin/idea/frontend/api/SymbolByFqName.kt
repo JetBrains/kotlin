@@ -13,12 +13,17 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.io.File
+import java.nio.file.Path
 
 object SymbolByFqName {
-    fun getSymbolDataFromFile(filePath: String): SymbolData {
-        val testFileText = FileUtil.loadFile(File(filePath))
-        val identifier = testFileText.lineSequence().first { line -> SymbolData.identifiers.any { line.startsWith(it) } }
-        return SymbolData.create(identifier)
+    fun getSymbolDataFromFile(filePath: Path): SymbolData {
+        val testFileText = FileUtil.loadFile(filePath.toFile())
+        val identifier = testFileText.lineSequence().first { line ->
+            SymbolData.identifiers.any { identifier ->
+                line.startsWith(identifier) || line.startsWith("// $identifier")
+            }
+        }
+        return SymbolData.create(identifier.removePrefix("// "))
     }
 
     fun textWithRenderedSymbolData(filePath: String, rendered: String): String = buildString {

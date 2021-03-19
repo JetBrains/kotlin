@@ -1,6 +1,7 @@
-callable: kotlin/collections/List.get
+// callable: kotlin/collections/List.get
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirFunctionSymbol:
   annotatedType: [] E
   annotationClassIds: []
@@ -21,3 +22,4 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
   visibility: PUBLIC
+*/

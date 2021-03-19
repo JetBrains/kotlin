@@ -18,8 +18,8 @@ open class D {
     open fun foo(x: Int) {}
 }
 
-// RESULT
 
+// RESULT
 // ALL:
 // B.foo(x: Int): Unit
 // C.foo(x: Int): Unit
@@ -27,4 +27,3 @@ open class D {
 
 // DIRECT:
 // B.foo(x: Int): Unit
-

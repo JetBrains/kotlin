@@ -1040,7 +1040,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractSymbolFromLibraryPointerRestoreTest> {
-                model("resoreSymbolFromLibrary", extension = "txt")
+                model("resoreSymbolFromLibrary")
+            }
+
+            testClass<AbstractSymbolByReferencePointerRestoreTest> {
+                model("symbolByReference")
             }
 
             testClass<AbstractMemoryLeakInSymbolsTest> {

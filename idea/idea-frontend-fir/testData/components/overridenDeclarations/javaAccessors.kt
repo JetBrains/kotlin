@@ -16,12 +16,11 @@ abstract class C {
     abstract val x: Int
 }
 
-// RESULT
 
+// RESULT
 // ALL:
 // B.x: Int
 // C.x: Int
 
 // DIRECT:
 // B.x: Int
-

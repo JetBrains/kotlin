@@ -8,17 +8,23 @@ package org.jetbrains.kotlin.idea.test.framework
 import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
 
 object TestStructureRenderer {
-    fun render(testStructure: TestFileStructure, vararg expectedData: TestStructureExpectedDataBlock): String = buildString {
+    fun render(
+        testStructure: TestFileStructure,
+        vararg expectedData: TestStructureExpectedDataBlock,
+        renderingMode: RenderingMode = RenderingMode.EVERY_LINE_WITH_SINGLE_LINE_COMMENT,
+    ): String =
+        render(testStructure, expectedData.toList(), renderingMode)
+
+    fun render(
+        testStructure: TestFileStructure,
+        expectedData: List<TestStructureExpectedDataBlock>,
+        renderingMode: RenderingMode = RenderingMode.EVERY_LINE_WITH_SINGLE_LINE_COMMENT
+    ): String = buildString {
         renderFiles(testStructure)
-        renderExpectedData(expectedData.toList())
+        appendLine()
+        renderExpectedData(expectedData, renderingMode)
         renderCaretSymbol(testStructure)
         renderExpressionTag(testStructure)
-    }
-
-    fun render(testStructure: TestFileStructure, expectedData: List<TestStructureExpectedDataBlock>): String = buildString {
-        renderFiles(testStructure)
-        renderExpectedData(expectedData)
-        renderCaretSymbol(testStructure)
     }
 
     private fun StringBuilder.renderCaretSymbol(testStructure: TestFileStructure) {
@@ -45,29 +51,33 @@ object TestStructureRenderer {
         }
     }
 
-    private fun StringBuilder.renderExpectedData(expectedData: List<TestStructureExpectedDataBlock>) {
-        if (expectedData.isNotEmpty()) {
-            appendLine(KtTest.RESULT_DIRECTIVE)
-            appendLine()
-            expectedData.forEach { block ->
-                renderExpectedDataBlock(block)
+    private fun StringBuilder.renderExpectedData(expectedData: List<TestStructureExpectedDataBlock>, renderingMode: RenderingMode) {
+        if (expectedData.isEmpty()) return
+        appendLine(KtTest.RESULT_DIRECTIVE)
+        if (renderingMode == RenderingMode.ALL_BLOCKS_IN_MULTI_LINE_COMMENT) {
+            appendLine("/*")
+        }
+        expectedData.forEachIndexed { index, block ->
+            renderExpectedDataBlock(
+                block,
+                asSingleLineComment = renderingMode == RenderingMode.EVERY_LINE_WITH_SINGLE_LINE_COMMENT
+            )
+            if (index != expectedData.lastIndex) {
                 appendLine()
             }
         }
+        if (renderingMode == RenderingMode.ALL_BLOCKS_IN_MULTI_LINE_COMMENT) {
+            appendLine("*/")
+        }
     }
 
-    private fun StringBuilder.renderExpectedDataBlock(block: TestStructureExpectedDataBlock) {
-        block.name?.let { name -> appendLine("// $name") }
-        block.values.forEach { value ->
-            if (value.lines().size > 1) {
-                appendLine(
-                    """|/*
-                       |${value.trim()}
-                       |*/
-                    """.trimMargin()
-                )
-            } else {
-                appendLine("// $value")
+    private fun StringBuilder.renderExpectedDataBlock(block: TestStructureExpectedDataBlock, asSingleLineComment: Boolean) {
+        val singleLineCommentPrefix = if (asSingleLineComment) "// " else ""
+        block.name?.let { name -> appendLine("$singleLineCommentPrefix$name") }
+        block.values.forEachIndexed { index, value ->
+            appendLine("$singleLineCommentPrefix${value.trim()}")
+            if (index != block.values.lastIndex && !asSingleLineComment) {
+                appendLine()
             }
         }
     }
@@ -76,5 +86,10 @@ object TestStructureRenderer {
         appendLine("${KtTest.FILE_DIRECTIVE} ${file.psiFile.name}")
         appendLine(file.psiFile.text)
         appendLine()
+    }
+
+    enum class RenderingMode {
+        EVERY_LINE_WITH_SINGLE_LINE_COMMENT,
+        ALL_BLOCKS_IN_MULTI_LINE_COMMENT
     }
 }

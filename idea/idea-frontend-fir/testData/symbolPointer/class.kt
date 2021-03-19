@@ -1,7 +1,8 @@
 class A {
 }
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
@@ -20,3 +21,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC
+*/

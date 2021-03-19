@@ -3,7 +3,8 @@ class A {
   val Int.y get() = this
 }
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
@@ -84,3 +85,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC
+*/

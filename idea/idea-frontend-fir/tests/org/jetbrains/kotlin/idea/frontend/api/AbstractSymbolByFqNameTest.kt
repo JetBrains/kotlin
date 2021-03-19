@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
+import java.nio.file.Paths
 
 abstract class AbstractSymbolByFqNameTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(path: String) {
         val fakeKtFile = myFixture.configureByText("file.kt", "fun a() {}") as KtFile
 
-        val symbolData = SymbolByFqName.getSymbolDataFromFile(path)
+        val symbolData = SymbolByFqName.getSymbolDataFromFile(Paths.get(path))
 
         val renderedSymbols = executeOnPooledThreadInReadAction {
             analyze(fakeKtFile) {

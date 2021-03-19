@@ -3,7 +3,8 @@ class A {
   fun y()
 }
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
@@ -64,3 +65,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC
+*/

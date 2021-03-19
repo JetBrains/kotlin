@@ -2,7 +2,8 @@ enum class X {
   Y, Z;
 }
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirEnumEntrySymbol:
   annotatedType: [] X
   containingEnumClassIdIfNonLocal: X
@@ -35,3 +36,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC
+*/

@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.SymbolByFqName
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.test.framework.TestFileStructure
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
-abstract class AbstractSymbolFromLibraryPointerRestoreTest : AbstractSymbolPointerRestoreTest() {
+abstract class AbstractSymbolByReferencePointerRestoreTest : AbstractSymbolPointerRestoreTest() {
     override fun KtAnalysisSession.collectSymbols(fileStructure: TestFileStructure): List<KtSymbol> {
-        val symbolData = SymbolByFqName.getSymbolDataFromFile(fileStructure.filePath)
-        return with(symbolData) { toSymbols() }
+        val referenceExpression = getElementOfTypeAtCaret<KtNameReferenceExpression>()
+        return listOfNotNull(referenceExpression.mainReference.resolveToSymbol())
     }
 }

@@ -3,8 +3,8 @@
 fun x() {
     val a = <caret>ArrayList(listOf(1))
 }
-// RESULT
 
+// RESULT
 /*
 KtFirConstructorSymbol:
   annotatedType: [] java/util/ArrayList<E>
@@ -19,4 +19,3 @@ KtFirConstructorSymbol:
   valueParameters: [KtFirConstructorValueParameterSymbol(c)]
   visibility: PUBLIC
 */
-

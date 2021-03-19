@@ -1,7 +1,8 @@
 fun x(): Int = 10
 fun y() {}
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
@@ -43,3 +44,4 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
+*/

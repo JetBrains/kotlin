@@ -1,6 +1,7 @@
-class: kotlin/collections/MutableMap.MutableEntry
+// class: kotlin/collections/MutableMap.MutableEntry
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
@@ -19,3 +20,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: MEMBER
   typeParameters: [KtFirTypeParameterSymbol(K), KtFirTypeParameterSymbol(V)]
   visibility: PUBLIC
+*/

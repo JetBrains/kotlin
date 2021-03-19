@@ -1,6 +1,5 @@
 val x = <expr>"abc"</expr>
-// RESULT
 
+// RESULT
 // expression: "abc"
 // type: kotlin.String
-

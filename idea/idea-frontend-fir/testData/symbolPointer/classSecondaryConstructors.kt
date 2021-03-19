@@ -3,7 +3,8 @@ class A() {
   constructor(y: Int, z: String) : this(y)
 }
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirConstructorSymbol:
   annotatedType: [] A
   annotationClassIds: []
@@ -91,3 +92,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC
+*/

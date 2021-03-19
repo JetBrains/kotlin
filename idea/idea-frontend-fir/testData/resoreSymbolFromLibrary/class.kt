@@ -1,8 +1,9 @@
 // RUNTIME
 
-class: kotlin/Lazy
+// class: kotlin/Lazy
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
@@ -21,3 +22,4 @@ KtFirNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: [KtFirTypeParameterSymbol(T)]
   visibility: PUBLIC
+*/

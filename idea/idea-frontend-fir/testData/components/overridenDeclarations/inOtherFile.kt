@@ -9,11 +9,10 @@ abstract class B {
     abstract fun foo(x: String): Int
 }
 
-// RESULT
 
+// RESULT
 // ALL:
 // B.foo(x: Int): Int
 
 // DIRECT:
 // B.foo(x: Int): Int
-

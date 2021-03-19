@@ -25,8 +25,8 @@ interface D {
     fun foo(x: String)
 }
 
-// RESULT
 
+// RESULT
 // ALL:
 // B.foo(x: String): Unit
 // C.foo(x: String): Unit
@@ -36,4 +36,3 @@ interface D {
 // B.foo(x: String): Unit
 // C.foo(x: String): Unit
 // D.foo(x: String): Unit
-

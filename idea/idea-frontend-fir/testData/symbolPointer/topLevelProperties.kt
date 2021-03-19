@@ -1,7 +1,8 @@
 val x: Int = 10
 val Int.y get() = this
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
@@ -63,3 +64,4 @@ KtFirKotlinPropertySymbol:
   setter: null
   symbolKind: TOP_LEVEL
   visibility: PUBLIC
+*/

@@ -26,36 +26,36 @@ public class SymbolFromLibraryPointerRestoreTestGenerated extends AbstractSymbol
     }
 
     public void testAllFilesPresentInResoreSymbolFromLibrary() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary"), Pattern.compile("^(.+)\\.txt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("class.txt")
+    @TestMetadata("class.kt")
     public void testClass() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/class.txt");
+        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/class.kt");
     }
 
-    @TestMetadata("classFromJdk.txt")
+    @TestMetadata("classFromJdk.kt")
     public void testClassFromJdk() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/classFromJdk.txt");
+        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/classFromJdk.kt");
     }
 
-    @TestMetadata("enumEntry.txt")
+    @TestMetadata("enumEntry.kt")
     public void testEnumEntry() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/enumEntry.txt");
+        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/enumEntry.kt");
     }
 
-    @TestMetadata("memberFunction.txt")
+    @TestMetadata("memberFunction.kt")
     public void testMemberFunction() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/memberFunction.txt");
+        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/memberFunction.kt");
     }
 
-    @TestMetadata("memberFunctionWithOverloads.txt")
+    @TestMetadata("memberFunctionWithOverloads.kt")
     public void testMemberFunctionWithOverloads() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/memberFunctionWithOverloads.txt");
+        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/memberFunctionWithOverloads.kt");
     }
 
-    @TestMetadata("nestedClass.txt")
+    @TestMetadata("nestedClass.kt")
     public void testNestedClass() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/nestedClass.txt");
+        runTest("idea/idea-frontend-fir/testData/resoreSymbolFromLibrary/nestedClass.kt");
     }
 }

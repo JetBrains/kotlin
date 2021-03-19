@@ -1,6 +1,7 @@
-callable: kotlin/collections/List.listIterator
+// callable: kotlin/collections/List.listIterator
 
-// SYMBOLS:
+// RESULT
+/*
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/ListIterator<E>
   annotationClassIds: []
@@ -42,3 +43,4 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
   visibility: PUBLIC
+*/

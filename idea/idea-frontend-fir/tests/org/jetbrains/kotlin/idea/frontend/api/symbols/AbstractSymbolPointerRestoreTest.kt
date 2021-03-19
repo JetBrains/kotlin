@@ -7,74 +7,81 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.analyseOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.SymbolByFqName
-import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.framework.AbstractKtIdeaTest
+import org.jetbrains.kotlin.idea.test.framework.TestFileStructure
+import org.jetbrains.kotlin.idea.test.framework.TestStructureExpectedDataBlock
+import org.jetbrains.kotlin.idea.test.framework.TestStructureRenderer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.util.suffixIfNot
-import org.junit.Assert
-import java.io.File
 
-abstract class AbstractSymbolPointerRestoreTest : KotlinLightCodeInsightFixtureTestCase() {
-    abstract fun KtAnalysisSession.collectSymbols(filePath: String, ktFile: KtFile): List<KtSymbol>
+abstract class AbstractSymbolPointerRestoreTest : AbstractKtIdeaTest() {
+    abstract fun KtAnalysisSession.collectSymbols(fileStructure: TestFileStructure): List<KtSymbol>
 
-    protected fun doTest(path: String) {
-        val file = File(path)
-        val ktFile = myFixture.configureByText(file.name.suffixIfNot(".kt"), FileUtil.loadFile(file)) as KtFile
-
-        val pointersWithRendered = executeOnPooledThreadInReadAction {
-            analyze(ktFile) {
-                collectSymbols(path, ktFile).map { symbol ->
-                    PointerWithRenderedSymbol(
-                        symbol.createPointer(),
-                        DebugSymbolRenderer.render(symbol)
-                    )
-                }
+    override fun doTestByFileStructure(fileStructure: TestFileStructure) {
+        val pointersWithRendered = analyseOnPooledThreadInReadAction(fileStructure.mainKtFile) {
+            collectSymbols(fileStructure).map { symbol ->
+                PointerWithRenderedSymbol(
+                    symbol.createPointer(),
+                    DebugSymbolRenderer.render(symbol)
+                )
             }
         }
 
-        val actual = SymbolByFqName.textWithRenderedSymbolData(
-            path,
-            pointersWithRendered.joinToString(separator = "\n") { it.rendered },
+        val actual = TestStructureRenderer.render(
+            fileStructure,
+            TestStructureExpectedDataBlock(values = pointersWithRendered.map { it.rendered }),
+            renderingMode = TestStructureRenderer.RenderingMode.ALL_BLOCKS_IN_MULTI_LINE_COMMENT,
         )
 
-        KotlinTestUtils.assertEqualsToFile(File(path), actual)
+        KotlinTestUtils.assertEqualsToFile(fileStructure.filePath.toFile(), actual)
 
+        doOutOfBlockModification(fileStructure.mainKtFile)
 
+        restoreSymbolsInOtherReadActionAndCompareResults(fileStructure, pointersWithRendered)
+    }
+
+    private fun restoreSymbolsInOtherReadActionAndCompareResults(
+        fileStructure: TestFileStructure,
+        pointersWithRendered: List<PointerWithRenderedSymbol>
+    ) {
+        val restored = analyseOnPooledThreadInReadAction(fileStructure.mainKtFile) {
+            pointersWithRendered.map { (pointer, expectedRender) ->
+                val restored = pointer.restoreSymbol() ?: error("Symbol $expectedRender was not not restored correctly")
+                DebugSymbolRenderer.render(restored)
+            }
+        }
+        val actualRestored = TestStructureRenderer.render(
+            fileStructure,
+            TestStructureExpectedDataBlock(values = restored),
+            renderingMode = TestStructureRenderer.RenderingMode.ALL_BLOCKS_IN_MULTI_LINE_COMMENT,
+        )
+
+        KotlinTestUtils.assertEqualsToFile(fileStructure.filePath.toFile(), actualRestored)
+    }
+
+    private fun doOutOfBlockModification(ktFile: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
             runWriteAction {
-                KtPsiFactory(ktFile).apply {
-                    ktFile.add(createNewLine(lineBreaks = 2))
-                    ktFile.add(createProperty("val aaaaaa: Int = 10"))
-                }
-                PsiDocumentManager.getInstance(project).apply {
-                    commitDocument(getDocument(ktFile) ?: error("Cannot find document for ktFile"))
-                }
+                val document = PsiDocumentManager.getInstance(project).getDocument(ktFile) ?: error("Cannot find document for ktFile")
+                val initialText = ktFile.text
+                val ktPsiFactory = KtPsiFactory(ktFile)
+                ktFile.add(ktPsiFactory.createNewLine(lineBreaks = 2))
+                ktFile.add(ktPsiFactory.createProperty("val aaaaaa: Int = 10"))
+                commitDocument(document)
+                document.setText(initialText)
+                commitDocument(document)
             }
         }
+    }
 
-        // another read action
-        executeOnPooledThreadInReadAction {
-            analyze(ktFile) {
-                val restored = pointersWithRendered.map { (pointer, expectedRender) ->
-                    val restored = pointer.restoreSymbol() ?: error("Symbol $expectedRender was not not restored correctly")
-                    DebugSymbolRenderer.render(restored)
-                }
-                val actualRestored = SymbolByFqName.textWithRenderedSymbolData(
-                    path,
-                    restored.joinToString(separator = "\n"),
-                )
-
-                KotlinTestUtils.assertEqualsToFile(File(path), actualRestored)
-            }
-        }
+    private fun commitDocument(document: Document) {
+        PsiDocumentManager.getInstance(project).commitDocument(document)
     }
 }
 
