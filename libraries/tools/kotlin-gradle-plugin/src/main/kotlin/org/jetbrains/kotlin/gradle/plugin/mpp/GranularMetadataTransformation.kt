@@ -14,16 +14,17 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifier
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_RUNTIME_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -357,7 +358,7 @@ internal fun requestedDependencies(
 }
 
 
-internal abstract class MppDependencyMetadataExtractor(val project: Project, val dependency: ResolvedComponentResult) {
+internal abstract class MppDependencyMetadataExtractor(val project: Project, val component: ResolvedComponentResult) {
     abstract fun getProjectStructureMetadata(): KotlinProjectStructureMetadata?
 
     abstract fun getExtractableMetadataFiles(
@@ -369,10 +370,14 @@ internal abstract class MppDependencyMetadataExtractor(val project: Project, val
 private class ProjectMppDependencyMetadataExtractor(
     project: Project,
     dependency: ResolvedComponentResult,
+    val moduleIdentifier: KotlinModuleIdentifier?,
     val dependencyProject: Project
 ) : MppDependencyMetadataExtractor(project, dependency) {
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? =
-        buildKotlinProjectStructureMetadata(dependencyProject)
+        moduleIdentifier?.let {
+            val module = dependencyProject.pm20Extension.modules.single { it.moduleIdentifier == moduleIdentifier }
+            buildProjectStructureMetadata(module)
+        } ?: buildKotlinProjectStructureMetadata(dependencyProject)
 
     override fun getExtractableMetadataFiles(
         visibleSourceSetNames: Set<String>,
@@ -382,7 +387,8 @@ private class ProjectMppDependencyMetadataExtractor(
             is KotlinMultiplatformExtension -> projectExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations
                 .filter { it.name in visibleSourceSetNames }.associate { it.defaultSourceSet.name to it.output.classesDirs }
             is KotlinPm20ProjectExtension -> {
-                val moduleId = dependency.toModuleIdentifier()
+                require(moduleIdentifier != null)
+                val moduleId = moduleIdentifier
                 val module = projectExtension.modules.single { it.moduleIdentifier == moduleId }
                 val metadataCompilationRegistry = projectExtension.metadataCompilationRegistryByModuleId.getValue(moduleId)
                 visibleSourceSetNames.associateWith {
@@ -447,7 +453,7 @@ private open class JarArtifactMppDependencyMetadataExtractor(
         baseDir: File
     ): ExtractableMetadataFiles {
         val primaryArtifact = primaryArtifact
-        val moduleId = ModuleIds.fromComponent(project, dependency)
+        val moduleId = ModuleIds.fromComponent(project, component)
 
         return JarExtractableMetadataFiles(
             moduleId,
@@ -531,9 +537,44 @@ internal fun getMetadataExtractor(
     resolveViaAvailableAt: Boolean
 ): MppDependencyMetadataExtractor? {
     val resolvedMppVariantsProvider = ResolvedMppVariantsProvider.get(project)
-    val moduleIdentifier = ModuleIds.fromComponent(project, resolvedComponentResult)
+    val moduleIdentifier = resolvedComponentResult.toSingleModuleIdentifier() // FIXME this loses information about auxiliary module deps
     // TODO check how this code works with multi-capability resolutions
 
+    return mppDependencyMetadataExtractor(
+        resolvedMppVariantsProvider,
+        moduleIdentifier,
+        configuration,
+        resolveViaAvailableAt,
+        resolvedComponentResult,
+        project
+    )
+}
+
+internal fun getMetadataExtractor(
+    project: Project,
+    resolvedComponentResult: ResolvedComponentResult,
+    moduleIdentifier: KotlinModuleIdentifier,
+    configuration: Configuration
+): MppDependencyMetadataExtractor? {
+    val resolvedMppVariantsProvider = ResolvedMppVariantsProvider.get(project)
+    return mppDependencyMetadataExtractor(
+        resolvedMppVariantsProvider,
+        moduleIdentifier,
+        configuration,
+        true,
+        resolvedComponentResult,
+        project
+    )
+}
+
+private fun mppDependencyMetadataExtractor(
+    resolvedMppVariantsProvider: ResolvedMppVariantsProvider,
+    moduleIdentifier: KotlinModuleIdentifier,
+    configuration: Configuration,
+    resolveViaAvailableAt: Boolean,
+    resolvedComponentResult: ResolvedComponentResult,
+    project: Project
+): MppDependencyMetadataExtractor? {
     var resolvedViaAvailableAt = false
 
     val metadataArtifact = resolvedMppVariantsProvider.getResolvedArtifactByPlatformModule(
@@ -570,9 +611,14 @@ internal fun getMetadataExtractor(
 internal fun getProjectStructureMetadata(
     project: Project,
     module: ResolvedComponentResult,
-    configuration: Configuration
+    configuration: Configuration,
+    moduleIdentifier: KotlinModuleIdentifier? = null
 ): KotlinProjectStructureMetadata? {
-    val extractor = getMetadataExtractor(project, module, configuration, resolveViaAvailableAt = true)
+    val extractor = if (moduleIdentifier != null)
+        getMetadataExtractor(project, module, moduleIdentifier, configuration)
+    else
+        getMetadataExtractor(project, module, configuration, resolveViaAvailableAt = true)
+
     return extractor?.getProjectStructureMetadata()
 }
 

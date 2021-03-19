@@ -28,7 +28,7 @@ internal class FragmentGranularMetadataResolver(
         get() = requestingFragment.containingModule.project
 
     private val parentResultsByModuleIdentifier: Map<KotlinModuleIdentifier, List<MetadataDependencyResolution>> by lazy {
-        refinesParentResolvers.value.flatMap { it.resolutions }.groupBy { it.dependency.toModuleIdentifier() }
+        refinesParentResolvers.value.flatMap { it.resolutions }.groupBy { it.dependency.toSingleModuleIdentifier() }
     }
 
     private val metadataModuleBuilder = ProjectStructureMetadataModuleBuilder()
@@ -41,7 +41,7 @@ internal class FragmentGranularMetadataResolver(
     private fun doResolveMetadataDependencies(): Iterable<MetadataDependencyResolution> {
         val configurationToResolve = configurationToResolveMetadataDependencies(project, requestingFragment.containingModule)
         val resolvedComponentsByModuleId =
-            configurationToResolve.incoming.resolutionResult.allComponents.associateBy { it.toModuleIdentifier() }
+            configurationToResolve.incoming.resolutionResult.allComponents.associateBy { it.toSingleModuleIdentifier() }
         val resolvedDependenciesByModuleId =
             configurationToResolve.incoming.resolutionResult.allDependencies.filterIsInstance<ResolvedDependencyResult>()
                 .flatMap { dependency -> dependency.requested.toModuleIdentifiers().map { id -> id to dependency } }.toMap()
@@ -100,7 +100,7 @@ internal class FragmentGranularMetadataResolver(
                     }
 
                     val parentResolutionsForDependency =
-                        parentResultsByModuleIdentifier[metadataSourceComponent.toModuleIdentifier()].orEmpty()
+                        parentResultsByModuleIdentifier[metadataSourceComponent.toSingleModuleIdentifier()].orEmpty()
                     val fragmentsVisibleByParents =
                         parentResolutionsForDependency.filterIsInstance<ChooseVisibleSourceSetsImpl>()
                             .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
