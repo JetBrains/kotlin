@@ -133,7 +133,10 @@ class ClassCodegen private constructor(
         irClass.functions.find { it.name.asString() == "<clinit>" }?.let { generateMethod(it, smap, delegatedPropertyOptimizer) }
         // 3. Now we have all the fields (`$$delegatedProperties` might be redundant if all reads were optimized out):
         for (field in irClass.fields) {
-            if (field !== delegatedProperties || delegatedPropertyOptimizer?.needsDelegatedProperties == true) {
+            if (field !== delegatedProperties ||
+                delegatedPropertyOptimizer?.needsDelegatedProperties == true ||
+                irClass.isCompanion
+            ) {
                 generateField(field)
             }
         }
@@ -326,7 +329,7 @@ class ClassCodegen private constructor(
         val (node, smap) = generateMethodNode(method)
         if (delegatedPropertyOptimizer != null) {
             delegatedPropertyOptimizer.transform(node)
-            if (method.name.asString() == "<clinit>") {
+            if (method.name.asString() == "<clinit>" && !irClass.isCompanion) {
                 delegatedPropertyOptimizer.transformClassInitializer(node)
             }
         }

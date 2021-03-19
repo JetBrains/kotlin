@@ -80,6 +80,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
     }
 
+    @TestMetadata("delegatedPropertiesInCompanionObject.kt")
+    public void testDelegatedPropertiesInCompanionObject() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/delegatedPropertiesInCompanionObject.kt");
+    }
+
     @TestMetadata("delegationToJavaInterfaceWithWildcardType.kt")
     public void testDelegationToJavaInterfaceWithWildcardType() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/delegationToJavaInterfaceWithWildcardType.kt");
