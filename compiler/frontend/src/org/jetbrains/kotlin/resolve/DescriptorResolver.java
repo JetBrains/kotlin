@@ -307,7 +307,8 @@ public class DescriptorResolver {
             int index,
             @NotNull KotlinType type,
             @NotNull BindingTrace trace,
-            @NotNull Annotations additionalAnnotations
+            @NotNull Annotations additionalAnnotations,
+            @Nullable InferenceSession inferenceSession
     ) {
         KotlinType varargElementType = null;
         KotlinType variableType = type;
@@ -340,7 +341,7 @@ public class DescriptorResolver {
                                 destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
                                 ExpressionTypingContext.newContext(
                                         trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE,
-                                        languageVersionSettings, dataFlowValueFactory
+                                        languageVersionSettings, dataFlowValueFactory, inferenceSession
                                 )
                         );
 
@@ -813,7 +814,8 @@ public class DescriptorResolver {
         KtExpression initializer = destructuringDeclaration.getInitializer();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory
+                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
+                languageVersionSettings, dataFlowValueFactory, inferenceSession
         );
 
         ExpressionReceiver receiver = createReceiverForDestructuringDeclaration(destructuringDeclaration, context);
@@ -874,7 +876,7 @@ public class DescriptorResolver {
             @NotNull KtVariableDeclaration variableDeclaration,
             @NotNull BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull InferenceSession inferenceSession,
+            @Nullable InferenceSession inferenceSession,
             @NotNull VariableAsPropertyInfo propertyInfo
     ) {
         KtModifierList modifierList = variableDeclaration.getModifierList();
@@ -987,7 +989,9 @@ public class DescriptorResolver {
                 trace,
                 typeIfKnown,
                 propertyInfo.getPropertyGetter(),
-                propertyInfo.getHasDelegate());
+                propertyInfo.getHasDelegate(),
+                inferenceSession
+        );
 
         KotlinType type = typeIfKnown != null ? typeIfKnown : getter.getReturnType();
 
@@ -1006,7 +1010,9 @@ public class DescriptorResolver {
                 annotationSplitter,
                 trace,
                 propertyInfo.getPropertySetter(),
-                propertyInfo.getHasDelegate());
+                propertyInfo.getHasDelegate(),
+                inferenceSession
+        );
 
         propertyDescriptor.initialize(
                 getter, setter,
@@ -1064,7 +1070,8 @@ public class DescriptorResolver {
             @NotNull AnnotationSplitter annotationSplitter,
             @NotNull BindingTrace trace,
             @Nullable KtPropertyAccessor setter,
-            boolean hasDelegate
+            boolean hasDelegate,
+            @Nullable InferenceSession inferenceSession
     ) {
         PropertySetterDescriptorImpl setterDescriptor = null;
         Annotations setterTargetedAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
@@ -1114,7 +1121,7 @@ public class DescriptorResolver {
                 }
 
                 ValueParameterDescriptorImpl valueParameterDescriptor = resolveValueParameterDescriptor(
-                        scopeWithTypeParameters, setterDescriptor, parameter, 0, type, trace, parameterTargetedAnnotations
+                        scopeWithTypeParameters, setterDescriptor, parameter, 0, type, trace, parameterTargetedAnnotations, inferenceSession
                 );
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
@@ -1150,7 +1157,8 @@ public class DescriptorResolver {
             @NotNull BindingTrace trace,
             @Nullable KotlinType propertyTypeIfKnown,
             @Nullable KtPropertyAccessor getter,
-            boolean hasDelegate
+            boolean hasDelegate,
+            @Nullable InferenceSession inferenceSession
     ) {
         PropertyGetterDescriptorImpl getterDescriptor;
         KotlinType getterType;
@@ -1170,7 +1178,9 @@ public class DescriptorResolver {
                     property.hasModifier(KtTokens.INLINE_KEYWORD) || getter.hasModifier(KtTokens.INLINE_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(getter)
             );
-            getterType = determineGetterReturnType(scopeForDeclarationResolution, trace, getterDescriptor, getter, propertyTypeIfKnown);
+            getterType = determineGetterReturnType(
+                    scopeForDeclarationResolution, trace, getterDescriptor, getter, propertyTypeIfKnown, inferenceSession
+            );
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
@@ -1193,7 +1203,8 @@ public class DescriptorResolver {
             @NotNull BindingTrace trace,
             @NotNull PropertyGetterDescriptor getterDescriptor,
             @NotNull KtPropertyAccessor getter,
-            @Nullable KotlinType propertyTypeIfKnown
+            @Nullable KotlinType propertyTypeIfKnown,
+            @Nullable InferenceSession inferenceSession
     ) {
         KtTypeReference returnTypeReference = getter.getReturnTypeReference();
         if (returnTypeReference != null) {
@@ -1210,7 +1221,7 @@ public class DescriptorResolver {
         KtProperty property = getter.getProperty();
         if (!property.hasDelegateExpressionOrInitializer() && property.getTypeReference() == null &&
             getter.hasBody() && !getter.hasBlockBody()) {
-            return inferReturnTypeFromExpressionBody(trace, scope, DataFlowInfoFactory.EMPTY, getter, getterDescriptor);
+            return inferReturnTypeFromExpressionBody(trace, scope, DataFlowInfoFactory.EMPTY, getter, getterDescriptor, inferenceSession);
         }
 
         return propertyTypeIfKnown;
@@ -1222,11 +1233,14 @@ public class DescriptorResolver {
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KtDeclarationWithBody function,
-            @NotNull FunctionDescriptor functionDescriptor
+            @NotNull FunctionDescriptor functionDescriptor,
+            @Nullable InferenceSession inferenceSession
     ) {
         return wrappedTypeFactory.createRecursionIntolerantDeferredType(trace, () -> {
             PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace, languageVersionSettings);
-            KotlinType type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
+            KotlinType type = expressionTypingServices.getBodyExpressionType(
+                    trace, scope, dataFlowInfo, function, functionDescriptor, inferenceSession
+            );
             KotlinType publicType = transformAnonymousTypeIfNeeded(
                     functionDescriptor, function, type, trace, anonymousTypeTransformers, languageVersionSettings
             );

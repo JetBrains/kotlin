@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -44,14 +45,15 @@ class ValueParameterResolver(
         valueParameterDescriptors: List<ValueParameterDescriptor>,
         declaringScope: LexicalScope,
         dataFlowInfo: DataFlowInfo,
-        trace: BindingTrace
+        trace: BindingTrace,
+        inferenceSession: InferenceSession?
     ) {
         val scopeForDefaultValue =
             LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
 
         val contextForDefaultValue = ExpressionTypingContext.newContext(
             trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
-            languageVersionSettings, dataFlowValueFactory
+            languageVersionSettings, dataFlowValueFactory, inferenceSession
         )
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {

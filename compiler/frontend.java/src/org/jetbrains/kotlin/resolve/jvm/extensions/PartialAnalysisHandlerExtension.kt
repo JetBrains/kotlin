@@ -73,12 +73,12 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
                     ForceResolveUtil.forceResolveAllContents(descriptor.typeConstructor.supertypes)
 
                     if (declaration is KtClassOrObject && descriptor is ClassDescriptorWithResolutionScopes) {
-                        bodyResolver.resolveSuperTypeEntryList(DataFlowInfo.EMPTY,
-                                                               declaration,
-                                                               descriptor,
-                                                               descriptor.unsubstitutedPrimaryConstructor,
-                                                               descriptor.scopeForConstructorHeaderResolution,
-                                                               descriptor.scopeForMemberDeclarationResolution)
+                        bodyResolver.resolveSuperTypeEntryList(
+                            DataFlowInfo.EMPTY, declaration, descriptor, descriptor.unsubstitutedPrimaryConstructor,
+                            descriptor.scopeForConstructorHeaderResolution,
+                            descriptor.scopeForMemberDeclarationResolution,
+                            resolveSession.inferenceSession
+                        )
                     }
                 }
                 is PropertyDescriptor -> {
@@ -99,7 +99,8 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
                         if (containingScope != null) {
                             bodyResolver.resolveConstructorParameterDefaultValues(
                                 topDownAnalysisContext.outerDataFlowInfo, bindingTrace,
-                                declaration, descriptor as ConstructorDescriptor, containingScope
+                                declaration, descriptor as ConstructorDescriptor, containingScope,
+                                resolveSession.inferenceSession
                             )
                         }
                     } else if (declaration is KtFunction && !declaration.hasDeclaredReturnType() && !declaration.hasBlockBody()) {

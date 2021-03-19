@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
 interface LazyClassContext {
     val declarationScopeProvider: DeclarationScopeProvider
+    val inferenceSession: InferenceSession?
 
     val storageManager: StorageManager
     val trace: BindingTrace

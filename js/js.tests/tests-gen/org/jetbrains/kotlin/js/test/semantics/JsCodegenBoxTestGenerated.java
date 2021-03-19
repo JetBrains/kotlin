@@ -11827,6 +11827,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
+            @TestMetadata("builderCallAsReturnTypeInLocalClass.kt")
+            public void testBuilderCallAsReturnTypeInLocalClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/builderCallAsReturnTypeInLocalClass.kt");
+            }
+
             @TestMetadata("callableReferenceAndCoercionToUnit.kt")
             public void testCallableReferenceAndCoercionToUnit() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/callableReferenceAndCoercionToUnit.kt");
@@ -11840,16 +11845,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("lackOfNullCheckOnNullableInsideBuild.kt")
             public void testLackOfNullCheckOnNullableInsideBuild() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
-            }
-
-            @TestMetadata("multiStepCompletionWithinThreeBuilderInferenceCalls.kt")
-            public void testMultiStepCompletionWithinThreeBuilderInferenceCalls() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/multiStepCompletionWithinThreeBuilderInferenceCalls.kt");
-            }
-
-            @TestMetadata("multiStepCompletionWithinTwoBuilderInferenceCalls.kt")
-            public void testMultiStepCompletionWithinTwoBuilderInferenceCalls() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/multiStepCompletionWithinTwoBuilderInferenceCalls.kt");
             }
 
             @TestMetadata("propagateInferenceSessionIntoDeclarationAnalyzers.kt")
@@ -11895,6 +11890,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("substitutelambdaExtensionReceiverType.kt")
             public void testSubstitutelambdaExtensionReceiverType() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/substitutelambdaExtensionReceiverType.kt");
+            }
+
+            @TestMetadata("topDownCompletionBreakedByNonBuilderInferenceSession.kt")
+            public void testTopDownCompletionBreakedByNonBuilderInferenceSession() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionBreakedByNonBuilderInferenceSession.kt");
+            }
+
+            @TestMetadata("topDownCompletionWithThreeBuilderInferenceCalls.kt")
+            public void testTopDownCompletionWithThreeBuilderInferenceCalls() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithThreeBuilderInferenceCalls.kt");
+            }
+
+            @TestMetadata("topDownCompletionWithTwoBuilderInferenceCalls.kt")
+            public void testTopDownCompletionWithTwoBuilderInferenceCalls() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithTwoBuilderInferenceCalls.kt");
             }
         }
     }

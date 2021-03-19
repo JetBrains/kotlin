@@ -66,7 +66,7 @@ class BuilderInferenceSession(
 
     private val commonCalls = arrayListOf<PSICompletedCallInfo>()
 
-    // Simple calls are calls which might not have gone through type inference, but may contain unsubstituted postponed variables inside their types.
+    // These calls come from the old type inference
     private val oldCallableReferenceCalls = arrayListOf<KtExpression>()
 
     private var hasInapplicableCall = false
