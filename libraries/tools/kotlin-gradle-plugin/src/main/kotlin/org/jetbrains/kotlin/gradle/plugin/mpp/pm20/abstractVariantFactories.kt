@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import jdk.internal.org.objectweb.asm.tree.VarInsnNode
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.SoftwareComponentFactory
@@ -22,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.project.model.refinesClosure
+import javax.inject.Inject
 
 abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
     module: KotlinGradleModule
@@ -142,70 +147,9 @@ abstract class AbstractKotlinGradleRuntimePublishedVariantFactory<T : KotlinGrad
     }
 
     open fun configureVariantPublishing(variant: T) {
-        val rootSoftwareComponent =
-            project.components
-                .withType(AdhocComponentWithVariants::class.java)
-                .getByName(rootPublicationComponentName(module))
-
-        val platformModuleDependencyProvider = project.provider {
-            val coordinates = variant.publishedMavenModuleCoordinates
-            (project.dependencies.create("${coordinates.group}:${coordinates.name}:${coordinates.version}") as ModuleDependency).apply {
-                if (module.moduleClassifier != null) {
-                    capabilities { it.requireCapability(CalculatedCapability.fromModule(module)) }
-                }
-            }
-        }
-
-        // FIXME inject vs internal API
-        val platformComponentName = platformComponentName(variant)
-        val platformComponent = (project as ProjectInternal).services
-            .get(SoftwareComponentFactory::class.java)
-            .adhoc(platformComponentName)
-        project.components.add(platformComponent)
-        platformComponent.addVariantsFromConfiguration(project.configurations.getByName(variant.apiElementsConfigurationName)) {
-            it.mapToMavenScope("compile")
-        }
-        platformComponent.addVariantsFromConfiguration(project.configurations.getByName(variant.runtimeElementsConfigurationName)) {
-            it.mapToMavenScope("runtime")
-        }
-
-        module.ifMadePublic {
-            project.pluginManager.withPlugin("maven-publish") {
-                project.extensions.getByType(PublishingExtension::class.java).apply {
-                    publications.create(platformComponentName, MavenPublication::class.java).apply {
-                        (this as DefaultMavenPublication).isAlias = true
-                        from(platformComponent)
-                        variant.assignMavenPublication(this)
-                        artifactId = dashSeparatedName(project.name, variant.defaultPublishedModuleSuffix)
-                    }
-                }
-            }
-        }
-
-        val publishedApiConfiguration =
-            project.configurations.create(publishedConfigurationName(variant.apiElementsConfigurationName)).apply {
-                isCanBeConsumed = false
-                isCanBeResolved = false
-                configureApiElementsConfiguration(variant, this)
-                setModuleCapability(this, module)
-                dependencies.addLater(platformModuleDependencyProvider)
-            }
-        val publishedRuntimeConfiguration =
-            project.configurations.create(publishedConfigurationName(variant.runtimeElementsConfigurationName)).apply {
-                isCanBeConsumed = false
-                isCanBeResolved = false
-                configureRuntimeElementsConfiguration(variant, this)
-                setModuleCapability(this, module)
-                dependencies.addLater(platformModuleDependencyProvider)
-            }
-        listOf(publishedApiConfiguration, publishedRuntimeConfiguration).forEach {
-            rootSoftwareComponent.addVariantsFromConfiguration(it) { }
-        }
+        VariantPublishingConfigurator.get(project).configureSingleVariantPublication(variant)
     }
-
-    open fun platformComponentName(variant: T) = variant.disambiguateName("")
 }
-
 
 internal fun setModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
     if (module.moduleClassifier != null) {

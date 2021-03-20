@@ -19,7 +19,10 @@ open class KotlinNativeVariantInternal(
     val konanTarget: KonanTarget
 ) : KotlinNativeVariant,
     KotlinGradleVariantInternal(containingModule, fragmentName),
-    SingleMavenPublicationHolder by DefaultSingleMavenPublicationHolder(containingModule, fragmentName) {
+    SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(containingModule, fragmentName) {
+
+    final override val hostSpecificMetadataElementsConfigurationName: String?
+        get() = disambiguateName("hostSpecificMetadataElements").takeIf { includesHostSpecificMetadata }
 
     override var enableEndorsedLibraries: Boolean = false
 
@@ -32,6 +35,9 @@ open class KotlinNativeVariantInternal(
 
     internal val compilationData by lazy { KotlinNativeVariantCompilationData(this) }
 }
+
+internal val KotlinNativeVariantInternal.includesHostSpecificMetadata: Boolean
+    get() = isHostSpecificKonanTargetsSet(setOf(konanTarget))
 
 // FIXME codegen
 open class KotlinLinuxX64Variant @Inject constructor(containingModule: KotlinGradleModule, fragmentName: String) :
