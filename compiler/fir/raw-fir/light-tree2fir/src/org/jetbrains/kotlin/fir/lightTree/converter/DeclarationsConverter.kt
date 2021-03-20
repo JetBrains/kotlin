@@ -1173,9 +1173,12 @@ class DeclarationsConverter(
                     accessorVisibility,
                     isGetter
                 )
-                .also {
-                    it.annotations += modifiers.annotations
-                    it.status = status
+                .also { accessor ->
+                    accessor.annotations += modifiers.annotations
+                    accessor.status = status
+                    currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
+                        accessor.containingClassAttr = lookupTag
+                    }
                 }
         }
         val target = FirFunctionTarget(labelName = null, isLambda = false)
