@@ -60,10 +60,10 @@ abstract class KotlinGradleVariantInternal(
 internal val KotlinGradleVariant.compileDependencyConfiguration: Configuration
     get() = containingModule.project.configurations.getByName(compileDependencyConfigurationName)
 
-class DefaultSingleMavenPublicationHolder(
+class DefaultSingleMavenPublishedModuleHolder(
     private var module: KotlinGradleModule,
     override val defaultPublishedModuleSuffix: String?
-) : SingleMavenPublicationHolder {
+) : SingleMavenPublishedModuleHolder {
     private val project get() = module.project
 
     private var assignedMavenPublication: MavenPublication? = null
@@ -113,7 +113,7 @@ private fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String)
 
 abstract class KotlinGradlePublishedVariantWithRuntime(containingModule: KotlinGradleModule, fragmentName: String) :
     KotlinGradleVariantWithRuntimeInternal(containingModule, fragmentName),
-    SingleMavenPublicationHolder by DefaultSingleMavenPublicationHolder(
+    SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(
         containingModule,
         defaultModuleSuffix(containingModule, fragmentName)
     ) {

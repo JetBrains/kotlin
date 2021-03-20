@@ -50,10 +50,14 @@ interface KotlinNativeVariant : KotlinGradleVariant {
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.native
 
+    /** A configuration name for the metadata of the host-specific fragments which this variant includes,
+     *  if applies to this Native variant; null otherwise */
+    val hostSpecificMetadataElementsConfigurationName: String?
+
     var enableEndorsedLibraries: Boolean
 }
 
-interface SingleMavenPublicationHolder {
+interface SingleMavenPublishedModuleHolder {
     fun assignMavenPublication(publication: MavenPublication)
     val defaultPublishedModuleSuffix: String?
     val publishedMavenModuleCoordinates: PublishedModuleCoordinatesProvider

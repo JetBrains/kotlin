@@ -49,6 +49,7 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
 
     override fun create(name: String): T =
         super.create(name).also { result ->
+            configureHostSpecificMetadata(result)
             configureVariantPublishing(result)
         }
 
@@ -80,22 +81,10 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
         }
     }
 
-    open fun configureVariantPublishing(variant: T) {
-        val rootSoftwareComponent =
-            project.components
-                .withType(AdhocComponentWithVariants::class.java)
-                .getByName(rootPublicationComponentName(module))
+    private fun configureHostSpecificMetadata(variant: T) {
+        val hostSpecificConfigurationNameIfEnabled = variant.hostSpecificMetadataElementsConfigurationName
+            ?: return
 
-        val platformModuleDependencyProvider = project.provider {
-            val coordinates = variant.publishedMavenModuleCoordinates
-            (project.dependencies.create("${coordinates.group}:${coordinates.name}:${coordinates.version}") as ModuleDependency).apply {
-                if (module.moduleClassifier != null) {
-                    capabilities { it.requireCapability(CalculatedCapability.fromModule(module)) }
-                }
-            }
-        }
-
-        val apiElements = project.configurations.getByName(variant.apiElementsConfigurationName)
         val hostSpecificMetadataJar = project.registerTask<Jar>(variant.disambiguateName("hostSpecificMetadataJar")) { jar ->
             jar.archiveClassifier.set("metadata")
             jar.archiveAppendix.set(variant.disambiguateName(""))
@@ -103,7 +92,7 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
                 .withAll { metadataCompilation ->
                     val fragment = metadataCompilation.fragment
                     if (metadataCompilation is KotlinNativeFragmentMetadataCompilationData) {
-                        jar.from(project.files(Callable {
+                        jar.from(project.files(project.provider {
                             if (fragment in variant.refinesClosure && fragment.isNativeHostSpecific())
                                 project.filesWithUnpackedArchives(metadataCompilation.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
                             else emptyList<Any>()
@@ -111,7 +100,8 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
                     }
                 }
         }
-        val hostSpecificMetadataElements = project.configurations.create(variant.hostSpecificMetadataConfigurationName).apply {
+        val apiElements = project.configurations.getByName(variant.apiElementsConfigurationName)
+        project.configurations.create(hostSpecificConfigurationNameIfEnabled).apply {
             isCanBeResolved = false
             isCanBeConsumed = false
             setPlatformAttributesAndMetadataUsage(variant)
@@ -120,49 +110,10 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
                 set(project.provider { apiElements.allDependencies })
             })
         }
+    }
 
-        // FIXME inject vs internal API
-        val platformComponentName = platformComponentName(variant)
-        val platformComponent = (project as ProjectInternal).services
-            .get(SoftwareComponentFactory::class.java)
-            .adhoc(platformComponentName)
-        project.components.add(platformComponent)
-        platformComponent.addVariantsFromConfiguration(apiElements) {
-            it.mapToMavenScope("compile")
-        }
-        platformComponent.addVariantsFromConfiguration(hostSpecificMetadataElements) { }
-
-        module.ifMadePublic {
-            project.pluginManager.withPlugin("maven-publish") {
-                project.extensions.getByType(PublishingExtension::class.java).apply {
-                    publications.create(platformComponentName, MavenPublication::class.java).apply {
-                        (this as DefaultMavenPublication).isAlias = true
-                        from(platformComponent)
-                        variant.assignMavenPublication(this)
-                        artifactId = dashSeparatedName(project.name, variant.defaultPublishedModuleSuffix)
-                    }
-                }
-            }
-        }
-
-        val publishedApiConfiguration =
-            project.configurations.create(publishedConfigurationName(variant.apiElementsConfigurationName)).apply {
-                isCanBeConsumed = false
-                isCanBeResolved = false
-                configureApiElementsConfiguration(variant, this)
-                setModuleCapability(this, module)
-                dependencies.addLater(platformModuleDependencyProvider)
-            }
-        val publishedMetadataConfiguration =
-            project.configurations.create(publishedConfigurationName(variant.hostSpecificMetadataConfigurationName)).apply {
-                isCanBeConsumed = false
-                isCanBeResolved = false
-                setPlatformAttributesAndMetadataUsage(variant)
-                setModuleCapability(this, module)
-                dependencies.addLater(platformModuleDependencyProvider)
-            }
-        rootSoftwareComponent.addVariantsFromConfiguration(publishedApiConfiguration) { }
-        rootSoftwareComponent.addVariantsFromConfiguration(publishedMetadataConfiguration) { }
+    open fun configureVariantPublishing(variant: T) {
+        VariantPublishingConfigurator.get(project).configureNativeVariantPublication(variant)
     }
 
     private fun Configuration.setPlatformAttributesAndMetadataUsage(variant: T) {
