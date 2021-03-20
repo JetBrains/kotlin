@@ -36,12 +36,11 @@ class TestFileDirectives(
         @Suppress("UNCHECKED_CAST")
         return value as VALUE
     }
+
+    fun isDirectivePresent(directive: PresenceDirective): Boolean =
+        directive.name in directives
 }
 
-abstract class TestFileDirective<VALUE : Any> {
-    abstract val name: String
-    abstract fun parse(value: String): VALUE?
-}
 
 sealed class TestFile {
     abstract val psiFile: PsiFile

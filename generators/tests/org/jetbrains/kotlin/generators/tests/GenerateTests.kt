@@ -1014,37 +1014,24 @@ fun main(args: Array<String>) {
                 model("analysisSession/resolveCall")
             }
 
-            testClass<AbstractSymbolsByPsiBuildingTest> {
-                model("symbolsByPsi")
-            }
-
-            testClass<AbstractSymbolsByFqNameBuildingTest> {
-                model("symbolsByFqName", extension = "txt")
-            }
-
-
-            testClass<AbstractSymbolByReferenceTest> {
-                model("symbolByReference")
-            }
-
             testClass<AbstractMemberScopeByFqNameTest> {
-                model("memberScopeByFqName", extension = "txt")
+                model("memberScopeByFqName")
             }
 
             testClass<AbstractFileScopeTest> {
                 model("fileScopeTest", extension = "kt")
             }
 
-            testClass<AbstractSymbolFromSourcePointerRestoreTest> {
-                model("symbolPointer", extension = "kt")
+            testClass<AbstractSymbolByPsiTest> {
+                model("symbols/symbolByPsi")
             }
 
-            testClass<AbstractSymbolFromLibraryPointerRestoreTest> {
-                model("resoreSymbolFromLibrary")
+            testClass<AbstractSymbolByFqNameTest> {
+                model("symbols/symbolByFqName")
             }
 
-            testClass<AbstractSymbolByReferencePointerRestoreTest> {
-                model("symbolByReference")
+            testClass<AbstractSymbolByReferenceTest> {
+                model("symbols/symbolByReference")
             }
 
             testClass<AbstractMemoryLeakInSymbolsTest> {

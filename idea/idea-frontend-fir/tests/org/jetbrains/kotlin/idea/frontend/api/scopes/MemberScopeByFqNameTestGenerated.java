@@ -26,26 +26,26 @@ public class MemberScopeByFqNameTestGenerated extends AbstractMemberScopeByFqNam
     }
 
     public void testAllFilesPresentInMemberScopeByFqName() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/memberScopeByFqName"), Pattern.compile("^(.+)\\.txt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/memberScopeByFqName"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("Int.txt")
+    @TestMetadata("Int.kt")
     public void testInt() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/Int.txt");
+        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/Int.kt");
     }
 
-    @TestMetadata("java.lang.String.txt")
+    @TestMetadata("java.lang.String.kt")
     public void testJava_lang_String() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/java.lang.String.txt");
+        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/java.lang.String.kt");
     }
 
-    @TestMetadata("kotlin.Function2.txt")
+    @TestMetadata("kotlin.Function2.kt")
     public void testKotlin_Function2() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/kotlin.Function2.txt");
+        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/kotlin.Function2.kt");
     }
 
-    @TestMetadata("MutableList.txt")
+    @TestMetadata("MutableList.kt")
     public void testMutableList() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/MutableList.txt");
+        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/MutableList.kt");
     }
 }

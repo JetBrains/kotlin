@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.idea.frontend.api.scopes
 
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.SymbolData
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByFqNameBuildingTest
+import org.jetbrains.kotlin.idea.frontend.api.SymbolByFqName
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.test.framework.TestFileStructure
 
-abstract class AbstractMemberScopeByFqNameTest : AbstractSymbolsByFqNameBuildingTest() {
-    override fun KtAnalysisSession.createSymbols(symbolData: SymbolData): List<KtSymbol> {
+abstract class AbstractMemberScopeByFqNameTest : AbstractSymbolByFqNameTest() {
+    override fun KtAnalysisSession.collectSymbols(fileStructure: TestFileStructure): List<KtSymbol> {
+        val symbolData = SymbolByFqName.getSymbolDataFromFile(fileStructure.filePath)
         val symbols = with(symbolData) { toSymbols() }
-        val classSymbol = symbols.singleOrNull() as? KtClassOrObjectSymbol ?: error("Should be a single class symbol, but $symbols found")
+        val classSymbol = symbols.singleOrNull() as? KtClassOrObjectSymbol
+            ?: error("Should be a single class symbol, but $symbols found")
         return classSymbol.getMemberScope().getAllSymbols().toList()
     }
 }
