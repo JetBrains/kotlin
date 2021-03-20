@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import java.util.concurrent.ConcurrentMap
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
@@ -220,15 +222,15 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildPropertySymbol(fir: FirProperty): KtKotlinPropertySymbol {
-            require(!fir.isLocal)
-            require(fir !is FirSyntheticProperty)
+            checkRequirementForBuildingSymbol<KtKotlinPropertySymbol>(fir, !fir.isLocal)
+            checkRequirementForBuildingSymbol<KtKotlinPropertySymbol>(fir, fir !is FirSyntheticProperty)
             return symbolsCache.cache(fir) {
                 KtFirKotlinPropertySymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
             }
         }
 
         fun buildLocalVariableSymbol(fir: FirProperty): KtFirLocalVariableSymbol {
-            require(fir.isLocal)
+            checkRequirementForBuildingSymbol<KtFirLocalVariableSymbol>(fir, fir.isLocal)
             return symbolsCache.cache(fir) {
                 KtFirLocalVariableSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
             }
@@ -249,20 +251,18 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildConstructorParameterSymbol(fir: FirValueParameter): KtFirConstructorValueParameterSymbol {
-            require(fir.isConstructorParameter == true)
+            checkRequirementForBuildingSymbol<KtFirConstructorValueParameterSymbol>(fir, fir.isConstructorParameter == true)
             return symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildFunctionParameterSymbol(fir: FirValueParameter): KtFirFunctionParameterSymbol {
-            require(fir.isConstructorParameter != true)
+            checkRequirementForBuildingSymbol<KtFirFunctionParameterSymbol>(fir, fir.isConstructorParameter != true)
             return symbolsCache.cache(fir) { KtFirFunctionParameterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
 
         fun buildFieldSymbol(fir: FirField): KtFirJavaFieldSymbol {
-            if (!fir.isJavaFieldOrSubstitutionOverrideOfJavaField()) {
-                error("Could not build symbol for non-Java field symbol")
-            }
+            checkRequirementForBuildingSymbol<KtFirJavaFieldSymbol>(fir, fir.isJavaFieldOrSubstitutionOverrideOfJavaField())
             return symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
@@ -301,12 +301,12 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildGetterSymbol(fir: FirPropertyAccessor): KtFirPropertyGetterSymbol {
-            require(fir.isGetter)
+            checkRequirementForBuildingSymbol<KtFirPropertyGetterSymbol>(fir, fir.isGetter)
             return symbolsCache.cache(fir) { KtFirPropertyGetterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
         fun buildSetterSymbol(fir: FirPropertyAccessor): KtFirPropertySetterSymbol {
-            require(fir.isSetter)
+            checkRequirementForBuildingSymbol<KtFirPropertySetterSymbol>(fir, fir.isSetter)
             return symbolsCache.cache(fir) { KtFirPropertySetterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
     }
@@ -353,6 +353,19 @@ internal class KtSymbolByFirBuilder private constructor(
     companion object {
         private fun throwUnexpectedElementError(element: Any): Nothing {
             error("Unexpected ${element::class.simpleName}")
+        }
+
+        @OptIn(ExperimentalContracts::class)
+        private inline fun <reified S : KtSymbol> checkRequirementForBuildingSymbol(
+            fir: FirElement,
+            requirement: Boolean,
+        ) {
+            contract {
+                returns() implies requirement
+            }
+            require(requirement) {
+                "Cannot build ${S::class.simpleName} for ${fir.renderWithType(FirRenderer.RenderMode.WithDeclarationAttributes)}"
+            }
         }
     }
 }
