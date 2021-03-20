@@ -34,9 +34,9 @@ abstract class KotlinVersionProviderService : WizardService {
 
     protected open fun getKotlinVersionRepository(versionKind: KotlinVersionKind): Repository = when (versionKind) {
         KotlinVersionKind.STABLE -> DefaultRepository.MAVEN_CENTRAL
-        KotlinVersionKind.EAP -> Repositories.KOTLIN_EAP_BINTRAY
-        KotlinVersionKind.M -> Repositories.KOTLIN_EAP_BINTRAY
-        KotlinVersionKind.DEV -> Repositories.KOTLIN_DEV_BINTRAY
+        KotlinVersionKind.EAP -> Repositories.KOTLIN_EAP_MAVEN_CENTRAL
+        KotlinVersionKind.M -> Repositories.KOTLIN_EAP_MAVEN_CENTRAL
+        KotlinVersionKind.DEV -> Repositories.JETBRAINS_KOTLIN_DEV
     }
 
     private fun getKotlinVersionRepository(version: Version) =

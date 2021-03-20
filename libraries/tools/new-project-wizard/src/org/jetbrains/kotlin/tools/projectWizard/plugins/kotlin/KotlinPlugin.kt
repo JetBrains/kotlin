@@ -55,7 +55,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
 
         val version by property(
             // todo do not hardcode kind & repository
-            WizardKotlinVersion(Versions.KOTLIN, KotlinVersionKind.M, Repositories.KOTLIN_EAP_BINTRAY)
+            WizardKotlinVersion(Versions.KOTLIN, KotlinVersionKind.M, Repositories.KOTLIN_EAP_MAVEN_CENTRAL)
         )
 
         val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE_GENERATION) {

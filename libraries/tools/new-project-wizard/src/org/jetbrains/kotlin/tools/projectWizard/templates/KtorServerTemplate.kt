@@ -55,7 +55,7 @@ class KtorServerTemplate : Template() {
         }
 
     override fun Writer.getIrsToAddToBuildFile(module: ModuleIR): List<BuildSystemIR> = buildList {
-        +RepositoryIR(Repositories.KTOR_BINTRAY)
+        +RepositoryIR(Repositories.KTOR)
         +RepositoryIR(DefaultRepository.JCENTER)
         +runTaskIrs(mainClass = "ServerKt")
     }
@@ -85,7 +85,7 @@ class KtorServerTemplate : Template() {
 }
 
 private fun ktorArtifactDependency(@NonNls name: String, kotlinVersion: Version) = ArtifactBasedLibraryDependencyIR(
-    MavenArtifact(Repositories.KTOR_BINTRAY, "io.ktor", name),
+    MavenArtifact(Repositories.KTOR, "io.ktor", name),
     Versions.KTOR,
     DependencyType.MAIN
 )

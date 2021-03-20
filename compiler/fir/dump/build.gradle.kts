@@ -8,10 +8,6 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlinx.html/") }
-}
-
 dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:deserialization"))
