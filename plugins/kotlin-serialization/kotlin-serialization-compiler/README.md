@@ -3,8 +3,6 @@
 Kotlin serialization plugin consists of three parts: a compiler plugin, an IntelliJ plugin and a runtime library.
 This is the folder with common source for all plugins, IDEA plugin is built from here. Gradle and Maven plugins can be found in `libraries` folder.
 
-Compiler plugins are uploaded on bintray: https://bintray.com/kotlin/kotlinx/kotlinx.serialization.plugin
-
 ## Building and usage
 
 ### Prerequisites:
