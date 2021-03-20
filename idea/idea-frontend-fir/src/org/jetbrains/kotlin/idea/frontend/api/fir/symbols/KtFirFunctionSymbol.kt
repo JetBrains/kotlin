@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.containsAn
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotationClassIds
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberPropertySymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirTopLevelFunctionSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
@@ -92,11 +94,16 @@ internal class KtFirFunctionSymbol(
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return when (symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level fun is not supported yet")
-            KtSymbolKind.MEMBER -> KtFirMemberFunctionSymbolPointer(
-                firRef.withFir { it.containingClass()?.classId ?: error("ClassId should not be null for member function") },
-                firRef.withFir { it.createSignature() }
-            )
+            KtSymbolKind.TOP_LEVEL -> firRef.withFir { fir ->
+                KtFirTopLevelFunctionSymbolPointer(fir.symbol.callableId, fir.createSignature())
+            }
+            KtSymbolKind.MEMBER ->  firRef.withFir { fir ->
+                KtFirMemberFunctionSymbolPointer(
+                    fir.containingClass()?.classId ?: error("ClassId should not be null for member function"),
+                    fir.name,
+                    fir.createSignature()
+                )
+            }
             KtSymbolKind.NON_PROPERTY_PARAMETER -> error("KtFunction could not be a parameter")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
                 callableIdIfNonLocal?.asString() ?: name.asString()

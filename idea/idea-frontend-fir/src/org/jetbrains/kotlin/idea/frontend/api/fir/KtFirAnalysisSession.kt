@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
@@ -79,6 +81,9 @@ private constructor(
             context
         )
     }
+
+    val rootModuleSession: FirSession get() = firResolveState.rootModuleSession
+    val firSymbolProvider: FirSymbolProvider get() = rootModuleSession.symbolProvider
 
     companion object {
         @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")

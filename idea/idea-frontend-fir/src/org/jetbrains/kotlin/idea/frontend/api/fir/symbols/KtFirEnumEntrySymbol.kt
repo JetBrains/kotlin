@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirEnumEntrySymbolPointer
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
@@ -46,6 +45,11 @@ internal class KtFirEnumEntrySymbol(
 
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        return KtFirEnumEntrySymbolPointer(containingEnumClassIdIfNonLocal!!, firRef.withFir { it.createSignature() })
+        return firRef.withFir { fir ->
+            KtFirEnumEntrySymbolPointer(
+                fir.symbol.containingClass()?.classId ?: error("Containing class should present for enum entry"),
+                fir.name
+            )
+        }
     }
 }

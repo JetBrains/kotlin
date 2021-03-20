@@ -109,12 +109,15 @@ internal class KtFirKotlinPropertySymbol(
     override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return when (symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level fun is not supported yet")
+            KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level properties is not supported yet")
             KtSymbolKind.NON_PROPERTY_PARAMETER -> TODO("Creating symbol for top level parameters is not supported yet")
-            KtSymbolKind.MEMBER -> KtFirMemberPropertySymbolPointer(
-                firRef.withFir { it.containingClass()?.classId ?: error("ClassId should not be null for member property") },
-                firRef.withFir { it.createSignature() }
-            )
+            KtSymbolKind.MEMBER -> firRef.withFir { fir ->
+                KtFirMemberPropertySymbolPointer(
+                    fir.containingClass()?.classId ?: error("ClassId should not be null for member property"),
+                    fir.name,
+                    fir.createSignature()
+                )
+            }
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
         }
     }
