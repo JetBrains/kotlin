@@ -1019,9 +1019,7 @@ class DeclarationsConverter(
                             null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
                         ).also {
                             it.status = defaultAccessorStatus()
-                            currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
-                                it.containingClassAttr = lookupTag
-                            }
+                            it.initContainingClassAttr()
                         }
                     // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
                     this.setter = convertedAccessors.find { it.isSetter }
@@ -1030,9 +1028,7 @@ class DeclarationsConverter(
                                 null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
                             ).also {
                                 it.status = defaultAccessorStatus()
-                                currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
-                                    it.containingClassAttr = lookupTag
-                                }
+                                it.initContainingClassAttr()
                             }
                         } else null
 
@@ -1176,9 +1172,7 @@ class DeclarationsConverter(
                 .also { accessor ->
                     accessor.annotations += modifiers.annotations
                     accessor.status = status
-                    currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
-                        accessor.containingClassAttr = lookupTag
-                    }
+                    accessor.initContainingClassAttr()
                 }
         }
         val target = FirFunctionTarget(labelName = null, isLambda = false)
@@ -1207,9 +1201,7 @@ class DeclarationsConverter(
             context.firFunctionTargets.removeLast()
         }.also {
             target.bind(it)
-            currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
-                it.containingClassAttr = lookupTag
-            }
+            it.initContainingClassAttr()
         }
     }
 

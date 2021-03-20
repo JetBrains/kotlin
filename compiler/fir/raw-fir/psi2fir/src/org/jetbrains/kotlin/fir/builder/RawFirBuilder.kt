@@ -357,9 +357,7 @@ open class RawFirBuilder(
                             this.contractDescription = it
                         }
                     }.also {
-                        currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
-                            it.containingClassAttr = lookupTag
-                        }
+                        it.initContainingClassAttr()
                         accessorTarget.bind(it)
                         this@RawFirBuilder.context.firFunctionTargets.removeLast()
                     }
@@ -382,9 +380,7 @@ open class RawFirBuilder(
                                 it.extractAnnotationsFrom(this)
                             }
                             it.status = status
-                            currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
-                                it.containingClassAttr = lookupTag
-                            }
+                            it.initContainingClassAttr()
                         }
                 }
                 else -> {
