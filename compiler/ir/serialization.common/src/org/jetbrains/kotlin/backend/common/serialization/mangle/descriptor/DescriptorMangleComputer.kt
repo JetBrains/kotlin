@@ -198,13 +198,7 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             is DynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
             is FlexibleType -> {
                 // TODO: is that correct way to mangle flexible type?
-                with(MangleConstant.FLEXIBLE_TYPE) {
-                    tBuilder.appendSignature(prefix)
-                    mangleType(tBuilder, type.lowerBound)
-                    tBuilder.appendSignature(separator)
-                    mangleType(tBuilder, type.upperBound)
-                    tBuilder.appendSignature(suffix)
-                }
+                mangleType(tBuilder, type.upperBound)
             }
             else -> error("Unexpected type $wtype")
         }
