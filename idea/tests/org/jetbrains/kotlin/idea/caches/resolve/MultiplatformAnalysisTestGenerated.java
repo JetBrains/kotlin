@@ -164,6 +164,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/jvmDefaultNonMpp/");
     }
 
+    @TestMetadata("jvmInlineValueClass")
+    public void testJvmInlineValueClass() throws Exception {
+        runTest("idea/testData/multiplatform/jvmInlineValueClass/");
+    }
+
     @TestMetadata("kt41218")
     public void testKt41218() throws Exception {
         runTest("idea/testData/multiplatform/kt41218/");

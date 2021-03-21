@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// SKIP_TXT
 // MODULE: m1-common
 // FILE: common.kt
 
