@@ -23,7 +23,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -44,7 +44,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -65,7 +65,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -86,7 +86,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -107,7 +107,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -128,7 +128,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -149,7 +149,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -191,7 +191,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -212,7 +212,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -233,7 +233,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -254,7 +254,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -275,7 +275,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -296,7 +296,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -359,7 +359,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -380,7 +380,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -401,7 +401,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -422,7 +422,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -443,7 +443,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -464,7 +464,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -485,7 +485,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -506,7 +506,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -527,7 +527,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -548,7 +548,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -569,7 +569,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -590,7 +590,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -611,7 +611,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -632,7 +632,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -653,7 +653,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -674,7 +674,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -695,7 +695,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -716,7 +716,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -737,7 +737,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -758,7 +758,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -779,7 +779,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -800,7 +800,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -821,7 +821,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -842,7 +842,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
+  valueParameters: [KtFirValueParameterSymbol(bitCount)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -863,7 +863,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
+  valueParameters: [KtFirValueParameterSymbol(bitCount)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -884,7 +884,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -905,7 +905,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -926,7 +926,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -947,7 +947,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -968,7 +968,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -989,7 +989,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -1199,7 +1199,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
+  valueParameters: [KtFirValueParameterSymbol(bitCount)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -1220,7 +1220,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -1241,7 +1241,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:

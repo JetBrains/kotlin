@@ -18,7 +18,7 @@ KtFirConstructorSymbol:
   valueParameters: []
   visibility: PUBLIC
 
-KtFirFunctionValueParameterSymbol:
+KtFirValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -26,7 +26,7 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: x
   origin: SOURCE
-  symbolKind: NON_PROPERTY_PARAMETER
+  symbolKind: LOCAL
 
 KtFirConstructorSymbol:
   annotatedType: [] A
@@ -38,10 +38,10 @@ KtFirConstructorSymbol:
   origin: SOURCE
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol cannot be cast to org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirConstructorValueParameterSymbol
+  valueParameters: [KtFirValueParameterSymbol(x)]
   visibility: PUBLIC
 
-KtFirFunctionValueParameterSymbol:
+KtFirValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -49,9 +49,9 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: y
   origin: SOURCE
-  symbolKind: NON_PROPERTY_PARAMETER
+  symbolKind: LOCAL
 
-KtFirFunctionValueParameterSymbol:
+KtFirValueParameterSymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
@@ -59,7 +59,7 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: z
   origin: SOURCE
-  symbolKind: NON_PROPERTY_PARAMETER
+  symbolKind: LOCAL
 
 KtFirConstructorSymbol:
   annotatedType: [] A
@@ -71,7 +71,7 @@ KtFirConstructorSymbol:
   origin: SOURCE
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol cannot be cast to org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirConstructorValueParameterSymbol
+  valueParameters: [KtFirValueParameterSymbol(y), KtFirValueParameterSymbol(z)]
   visibility: PUBLIC
 
 KtFirNamedClassOrObjectSymbol:

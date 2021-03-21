@@ -41,6 +41,6 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+  valueParameters: [KtFirValueParameterSymbol(index)]
   visibility: PUBLIC
 */

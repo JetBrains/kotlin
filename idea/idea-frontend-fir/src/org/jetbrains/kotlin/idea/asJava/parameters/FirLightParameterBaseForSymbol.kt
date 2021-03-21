@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class FirLightParameterBaseForSymbol(
-    private val parameterSymbol: KtParameterSymbol,
+    private val parameterSymbol: KtValueParameterSymbol,
     private val containingMethod: FirLightMethod
 ) : FirLightParameter(containingMethod) {
     private val _name: String = parameterSymbol.name.asString()

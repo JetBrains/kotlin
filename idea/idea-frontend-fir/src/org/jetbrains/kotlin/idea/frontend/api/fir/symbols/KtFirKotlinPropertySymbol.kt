@@ -110,7 +110,6 @@ internal class KtFirKotlinPropertySymbol(
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return when (symbolKind) {
             KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level properties is not supported yet")
-            KtSymbolKind.NON_PROPERTY_PARAMETER -> TODO("Creating symbol for top level parameters is not supported yet")
             KtSymbolKind.MEMBER -> firRef.withFir { fir ->
                 KtFirMemberPropertySymbolPointer(
                     fir.containingClass()?.classId ?: error("ClassId should not be null for member property"),

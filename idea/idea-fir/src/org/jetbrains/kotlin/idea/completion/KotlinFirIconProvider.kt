@@ -40,7 +40,7 @@ internal object KotlinFirIconProvider {
             }
         }
 
-        if (symbol is KtParameterSymbol) return KotlinIcons.PARAMETER
+        if (symbol is KtValueParameterSymbol) return KotlinIcons.PARAMETER
 
         if (symbol is KtLocalVariableSymbol) return if (symbol.isVal) KotlinIcons.VAL else KotlinIcons.VAR
 

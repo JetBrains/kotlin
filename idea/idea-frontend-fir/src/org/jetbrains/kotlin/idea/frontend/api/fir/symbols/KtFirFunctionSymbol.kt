@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.containsAn
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotationClassIds
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberPropertySymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirTopLevelFunctionSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
@@ -45,11 +45,13 @@ internal class KtFirFunctionSymbol(
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
-    override val valueParameters: List<KtFirFunctionValueParameterSymbol> by firRef.withFirAndCache { fir ->
+
+    override val valueParameters: List<KtValueParameterSymbol> by firRef.withFirAndCache { fir ->
         fir.valueParameters.map { valueParameter ->
-            builder.variableLikeBuilder.buildFunctionParameterSymbol(valueParameter)
+            builder.variableLikeBuilder.buildValueParameterSymbol(valueParameter)
         }
     }
+
     override val typeParameters by firRef.withFirAndCache { fir ->
         fir.typeParameters.map { typeParameter ->
             builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol.fir)
@@ -97,14 +99,13 @@ internal class KtFirFunctionSymbol(
             KtSymbolKind.TOP_LEVEL -> firRef.withFir { fir ->
                 KtFirTopLevelFunctionSymbolPointer(fir.symbol.callableId, fir.createSignature())
             }
-            KtSymbolKind.MEMBER ->  firRef.withFir { fir ->
+            KtSymbolKind.MEMBER -> firRef.withFir { fir ->
                 KtFirMemberFunctionSymbolPointer(
                     fir.containingClass()?.classId ?: error("ClassId should not be null for member function"),
                     fir.name,
                     fir.createSignature()
                 )
             }
-            KtSymbolKind.NON_PROPERTY_PARAMETER -> error("KtFunction could not be a parameter")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
                 callableIdIfNonLocal?.asString() ?: name.asString()
             )

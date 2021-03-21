@@ -30,7 +30,7 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
-    abstract fun getParameterSymbol(psi: KtParameter): KtParameterSymbol
+    abstract fun getParameterSymbol(psi: KtParameter): KtValueParameterSymbol
     abstract fun getFileSymbol(psi: KtFile): KtFileSymbol
     abstract fun getFunctionSymbol(psi: KtNamedFunction): KtFunctionSymbol
     abstract fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol
@@ -54,7 +54,7 @@ interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     fun KtDeclaration.getSymbol(): KtSymbol =
         analysisSession.symbolProvider.getSymbol(this)
 
-    fun KtParameter.getParameterSymbol(): KtParameterSymbol =
+    fun KtParameter.getParameterSymbol(): KtValueParameterSymbol =
         analysisSession.symbolProvider.getParameterSymbol(this)
 
     fun KtNamedFunction.getFunctionSymbol(): KtFunctionSymbol =

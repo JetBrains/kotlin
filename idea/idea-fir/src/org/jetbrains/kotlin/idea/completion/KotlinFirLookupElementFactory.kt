@@ -394,7 +394,7 @@ private object ShortNamesRenderer {
     fun KtAnalysisSession.renderFunctionParameters(function: KtFunctionSymbol): String =
         function.valueParameters.joinToString(", ", "(", ")") { renderFunctionParameter(it) }
 
-    private fun KtAnalysisSession.renderFunctionParameter(param: KtFunctionParameterSymbol): String =
+    private fun KtAnalysisSession.renderFunctionParameter(param: KtValueParameterSymbol): String =
         "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${param.annotatedType.type.render()}"
 }
 

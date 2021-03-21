@@ -18,57 +18,38 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotati
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirConstructorValueParameterSymbol(
+internal class KtFirValueParameterSymbol(
     fir: FirValueParameter,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     _builder: KtSymbolByFirBuilder
-) : KtConstructorParameterSymbol(), KtFirSymbol<FirValueParameter> {
+) : KtValueParameterSymbol(), KtFirSymbol<FirValueParameter> {
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
 
     override val name: Name get() = firRef.withFir { it.name }
+    override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.TYPES, builder)
     }
-    override val symbolKind: KtSymbolKind
-        get() = firRef.withFir { fir ->
-            when {
-                fir.isVal || fir.isVal -> KtSymbolKind.MEMBER
-                else -> KtSymbolKind.NON_PROPERTY_PARAMETER
-            }
-        }
+
+    override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }
 
     override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 
-    override val constructorParameterKind: KtConstructorParameterSymbolKind
-        get() = firRef.withFir { fir ->
-            when {
-                fir.isVal -> KtConstructorParameterSymbolKind.VAL_PROPERTY
-                fir.isVar -> KtConstructorParameterSymbolKind.VAR_PROPERTY
-                else -> KtConstructorParameterSymbolKind.NON_PROPERTY
-            }
-        }
-
-    override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }
-
-    override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
-
-    override fun createPointer(): KtSymbolPointer<KtConstructorParameterSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        TODO("Creating symbols for library constructor parameters is not supported yet")
+        TODO("Creating pointers for functions parameters from library is not supported yet")
     }
 }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.calls.KtErrorCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -108,7 +108,7 @@ private fun KtCall.stringRepresentation(): String {
             append(")")
             append(": ${annotatedType.type.render()}")
         }
-        is KtParameterSymbol -> "$name: ${annotatedType.type.render()}"
+        is KtValueParameterSymbol -> "$name: ${annotatedType.type.render()}"
         is KtSuccessCallTarget -> symbol.stringValue()
         is KtErrorCallTarget -> "ERR<${this.diagnostic.defaultMessage}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()

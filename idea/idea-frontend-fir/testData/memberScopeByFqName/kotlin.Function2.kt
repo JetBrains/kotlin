@@ -22,7 +22,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(p1), KtFirFunctionValueParameterSymbol(p2)]
+  valueParameters: [KtFirValueParameterSymbol(p1), KtFirValueParameterSymbol(p2)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
@@ -43,7 +43,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+  valueParameters: [KtFirValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:

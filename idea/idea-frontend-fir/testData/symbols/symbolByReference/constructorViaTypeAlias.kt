@@ -17,6 +17,6 @@ KtFirConstructorSymbol:
   origin: JAVA
   symbolKind: MEMBER
   typeParameters: [KtFirTypeParameterSymbol(E)]
-  valueParameters: [KtFirConstructorValueParameterSymbol(c)]
+  valueParameters: [KtFirValueParameterSymbol(c)]
   visibility: PUBLIC
 */

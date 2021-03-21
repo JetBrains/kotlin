@@ -801,14 +801,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE) { firDiagnostic ->
         KclassWithNullableTypeParameterInSignatureImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.TYPE_PARAMETER_AS_REIFIED) { firDiagnostic ->
         TypeParameterAsReifiedImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -833,7 +833,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS) { firDiagnostic ->
         ExpressionOfNullableTypeInClassLiteralLhsImpl(
-            firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -1231,14 +1231,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD) { firDiagnostic ->
         ValReassignmentViaBackingFieldImpl(
-            firSymbolBuilder.buildVariableSymbol(firDiagnostic.a.fir as FirProperty),
+            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir as FirProperty),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR) { firDiagnostic ->
         ValReassignmentViaBackingFieldErrorImpl(
-            firSymbolBuilder.buildVariableSymbol(firDiagnostic.a.fir as FirProperty),
+            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir as FirProperty),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -1314,14 +1314,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
         TypeParameterIsNotAnExpressionImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT) { firDiagnostic ->
         TypeParameterOnLhsOfDotImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

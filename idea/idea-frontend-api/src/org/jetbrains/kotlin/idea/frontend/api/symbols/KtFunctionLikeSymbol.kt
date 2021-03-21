@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKind {
-    abstract val valueParameters: List<KtParameterSymbol>
+    abstract val valueParameters: List<KtValueParameterSymbol>
 
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionLikeSymbol>
 }
@@ -38,8 +38,6 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     abstract val isInline: Boolean
     abstract val isOverride: Boolean
 
-    abstract override val valueParameters: List<KtFunctionParameterSymbol>
-
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionSymbol>
 }
 
@@ -52,8 +50,6 @@ abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     abstract val containingClassIdIfNonLocal: ClassId?
 
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
-
-    abstract override val valueParameters: List<KtConstructorParameterSymbol>
 
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>
 }

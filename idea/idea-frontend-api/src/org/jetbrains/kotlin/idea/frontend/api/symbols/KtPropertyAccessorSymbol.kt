@@ -29,7 +29,7 @@ abstract class KtPropertyGetterSymbol : KtPropertyAccessorSymbol(), KtTypedSymbo
 }
 
 abstract class KtPropertySetterSymbol : KtPropertyAccessorSymbol() {
-    abstract val parameter: KtFunctionParameterSymbol
+    abstract val parameter: KtValueParameterSymbol
 
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol>
 }

@@ -1,4 +1,3 @@
-
 annotation class Anno(val param1: String, val param2: Int)
 
 @Anno(param1 = "param", 2)
@@ -11,7 +10,7 @@ class X {
 
 // RESULT
 /*
-KtFirFunctionValueParameterSymbol:
+KtFirValueParameterSymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
@@ -19,9 +18,9 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: param1
   origin: SOURCE
-  symbolKind: NON_PROPERTY_PARAMETER
+  symbolKind: LOCAL
 
-KtFirFunctionValueParameterSymbol:
+KtFirValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
@@ -29,7 +28,7 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: param2
   origin: SOURCE
-  symbolKind: NON_PROPERTY_PARAMETER
+  symbolKind: LOCAL
 
 KtFirConstructorSymbol:
   annotatedType: [] Anno
@@ -41,7 +40,7 @@ KtFirConstructorSymbol:
   origin: SOURCE
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol cannot be cast to org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirConstructorValueParameterSymbol
+  valueParameters: [KtFirValueParameterSymbol(param1), KtFirValueParameterSymbol(param2)]
   visibility: PUBLIC
 
 KtFirNamedClassOrObjectSymbol:

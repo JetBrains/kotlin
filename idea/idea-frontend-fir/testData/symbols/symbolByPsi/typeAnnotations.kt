@@ -1,4 +1,3 @@
-
 @Target(AnnotationTarget.TYPE)
 annotation class Anno1
 @Target(AnnotationTarget.TYPE)
@@ -112,7 +111,7 @@ KtFirNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: PUBLIC
 
-KtFirFunctionValueParameterSymbol:
+KtFirValueParameterSymbol:
   annotatedType: [Anno2()] I
   annotationClassIds: []
   annotations: []
@@ -120,7 +119,7 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: arg
   origin: SOURCE
-  symbolKind: NON_PROPERTY_PARAMETER
+  symbolKind: LOCAL
 
 KtFirFunctionSymbol:
   annotatedType: [Anno3()] I
@@ -140,7 +139,7 @@ KtFirFunctionSymbol:
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(arg)]
+  valueParameters: [KtFirValueParameterSymbol(arg)]
   visibility: PUBLIC
 
 KtFirKotlinPropertySymbol:

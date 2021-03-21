@@ -33,9 +33,9 @@ internal class KtFirSymbolProvider(
 ) : KtSymbolProvider(), ValidityTokenOwner {
     private val firSymbolProvider by weakRef(firSymbolProvider)
 
-    override fun getParameterSymbol(psi: KtParameter): KtParameterSymbol = withValidityAssertion {
-        psi.withFirDeclarationOfType<FirValueParameter, KtParameterSymbol>(resolveState) {
-            firSymbolBuilder.variableLikeBuilder.buildParameterSymbol(it)
+    override fun getParameterSymbol(psi: KtParameter): KtValueParameterSymbol = withValidityAssertion {
+        psi.withFirDeclarationOfType<FirValueParameter, KtValueParameterSymbol>(resolveState) {
+            firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(it)
         }
     }
 

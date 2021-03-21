@@ -206,7 +206,7 @@ internal class KtSymbolByFirBuilder private constructor(
         fun buildVariableLikeSymbol(fir: FirVariable<*>): KtVariableLikeSymbol {
             return when (fir) {
                 is FirProperty -> buildVariableSymbol(fir)
-                is FirValueParameter -> buildParameterSymbol(fir)
+                is FirValueParameter -> buildValueParameterSymbol(fir)
                 is FirField -> buildFieldSymbol(fir)
                 is FirEnumEntry -> buildEnumEntrySymbol(fir) // TODO enum entry should not be callable
                 else -> throwUnexpectedElementError(fir)
@@ -242,22 +242,10 @@ internal class KtSymbolByFirBuilder private constructor(
             }
         }
 
-        fun buildParameterSymbol(fir: FirValueParameter): KtParameterSymbol {
-            @Suppress("IntroduceWhenSubject")
-            return when {
-                fir.isConstructorParameter == true -> buildConstructorParameterSymbol(fir)
-                else -> buildFunctionParameterSymbol(fir)
+        fun buildValueParameterSymbol(fir: FirValueParameter): KtValueParameterSymbol {
+            return symbolsCache.cache(fir) {
+                KtFirValueParameterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
             }
-        }
-
-        fun buildConstructorParameterSymbol(fir: FirValueParameter): KtFirConstructorValueParameterSymbol {
-            checkRequirementForBuildingSymbol<KtFirConstructorValueParameterSymbol>(fir, fir.isConstructorParameter == true)
-            return symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
-        }
-
-        fun buildFunctionParameterSymbol(fir: FirValueParameter): KtFirFunctionParameterSymbol {
-            checkRequirementForBuildingSymbol<KtFirFunctionParameterSymbol>(fir, fir.isConstructorParameter != true)
-            return symbolsCache.cache(fir) { KtFirFunctionParameterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
 
 
@@ -364,7 +352,7 @@ internal class KtSymbolByFirBuilder private constructor(
                 returns() implies requirement
             }
             require(requirement) {
-                "Cannot build ${S::class.simpleName} for ${fir.renderWithType(FirRenderer.RenderMode.WithDeclarationAttributes)}"
+                "Cannot build ${S::class.simpleName} for ${fir.renderWithType(FirRenderer.RenderMode.WithResolvePhases)}"
             }
         }
     }
