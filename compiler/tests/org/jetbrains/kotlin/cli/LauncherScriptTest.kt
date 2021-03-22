@@ -239,7 +239,13 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testScriptWithXArguments() {
-        runProcess("kotlin", "-Xallow-result-return-type", "$testDataDirectory/funWithResultReturn.kts", expectedStdout = "42\n")
+        runProcess(
+            "kotlin", "-Xno-inline", "$testDataDirectory/noInline.kts",
+            expectedExitCode = 3,
+            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
+	at NoInline.<init>(noInline.kts:1)
+""")
+        runProcess("kotlin", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
     }
 
     fun testNoStdLib() {
@@ -292,17 +298,27 @@ println(42)
 
     fun testHowToRunCustomScript() {
         runProcess(
-            "kotlin", "$testDataDirectory/funWithResultReturn.myscript",
-            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/funWithResultReturn.myscript\n"
+            "kotlin", "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/noInline.myscript\n"
         )
         runProcess(
-            "kotlin", "-howtorun", "script", "$testDataDirectory/funWithResultReturn.myscript",
-            expectedExitCode = 1, expectedStderr = "error: unrecognized script type: funWithResultReturn.myscript; Specify path to the script file as the first argument\n"
+            "kotlin", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 1, expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
         )
         runProcess(
-            "kotlin", "-howtorun", ".main.kts", "$testDataDirectory/funWithResultReturn.myscript",
-            expectedStdout = "42\n"
+            "kotlin", "-howtorun", ".kts", "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 1, expectedStderr = """error: unresolved reference: CompilerOptions (noInline.myscript:1:7)
+compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: CompilerOptions
+@file:CompilerOptions("-Xno-inline")
+      ^
+"""
         )
+        runProcess(
+            "kotlin", "-howtorun", ".main.kts", "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 3,
+            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline_main
+	at NoInline_main.<init>(noInline.myscript:3)
+""")
     }
 
     fun testHowToRunClassFile() {
