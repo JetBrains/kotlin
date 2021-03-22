@@ -5,16 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 
-interface KtSymbolWithModality<M : KtSymbolModality> {
-    val modality: M
-}
+import org.jetbrains.kotlin.descriptors.Modality
 
-sealed class KtSymbolModality {
-    object SEALED : KtSymbolModality()
-}
-
-sealed class KtCommonSymbolModality : KtSymbolModality() {
-    object FINAL : KtCommonSymbolModality()
-    object ABSTRACT : KtCommonSymbolModality()
-    object OPEN : KtCommonSymbolModality()
+interface KtSymbolWithModality {
+    val modality: Modality
 }

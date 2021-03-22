@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.util.PlatformIcons
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
@@ -14,7 +15,7 @@ import javax.swing.Icon
 internal object KotlinFirIconProvider {
     fun getIconFor(symbol: KtNamedSymbol): Icon? {
         if (symbol is KtFunctionSymbol) {
-            val isAbstract = symbol.modality == KtCommonSymbolModality.ABSTRACT
+            val isAbstract = symbol.modality == Modality.ABSTRACT
 
             return when {
                 symbol.isExtension -> {
@@ -28,7 +29,7 @@ internal object KotlinFirIconProvider {
         }
 
         if (symbol is KtClassOrObjectSymbol) {
-            val isAbstract = (symbol as? KtNamedClassOrObjectSymbol)?.modality == KtCommonSymbolModality.ABSTRACT
+            val isAbstract = (symbol as? KtNamedClassOrObjectSymbol)?.modality == Modality.ABSTRACT
 
             return when (symbol.classKind) {
                 KtClassKind.CLASS -> if (isAbstract) KotlinIcons.ABSTRACT_CLASS else KotlinIcons.CLASS

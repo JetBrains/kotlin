@@ -5,31 +5,37 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolModality
-import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.psi.KtDeclaration
 
-internal inline fun <reified M : KtSymbolModality> Modality?.getSymbolModality(): M = when (this) {
-    Modality.FINAL -> KtCommonSymbolModality.FINAL
-    Modality.OPEN -> KtCommonSymbolModality.OPEN
-    Modality.ABSTRACT -> KtCommonSymbolModality.ABSTRACT
-    Modality.SEALED -> KtSymbolModality.SEALED
-    null -> error("Symbol modality should not be null, looks like the fir symbol was not properly resolved")
-} as? M ?: error("Sealed modality can only be applied to class")
+internal fun KtFirSymbol<FirMemberDeclaration>.getModality() =
+    firRef.withFir(FirResolvePhase.STATUS) { fir ->
+        fir.modality
+            ?: fir.invalidModalityError()
+    }
 
-internal inline fun <F : FirMemberDeclaration, reified M : KtSymbolModality> KtFirSymbol<F>.getModality() =
-    firRef.withFir(FirResolvePhase.STATUS) { it.modality.getSymbolModality<M>() }
+
+private fun FirDeclaration.invalidModalityError(): Nothing {
+    error(
+        """|Symbol modality should not be null, looks like the FIR symbol was not properly resolved
+                   |
+                   |${renderWithType(FirRenderer.RenderMode.WithResolvePhases)}
+                   |
+                   |${(psi as? KtDeclaration)?.getElementTextInContext()}""".trimMargin()
+    )
+}
 
 
 internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(): Visibility =

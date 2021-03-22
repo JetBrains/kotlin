@@ -60,7 +60,7 @@ sealed class KtVariableSymbol : KtVariableLikeSymbol() {
 
 abstract class KtJavaFieldSymbol :
     KtVariableSymbol(),
-    KtSymbolWithModality<KtCommonSymbolModality>,
+    KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
@@ -71,7 +71,7 @@ abstract class KtJavaFieldSymbol :
 sealed class KtPropertySymbol : KtVariableSymbol(),
     KtPossibleExtensionSymbol,
     KtPossibleMemberSymbol,
-    KtSymbolWithModality<KtCommonSymbolModality>,
+    KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol,
     KtSymbolWithKind {

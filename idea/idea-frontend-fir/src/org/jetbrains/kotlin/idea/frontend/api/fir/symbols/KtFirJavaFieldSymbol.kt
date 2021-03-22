@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtJavaFieldSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.CallableId
@@ -43,7 +43,7 @@ internal class KtFirJavaFieldSymbol(
 
     override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()
 
-    override val modality: KtCommonSymbolModality get() = getModality()
+    override val modality: Modality get() = getModality()
 
     override val visibility: Visibility get() = getVisibility()
 

@@ -202,15 +202,14 @@ internal fun FirMemberDeclaration.computeSimpleModality(): Set<String> {
     return modifier?.let { setOf(it) } ?: emptySet()
 }
 
-internal fun KtSymbolWithModality<*>.computeSimpleModality(): String? = when (modality) {
-    KtSymbolModality.SEALED -> PsiModifier.ABSTRACT
-    KtCommonSymbolModality.FINAL -> PsiModifier.FINAL
-    KtCommonSymbolModality.ABSTRACT -> PsiModifier.ABSTRACT
-    KtCommonSymbolModality.OPEN -> null
-    else -> throw NotImplementedError()
+internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modality) {
+    Modality.SEALED -> PsiModifier.ABSTRACT
+    Modality.FINAL -> PsiModifier.FINAL
+    Modality.ABSTRACT -> PsiModifier.ABSTRACT
+    Modality.OPEN -> null
 }
 
-internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMethod(
+internal fun KtSymbolWithModality.computeModalityForMethod(
     isTopLevel: Boolean,
     suppressFinal: Boolean,
     result: MutableSet<String>

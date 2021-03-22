@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.*
@@ -251,7 +252,7 @@ internal fun FirLightClassBase.createField(
     fun hasBackingField(property: KtPropertySymbol): Boolean = when (property) {
         is KtSyntheticJavaPropertySymbol -> true
         is KtKotlinPropertySymbol -> when {
-            property.modality == KtCommonSymbolModality.ABSTRACT -> false
+            property.modality == Modality.ABSTRACT -> false
             property.isHiddenOrSynthetic() -> false
             property.isLateInit -> true
             //TODO Fix it when KtFirConstructorValueParameterSymbol be ready

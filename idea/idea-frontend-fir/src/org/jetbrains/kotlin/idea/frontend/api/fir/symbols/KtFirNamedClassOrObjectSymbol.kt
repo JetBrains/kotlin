@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
@@ -44,7 +45,7 @@ internal class KtFirNamedClassOrObjectSymbol(
             fir.symbol.classId.takeUnless { it.isLocal }
         }
 
-    override val modality: KtSymbolModality get() = getModality()
+    override val modality: Modality get() = getModality()
 
     override val visibility: Visibility get() = getVisibility()
 

@@ -29,7 +29,7 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtPossibleExtensionSymbol,
     KtPossibleMemberSymbol,
     KtSymbolWithTypeParameters,
-    KtSymbolWithModality<KtCommonSymbolModality>,
+    KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol {
 

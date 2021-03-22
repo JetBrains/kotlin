@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
@@ -60,7 +61,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
     override val initializer: KtConstantValue? by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir -> fir.initializer?.convertConstantExpression() }
 
-    override val modality: KtCommonSymbolModality get() = getModality()
+    override val modality: Modality get() = getModality()
     override val visibility: Visibility get() = getVisibility()
 
     override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }

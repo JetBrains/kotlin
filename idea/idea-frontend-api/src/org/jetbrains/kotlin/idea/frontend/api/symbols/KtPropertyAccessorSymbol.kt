@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.CallableId
 
 sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     KtPossibleMemberSymbol,
-    KtSymbolWithModality<KtCommonSymbolModality>,
+    KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol {
 

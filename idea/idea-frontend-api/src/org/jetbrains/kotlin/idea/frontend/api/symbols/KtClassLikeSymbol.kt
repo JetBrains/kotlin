@@ -61,7 +61,7 @@ abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
 
 abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
     KtSymbolWithTypeParameters,
-    KtSymbolWithModality<KtSymbolModality>,
+    KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtNamedSymbol {
 
