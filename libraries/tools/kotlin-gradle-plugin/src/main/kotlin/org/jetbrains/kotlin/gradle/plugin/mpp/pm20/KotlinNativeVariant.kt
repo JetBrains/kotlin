@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeCompileOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.isHostSpecificKonanTargetsSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
-open class KotlinNativeVariantInternal(
+abstract class KotlinNativeVariantInternal(
     containingModule: KotlinGradleModule,
     fragmentName: String,
     val konanTarget: KonanTarget
@@ -33,7 +35,7 @@ open class KotlinNativeVariantInternal(
         DefaultCInteropSettings(project, cinteropName, compilationData)
     }
 
-    internal val compilationData by lazy { KotlinNativeVariantCompilationData(this) }
+    override val compilationData by lazy { KotlinNativeVariantCompilationData(this) }
 }
 
 internal val KotlinNativeVariantInternal.includesHostSpecificMetadata: Boolean
@@ -54,10 +56,6 @@ open class KotlinIosX64Variant @Inject constructor(containingModule: KotlinGradl
 
 open class KotlinIosArm64Variant @Inject constructor(containingModule: KotlinGradleModule, fragmentName: String) :
     KotlinNativeVariantInternal(containingModule, fragmentName, KonanTarget.IOS_ARM64)
-
-
-internal val KotlinNativeVariant.hostSpecificMetadataConfigurationName
-    get() = disambiguateName("MetadataElements")
 
 interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
     val konanTarget: KonanTarget

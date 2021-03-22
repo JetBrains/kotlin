@@ -7,30 +7,18 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.attributes.Usage
-import org.gradle.api.component.AdhocComponentWithVariants
-import org.gradle.api.component.SoftwareComponentFactory
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.refinesClosure
-import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
-import java.util.concurrent.Callable
 import kotlin.reflect.KClass
 
 open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
@@ -55,25 +43,13 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
 
     override fun configureKotlinCompilation(fragment: T) {
         val compilationData = fragment.compilationData
+        LifecycleTasksManager(project).registerClassesTask(compilationData)
 
-        //FIXME: deduplicate with KotlinJvmVariantFactory
-        val classesTaskName = compilationData.compileAllTaskName
-        project.tasks.register(classesTaskName) { classesTask ->
-            classesTask.dependsOn(fragment.compilationOutputs.allOutputs)
-        }
+        val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
 
-        //FIXME: needs refactoring so as not to create the configurator
-        val compileTask = with(KotlinNativeTargetConfigurator<Nothing>(project.getKotlinPluginVersion()!!)) {
-            project.createKlibCompilationTask(compilationData)
-        }
-
-        // FIXME: duplication with KotlinJvmVariantFactory
-        val allSources = { project.files(Callable { fragment.refinesClosure.map { it.kotlinSourceRoots } }) }
-        val commonSources = {
-            project.files(Callable {
-                fragment.refinesClosure.filter { module.variantsContainingFragment(it).count() > 1 }.map { it.kotlinSourceRoots }
-            })
-        }
+        val sources = VariantSourcesProvider()
+        val allSources = sources.getSourcesFromRefinesClosure(fragment)
+        val commonSources = sources.getSourcesFromRefinesClosure(fragment)
 
         compileTask.configure {
             it.source(allSources)

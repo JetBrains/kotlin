@@ -102,9 +102,8 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             project,
             compileKotlinTaskName,
             sourceSet.customSourceFilesExtensions,
-            { sourceSet.kotlin },
             addAsCommonSources
-        )
+        ) { sourceSet.kotlin }
 
     internal fun addExactSourceSetsEagerly(sourceSets: Set<KotlinSourceSet>) {
         with(target.project) {
@@ -276,12 +275,20 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         get() = ownModuleName()
 }
 
+internal fun addCommonSourcesToKotlinCompileTask(
+    project: Project,
+    taskName: String,
+    sourceFileExtensions: Iterable<String>,
+    sources: () -> Iterable<File>
+) = addSourcesToKotlinCompileTask(project, taskName, sourceFileExtensions, lazyOf(true), sources)
+
+// FIXME this function dangerously ignores an incorrect type of the task (e.g. if the actual task is a K/N one); consider reporting a failure
 internal fun addSourcesToKotlinCompileTask(
     project: Project,
     taskName: String,
     sourceFileExtensions: Iterable<String>,
-    sources: () -> Iterable<File>,
-    addAsCommonSources: Lazy<Boolean>
+    addAsCommonSources: Lazy<Boolean> = lazyOf(false),
+    sources: () -> Iterable<File>
 ) {
     fun AbstractKotlinCompile<*>.configureAction() {
         source(project.files(Callable { sources() }))

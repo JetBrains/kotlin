@@ -39,6 +39,8 @@ abstract class KotlinGradleVariantInternal(
 
     override lateinit var compileDependencyFiles: FileCollection
 
+    internal abstract val compilationData: KotlinVariantCompilationDataInternal<*>
+
     // TODO rewrite using our own artifacts API?
     override val compilationOutputs: KotlinCompilationOutput =
         DefaultKotlinCompilationOutput(
