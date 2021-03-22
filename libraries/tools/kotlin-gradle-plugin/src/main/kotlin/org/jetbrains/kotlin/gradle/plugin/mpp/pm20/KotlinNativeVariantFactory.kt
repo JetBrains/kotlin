@@ -44,17 +44,7 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
     override fun configureKotlinCompilation(fragment: T) {
         val compilationData = fragment.compilationData
         LifecycleTasksManager(project).registerClassesTask(compilationData)
-
-        val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
-
-        val sources = VariantSourcesProvider()
-        val allSources = sources.getSourcesFromRefinesClosure(fragment)
-        val commonSources = sources.getSourcesFromRefinesClosure(fragment)
-
-        compileTask.configure {
-            it.source(allSources)
-            it.commonSources.from(commonSources)
-        }
+        KotlinCompilationTaskConfigurator(project).createKotlinNativeCompilationTask(fragment, compilationData)
     }
 
     private fun configureHostSpecificMetadata(variant: T) {
@@ -96,6 +86,4 @@ open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(
         configureApiElementsConfiguration(variant, this) // then override the Usage attribute
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
     }
-
-    open fun platformComponentName(variant: T) = variant.disambiguateName("")
 }

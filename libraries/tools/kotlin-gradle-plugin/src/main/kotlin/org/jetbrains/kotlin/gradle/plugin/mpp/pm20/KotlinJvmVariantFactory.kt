@@ -39,16 +39,7 @@ open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
     override fun configureKotlinCompilation(fragment: KotlinJvmVariant) {
         val compilationData = fragment.compilationData
         LifecycleTasksManager(project).registerClassesTask(compilationData)
-
-        Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilationData, project.getKotlinPluginVersion() ?: "unknown"/*TODO*/).run()
-
-        val sources = VariantSourcesProvider()
-        val allSources = sources.getSourcesFromRefinesClosure(fragment)
-        val commonSources = sources.getCommonSourcesFromRefinesClosure(fragment)
-
-        // FIXME support custom source file extensions in the two calls below
-        addSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { allSources }
-        addCommonSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { commonSources }
+        KotlinCompilationTaskConfigurator(project).createKotlinJvmCompilationTask(fragment, compilationData)
     }
 }
 

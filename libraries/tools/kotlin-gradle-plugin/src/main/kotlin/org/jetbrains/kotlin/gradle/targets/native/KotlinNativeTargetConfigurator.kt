@@ -360,8 +360,12 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
                 project.project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).apply {
                     dependsOn(compileTaskProvider)
                 }
+            }
+            val shouldAddCompileOutputsToElements = compilation.owner is KotlinGradleVariant || compilation.isMainCompilationData()
+            if (shouldAddCompileOutputsToElements) {
                 createRegularKlibArtifact(compilation, compileTaskProvider)
             }
+
             if (compilation is AbstractKotlinNativeCompilation) {
                 // FIXME: support compiler plugins for PM20
                 addCompilerPlugins(compilation)
