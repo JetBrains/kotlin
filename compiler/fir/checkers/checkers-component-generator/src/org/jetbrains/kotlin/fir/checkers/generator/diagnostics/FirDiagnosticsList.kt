@@ -299,6 +299,14 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<FirClass<*>>("classOrObject")
             parameter<FirCallableDeclaration<*>>("missingDeclaration")
         }
+        val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClass<*>>("classOrObject")
+            parameter<FirCallableDeclaration<*>>("invisibleDeclaration")
+        }
+        val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING by warning<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClass<*>>("classOrObject")
+            parameter<FirCallableDeclaration<*>>("invisibleDeclaration")
+        }
         val MANY_IMPL_MEMBER_NOT_IMPLEMENTED by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirClass<*>>("classOrObject")
             parameter<FirCallableDeclaration<*>>("missingDeclaration")

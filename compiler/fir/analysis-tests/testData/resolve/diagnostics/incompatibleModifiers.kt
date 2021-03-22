@@ -22,7 +22,7 @@ abstract class K {
     <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> val i2: Int
 }
 
-private open class L : K()
+private open <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class L<!> : K()
 private abstract class M : K()
 
 class X {

@@ -210,6 +210,8 @@ object FirErrors {
     val OVERRIDING_FINAL_MEMBER by error2<FirSourceElement, KtNamedDeclaration, FirCallableDeclaration<*>, Name>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
     val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error2<FirSourceElement, KtClassOrObject, FirClass<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED by error2<FirSourceElement, KtClassOrObject, FirClass<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER by error2<FirSourceElement, KtClassOrObject, FirClass<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING by warning2<FirSourceElement, KtClassOrObject, FirClass<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val MANY_IMPL_MEMBER_NOT_IMPLEMENTED by error2<FirSourceElement, KtClassOrObject, FirClass<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED by error2<FirSourceElement, KtClassOrObject, FirClass<*>, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)

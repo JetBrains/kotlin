@@ -896,6 +896,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER) { firDiagnostic ->
+        InvisibleAbstractMemberFromSuperImpl(
+            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING) { firDiagnostic ->
+        InvisibleAbstractMemberFromSuperWarningImpl(
+            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
         ManyImplMemberNotImplementedImpl(
             firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),

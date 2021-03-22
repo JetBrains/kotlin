@@ -51,7 +51,7 @@ fun case2() {
 
 // TESTCASE NUMBER: 3
 
-class Case3 : BaseJava() {}
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Case3<!> : BaseJava() {}
 
 fun case3() {
     val v = Case3()
@@ -63,7 +63,7 @@ fun case3() {
 */
 abstract class AbstractClassCase4 : BaseJava() {}
 
-class Case4 : AbstractClassCase4() {}
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Case4<!> : AbstractClassCase4() {}
 
 fun case4() {
     val v = Case4()

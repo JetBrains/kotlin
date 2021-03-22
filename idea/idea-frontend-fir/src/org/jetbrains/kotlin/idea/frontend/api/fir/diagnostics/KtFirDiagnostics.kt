@@ -637,6 +637,18 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val missingDeclaration: KtCallableSymbol
     }
 
+    abstract class InvisibleAbstractMemberFromSuper : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = InvisibleAbstractMemberFromSuper::class
+        abstract val classOrObject: KtClassLikeSymbol
+        abstract val invisibleDeclaration: KtCallableSymbol
+    }
+
+    abstract class InvisibleAbstractMemberFromSuperWarning : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = InvisibleAbstractMemberFromSuperWarning::class
+        abstract val classOrObject: KtClassLikeSymbol
+        abstract val invisibleDeclaration: KtCallableSymbol
+    }
+
     abstract class ManyImplMemberNotImplemented : KtFirDiagnostic<KtClassOrObject>() {
         override val diagnosticClass get() = ManyImplMemberNotImplemented::class
         abstract val classOrObject: KtClassLikeSymbol

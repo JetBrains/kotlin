@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
@@ -43,6 +45,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         )
 
         val notImplementedSymbols = mutableListOf<FirCallableSymbol<*>>()
+        val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()
         val classPackage = declaration.symbol.classId.packageFqName
 
         fun FirCallableMemberDeclaration<*>.isInvisible(): Boolean {
@@ -67,22 +70,25 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             classScope.processFunctionsByName(name) { namedFunctionSymbol ->
                 val simpleFunction = namedFunctionSymbol.fir
                 if (!simpleFunction.shouldBeImplemented()) return@processFunctionsByName
-                // TODO: private & package-private functions / properties require another diagnostic
-                // (INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER)
-                if (simpleFunction.isInvisible()) return@processFunctionsByName
-
                 if (declaration.isData && simpleFunction.matchesDataClassSyntheticMemberSignatures) return@processFunctionsByName
 
                 // TODO: suspend function overridden by a Java class in the middle is not properly regarded as an override
                 if (simpleFunction.isSuspend) return@processFunctionsByName
-                notImplementedSymbols += namedFunctionSymbol
+                if (simpleFunction.isInvisible()) {
+                    invisibleSymbols += namedFunctionSymbol
+                } else {
+                    notImplementedSymbols += namedFunctionSymbol
+                }
             }
             classScope.processPropertiesByName(name) { propertySymbol ->
                 val property = propertySymbol.fir as? FirProperty ?: return@processPropertiesByName
                 if (!property.shouldBeImplemented()) return@processPropertiesByName
-                if (property.isInvisible()) return@processPropertiesByName
 
-                notImplementedSymbols += propertySymbol
+                if (property.isInvisible()) {
+                    invisibleSymbols += propertySymbol
+                } else {
+                    notImplementedSymbols += propertySymbol
+                }
             }
         }
 
@@ -92,6 +98,14 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                 reporter.reportOn(source, FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
             } else {
                 reporter.reportOn(source, FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
+            }
+        }
+        if (invisibleSymbols.isNotEmpty()) {
+            val invisible = invisibleSymbols.first().fir
+            if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses)) {
+                reporter.reportOn(source, FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, declaration, invisible, context)
+            } else {
+                reporter.reportOn(source, FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING, declaration, invisible, context)
             }
         }
     }
