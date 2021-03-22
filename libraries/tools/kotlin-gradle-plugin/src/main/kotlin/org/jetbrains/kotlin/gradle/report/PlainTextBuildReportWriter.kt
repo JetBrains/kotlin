@@ -148,13 +148,13 @@ internal class PlainTextBuildReportWriter(
     private fun printTaskLog(task: TaskExecutionData) {
         val skipMessage = task.resultState.skipMessage
         if (skipMessage != null) {
-            p.println("$task was skipped: $skipMessage")
+            p.println("Task '${task.task.path}' was skipped: $skipMessage")
         } else {
-            p.println("$task finished in ${formatTime(task.totalTimeNs)}")
+            p.println("Task '${task.task.path}' finished in ${formatTime(task.totalTimeNs)}")
         }
 
         if (task.icLogLines.isNotEmpty()) {
-            p.withIndent("Compilation log for $task:") {
+            p.withIndent("Compilation log for task '${task.task.path}':") {
                 task.icLogLines.forEach { p.println(it) }
             }
         }
