@@ -12,7 +12,7 @@ KtFirJavaFieldSymbol:
   name: value
   origin: JAVA
   symbolKind: MEMBER
-  visibility: PRIVATE
+  visibility: Private
 
 KtFirJavaFieldSymbol:
   annotatedType: [] kotlin/Int
@@ -22,7 +22,7 @@ KtFirJavaFieldSymbol:
   name: hash
   origin: JAVA
   symbolKind: MEMBER
-  visibility: PRIVATE
+  visibility: Private
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -43,7 +43,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: UNKNOWN
+  visibility: PackageVisibility
 
 KtFirJavaFieldSymbol:
   annotatedType: [] kotlin/Int
@@ -53,7 +53,7 @@ KtFirJavaFieldSymbol:
   name: hash32
   origin: JAVA
   symbolKind: MEMBER
-  visibility: PRIVATE
+  visibility: Private
 
 KtFirSyntheticJavaPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -77,7 +77,7 @@ KtFirSyntheticJavaPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: MEMBER
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -98,7 +98,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Char
@@ -119,7 +119,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(index)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -140,7 +140,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(index)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -161,7 +161,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(index)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -182,7 +182,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(beginIndex), KtFirValueParameterSymbol(endIndex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -203,7 +203,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(index), KtFirValueParameterSymbol(codePointOffset)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -224,7 +224,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(dst), KtFirValueParameterSymbol(dstBegin)]
-  visibility: UNKNOWN
+  visibility: PackageVisibility
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -245,7 +245,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(srcBegin), KtFirValueParameterSymbol(srcEnd), KtFirValueParameterSymbol(dst), KtFirValueParameterSymbol(dstBegin)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -266,7 +266,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(srcBegin), KtFirValueParameterSymbol(srcEnd), KtFirValueParameterSymbol(dst), KtFirValueParameterSymbol(dstBegin)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/ByteArray
@@ -287,7 +287,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(charsetName)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/ByteArray
@@ -308,7 +308,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(charset)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/ByteArray
@@ -329,7 +329,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -350,7 +350,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(anObject)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -371,7 +371,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(sb)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -392,7 +392,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(cs)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -413,7 +413,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(anotherString)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -434,7 +434,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(anotherString)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -455,7 +455,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(str)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -476,7 +476,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(toffset), KtFirValueParameterSymbol(other), KtFirValueParameterSymbol(ooffset), KtFirValueParameterSymbol(len)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -497,7 +497,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ignoreCase), KtFirValueParameterSymbol(toffset), KtFirValueParameterSymbol(other), KtFirValueParameterSymbol(ooffset), KtFirValueParameterSymbol(len)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -518,7 +518,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(prefix), KtFirValueParameterSymbol(toffset)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -539,7 +539,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(prefix)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -560,7 +560,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(suffix)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -581,7 +581,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -602,7 +602,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ch)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -623,7 +623,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ch), KtFirValueParameterSymbol(fromIndex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -644,7 +644,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(str)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -665,7 +665,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(str), KtFirValueParameterSymbol(fromIndex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -686,7 +686,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ch), KtFirValueParameterSymbol(fromIndex)]
-  visibility: PRIVATE
+  visibility: Private
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -707,7 +707,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ch)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -728,7 +728,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ch), KtFirValueParameterSymbol(fromIndex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -749,7 +749,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(str)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -770,7 +770,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(str), KtFirValueParameterSymbol(fromIndex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
@@ -791,7 +791,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ch), KtFirValueParameterSymbol(fromIndex)]
-  visibility: PRIVATE
+  visibility: Private
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -812,7 +812,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(beginIndex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -833,7 +833,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(beginIndex), KtFirValueParameterSymbol(endIndex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/CharSequence
@@ -854,7 +854,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(beginIndex), KtFirValueParameterSymbol(endIndex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -875,7 +875,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(str)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -896,7 +896,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(oldChar), KtFirValueParameterSymbol(newChar)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -917,7 +917,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(target), KtFirValueParameterSymbol(replacement)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -938,7 +938,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(regex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
@@ -959,7 +959,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(s)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -980,7 +980,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(regex), KtFirValueParameterSymbol(replacement)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1001,7 +1001,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(regex), KtFirValueParameterSymbol(replacement)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>>, @EnhancedNullability kotlin/Array<out ft<kotlin/String, kotlin/String?>>>
@@ -1022,7 +1022,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(regex), KtFirValueParameterSymbol(limit)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>>, @EnhancedNullability kotlin/Array<out ft<kotlin/String, kotlin/String?>>>
@@ -1043,7 +1043,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(regex)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1064,7 +1064,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(locale)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1085,7 +1085,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1106,7 +1106,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(locale)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1127,7 +1127,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1148,7 +1148,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1169,7 +1169,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/CharArray
@@ -1190,7 +1190,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
@@ -1211,7 +1211,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Char
@@ -1232,7 +1232,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(index)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -1251,7 +1251,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any, [] java/util/Comparator<ft<kotlin/String, kotlin/String?>>, [] java/io/Serializable]
   symbolKind: MEMBER
   typeParameters: []
-  visibility: PRIVATE
+  visibility: Private
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1264,7 +1264,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1277,7 +1277,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(original)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1290,7 +1290,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(value)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1303,7 +1303,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(value), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1316,7 +1316,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(codePoints), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1329,7 +1329,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ascii), KtFirValueParameterSymbol(hibyte), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1342,7 +1342,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ascii), KtFirValueParameterSymbol(hibyte)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1355,7 +1355,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length), KtFirValueParameterSymbol(charsetName)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1368,7 +1368,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length), KtFirValueParameterSymbol(charset)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1381,7 +1381,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(charsetName)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1394,7 +1394,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(charset)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1407,7 +1407,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1420,7 +1420,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1433,7 +1433,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(buffer)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1446,7 +1446,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(builder)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1459,7 +1459,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(value), KtFirValueParameterSymbol(share)]
-  visibility: UNKNOWN
+  visibility: PackageVisibility
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
@@ -1472,5 +1472,5 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count), KtFirValueParameterSymbol(value)]
-  visibility: UNKNOWN
+  visibility: PackageVisibility
 */

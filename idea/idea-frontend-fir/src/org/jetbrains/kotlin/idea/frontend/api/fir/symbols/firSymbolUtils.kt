@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -21,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.metadata.ProtoBuf
 
 internal inline fun <reified M : KtSymbolModality> Modality?.getSymbolModality(): M = when (this) {
     Modality.FINAL -> KtCommonSymbolModality.FINAL
@@ -35,21 +33,8 @@ internal inline fun <F : FirMemberDeclaration, reified M : KtSymbolModality> KtF
     firRef.withFir(FirResolvePhase.STATUS) { it.modality.getSymbolModality<M>() }
 
 
-internal fun Visibility?.getSymbolVisibility(): KtSymbolVisibility = when (this) {
-    Visibilities.Public -> KtSymbolVisibility.PUBLIC
-    Visibilities.Protected -> KtSymbolVisibility.PROTECTED
-    Visibilities.Private -> KtSymbolVisibility.PRIVATE
-    Visibilities.PrivateToThis -> KtSymbolVisibility.PRIVATE_TO_THIS
-    Visibilities.Internal -> KtSymbolVisibility.INTERNAL
-    Visibilities.Local -> KtSymbolVisibility.LOCAL
-    Visibilities.Unknown -> KtSymbolVisibility.UNKNOWN
-    JavaVisibilities.PackageVisibility -> KtSymbolVisibility.UNKNOWN //TODO: Add Java visibilities
-    null -> error("Symbol visibility should not be null, looks like the fir symbol was not properly resolved")
-    else -> throw NotImplementedError("Unknown visibility $name")
-}
-
-internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(): KtSymbolVisibility =
-    firRef.withFir(FirResolvePhase.STATUS) { it.visibility.getSymbolVisibility() }
+internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(): Visibility =
+    firRef.withFir(FirResolvePhase.STATUS) { fir -> fir.visibility }
 
 
 internal fun ConeClassLikeType.expandTypeAliasIfNeeded(session: FirSession): ConeClassLikeType {

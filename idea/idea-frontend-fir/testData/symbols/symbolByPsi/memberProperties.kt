@@ -27,7 +27,7 @@ KtFirKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: MEMBER
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirPropertyGetterSymbol:
   annotatedType: [] kotlin/Int
@@ -41,7 +41,7 @@ KtFirPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   symbolKind: TOP_LEVEL
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -65,7 +65,7 @@ KtFirKotlinPropertySymbol:
   receiverType: [] kotlin/Int
   setter: null
   symbolKind: MEMBER
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -84,5 +84,5 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */

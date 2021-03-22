@@ -21,5 +21,5 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(index)]
-  visibility: PUBLIC
+  visibility: Public
 */

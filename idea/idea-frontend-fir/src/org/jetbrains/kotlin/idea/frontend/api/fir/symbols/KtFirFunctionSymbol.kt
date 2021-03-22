@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
@@ -91,7 +92,7 @@ internal class KtFirFunctionSymbol(
         }
     override val modality: KtCommonSymbolModality get() = getModality()
 
-    override val visibility: KtSymbolVisibility get() = getVisibility()
+    override val visibility: Visibility get() = getVisibility()
 
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

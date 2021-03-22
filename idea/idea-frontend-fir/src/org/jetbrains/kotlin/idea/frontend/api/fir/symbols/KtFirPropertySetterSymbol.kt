@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.idea.fir.findPsi
@@ -46,7 +47,7 @@ internal class KtFirPropertySetterSymbol(
     override val hasBody: Boolean get() = firRef.withFir { it.body != null }
 
     override val modality: KtCommonSymbolModality get() = firRef.withFir(FirResolvePhase.STATUS) { it.modality.getSymbolModality() }
-    override val visibility: KtSymbolVisibility get() = firRef.withFir(FirResolvePhase.STATUS) { it.visibility.getSymbolVisibility() }
+    override val visibility: Visibility get() = getVisibility()
 
     override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)

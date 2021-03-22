@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
@@ -236,15 +238,15 @@ internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(isTopLevel: Boolean
 internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isTopLevel: Boolean): String =
     visibility.toPsiVisibility(isTopLevel, forClass = true)
 
-internal fun KtSymbolVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
+internal fun Visibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
     toPsiVisibility(isTopLevel, forClass = false)
 
-private fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
+private fun Visibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
     // Top-level private class has PACKAGE_LOCAL visibility in Java
     // Nested private class has PRIVATE visibility
-    KtSymbolVisibility.PRIVATE, KtSymbolVisibility.PRIVATE_TO_THIS ->
+    Visibilities.Private, Visibilities.PrivateToThis ->
         if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
-    KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
+    Visibilities.Protected -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC
 }
 

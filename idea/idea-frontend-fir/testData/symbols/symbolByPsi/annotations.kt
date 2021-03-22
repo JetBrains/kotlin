@@ -41,7 +41,7 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(param1), KtFirValueParameterSymbol(param2)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -60,7 +60,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -81,7 +81,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [Anno]
@@ -100,5 +100,5 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */

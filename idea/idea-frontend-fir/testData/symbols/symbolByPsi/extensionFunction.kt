@@ -21,5 +21,5 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */

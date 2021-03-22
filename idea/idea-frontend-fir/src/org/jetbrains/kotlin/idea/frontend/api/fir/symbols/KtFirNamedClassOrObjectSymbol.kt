@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
@@ -45,7 +46,7 @@ internal class KtFirNamedClassOrObjectSymbol(
 
     override val modality: KtSymbolModality get() = getModality()
 
-    override val visibility: KtSymbolVisibility get() = getVisibility()
+    override val visibility: Visibility get() = getVisibility()
 
     override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)

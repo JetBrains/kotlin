@@ -9,12 +9,12 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.asJava.classes.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.load.java.JvmAbi
 
@@ -27,7 +27,7 @@ internal class FirLightClassForSymbol(
         require(classOrObjectSymbol.classKind != KtClassKind.INTERFACE && classOrObjectSymbol.classKind != KtClassKind.ANNOTATION_CLASS)
     }
 
-    internal fun tryGetEffectiveVisibility(symbol: KtCallableSymbol): KtSymbolVisibility? {
+    internal fun tryGetEffectiveVisibility(symbol: KtCallableSymbol): Visibility? {
 
         if (symbol !is KtPropertySymbol && symbol !is KtFunctionSymbol) return null
 

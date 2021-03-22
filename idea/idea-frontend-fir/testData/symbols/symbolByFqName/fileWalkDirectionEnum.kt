@@ -23,7 +23,7 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: [KtFirTypeParameterSymbol(T)]
   valueParameters: [KtFirValueParameterSymbol(element)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
@@ -44,7 +44,7 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: [KtFirTypeParameterSymbol(T)]
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
@@ -65,5 +65,5 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: [KtFirTypeParameterSymbol(T)]
   valueParameters: [KtFirValueParameterSymbol(elements)]
-  visibility: PUBLIC
+  visibility: Public
 */

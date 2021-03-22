@@ -20,5 +20,5 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */

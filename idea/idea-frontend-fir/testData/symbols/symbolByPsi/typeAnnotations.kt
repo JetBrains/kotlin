@@ -33,7 +33,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [kotlin/annotation/Target]
@@ -52,7 +52,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [kotlin/annotation/Target]
@@ -71,7 +71,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [kotlin/annotation/Target]
@@ -90,7 +90,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -109,7 +109,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirValueParameterSymbol:
   annotatedType: [Anno2()] I
@@ -140,7 +140,7 @@ KtFirFunctionSymbol:
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(arg)]
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirKotlinPropertySymbol:
   annotatedType: [Anno4()] I
@@ -164,7 +164,7 @@ KtFirKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: MEMBER
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -183,5 +183,5 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[Anno1()] I]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */

@@ -18,5 +18,5 @@ KtFirConstructorSymbol:
   symbolKind: MEMBER
   typeParameters: [KtFirTypeParameterSymbol(E)]
   valueParameters: [KtFirValueParameterSymbol(c)]
-  visibility: PUBLIC
+  visibility: Public
 */

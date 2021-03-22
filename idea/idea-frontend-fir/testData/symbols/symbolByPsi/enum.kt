@@ -35,5 +35,5 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Enum<X>]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */

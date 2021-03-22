@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.findPsi
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtJavaFieldSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.FqName
@@ -47,7 +47,7 @@ internal class KtFirJavaFieldSymbol(
 
     override val modality: KtCommonSymbolModality get() = getModality()
 
-    override val visibility: KtSymbolVisibility get() = getVisibility()
+    override val visibility: Visibility get() = getVisibility()
 
     override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> {
         TODO("Creating pointers for java fields is not supported yet")

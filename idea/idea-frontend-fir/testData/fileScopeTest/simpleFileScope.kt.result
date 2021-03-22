@@ -27,7 +27,7 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
@@ -51,7 +51,7 @@ KtFirKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
-  visibility: PUBLIC
+  visibility: Public
 
 CLASSIFIER NAMES:
 [C, I]
@@ -74,7 +74,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -93,4 +93,4 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public

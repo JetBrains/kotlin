@@ -33,7 +33,7 @@ KtFirFunctionSymbol:
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: []
-  visibility: LOCAL
+  visibility: Local
 
 KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
@@ -52,7 +52,7 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: LOCAL
   typeParameters: []
-  visibility: LOCAL
+  visibility: Local
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
@@ -73,5 +73,5 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */

@@ -19,5 +19,5 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/collections/Map.Entry<K, V>]
   symbolKind: MEMBER
   typeParameters: [KtFirTypeParameterSymbol(K), KtFirTypeParameterSymbol(V)]
-  visibility: PUBLIC
+  visibility: Public
 */

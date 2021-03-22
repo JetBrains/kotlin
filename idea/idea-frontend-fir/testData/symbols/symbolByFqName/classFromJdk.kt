@@ -21,5 +21,5 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Any, [] java/io/Serializable, [] kotlin/Comparable<ft<kotlin/String, kotlin/String?>>, [] kotlin/CharSequence]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */

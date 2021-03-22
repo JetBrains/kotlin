@@ -38,5 +38,5 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: [KtFirTypeParameterSymbol(X)]
   valueParameters: [KtFirValueParameterSymbol(x)]
-  visibility: PUBLIC
+  visibility: Public
 */

@@ -21,5 +21,5 @@ KtFirNamedClassOrObjectSymbol:
   superTypes: [[] kotlin/Enum<kotlin/io/FileWalkDirection>]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 */
