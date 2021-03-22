@@ -76,7 +76,9 @@ val kotlinVersion by extra(
 val kotlinLanguageVersion by extra("1.5")
 
 allprojects {
-    group = "org.jetbrains.kotlin"
+    if (!this.path.startsWith(":kotlin-ide")) {
+        group = "org.jetbrains.kotlin"
+    }
     version = kotlinVersion
 }
 
