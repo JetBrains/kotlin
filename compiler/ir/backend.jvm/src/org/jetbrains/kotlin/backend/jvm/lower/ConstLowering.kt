@@ -20,9 +20,15 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isStringClassType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-internal val constPhase = makeIrFilePhase(
+internal val constPhase1 = makeIrFilePhase(
     ::ConstLowering,
-    name = "Const",
+    name = "Const1",
+    description = "Substitute calls to const properties with constant values"
+)
+
+internal val constPhase2 = makeIrFilePhase(
+    ::ConstLowering,
+    name = "Const2",
     description = "Substitute calls to const properties with constant values"
 )
 
