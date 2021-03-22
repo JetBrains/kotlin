@@ -7,7 +7,6 @@
 
 // usages in build scripts are not tracked properly
 
-import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
@@ -16,6 +15,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.accessors.runtime.addDependencyTo
+import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
@@ -119,76 +119,78 @@ enum class JpsDepScope {
     COMPILE, TEST, RUNTIME, PROVIDED
 }
 
+fun DependencyHandler.add(configurationName: String, dependencyNotation: Any, configure: (ExternalModuleDependency.() -> Unit)?) {
+    // Hack to workaround:
+    // org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency_Decorated cannot be cast to org.gradle.api.artifacts.ExternalModuleDependency
+    // when add("configurationName", project(":whatever"), someClosure) is used
+    if (configure != null) {
+        add(configurationName, dependencyNotation, closureOf(configure))
+    } else {
+        add(configurationName, dependencyNotation)
+    }
+}
+
 fun DependencyHandler.jpsLikeJarDependency(
     dependencyNotation: Any,
     scope: JpsDepScope,
-    dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
+    dependencyConfiguration: (ExternalModuleDependency.() -> Unit)? = null,
     exported: Boolean = false
 ) {
     when (scope) {
         JpsDepScope.COMPILE -> {
             if (exported) {
-                addDependencyTo(this, "api", dependencyNotation, dependencyConfiguration)
-                addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
+                add("api", dependencyNotation, dependencyConfiguration)
+                add("testCompile", dependencyNotation, dependencyConfiguration)
             } else {
-                addDependencyTo(this, "implementation", dependencyNotation, dependencyConfiguration)
+                add("implementation", dependencyNotation, dependencyConfiguration)
             }
         }
         JpsDepScope.TEST -> {
             if (exported) {
-                addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
+                add("testCompile", dependencyNotation, dependencyConfiguration)
             } else {
-                addDependencyTo(this, "testImplementation", dependencyNotation, dependencyConfiguration)
+                add("testImplementation", dependencyNotation, dependencyConfiguration)
             }
         }
         JpsDepScope.RUNTIME -> {
-            addDependencyTo(this, "testRuntimeOnly", dependencyNotation, dependencyConfiguration)
+            add("testRuntimeOnly", dependencyNotation, dependencyConfiguration)
         }
         JpsDepScope.PROVIDED -> {
             if (exported) {
-                addDependencyTo(this, "compileOnlyApi", dependencyNotation, dependencyConfiguration)
-                addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
+                add("compileOnlyApi", dependencyNotation, dependencyConfiguration)
+                add("testCompile", dependencyNotation, dependencyConfiguration)
             } else {
-                addDependencyTo(this, "compileOnly", dependencyNotation, dependencyConfiguration)
-                addDependencyTo(this, "testImplementation", dependencyNotation, dependencyConfiguration)
+                add("compileOnly", dependencyNotation, dependencyConfiguration)
+                add("testImplementation", dependencyNotation, dependencyConfiguration)
             }
         }
     }
 }
 
 fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepScope, exported: Boolean = false) {
+    jpsLikeJarDependency(project(moduleName), scope, exported = exported)
     when (scope) {
         JpsDepScope.COMPILE -> {
             if (exported) {
-                add("api", project(moduleName))
-                add("testCompile", project(moduleName))
                 add("testCompile", projectTests(moduleName))
             } else {
                 add("testImplementation", projectTests(moduleName))
-                add("implementation", project(moduleName))
             }
         }
         JpsDepScope.TEST -> {
             if (exported) {
-                add("testCompile", project(moduleName))
                 add("testCompile", projectTests(moduleName))
             } else {
-                add("testImplementation", project(moduleName))
                 add("testImplementation", projectTests(moduleName))
             }
         }
         JpsDepScope.RUNTIME -> {
-            add("testRuntimeOnly", project(moduleName))
             add("runtimeOnly", projectTests(moduleName))
         }
         JpsDepScope.PROVIDED -> {
             if (exported) {
-                add("compileOnlyApi", project(moduleName))
-                add("testCompile", project(moduleName))
                 add("testCompile", projectTests(moduleName))
             } else {
-                add("compileOnly", project(moduleName))
-                add("testImplementation", project(moduleName))
                 add("testImplementation", projectTests(moduleName))
             }
         }
