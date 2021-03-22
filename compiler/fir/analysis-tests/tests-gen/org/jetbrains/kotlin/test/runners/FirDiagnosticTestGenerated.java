@@ -3000,6 +3000,18 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("doubleGenericDiamond.kt")
+            public void testDoubleGenericDiamond() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericDiamond.kt");
+            }
+
+            @Test
+            @TestMetadata("falseIntersection.kt")
+            public void testFalseIntersection() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/falseIntersection.kt");
+            }
+
+            @Test
             @TestMetadata("flexibleTypeVarAgainstNull.kt")
             public void testFlexibleTypeVarAgainstNull() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/flexibleTypeVarAgainstNull.kt");
@@ -3063,6 +3075,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             @TestMetadata("secondaryConstructorCfg.kt")
             public void testSecondaryConstructorCfg() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/secondaryConstructorCfg.kt");
+            }
+
+            @Test
+            @TestMetadata("transform.kt")
+            public void testTransform() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/transform.kt");
             }
         }
 

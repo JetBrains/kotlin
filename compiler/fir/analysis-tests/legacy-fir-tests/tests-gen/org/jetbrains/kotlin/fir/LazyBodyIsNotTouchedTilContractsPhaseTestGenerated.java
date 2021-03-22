@@ -2651,6 +2651,16 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
         }
 
+        @TestMetadata("doubleGenericDiamond.kt")
+        public void testDoubleGenericDiamond() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericDiamond.kt");
+        }
+
+        @TestMetadata("falseIntersection.kt")
+        public void testFalseIntersection() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/falseIntersection.kt");
+        }
+
         @TestMetadata("flexibleTypeVarAgainstNull.kt")
         public void testFlexibleTypeVarAgainstNull() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/flexibleTypeVarAgainstNull.kt");
@@ -2704,6 +2714,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("secondaryConstructorCfg.kt")
         public void testSecondaryConstructorCfg() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/secondaryConstructorCfg.kt");
+        }
+
+        @TestMetadata("transform.kt")
+        public void testTransform() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/transform.kt");
         }
     }
 

@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
-import org.jetbrains.kotlin.fir.originalForIntersectionOverrideAttr
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -94,15 +91,15 @@ class FirTypeIntersectionScope private constructor(
             members.map { MemberWithBaseScope(it, scope) }
         }
 
-        while (allMembersWithScope.isNotEmpty()) {
+        while (allMembersWithScope.size > 1) {
             val maxByVisibility = findMemberWithMaxVisibility(allMembersWithScope)
             val extractBothWaysWithPrivate = extractBothWaysOverridable(maxByVisibility, allMembersWithScope)
-            val extractedOverrides = extractBothWaysWithPrivate.filterNot {
+            val extractedOverrides = extractBothWaysWithPrivate.filterNotTo(mutableListOf()) {
                 Visibilities.isPrivate((it.member.fir as FirMemberDeclaration).visibility)
             }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
-
-            val (mostSpecific, scopeForMostSpecific) = selectMostSpecificMember(extractedOverrides)
-            if (extractedOverrides.size > 1) {
+            val baseMembersForIntersection = extractedOverrides.calcBaseMembersForIntersectionOverride()
+            if (baseMembersForIntersection.size > 1) {
+                val (mostSpecific, scopeForMostSpecific) = selectMostSpecificMember(baseMembersForIntersection)
                 val intersectionOverride = intersectionOverrides.getOrPut(mostSpecific) {
                     val newModality = chooseIntersectionOverrideModality(extractedOverrides)
                     val newVisibility = chooseIntersectionVisibility(extractedOverrides)
@@ -124,12 +121,62 @@ class FirTypeIntersectionScope private constructor(
                 @Suppress("UNCHECKED_CAST")
                 processor(intersectionOverride.member as D)
             } else {
+                val mostSpecific = baseMembersForIntersection.single().member
                 overriddenSymbols[mostSpecific] = extractedOverrides
                 processor(mostSpecific)
             }
         }
 
+        if (allMembersWithScope.isNotEmpty()) {
+            val single = allMembersWithScope.single().member
+            overriddenSymbols[single] = allMembersWithScope.toList()
+            processor(single)
+        }
+
         return true
+    }
+
+    private inline fun <reified D : FirCallableDeclaration<*>> D.unwrapSubstitutionOverrides(): D {
+        var current = this
+
+        do {
+            val next = current.originalForSubstitutionOverride ?: return current
+            current = next
+        } while (true)
+    }
+
+    private fun <S : FirCallableSymbol<*>>
+            MutableList<MemberWithBaseScope<S>>.calcBaseMembersForIntersectionOverride(): List<MemberWithBaseScope<S>> {
+        if (size == 1) return this
+        val unwrappedMemberSet = mutableSetOf<MemberWithBaseScope<S>>()
+        for ((member, scope) in this) {
+            @Suppress("UNCHECKED_CAST")
+            unwrappedMemberSet += MemberWithBaseScope(member.fir.unwrapSubstitutionOverrides().symbol as S, scope)
+        }
+        // If in fact extracted overrides are the same symbols,
+        // we should just take most specific member without creating intersection
+        // A typical sample here is inheritance of the same class in different places of hierarchy
+        if (unwrappedMemberSet.size == 1) {
+            return listOf(selectMostSpecificMember(this))
+        }
+
+        val baseMembers = mutableSetOf<S>()
+        for ((unwrappedMember, scope) in unwrappedMemberSet) {
+            @Suppress("UNCHECKED_CAST")
+            if (unwrappedMember is FirNamedFunctionSymbol) {
+                scope.processOverriddenFunctions(unwrappedMember) {
+                    baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as S
+                    ProcessorAction.NEXT
+                }
+            } else if (unwrappedMember is FirPropertySymbol) {
+                scope.processOverriddenProperties(unwrappedMember) {
+                    baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as S
+                    ProcessorAction.NEXT
+                }
+            }
+        }
+        removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
+        return this
     }
 
     private fun <D : FirCallableSymbol<*>> chooseIntersectionOverrideModality(
@@ -397,7 +444,7 @@ class FirTypeIntersectionScope private constructor(
     private fun <D : FirCallableSymbol<*>> extractBothWaysOverridable(
         overrider: MemberWithBaseScope<D>,
         members: MutableCollection<MemberWithBaseScope<D>>
-    ): Collection<MemberWithBaseScope<D>> {
+    ): MutableList<MemberWithBaseScope<D>> {
         val result = mutableListOf<MemberWithBaseScope<D>>().apply { add(overrider) }
 
         val iterator = members.iterator()

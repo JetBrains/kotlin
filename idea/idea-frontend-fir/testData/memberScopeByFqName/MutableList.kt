@@ -289,7 +289,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: contains
-  origin: INTERSECTION_OVERRIDE
+  origin: LIBRARY
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
@@ -310,7 +310,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: containsAll
-  origin: INTERSECTION_OVERRIDE
+  origin: LIBRARY
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
@@ -363,8 +363,8 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.isEmpty
-  dispatchType: kotlin/collections/MutableList<E>
+  callableIdIfNonLocal: kotlin/collections/List.isEmpty
+  dispatchType: kotlin/collections/List<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -373,7 +373,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: isEmpty
-  origin: INTERSECTION_OVERRIDE
+  origin: LIBRARY
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
@@ -427,10 +427,10 @@ KtFirKotlinPropertySymbol:
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin/collections/List.size
-  dispatchType: kotlin/collections/MutableList<E>
-  getter: null
+  dispatchType: kotlin/collections/List<E>
+  getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: false
-  hasGetter: false
+  hasGetter: true
   hasSetter: false
   initializer: null
   isConst: false
@@ -440,7 +440,7 @@ KtFirKotlinPropertySymbol:
   isVal: true
   modality: ABSTRACT
   name: size
-  origin: INTERSECTION_OVERRIDE
+  origin: LIBRARY
   receiverType: null
   setter: null
   symbolKind: MEMBER
