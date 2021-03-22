@@ -17,6 +17,7 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch.SearchParameters
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.moduleInfo
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -74,6 +76,7 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
         val resolutionFacade = getResolutionFacade(moduleDescriptor, project) ?: return emptyList()
 
         return ClassInheritorsSearch.search(searchParameters)
+            .filter { psiClass -> psiClass is KtClassOrObject || psiClass is KtLightClass }
             .mapNotNull { it.resolveToDescriptor(resolutionFacade) }
             .sortedBy(ClassDescriptor::getName) // order needs to be stable (at least for tests)
     }
