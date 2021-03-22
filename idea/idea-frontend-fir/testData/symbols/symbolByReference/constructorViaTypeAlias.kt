@@ -11,6 +11,7 @@ KtFirConstructorSymbol:
   annotatedType: [] java/util/ArrayList<E>
   annotationClassIds: []
   annotations: []
+  callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/util/ArrayList
   dispatchType: java/util/ArrayList<E>
   isPrimary: false

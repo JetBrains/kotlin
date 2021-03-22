@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -15,6 +16,16 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.ImportPath
 
 private val SimpleImportPathComparator: Comparator<ImportPath> = compareBy(ImportPath::toString)
+
+fun addImportToFile(
+    project: Project,
+    file: KtFile,
+    callableId: CallableId,
+    allUnder: Boolean = false,
+    alias: Name? = null
+) {
+    addImportToFile(project, file, callableId.asFqNameForDebugInfo(), allUnder, alias)
+}
 
 /**
  * This is a partial copy from `org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl.Companion.addImport`.

@@ -8,7 +8,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.collections.listOf
+  callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
   isExtension: false
   isExternal: false
@@ -29,7 +29,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotationClassIds: [kotlin/internal/InlineOnly]
   annotations: [kotlin/internal/InlineOnly()]
-  callableIdIfNonLocal: kotlin.collections.listOf
+  callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
   isExtension: false
   isExternal: false
@@ -50,7 +50,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.collections.listOf
+  callableIdIfNonLocal: kotlin/collections/listOf
   dispatchType: null
   isExtension: false
   isExternal: false

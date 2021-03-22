@@ -8,18 +8,17 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.modality
-import org.jetbrains.kotlin.fir.declarations.visibility
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolModality
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.name.CallableId
 
 internal inline fun <reified M : KtSymbolModality> Modality?.getSymbolModality(): M = when (this) {
     Modality.FINAL -> KtCommonSymbolModality.FINAL
@@ -36,6 +35,8 @@ internal inline fun <F : FirMemberDeclaration, reified M : KtSymbolModality> KtF
 internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(): Visibility =
     firRef.withFir(FirResolvePhase.STATUS) { fir -> fir.visibility }
 
+internal fun KtFirSymbol<FirCallableDeclaration<*>>.getCallableIdIfNonLocal(): CallableId? =
+    firRef.withFir { fir -> fir.symbol.callableId.takeUnless { it.isLocal } }
 
 internal fun ConeClassLikeType.expandTypeAliasIfNeeded(session: FirSession): ConeClassLikeType {
     val firTypeAlias = lookupTag.toSymbol(session) as? FirTypeAliasSymbol ?: return this

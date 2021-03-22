@@ -4,4 +4,4 @@ fun x() {
 
 fun foo(){}
 
-// CALL: KtFunctionCall: targetFunction = ERR<Inapplicable candidate(s): /foo, [foo(): kotlin.Unit]>
+// CALL: KtFunctionCall: targetFunction = ERR<Inapplicable candidate(s): /foo, [/foo(): kotlin.Unit]>

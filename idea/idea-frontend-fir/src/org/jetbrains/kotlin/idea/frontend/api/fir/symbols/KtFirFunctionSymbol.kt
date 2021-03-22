@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbo
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -78,10 +79,8 @@ internal class KtFirFunctionSymbol(
     override val isExternal: Boolean get() = firRef.withFir { it.isExternal }
     override val isInline: Boolean get() = firRef.withFir { it.isInline }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
-    override val callableIdIfNonLocal: FqName?
-        get() = firRef.withFir { fir ->
-            fir.symbol.callableId.takeUnless { fir.isLocal }?.asFqNameForDebugInfo()
-        }
+    override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()
+
     override val symbolKind: KtSymbolKind
         get() = firRef.withFir { fir ->
             when {
@@ -108,7 +107,7 @@ internal class KtFirFunctionSymbol(
                 )
             }
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
-                callableIdIfNonLocal?.asString() ?: name.asString()
+                callableIdIfNonLocal?.toString() ?: name.asString()
             )
         }
     }

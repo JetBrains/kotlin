@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -42,6 +43,8 @@ internal class KtFirEnumEntrySymbol(
 
     override val containingEnumClassIdIfNonLocal: ClassId?
         get() = firRef.withFir { it.containingClass()?.classId?.takeUnless { it.isLocal } }
+
+    override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()
 
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

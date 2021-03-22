@@ -4,4 +4,4 @@ open class A<T>(x: T)
 
 class B : A(<selection>1 to 2</selection>)
 
-// CALL: KtFunctionCall: targetFunction = to(<receiver>: A, other: B): A
+// CALL: KtFunctionCall: targetFunction = /to(<receiver>: A, other: B): A

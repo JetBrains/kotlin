@@ -6,7 +6,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/ListIterator<E>
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.collections.List.listIterator
+  callableIdIfNonLocal: kotlin/collections/List.listIterator
   dispatchType: kotlin/collections/List<E>
   isExtension: false
   isExternal: false
@@ -27,7 +27,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/ListIterator<E>
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.collections.List.listIterator
+  callableIdIfNonLocal: kotlin/collections/List.listIterator
   dispatchType: kotlin/collections/List<E>
   isExtension: false
   isExternal: false

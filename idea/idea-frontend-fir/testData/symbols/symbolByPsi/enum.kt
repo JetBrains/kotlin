@@ -6,6 +6,7 @@ enum class X {
 /*
 KtFirEnumEntrySymbol:
   annotatedType: [] X
+  callableIdIfNonLocal: /X.Y
   containingEnumClassIdIfNonLocal: X
   name: Y
   origin: SOURCE
@@ -13,6 +14,7 @@ KtFirEnumEntrySymbol:
 
 KtFirEnumEntrySymbol:
   annotatedType: [] X
+  callableIdIfNonLocal: /X.Z
   containingEnumClassIdIfNonLocal: X
   name: Z
   origin: SOURCE

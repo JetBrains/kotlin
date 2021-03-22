@@ -13,7 +13,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: <anonymous>.run
+  callableIdIfNonLocal: null
   dispatchType: <anonymous>
   isExtension: false
   isExternal: false
@@ -34,7 +34,7 @@ KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: <anonymous>.data
+  callableIdIfNonLocal: null
   dispatchType: <anonymous>
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -68,7 +68,7 @@ KtFirKotlinPropertySymbol:
   annotatedType: [] java/lang/Runnable
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: AnonymousContainer.anonymousObject
+  callableIdIfNonLocal: /AnonymousContainer.anonymousObject
   dispatchType: AnonymousContainer
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true

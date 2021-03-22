@@ -7,7 +7,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: x
+  callableIdIfNonLocal: /x
   dispatchType: null
   isExtension: false
   isExternal: false
@@ -28,7 +28,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: y
+  callableIdIfNonLocal: /y
   dispatchType: null
   isExtension: false
   isExternal: false

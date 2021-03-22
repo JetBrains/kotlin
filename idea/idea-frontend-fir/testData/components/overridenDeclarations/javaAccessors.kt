@@ -19,8 +19,8 @@ abstract class C {
 
 // RESULT
 // ALL:
-// B.x: Int
+// /B.x: Int
 // C.x: Int
 
 // DIRECT:
-// B.x: Int
+// /B.x: Int

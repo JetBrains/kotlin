@@ -6,6 +6,7 @@ KtFirValueParameterSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
+  callableIdIfNonLocal: null
   hasDefaultValue: false
   isVararg: false
   name: x
@@ -16,7 +17,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: foo
+  callableIdIfNonLocal: /foo
   dispatchType: null
   isExtension: false
   isExternal: false

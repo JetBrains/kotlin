@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.name.CallableId
 
 abstract class KtCallableSymbol : KtSymbol, KtTypedSymbol {
+    abstract val callableIdIfNonLocal: CallableId?
     abstract override fun createPointer(): KtSymbolPointer<KtCallableSymbol>
 }

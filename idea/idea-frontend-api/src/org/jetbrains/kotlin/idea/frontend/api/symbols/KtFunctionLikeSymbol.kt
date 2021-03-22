@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -18,6 +19,7 @@ abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKind {
 
 abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol(), KtPossibleExtensionSymbol {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
+    final override val callableIdIfNonLocal: CallableId? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol>
 }
@@ -30,7 +32,6 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtSymbolWithModality<KtCommonSymbolModality>,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol {
-    abstract val callableIdIfNonLocal: FqName?
 
     abstract val isSuspend: Boolean
     abstract val isOperator: Boolean
@@ -49,6 +50,7 @@ abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     abstract val isPrimary: Boolean
     abstract val containingClassIdIfNonLocal: ClassId?
 
+    final override val callableIdIfNonLocal: CallableId? get() = null
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>

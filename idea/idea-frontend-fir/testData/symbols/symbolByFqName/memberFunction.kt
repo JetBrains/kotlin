@@ -6,7 +6,7 @@ KtFirFunctionSymbol:
   annotatedType: [] E
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.collections.List.get
+  callableIdIfNonLocal: kotlin/collections/List.get
   dispatchType: kotlin/collections/List<E>
   isExtension: false
   isExternal: false

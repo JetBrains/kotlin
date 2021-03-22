@@ -8,6 +8,7 @@ var x: Int = 0
 /*
 KtFirBackingFieldSymbol:
   annotatedType: [] kotlin/Int
+  callableIdIfNonLocal: null
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KtFirKotlinPropertySymbol(x)

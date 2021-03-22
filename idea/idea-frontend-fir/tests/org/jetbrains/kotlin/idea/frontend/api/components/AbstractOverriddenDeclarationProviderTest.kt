@@ -56,7 +56,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractKtIdeaTest() 
     }
 
     private fun getPath(symbol: KtCallableSymbol): String = when (symbol) {
-        is KtSyntheticJavaPropertySymbol -> symbol.callableIdIfNonLocal?.asString()!!
+        is KtSyntheticJavaPropertySymbol -> symbol.callableIdIfNonLocal?.toString()!!
         else -> {
             val ktDeclaration = symbol.psi as KtDeclaration
             ktDeclaration

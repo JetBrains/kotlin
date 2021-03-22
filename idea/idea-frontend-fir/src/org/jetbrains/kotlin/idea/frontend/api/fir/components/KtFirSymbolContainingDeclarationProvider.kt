@@ -86,8 +86,8 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 classId.outerClassId
             }
             is KtFunctionSymbol -> {
-                val fqName = symbol.callableIdIfNonLocal ?: error("fqName should not be null for non-local declaration")
-                fqName.parent().let { ClassId.topLevel(it) }
+                val fqName = symbol.callableIdIfNonLocal ?: error("callableIdIfNonLocal should not be null for non-local declaration")
+                fqName.classId
             }
             is KtEnumEntrySymbol -> {
                 val classId = symbol.containingEnumClassIdIfNonLocal ?: error("fqName should not be null for non-local declaration")
@@ -95,7 +95,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             }
             is KtPropertySymbol -> {
                 val fqName = symbol.callableIdIfNonLocal ?: error("fqName should not be null for non-local declaration")
-                fqName.parent().let { ClassId.topLevel(it) }
+                fqName.classId
             }
             else -> error("We should not have a ${symbol::class} from a library")
         } ?: error("outerClassId should not be null for member declaration")

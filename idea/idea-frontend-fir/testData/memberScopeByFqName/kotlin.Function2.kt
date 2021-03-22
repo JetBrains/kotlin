@@ -8,7 +8,7 @@ KtFirFunctionSymbol:
   annotatedType: [] R
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.Function2.invoke
+  callableIdIfNonLocal: kotlin/Function2.invoke
   dispatchType: kotlin/Function2<P1, P2, R>
   isExtension: false
   isExternal: false
@@ -29,7 +29,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.Any.equals
+  callableIdIfNonLocal: kotlin/Any.equals
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
@@ -50,7 +50,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.Any.hashCode
+  callableIdIfNonLocal: kotlin/Any.hashCode
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
@@ -71,7 +71,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.Any.toString
+  callableIdIfNonLocal: kotlin/Any.toString
   dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
