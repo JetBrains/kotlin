@@ -1,3 +1,5 @@
-idePluginDependency {
-    publishProjectJars(listOf(":kotlin-noarg-compiler-plugin"))
+plugins {
+    kotlin("jvm")
 }
+
+publishJarsForIde(listOf(":kotlin-noarg-compiler-plugin"))
