@@ -25,6 +25,7 @@ fun KGPBaseTest.project(
     projectName: String,
     gradleVersion: GradleVersion,
     buildOptions: KGPBaseTest.BuildOptions = defaultBuildOptions,
+    forceOutput: Boolean = false,
     test: TestProject.() -> Unit
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -39,6 +40,9 @@ fun KGPBaseTest.project(
         .withProjectDir(projectPath.toFile())
         .withTestKitDir(Paths.get(".").testKitDir.toAbsolutePath().toFile())
         .withGradleVersion(gradleVersion.version)
+        .also {
+            if (forceOutput) it.forwardOutput()
+        }
 
     val testProject = TestProject(
         gradleRunner,
