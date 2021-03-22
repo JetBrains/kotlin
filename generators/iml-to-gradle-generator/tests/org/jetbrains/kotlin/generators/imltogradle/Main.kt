@@ -128,6 +128,9 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
             .safeAs<JpsSimpleElement<*>>()?.data
             ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()
             ?: error("Cannot find maven coordinates for $jpsLibrary")
+        if (libraryName == "kotlinc.kotlin-stdlib-jdk8") {
+            return listOf(jpsLikeJarDependency("kotlinStdlib()", dependencyConfiguration = null))
+        }
         return if (libraryName.startsWith("kotlinc.")) {
             listOf(jpsLikeModuleDependency(":prepare:ide-plugin-dependencies:${mavenRepositoryLibraryDescriptor.artifactId}"))
         } else {
