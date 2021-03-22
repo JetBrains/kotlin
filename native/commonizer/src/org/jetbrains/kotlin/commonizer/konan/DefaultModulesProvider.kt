@@ -67,15 +67,10 @@ internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : Mo
     }
 
     companion object {
-        fun forStandardLibrary(stdlib: NativeLibrary): ModulesProvider {
-            check(stdlib.manifestData.uniqueName == KONAN_STDLIB_NAME)
-            return DefaultModulesProvider(listOf(stdlib))
-        }
-
-        fun platformLibraries(librariesToCommonize: NativeLibrariesToCommonize): ModulesProvider =
+        fun create(librariesToCommonize: NativeLibrariesToCommonize): ModulesProvider =
             DefaultModulesProvider(librariesToCommonize.libraries)
 
-        fun platformLibraries(libraries: Iterable<NativeLibrary>): ModulesProvider =
+        fun create(libraries: Iterable<NativeLibrary>): ModulesProvider =
             DefaultModulesProvider(libraries.toList())
     }
 }

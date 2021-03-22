@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.utils.ProgressLogger
 
 internal class LibraryCommonizer internal constructor(
-    private val konanDistribution: KonanDistribution,
     private val repository: Repository,
     private val dependencies: Repository,
-    private val libraryLoader: NativeLibraryLoader,
-    private val targets: List<LeafCommonizerTarget>,
+    private val commonTarget: SharedCommonizerTarget,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
     private val progressLogger: ProgressLogger
@@ -28,10 +26,8 @@ internal class LibraryCommonizer internal constructor(
         progressLogger.logTotal()
     }
 
-    private fun loadLibraries(): AllNativeLibraries {
-        val stdlib = libraryLoader(konanDistribution.stdlib)
-
-        val librariesByTargets = targets.associateWith { target ->
+    private fun loadLibraries(): TargetDependent<NativeLibrariesToCommonize> {
+        val librariesByTargets = commonTarget.targets.associateWith { target ->
             NativeLibrariesToCommonize(repository.getLibraries(target).toList())
         }
 
@@ -41,30 +37,30 @@ internal class LibraryCommonizer internal constructor(
             }
         }
         progressLogger.log("Resolved libraries to be commonized")
-        return AllNativeLibraries(stdlib, librariesByTargets)
+        return librariesByTargets
     }
 
-    private fun commonizeAndSaveResults(allLibraries: AllNativeLibraries) {
+    private fun commonizeAndSaveResults(allLibraries: TargetDependent<NativeLibrariesToCommonize>) {
         val parameters = CommonizerParameters(
             resultsConsumer = resultsConsumer,
             manifestDataProvider = TargetedNativeManifestDataProvider(allLibraries),
-            dependencyModulesProvider = DefaultModulesProvider.forStandardLibrary(allLibraries.stdlib),
+            commonDependencyModulesProvider = DefaultModulesProvider.create(dependencies.getLibraries(commonTarget)),
             statsCollector = statsCollector,
             progressLogger = progressLogger::log
         )
 
-        allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
+        allLibraries.forEach { (target, librariesToCommonize) ->
             parameters.addTarget(target, librariesToCommonize)
         }
 
         runCommonization(parameters)
     }
 
-    private fun CommonizerParameters.addTarget(target: LeafCommonizerTarget, libraries: NativeLibrariesToCommonize) {
+    private fun CommonizerParameters.addTarget(target: CommonizerTarget, libraries: NativeLibrariesToCommonize) {
         if (libraries.libraries.isEmpty()) return
 
-        val modulesProvider = DefaultModulesProvider.platformLibraries(libraries)
-        val dependencyModuleProvider = DefaultModulesProvider.platformLibraries(dependencies.getLibraries(target))
+        val modulesProvider = DefaultModulesProvider.create(libraries)
+        val dependencyModuleProvider = DefaultModulesProvider.create(dependencies.getLibraries(target))
 
         addTarget(
             TargetProvider(
@@ -76,9 +72,9 @@ internal class LibraryCommonizer internal constructor(
     }
 
     private fun checkPreconditions() {
-        when (targets.size) {
+        when (commonTarget.targets.size) {
             0 -> progressLogger.fatal("No targets specified")
-            1 -> progressLogger.fatal("Too few targets specified: $targets")
+            1 -> progressLogger.fatal("Too few targets specified: $commonTarget")
         }
     }
 }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
-import org.jetbrains.kotlin.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.commonizer.konan.TargetedNativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
@@ -208,7 +207,7 @@ private class AnalyzedModules(
     fun toCommonizerParameters(
         resultsConsumer: ResultsConsumer, manifestDataProvider: TargetedNativeManifestDataProvider = MockNativeManifestDataProvider()
     ) = CommonizerParameters(
-        resultsConsumer, manifestDataProvider, dependencyModulesProvider = dependencyModules[sharedTarget]?.let(MockModulesProvider::create)
+        resultsConsumer, manifestDataProvider, commonDependencyModulesProvider = dependencyModules[sharedTarget]?.let(MockModulesProvider::create)
     ).also { parameters ->
 
         leafTargets.forEach { leafTarget ->

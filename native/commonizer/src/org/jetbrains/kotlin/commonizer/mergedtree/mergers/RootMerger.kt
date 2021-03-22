@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree.mergers
 
-import org.jetbrains.kotlin.commonizer.CommonizerParameters
-import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.commonizer.ModulesProvider
+import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.buildRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
-import org.jetbrains.kotlin.commonizer.prettyName
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class RootMerger(
@@ -25,7 +22,7 @@ internal class RootMerger(
         val rootNode: CirRootNode = buildRootNode(storageManager, parameters.targetProviders.size)
 
         val commonModuleNames = parameters.getCommonModuleNames()
-        val missingModuleInfosByTargets = mutableMapOf<LeafCommonizerTarget, Collection<ModulesProvider.ModuleInfo>>()
+        val missingModuleInfosByTargets = mutableMapOf<CommonizerTarget, Collection<ModulesProvider.ModuleInfo>>()
 
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
             val allModuleInfos = targetProvider.modulesProvider.loadModuleInfos()

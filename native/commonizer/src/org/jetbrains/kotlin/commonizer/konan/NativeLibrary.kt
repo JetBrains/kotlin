@@ -10,6 +10,7 @@ import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 fun interface TargetedNativeManifestDataProvider {
@@ -20,11 +21,13 @@ internal interface NativeManifestDataProvider {
     fun getManifest(libraryName: String): NativeSensitiveManifestData
 }
 
-internal fun TargetedNativeManifestDataProvider(libraries: AllNativeLibraries): TargetedNativeManifestDataProvider {
+internal fun TargetedNativeManifestDataProvider(
+    libraries: TargetDependent<NativeLibrariesToCommonize>
+): TargetedNativeManifestDataProvider {
     val cachedManifestProviders: Map<CommonizerTarget, NativeManifestDataProvider> = FactoryMap.create { target ->
         when (target) {
-            is LeafCommonizerTarget -> libraries.librariesByTargets.getValue(target)
-            is SharedCommonizerTarget -> CommonNativeManifestDataProvider(libraries.librariesByTargets.values)
+            is LeafCommonizerTarget -> libraries.getValue(target)
+            is SharedCommonizerTarget -> CommonNativeManifestDataProvider(libraries.values)
         }
     }
     return TargetedNativeManifestDataProvider { target, libraryName ->
@@ -53,11 +56,6 @@ internal class NativeLibrariesToCommonize(val libraries: List<NativeLibrary>) : 
         fun create(libraries: List<KotlinLibrary>) = NativeLibrariesToCommonize(libraries.map(::NativeLibrary))
     }
 }
-
-internal class AllNativeLibraries(
-    val stdlib: NativeLibrary,
-    val librariesByTargets: Map<LeafCommonizerTarget, NativeLibrariesToCommonize>
-)
 
 internal class CommonNativeManifestDataProvider(
     libraryGroups: Collection<NativeLibrariesToCommonize>
