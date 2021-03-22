@@ -9,9 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.fir.api.applicator.applicatorByQuickFix
-import org.jetbrains.kotlin.idea.fir.api.fixes.HLApplicatorWithTargetAndInput
+import org.jetbrains.kotlin.idea.fir.api.fixes.HLQuickFix
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
-import org.jetbrains.kotlin.idea.fir.api.fixes.withInput
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeWithNullability
@@ -50,20 +49,13 @@ object ReplaceCallFixFactories {
             }
 
             when (val psi = diagnostic.psi) {
-                is KtDotQualifiedExpression -> listOf(
-                    HLApplicatorWithTargetAndInput(replaceWithSafeCallFixApplicator, psi withInput Input(psi.shouldHaveNotNullType()))
-                )
+                is KtDotQualifiedExpression -> listOf(HLQuickFix(psi, Input(psi.shouldHaveNotNullType()), replaceWithSafeCallFixApplicator))
                 is KtNameReferenceExpression -> {
                     // TODO: As a safety precaution, resolve the expression to determine if it is a call with an implicit receiver.
                     // This is a defensive check to ensure that the diagnostic was reported on such a call and not some other name reference.
                     // This isn't strictly needed because FIR checkers aren't reporting on wrong elements, but ReplaceWithSafeCallFixFactory
                     // in FE1.0 does so.
-                    listOf(
-                        HLApplicatorWithTargetAndInput(
-                            replaceImplicitReceiverCallFixApplicator,
-                            psi withInput Input(psi.shouldHaveNotNullType())
-                        )
-                    )
+                    listOf(HLQuickFix(psi, Input(psi.shouldHaveNotNullType()), replaceImplicitReceiverCallFixApplicator))
                 }
                 else -> emptyList()
             }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class HLQuickFix<PSI : PsiElement, in INPUT : HLApplicatorInput>(
+class HLQuickFix<PSI : PsiElement, in INPUT : HLApplicatorInput>(
     target: PSI,
     private val input: INPUT,
     val applicator: HLApplicator<PSI, INPUT>,
