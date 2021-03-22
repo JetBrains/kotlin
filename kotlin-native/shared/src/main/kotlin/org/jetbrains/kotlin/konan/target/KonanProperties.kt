@@ -41,18 +41,30 @@ abstract class KonanPropertiesLoader(override val target: KonanTarget,
     private val predefinedLlvmDistributions: Set<String> =
             properties.propertyList("predefinedLlvmDistributions").toSet()
 
-    private fun llvmDependencies(): List<String> {
+    private val predefinedLibffiVersions: Set<String> =
+            properties.propertyList("predefinedLibffiVersions").toSet()
+
+    private fun getPredefinedDependencyOrNull(
+            dependencyName: String,
+            dependencyAccessor: () -> String?,
+            predefinedDependencies: Set<String>
+    ): String? {
         // Store into variable to avoid repeated resolve.
-        val llvmHome = llvmHome
-                ?: error("Undefined LLVM home!")
-        return when (llvmHome) {
-            in predefinedLlvmDistributions -> llvmHome
+        val dependency = dependencyAccessor()
+                ?: error("Undefined $dependencyName!")
+        return when (dependency) {
+            in predefinedDependencies -> dependency
             else -> null
-        }.let(::listOfNotNull)
+        }
     }
 
+    private fun compilerDependencies(): List<String> = listOfNotNull(
+            getPredefinedDependencyOrNull("LLVM home", this::llvmHome, predefinedLlvmDistributions),
+            getPredefinedDependencyOrNull("libffi version", this::libffiDir, predefinedLibffiVersions)
+    )
+
     open val dependencies: List<String>
-        get() = hostTargetList("dependencies") + llvmDependencies()
+        get() = hostTargetList("dependencies") + compilerDependencies()
 
     override fun downloadDependencies() {
         dependencyProcessor!!.run()
