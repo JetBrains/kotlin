@@ -105,6 +105,8 @@ open class HostManager(
             TVOS_ARM64,
             TVOS_X64,
             LINUX_X64,
+            LINUX_ARM32_HFP,
+            LINUX_ARM64
         )
     )
 
