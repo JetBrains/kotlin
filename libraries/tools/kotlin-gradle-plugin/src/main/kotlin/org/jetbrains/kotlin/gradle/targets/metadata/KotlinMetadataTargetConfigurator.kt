@@ -483,7 +483,7 @@ internal class NativeSharedCompilationProcessor(
 
     override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
         with(nativeTargetConfigurator) {
-            project.createKlibCompilationTask(kotlinCompilation)
+            KotlinNativeTargetConfigurator.createKlibCompilationTask(kotlinCompilation)
         }
 
     override fun run() = Unit

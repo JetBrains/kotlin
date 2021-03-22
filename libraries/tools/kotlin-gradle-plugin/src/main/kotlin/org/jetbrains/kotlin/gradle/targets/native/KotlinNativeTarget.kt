@@ -139,7 +139,7 @@ open class KotlinNativeTarget @Inject constructor(
 
 private val hostManager by lazy { HostManager() }
 
-private fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean {
+internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean {
     val enabledByHost = hostManager.enabledByHost
     val allHosts = enabledByHost.keys
     fun canBeBuiltOnHosts(konanTarget: KonanTarget) = enabledByHost.filterValues { konanTarget in it }.keys

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 
 open class KotlinJvmVariant(containingModule: KotlinGradleModule, fragmentName: String) :
     KotlinGradlePublishedVariantWithRuntime(containingModule, fragmentName) {
+    override val compilationData: KotlinJvmVariantCompilationData by lazy { KotlinJvmVariantCompilationData(this) }
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm

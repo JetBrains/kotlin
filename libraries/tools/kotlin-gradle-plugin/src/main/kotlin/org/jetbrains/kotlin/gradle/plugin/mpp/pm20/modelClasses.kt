@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.addCommonSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.project.model.refinesClosure
-import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
-import java.util.concurrent.Callable
 
 open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
     AbstractKotlinGradleRuntimePublishedVariantFactory<KotlinJvmVariant>(module) {
@@ -38,30 +37,18 @@ open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
     }
 
     override fun configureKotlinCompilation(fragment: KotlinJvmVariant) {
-        val compilationData = KotlinJvmVariantCompilationData(fragment)
-
-        val classesTaskName = compilationData.compileAllTaskName
-        project.tasks.register(classesTaskName) { classesTask ->
-            classesTask.dependsOn(fragment.compilationOutputs.allOutputs)
-        }
+        val compilationData = fragment.compilationData
+        LifecycleTasksManager(project).registerClassesTask(compilationData)
 
         Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilationData, project.getKotlinPluginVersion() ?: "unknown"/*TODO*/).run()
 
-        val allSources = { project.files(Callable { fragment.refinesClosure.map { it.kotlinSourceRoots } }) }
-        val commonSources = {
-            project.files(Callable {
-                fragment.refinesClosure.filter { module.variantsContainingFragment(it).count() > 1 }.map { it.kotlinSourceRoots }
-            })
-        }
+        val sources = VariantSourcesProvider()
+        val allSources = sources.getSourcesFromRefinesClosure(fragment)
+        val commonSources = sources.getCommonSourcesFromRefinesClosure(fragment)
 
-        addSourcesToKotlinCompileTask(
-            project, compilationData.compileKotlinTaskName, /*FIXME*/ emptyList(), allSources,
-            addAsCommonSources = lazyOf(false)
-        )
-        addSourcesToKotlinCompileTask(
-            project, compilationData.compileKotlinTaskName, /*FIXME*/ emptyList(), commonSources,
-            addAsCommonSources = lazyOf(true)
-        )
+        // FIXME support custom source file extensions in the two calls below
+        addSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { allSources }
+        addCommonSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { commonSources }
     }
 }
 

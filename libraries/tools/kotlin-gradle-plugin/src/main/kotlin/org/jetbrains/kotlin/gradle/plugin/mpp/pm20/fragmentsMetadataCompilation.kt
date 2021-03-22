@@ -202,8 +202,8 @@ private fun addSourcesToMetadataCompileTask(compilationData: AbstractKotlinFragm
             compilationData.project,
             compilationData.compileKotlinTaskName,
             /*FIXME*/ emptyList(),
-            sources,
-            lazyOf(true)
+            lazyOf(true),
+            sources
         )
         is KotlinNativeFragmentMetadataCompilationData -> addSourcesToKotlinNativeCompileTask(
             compilationData.project,
