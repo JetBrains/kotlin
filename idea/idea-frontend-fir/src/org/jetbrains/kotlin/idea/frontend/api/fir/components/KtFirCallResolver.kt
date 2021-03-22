@@ -98,14 +98,15 @@ internal class KtFirCallResolver(
             is FirErrorNamedReference -> calleeReference.createErrorCallTarget(source)
             is FirErrorReferenceWithCandidate -> calleeReference.createErrorCallTarget(source)
             is FirSimpleNamedReference ->
-                error(
+                null
+              /*  error(
                     """
                       Looks like ${this::class.simpleName} && it calle reference ${calleeReference::class.simpleName} were not resolved to BODY_RESOLVE phase,
                       consider resolving it containing declaration before starting resolve calls
                       ${this.render()}
                       ${(this.psi as? KtElement)?.getElementTextInContext()}
                       """.trimIndent()
-                )
+                )*/
             else -> error("Unexpected call reference ${calleeReference::class.simpleName}")
         } ?: return null
         return KtFunctionCall(target)
