@@ -110,7 +110,7 @@ object LightClassUtil {
     }
 
     fun getLightClassMethod(function: KtFunction): PsiMethod? {
-        return getPsiMethodWrapper(function)
+        return getPsiMethodWrapper(function, function.name)
     }
 
     /**
@@ -121,15 +121,11 @@ object LightClassUtil {
     }
 
     fun getLightClassMethods(function: KtFunction): List<PsiMethod> {
-        return getPsiMethodWrappers(function).toList()
+        return getPsiMethodWrappers(function, function.name).toList()
     }
 
-    fun getLightClassMethodsByName(function: KtFunction, name: String): Sequence<KtLightMethod> {
-        return getPsiMethodWrappers(function, name)
-    }
-
-    private fun getPsiMethodWrapper(declaration: KtDeclaration): PsiMethod? {
-        return getPsiMethodWrappers(declaration).firstOrNull()
+    private fun getPsiMethodWrapper(declaration: KtDeclaration, name: String? = null): PsiMethod? {
+        return getPsiMethodWrappers(declaration, name).firstOrNull()
     }
 
     private fun getPsiMethodWrappers(declaration: KtDeclaration, name: String? = null): Sequence<KtLightMethod> =
