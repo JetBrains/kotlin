@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession.Companion.updateCalls
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
@@ -54,6 +55,9 @@ class BuilderInferenceSession(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
     private var nestedBuilderInferenceSessions: MutableSet<BuilderInferenceSession> = mutableSetOf()
+
+    private lateinit var lambda: ResolvedLambdaAtom
+    private lateinit var commonSystem: NewConstraintSystemImpl
 
     init {
         if (topLevelCallContext.inferenceSession is BuilderInferenceSession) {
@@ -199,9 +203,12 @@ class BuilderInferenceSession(
         val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(initialStorage)
         val initialStorageSubstitutor = initialStorage.buildResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false)
 
+        this.lambda = lambda
+        this.commonSystem = commonSystem
+
         if (effectivelyEmptyConstraintSystem) {
             if (isTopLevelBuilderInferenceCall()) {
-                updateAllCalls(initialStorageSubstitutor, commonSystem, lambda)
+                updateAllCalls(initialStorageSubstitutor)
             }
             return null
         }
@@ -215,7 +222,7 @@ class BuilderInferenceSession(
         )
 
         if (isTopLevelBuilderInferenceCall()) {
-            updateAllCalls(initialStorageSubstitutor, commonSystem, lambda)
+            updateAllCalls(initialStorageSubstitutor)
         }
 
         return commonSystem.fixedTypeVariables.cast() // TODO: SUB
@@ -227,13 +234,15 @@ class BuilderInferenceSession(
      * - ...
      * - updating calls within the deepest builder inference call
      */
-    private fun updateAllCalls(substitutor: NewTypeSubstitutor, commonSystem: NewConstraintSystemImpl, lambda: ResolvedLambdaAtom) {
-        val resultingSubstitutor = ComposedSubstitutor(substitutor, commonSystem.buildCurrentSubstitutor() as NewTypeSubstitutor)
-
-        updateCalls(lambda, resultingSubstitutor, commonSystem.errors)
+    private fun updateAllCalls(substitutor: NewTypeSubstitutor) {
+        updateCalls(
+            lambda,
+            substitutor = ComposedSubstitutor(substitutor, commonSystem.buildCurrentSubstitutor() as NewTypeSubstitutor),
+            commonSystem.errors
+        )
 
         for (nestedSession in nestedBuilderInferenceSessions) {
-            nestedSession.updateAllCalls(substitutor, commonSystem, lambda)
+            nestedSession.updateAllCalls(substitutor)
         }
     }
 
@@ -355,10 +364,18 @@ class BuilderInferenceSession(
 
         val atomCompleter = createResolvedAtomCompleter(
             resultingSubstitutor,
-            completedCall.context.replaceBindingTrace(topLevelCallContext.trace)
+            completedCall.context.replaceBindingTrace(findTopLevelTrace()).replaceInferenceSession(this)
         )
 
         completeCall(completedCall, atomCompleter)
+    }
+
+    private fun findTopLevelTrace(): BindingTrace {
+        var currentSession = this
+        while (true) {
+            currentSession = currentSession.findParentBuildInferenceSession() ?: break
+        }
+        return currentSession.topLevelCallContext.trace
     }
 
     private fun completeCallableReference(expression: KtCallableReferenceExpression, substitutor: NewTypeSubstitutor) {
@@ -421,7 +438,10 @@ class BuilderInferenceSession(
             val nonFixedTypesToResult = nonFixedToVariablesSubstitutor.map.mapValues { substitutor.safeSubstitute(it.value) }
             val nonFixedTypesToResultSubstitutor = ComposedSubstitutor(substitutor, nonFixedToVariablesSubstitutor)
 
-            val atomCompleter = createResolvedAtomCompleter(nonFixedTypesToResultSubstitutor, topLevelCallContext)
+            val atomCompleter = createResolvedAtomCompleter(
+                nonFixedTypesToResultSubstitutor,
+                topLevelCallContext.replaceBindingTrace(findTopLevelTrace()).replaceInferenceSession(this)
+            )
 
             for (completedCall in commonCalls) {
                 updateCall(completedCall, nonFixedTypesToResultSubstitutor, nonFixedTypesToResult)
