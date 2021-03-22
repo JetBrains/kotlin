@@ -36,6 +36,10 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-test-js-runner"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-util-io"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-util-klib"/>
+         <trust group="org.jetbrains.kotlin" name="builtins"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk7"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk8"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-minimal-for-test"/>
          <trust file="kotlin-native-prebuilt-.*" regex="true"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
          <trust file=".*-sources[.]jar" regex="true"/>
