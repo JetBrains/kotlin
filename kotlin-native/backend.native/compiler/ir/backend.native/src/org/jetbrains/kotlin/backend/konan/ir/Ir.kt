@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.kotlinNativeInternal
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -455,6 +457,14 @@ internal class KonanSymbols(
 
     val kType = symbolTable.referenceClass(context.reflectionTypes.kType)
     val kVariance = symbolTable.referenceClass(context.reflectionTypes.kVariance)
+    val kVarianceIn = getKVarianceEnumEntry("IN")
+    val kVarianceOut = getKVarianceEnumEntry("OUT")
+    val kVarianceInvariant = getKVarianceEnumEntry("INVARIANT")
+
+    private fun getKVarianceEnumEntry(name: String): IrEnumEntrySymbol {
+        val descriptor = context.reflectionTypes.kVariance.enumEntries.single { it.name.asString() == name }
+        return symbolTable.referenceEnumEntry(descriptor)
+    }
 
     val getClassTypeInfo = internalFunction("getClassTypeInfo")
     val getObjectTypeInfo = internalFunction("getObjectTypeInfo")

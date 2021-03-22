@@ -126,20 +126,15 @@ internal class KTypeGenerator(
         else -> parent.fqNameForIrSerialization.asString()
     }
 
-    private val Variance.kVarianceName: String
-        get() = when (this) {
-            Variance.INVARIANT -> "INVARIANT"
-            Variance.IN_VARIANCE -> "IN"
-            Variance.OUT_VARIANCE -> "OUT"
-        }
-
     private fun IrBuilderWithScope.irKVariance(variance: Variance) =
             IrGetEnumValueImpl(
                     startOffset, endOffset,
                     symbols.kVariance.defaultType,
-                    symbols.kVariance.owner.declarations
-                            .filterIsInstance<IrEnumEntry>()
-                            .single { it.name.asString() == variance.kVarianceName }.symbol
+                    when (variance) {
+                        Variance.INVARIANT -> symbols.kVarianceInvariant
+                        Variance.IN_VARIANCE -> symbols.kVarianceIn
+                        Variance.OUT_VARIANCE -> symbols.kVarianceOut
+                    }
             )
 
     private fun <T> IrBuilderWithScope.irKTypeLikeList(
