@@ -41,7 +41,7 @@ dependencies {
     testImplementation(gradleApi())
     testImplementation(gradleTestKit())
     testImplementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
-    testApiJUnit5(vintageEngine = true)
+    testApiJUnit5(vintageEngine = true, jupiterParams = true)
 
     testRuntimeOnly(projectRuntimeJar(":kotlin-android-extensions"))
     testRuntimeOnly(project(":compiler:tests-mutes"))
@@ -181,6 +181,7 @@ tasks.withType<Test> {
     useAndroidSdk()
 
     maxHeapSize = "512m"
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
     useJUnitPlatform()
 
     testLogging {

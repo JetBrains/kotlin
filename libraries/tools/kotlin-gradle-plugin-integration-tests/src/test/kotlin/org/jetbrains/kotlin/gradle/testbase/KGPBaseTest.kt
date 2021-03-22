@@ -7,9 +7,21 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.internal.impldep.org.junit.platform.commons.support.AnnotationSupport.findAnnotation
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
+import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
+import java.util.stream.Stream
+import kotlin.streams.asStream
 
 /**
  * Base class for all Kotlin Gradle plugin integration tests.
@@ -48,4 +60,37 @@ abstract class KGPBaseTest {
             return arguments.toList()
         }
     }
+
+    class GradleArgumentsProvider : ArgumentsProvider {
+        override fun provideArguments(
+            context: ExtensionContext
+        ): Stream<out Arguments> {
+            val versionsAnnotation = findAnnotation(context.testMethod, GradleTestVersions::class.java).orElseThrow {
+                IllegalStateException("Define allowed Gradle versions via '@GradleTestVersions'.")
+            }
+
+            val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
+            val maxGradleVersion = GradleVersion.version(versionsAnnotation.maxVersion)
+            val additionalGradleVersions = versionsAnnotation
+                .additionalVersions
+                .map(GradleVersion::version)
+            additionalGradleVersions.forEach {
+                assert(it in minGradleVersion..maxGradleVersion) {
+                    "Additional Gradle version ${it.version} should be between ${minGradleVersion.version} and ${maxGradleVersion.version}"
+                }
+            }
+
+            return sequenceOf(minGradleVersion, *additionalGradleVersions.toTypedArray(), maxGradleVersion)
+                .map { Arguments.of(it) }
+                .asStream()
+        }
+    }
+
+    @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class GradleTestVersions(
+        val minVersion: String = minSupportedGradleVersion,
+        val maxVersion: String = "7.0-milestone-3",
+        val additionalVersions: Array<String> = []
+    )
 }

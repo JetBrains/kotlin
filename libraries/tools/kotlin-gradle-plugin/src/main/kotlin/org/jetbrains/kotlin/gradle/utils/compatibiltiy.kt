@@ -34,7 +34,7 @@ import org.gradle.util.GradleVersion
 import java.io.File
 import java.io.Serializable
 
-const val minSupportedGradleVersion = "6.1"
+const val minSupportedGradleVersion = "6.1.1"
 
 internal val Task.inputsCompatible: TaskInputs get() = inputs
 

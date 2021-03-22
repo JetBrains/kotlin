@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.util.GradleVersion
 import kotlin.test.assertTrue
 import java.nio.file.*
 import java.nio.file.Files.copy
@@ -22,22 +23,29 @@ import java.nio.file.attribute.BasicFileAttributes
  */
 fun KGPBaseTest.project(
     projectName: String,
+    gradleVersion: GradleVersion,
     buildOptions: KGPBaseTest.BuildOptions = defaultBuildOptions,
     test: TestProject.() -> Unit
 ): TestProject {
-    val projectPath = setupProjectFromTestResources(projectName, KGPBaseTest.workingDir)
+    val projectPath = setupProjectFromTestResources(
+        projectName,
+        gradleVersion,
+        KGPBaseTest.workingDir
+    )
     projectPath.addDefaultBuildFiles()
 
     val gradleRunner = GradleRunner
         .create()
         .withProjectDir(projectPath.toFile())
-        .withTestKitDir(KGPBaseTest.workingDir.testKitDir.toFile())
+        .withTestKitDir(Paths.get(".").testKitDir.toAbsolutePath().toFile())
+        .withGradleVersion(gradleVersion.version)
 
     val testProject = TestProject(
         gradleRunner,
         projectName,
         buildOptions,
-        projectPath
+        projectPath,
+        gradleVersion
     )
     testProject.test()
     return testProject
@@ -75,7 +83,8 @@ class TestProject(
     val gradleRunner: GradleRunner,
     val projectName: String,
     val buildOptions: KGPBaseTest.BuildOptions,
-    val projectPath: Path
+    val projectPath: Path,
+    val gradleVersion: GradleVersion
 )
 
 private fun TestProject.commonBuildSetup(
@@ -85,15 +94,17 @@ private fun TestProject.commonBuildSetup(
     val allBuildArguments = buildOptionsArguments + buildArguments + "--full-stacktrace"
 
     println("<=== Test build: ${this.projectName} ===>")
+    println("<=== Using Gradle version: ${gradleVersion.version} ===>")
     println("<=== Run arguments: ${allBuildArguments.joinToString()} ===>")
 
     return allBuildArguments
 }
 
-private val Path.testKitDir get() = resolve("testKitDir")
+private val Path.testKitDir get() = resolve(".testKitDir")
 
 private fun setupProjectFromTestResources(
     projectName: String,
+    gradleVersion: GradleVersion,
     tempDir: Path
 ): Path {
     val testProjectPath = Paths.get("src", "test", "resources", "testProject", projectName)
@@ -102,6 +113,7 @@ private fun setupProjectFromTestResources(
 
     return tempDir
         .resolve(projectName)
+        .resolve(gradleVersion.version)
         .also {
             testProjectPath.copyRecursively(it)
         }
