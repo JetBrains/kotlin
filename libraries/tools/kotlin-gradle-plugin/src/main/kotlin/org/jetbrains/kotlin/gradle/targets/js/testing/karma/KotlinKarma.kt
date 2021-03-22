@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
@@ -215,6 +216,15 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                 // noinspection JSUnnecessarySemicolon
                 ;(function(config) {
                     const webpack = require('webpack');
+                    ${
+                    if (webpackMajorVersion != WebpackMajorVersion.V4) {
+                        """
+                            // https://github.com/webpack/webpack/issues/12951
+                            const PatchSourceMapSource = require('kotlin-test-js-runner/webpack-5-debug');
+                            config.plugins.push(new PatchSourceMapSource())
+                            """
+                    } else ""
+                }
                     config.plugins.push(new webpack.SourceMapDevToolPlugin({
                         moduleFilenameTemplate: "[absolute-resource-path]"
                     }))

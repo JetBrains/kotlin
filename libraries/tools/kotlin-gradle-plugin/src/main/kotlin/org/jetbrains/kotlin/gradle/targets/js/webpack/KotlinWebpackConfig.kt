@@ -442,7 +442,7 @@ data class KotlinWebpackConfig(
                 // noinspection JSUnnecessarySemicolon
                 ;(function(config) {
                     const tcErrorPlugin = require('kotlin-test-js-runner/tc-log-error-webpack');
-                    config.plugins.push(new tcErrorPlugin(tcErrorPlugin))
+                    config.plugins.push(new tcErrorPlugin())
                     config.stats = config.stats || {}
                     Object.assign(config.stats, config.stats, {
                         warnings: false,
