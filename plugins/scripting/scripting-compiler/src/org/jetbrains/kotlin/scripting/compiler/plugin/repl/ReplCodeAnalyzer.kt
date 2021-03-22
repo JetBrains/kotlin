@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PackageViewDescriptorFactory
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ReplPackageViewDescriptorFactory
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.jvm.util.CompiledHistoryItem
@@ -65,7 +67,8 @@ open class ReplCodeAnalyzerBase(
             environment.configuration,
             environment::createPackagePartProvider,
             { _, _ -> ScriptMutableDeclarationProviderFactory() },
-            implicitsResolutionFilter = implicitsResolutionFilter
+            implicitsResolutionFilter = implicitsResolutionFilter,
+            moduleCapabilities = mapOf(PackageViewDescriptorFactory.CAPABILITY to ReplPackageViewDescriptorFactory)
         )
 
         this.module = container.get()

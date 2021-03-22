@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.*
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
@@ -333,8 +334,10 @@ class ReplCompilationState<AnalyzerT : ReplCodeAnalyzerBase>(
     override val baseScriptCompilationConfiguration: ScriptCompilationConfiguration get() = context.baseScriptCompilationConfiguration
     override val environment: KotlinCoreEnvironment get() = context.environment
     override val analyzerEngine: AnalyzerT by lazy {
-        // ReplCodeAnalyzer1(context.environment)
-        analyzerInit(context, implicitsResolutionFilter)
+        val analyzer = analyzerInit(context, implicitsResolutionFilter)
+        val psiFacade = KotlinJavaPsiFacade.getInstance(environment.project)
+        psiFacade.setNotFoundPackagesCachingStrategy(ReplNotFoundPackagesCachingStrategy)
+        analyzer
     }
 
     private val manglerAndSymbolTable by lazy {

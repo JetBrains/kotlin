@@ -296,6 +296,12 @@ class JvmIdeServicesTest : TestCase() {
                 val (exitCode, outputJarPath) = compileFile("stringTo.kt", outputJarName)
                 assertEquals(ExitCode.OK, exitCode)
 
+                assertCompileFails(
+                    repl, """
+                        import example.dependency.*
+                    """.trimIndent()
+                )
+
                 assertEvalUnit(
                     repl, """
                         @file:DependsOn("$outputJarPath")
@@ -410,6 +416,17 @@ private fun JvmTestRepl.compileAndEval(codeLine: SourceCode): Pair<ResultWithDia
         eval(it)
     }
     return compRes to evalRes?.valueOrNull().get()
+}
+
+private fun assertCompileFails(
+    repl: JvmTestRepl,
+    @Suppress("SameParameterValue")
+    line: String
+) {
+    val compiledSnippet =
+        checkCompile(repl, line)
+
+    TestCase.assertNull(compiledSnippet)
 }
 
 private fun assertEvalUnit(
