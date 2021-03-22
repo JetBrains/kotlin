@@ -175,6 +175,32 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testIncrementalFir() {
+        val project = Project("kotlinProject")
+        val options = defaultBuildOptions().copy(incremental = true, useFir = true)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertNoWarnings()
+        }
+
+        val greeterKt = project.projectDir.getFileByName("Greeter.kt")
+        greeterKt.modify {
+            it.replace("greeting: String", "greeting: CharSequence")
+        }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertNoWarnings()
+            val affectedSources = project.projectDir.getFilesByNames(
+                "Greeter.kt", "KotlinGreetingJoiner.kt",
+                "TestGreeter.kt", "TestKotlinGreetingJoiner.kt"
+            )
+            assertCompiledKotlinSources(project.relativize(affectedSources))
+        }
+    }
+
+    @Test
     fun testManyClassesIC() {
         val project = Project("manyClasses")
         val options = defaultBuildOptions().copy(incremental = true)
@@ -435,6 +461,27 @@ class KotlinGradleIT : BaseGradleIT() {
     fun testIncrementalTestCompile() {
         val project = Project("kotlinProject")
         val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+        }
+
+        val joinerKt = project.projectDir.getFileByName("KotlinGreetingJoiner.kt")
+        joinerKt.modify {
+            it.replace("class KotlinGreetingJoiner", "internal class KotlinGreetingJoiner")
+        }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            val testJoinerKt = project.projectDir.getFileByName("TestKotlinGreetingJoiner.kt")
+            assertCompiledKotlinSources(project.relativize(joinerKt, testJoinerKt))
+        }
+    }
+
+    @Test
+    fun testIncrementalFirTestCompile() {
+        val project = Project("kotlinProject")
+        val options = defaultBuildOptions().copy(incremental = true, useFir = true)
 
         project.build("build", options = options) {
             assertSuccessful()
