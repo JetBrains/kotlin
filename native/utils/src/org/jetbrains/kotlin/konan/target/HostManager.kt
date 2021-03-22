@@ -95,7 +95,8 @@ open class HostManager(
         MACOS_ARM64 to setOf(
             // TODO: More targets will be added later after additional testing.
             MACOS_ARM64,
-            IOS_ARM64
+            IOS_ARM64,
+            LINUX_X64
         )
     )
 
