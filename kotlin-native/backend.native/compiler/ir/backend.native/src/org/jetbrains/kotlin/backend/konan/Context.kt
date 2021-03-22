@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
-import org.jetbrains.kotlin.backend.konan.optimizations.Devirtualization
+import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.descriptors.*
@@ -462,7 +462,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     var externalModulesDFG: ExternalModulesDFG? = null
     lateinit var lifetimes: MutableMap<IrElement, Lifetime>
     lateinit var codegenVisitor: CodeGeneratorVisitor
-    var devirtualizationAnalysisResult: Devirtualization.AnalysisResult? = null
+    var devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult? = null
 
     var referencedFunctions: Set<IrFunction>? = null
 

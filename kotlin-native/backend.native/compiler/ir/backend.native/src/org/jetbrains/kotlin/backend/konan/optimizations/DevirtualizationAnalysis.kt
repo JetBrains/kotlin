@@ -24,16 +24,11 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -52,7 +47,7 @@ inline fun BitSet.forEachBit(block: (Int) -> Unit) {
 
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.
-internal object Devirtualization {
+internal object DevirtualizationAnalysis {
 
     private val TAKE_NAMES = false // Take fqNames for all functions and types (for debug purposes).
 
@@ -120,9 +115,9 @@ internal object Devirtualization {
 
     private val VIRTUAL_TYPE_ID = 0 // Id of [DataFlowIR.Type.Virtual].
 
-    internal class DevirtualizationAnalysis(val context: Context,
-                                            val moduleDFG: ModuleDFG,
-                                            val externalModulesDFG: ExternalModulesDFG) {
+    internal class DevirtualizationAnalysisImpl(val context: Context,
+                                                val moduleDFG: ModuleDFG,
+                                                val externalModulesDFG: ExternalModulesDFG) {
 
         private val entryPoint = context.ir.symbols.entryPoint?.owner
 
@@ -1265,22 +1260,13 @@ internal object Devirtualization {
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
     class AnalysisResult(val devirtualizedCallSites: Map<DataFlowIR.Node.VirtualCall, DevirtualizedCallSite>,
-                         val typeHierarchy: DevirtualizationAnalysis.TypeHierarchy)
+                         val typeHierarchy: DevirtualizationAnalysisImpl.TypeHierarchy)
 
-    fun run(irModule: IrModuleFragment, context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG)
-            : AnalysisResult {
-        val devirtualizationAnalysisResult = DevirtualizationAnalysis(context, moduleDFG, externalModulesDFG).analyze()
-        val devirtualizedCallSites =
-                devirtualizationAnalysisResult.devirtualizedCallSites
-                        .asSequence()
-                        .filter { it.key.irCallSite != null }
-                        .associate { it.key.irCallSite!! to it.value }
-        devirtualize(irModule, context, externalModulesDFG, devirtualizedCallSites)
-        return devirtualizationAnalysisResult
-    }
+    fun run(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) =
+            DevirtualizationAnalysisImpl(context, moduleDFG, externalModulesDFG).analyze()
 
-    private fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
-                             devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
+    fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
+                     devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
         val symbols = context.ir.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val optimize = context.shouldOptimize()
