@@ -123,14 +123,16 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
     }
     if (dep is JpsLibraryDependency) {
         val libraryName = dep.libraryReference.libraryName
-        if (libraryName.startsWith("kotlinc.")) {
-            return listOf()
-        }
         val jpsLibrary = dep.resolve(moduleImlRootElement) ?: error("Cannot resolve jps library = $libraryName")
-        val mavenId = jpsLibrary.properties.safeAs<JpsSimpleElement<*>>()?.data
-            ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()?.mavenId
+        val mavenRepositoryLibraryDescriptor = jpsLibrary.properties
+            .safeAs<JpsSimpleElement<*>>()?.data
+            ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()
             ?: error("Cannot find maven coordinates for $jpsLibrary")
-        return listOf(jpsLikeJarDependency("\"$mavenId\"", dependencyConfiguration = null))
+        return if (libraryName.startsWith("kotlinc.")) {
+            listOf(jpsLikeModuleDependency(":prepare:ide-plugin-dependencies:${mavenRepositoryLibraryDescriptor.artifactId}"))
+        } else {
+            listOf(jpsLikeJarDependency("\"${mavenRepositoryLibraryDescriptor.mavenId}\"", dependencyConfiguration = null))
+        }
     }
     error("Unknown dependency: $dep")
 }
