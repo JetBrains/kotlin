@@ -24,7 +24,7 @@ internal class FilesRepository(
             .mapValues { (_, list) -> list.toSet() }
     }
 
-    override fun getLibraries(target: LeafCommonizerTarget): Set<NativeLibrary> {
+    override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {
         return librariesByTarget[target].orEmpty()
     }
 }

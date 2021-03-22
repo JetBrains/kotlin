@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
 
 class TargetProvider(
-    val target: LeafCommonizerTarget,
+    val target: CommonizerTarget,
     val modulesProvider: ModulesProvider,
     val dependencyModulesProvider: ModulesProvider?
 )

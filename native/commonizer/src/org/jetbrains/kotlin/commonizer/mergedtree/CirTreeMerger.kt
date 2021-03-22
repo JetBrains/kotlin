@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 
 import kotlinx.metadata.KmTypeParameter
 import org.jetbrains.kotlin.commonizer.CommonizerParameters
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.mergedtree.mergers.*
@@ -46,7 +47,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 class CirTreeMergeResult(
     val root: CirRootNode,
-    val missingModuleInfos: Map<LeafCommonizerTarget, Collection<ModuleInfo>>
+    val missingModuleInfos: Map<CommonizerTarget, Collection<ModuleInfo>>
 )
 
 internal class CirTargetMergingContext(

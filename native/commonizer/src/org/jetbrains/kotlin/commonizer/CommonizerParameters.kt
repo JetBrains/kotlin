@@ -12,12 +12,12 @@ class CommonizerParameters(
     val resultsConsumer: ResultsConsumer,
     val manifestDataProvider: TargetedNativeManifestDataProvider,
     // common module dependencies (ex: Kotlin stdlib)
-    val dependencyModulesProvider: ModulesProvider? = null,
+    val commonDependencyModulesProvider: ModulesProvider? = null,
     val statsCollector: StatsCollector? = null,
     val progressLogger: ((String) -> Unit)? = null
 ) {
     // use linked hash map to preserve order
-    private val _targetProviders = LinkedHashMap<LeafCommonizerTarget, TargetProvider>()
+    private val _targetProviders = LinkedHashMap<CommonizerTarget, TargetProvider>()
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
 
     fun addTarget(targetProvider: TargetProvider): CommonizerParameters {
