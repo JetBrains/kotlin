@@ -29,8 +29,8 @@ open class FirPropertySymbol(
 
 class FirIntersectionOverridePropertySymbol(
     callableId: CallableId,
-    val intersections: Collection<FirCallableSymbol<*>>
-) : FirPropertySymbol(callableId)
+    override val intersections: Collection<FirCallableSymbol<*>>
+) : FirPropertySymbol(callableId), FirIntersectionCallableSymbol
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
 

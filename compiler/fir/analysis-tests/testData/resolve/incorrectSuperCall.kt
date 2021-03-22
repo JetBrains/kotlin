@@ -11,7 +11,7 @@ open class B {
     open fun baz() {}
 }
 
-class C : A, B() {
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B() {
     override fun foo() {
         super.foo()
 

@@ -16,11 +16,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverridePropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -40,6 +50,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val classScope = declaration.unsubstitutedScope(context)
 
         val notImplementedSymbols = mutableListOf<FirCallableSymbol<*>>()
+        val notImplementedIntersectionSymbols = mutableListOf<FirCallableSymbol<*>>()
         val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()
         val classPackage = declaration.symbol.classId.packageFqName
 
@@ -64,6 +75,15 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         for (name in classScope.getCallableNames()) {
             classScope.processFunctionsByName(name) { namedFunctionSymbol ->
                 val simpleFunction = namedFunctionSymbol.fir
+                if (namedFunctionSymbol is FirIntersectionOverrideFunctionSymbol) {
+                    if (namedFunctionSymbol.intersections.count {
+                            (it.fir as FirCallableMemberDeclaration).modality != Modality.ABSTRACT
+                        } > 1 && simpleFunction.getContainingClass(context) === declaration
+                    ) {
+                        notImplementedIntersectionSymbols += namedFunctionSymbol
+                        return@processFunctionsByName
+                    }
+                }
                 if (!simpleFunction.shouldBeImplemented()) return@processFunctionsByName
                 if (declaration is FirRegularClass && declaration.isData && simpleFunction.matchesDataClassSyntheticMemberSignatures) {
                     return@processFunctionsByName
@@ -79,6 +99,15 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             }
             classScope.processPropertiesByName(name) { propertySymbol ->
                 val property = propertySymbol.fir as? FirProperty ?: return@processPropertiesByName
+                if (propertySymbol is FirIntersectionOverridePropertySymbol) {
+                    if (propertySymbol.intersections.count {
+                            (it.fir as FirCallableMemberDeclaration).modality != Modality.ABSTRACT
+                        } > 1 && property.getContainingClass(context) === declaration
+                    ) {
+                        notImplementedIntersectionSymbols += propertySymbol
+                        return@processPropertiesByName
+                    }
+                }
                 if (!property.shouldBeImplemented()) return@processPropertiesByName
 
                 if (property.isInvisible()) {
@@ -92,17 +121,30 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         if (notImplementedSymbols.isNotEmpty()) {
             val notImplemented = notImplementedSymbols.first().fir
             if (notImplemented.isFromInterfaceOrEnum(context)) {
-                reporter.reportOn(source, FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
+                reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
             } else {
-                reporter.reportOn(source, FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
+                reporter.reportOn(source, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
             }
         }
         if (invisibleSymbols.isNotEmpty()) {
             val invisible = invisibleSymbols.first().fir
             if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses)) {
-                reporter.reportOn(source, FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, declaration, invisible, context)
+                reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, declaration, invisible, context)
             } else {
-                reporter.reportOn(source, FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING, declaration, invisible, context)
+                reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING, declaration, invisible, context)
+            }
+        }
+        if (notImplementedIntersectionSymbols.isNotEmpty()) {
+            val notImplementedIntersectionSymbol = notImplementedIntersectionSymbols.first()
+            val notImplementedIntersection = notImplementedIntersectionSymbol.fir
+            val intersections = (notImplementedIntersectionSymbol as FirIntersectionCallableSymbol).intersections
+            if (intersections.any {
+                    (it.containingClass()?.toSymbol(context.session)?.fir as? FirRegularClass)?.classKind == ClassKind.CLASS
+                }
+            ) {
+                reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, declaration, notImplementedIntersection, context)
+            } else {
+                reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, declaration, notImplementedIntersection, context)
             }
         }
     }

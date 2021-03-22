@@ -25,10 +25,14 @@ open class FirNamedFunctionSymbol(
     callableId: CallableId,
 ) : FirFunctionSymbol<FirSimpleFunction>(callableId)
 
+interface FirIntersectionCallableSymbol {
+    val intersections: Collection<FirCallableSymbol<*>>
+}
+
 class FirIntersectionOverrideFunctionSymbol(
     callableId: CallableId,
-    val intersections: Collection<FirCallableSymbol<*>>
-) : FirNamedFunctionSymbol(callableId)
+    override val intersections: Collection<FirCallableSymbol<*>>
+) : FirNamedFunctionSymbol(callableId), FirIntersectionCallableSymbol
 
 class FirConstructorSymbol(
     callableId: CallableId

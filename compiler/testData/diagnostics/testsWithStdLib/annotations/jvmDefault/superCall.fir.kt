@@ -53,7 +53,7 @@ class ManySupers2: Foo2(), C {
     }
 }
 
-class ManySupers3: Bar2(), C {
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class ManySupers3<!>: Bar2(), C {
     fun foo() {
         super<Bar2>.test()
         super<C>.test()
