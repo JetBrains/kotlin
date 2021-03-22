@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
-class LazyPackageViewDescriptorImpl(
+open class LazyPackageViewDescriptorImpl(
     override val module: ModuleDescriptorImpl,
     override val fqName: FqName,
     storageManager: StorageManager

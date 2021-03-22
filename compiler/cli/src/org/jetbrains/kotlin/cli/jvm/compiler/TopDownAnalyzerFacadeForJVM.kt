@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -143,13 +144,14 @@ object TopDownAnalyzerFacadeForJVM {
         klibList: List<KotlinLibrary> = emptyList(),
         implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null,
         explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList(),
-        explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList()
+        explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList(),
+        moduleCapabilities: Map<ModuleCapability<*>, Any?> = emptyMap()
     ): ComponentProvider {
         val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
         val languageVersionSettings = configuration.languageVersionSettings
         val jvmPlatform = JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget)
 
-        val moduleContext = createModuleContext(project, configuration, jvmPlatform)
+        val moduleContext = createModuleContext(project, configuration, jvmPlatform, moduleCapabilities)
 
         val storageManager = moduleContext.storageManager
         val module = moduleContext.module
@@ -318,11 +320,17 @@ object TopDownAnalyzerFacadeForJVM {
         }
     }
 
-    private fun createModuleContext(project: Project, configuration: CompilerConfiguration, platform: TargetPlatform?): MutableModuleContext {
+    private fun createModuleContext(
+        project: Project,
+        configuration: CompilerConfiguration,
+        platform: TargetPlatform?,
+        capabilities: Map<ModuleCapability<*>, Any?> = emptyMap()
+    ): MutableModuleContext {
         val projectContext = ProjectContext(project, "TopDownAnalyzer for JVM")
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
         return ContextForNewModule(
-            projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"), builtIns, platform
+            projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
+            builtIns, platform, capabilities
         ).apply {
             builtIns.builtInsModule = module
         }
