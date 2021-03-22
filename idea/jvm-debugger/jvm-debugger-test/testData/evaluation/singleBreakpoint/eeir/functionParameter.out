@@ -1,0 +1,8 @@
+LineBreakpoint created at functionParameter.kt:5
+Run Java
+Connected to the target VM
+functionParameter.kt:5
+Compile bytecode for x + y + z
+Disconnected from the target VM
+
+Process finished with exit code 0

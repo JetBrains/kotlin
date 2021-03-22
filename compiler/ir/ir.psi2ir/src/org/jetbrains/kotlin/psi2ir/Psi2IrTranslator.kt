@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.utils.SmartList
 
 typealias Psi2IrPostprocessingStep = (IrModuleFragment) -> Unit
@@ -117,6 +119,20 @@ class Psi2IrTranslator(
                     symbolTable.referenceValueParameter(codegenInfo.methodDescriptor.valueParameters[parameterPosition])
                 } else {
                     symbolTable.referenceValue(descriptor)
+                }
+            }
+
+            override fun referenceValueParameter(
+                symbolTable: SymbolTable,
+                descriptor: ReceiverParameterDescriptor
+            ): IrValueSymbol {
+                //TODO(kjaa): this cast feels _waaaaaay_ specific. maybe a dispatch, here? Or simply just case-by-case it.
+                val parameterPosition =
+                    codegenInfo.parameters.map { it.targetDescriptor }.indexOf((descriptor.value as ImplicitClassReceiver).classDescriptor)
+                return if (parameterPosition > -1) {
+                    symbolTable.referenceValueParameter(codegenInfo.methodDescriptor.valueParameters[parameterPosition])
+                } else {
+                    symbolTable.referenceValueParameter(descriptor)
                 }
             }
         }
