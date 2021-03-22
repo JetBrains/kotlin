@@ -310,12 +310,8 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
             else allPreviousLines.subList(1, allPreviousLines.size)
 
         return ScriptCompilationConfiguration(configuration) {
-            skipExtensionsResolutionForImplicits.update {
-                it?.also { it.toMutableList().addAll(skipAlways) } ?: skipAlways
-            }
-            skipExtensionsResolutionForImplicitsExceptInnermost.update {
-                it?.also { it.toMutableList().addAll(skipFirstTime) } ?: skipFirstTime
-            }
+            skipExtensionsResolutionForImplicits(*skipAlways.toTypedArray())
+            skipExtensionsResolutionForImplicitsExceptInnermost(*skipFirstTime.toTypedArray())
         }
     }
 
