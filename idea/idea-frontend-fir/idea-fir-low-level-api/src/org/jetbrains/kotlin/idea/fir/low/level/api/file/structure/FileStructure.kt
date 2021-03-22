@@ -63,10 +63,8 @@ internal class FileStructure(
     fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> {
         val structureElements = getAllStructureElements()
 
-        return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
-            buildSet {
-                collectDiagnosticsFromStructureElements(structureElements, diagnosticCheckerFilter)
-            }
+        return buildSet {
+            collectDiagnosticsFromStructureElements(structureElements, diagnosticCheckerFilter)
         }
     }
 
