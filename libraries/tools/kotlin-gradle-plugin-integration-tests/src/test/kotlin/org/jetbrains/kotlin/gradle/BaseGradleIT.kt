@@ -231,7 +231,8 @@ abstract class BaseGradleIT {
         val jsCompilerType: KotlinJsCompilerType? = null,
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
-        val warningMode: WarningMode = WarningMode.Fail
+        val warningMode: WarningMode = WarningMode.Fail,
+        val useFir: Boolean = false
     )
 
     enum class ConfigurationCacheProblems {
@@ -905,6 +906,10 @@ Finished executing task ':$taskName'|
 
             options.jsCompilerType?.let {
                 add("-Pkotlin.js.compiler=$it")
+            }
+
+            if (options.useFir) {
+                add("-Pkotlin.useFir=true")
             }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
