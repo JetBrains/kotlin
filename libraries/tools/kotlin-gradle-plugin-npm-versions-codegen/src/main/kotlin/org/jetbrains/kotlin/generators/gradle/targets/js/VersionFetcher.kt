@@ -22,16 +22,35 @@ class VersionFetcher : AutoCloseable {
         return coroutineScope {
             npmPackages
                 .filter { it.version != null }
-                .map { HardcodedPackageInformation(it.displayName, it.version!!) } +
+                .map {
+                    HardcodedPackageInformation(
+                        it.name,
+                        it.version!!,
+                        it.displayName
+                    )
+                } +
                     npmPackages
                         .filter { it.version == null }
-                        .map { async { it.displayName to fetchPackageInformationAsync(it.name) } }
+                        .map {
+                            async {
+                                val fetched = fetchPackageInformationAsync(it.name)
+                                object {
+                                    val name = it.name
+                                    val displayName = it.displayName
+                                    val fetched = fetched
+                                }
+                            }
+                        }
                         .map { fetched ->
-                            val (packageName, value) = fetched.await()
-                            val fetchedPackageInformation = Gson().fromJson(value, FetchedPackageInformation::class.java)
+                            val await = fetched.await()
+                            val name = await.name
+                            val displayName = await.displayName
+                            val awaitFetched = await.fetched
+                            val fetchedPackageInformation = Gson().fromJson(awaitFetched, FetchedPackageInformation::class.java)
                             RealPackageInformation(
-                                packageName,
-                                fetchedPackageInformation.versions.keys
+                                name,
+                                fetchedPackageInformation.versions.keys,
+                                displayName
                             )
                         }
         }

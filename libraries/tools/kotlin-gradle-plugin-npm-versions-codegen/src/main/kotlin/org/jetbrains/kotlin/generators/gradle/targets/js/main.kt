@@ -65,7 +65,8 @@ fun findLastVersions(packages: List<PackageInformation>): List<Package> {
 
             Package(
                 packageInformation.name,
-                maximumVersion
+                maximumVersion,
+                packageInformation.displayName
             )
         }
 }
