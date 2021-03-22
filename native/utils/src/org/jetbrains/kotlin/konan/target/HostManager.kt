@@ -93,10 +93,18 @@ open class HostManager(
             WASM32
         ),
         MACOS_ARM64 to setOf(
-            // TODO: More targets will be added later after additional testing.
             MACOS_ARM64,
+            MACOS_X64,
+            IOS_ARM32,
             IOS_ARM64,
-            LINUX_X64
+            IOS_X64,
+            WATCHOS_ARM32,
+            WATCHOS_ARM64,
+            WATCHOS_X86,
+            WATCHOS_X64,
+            TVOS_ARM64,
+            TVOS_X64,
+            LINUX_X64,
         )
     )
 
