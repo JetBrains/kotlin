@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
@@ -43,9 +44,13 @@ internal class KtFirSymbolProvider(
         firSymbolBuilder.buildFileSymbol(psi.getFirFile(resolveState))
     }
 
-    override fun getFunctionSymbol(psi: KtNamedFunction): KtFunctionSymbol = withValidityAssertion {
-        psi.withFirDeclarationOfType<FirSimpleFunction, KtFunctionSymbol>(resolveState) {
-            firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(it)
+    override fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol = withValidityAssertion {
+        psi.withFirDeclarationOfType<FirFunction<*>, KtFunctionLikeSymbol>(resolveState) { fir ->
+            when (fir) {
+                is FirSimpleFunction -> firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(fir)
+                is FirAnonymousFunction -> firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(fir)
+                else -> error("Unexpected ${fir.renderWithType()}")
+            }
         }
     }
 

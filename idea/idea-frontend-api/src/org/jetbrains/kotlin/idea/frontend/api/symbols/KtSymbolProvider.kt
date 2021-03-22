@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.*
 abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     open fun getSymbol(psi: KtDeclaration): KtSymbol = when (psi) {
         is KtParameter -> getParameterSymbol(psi)
-        is KtNamedFunction -> getFunctionSymbol(psi)
+        is KtNamedFunction -> getFunctionLikeSymbol(psi)
         is KtConstructor<*> -> getConstructorSymbol(psi)
         is KtTypeParameter -> getTypeParameterSymbol(psi)
         is KtTypeAlias -> getTypeAliasSymbol(psi)
@@ -32,7 +32,7 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
 
     abstract fun getParameterSymbol(psi: KtParameter): KtValueParameterSymbol
     abstract fun getFileSymbol(psi: KtFile): KtFileSymbol
-    abstract fun getFunctionSymbol(psi: KtNamedFunction): KtFunctionSymbol
+    abstract fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol
     abstract fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol
     abstract fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol
     abstract fun getTypeAliasSymbol(psi: KtTypeAlias): KtTypeAliasSymbol
@@ -57,8 +57,14 @@ interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     fun KtParameter.getParameterSymbol(): KtValueParameterSymbol =
         analysisSession.symbolProvider.getParameterSymbol(this)
 
-    fun KtNamedFunction.getFunctionSymbol(): KtFunctionSymbol =
-        analysisSession.symbolProvider.getFunctionSymbol(this)
+    /**
+     * Creates [KtFunctionLikeSymbol] by [KtNamedFunction]
+     *
+     * If [KtNamedFunction.getName] is `null` then returns [KtAnonymousFunctionSymbol]
+     * Otherwise, returns [KtFunctionSymbol]
+     */
+    fun KtNamedFunction.getFunctionLikeSymbol(): KtFunctionLikeSymbol =
+        analysisSession.symbolProvider.getFunctionLikeSymbol(this)
 
     fun KtConstructor<*>.getConstructorSymbol(): KtConstructorSymbol =
         analysisSession.symbolProvider.getConstructorSymbol(this)
