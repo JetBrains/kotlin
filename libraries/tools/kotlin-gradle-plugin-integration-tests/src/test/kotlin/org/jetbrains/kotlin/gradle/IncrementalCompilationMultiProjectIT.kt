@@ -29,7 +29,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         get() = "compileKotlin2Js"
 }
 
-class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val additionalLibDependencies: String =
         "implementation \"org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version\""
 
@@ -139,6 +139,12 @@ open class A {
     }
 }
 
+class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(useFir = true)
+    }
+}
+
 abstract class BaseIncrementalCompilationMultiProjectIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
@@ -194,6 +200,9 @@ open class A {
 
     @Test
     fun testLibClassBecameFinal() {
+        // TODO: fix fir IC and remove
+        if (defaultBuildOptions().useFir) return
+
         val project = defaultProject()
         project.build("build") {
             assertSuccessful()

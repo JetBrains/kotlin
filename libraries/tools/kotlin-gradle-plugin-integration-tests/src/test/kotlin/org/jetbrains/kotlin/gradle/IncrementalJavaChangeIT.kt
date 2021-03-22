@@ -34,7 +34,7 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(use
     }
 }
 
-class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = false) {
+open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = false) {
     @Test
     override fun testModifySignatureTrackedJavaInLib() {
         doTest(
@@ -55,6 +55,12 @@ class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesB
                 "useTrackedJavaClassSameModule.kt"
             )
         )
+    }
+}
+
+class IncrementalFirJavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(useFir = true)
     }
 }
 
