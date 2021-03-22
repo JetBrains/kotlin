@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -332,6 +333,7 @@ open class ComposableCallChecker :
         val expectedType = c.expectedType
         if (expectedType === TypeUtils.NO_EXPECTED_TYPE) return
         if (expectedType === TypeUtils.UNIT_EXPECTED_TYPE) return
+        if (expectedType.isAnyOrNullableAny()) return
         val expectedComposable = expectedType.hasComposableAnnotation()
         if (expression is KtLambdaExpression) {
             val descriptor = bindingContext[BindingContext.FUNCTION, expression.functionLiteral]
