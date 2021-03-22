@@ -42,6 +42,10 @@ abstract class AbstractKotlinNativeCompilation(
             get() = languageSettings.languageVersion
             set(value) { languageSettings.languageVersion = value }
 
+        override var useFir: Boolean
+            get() = false
+            set(@Suppress("UNUSED_PARAMETER") value) {}
+
         override var allWarningsAsErrors: Boolean = false
         override var suppressWarnings: Boolean = false
         override var verbose: Boolean = false

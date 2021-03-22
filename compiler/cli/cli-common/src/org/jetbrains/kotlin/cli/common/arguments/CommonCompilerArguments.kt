@@ -304,6 +304,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var checkStickyPhaseConditions: Boolean by FreezableVar(false)
 
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(
         value = "-Xuse-fir",
         description = "Compile using Front-end IR. Warning: this feature is far from being production-ready"
