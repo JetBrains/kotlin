@@ -180,7 +180,8 @@ class CodeConformanceTest : TestCase() {
                 "@author" in source && atAuthorPattern.matcher(source).find() &&
                         "ASM: a very small and fast Java bytecode manipulation framework" !in source &&
                         "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source &&
-                        !file.relativeTo(root).systemIndependentPath.startsWith("kotlin-ultimate/ide/common-cidr-native")
+                        !file.relativeTo(root).systemIndependentPath.startsWith("kotlin-ultimate/ide/common-cidr-native") &&
+                        file.name != "CLionKonanProjectDataService.kt"
             },
             TestData(
                 "%d source files use something from com.beust.jcommander.internal package.\n" +
@@ -302,17 +303,21 @@ class CodeConformanceTest : TestCase() {
         val repoCheckers = listOf(
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf("gradle/cacheRedirector.gradle.kts")
+                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
+                setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
+                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
+                setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root, setOf("gradle/cacheRedirector.gradle.kts")
+                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root,
+                setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
+                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
+                setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList("kotlin/ktor", root, setOf("gradle/cacheRedirector.gradle.kts")),
             RepoAllowList("bintray.com/kotlin-dependencies", root, setOf("gradle/cacheRedirector.gradle.kts")),
@@ -349,12 +354,14 @@ class CodeConformanceTest : TestCase() {
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
                 "https://dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
-                    "kotlin-ultimate/build.gradle.kts"
+                    "kotlin-ultimate/build.gradle.kts",
+                    "gradle/cacheRedirector.gradle.kts"
                 )
             ),
             RepoAllowList(
                 "https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
-                    "kotlin-ultimate/build.gradle.kts"
+                    "kotlin-ultimate/build.gradle.kts",
+                    "gradle/cacheRedirector.gradle.kts"
                 )
             ),
         )
