@@ -220,6 +220,12 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         .mapValues { entry -> entry.value.joinToString("\n") { convertJpsModuleSourceRoot(imlFile, it) } }
         .let { Pair(it[false] ?: "", it[true] ?: "") }
 
+    val mavenRepos = KOTLIN_REPO_ROOT.resolve(KOTLIN_IDE_DIR_NAME).resolve(".idea/jarRepositories.xml").readXml().traverseChildren()
+        .filter { it.getAttributeValue("name") == "url" }
+        .map { it.getAttributeValue("value")!! }
+        .map { "maven { setUrl(\"$it\") }" }
+        .joinToString("\n")
+
     val moduleImlRootElement = imlFile.readXml()
     val deps = jpsModule.dependencies.flatMap { convertJpsDependencyElement(it, moduleImlRootElement) }
         .distinct()
@@ -233,6 +239,10 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |plugins {
         |    kotlin("jvm")
         |    id("jps-compatible")
+        |}
+        |
+        |repositories {
+        |    $mavenRepos
         |}
         |
         |dependencies {
