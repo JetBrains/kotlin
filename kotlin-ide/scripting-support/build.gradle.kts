@@ -8,7 +8,16 @@ plugins {
 }
 
 dependencies {
+    jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(project(":kotlin-reflect"), JpsDepScope.TEST)
     jpsLikeJarDependency("junit:junit:4.12", JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide"), JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":kotlin-scripting-compiler"), JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":kotlin-scripting-compiler-impl"), JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":kotlin-scripting-jvm"), JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":kotlin-script-runtime"), JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":kotlin-script-util"), JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":kotlin-scripting-common"), JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.TEST)

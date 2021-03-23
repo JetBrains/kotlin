@@ -9,6 +9,8 @@ plugins {
 
 dependencies {
     jpsLikeModuleDependency(":kotlin-ide:fir", JpsDepScope.TEST)
+    jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(project(":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide"), JpsDepScope.COMPILE)
     jpsLikeJarDependency("com.google.code.gson:gson:2.8.6", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:resources-fir", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:frontend-fir", JpsDepScope.TEST)

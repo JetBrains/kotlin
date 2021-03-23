@@ -8,7 +8,10 @@ plugins {
 }
 
 dependencies {
+    jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(project(":kotlin-reflect"), JpsDepScope.COMPILE)
     jpsLikeJarDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(project(":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide"), JpsDepScope.RUNTIME)
     jpsLikeJarDependency("org.yaml:snakeyaml:1.24", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:project-wizard:core", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)

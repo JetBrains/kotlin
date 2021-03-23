@@ -8,7 +8,10 @@ plugins {
 }
 
 dependencies {
+    jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":kotlin-reflect"), JpsDepScope.TEST)
     jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test:1.4.0", JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide"), JpsDepScope.TEST)
     jpsLikeJarDependency("org.jetbrains.intellij.deps:trove4j:1.0.20200330", JpsDepScope.TEST)
     jpsLikeJarDependency("org.testng:testng:7.1.0", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:jps:jps-common", JpsDepScope.TEST)

@@ -9,6 +9,9 @@ plugins {
 
 dependencies {
     jpsLikeModuleDependency(":kotlin-ide:resources-fir", JpsDepScope.TEST)
+    jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(project(":kotlin-reflect"), JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide"), JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:fir-low-level-api", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:frontend-api", JpsDepScope.COMPILE)

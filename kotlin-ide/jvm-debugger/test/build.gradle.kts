@@ -8,10 +8,13 @@ plugins {
 }
 
 dependencies {
+    jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(project(":kotlin-reflect"), JpsDepScope.COMPILE)
     jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test:1.4.0", JpsDepScope.TEST)
     jpsLikeJarDependency("org.jetbrains.intellij.deps:asm-all:9.0", JpsDepScope.TEST)
     jpsLikeJarDependency("com.google.guava:guava:29.0-jre", JpsDepScope.TEST)
     jpsLikeJarDependency("org.jetbrains.intellij.deps:jb-jdi:2.3", JpsDepScope.TEST)
+    jpsLikeJarDependency(project(":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide"), JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.TEST)
