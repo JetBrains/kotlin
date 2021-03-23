@@ -1132,4 +1132,102 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
             }
         }
     }
+
+    @TestMetadata("idea/testData/quickfix/addInitializer")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddInitializer extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddInitializer() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("localVar.kt")
+        public void testLocalVar() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/localVar.kt");
+        }
+
+        @TestMetadata("memberExtensionProperty.kt")
+        public void testMemberExtensionProperty() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberExtensionProperty.kt");
+        }
+
+        @TestMetadata("memberExtensionPropertyVarGetterOnly.kt")
+        public void testMemberExtensionPropertyVarGetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberExtensionPropertyVarGetterOnly.kt");
+        }
+
+        @TestMetadata("memberExtensionPropertyVarSetterOnly.kt")
+        public void testMemberExtensionPropertyVarSetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberExtensionPropertyVarSetterOnly.kt");
+        }
+
+        @TestMetadata("memberProperty.kt")
+        public void testMemberProperty() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberProperty.kt");
+        }
+
+        @TestMetadata("memberPropertyVarGetterOnly.kt")
+        public void testMemberPropertyVarGetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberPropertyVarGetterOnly.kt");
+        }
+
+        @TestMetadata("memberPropertyVarSetterOnly.kt")
+        public void testMemberPropertyVarSetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberPropertyVarSetterOnly.kt");
+        }
+
+        @TestMetadata("memberPropertyWithAccessor.kt")
+        public void testMemberPropertyWithAccessor() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberPropertyWithAccessor.kt");
+        }
+
+        @TestMetadata("memberPropertyWithDelegateRuntime.kt")
+        public void testMemberPropertyWithDelegateRuntime() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberPropertyWithDelegateRuntime.kt");
+        }
+
+        @TestMetadata("topLevelExtensionProperty.kt")
+        public void testTopLevelExtensionProperty() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelExtensionProperty.kt");
+        }
+
+        @TestMetadata("topLevelExtensionPropertySetterOnly.kt")
+        public void testTopLevelExtensionPropertySetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelExtensionPropertySetterOnly.kt");
+        }
+
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelProperty.kt");
+        }
+
+        @TestMetadata("topLevelPropertyVarClass.kt")
+        public void testTopLevelPropertyVarClass() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarClass.kt");
+        }
+
+        @TestMetadata("topLevelPropertyVarGetterOnly.kt")
+        public void testTopLevelPropertyVarGetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarGetterOnly.kt");
+        }
+
+        @TestMetadata("topLevelPropertyVarSetterOnly.kt")
+        public void testTopLevelPropertyVarSetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarSetterOnly.kt");
+        }
+
+        @TestMetadata("topLevelPropertyWithDelegateRuntime.kt")
+        public void testTopLevelPropertyWithDelegateRuntime() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyWithDelegateRuntime.kt");
+        }
+
+        @TestMetadata("topLevelPropertyWithGetter.kt")
+        public void testTopLevelPropertyWithGetter() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyWithGetter.kt");
+        }
+    }
 }
