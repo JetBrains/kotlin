@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -274,26 +275,25 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateUnboxMethodForInlineClass() {
         if (!(myClass instanceof KtClass)) return;
-        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
+        InlineClassRepresentation<SimpleType> inlineClassRepresentation = descriptor.getInlineClassRepresentation();
+        if (inlineClassRepresentation == null) return;
 
         Type ownerType = typeMapper.mapClass(descriptor);
-        ValueParameterDescriptor inlinedValue = InlineClassesUtilsKt.underlyingRepresentation(this.descriptor);
-        if (inlinedValue == null) return;
-
-        Type valueType = typeMapper.mapType(inlinedValue.getType());
+        Type valueType = typeMapper.mapType(inlineClassRepresentation.getUnderlyingType());
         SimpleFunctionDescriptor functionDescriptor = InlineClassDescriptorResolver.createUnboxFunctionDescriptor(this.descriptor);
-        assert functionDescriptor != null : "FunctionDescriptor for unbox method should be not null during codegen";
 
         functionCodegen.generateMethod(
                 JvmDeclarationOriginKt.UnboxMethodOfInlineClass(functionDescriptor), functionDescriptor,
                 new FunctionGenerationStrategy.CodegenBased(state) {
                     @Override
-                    public void doGenerateBody(
-                            @NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature
-                    ) {
+                    public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                         InstructionAdapter iv = codegen.v;
                         iv.load(0, OBJECT_TYPE);
-                        iv.getfield(ownerType.getInternalName(), inlinedValue.getName().asString(), valueType.getDescriptor());
+                        iv.getfield(
+                                ownerType.getInternalName(),
+                                inlineClassRepresentation.getUnderlyingPropertyName().asString(),
+                                valueType.getDescriptor()
+                        );
                         iv.areturn(valueType);
                     }
                 }

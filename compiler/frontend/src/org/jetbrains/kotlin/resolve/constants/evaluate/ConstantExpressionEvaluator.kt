@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
@@ -857,7 +858,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 }
 
                 classDescriptor.isInlineClass() && UnsignedTypes.isUnsignedClass(classDescriptor) ->
-                    createConstantValueForUnsignedTypeConstructor(call, resultingDescriptor, classDescriptor)
+                    createConstantValueForUnsignedTypeConstructor(call, resultingDescriptor, classDescriptor.inlineClassRepresentation!!)
 
                 else -> null
             }
@@ -869,20 +870,17 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun createConstantValueForUnsignedTypeConstructor(
         call: ResolvedCall<*>,
         constructorDescriptor: ConstructorDescriptor,
-        classDescriptor: ClassDescriptor
+        representation: InlineClassRepresentation<SimpleType>,
     ): TypedCompileTimeConstant<*>? {
-        assert(classDescriptor.isInlineClass()) { "Unsigned type should be an inline class type, but it is: $classDescriptor" }
-
         if (!constructorDescriptor.isPrimary) return null
 
         val valueArguments = call.valueArguments
         if (valueArguments.size > 1) return null
 
-        val underlyingType = classDescriptor.underlyingRepresentation()?.type ?: return null
-
         val argument = valueArguments.values.singleOrNull()?.arguments?.singleOrNull() ?: return null
         val argumentExpression = argument.getArgumentExpression() ?: return null
 
+        val underlyingType = representation.underlyingType
         val compileTimeConstant = evaluate(argumentExpression, underlyingType)
         val evaluatedArgument = compileTimeConstant?.toConstantValue(underlyingType) ?: return null
 

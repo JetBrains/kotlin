@@ -165,17 +165,18 @@ class DescriptorSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
-        classDescriptor.underlyingRepresentation()?.let { parameter ->
-            builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(parameter.name)
+        val representation = classDescriptor.inlineClassRepresentation
+        if (representation != null) {
+            builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.underlyingPropertyName)
 
             val property = callableMembers.single {
-                it is PropertyDescriptor && it.extensionReceiverParameter == null && it.name == parameter.name
+                it is PropertyDescriptor && it.extensionReceiverParameter == null && it.name == representation.underlyingPropertyName
             }
             if (!property.visibility.isPublicAPI) {
                 if (useTypeTable()) {
-                    builder.inlineClassUnderlyingTypeId = typeId(parameter.type)
+                    builder.inlineClassUnderlyingTypeId = typeId(representation.underlyingType)
                 } else {
-                    builder.setInlineClassUnderlyingType(type(parameter.type))
+                    builder.setInlineClassUnderlyingType(type(representation.underlyingType))
                 }
             }
         }

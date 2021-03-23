@@ -72,7 +72,7 @@ class ErasedInlineClassBodyCodegen(
     }
 
     private fun generateUnboxMethod() {
-        val boxMethodDescriptor = InlineClassDescriptorResolver.createBoxFunctionDescriptor(descriptor) ?: return
+        val boxMethodDescriptor = InlineClassDescriptorResolver.createBoxFunctionDescriptor(descriptor)
 
         functionCodegen.generateMethod(
             Synthetic(null, boxMethodDescriptor), boxMethodDescriptor, object : FunctionGenerationStrategy.CodegenBased(state) {
@@ -103,7 +103,7 @@ class ErasedInlineClassBodyCodegen(
     }
 
     private fun generateSpecializedEqualsStub() {
-        val specializedEqualsDescriptor = InlineClassDescriptorResolver.createSpecializedEqualsDescriptor(descriptor) ?: return
+        val specializedEqualsDescriptor = InlineClassDescriptorResolver.createSpecializedEqualsDescriptor(descriptor)
 
         functionCodegen.generateMethod(
             Synthetic(null, specializedEqualsDescriptor), specializedEqualsDescriptor, object : FunctionGenerationStrategy.CodegenBased(state) {

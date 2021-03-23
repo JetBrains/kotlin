@@ -20,6 +20,7 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.backend.common.SamType;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
@@ -92,7 +93,6 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker;
 import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.kotlin.backend.common.SamType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -2024,10 +2024,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     // Do not unbox parameters of suspend lambda, they are unboxed in `invoke` method
                     !CoroutineCodegenUtilKt.isInvokeSuspendOfLambda(context.getFunctionDescriptor())
                 ) {
-                    KotlinType underlyingType = InlineClassesUtilsKt.underlyingRepresentation(
-                            (ClassDescriptor) inlineClassType.getConstructor().getDeclarationDescriptor()).getType();
-                    return StackValue.underlyingValueOfInlineClass(
-                            typeMapper.mapType(underlyingType), underlyingType, localOrCaptured);
+                    ClassDescriptor inlineClass = (ClassDescriptor) inlineClassType.getConstructor().getDeclarationDescriptor();
+                    InlineClassRepresentation<SimpleType> representation =
+                            inlineClass != null ? inlineClass.getInlineClassRepresentation() : null;
+                    assert representation != null : "Not an inline class: " + inlineClassType;
+                    KotlinType underlyingType = representation.getUnderlyingType();
+                    return StackValue.underlyingValueOfInlineClass(typeMapper.mapType(underlyingType), underlyingType, localOrCaptured);
                 }
             }
             return localOrCaptured;

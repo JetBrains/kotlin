@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.types.KotlinType
 
 object InlineClassDescriptorResolver {
     @JvmField
@@ -28,11 +29,11 @@ object InlineClassDescriptorResolver {
     val SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME = Name.identifier("p2")
 
     @JvmStatic
-    fun createBoxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? =
+    fun createBoxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor =
         createConversionFunctionDescriptor(true, owner)
 
     @JvmStatic
-    fun createUnboxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? =
+    fun createUnboxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor =
         createConversionFunctionDescriptor(false, owner)
 
     @JvmStatic
@@ -57,9 +58,7 @@ object InlineClassDescriptorResolver {
     private fun isSynthesizedInlineClassMember(descriptor: CallableMemberDescriptor) =
         descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED && descriptor.containingDeclaration.isInlineClass()
 
-    fun createSpecializedEqualsDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? {
-        val inlinedValue = owner.underlyingRepresentation() ?: return null
-
+    fun createSpecializedEqualsDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor {
         val functionDescriptor = SimpleFunctionDescriptorImpl.create(
             owner,
             Annotations.EMPTY,
@@ -72,7 +71,7 @@ object InlineClassDescriptorResolver {
             null,
             null,
             emptyList<TypeParameterDescriptor>(),
-            createValueParametersForSpecializedEquals(functionDescriptor, inlinedValue),
+            createValueParametersForSpecializedEquals(functionDescriptor, owner.inlineClassRepresentation!!.underlyingType),
             owner.builtIns.booleanType,
             Modality.FINAL,
             DescriptorVisibilities.PUBLIC
@@ -81,12 +80,7 @@ object InlineClassDescriptorResolver {
         return functionDescriptor
     }
 
-    private fun createConversionFunctionDescriptor(
-        isBoxMethod: Boolean,
-        owner: ClassDescriptor
-    ): SimpleFunctionDescriptor? {
-        val inlinedValue = owner.underlyingRepresentation() ?: return null
-
+    private fun createConversionFunctionDescriptor(isBoxMethod: Boolean, owner: ClassDescriptor): SimpleFunctionDescriptor {
         val functionDescriptor = SimpleFunctionDescriptorImpl.create(
             owner,
             Annotations.EMPTY,
@@ -95,12 +89,13 @@ object InlineClassDescriptorResolver {
             SourceElement.NO_SOURCE
         )
 
+        val underlyingType = owner.inlineClassRepresentation!!.underlyingType
         functionDescriptor.initialize(
             null,
             if (isBoxMethod) null else owner.thisAsReceiverParameter,
             emptyList<TypeParameterDescriptor>(),
-            if (isBoxMethod) listOf(createValueParameterForBoxing(functionDescriptor, inlinedValue)) else emptyList(),
-            if (isBoxMethod) owner.defaultType else inlinedValue.returnType,
+            if (isBoxMethod) listOf(createValueParameterForBoxing(functionDescriptor, underlyingType)) else emptyList(),
+            if (isBoxMethod) owner.defaultType else underlyingType,
             Modality.FINAL,
             DescriptorVisibilities.PUBLIC
         )
@@ -109,36 +104,22 @@ object InlineClassDescriptorResolver {
     }
 
     private fun createValueParameterForBoxing(
-        functionDescriptor: FunctionDescriptor,
-        inlinedValue: ValueParameterDescriptor
-    ): ValueParameterDescriptorImpl {
-        return createValueParameter(functionDescriptor, inlinedValue, BOXING_VALUE_PARAMETER_NAME, 0)
-    }
+        functionDescriptor: FunctionDescriptor, underlyingType: KotlinType
+    ): ValueParameterDescriptorImpl =
+        createValueParameter(functionDescriptor, underlyingType, BOXING_VALUE_PARAMETER_NAME, 0)
 
     private fun createValueParametersForSpecializedEquals(
-        functionDescriptor: FunctionDescriptor,
-        inlinedValue: ValueParameterDescriptor
-    ): List<ValueParameterDescriptor> {
-        return listOf(
-            createValueParameter(functionDescriptor, inlinedValue, SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME, 0),
-            createValueParameter(functionDescriptor, inlinedValue, SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME, 1)
+        functionDescriptor: FunctionDescriptor, underlyingType: KotlinType
+    ): List<ValueParameterDescriptor> =
+        listOf(
+            createValueParameter(functionDescriptor, underlyingType, SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME, 0),
+            createValueParameter(functionDescriptor, underlyingType, SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME, 1)
         )
-    }
 
     private fun createValueParameter(
-        functionDescriptor: FunctionDescriptor,
-        inlinedValue: ValueParameterDescriptor,
-        name: Name,
-        index: Int
-    ): ValueParameterDescriptorImpl {
-        return ValueParameterDescriptorImpl(
-            functionDescriptor,
-            null,
-            index,
-            Annotations.EMPTY,
-            name,
-            inlinedValue.type,
-            false, false, false, null, SourceElement.NO_SOURCE
+        functionDescriptor: FunctionDescriptor, type: KotlinType, name: Name, index: Int
+    ): ValueParameterDescriptorImpl =
+        ValueParameterDescriptorImpl(
+            functionDescriptor, null, index, Annotations.EMPTY, name, type, false, false, false, null, SourceElement.NO_SOURCE
         )
-    }
 }

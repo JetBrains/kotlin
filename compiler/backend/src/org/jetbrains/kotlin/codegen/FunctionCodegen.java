@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -369,23 +370,22 @@ public class FunctionCodegen {
     public static void generateMethodInsideInlineClassWrapper(
             @NotNull JvmDeclarationOrigin origin,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull ClassDescriptor containingDeclaration,
+            @NotNull ClassDescriptor inlineClass,
             @NotNull MethodVisitor mv,
             @NotNull KotlinTypeMapper typeMapper
     ) {
         mv.visitCode();
 
-        Type fieldOwnerType = typeMapper.mapClass(containingDeclaration);
+        Type fieldOwnerType = typeMapper.mapClass(inlineClass);
         Method erasedMethodImpl = typeMapper.mapAsmMethod(functionDescriptor.getOriginal(), OwnerKind.ERASED_INLINE_CLASS);
 
-        ValueParameterDescriptor valueRepresentation = InlineClassesUtilsKt.underlyingRepresentation(containingDeclaration);
-        if (valueRepresentation == null) return;
-
-        Type fieldType = typeMapper.mapType(valueRepresentation);
+        InlineClassRepresentation<SimpleType> representation = inlineClass.getInlineClassRepresentation();
+        assert representation != null : "Not an inline class: " + inlineClass;
 
         generateDelegateToStaticErasedVersion(
-                mv, erasedMethodImpl,
-                fieldOwnerType, valueRepresentation.getName().asString(), fieldType
+                mv, erasedMethodImpl, fieldOwnerType,
+                representation.getUnderlyingPropertyName().asString(),
+                typeMapper.mapType(representation.getUnderlyingType())
         );
 
         endVisit(mv, null, origin.getElement());

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
 
-fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
+private fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
     if (!isInlineClass()) return null
     return unsubstitutedPrimaryConstructor?.valueParameters?.singleOrNull()
 }
@@ -24,7 +24,7 @@ fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
 // FIXME: would like to check as well.
 fun DeclarationDescriptor.isInlineClass() = this is ClassDescriptor && (isInline || isValue)
 
-fun KotlinType.unsubstitutedUnderlyingParameter(): ValueParameterDescriptor? {
+private fun KotlinType.unsubstitutedUnderlyingParameter(): ValueParameterDescriptor? {
     return constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.underlyingRepresentation()
 }
 
@@ -67,10 +67,6 @@ fun KotlinType.isNullableUnderlyingType(): Boolean {
 fun CallableDescriptor.isGetterOfUnderlyingPropertyOfInlineClass() =
     this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfInlineClass()
 
-fun VariableDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean {
-    if (extensionReceiverParameter != null) return false
-    val containingDeclaration = this.containingDeclaration
-    if (!containingDeclaration.isInlineClass()) return false
-
-    return (containingDeclaration as ClassDescriptor).underlyingRepresentation()?.name == this.name
-}
+fun VariableDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean =
+    extensionReceiverParameter == null &&
+            (containingDeclaration as? ClassDescriptor)?.inlineClassRepresentation?.underlyingPropertyName == this.name
