@@ -10,10 +10,6 @@ val isFirPlugin: Boolean
     get() = rootProject.findProperty("idea.fir.plugin") == "true"
 
 
-repositories {
-    maven("https://jetbrains.bintray.com/markdown")
-}
-
 sourceSets {
     "main" {
         projectDefault()
