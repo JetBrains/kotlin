@@ -189,6 +189,12 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
         return Collections.emptyList();
     }
 
+    @Nullable
+    @Override
+    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
+        return null;
+    }
+
     @Override
     public String toString() {
         return DeclarationDescriptorImpl.toString(this);

@@ -222,6 +222,8 @@ class KtSymbolBasedClassDescriptor(override val ktSymbol: KtNamedClassOrObjectSy
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = implementationPostponed()
 
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType> = TODO("Not yet implemented")
+
     override fun getMemberScope(typeArguments: MutableList<out TypeProjection>): MemberScope = noImplementation()
     override fun getMemberScope(typeSubstitution: TypeSubstitution): MemberScope = noImplementation()
     override fun getUnsubstitutedMemberScope(): MemberScope = noImplementation()

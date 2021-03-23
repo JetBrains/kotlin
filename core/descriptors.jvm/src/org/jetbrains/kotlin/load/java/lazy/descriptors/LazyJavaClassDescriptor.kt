@@ -195,6 +195,8 @@ class LazyJavaClassDescriptor(
         emptyList()
     }
 
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
+
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
     private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor(c.storageManager) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
@@ -83,6 +84,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = null
         override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
         override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
+        override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
 
         override fun toString() = "class $name (not found)"
     }

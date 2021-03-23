@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import java.util.*
 
 /**
  * A [ClassDescriptor] representing the fictitious class for a function type, such as kotlin.Function1 or kotlin.reflect.KFunction2.
@@ -88,6 +87,7 @@ class FunctionClassDescriptor(
     override val annotations: Annotations get() = Annotations.EMPTY
     override fun getSource(): SourceElement = SourceElement.NO_SOURCE
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
 
     override fun getDeclaredTypeParameters() = parameters
 

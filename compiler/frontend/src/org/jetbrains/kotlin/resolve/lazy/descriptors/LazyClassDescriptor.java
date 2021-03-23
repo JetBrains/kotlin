@@ -22,14 +22,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
@@ -579,6 +577,25 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public Collection<ClassDescriptor> getSealedSubclasses() {
         return sealedSubclasses.invoke();
+    }
+
+    @Nullable
+    @Override
+    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
+        if (!InlineClassesUtilsKt.isInlineClass(this)) return null;
+
+        ClassConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
+        if (constructor != null) {
+            ValueParameterDescriptor parameter = firstOrNull(constructor.getValueParameters());
+            if (parameter != null) {
+                return new InlineClassRepresentation<>(parameter.getName(), (SimpleType) parameter.getType());
+            }
+        }
+
+        // Don't crash on invalid code.
+        return new InlineClassRepresentation<>(
+                SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME, c.getModuleDescriptor().getBuiltIns().getAnyType()
+        );
     }
 
     @Override

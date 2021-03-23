@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.utils.Printer;
@@ -190,6 +191,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @Override
     public Collection<ClassDescriptor> getSealedSubclasses() {
         return Collections.emptyList();
+    }
+
+    @Nullable
+    @Override
+    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
+        return null;
     }
 
     private class EnumEntryScope extends MemberScopeImpl {

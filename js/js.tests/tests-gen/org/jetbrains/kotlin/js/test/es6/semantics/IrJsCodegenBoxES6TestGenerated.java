@@ -4470,6 +4470,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/defaultWithInlineClassAndReceivers.kt");
             }
 
+            @TestMetadata("extensionPropertyWithSameName.kt")
+            public void testExtensionPropertyWithSameName() throws Exception {
+                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/extensionPropertyWithSameName.kt");
+            }
+
             @TestMetadata("funInterface.kt")
             public void testFunInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/funInterface.kt");
