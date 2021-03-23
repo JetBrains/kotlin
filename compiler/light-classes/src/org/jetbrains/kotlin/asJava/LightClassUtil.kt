@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -131,7 +132,7 @@ object LightClassUtil {
     private fun getPsiMethodWrappers(declaration: KtDeclaration, name: String? = null): Sequence<KtLightMethod> =
         getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
             .filterIsInstance<KtLightMethod>()
-            .filter { name == null || name == it.name }
+            .filter { name == null || declaration.hasModifier(KtTokens.INTERNAL_KEYWORD) || name == it.name }
             .filter { it.kotlinOrigin === declaration || it.navigationElement === declaration }
 
     private fun getWrappingClass(declaration: KtDeclaration): PsiClass? {

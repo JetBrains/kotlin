@@ -1,0 +1,9 @@
+UFile (package = )
+    UClass (name = Test)
+        UMethod (name = method$test_module)
+            UParameter (name = param)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = Unit)
+        UMethod (name = Test)

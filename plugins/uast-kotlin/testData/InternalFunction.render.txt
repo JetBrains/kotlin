@@ -1,0 +1,6 @@
+public final class Test {
+    public final fun method$test_module(@org.jetbrains.annotations.NotNull param: java.lang.String) : void {
+        return Unit
+    }
+    public fun Test() = UastEmptyExpression
+}
