@@ -95,26 +95,9 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     }.flatten()
 
     private val specificClangArgs: List<String> = when (target) {
-        KonanTarget.LINUX_X64, 
-        KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32,
-        KonanTarget.LINUX_ARM64,
-        KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 -> emptyList()
-
         KonanTarget.LINUX_ARM32_HFP -> listOf(
                 "-mfpu=vfp", "-mfloat-abi=hard"
         )
-
-        KonanTarget.MACOS_X64,
-        KonanTarget.MACOS_ARM64,
-        KonanTarget.IOS_ARM32,
-        KonanTarget.IOS_ARM64,
-        KonanTarget.IOS_X64,
-        KonanTarget.TVOS_ARM64,
-        KonanTarget.TVOS_X64,
-        KonanTarget.WATCHOS_ARM64,
-        KonanTarget.WATCHOS_ARM32,
-        KonanTarget.WATCHOS_X86,
-        KonanTarget.WATCHOS_X64 -> listOf()
 
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
@@ -161,6 +144,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 "-isystem$absoluteTargetSysRoot/include/libcxx",
                 "-isystem$absoluteTargetSysRoot/include/libc"
         ) + (configurables as ZephyrConfigurables).constructClangArgs()
+
+        else -> emptyList()
     }
 
     val clangPaths = listOf("$absoluteLlvmHome/bin", binDir)
