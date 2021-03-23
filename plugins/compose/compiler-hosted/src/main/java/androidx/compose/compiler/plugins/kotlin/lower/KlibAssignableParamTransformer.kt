@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
@@ -74,19 +73,17 @@ class KlibAssignableParamTransformer(
         }
 
         val variables = assignableParams.map {
-            val variableDescriptor = WrappedVariableDescriptor()
             val variable = IrVariableImpl(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.DEFINED,
-                symbol = IrVariableSymbolImpl(variableDescriptor),
+                symbol = IrVariableSymbolImpl(),
                 name = it.name,
                 type = it.type,
                 isVar = true,
                 isConst = false,
                 isLateinit = false
             )
-            variableDescriptor.bind(variable)
             variable.parent = declaration
 
             variable.initializer = IrGetValueImpl(
