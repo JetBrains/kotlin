@@ -54,6 +54,7 @@ tasks {
             "mocha-kotlin-reporter.js",
             "tc-log-appender.js",
             "tc-log-error-webpack.js",
+            "webpack-5-debug.js",
             "package.json",
             "rollup.config.js",
             "tsconfig.json",

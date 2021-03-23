@@ -233,6 +233,9 @@ class KotlinKarma(
                 // noinspection JSUnnecessarySemicolon
                 ;(function(config) {
                     const webpack = require('webpack');
+                    // https://github.com/webpack/webpack/issues/12951
+                    const PatchSourceMapSource = require('kotlin-test-js-runner/webpack-5-debug');
+                    config.plugins.push(new PatchSourceMapSource())
                     config.plugins.push(new webpack.SourceMapDevToolPlugin({
                         moduleFilenameTemplate: "[absolute-resource-path]"
                     }))
