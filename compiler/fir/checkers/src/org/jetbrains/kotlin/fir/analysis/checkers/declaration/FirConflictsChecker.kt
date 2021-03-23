@@ -231,8 +231,10 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         val packageMemberScope: FirPackageMemberScope = context.sessionHolder.scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
             FirPackageMemberScope(file.packageFqName, context.sessionHolder.session)
         }
-        for (topLevelDeclaration in file.declarations) {
-            inspector.collectWithExternalConflicts(topLevelDeclaration, file, context.session, packageMemberScope)
+        if (!context.session::class.java.name.contains("FirLibrarySession")) {
+            for (topLevelDeclaration in file.declarations) {
+                inspector.collectWithExternalConflicts(topLevelDeclaration, file, context.session, packageMemberScope)
+            }
         }
     }
 
