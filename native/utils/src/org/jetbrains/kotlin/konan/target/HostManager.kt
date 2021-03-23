@@ -106,7 +106,12 @@ open class HostManager(
             TVOS_X64,
             LINUX_X64,
             LINUX_ARM32_HFP,
-            LINUX_ARM64
+            LINUX_ARM64,
+            ANDROID_X86,
+            ANDROID_X64,
+            ANDROID_ARM32,
+            ANDROID_ARM64,
+            WASM32
         )
     )
 
