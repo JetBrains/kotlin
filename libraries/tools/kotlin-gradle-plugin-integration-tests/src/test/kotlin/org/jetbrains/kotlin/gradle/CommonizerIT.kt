@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.internal.os.OperatingSystem
-import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import kotlin.test.Test
