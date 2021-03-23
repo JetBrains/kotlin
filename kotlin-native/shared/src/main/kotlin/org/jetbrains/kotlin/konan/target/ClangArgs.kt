@@ -65,6 +65,14 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             }
             add(listOf("-arch", arch))
             add(listOf("-stdlib=libc++"))
+            val osVersionMin = when (target) {
+                // Here we workaround Clang 8 limitation: macOS major version should be 10.
+                // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
+                // TODO: Fix with LLVM Update.
+                KonanTarget.MACOS_ARM64 -> "10.16"
+                else -> configurables.osVersionMin
+            }
+            add(listOf("${configurables.osVersionMinFlagClang}=$osVersionMin"))
         }
         val hasCustomSysroot = configurables is ZephyrConfigurables
                 || configurables is WasmConfigurables
@@ -86,12 +94,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         }
     }.flatten()
 
-    private val osVersionMin: String
-            get() {
-                require(configurables is AppleConfigurables)
-                return configurables.osVersionMin
-            }
-
     private val specificClangArgs: List<String> = when (target) {
         KonanTarget.LINUX_X64, 
         KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32,
@@ -102,43 +104,17 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 "-mfpu=vfp", "-mfloat-abi=hard"
         )
 
-        KonanTarget.MACOS_X64 -> listOf(
-                "-mmacosx-version-min=$osVersionMin"
-        )
-
-        // Here we workaround Clang 8 limitation: macOS major version should be 10.
-        // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
-        // TODO: Fix with LLVM Update.
-        KonanTarget.MACOS_ARM64 -> listOf(
-                "-mmacosx-version-min=10.16"
-        )
-
+        KonanTarget.MACOS_X64,
+        KonanTarget.MACOS_ARM64,
         KonanTarget.IOS_ARM32,
-        KonanTarget.IOS_ARM64 -> listOf(
-                "-miphoneos-version-min=$osVersionMin"
-        )
-
-        KonanTarget.IOS_X64 -> listOf(
-                "-miphoneos-version-min=$osVersionMin"
-        )
-
-        KonanTarget.TVOS_ARM64 -> listOf(
-                "-mtvos-version-min=$osVersionMin"
-        )
-
-        KonanTarget.TVOS_X64 -> listOf(
-                "-mtvos-simulator-version-min=$osVersionMin"
-        )
-
+        KonanTarget.IOS_ARM64,
+        KonanTarget.IOS_X64,
+        KonanTarget.TVOS_ARM64,
+        KonanTarget.TVOS_X64,
         KonanTarget.WATCHOS_ARM64,
-        KonanTarget.WATCHOS_ARM32 -> listOf(
-                "-mwatchos-version-min=$osVersionMin"
-        )
-
+        KonanTarget.WATCHOS_ARM32,
         KonanTarget.WATCHOS_X86,
-        KonanTarget.WATCHOS_X64 -> listOf(
-                "-mwatchos-simulator-version-min=$osVersionMin"
-        )
+        KonanTarget.WATCHOS_X64 -> listOf()
 
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
