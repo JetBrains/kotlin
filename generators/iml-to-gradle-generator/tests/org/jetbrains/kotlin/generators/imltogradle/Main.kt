@@ -168,7 +168,7 @@ fun convertJpsModuleDependency(dep: JpsModuleDependency): List<String> {
             val ijModule = intellijModuleNameToJpsModuleMapping[dep.moduleReference.moduleName]
                 ?: error("Cannot fine intellij module = ${dep.moduleReference}")
             return ijModule.flattenExportedTransitiveDependencies(initialScope = dep.scope, jpsDependencyToDependantModuleIml = { null })
-                .filter { it.scope != JpsJavaDependencyScope.RUNTIME } // We are interested in compile classpath transitive dependencies
+                .filter { it.scope != JpsJavaDependencyScope.RUNTIME } // We are interested only in compile classpath transitive dependencies
                 .flatMap { dependencyDescriptor ->
                     when (val moduleOrLibrary = dependencyDescriptor.moduleOrLibrary) {
                         is Either.First -> {
