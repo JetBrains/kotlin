@@ -9,19 +9,24 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.types.KotlinType
 
 interface KotlinMangler<D : Any> {
 
     val String.hashMangle: Long
 
-    fun D.isExported(): Boolean
-    val D.mangleString: String
-    val D.signatureString: String
-    val D.fqnString: String
+    fun D.isExported(compatibleMode: Boolean): Boolean
+//    fun D.isExported(): Boolean
+    fun D.mangleString(localNameResolver: (D) -> String? = { null }): String
+    fun D.signatureString(localNameResolver: (D) -> String? = { null }): String
+    fun D.fqnString(localNameResolver: (D) -> String? = { null }): String
 
-    val D.hashedMangle: Long get() = mangleString.hashMangle
-    val D.signatureMangle: Long get() = signatureString.hashMangle
-    val D.fqnMangle: Long get() = fqnString.hashMangle
+    fun D.hashedMangle(localNameResolver: (D) -> String? = { null }): Long = mangleString(localNameResolver).hashMangle
+    fun D.signatureMangle(localNameResolver: (D) -> String? = { null }): Long {
+        val sss = signatureString(localNameResolver)
+        return sss.hashMangle
+    }
+    fun D.fqnMangle(localNameResolver: (D) -> String? = { null }): Long = fqnString(localNameResolver).hashMangle
 
     val manglerName: String
 
@@ -29,11 +34,13 @@ interface KotlinMangler<D : Any> {
         override val manglerName: String
             get() = "Descriptor"
 
-        fun ClassDescriptor.isExportEnumEntry(): Boolean
+//        fun ClassDescriptor.isExportEnumEntry(): Boolean
         fun ClassDescriptor.mangleEnumEntryString(): String
 
-        fun PropertyDescriptor.isExportField(): Boolean
+//        fun PropertyDescriptor.isExportField(): Boolean
         fun PropertyDescriptor.mangleFieldString(): String
+
+        fun setupTypeApproximation(app: (KotlinType) -> (KotlinType))
     }
 
     interface IrMangler : KotlinMangler<IrDeclaration> {

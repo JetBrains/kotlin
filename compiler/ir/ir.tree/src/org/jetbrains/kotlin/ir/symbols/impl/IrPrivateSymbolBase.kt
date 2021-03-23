@@ -32,13 +32,18 @@ abstract class IrSymbolBase<out D : DeclarationDescriptor>(
         return "Unbound private symbol ${super.toString()}"
     }
 }
-
+private var cnt = 0
 abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D?) :
     IrBindableSymbol<D, B>, IrSymbolBase<D>(descriptor) {
+
+    private val n = cnt++
 
     init {
         assert(descriptor == null || isOriginalDescriptor(descriptor)) {
             "Substituted descriptor $descriptor for ${descriptor!!.original}"
+        }
+        if (n == 4249) {
+            println("ejkrhj")
         }
         if (descriptor != null) {
             val containingDeclaration = descriptor.containingDeclaration

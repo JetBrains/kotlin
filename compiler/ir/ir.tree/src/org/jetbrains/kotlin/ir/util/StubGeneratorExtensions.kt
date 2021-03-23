@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -23,6 +25,8 @@ open class StubGeneratorExtensions {
     open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
 
     open fun isStaticFunction(descriptor: FunctionDescriptor): Boolean = false
+
+    open fun recordLocalClassSymbol(classDescriptor: ClassDescriptor, classSymbol: IrClassSymbol) {}
 
     open val enhancedNullability: EnhancedNullability
         get() = EnhancedNullability

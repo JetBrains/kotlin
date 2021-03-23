@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
+import org.jetbrains.kotlin.ir.util.withLocalScope
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPureElement
@@ -28,6 +29,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     private val typeTranslator = context.typeTranslator
     private val symbolTable = context.symbolTable
     private val irFactory = context.irFactory
+    private val signatirer = symbolTable.signaturer
 
     // TODO: use this generator in psi2ir too
 
@@ -168,7 +170,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         }
         irConstructor.metadata = DescriptorMetadataSource.Function(descriptor)
 
-        symbolTable.withScope(irConstructor) {
+        symbolTable.withLocalScope(null, EmptyScopeBuilder, irConstructor) {
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
             generateScopedTypeParameterDeclarations(irConstructor, ctorTypeParameters)
             generateValueParameterDeclarations(irConstructor, descriptor, defaultArgumentFactory)
@@ -194,7 +196,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         }
         irFunction.metadata = DescriptorMetadataSource.Function(descriptor)
 
-        symbolTable.withScope(irFunction) {
+        symbolTable.withLocalScope(null, EmptyScopeBuilder, irFunction) {
             generateOverridenSymbols(irFunction, descriptor.overriddenDescriptors)
             generateScopedTypeParameterDeclarations(irFunction, descriptor.propertyIfAccessor.typeParameters)
             generateValueParameterDeclarations(irFunction, descriptor, defaultArgumentFactory)

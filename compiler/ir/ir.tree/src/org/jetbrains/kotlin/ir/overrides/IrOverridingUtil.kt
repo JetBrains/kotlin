@@ -26,16 +26,16 @@ abstract class FakeOverrideBuilderStrategy {
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember =
         buildFakeOverrideMember(superType, member, clazz)
 
-    fun linkFakeOverride(fakeOverride: IrOverridableMember) {
+    fun linkFakeOverride(fakeOverride: IrOverridableMember, compatibilityMode: Boolean) {
         when (fakeOverride) {
-            is IrFakeOverrideFunction -> linkFunctionFakeOverride(fakeOverride)
-            is IrFakeOverrideProperty -> linkPropertyFakeOverride(fakeOverride)
+            is IrFakeOverrideFunction -> linkFunctionFakeOverride(fakeOverride, compatibilityMode)
+            is IrFakeOverrideProperty -> linkPropertyFakeOverride(fakeOverride, compatibilityMode)
             else -> error("Unexpected fake override: $fakeOverride")
         }
     }
 
-    protected abstract fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction)
-    protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty)
+    protected abstract fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction, compatibilityMode: Boolean)
+    protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty, compatibilityMode: Boolean)
 
     // TODO: need to make IrProperty carry overriddenSymbols.
     val propertyOverriddenSymbols: MutableMap<IrOverridableMember, List<IrSymbol>> = mutableMapOf()
@@ -113,7 +113,7 @@ class IrOverridingUtil(
             }
         }
 
-    fun buildFakeOverridesForClass(clazz: IrClass) {
+    fun buildFakeOverridesForClass(clazz: IrClass, oldSignatures: Boolean) {
         val superTypes = clazz.superTypes
 
         @Suppress("UNCHECKED_CAST")
@@ -138,14 +138,15 @@ class IrOverridingUtil(
             generateOverridesInFunctionGroup(
                 group.value,
                 fromCurrent.filter { it.name == group.key },
-                clazz
+                clazz, oldSignatures
             )
         }
     }
 
     fun buildFakeOverridesForClassUsingOverriddenSymbols(
         clazz: IrClass,
-        implementedMembers: List<IrOverridableMember> = emptyList()
+        implementedMembers: List<IrOverridableMember> = emptyList(),
+        compatibilityMode: Boolean
     ): List<IrOverridableMember> {
         fakeOverrideBuilder.propertyOverriddenSymbols.clear()
 
@@ -179,7 +180,7 @@ class IrOverridingUtil(
         val unoverriddenSuperMembersGroupedByName = unoverriddenSuperMembers.groupBy { it.name }
         val fakeOverrides = mutableListOf<IrOverridableMember>()
         for (group in unoverriddenSuperMembersGroupedByName.values) {
-            createAndBindFakeOverrides(clazz, group, fakeOverrides)
+            createAndBindFakeOverrides(clazz, group, fakeOverrides, compatibilityMode)
         }
         return fakeOverrides
     }
@@ -197,7 +198,8 @@ class IrOverridingUtil(
     private fun generateOverridesInFunctionGroup(
         membersFromSupertypes: List<IrOverridableMember>,
         membersFromCurrent: List<IrOverridableMember>,
-        current: IrClass
+        current: IrClass,
+        compatibilityMode: Boolean
     ) {
         val notOverridden = membersFromSupertypes.toMutableSet()
 
@@ -207,7 +209,7 @@ class IrOverridingUtil(
         }
 
         val addedFakeOverrides = mutableListOf<IrOverridableMember>()
-        createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides)
+        createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
         current.declarations.addAll(addedFakeOverrides)
     }
 
@@ -249,7 +251,8 @@ class IrOverridingUtil(
     private fun createAndBindFakeOverrides(
         current: IrClass,
         notOverridden: Collection<IrOverridableMember>,
-        addedFakeOverrides: MutableList<IrOverridableMember>
+        addedFakeOverrides: MutableList<IrOverridableMember>,
+        compatibilityMode: Boolean
     ) {
         val fromSuper = notOverridden.toMutableSet()
         while (fromSuper.isNotEmpty()) {
@@ -258,7 +261,7 @@ class IrOverridingUtil(
                 notOverriddenFromSuper,
                 fromSuper
             )
-            createAndBindFakeOverride(overridables, current, addedFakeOverrides)
+            createAndBindFakeOverride(overridables, current, addedFakeOverrides, compatibilityMode)
         }
     }
 
@@ -371,7 +374,8 @@ class IrOverridingUtil(
     private fun createAndBindFakeOverride(
         overridables: Collection<IrOverridableMember>,
         current: IrClass,
-        addedFakeOverrides: MutableList<IrOverridableMember>
+        addedFakeOverrides: MutableList<IrOverridableMember>,
+        compatibilityMode: Boolean
     ) {
         val effectiveOverridden = filterVisibleFakeOverrides(overridables)
 
@@ -406,7 +410,7 @@ class IrOverridingUtil(
         ) { "Overridden symbols should be set for " + CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
 
         addedFakeOverrides.add(fakeOverride)
-        fakeOverrideBuilder.linkFakeOverride(fakeOverride)
+        fakeOverrideBuilder.linkFakeOverride(fakeOverride, compatibilityMode)
     }
 
     private fun isVisibilityMoreSpecific(

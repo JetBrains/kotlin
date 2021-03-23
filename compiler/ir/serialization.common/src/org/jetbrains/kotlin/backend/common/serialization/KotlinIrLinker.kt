@@ -13,20 +13,18 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.protobuf.CodedInputStream
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -89,7 +87,7 @@ abstract class KotlinIrLinker(
 
     protected abstract fun createModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-        klib: IrLibrary?,
+        klib: KotlinLibrary?,
         strategy: DeserializationStrategy,
     ): IrModuleDeserializer
 
@@ -107,18 +105,17 @@ abstract class KotlinIrLinker(
     }
 
     private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
-        assert(symbol.isPublicApi || symbol.descriptor.module === currentModule || platformSpecificSymbol(symbol))
 
         if (symbol in triedToDeserializeDeclarationForSymbol || symbol in deserializedSymbols) {
             return null
         }
         triedToDeserializeDeclarationForSymbol.add(symbol)
 
+        if (!symbol.hasDescriptor) return null
         val descriptor = symbol.descriptor
 
         val moduleDeserializer = resolveModuleDeserializer(descriptor.module, symbol.signature)
 
-//        moduleDeserializer.deserializeIrSymbol(signature, symbol.kind())
         moduleDeserializer.declareIrSymbol(symbol)
 
         deserializeAllReachableTopLevels()
@@ -152,9 +149,11 @@ abstract class KotlinIrLinker(
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
 
         if (!symbol.isPublicApi) {
-            val descriptor = symbol.descriptor
-            if (!platformSpecificSymbol(symbol)) {
-                if (descriptor.module !== currentModule) return null
+            if (symbol.hasDescriptor) {
+                val descriptor = symbol.descriptor
+                if (!platformSpecificSymbol(symbol)) {
+                    if (descriptor.module !== currentModule) return null
+                }
             }
         }
 

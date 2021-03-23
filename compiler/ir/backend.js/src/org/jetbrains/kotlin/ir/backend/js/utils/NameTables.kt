@@ -34,7 +34,7 @@ import kotlin.math.abs
 private fun <T> mapToKey(declaration: T): String {
     return with(JsManglerIr) {
         if (declaration is IrDeclaration) {
-            declaration.hashedMangle.toString()
+            declaration.hashedMangle { null }.toString()
         } else if (declaration is String) {
             declaration.hashMangle.toString()
         } else {

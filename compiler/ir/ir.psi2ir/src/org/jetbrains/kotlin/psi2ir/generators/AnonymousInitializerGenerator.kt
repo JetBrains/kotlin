@@ -35,7 +35,7 @@ class AnonymousInitializerGenerator(
         context.symbolTable.declareAnonymousInitializer(
             ktAnonymousInitializer.startOffsetSkippingComments, ktAnonymousInitializer.endOffset,
             IrDeclarationOrigin.DEFINED, irClass.descriptor
-        ).buildWithScope { irAnonymousInitializer ->
+        ).buildWithLocalScope(ktAnonymousInitializer) { irAnonymousInitializer ->
             irAnonymousInitializer.parent = irClass
             val bodyGenerator = createBodyGenerator(irAnonymousInitializer.symbol)
             val statementGenerator = bodyGenerator.createStatementGenerator()

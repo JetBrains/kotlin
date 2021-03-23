@@ -12,14 +12,15 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 abstract class IrBasedKotlinManglerImpl : AbstractKotlinMangler<IrDeclaration>(), KotlinMangler.IrMangler {
-    override val IrDeclaration.mangleString: String
-        get() = getMangleComputer(MangleMode.FULL).computeMangle(this)
 
-    override val IrDeclaration.signatureString: String
-        get() = getMangleComputer(MangleMode.SIGNATURE).computeMangle(this)
+    override fun IrDeclaration.mangleString(localNameResolver: (IrDeclaration) -> String?): String
+        = getMangleComputer(MangleMode.FULL, { it }).computeMangle(this, localNameResolver)
 
-    override val IrDeclaration.fqnString: String
-        get() = getMangleComputer(MangleMode.FQNAME).computeMangle(this)
+    override fun IrDeclaration.signatureString(localNameResolver: (IrDeclaration) -> String?): String
+        = getMangleComputer(MangleMode.SIGNATURE, { it }).computeMangle(this, localNameResolver)
 
-    override fun IrDeclaration.isExported(): Boolean = getExportChecker().check(this, SpecialDeclarationType.REGULAR)
+    override fun IrDeclaration.fqnString(localNameResolver: (IrDeclaration) -> String?): String
+        = getMangleComputer(MangleMode.FQNAME, { it }).computeMangle(this, localNameResolver)
+
+    override fun IrDeclaration.isExported(compatibleMode: Boolean): Boolean = getExportChecker(compatibleMode).check(this, SpecialDeclarationType.REGULAR)
 }

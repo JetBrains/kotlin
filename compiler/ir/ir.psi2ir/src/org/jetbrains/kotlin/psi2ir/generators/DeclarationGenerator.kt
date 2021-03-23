@@ -18,18 +18,23 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.ScopeBuilder
+import org.jetbrains.kotlin.ir.util.SignatureScope
+import org.jetbrains.kotlin.ir.util.withLocalScope
 import org.jetbrains.kotlin.ir.util.withScope
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
+import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -190,6 +195,82 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)
 }
 
+class IrElementScopeBuilder : ScopeBuilder<DeclarationDescriptor, IrElement> {
+
+    private class LocalIndexCollector(private val scope: SignatureScope<DeclarationDescriptor>) : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            if (declaration.kind == ClassKind.OBJECT) {
+                // TODO: is that correct?
+                scope.commitAnonymousObject(declaration.descriptor)
+            } else {
+                scope.commitLocalClass(declaration.descriptor)
+            }
+        }
+
+        override fun visitFunction(declaration: IrFunction) {
+            scope.commitLocalFunction(declaration.descriptor)
+        }
+
+        override fun visitFunctionExpression(expression: IrFunctionExpression) {
+            scope.commitLambda(expression.function.descriptor)
+        }
+
+    }
+
+    override fun build(scope: SignatureScope<DeclarationDescriptor>, element: IrElement?) {
+        element?.acceptChildrenVoid(LocalIndexCollector(scope))
+    }
+}
+
+class KtElementScopeBuilder(private val bindingContext: BindingContext) : ScopeBuilder<DeclarationDescriptor, KtElement> {
+
+    private inner class LocalIndexCollector(private val scope: SignatureScope<DeclarationDescriptor>) : KtVisitorVoid() {
+
+        private val KtPureClassOrObject.classDescriptor: ClassDescriptor
+            get() = findClassDescriptor(bindingContext)
+
+        private val KtFunction.functionDescriptor: FunctionDescriptor
+            get() = bindingContext[BindingContext.FUNCTION, this] ?: error("No descriptor found for function $text")
+
+        override fun visitKtElement(element: KtElement) {
+            element.acceptChildren(this)
+        }
+
+        override fun visitLambdaExpression(expression: KtLambdaExpression) {
+            scope.commitLambda(expression.functionLiteral.functionDescriptor)
+        }
+
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            scope.commitLocalFunction(function.functionDescriptor)
+        }
+
+        override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
+            scope.commitAnonymousObject(expression.objectDeclaration.classDescriptor)
+        }
+
+        override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+            scope.commitLocalClass(classOrObject.classDescriptor)
+        }
+
+        override fun visitEnumEntry(enumEntry: KtEnumEntry) {
+            enumEntry.initializerList?.initializers?.forEach { it.accept(this) }
+//            enumEntry.acceptChildren(this)
+        }
+    }
+
+    override fun build(scope: SignatureScope<DeclarationDescriptor>, element: KtElement?) {
+        element?.acceptChildren(LocalIndexCollector(scope))
+    }
+}
+
+object EmptyScopeBuilder : ScopeBuilder<DeclarationDescriptor, KtElement> {
+    override fun build(scope: SignatureScope<DeclarationDescriptor>, element: KtElement?) {}
+}
+
 abstract class DeclarationGeneratorExtension(val declarationGenerator: DeclarationGenerator) : Generator {
     override val context: GeneratorContext get() = declarationGenerator.context
 
@@ -199,6 +280,14 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
                 builder(irDeclaration)
             }
         }
+
+    inline fun <E : KtElement, T : IrDeclaration> T.buildWithLocalScope(element: E?, crossinline builder: (T) -> Unit): T =
+        also { irDeclaration ->
+            context.symbolTable.withLocalScope(element, KtElementScopeBuilder(context.bindingContext), irDeclaration) {
+                builder(irDeclaration)
+            }
+        }
+
 
     fun KotlinType.toIrType() = with(declarationGenerator) { toIrType() }
 }

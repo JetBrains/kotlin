@@ -90,7 +90,8 @@ class FirAnalyzerFacade(
 
         return Fir2IrConverter.createModuleFragment(
             session, _scopeSession!!, firFiles!!,
-            languageVersionSettings, signaturer,
+            languageVersionSettings,
+            signaturer,
             extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider()

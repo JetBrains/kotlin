@@ -24,7 +24,7 @@ class JsReplCompiler(private val environment: KotlinCoreEnvironment) : ReplCompi
             NameTables(emptyList(), mappedNames = mutableMapOf()),
             readLibrariesFromConfiguration(environment.configuration),
             ReplCodeAnalyzerBase.ResettableAnalyzerState(),
-            SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
+            SymbolTable(IdSignatureDescriptor(JsManglerDesc /* TODO */), IrFactoryImpl)
         )
     }
 

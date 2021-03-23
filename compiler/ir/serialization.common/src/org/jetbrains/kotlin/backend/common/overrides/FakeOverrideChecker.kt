@@ -41,7 +41,7 @@ class FakeOverrideChecker(
             .filterNot { it.visibility == DescriptorVisibilities.PRIVATE || it.visibility == DescriptorVisibilities.INVISIBLE_FAKE }
 
         val descriptorSignatures = descriptorFakeOverrides
-            .map { with(descriptorMangler) { it.signatureString }}
+            .map { with(descriptorMangler) { it.signatureString { it.name.asString() } }}
             .sorted()
 
         val irFakeOverrides = clazz.declarations
@@ -53,7 +53,7 @@ class FakeOverrideChecker(
         }
 
         val irSignatures = irFakeOverrides
-            .map { with(irMangler) { it.signatureString }}
+            .map { with(irMangler) { it.signatureString { (it as IrDeclarationWithName).name.asString() } }}
             .sorted()
 
         // We can't have equality here because dependency libraries could have

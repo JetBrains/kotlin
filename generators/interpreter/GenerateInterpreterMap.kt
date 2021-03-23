@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.Printer
@@ -199,12 +200,17 @@ private fun getIrBuiltIns(): IrBuiltIns {
     val languageSettings = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3)
 
     val moduleDescriptor = ModuleDescriptorImpl(Name.special("<test-module>"), LockBasedStorageManager(""), DefaultBuiltIns.Instance)
-    val signaturer = object : IdSignatureComposer {
-        override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature? = null
+    val signaturer = object : IdSignatureComposer<Any> {
+        override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature = error("jhhh")
 
-        override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature? = null
+        override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature = error("dsd")
+
+        override fun <R> inLocalScope(element: Any?, block: () -> R): R {
+            TODO("Not yet implemented")
+        }
     }
     val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
-    val typeTranslator = TypeTranslatorImpl(symbolTable, languageSettings, moduleDescriptor)
+    @Suppress("UNCHECKED_CAST")
+    val typeTranslator = TypeTranslatorImpl(symbolTable, signaturer as IdSignatureComposer<KtElement>, languageSettings, moduleDescriptor)
     return IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 }

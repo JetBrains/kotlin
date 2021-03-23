@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.types.TypeApproximator
 
 class TypeTranslatorImpl(
     symbolTable: ReferenceSymbolTable,
+    signatureComposer: IdSignatureComposer,
     languageVersionSettings: LanguageVersionSettings,
     moduleDescriptor: ModuleDescriptor,
-    typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver() },
+    typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver(signatureComposer) },
     enterTableScope: Boolean = false,
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ) : TypeTranslator(symbolTable, languageVersionSettings, typeParametersResolverBuilder, enterTableScope, extensions) {
@@ -30,4 +31,8 @@ class TypeTranslatorImpl(
 
     override fun commonSupertype(types: Collection<KotlinType>): KotlinType =
         CommonSupertypes.commonSupertype(types)
+
+    init {
+        signatureComposer.setupTypeApproximation { approximate(it) }
+    }
 }

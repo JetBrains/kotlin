@@ -37,17 +37,17 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
         }
 
         override fun visitConstructor(constructor: FirConstructor, data: Any?) {
-            hashId = mangler.run { constructor.signatureMangle }
+            hashId = mangler.run { constructor.signatureMangle { null } }
             setExpected(constructor.isExpect)
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
-            hashId = mangler.run { simpleFunction.signatureMangle }
+            hashId = mangler.run { simpleFunction.signatureMangle { null } }
             setExpected(simpleFunction.isExpect)
         }
 
         override fun visitProperty(property: FirProperty, data: Any?) {
-            hashId = mangler.run { property.signatureMangle }
+            hashId = mangler.run { property.signatureMangle { null } }
             setExpected(property.isExpect)
         }
 

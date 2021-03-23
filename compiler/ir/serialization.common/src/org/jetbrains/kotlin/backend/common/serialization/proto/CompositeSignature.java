@@ -4,30 +4,30 @@
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 /**
- * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature}
+ * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature}
  */
-public final class FileSignature extends
+public final class CompositeSignature extends
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature)
-    FileSignatureOrBuilder {
-  // Use FileSignature.newBuilder() to construct.
-  private FileSignature(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature)
+    CompositeSignatureOrBuilder {
+  // Use CompositeSignature.newBuilder() to construct.
+  private CompositeSignature(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
     super(builder);
     this.unknownFields = builder.getUnknownFields();
   }
-  private FileSignature(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+  private CompositeSignature(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-  private static final FileSignature defaultInstance;
-  public static FileSignature getDefaultInstance() {
+  private static final CompositeSignature defaultInstance;
+  public static CompositeSignature getDefaultInstance() {
     return defaultInstance;
   }
 
-  public FileSignature getDefaultInstanceForType() {
+  public CompositeSignature getDefaultInstanceForType() {
     return defaultInstance;
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  private FileSignature(
+  private CompositeSignature(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -53,10 +53,14 @@ public final class FileSignature extends
             }
             break;
           }
-          case 10: {
-            org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+          case 8: {
             bitField0_ |= 0x00000001;
-            path_ = bs;
+            containerSig_ = input.readInt32();
+            break;
+          }
+          case 16: {
+            bitField0_ |= 0x00000002;
+            innerSig_ = input.readInt32();
             break;
           }
         }
@@ -77,66 +81,55 @@ public final class FileSignature extends
       makeExtensionsImmutable();
     }
   }
-  public static org.jetbrains.kotlin.protobuf.Parser<FileSignature> PARSER =
-      new org.jetbrains.kotlin.protobuf.AbstractParser<FileSignature>() {
-    public FileSignature parsePartialFrom(
+  public static org.jetbrains.kotlin.protobuf.Parser<CompositeSignature> PARSER =
+      new org.jetbrains.kotlin.protobuf.AbstractParser<CompositeSignature>() {
+    public CompositeSignature parsePartialFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return new FileSignature(input, extensionRegistry);
+      return new CompositeSignature(input, extensionRegistry);
     }
   };
 
   @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<FileSignature> getParserForType() {
+  public org.jetbrains.kotlin.protobuf.Parser<CompositeSignature> getParserForType() {
     return PARSER;
   }
 
   private int bitField0_;
-  public static final int PATH_FIELD_NUMBER = 1;
-  private java.lang.Object path_;
+  public static final int CONTAINER_SIG_FIELD_NUMBER = 1;
+  private int containerSig_;
   /**
-   * <code>required string path = 1;</code>
+   * <code>required int32 container_sig = 1;</code>
    */
-  public boolean hasPath() {
+  public boolean hasContainerSig() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required string path = 1;</code>
+   * <code>required int32 container_sig = 1;</code>
    */
-  public java.lang.String getPath() {
-    java.lang.Object ref = path_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      org.jetbrains.kotlin.protobuf.ByteString bs = 
-          (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      if (bs.isValidUtf8()) {
-        path_ = s;
-      }
-      return s;
-    }
+  public int getContainerSig() {
+    return containerSig_;
+  }
+
+  public static final int INNER_SIG_FIELD_NUMBER = 2;
+  private int innerSig_;
+  /**
+   * <code>required int32 inner_sig = 2;</code>
+   */
+  public boolean hasInnerSig() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required string path = 1;</code>
+   * <code>required int32 inner_sig = 2;</code>
    */
-  public org.jetbrains.kotlin.protobuf.ByteString
-      getPathBytes() {
-    java.lang.Object ref = path_;
-    if (ref instanceof java.lang.String) {
-      org.jetbrains.kotlin.protobuf.ByteString b = 
-          org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      path_ = b;
-      return b;
-    } else {
-      return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-    }
+  public int getInnerSig() {
+    return innerSig_;
   }
 
   private void initFields() {
-    path_ = "";
+    containerSig_ = 0;
+    innerSig_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -144,7 +137,11 @@ public final class FileSignature extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasPath()) {
+    if (!hasContainerSig()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasInnerSig()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -156,7 +153,10 @@ public final class FileSignature extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeBytes(1, getPathBytes());
+      output.writeInt32(1, containerSig_);
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      output.writeInt32(2, innerSig_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -169,7 +169,11 @@ public final class FileSignature extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBytesSize(1, getPathBytes());
+        .computeInt32Size(1, containerSig_);
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(2, innerSig_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -183,53 +187,53 @@ public final class FileSignature extends
     return super.writeReplace();
   }
 
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseFrom(byte[] data)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseDelimitedFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseDelimitedFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -238,21 +242,21 @@ public final class FileSignature extends
 
   public static Builder newBuilder() { return Builder.create(); }
   public Builder newBuilderForType() { return newBuilder(); }
-  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature prototype) {
+  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature prototype) {
     return newBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() { return newBuilder(this); }
 
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature}
+   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature}
    */
   public static final class Builder extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature, Builder>
+        org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature, Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature)
-      org.jetbrains.kotlin.backend.common.serialization.proto.FileSignatureOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.newBuilder()
+      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature)
+      org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignatureOrBuilder {
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -265,8 +269,10 @@ public final class FileSignature extends
 
     public Builder clear() {
       super.clear();
-      path_ = "";
+      containerSig_ = 0;
       bitField0_ = (bitField0_ & ~0x00000001);
+      innerSig_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
 
@@ -274,36 +280,41 @@ public final class FileSignature extends
       return create().mergeFrom(buildPartial());
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.getDefaultInstance();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature.getDefaultInstance();
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature build() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature result = buildPartial();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature buildPartial() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature(this);
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
         to_bitField0_ |= 0x00000001;
       }
-      result.path_ = path_;
+      result.containerSig_ = containerSig_;
+      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+        to_bitField0_ |= 0x00000002;
+      }
+      result.innerSig_ = innerSig_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
 
-    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature other) {
-      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.getDefaultInstance()) return this;
-      if (other.hasPath()) {
-        bitField0_ |= 0x00000001;
-        path_ = other.path_;
-
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature.getDefaultInstance()) return this;
+      if (other.hasContainerSig()) {
+        setContainerSig(other.getContainerSig());
+      }
+      if (other.hasInnerSig()) {
+        setInnerSig(other.getInnerSig());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -311,8 +322,12 @@ public final class FileSignature extends
     }
 
     public final boolean isInitialized() {
-      if (!hasPath()) {
-
+      if (!hasContainerSig()) {
+        
+        return false;
+      }
+      if (!hasInnerSig()) {
+        
         return false;
       }
       return true;
@@ -322,11 +337,11 @@ public final class FileSignature extends
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature parsedMessage = null;
+      org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) e.getUnfinishedMessage();
+        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature) e.getUnfinishedMessage();
         throw e;
       } finally {
         if (parsedMessage != null) {
@@ -337,89 +352,77 @@ public final class FileSignature extends
     }
     private int bitField0_;
 
-    private java.lang.Object path_ = "";
+    private int containerSig_ ;
     /**
-     * <code>required string path = 1;</code>
+     * <code>required int32 container_sig = 1;</code>
      */
-    public boolean hasPath() {
+    public boolean hasContainerSig() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string path = 1;</code>
+     * <code>required int32 container_sig = 1;</code>
      */
-    public java.lang.String getPath() {
-      java.lang.Object ref = path_;
-      if (!(ref instanceof java.lang.String)) {
-        org.jetbrains.kotlin.protobuf.ByteString bs =
-            (org.jetbrains.kotlin.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          path_ = s;
-        }
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    public int getContainerSig() {
+      return containerSig_;
     }
     /**
-     * <code>required string path = 1;</code>
+     * <code>required int32 container_sig = 1;</code>
      */
-    public org.jetbrains.kotlin.protobuf.ByteString
-        getPathBytes() {
-      java.lang.Object ref = path_;
-      if (ref instanceof String) {
-        org.jetbrains.kotlin.protobuf.ByteString b =
-            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        path_ = b;
-        return b;
-      } else {
-        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>required string path = 1;</code>
-     */
-    public Builder setPath(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-      path_ = value;
-
+    public Builder setContainerSig(int value) {
+      bitField0_ |= 0x00000001;
+      containerSig_ = value;
+      
       return this;
     }
     /**
-     * <code>required string path = 1;</code>
+     * <code>required int32 container_sig = 1;</code>
      */
-    public Builder clearPath() {
+    public Builder clearContainerSig() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      path_ = getDefaultInstance().getPath();
+      containerSig_ = 0;
+      
+      return this;
+    }
 
+    private int innerSig_ ;
+    /**
+     * <code>required int32 inner_sig = 2;</code>
+     */
+    public boolean hasInnerSig() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required int32 inner_sig = 2;</code>
+     */
+    public int getInnerSig() {
+      return innerSig_;
+    }
+    /**
+     * <code>required int32 inner_sig = 2;</code>
+     */
+    public Builder setInnerSig(int value) {
+      bitField0_ |= 0x00000002;
+      innerSig_ = value;
+      
       return this;
     }
     /**
-     * <code>required string path = 1;</code>
+     * <code>required int32 inner_sig = 2;</code>
      */
-    public Builder setPathBytes(
-        org.jetbrains.kotlin.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-      path_ = value;
-
+    public Builder clearInnerSig() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      innerSig_ = 0;
+      
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature)
+    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature)
   }
 
   static {
-    defaultInstance = new FileSignature(true);
+    defaultInstance = new CompositeSignature(true);
     defaultInstance.initFields();
   }
 
-  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature)
+  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature)
 }

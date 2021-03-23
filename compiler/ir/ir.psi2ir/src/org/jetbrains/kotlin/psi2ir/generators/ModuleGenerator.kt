@@ -72,31 +72,33 @@ class ModuleGenerator(
     private fun generateSingleFile(irDeclarationGenerator: DeclarationGenerator, ktFile: KtFile): IrFileImpl {
         val irFile = createEmptyIrFile(ktFile)
 
-        for (ktAnnotationEntry in ktFile.annotationEntries) {
-            val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
-            constantValueGenerator.generateAnnotationConstructorCall(annotationDescriptor)?.let {
-                irFile.annotations += it
+        context.symbolTable.signaturer.inFile(irFile.symbol) {
+            for (ktAnnotationEntry in ktFile.annotationEntries) {
+                val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
+                constantValueGenerator.generateAnnotationConstructorCall(annotationDescriptor)?.let {
+                    irFile.annotations += it
+                }
             }
+
+            for (ktDeclaration in ktFile.declarations) {
+                irFile.declarations.addIfNotNull(irDeclarationGenerator.generateMemberDeclaration(ktDeclaration))
+            }
+
+            irFile.patchDeclarationParents()
+
+            if (expectDescriptorToSymbol != null) {
+                referenceExpectsForUsedActuals(expectDescriptorToSymbol, context.symbolTable, irFile)
+            }
+
+            irFile.acceptChildrenVoid(IrSyntheticDeclarationGenerator(context))
+
+            insertImplicitCasts(irFile, context)
+            context.callToSubstitutedDescriptorMap.clear()
+
+            irFile.acceptVoid(AnnotationGenerator(context))
+
+            irFile.patchDeclarationParents()
         }
-
-        for (ktDeclaration in ktFile.declarations) {
-            irFile.declarations.addIfNotNull(irDeclarationGenerator.generateMemberDeclaration(ktDeclaration))
-        }
-
-        irFile.patchDeclarationParents()
-
-        if (expectDescriptorToSymbol != null) {
-            referenceExpectsForUsedActuals(expectDescriptorToSymbol, context.symbolTable, irFile)
-        }
-
-        irFile.acceptChildrenVoid(IrSyntheticDeclarationGenerator(context))
-
-        insertImplicitCasts(irFile, context)
-        context.callToSubstitutedDescriptorMap.clear()
-
-        irFile.acceptVoid(AnnotationGenerator(context))
-
-        irFile.patchDeclarationParents()
 
         return irFile
     }

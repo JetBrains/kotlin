@@ -42,4 +42,31 @@ public interface IdSignatureOrBuilder extends
    * <code>optional int32 scoped_local_sig = 4;</code>
    */
   int getScopedLocalSig();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature composite_sig = 5;</code>
+   */
+  boolean hasCompositeSig();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature composite_sig = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature getCompositeSig();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature local_sig = 6;</code>
+   */
+  boolean hasLocalSig();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature local_sig = 6;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature getLocalSig();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+   */
+  boolean hasFileSig();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature getFileSig();
 }

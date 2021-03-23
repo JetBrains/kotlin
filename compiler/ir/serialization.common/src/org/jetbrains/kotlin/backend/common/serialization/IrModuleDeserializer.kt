@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 internal fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     return when (this) {
@@ -28,11 +29,26 @@ internal fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     }
 }
 
-abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
+class CompatibilityMode(val oldSignatures: Boolean) {
+    companion object {
+        val WITH_PRIVATE_SIG = CompatibilityMode(oldSignatures = true)
+        val WITH_COMMON_SIG = CompatibilityMode(oldSignatures = false)
+
+        val LAST_PRIVATE_SIG_ABI_VERSION = KotlinAbiVersion(1, 4, 2)
+
+
+        fun resolveCompatibilityMode(libraryAbiVersion: KotlinAbiVersion): CompatibilityMode {
+            assert(libraryAbiVersion.isCompatible())
+            return if (libraryAbiVersion.patch > LAST_PRIVATE_SIG_ABI_VERSION.patch) WITH_COMMON_SIG else WITH_PRIVATE_SIG
+        }
+    }
+}
+
+abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor, val libraryAbiVersion: KotlinAbiVersion) {
     abstract operator fun contains(idSig: IdSignature): Boolean
     abstract fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol
 
-    open fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature) : IrSimpleFunctionSymbol =
+    open fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol =
         error("Unsupported operation")
 
     open fun referencePropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol =
@@ -53,7 +69,9 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
 
     open fun init(delegate: IrModuleDeserializer) {}
 
-    open fun addModuleReachableTopLevel(idSig: IdSignature) { error("Unsupported Operation (sig: $idSig") }
+    open fun addModuleReachableTopLevel(idSig: IdSignature) {
+        error("Unsupported Operation (sig: $idSig")
+    }
 
     abstract val moduleFragment: IrModuleFragment
 
@@ -62,14 +80,16 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
     open val strategy: DeserializationStrategy = DeserializationStrategy.ONLY_DECLARATION_HEADERS
 
     open val isCurrent = false
+
+    val compatibilityMode: CompatibilityMode get() = CompatibilityMode.resolveCompatibilityMode(libraryAbiVersion)
 }
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
 class IrModuleDeserializerWithBuiltIns(
     builtIns: IrBuiltIns,
     private val functionFactory: IrAbstractFunctionFactory,
-    private val delegate: IrModuleDeserializer
-) : IrModuleDeserializer(delegate.moduleDescriptor) {
+    private val delegate: IrModuleDeserializer,
+) : IrModuleDeserializer(delegate.moduleDescriptor, delegate.libraryAbiVersion) {
 
     init {
         // TODO: figure out how it should work for K/N
@@ -199,7 +219,7 @@ class IrModuleDeserializerWithBuiltIns(
 open class CurrentModuleDeserializer(
     override val moduleFragment: IrModuleFragment,
     override val moduleDependencies: Collection<IrModuleDeserializer>
-) : IrModuleDeserializer(moduleFragment.descriptor) {
+) : IrModuleDeserializer(moduleFragment.descriptor, KotlinAbiVersion.CURRENT) {
     override fun contains(idSig: IdSignature): Boolean = false // TODO:
 
     override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {

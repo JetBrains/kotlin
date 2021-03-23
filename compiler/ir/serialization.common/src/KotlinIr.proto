@@ -42,12 +42,28 @@ message FileLocalIdSignature {
   required int64 local_id = 2;
 }
 
+message CompositeSignature {
+  required int32 container_sig = 1;
+  required int32 inner_sig = 2;
+}
+
+message LocalSignature {
+  repeated int32 local_fq_name = 1 [packed=true];
+  optional int64 local_hash = 2;
+  optional int32 description = 3; // debug information
+}
+
+message FileSignature {}
+
 message IdSignature {
   oneof idsig {
     PublicIdSignature public_sig = 1;
     FileLocalIdSignature private_sig = 2;
     AccessorIdSignature accessor_sig = 3;
     int32 scoped_local_sig = 4;
+    CompositeSignature composite_sig = 5;
+    LocalSignature local_sig = 6;
+    FileSignature file_sig = 7;
   }
 }
 

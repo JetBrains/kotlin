@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
  * Generating synthetic members of inline class can use this as well, in particular, members from Any: equals, hashCode, and toString.
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class DataClassMembersGenerator(
+abstract class DataClassMembersGenerator<T : Any>(
     val context: IrGeneratorContext,
     val symbolTable: SymbolTable,
     val irClass: IrClass,
@@ -42,11 +42,12 @@ abstract class DataClassMembersGenerator(
     private val irPropertiesByDescriptor: Map<PropertyDescriptor, IrProperty> =
         irClass.properties.associateBy { it.descriptor }
 
-    inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
+    inline fun <TT : IrFunction> TT.buildWithScope(crossinline builder: (TT) -> Unit): TT =
         also { irDeclaration ->
-            symbolTable.withScope(irDeclaration) {
-                builder(irDeclaration)
+            val empty = object : ScopeBuilder<IrDeclaration, T> {
+                override fun build(scope: SignatureScope<IrDeclaration>, element: T?) {}
             }
+            symbolTable.withLocalScope(null, empty, irDeclaration) { builder(irDeclaration) }
         }
 
     private inner class MemberFunctionBuilder(
@@ -54,13 +55,13 @@ abstract class DataClassMembersGenerator(
         endOffset: Int = UNDEFINED_OFFSET,
         val irFunction: IrFunction
     ) : IrBlockBodyBuilder(context, Scope(irFunction.symbol), startOffset, endOffset) {
-        inline fun addToClass(builder: MemberFunctionBuilder.(IrFunction) -> Unit): IrFunction {
+        inline fun addToClass(crossinline builder: MemberFunctionBuilder.(IrFunction) -> Unit): IrFunction {
             build(builder)
             irClass.declarations.add(irFunction)
             return irFunction
         }
 
-        inline fun build(builder: MemberFunctionBuilder.(IrFunction) -> Unit) {
+        inline fun build(crossinline builder: MemberFunctionBuilder.(IrFunction) -> Unit) {
             irFunction.buildWithScope {
                 builder(irFunction)
                 irFunction.body = doBuild()
@@ -265,7 +266,7 @@ abstract class DataClassMembersGenerator(
         function: FunctionDescriptor,
         startOffset: Int = SYNTHETIC_OFFSET,
         endOffset: Int = SYNTHETIC_OFFSET,
-        body: MemberFunctionBuilder.(IrFunction) -> Unit
+        crossinline body: MemberFunctionBuilder.(IrFunction) -> Unit
     ) {
         MemberFunctionBuilder(startOffset, endOffset, declareSimpleFunction(startOffset, endOffset, function)).addToClass { irFunction ->
             irFunction.buildWithScope {
@@ -280,7 +281,7 @@ abstract class DataClassMembersGenerator(
         irFunction: IrFunction,
         startOffset: Int = SYNTHETIC_OFFSET,
         endOffset: Int = SYNTHETIC_OFFSET,
-        body: MemberFunctionBuilder.(IrFunction) -> Unit
+        crossinline body: MemberFunctionBuilder.(IrFunction) -> Unit
     ) {
         MemberFunctionBuilder(startOffset, endOffset, irFunction).build { function ->
             function.buildWithScope {

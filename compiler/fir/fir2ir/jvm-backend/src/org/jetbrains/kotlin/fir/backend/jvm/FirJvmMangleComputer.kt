@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -310,7 +311,7 @@ open class FirJvmMangleComputer(
     override fun visitConstructor(constructor: FirConstructor, data: Boolean) =
         constructor.mangleFunction(isCtor = true, isStatic = false, constructor)
 
-    override fun computeMangle(declaration: FirDeclaration): String {
+    override fun computeMangle(declaration: FirDeclaration, localNameResolver: (FirDeclaration) -> String?): String {
         declaration.accept(this, true)
         return builder.toString()
     }

@@ -176,7 +176,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
             isDelegated = false
-        ).buildWithScope { irProperty ->
+        ).buildWithLocalScope(ktProperty) { irProperty ->
             irProperty.backingField =
                 if (propertyDescriptor.actuallyHasBackingField(context.bindingContext))
                     generatePropertyBackingField(ktProperty, propertyDescriptor) { irField ->

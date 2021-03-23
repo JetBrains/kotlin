@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -17,13 +20,17 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as ProtoFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
 
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
     val fileReader: IrLibraryFile,
+    fileSymbol: IrFileSymbol,
     val actuals: List<Actual>,
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
@@ -31,6 +38,8 @@ class IrSymbolDeserializer(
 ) {
 
     val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
+
+    private val fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol)
 
     fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return deserializedSymbols.getOrPut(idSig) {
@@ -62,7 +71,7 @@ class IrSymbolDeserializer(
     }
 
     fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
-        assert(signature.isLocal)
+//        assert(signature.isLocal)
         deserializedSymbols.putIfAbsent(signature, symbol)
     }
 
@@ -144,12 +153,31 @@ class IrSymbolDeserializer(
         return IdSignature.ScopeLocalDeclaration(proto)
     }
 
+    private fun deserializeCompositeIdSignature(proto: ProtoCompositeSignature): IdSignature.CompositeSignature {
+        val containerSig = deserializeIdSignature(proto.containerSig)
+        val innerSig = deserializeIdSignature(proto.innerSig)
+        return IdSignature.CompositeSignature(containerSig, innerSig)
+    }
+
+    private fun deserializeLocalIdSignature(proto: ProtoLocalSignature): IdSignature.LocalSignature {
+        val localFqn = fileReader.deserializeFqName(proto.localFqNameList)
+        val localHash = if (proto.hasLocalHash()) proto.localHash else null
+        val description = if (proto.hasDescription()) fileReader.deserializeString(proto.description) else null
+        return IdSignature.LocalSignature(localFqn, localHash, description)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun deserializeFileIdSignature(proto: ProtoFileSignature): IdSignature.FileSignature = fileSignature
+
     fun deserializeSignatureData(proto: ProtoIdSignature): IdSignature {
         return when (proto.idsigCase) {
             PUBLIC_SIG -> deserializePublicIdSignature(proto.publicSig)
             ACCESSOR_SIG -> deserializeAccessorIdSignature(proto.accessorSig)
             PRIVATE_SIG -> deserializeFileLocalIdSignature(proto.privateSig)
             SCOPED_LOCAL_SIG -> deserializeScopeLocalIdSignature(proto.scopedLocalSig)
+            COMPOSITE_SIG -> deserializeCompositeIdSignature(proto.compositeSig)
+            LOCAL_SIG -> deserializeLocalIdSignature(proto.localSig)
+            FILE_SIG -> deserializeFileIdSignature(proto.fileSig)
             else -> error("Unexpected IdSignature kind: ${proto.idsigCase}")
         }
     }

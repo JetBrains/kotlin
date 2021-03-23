@@ -261,7 +261,7 @@ class Fir2IrConverter(
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer, irFactory)
             val typeTranslator =
-                TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor, extensions = generatorExtensions)
+                TypeTranslatorImpl(symbolTable, signaturer, languageVersionSettings, moduleDescriptor, extensions = generatorExtensions)
             val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             FirBuiltinSymbols(irBuiltIns, moduleDescriptor.builtIns, symbolTable)
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irBuiltIns, irFactory, mangler)

@@ -20,7 +20,7 @@ interface TypeParametersResolver {
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class ScopedTypeParametersResolver : TypeParametersResolver {
+class ScopedTypeParametersResolver(private val signaturer: IdSignatureComposer) : TypeParametersResolver {
 
     private val typeParameterScopes = ArrayDeque<Map<TypeParameterDescriptor, IrTypeParameterSymbol>>()
 

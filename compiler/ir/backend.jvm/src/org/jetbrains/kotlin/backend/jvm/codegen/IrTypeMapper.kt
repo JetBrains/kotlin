@@ -43,10 +43,17 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
     override val typeContext: TypeSystemCommonBackendContextForTypeMapping = IrTypeCheckerContextForTypeMapping(typeSystem, context)
 
+    private fun tryReferenceLocalClass(classDescriptor: ClassDescriptor): IrClassSymbol? =
+        context.generatorExtensions.referenceLocalClass(classDescriptor)
+
+    private fun referenceClass(klass: ClassDescriptor): IrClassSymbol {
+        return tryReferenceLocalClass(klass) ?: context.referenceClass(klass)
+    }
+
     override fun mapClass(classifier: ClassifierDescriptor): Type =
         when (classifier) {
             is ClassDescriptor ->
-                mapClass(context.referenceClass(classifier).owner)
+                mapClass(referenceClass(classifier).owner)
             is TypeParameterDescriptor ->
                 mapType(context.referenceTypeParameter(classifier).defaultType)
             else ->

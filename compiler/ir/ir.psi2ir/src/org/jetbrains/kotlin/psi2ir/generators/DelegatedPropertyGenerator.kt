@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.ir.util.withLocalScope
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -59,7 +60,9 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
             propertyDescriptor,
             isDelegated = true
         ).apply {
-            backingField = generateDelegateFieldForProperty(propertyDescriptor, kPropertyType, ktDelegate)
+            context.symbolTable.withLocalScope(ktDelegate, KtElementScopeBuilder(context.bindingContext), this) {
+                backingField = generateDelegateFieldForProperty(propertyDescriptor, kPropertyType, ktDelegate)
+            }
         }
 
         val irDelegate = irProperty.backingField!!
@@ -96,13 +99,13 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         ktProperty: KtProperty,
         ktDelegate: KtPropertyDelegate,
         accessorDescriptor: PropertyAccessorDescriptor,
-        generateBody: (IrFunction) -> IrBody
+        crossinline generateBody: (IrFunction) -> IrBody
     ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
             accessorDescriptor
-        ).buildWithScope { irAccessor ->
+        ).buildWithLocalScope(ktProperty) { irAccessor ->
             FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktProperty, null)
             irAccessor.body = generateBody(irAccessor)
         }
@@ -141,10 +144,12 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
                     metadata = DescriptorMetadataSource.Property(propertyDescriptor)
                 }
             }.also { irDelegate ->
-                irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
-                    propertyDescriptor, kPropertyType, ktDelegate,
-                    irDelegate.symbol
-                )
+                irDelegate.buildWithLocalScope(ktDelegate) {
+                    irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
+                        propertyDescriptor, kPropertyType, ktDelegate,
+                        irDelegate.symbol
+                    )
+                }
             }
         }
     }
@@ -356,13 +361,13 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     private inline fun createLocalPropertyAccessor(
         getterDescriptor: VariableAccessorDescriptor,
         ktDelegate: KtPropertyDelegate,
-        generateBody: (IrFunction) -> IrBody
+        crossinline generateBody: (IrFunction) -> IrBody
     ) =
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
             getterDescriptor
-        ).buildWithScope { irAccessor ->
+        ).buildWithLocalScope(ktDelegate) { irAccessor ->
             FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktDelegate, null)
             irAccessor.body = generateBody(irAccessor)
         }
