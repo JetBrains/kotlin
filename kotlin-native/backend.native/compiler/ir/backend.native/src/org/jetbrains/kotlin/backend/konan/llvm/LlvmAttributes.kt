@@ -67,6 +67,5 @@ private fun shouldEnforceFramePointer(context: Context): Boolean {
 }
 
 private fun enforceFramePointer(llvmFunction: LLVMValueRef) {
-    LLVMAddTargetDependentFunctionAttr(llvmFunction, "no-frame-pointer-elim", "true")
-    LLVMAddTargetDependentFunctionAttr(llvmFunction, "no-frame-pointer-elim-non-leaf", "")
+    LLVMAddTargetDependentFunctionAttr(llvmFunction, "frame-pointer", "all")
 }
