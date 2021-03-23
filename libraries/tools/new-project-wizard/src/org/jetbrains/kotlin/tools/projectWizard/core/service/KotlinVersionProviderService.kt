@@ -100,7 +100,6 @@ val KotlinVersionKind.isStable
 
 object EapVersionDownloader {
     fun getLatestEapVersion() = downloadVersionFromMavenCentral(EAP_URL).firstOrNull()
-    fun getLatestDevVersion() = downloadVersions(DEV_URL).firstOrNull()
 
     private fun downloadPage(url: String): TaskResult<String> = safe {
         BufferedReader(InputStreamReader(URL(url).openStream())).lines().collect(Collectors.joining("\n"))
@@ -134,9 +133,6 @@ object EapVersionDownloader {
 
     @NonNls
     private val EAP_URL = "https://search.maven.org/solrsearch/select?q=g:org.jetbrains.kotlin%20AND%20a:kotlin-gradle-plugin"
-
-    @NonNls
-    private val DEV_URL = "https://dl.bintray.com/kotlin/kotlin-dev/org/jetbrains/kotlin/jvm/org.jetbrains.kotlin.jvm.gradle.plugin/"
 
     @NonNls
     private val versionRegexp = """href="([^"\\]+)"""".toRegex()

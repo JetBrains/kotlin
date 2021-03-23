@@ -2,7 +2,6 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform") version ("{{kotlin_plugin_version}}")
 }
 repositories {
-    maven("https://dl.bintray.com/kotlin/kotlin-dev")
     mavenLocal()
 }
 
