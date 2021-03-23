@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -65,7 +66,8 @@ class JvmIrSerializer(
 
     override fun serializeIrSymbol(symbol: IrSymbol): Long {
         val declaration = symbol.owner as? IrDeclaration ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
-        if (declaration.parent is IrPackageFragment && declaration is IrMemberWithContainerSource && declaration !is IrClass) {
+        val parent = declaration.parent
+        if ((parent is IrPackageFragment || parent.isFacadeClass) && declaration is IrMemberWithContainerSource && declaration !is IrClass) {
             val facadeClassName = declaration.facadeName() ?: return super.serializeIrSymbol(symbol)
             val facadeId = serializeName(facadeClassName)
             val signatureId = protoIdSignature(declaration)
@@ -108,9 +110,13 @@ class JvmIrSerializer(
 
     fun IrMemberWithContainerSource.facadeName(): Name? {
         val parent = parent
-        if (this is IrClass || parent !is IrPackageFragment) return null
+        if (this is IrClass) return null
         return when (parent) {
             is IrFile -> parent.facadeFqName().shortName()
+            is IrClass -> {
+                assert(parent.isFacadeClass)
+                parent.name
+            }
             is IrExternalPackageFragment -> {
                 val source = containerSource as? JvmPackagePartSource ?: return null
                 val facadeName = source.facadeClassName ?: source.className

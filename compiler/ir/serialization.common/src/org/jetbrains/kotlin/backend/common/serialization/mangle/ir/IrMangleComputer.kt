@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.types.Variance
@@ -257,7 +255,8 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
         isRealExpect = isRealExpect or declaration.isExpect
 
         val container = declaration.correspondingPropertySymbol?.owner ?: declaration
-        val isStatic = declaration.dispatchReceiverParameter == null && container.parent !is IrPackageFragment
+        val isStatic = declaration.dispatchReceiverParameter == null &&
+                (container.parent !is IrPackageFragment && !container.parent.isFacadeClass)
 
         declaration.mangleFunction(false, isStatic, container)
     }

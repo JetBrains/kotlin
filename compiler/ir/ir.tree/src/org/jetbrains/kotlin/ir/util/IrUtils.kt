@@ -594,3 +594,9 @@ fun IrExpression?.isPure(anyVariable: Boolean, checkFields: Boolean = true): Boo
 
     return false
 }
+
+val IrDeclarationParent.isFacadeClass: Boolean
+    get() = this is IrClass &&
+            (origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS ||
+                    origin == IrDeclarationOrigin.FILE_CLASS ||
+                    origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS)

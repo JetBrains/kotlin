@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.overrides.isOverridableFunction
 import org.jetbrains.kotlin.ir.overrides.isOverridableProperty
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -49,7 +50,9 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
 
         private fun collectFqNames(declaration: IrDeclarationWithName) {
             declaration.parent.acceptVoid(this)
-            classFqnSegments.add(declaration.name.asString())
+            if (declaration !is IrClass || !declaration.isFacadeClass) {
+                classFqnSegments.add(declaration.name.asString())
+            }
         }
 
         override fun visitElement(element: IrElement) = error("Unexpected element ${element.render()}")
