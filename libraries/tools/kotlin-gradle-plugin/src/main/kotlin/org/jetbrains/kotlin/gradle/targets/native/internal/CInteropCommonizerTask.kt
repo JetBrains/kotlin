@@ -10,11 +10,12 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.workers.WorkParameters
-import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.NativeDistributionCommonizerOutputLayout
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.level
+import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
+import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.utils.transitiveClosure
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -48,6 +50,23 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     @get:Nested
     internal var cinterops = setOf<CInteropGist>()
         private set
+
+    /**
+     * All library files produced by the [Project.commonizeNativeDistributionTask] that are relevant for commonization
+     */
+    @get:Classpath
+    internal val nativeDistributionLibraries: Set<File>
+        get() {
+            val commonizeNativeDistribution = project.commonizeNativeDistributionTask.get()
+            return getCommonizationParameters().flatMapTo(mutableSetOf()) { parameters ->
+                parameters.commonizerTarget.withAllTransitiveTargets().flatMap { target ->
+                    commonizeNativeDistribution.commonizerTargetOutputDirectories.flatMap { outputDirectory ->
+                        NativeDistributionCommonizerOutputLayout.getTargetDirectory(outputDirectory, target)
+                            .listFiles().orEmpty().toList()
+                    }
+                }
+            }
+        }
 
     @OutputDirectories
     fun getAllOutputDirectories(): Set<File> {
@@ -89,11 +108,12 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         val cinteropsForTarget = cinterops.filter { cinterop -> cinterop.identifier in parameters.interops }
         outputDirectory(parameters).deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
+
         GradleCliCommonizer(project).commonizeLibraries(
             konanHome = project.file(project.konanHome),
             outputCommonizerTarget = parameters.commonizerTarget,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.toSet(),
-            dependencyLibraries = cinteropsForTarget.flatMap { it.dependencies.files }.toSet(),
+            dependencyLibraries = cinteropsForTarget.flatMap { it.dependencies.files }.toSet() + nativeDistributionLibraries,
             outputDirectory = outputDirectory(parameters)
         )
     }
@@ -187,11 +207,14 @@ private fun removeRedundantParameters(parameters: Set<CInteropCommonizationParam
     }
 }
 
-
 private operator fun CommonizerTarget.contains(other: CommonizerTarget): Boolean {
     if (this == other) return true
     if (this !is SharedCommonizerTarget) return false
     return targets.any { child -> other in child }
+}
+
+private fun SharedCommonizerTarget.withAllTransitiveTargets(): Set<CommonizerTarget> {
+    return setOf(this) + this.transitiveClosure<CommonizerTarget> { if (this is SharedCommonizerTarget) this.targets else emptySet() }
 }
 
 private fun Project.getDependingNativeCompilations(compilation: KotlinSharedNativeCompilation): Set<KotlinNativeCompilation> {

@@ -46,7 +46,7 @@ internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
         if (isCInteropCommonizationEnabled) {
             return locateOrRegisterTask(
                 "commonizeCInterop",
-                invokeWhenRegistered = { commonizeTask.dependsOn(this) },
+                invokeWhenRegistered = { commonizeTask.dependsOn(this); dependsOn(commonizeNativeDistributionTask) },
                 configureTask = {
                     group = "interop"
                     description = "Invokes the commonizer on c-interop bindings of the project"
