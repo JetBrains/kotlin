@@ -324,35 +324,6 @@ class CodeConformanceTest : TestCase() {
             RepoAllowList("api.bintray.com/maven/kotlin/kotlin-dependencies", root, setOf()),
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
-                "https://dl.bintray.com/kotlin/kotlin-dev", root, setOf(
-                    "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
-                    "gradle/cacheRedirector.gradle.kts",
-                    "kotlin-ultimate/prepare/mobile-plugin/build.gradle.kts",
-                    "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/native-fat-framework/smoke/build.gradle.kts",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/new-mpp-android/build.gradle",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/native-fat-framework/smoke/build.gradle.kts",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-android/build.gradle",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/VariantAwareDependenciesIT.kt",
-                    "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
-                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/build.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/settings.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/build.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/settings.gradle.kts",
-                    "idea/testData/perfTest/native/_common/settings.gradle.kts",
-                    "idea/testData/gradle/nativeLibraries/commonIOSWithDisabledPropagation/settings.gradle.kts",
-                    "idea/testData/gradle/packagePrefixImport/packagePrefixNonMPP/build.gradle",
-                    "idea/testData/gradle/gradleFacetImportTest/jvmImportWithCustomSourceSets_1_1_2/build.gradle",
-                    "idea/testData/gradle/gradleFacetImportTest/jvmImport_1_1_2/build.gradle",
-                    "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt",
-                    "idea/testData/perfTest/native/_common/build.gradle.kts.header"
-                )
-            ),
-            RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev", root, setOf()),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
                 "https://dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
                     "kotlin-ultimate/build.gradle.kts",
                     "gradle/cacheRedirector.gradle.kts"
