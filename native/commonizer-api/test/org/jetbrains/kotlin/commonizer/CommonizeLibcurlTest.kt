@@ -28,7 +28,8 @@ class CommonizeLibcurlTest {
         commonizer.commonizeLibraries(
             konanHome = konanHome,
             inputLibraries = libraries,
-            dependencyLibraries = emptySet(),
+            dependencyLibraries = KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_X64.name).listFiles().orEmpty().toSet() +
+                    KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_ARM64.name).listFiles().orEmpty().toSet(),
             outputCommonizerTarget = CommonizerTarget(LINUX_ARM64, LINUX_X64),
             outputDirectory = temporaryOutputDirectory.root
         )
