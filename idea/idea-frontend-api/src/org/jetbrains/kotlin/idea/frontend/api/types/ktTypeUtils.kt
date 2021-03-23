@@ -27,6 +27,12 @@ fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
     return this.classId == classId
 }
 
+val KtType.isPrimitive: Boolean
+    get() {
+        if (this !is KtClassType) return false
+        return this.classId in DefaultTypeClassIds.PRIMITIVES
+    }
+
 private object DefaultTypeClassIds {
     val UNIT = ClassId.topLevel(StandardNames.FqNames.unit.toSafe())
     val INT = ClassId.topLevel(StandardNames.FqNames._int.toSafe())
@@ -38,6 +44,7 @@ private object DefaultTypeClassIds {
     val CHAR = ClassId.topLevel(StandardNames.FqNames._char.toSafe())
     val BOOLEAN = ClassId.topLevel(StandardNames.FqNames._boolean.toSafe())
     val STRING = ClassId.topLevel(StandardNames.FqNames.string.toSafe())
+    val PRIMITIVES = setOf(INT, LONG, SHORT, BYTE, FLOAT, DOUBLE, CHAR, BOOLEAN)
 }
 
 val KtType.defaultInitializer: String?

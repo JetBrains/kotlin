@@ -3,4 +3,3 @@
 class A {
     private lateinit var a: String<caret>
 }
-/* IGNORE_FIR */
