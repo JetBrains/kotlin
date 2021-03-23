@@ -25,7 +25,7 @@ object CallableReturnTypeUpdaterApplicator {
         applyTo { declaration, type, project ->
             val newTypeRef = if (!declaration.isProcedure(type)) {
                 // TODO use longTypeRepresentation and then shorten
-                KtPsiFactory(project ?: declaration.project).createType(type.shortTypeRepresentation)
+                KtPsiFactory(project).createType(type.shortTypeRepresentation)
             } else null
             runWriteAction {
                 declaration.typeReference = newTypeRef

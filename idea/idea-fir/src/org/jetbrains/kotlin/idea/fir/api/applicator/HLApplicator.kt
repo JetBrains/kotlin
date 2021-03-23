@@ -28,7 +28,7 @@ sealed class HLApplicator<in PSI : PsiElement, in INPUT : HLApplicatorInput> {
      * @param psi a [PsiElement] to apply fix to
      * @param input additional data needed to apply the fix, the [input] can be collected by [HLApplicatorInputProvider
      */
-    fun applyTo(psi: PSI, input: INPUT, project: Project?, editor: Editor?) = ForbidKtResolve.forbidResolveIn("HLApplicator.applyTo") {
+    fun applyTo(psi: PSI, input: INPUT, project: Project, editor: Editor?) = ForbidKtResolve.forbidResolveIn("HLApplicator.applyTo") {
         applyToImpl(psi, input, project, editor)
     }
 
@@ -57,7 +57,7 @@ sealed class HLApplicator<in PSI : PsiElement, in INPUT : HLApplicatorInput> {
         getFamilyNameImpl()
     }
 
-    protected abstract fun applyToImpl(psi: PSI, input: INPUT, project: Project?, editor: Editor?)
+    protected abstract fun applyToImpl(psi: PSI, input: INPUT, project: Project, editor: Editor?)
     protected abstract fun isApplicableByPsiImpl(psi: PSI): Boolean
     protected abstract fun getActionNameImpl(psi: PSI, input: INPUT): String
     protected abstract fun getFamilyNameImpl(): String
@@ -95,12 +95,12 @@ fun <PSI : PsiElement, NEW_PSI : PSI, INPUT : HLApplicatorInput> HLApplicator<PS
 
 
 internal class HLApplicatorImpl<PSI : PsiElement, INPUT : HLApplicatorInput>(
-    val applyTo: (PSI, INPUT, Project?, Editor?) -> Unit,
+    val applyTo: (PSI, INPUT, Project, Editor?) -> Unit,
     val isApplicableByPsi: (PSI) -> Boolean,
     val getActionName: (PSI, INPUT) -> String,
     val getFamilyName: () -> String,
 ) : HLApplicator<PSI, INPUT>() {
-    override fun applyToImpl(psi: PSI, input: INPUT, project: Project?, editor: Editor?) {
+    override fun applyToImpl(psi: PSI, input: INPUT, project: Project, editor: Editor?) {
         applyTo.invoke(psi, input, project, editor)
     }
 
@@ -117,7 +117,7 @@ internal class HLApplicatorImpl<PSI : PsiElement, INPUT : HLApplicatorInput>(
 
 class HLApplicatorBuilder<PSI : PsiElement, INPUT : HLApplicatorInput> internal constructor(
     @PrivateForInline
-    var applyTo: ((PSI, INPUT, Project?, Editor?) -> Unit)? = null,
+    var applyTo: ((PSI, INPUT, Project, Editor?) -> Unit)? = null,
     private var isApplicableByPsi: ((PSI) -> Boolean)? = null,
     private var getActionName: ((PSI, INPUT) -> String)? = null,
     private var getFamilyName: (() -> String)? = null
@@ -144,10 +144,14 @@ class HLApplicatorBuilder<PSI : PsiElement, INPUT : HLApplicatorInput> internal 
     }
 
     @OptIn(PrivateForInline::class)
-    fun applyTo(doApply: (PSI, INPUT, Project?, Editor?) -> Unit) {
-        applyTo = doApply
+    fun applyToWithEditorRequired(doApply: (PSI, INPUT, Project, Editor) -> Unit) {
+        applyTo = { element, data, project, editor -> if (editor != null) doApply(element, data, project, editor) }
     }
 
+    @OptIn(PrivateForInline::class)
+    fun applyTo(doApply: (PSI, INPUT, Project, Editor?) -> Unit) {
+        applyTo = doApply
+    }
 
     @OptIn(PrivateForInline::class)
     fun applyTo(doApply: (PSI, INPUT) -> Unit) {
@@ -155,7 +159,7 @@ class HLApplicatorBuilder<PSI : PsiElement, INPUT : HLApplicatorInput> internal 
     }
 
     @OptIn(PrivateForInline::class)
-    fun applyTo(doApply: (PSI, INPUT, Project?) -> Unit) {
+    fun applyTo(doApply: (PSI, INPUT, Project) -> Unit) {
         applyTo = { element, data, project, _ -> doApply(element, data, project) }
     }
 
@@ -206,7 +210,7 @@ fun <PSI : PsiElement, INPUT : HLApplicatorInput, QUICK_FIX : KotlinPsiOnlyQuick
     isApplicableByPsi: (PSI) -> Boolean = { true },
     quickFixByInput: (PSI, INPUT) -> QUICK_FIX,
 ): HLApplicator<PSI, INPUT> = HLApplicatorImpl(
-    applyTo = { psi, input, project, editor -> quickFixByInput(psi, input).invoke(project ?: psi.project, editor, psi.containingFile) },
+    applyTo = { psi, input, project, editor -> quickFixByInput(psi, input).invoke(project, editor, psi.containingFile) },
     isApplicableByPsi = isApplicableByPsi,
     getActionName = { psi, input -> quickFixByInput(psi, input).text },
     getFamilyName = getFamilyName
