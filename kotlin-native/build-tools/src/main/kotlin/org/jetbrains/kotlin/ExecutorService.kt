@@ -255,12 +255,33 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
         out.toString("UTF-8").trim()
     }
 
-    private val device = project.findProperty("iosDevice")?.toString() ?: when (target) {
-        KonanTarget.TVOS_X64 -> "Apple TV 4K"
-        KonanTarget.IOS_X64 -> "iPhone 8"
-        KonanTarget.WATCHOS_X64 -> "Apple Watch Series 6 - 40mm"
-        KonanTarget.WATCHOS_X86 -> "Apple Watch Series 4 - 40mm"
-        else -> error("Unexpected simulation target: $target")
+    private val device by lazy {
+        val default = project.findProperty("iosDevice")?.toString() ?: when (target) {
+            KonanTarget.TVOS_X64 -> "Apple TV 4K"
+            KonanTarget.IOS_X64 -> "iPhone 8"
+            KonanTarget.WATCHOS_X64 -> "Apple Watch Series 6 - 40mm"
+            KonanTarget.WATCHOS_X86 -> "Apple Watch Series 4 - 40mm"
+            else -> error("Unexpected simulation target: $target")
+        }
+
+        // Find out if the default device is available
+        val out = ByteArrayOutputStream()
+        var result = project.exec {
+            commandLine("/usr/bin/xcrun", "simctl", "list", "devices", "available")
+            standardOutput = out
+        }
+        result.assertNormalExitValue()
+        // Create if it's not available
+        if (!out.toString("UTF-8").trim().contains(default)) {
+            out.reset()
+            result = project.exec {
+                commandLine("/usr/bin/xcrun", "simctl", "create", default, default)
+                standardOutput = out
+            }
+            result.assertNormalExitValue()
+        }
+
+        default
     }
 
     private val archSpecification = when (target.architecture) {
