@@ -129,19 +129,24 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
             .safeAs<JpsSimpleElement<*>>()?.data
             ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()
             ?: error("Cannot find maven coordinates for $jpsLibrary")
-        if (libraryName == "kotlinc.kotlin-stdlib-jdk8") {
-            return listOf(jpsLikeJarDependency("kotlinStdlib()", dependencyConfiguration = null))
-        }
-        return if (libraryName.startsWith("kotlinc.")) {
-            val artifactId = mavenRepositoryLibraryDescriptor.artifactId
-            if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$artifactId").exists()){
-                listOf(jpsLikeJarDependency(":prepare:ide-plugin-dependencies:$artifactId", dependencyConfiguration = null))
-            } else {
-                listOf(jpsLikeJarDependency(":$artifactId", dependencyConfiguration = null))
+        return listOf(
+            when {
+                libraryName == "kotlinc.kotlin-stdlib-jdk8" -> {
+                    jpsLikeJarDependency("kotlinStdlib()", dependencyConfiguration = null)
+                }
+                libraryName.startsWith("kotlinc.") -> {
+                    val artifactId = mavenRepositoryLibraryDescriptor.artifactId
+                    if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$artifactId").exists()) {
+                        jpsLikeJarDependency("project(\":prepare:ide-plugin-dependencies:$artifactId\")", dependencyConfiguration = null)
+                    } else {
+                        jpsLikeJarDependency("project(\":${mavenRepositoryLibraryDescriptor.artifactId}\")", dependencyConfiguration = null)
+                    }
+                }
+                else -> {
+                    jpsLikeJarDependency("\"${mavenRepositoryLibraryDescriptor.mavenId}\"", dependencyConfiguration = null)
+                }
             }
-        } else {
-            listOf(jpsLikeJarDependency("\"${mavenRepositoryLibraryDescriptor.mavenId}\"", dependencyConfiguration = null))
-        }
+        )
     }
     error("Unknown dependency: $dep")
 }
