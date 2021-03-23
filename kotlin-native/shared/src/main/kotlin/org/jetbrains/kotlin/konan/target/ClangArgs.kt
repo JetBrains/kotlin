@@ -56,6 +56,15 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         if (configurables is TargetableConfigurables) {
             add(listOf("-target", configurables.targetArg!!))
         }
+        if (configurables is AppleConfigurables) {
+            val arch = when (target) {
+                // TODO: LLVM 8 doesn't support arm64_32.
+                //  We can use armv7k because they are compatible at bitcode level.
+                KonanTarget.WATCHOS_ARM64 -> "armv7k"
+                else -> configurables.arch
+            }
+            add(listOf("-arch", arch))
+        }
         val hasCustomSysroot = configurables is ZephyrConfigurables
                 || configurables is WasmConfigurables
                 || configurables is AndroidConfigurables
@@ -100,19 +109,16 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
         // TODO: Fix with LLVM Update.
         KonanTarget.MACOS_ARM64 -> listOf(
-                "-arch", "arm64",
                 "-mmacosx-version-min=10.16"
         )
 
         KonanTarget.IOS_ARM32 -> listOf(
                 "-stdlib=libc++",
-                "-arch", "armv7",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.IOS_ARM64 -> listOf(
                 "-stdlib=libc++",
-                "-arch", "arm64",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
@@ -123,7 +129,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
         KonanTarget.TVOS_ARM64 -> listOf(
                 "-stdlib=libc++",
-                "-arch", "arm64",
                 "-mtvos-version-min=$osVersionMin"
         )
 
@@ -135,13 +140,11 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         KonanTarget.WATCHOS_ARM64,
         KonanTarget.WATCHOS_ARM32 -> listOf(
                 "-stdlib=libc++",
-                "-arch", "armv7k",
                 "-mwatchos-version-min=$osVersionMin"
         )
 
         KonanTarget.WATCHOS_X86 -> listOf(
                 "-stdlib=libc++",
-                "-arch", "i386",
                 "-mwatchos-simulator-version-min=$osVersionMin"
         )
 
