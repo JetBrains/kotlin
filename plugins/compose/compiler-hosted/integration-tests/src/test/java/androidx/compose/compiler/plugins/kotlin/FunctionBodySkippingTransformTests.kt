@@ -498,6 +498,46 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testLocalComposableFunctions(): Unit = comparisonPropagation(
+        """
+            @Composable fun A(a: Int) {}
+        """,
+        """
+            @Composable
+            fun Example(a: Int) {
+                @Composable fun Inner() {
+                    A(a)
+                }
+                Inner()
+            }
+        """,
+        """
+            @Composable
+            fun Example(a: Int, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>, "C(Example)<Inner(...>:Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                @Composable
+                fun Inner(%composer: Composer?, %changed: Int) {
+                  %composer.startReplaceableGroup(<>, "C(Inner)<A(a)>:Test.kt")
+                  A(a, %composer, 0b1110 and %dirty)
+                  %composer.endReplaceableGroup()
+                }
+                Inner(%composer, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Example(a, %composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
     fun testLoopWithContinueAndCallAfter(): Unit = comparisonPropagation(
         """
             @Composable fun Call() {}
@@ -1974,19 +2014,9 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 @Composable
                 fun foo(y: Int, %composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>, "C(foo)<B(x,>:Test.kt")
-                  val %dirty = %changed
-                  if (%changed and 0b1110 === 0) {
-                    %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
-                  }
-                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                    B(x, y, %composer, 0b1110 and %dirty or 0b01110000 and %dirty shl 0b0011)
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    foo(y, %composer, %changed or 0b0001)
-                  }
+                  %composer.startReplaceableGroup(<>, "C(foo)<B(x,>:Test.kt")
+                  B(x, y, %composer, 0b1110 and %dirty or 0b01110000 and %changed shl 0b0011)
+                  %composer.endReplaceableGroup()
                 }
                 foo(x, %composer, 0b1110 and %dirty)
               } else {
