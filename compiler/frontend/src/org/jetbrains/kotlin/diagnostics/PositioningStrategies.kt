@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.cfg.UnreachableCode
 import org.jetbrains.kotlin.diagnostics.Errors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.diagnostics.Errors.NO_ACTUAL_FOR_EXPECT
-import org.jetbrains.kotlin.diagnostics.PositioningStrategies.INNER_MODIFIER
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
@@ -637,10 +636,10 @@ object PositioningStrategies {
     val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<PsiElement> =
         object : PositioningStrategy<PsiElement>() {
             override fun mark(element: PsiElement): List<TextRange> {
-                when (element) {
+                return when (element) {
                     is KtSecondaryConstructor -> {
                         val valueParameterList = element.valueParameterList ?: return markElement(element)
-                        return markRange(element.getConstructorKeyword(), valueParameterList.lastChild)
+                        markRange(element.getConstructorKeyword(), valueParameterList.lastChild)
                     }
                     is KtConstructorDelegationCall -> {
                         if (element.isImplicit) {
@@ -650,9 +649,9 @@ object PositioningStrategies {
                             val valueParameterList = constructor.valueParameterList ?: return markElement(constructor)
                             return markRange(constructor.getConstructorKeyword(), valueParameterList.lastChild)
                         }
-                        return markElement(element.calleeExpression ?: element)
+                        markElement(element.calleeExpression ?: element)
                     }
-                    else -> error("unexpected element $element")
+                    else -> markElement(element)
                 }
             }
         }
