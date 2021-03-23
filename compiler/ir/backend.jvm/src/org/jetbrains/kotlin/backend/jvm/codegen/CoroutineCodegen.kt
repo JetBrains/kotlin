@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
@@ -28,10 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -193,12 +191,33 @@ internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlin
     // Force boxing for nullable inline class types with nullable underlying type
     if (returnType.isNullable() && unboxedReturnType.isNullable()) return null
     // Force boxing if the function overrides function with different type modulo nullability ignoring type parameters
-    if ((this as? IrSimpleFunction)?.let {
-            it.overriddenSymbols.any { overridden ->
-                (overridden.owner.returnType.isNullable() && overridden.owner.returnType.makeNotNull().unboxInlineClass().isNullable()) ||
-                        overridden.owner.returnType.makeNotNull().classOrNull != returnType.makeNotNull().classOrNull
-            }
-        } != false) return null
+    if ((this as? IrSimpleFunction)?.overridesReturningDifferentType(returnType) != false) return null
     // Don't box other inline classes
     return returnType
+}
+
+private fun IrSimpleFunction.overridesReturningDifferentType(returnType: IrType): Boolean {
+    val visited = hashSetOf<IrSimpleFunction>()
+
+    fun dfs(function: IrSimpleFunction): Boolean {
+        if (!visited.add(function)) return false
+
+        for (overridden in function.overriddenSymbols) {
+            val owner = overridden.owner
+            val overriddenReturnType = owner.returnType
+
+            if (!overriddenReturnType.erasedUpperBound.isInline) return true
+
+            if (overriddenReturnType.isNullable() &&
+                overriddenReturnType.makeNotNull().unboxInlineClass().isNullable()
+            ) return true
+
+            if (overriddenReturnType.classOrNull != returnType.classOrNull) return true
+
+            if (dfs(owner)) return true
+        }
+        return false
+    }
+
+    return dfs(this)
 }
