@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.load.kotlin.*
@@ -99,6 +98,10 @@ class SingleClassJvmIrProvider(
         if (signature !is IdSignature.PublicSignature) return
         val classId = ClassId.topLevel(signature.packageFqName().child(Name.identifier(signature.firstNameSegment)))
         val toplevelDescriptor = moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: return
+
+        /* TODO: should not be needed after we deal with fake overrides. */
+        if (symbolTable.referenceClass(toplevelDescriptor).isBound) return
+
         val source = toplevelDescriptor.source as? KotlinJvmBinarySourceElement ?: return
         val classHeader = source.binaryClass.classHeader
         if (classHeader.serializedIr == null || classHeader.serializedIr!!.isEmpty()) return
