@@ -70,47 +70,25 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               if (%changed !== 0 || !%composer.skipping) {
                 @Composable
                 fun A(%composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>, "C(A):Test.kt")
-                  if (%changed !== 0 || !%composer.skipping) {
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    A(%composer, %changed or 0b0001)
-                  }
+                  %composer.startReplaceableGroup(<>, "C(A):Test.kt")
+                  %composer.endReplaceableGroup()
                 }
                 @Composable
                 fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>, "C(B):Test.kt")
-                  val %dirty = %changed
-                  if (%changed and 0b1110 === 0) {
-                    %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
-                  }
-                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    B(content, %composer, %changed or 0b0001)
-                  }
+                  %composer.startReplaceableGroup(<>, "C(B):Test.kt")
+                  %composer.endReplaceableGroup()
                 }
                 @Composable
                 fun C(%composer: Composer?, %changed: Int) {
-                  %composer = %composer.startRestartGroup(<>, "C(C)<B>:Test.kt")
-                  if (%changed !== 0 || !%composer.skipping) {
-                    B(composableLambda(%composer, <>, false, "C<A()>:Test.kt") { %composer: Composer?, %changed: Int ->
-                      if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                        A(%composer, 0)
-                      } else {
-                        %composer.skipToGroupEnd()
-                      }
-                    }, %composer, 0b0110)
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    C(%composer, %changed or 0b0001)
-                  }
+                  %composer.startReplaceableGroup(<>, "C(C)<B>:Test.kt")
+                  B(composableLambda(%composer, <>, false, "C<A()>:Test.kt") { %composer: Composer?, %changed: Int ->
+                    if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                      A(%composer, 0)
+                    } else {
+                      %composer.skipToGroupEnd()
+                    }
+                  }, %composer, 0b0110)
+                  %composer.endReplaceableGroup()
                 }
               } else {
                 %composer.skipToGroupEnd()
