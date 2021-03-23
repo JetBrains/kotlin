@@ -71,7 +71,6 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
             commonTarget = outputCommonizerTarget,
             repository = repository,
             dependencies = StdlibRepository(distribution, libraryLoader) +
-                    KonanDistributionRepository(distribution, commonizerTargets.toSet(), libraryLoader) +
                     FilesRepository(dependencyLibraries.toSet(), libraryLoader),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
