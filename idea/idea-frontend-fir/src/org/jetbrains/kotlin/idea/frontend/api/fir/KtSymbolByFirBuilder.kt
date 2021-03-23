@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
-import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -304,7 +304,7 @@ internal class KtSymbolByFirBuilder private constructor(
             return typesCache.cache(coneType) {
                 when (coneType) {
                     is ConeClassLikeTypeImpl -> {
-                        if (coneType.isFunctionalType(rootSession)) KtFirFunctionalType(coneType, token, this@KtSymbolByFirBuilder)
+                        if (hasFunctionalClassId(coneType)) KtFirFunctionalType(coneType, token, this@KtSymbolByFirBuilder)
                         else KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
                     }
                     is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this@KtSymbolByFirBuilder)
@@ -315,6 +315,11 @@ internal class KtSymbolByFirBuilder private constructor(
                     else -> throwUnexpectedElementError(coneType)
                 }
             }
+        }
+
+        private fun hasFunctionalClassId(coneType: ConeClassLikeTypeImpl): Boolean {
+            val classId = coneType.classId ?: return false
+            return FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) != null
         }
 
         fun buildKtType(coneType: FirTypeRef): KtType {
