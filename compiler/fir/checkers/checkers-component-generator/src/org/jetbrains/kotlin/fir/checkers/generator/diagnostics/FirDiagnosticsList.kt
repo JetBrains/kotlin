@@ -336,6 +336,14 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<FirClass<*>>("classOrObject")
             parameter<FirCallableDeclaration<*>>("missingDeclaration")
         }
+        val OVERRIDING_FINAL_MEMBER_BY_DELEGATION by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableDeclaration<*>>("delegatedDeclaration")
+            parameter<FirCallableDeclaration<*>>("overriddenDeclaration")
+        }
+        val DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE by warning<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableDeclaration<*>>("delegatedDeclaration")
+            parameter<FirCallableDeclaration<*>>("overriddenDeclaration")
+        }
 
         val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
             parameter<FirMemberDeclaration>("function")

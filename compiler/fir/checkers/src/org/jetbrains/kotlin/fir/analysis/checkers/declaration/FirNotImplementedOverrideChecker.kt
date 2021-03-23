@@ -18,10 +18,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
@@ -135,16 +137,58 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             }
         }
         if (notImplementedIntersectionSymbols.isNotEmpty()) {
-            val notImplementedIntersectionSymbol = notImplementedIntersectionSymbols.first()
-            val notImplementedIntersection = notImplementedIntersectionSymbol.fir
-            val intersections = (notImplementedIntersectionSymbol as FirIntersectionCallableSymbol).intersections
-            if (intersections.any {
-                    (it.containingClass()?.toSymbol(context.session)?.fir as? FirRegularClass)?.classKind == ClassKind.CLASS
+            var overridingFinalByDelegationReported = false
+            var manyMemberNotImplementedReported = false
+            var delegatedHidesSupertypeReported = false
+            for (notImplementedIntersectionSymbol in notImplementedIntersectionSymbols) {
+                val notImplementedIntersection = notImplementedIntersectionSymbol.fir
+                val intersections = (notImplementedIntersectionSymbol as FirIntersectionCallableSymbol).intersections
+                val delegatedIntersected = intersections.find {
+                    val fir = it.fir as FirCallableMemberDeclaration
+                    fir.origin == FirDeclarationOrigin.Delegated
                 }
-            ) {
-                reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, declaration, notImplementedIntersection, context)
-            } else {
-                reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, declaration, notImplementedIntersection, context)
+                if (delegatedIntersected != null) {
+                    val finalIntersected = intersections.find { (it.fir as FirCallableMemberDeclaration).modality == Modality.FINAL }
+                    if (finalIntersected != null) {
+                        if (!overridingFinalByDelegationReported) {
+                            reporter.reportOn(
+                                source,
+                                OVERRIDING_FINAL_MEMBER_BY_DELEGATION,
+                                delegatedIntersected.fir,
+                                finalIntersected.fir,
+                                context
+                            )
+                            overridingFinalByDelegationReported = true
+                        }
+                        continue
+                    }
+                    val notDelegatedIntersected = intersections.firstOrNull {
+                        (it.fir as FirCallableMemberDeclaration).origin != FirDeclarationOrigin.Delegated
+                    }
+                    if (notDelegatedIntersected != null) {
+                        if (!delegatedHidesSupertypeReported) {
+                            reporter.reportOn(
+                                source,
+                                DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE,
+                                delegatedIntersected.fir,
+                                notDelegatedIntersected.fir,
+                                context
+                            )
+                            delegatedHidesSupertypeReported = true
+                        }
+                        continue
+                    }
+                }
+                if (manyMemberNotImplementedReported) continue
+                if (intersections.any {
+                        (it.containingClass()?.toSymbol(context.session)?.fir as? FirRegularClass)?.classKind == ClassKind.CLASS
+                    }
+                ) {
+                    reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, declaration, notImplementedIntersection, context)
+                } else {
+                    reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, declaration, notImplementedIntersection, context)
+                }
+                manyMemberNotImplementedReported = true
             }
         }
     }

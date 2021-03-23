@@ -14,7 +14,7 @@ class Delegate : Derived {
 public open class MyClass : Base by Delegate()
 
 fun box(): String {
-    object : MyClass(), Derived by Delegate() {
+    <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>object<!> : MyClass(), Derived by Delegate() {
     }
     return "OK"
 }

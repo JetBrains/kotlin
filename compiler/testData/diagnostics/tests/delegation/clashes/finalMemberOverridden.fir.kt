@@ -39,18 +39,18 @@ class CBarT<T> : IBarT<T> {
     override val bar: T get() = null!!
 }
 
-class Test1 : Final(), IFoo by CFoo()
+<!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test1<!> : Final(), IFoo by CFoo()
 
-class Test2 : Final(), IBar by CBar()
+<!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test2<!> : Final(), IBar by CBar()
 
-class Test3 : Final(), IQux by CQux()
+<!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test3<!> : Final(), IQux by CQux()
 
-class Test4 : Derived(), IFoo by CFoo()
+<!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test4<!> : Derived(), IFoo by CFoo()
 
-class Test5 : Derived(), IBar by CBar()
+<!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test5<!> : Derived(), IBar by CBar()
 
-class Test6 : Derived(), IQux by CQux()
+<!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test6<!> : Derived(), IQux by CQux()
 
-class Test7 : Final(), IBarT<Int> by CBarT<Int>()
+<!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test7<!> : Final(), IBarT<Int> by CBarT<Int>()
 
-class Test8 : Final(), IBarT<Int> by CBar()
+<!OVERRIDING_FINAL_MEMBER_BY_DELEGATION!>class Test8<!> : Final(), IBarT<Int> by CBar()

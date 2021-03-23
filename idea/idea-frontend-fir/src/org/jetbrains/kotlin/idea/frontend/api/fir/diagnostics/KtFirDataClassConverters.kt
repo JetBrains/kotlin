@@ -965,6 +965,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION) { firDiagnostic ->
+        OverridingFinalMemberByDelegationImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a as FirCallableDeclaration),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE) { firDiagnostic ->
+        DelegatedMemberHidesSupertypeOverrideImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a as FirCallableDeclaration),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE) { firDiagnostic ->
         ReturnTypeMismatchOnOverrideImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a as FirDeclaration),

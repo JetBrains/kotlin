@@ -1105,6 +1105,24 @@ internal class ManyInterfacesMemberNotImplementedImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class OverridingFinalMemberByDelegationImpl(
+    override val delegatedDeclaration: KtCallableSymbol,
+    override val overriddenDeclaration: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.OverridingFinalMemberByDelegation(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class DelegatedMemberHidesSupertypeOverrideImpl(
+    override val delegatedDeclaration: KtCallableSymbol,
+    override val overriddenDeclaration: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DelegatedMemberHidesSupertypeOverride(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ReturnTypeMismatchOnOverrideImpl(
     override val function: KtSymbol,
     override val superFunction: KtSymbol,

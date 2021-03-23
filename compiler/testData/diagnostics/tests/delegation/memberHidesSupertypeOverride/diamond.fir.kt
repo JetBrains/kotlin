@@ -23,19 +23,19 @@ class ImplAll : Base, Base2, Base3 {
 }
 
 fun box(): String {
-    object : Base2, Base3, Base by Impl() {
+    <!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>object<!> : Base2, Base3, Base by Impl() {
 
     }
 
-    object : Base2 by Impl2(), Base3, Base {
+    <!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>object<!> : Base2 by Impl2(), Base3, Base {
 
     }
 
-    object : Base2, Base3 by Impl3(), Base {
+    <!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>object<!> : Base2, Base3 by Impl3(), Base {
 
     }
 
-    object : Base2 by Impl2(), Base3 by Impl3(), Base by Impl() {
+    <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>object<!> : Base2 by Impl2(), Base3 by Impl3(), Base by Impl() {
 
     }
 

@@ -690,6 +690,18 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val missingDeclaration: KtCallableSymbol
     }
 
+    abstract class OverridingFinalMemberByDelegation : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = OverridingFinalMemberByDelegation::class
+        abstract val delegatedDeclaration: KtCallableSymbol
+        abstract val overriddenDeclaration: KtCallableSymbol
+    }
+
+    abstract class DelegatedMemberHidesSupertypeOverride : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = DelegatedMemberHidesSupertypeOverride::class
+        abstract val delegatedDeclaration: KtCallableSymbol
+        abstract val overriddenDeclaration: KtCallableSymbol
+    }
+
     abstract class ReturnTypeMismatchOnOverride : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = ReturnTypeMismatchOnOverride::class
         abstract val function: KtSymbol
