@@ -7,6 +7,24 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    maven { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/intellij-third-party-dependencies") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/jcenter") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/repo.jenkins-ci.org/releases") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/dl.bintray.com/groovy/maven/") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/jediterm/") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/markdown") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/download.jetbrains.com/teamcity-repository") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-plugin/") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/space") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-ide-plugin-dependencies") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide") }
+    maven { setUrl("https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-ide-plugin-dependencies") }
+}
+
 dependencies {
     jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.TEST)
     jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test:1.4.0", JpsDepScope.TEST)
