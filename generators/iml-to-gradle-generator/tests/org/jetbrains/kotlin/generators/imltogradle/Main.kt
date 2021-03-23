@@ -10,20 +10,20 @@ import org.jdom.Element
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.jps.model.java.impl.JpsJavaExtensionServiceImpl
+import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor
+import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.*
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer
-import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer
 import java.io.File
 
 const val KOTLIN_IDE_DIR_NAME = "kotlin-ide"
 
 private lateinit var kotlinIdeJpsModuleNameToGradleModuleNameMapping: Map<String, String>
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
-private lateinit var projectLevelLibraryNameToJpsLibraryMapping: Map<String, JpsLibrary>
+private lateinit var intellijModuleNameToJpsModuleMapping: Map<String, JpsModule>
 private val KOTLIN_REPO_ROOT = File(".").canonicalFile
 
 private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<String, List<GradleDependencyNotation>> = mapOf(
@@ -33,13 +33,24 @@ private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<Stri
     "intellij.platform.externalSystem.tests" to listOf(),
     "intellij.gradle.toolingExtension.tests" to listOf(),
     "intellij.gradle.tests" to listOf(),
+
+    // Transitive exported dependencies
+    "intellij.platform.lang.tests" to listOf(),
 )
+
+private val knownBrokenLibraryJars = listOf("lucene-core", "coverage-report") // TODO resolve jar in ivy repo?
 
 val SKIP_IML = listOf(
     "kotlin-ide/kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml"
 )
 
-fun main() {
+fun main(args: Array<String>) {
+    val intellijCommunityRoot = args.singleOrNull()
+        ?.let { File(it) }
+        ?: error("Usage: ./gradlew generateGradleByIml -Pargs=\"path/to/intellij-community\"")
+
+    intellijModuleNameToJpsModuleMapping = intellijCommunityRoot.loadJpsProject().modules.associateBy { it.name }
+
     val kotlinIdeFile = KOTLIN_REPO_ROOT.resolve(KOTLIN_IDE_DIR_NAME)
     val imlFiles = kotlinIdeFile.walk()
         .filter { it.isFile && it.extension == "iml" && it.name.startsWith("kotlin.") }
@@ -82,70 +93,117 @@ fun main() {
     }
 }
 
-fun JpsLibraryDependency.resolve(moduleImlRootElement: Element): JpsLibrary? {
-    val libraryName = libraryReference.libraryName
-    return moduleImlRootElement.traverseChildren()
-        .filter { it.name == JpsModuleRootModelSerializer.LIBRARY_TAG }
-        .map { JpsLibraryTableSerializer.loadLibrary(it) }
-        .find { it.name == libraryName }
-        ?: projectLevelLibraryNameToJpsLibraryMapping[libraryName]
+fun jpsLikeJarDependency(
+    dependencyNotation: String,
+    scope: JpsJavaDependencyScope,
+    dependencyConfiguration: String?,
+    exported: Boolean
+): String {
+    val scopeArg = "JpsDepScope.$scope"
+    val exportedArg = "exported = true".takeIf { exported }
+    return "jpsLikeJarDependency(${listOfNotNull(dependencyNotation, scopeArg, dependencyConfiguration, exportedArg).joinToString()})"
+}
+
+fun jpsLikeModuleDependency(
+    moduleName: String,
+    scope: JpsJavaDependencyScope,
+    exported: Boolean
+): String {
+    val scopeArg = "JpsDepScope.$scope"
+    val exportedArg = "exported = true".takeIf { exported }
+    return "jpsLikeModuleDependency(${listOfNotNull("\"$moduleName\"", scopeArg, exportedArg).joinToString()})"
+}
+
+fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: Boolean): String? {
+    val mavenRepositoryLibraryDescriptor = lib.properties
+        .safeAs<JpsSimpleElement<*>>()?.data
+        ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()
+
+    if (mavenRepositoryLibraryDescriptor == null) {
+        val ignore = knownBrokenLibraryJars.any { substring ->
+            lib.getRootUrls(JpsOrderRootType.COMPILED).any { it.contains(substring) }
+        }
+        if (ignore) {
+            return null
+        }
+    }
+    mavenRepositoryLibraryDescriptor ?: error("Cannot find maven coordinates for library ${lib.name}")
+
+    return when {
+        lib.name == "kotlinc.kotlin-stdlib-jdk8" -> {
+            jpsLikeJarDependency("kotlinStdlib()", scope, dependencyConfiguration = null, exported)
+        }
+        lib.name.startsWith("kotlinc.") -> {
+            val artifactId = mavenRepositoryLibraryDescriptor.artifactId
+            if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$artifactId").exists()) {
+                jpsLikeJarDependency(
+                    "project(\":prepare:ide-plugin-dependencies:$artifactId\")",
+                    scope,
+                    dependencyConfiguration = null,
+                    exported
+                )
+            } else {
+                jpsLikeJarDependency(
+                    "project(\":${mavenRepositoryLibraryDescriptor.artifactId}\")",
+                    scope,
+                    dependencyConfiguration = null,
+                    exported
+                )
+            }
+        }
+        else -> {
+            jpsLikeJarDependency("\"${mavenRepositoryLibraryDescriptor.mavenId}\"", scope, dependencyConfiguration = null, exported)
+        }
+    }
+}
+
+fun convertJpsModuleDependency(dep: JpsModuleDependency): List<String> {
+    val moduleName = dep.moduleReference.moduleName
+    when {
+        moduleName.startsWith("kotlin.") -> {
+            val gradleModuleName = kotlinIdeJpsModuleNameToGradleModuleNameMapping.getValue(moduleName)
+            return listOf(jpsLikeModuleDependency(gradleModuleName, dep.scope, dep.isExported))
+        }
+        moduleName.startsWith("intellij.") -> {
+            val ijModule = intellijModuleNameToJpsModuleMapping[dep.moduleReference.moduleName]
+                ?: error("Cannot fine intellij module = ${dep.moduleReference}")
+            return ijModule.flattenExportedTransitiveDependencies(initialScope = dep.scope, jpsDependencyToDependantModuleIml = { null })
+                .filter { it.scope != JpsJavaDependencyScope.RUNTIME } // We are interested in compile classpath transitive dependencies
+                .flatMap { dependencyDescriptor ->
+                    when (val moduleOrLibrary = dependencyDescriptor.moduleOrLibrary) {
+                        is Either.First -> {
+                            val dependantModuleName = moduleOrLibrary.value.name
+                            intellijModuleNameToGradleDependencyNotationsMapping[dependantModuleName]
+                                .orElse { error("Cannot find Gradle notation mapping for module = $dependantModuleName") }
+                                .map {
+                                    jpsLikeJarDependency(
+                                        it.dependencyNotation,
+                                        dependencyDescriptor.scope,
+                                        it.dependencyConfiguration,
+                                        dep.isExported
+                                    )
+                                }
+                                .asSequence()
+                        }
+                        is Either.Second -> sequenceOf(convertJpsLibrary(moduleOrLibrary.value, dependencyDescriptor.scope, dep.isExported))
+                    }
+                }
+                .filterNotNull()
+                .map { "$it // Exported transitive dependency" }
+                .toList()
+        }
+        else -> error("Cannot convert module dependency to Gradle $dep")
+    }
 }
 
 fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement: Element): List<String> {
-    if (dep is JpsSdkDependency || dep is JpsModuleSourceDependency) {
-        return listOf()
+    return when (dep) {
+        is JpsModuleDependency -> convertJpsModuleDependency(dep)
+        is JpsLibraryDependency -> dep.resolve(moduleImlRootElement)
+            .orElse { error("Cannot resolve library reference = ${dep.libraryReference}") }
+            .let { listOfNotNull(convertJpsLibrary(it, dep.scope, dep.isExported)) }
+        else -> error("Unknown dependency: $dep")
     }
-
-    val moduleName = (dep as? JpsModuleDependency)?.moduleReference?.moduleName
-    val ext = JpsJavaExtensionServiceImpl.getInstance().getDependencyExtension(dep)
-        ?: error("Cannot get dependency extension for $dep")
-    val scope = "JpsDepScope.${ext.scope}"
-    val exported = "exported = true".takeIf { ext.isExported }
-
-    fun jpsLikeJarDependency(dependencyNotation: String, dependencyConfiguration: String?): String {
-        return "jpsLikeJarDependency(${listOfNotNull(dependencyNotation, scope, dependencyConfiguration, exported).joinToString()})"
-    }
-
-    fun jpsLikeModuleDependency(moduleName: String): String {
-        return "jpsLikeModuleDependency(${listOfNotNull("\"$moduleName\"", scope, exported).joinToString()})"
-    }
-
-    if (moduleName?.startsWith("kotlin.") == true) {
-        val gradleModuleName = kotlinIdeJpsModuleNameToGradleModuleNameMapping.getValue(moduleName)
-        return listOf(jpsLikeModuleDependency(gradleModuleName))
-    }
-    if (moduleName?.startsWith("intellij.") == true) {
-        return intellijModuleNameToGradleDependencyNotationsMapping[moduleName]
-            ?.map { jpsLikeJarDependency(it.dependencyNotation, it.dependencyConfiguration) }
-            ?: error("Cannot find mapping for intellij module name = $moduleName")
-    }
-    if (dep is JpsLibraryDependency) {
-        val libraryName = dep.libraryReference.libraryName
-        val jpsLibrary = dep.resolve(moduleImlRootElement) ?: error("Cannot resolve jps library = $libraryName")
-        val mavenRepositoryLibraryDescriptor = jpsLibrary.properties
-            .safeAs<JpsSimpleElement<*>>()?.data
-            ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()
-            ?: error("Cannot find maven coordinates for $jpsLibrary")
-        return listOf(
-            when {
-                libraryName == "kotlinc.kotlin-stdlib-jdk8" -> {
-                    jpsLikeJarDependency("kotlinStdlib()", dependencyConfiguration = null)
-                }
-                libraryName.startsWith("kotlinc.") -> {
-                    val artifactId = mavenRepositoryLibraryDescriptor.artifactId
-                    if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$artifactId").exists()) {
-                        jpsLikeJarDependency("project(\":prepare:ide-plugin-dependencies:$artifactId\")", dependencyConfiguration = null)
-                    } else {
-                        jpsLikeJarDependency("project(\":${mavenRepositoryLibraryDescriptor.artifactId}\")", dependencyConfiguration = null)
-                    }
-                }
-                else -> {
-                    jpsLikeJarDependency("\"${mavenRepositoryLibraryDescriptor.mavenId}\"", dependencyConfiguration = null)
-                }
-            }
-        )
-    }
-    error("Unknown dependency: $dep")
 }
 
 fun convertJpsModuleSourceRoot(imlFile: File, sourceRoot: JpsModuleSourceRoot): String {
@@ -157,15 +215,13 @@ fun convertJpsModuleSourceRoot(imlFile: File, sourceRoot: JpsModuleSourceRoot): 
 }
 
 fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
-    val dependencies = jpsModule.dependenciesList.dependencies
-
     val (src, test) = jpsModule.sourceRoots
         .groupBy { it.rootType.isForTests }
         .mapValues { entry -> entry.value.joinToString("\n") { convertJpsModuleSourceRoot(imlFile, it) } }
         .let { Pair(it[false] ?: "", it[true] ?: "") }
 
     val moduleImlRootElement = imlFile.readXml()
-    val deps = dependencies.flatMap { convertJpsDependencyElement(it, moduleImlRootElement) }
+    val deps = jpsModule.dependencies.flatMap { convertJpsDependencyElement(it, moduleImlRootElement) }
         .distinct()
         .filter { it != "implementation()" } // TODO remove hack
         .joinToString("\n")
