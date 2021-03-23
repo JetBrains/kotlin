@@ -512,12 +512,14 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             class UnstableDelegateProp {
                 var p1 by UnstableDelegate()
             }
+            fun used(x: Any?) {}
         """,
         """
             import a.*
             import androidx.compose.runtime.Composable
 
             @Composable fun A(y: Any) {
+                used(y)
                 A(EmptyClass())
                 A(SingleStableValInt(123))
                 A(SingleStableVal(StableClass()))
@@ -541,6 +543,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun A(y: Any, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>, "C(A)<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
+              used(y)
               A(EmptyClass(), %composer, EmptyClass.%stable)
               A(SingleStableValInt(123), %composer, SingleStableValInt.%stable)
               A(SingleStableVal(StableClass()), %composer, SingleStableVal.%stable)
@@ -609,6 +612,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                     get() { TODO() }
                     set(value) { }
             }
+            fun used(x: Any?) {}
         """,
         """
             import a.*
@@ -622,6 +626,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 var p1 by UnstableDelegate()
             }
             @Composable fun A(y: Any) {
+                used(y)
                 A(X(listOf(StableClass())))
                 A(StableDelegateProp())
                 A(UnstableDelegateProp())
@@ -657,6 +662,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun A(y: Any, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>:Test.kt")
+              used(y)
               A(X(listOf(StableClass())), %composer, 0b1000)
               A(StableDelegateProp(), %composer, 0)
               A(UnstableDelegateProp(), %composer, UnstableDelegate.%stable)
@@ -675,13 +681,14 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               fun make(): T = error("")
             }
             class Foo
+            fun used(x: Any?) {}
         """,
         """
-            import a.Wrapper
-            import a.Foo
+            import a.*
             import androidx.compose.runtime.Composable
 
             @Composable fun A(y: Any) {
+                used(y)
                 A(Wrapper(Foo()))
             }
         """,
@@ -689,6 +696,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun A(y: Any, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>, "C(A)<A(Wrap...>:Test.kt")
+              used(y)
               A(Wrapper(Foo()), %composer, Wrapper.%stable)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, %composer, %changed or 0b0001)
@@ -742,10 +750,11 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>, "C(X)P(1)*<itemCo...>:Test.kt")
+              val %dirty = %changed
               val tmp0_iterator = items.iterator()
               while (tmp0_iterator.hasNext()) {
                 val item = tmp0_iterator.next()
-                itemContent(item, %composer, 0b01110000 and %changed)
+                itemContent(item, %composer, 0b01110000 and %dirty)
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 X(items, itemContent, %composer, %changed or 0b0001)
@@ -801,9 +810,12 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
 
             class Foo
             @Composable fun A(y: Int, x: Any) {
+                used(y)
                 B(x)
             }
-            @Composable fun B(x: Any) {}
+            @Composable fun B(x: Any) {
+                used(x)
+            }
         """,
         """
             @StabilityInferred(parameters = 0)
@@ -813,6 +825,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun A(y: Int, x: Any, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>, "C(A)P(1)<B(x)>:Test.kt")
+              used(y)
               B(x, %composer, 0b1000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, x, %composer, %changed or 0b0001)
@@ -821,6 +834,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun B(x: Any, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>, "C(B):Test.kt")
+              used(x)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(x, %composer, %changed or 0b0001)
               }
@@ -835,9 +849,12 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
 
             class Foo(var bar: Int = 0)
             @Composable fun A(y: Int, x: Foo) {
+                used(y)
                 B(x)
             }
-            @Composable fun B(x: Any) {}
+            @Composable fun B(x: Any) {
+                used(x)
+            }
         """,
         """
             @StabilityInferred(parameters = 0)
@@ -847,6 +864,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>, "C(A)P(1)<B(x)>:Test.kt")
+              used(y)
               B(x, %composer, 0b1000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, x, %composer, %changed or 0b0001)
@@ -855,6 +873,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun B(x: Any, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>, "C(B):Test.kt")
+              used(x)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(x, %composer, %changed or 0b0001)
               }
@@ -1018,7 +1037,10 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     ) = verifyComposeIrTransform(
         checked,
         expectedTransformed,
-        unchecked,
+        """
+            $unchecked
+            fun used(x: Any?) {}
+        """,
         dumpTree = dumpTree
     )
 }

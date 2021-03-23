@@ -2430,6 +2430,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(value: InlineClass) {
+                used(value)
                 A()
             }
         """,
@@ -2442,6 +2443,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(value.value)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                used(value)
                 A(%composer, 0)
               } else {
                 %composer.skipToGroupEnd()
@@ -2456,30 +2458,150 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testParameterOrderInformation(): Unit = controlFlow(
         """
-            @Composable fun Test01(p0: Int, p1: Int, p2: Int, p3: Int) { }
-            @Composable fun Test02(p0: Int, p1: Int, p3: Int, p2: Int) { }
-            @Composable fun Test03(p0: Int, p2: Int, p1: Int, p3: Int) { }
-            @Composable fun Test04(p0: Int, p2: Int, p3: Int, p1: Int) { }
-            @Composable fun Test05(p0: Int, p3: Int, p1: Int, p2: Int) { }
-            @Composable fun Test06(p0: Int, p3: Int, p2: Int, p1: Int) { }
-            @Composable fun Test07(p1: Int, p0: Int, p2: Int, p3: Int) { }
-            @Composable fun Test08(p1: Int, p0: Int, p3: Int, p2: Int) { }
-            @Composable fun Test09(p1: Int, p2: Int, p0: Int, p3: Int) { }
-            @Composable fun Test00(p1: Int, p2: Int, p3: Int, p0: Int) { }
-            @Composable fun Test11(p1: Int, p3: Int, p0: Int, p2: Int) { }
-            @Composable fun Test12(p1: Int, p3: Int, p2: Int, p0: Int) { }
-            @Composable fun Test13(p2: Int, p0: Int, p1: Int, p3: Int) { }
-            @Composable fun Test14(p2: Int, p0: Int, p3: Int, p1: Int) { }
-            @Composable fun Test15(p2: Int, p1: Int, p0: Int, p3: Int) { }
-            @Composable fun Test16(p2: Int, p1: Int, p3: Int, p0: Int) { }
-            @Composable fun Test17(p2: Int, p3: Int, p0: Int, p1: Int) { }
-            @Composable fun Test18(p2: Int, p3: Int, p1: Int, p0: Int) { }
-            @Composable fun Test19(p3: Int, p0: Int, p1: Int, p2: Int) { }
-            @Composable fun Test20(p3: Int, p0: Int, p2: Int, p1: Int) { }
-            @Composable fun Test21(p3: Int, p1: Int, p0: Int, p2: Int) { }
-            @Composable fun Test22(p3: Int, p1: Int, p2: Int, p0: Int) { }
-            @Composable fun Test23(p3: Int, p2: Int, p0: Int, p1: Int) { }
-            @Composable fun Test24(p3: Int, p2: Int, p1: Int, p0: Int) { }
+            @Composable fun Test01(p0: Int, p1: Int, p2: Int, p3: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test02(p0: Int, p1: Int, p3: Int, p2: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test03(p0: Int, p2: Int, p1: Int, p3: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test04(p0: Int, p2: Int, p3: Int, p1: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test05(p0: Int, p3: Int, p1: Int, p2: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test06(p0: Int, p3: Int, p2: Int, p1: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test07(p1: Int, p0: Int, p2: Int, p3: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test08(p1: Int, p0: Int, p3: Int, p2: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test09(p1: Int, p2: Int, p0: Int, p3: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test00(p1: Int, p2: Int, p3: Int, p0: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test11(p1: Int, p3: Int, p0: Int, p2: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test12(p1: Int, p3: Int, p2: Int, p0: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test13(p2: Int, p0: Int, p1: Int, p3: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test14(p2: Int, p0: Int, p3: Int, p1: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test15(p2: Int, p1: Int, p0: Int, p3: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test16(p2: Int, p1: Int, p3: Int, p0: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test17(p2: Int, p3: Int, p0: Int, p1: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test18(p2: Int, p3: Int, p1: Int, p0: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test19(p3: Int, p0: Int, p1: Int, p2: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test20(p3: Int, p0: Int, p2: Int, p1: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test21(p3: Int, p1: Int, p0: Int, p2: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test22(p3: Int, p1: Int, p2: Int, p0: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test23(p3: Int, p2: Int, p0: Int, p1: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
+            @Composable fun Test24(p3: Int, p2: Int, p1: Int, p0: Int) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
+            }
         """,
         """
             @Composable
@@ -2499,6 +2621,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2523,6 +2649,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2547,6 +2677,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2571,6 +2705,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2595,6 +2733,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2619,6 +2761,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2643,6 +2789,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2667,6 +2817,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2691,6 +2845,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2715,6 +2873,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2739,6 +2901,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2763,6 +2929,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2787,6 +2957,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2811,6 +2985,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2835,6 +3013,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2859,6 +3041,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2883,6 +3069,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2907,6 +3097,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2931,6 +3125,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2955,6 +3153,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2979,6 +3181,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -3003,6 +3209,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -3027,6 +3237,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -3051,6 +3265,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                used(p0)
+                used(p1)
+                used(p2)
+                used(p3)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -3070,13 +3288,14 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
 
             @Composable
             fun Test(value: LocalInlineClass) {
-
+                used(value)
             }
         """,
         extra = """
             package androidx.compose.runtime.tests
 
             inline class LocalInlineClass(val value: Int)
+            fun used(x: Any?) {}
         """,
         expectedTransformed = """
             @Composable
@@ -3087,6 +3306,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %dirty = %dirty or if (%composer.changed(value.value)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                used(value)
               } else {
                 %composer.skipToGroupEnd()
               }

@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
+import org.junit.Ignore
 import org.junit.Test
 
 class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
@@ -39,6 +40,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             import androidx.compose.runtime.Composable
 
             $unchecked
+            fun used(x: Any?) {}
         """.trimIndent(),
         dumpTree = dumpTree
     )
@@ -666,6 +668,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun Test(items: List<Int>) {
                 val foo = remember { Foo() }
+                used(items)
             }
         """,
         """
@@ -676,6 +679,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                 val tmp0_return = Foo()
                 tmp0_return
               }
+              used(items)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(items, %composer, %changed or 0b0001)
               }
@@ -900,8 +904,8 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
         """
     )
 
-    @Test
-    fun testOptimizationFailsIfDefaultsGroupIsUsed(): Unit = comparisonPropagation(
+    @Ignore("This test must pass before intrinsic remember can be turned on")
+    fun xtestOptimizationFailsIfDefaultsGroupIsUsed(): Unit = comparisonPropagation(
         """
             class Foo
             fun someInt(): Int = 123
@@ -910,8 +914,8 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun Test(a: Int = someInt()) {
                 val foo = remember { Foo() }
-                print(foo)
-                print(a)
+                used(foo)
+                used(a)
             }
         """,
         """
@@ -940,8 +944,8 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
                   val tmp0_return = Foo()
                   tmp0_return
                 }, %composer, 0)
-                print(foo)
-                print(a)
+                used(foo)
+                used(a)
               } else {
                 %composer.skipToGroupEnd()
               }

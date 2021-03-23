@@ -40,6 +40,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             import androidx.compose.runtime.NonRestartableComposable
 
             $unchecked
+
+            fun used(x: Any?) {}
         """.trimIndent(),
         dumpTree = dumpTree
     )
@@ -165,7 +167,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(x: Int = makeInt()) {
-
+                used(x)
             }
         """,
         """
@@ -190,6 +192,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                     %dirty = %dirty and 0b1110.inv()
                   }
                 }
+                used(x)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -292,7 +295,37 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 a29: Int = 0,
                 a30: Int = 0
             ) {
-                print("Hello world!")
+                used(a00)
+                used(a01)
+                used(a02)
+                used(a03)
+                used(a04)
+                used(a05)
+                used(a06)
+                used(a07)
+                used(a08)
+                used(a09)
+                used(a10)
+                used(a11)
+                used(a12)
+                used(a13)
+                used(a14)
+                used(a15)
+                used(a16)
+                used(a17)
+                used(a18)
+                used(a19)
+                used(a20)
+                used(a21)
+                used(a22)
+                used(a23)
+                used(a24)
+                used(a25)
+                used(a26)
+                used(a27)
+                used(a28)
+                used(a29)
+                used(a30)
             }
         """,
         """
@@ -552,7 +585,37 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b01000000000000000000000000000000 !== 0) {
                   a30 = 0
                 }
-                print("Hello world!")
+                used(a00)
+                used(a01)
+                used(a02)
+                used(a03)
+                used(a04)
+                used(a05)
+                used(a06)
+                used(a07)
+                used(a08)
+                used(a09)
+                used(a10)
+                used(a11)
+                used(a12)
+                used(a13)
+                used(a14)
+                used(a15)
+                used(a16)
+                used(a17)
+                used(a18)
+                used(a19)
+                used(a20)
+                used(a21)
+                used(a22)
+                used(a23)
+                used(a24)
+                used(a25)
+                used(a26)
+                used(a27)
+                used(a28)
+                used(a29)
+                used(a30)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -603,7 +666,38 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 a30: Int = 0,
                 a31: Int = 0
             ) {
-                print("Hello world!")
+                used(a00)
+                used(a01)
+                used(a02)
+                used(a03)
+                used(a04)
+                used(a05)
+                used(a06)
+                used(a07)
+                used(a08)
+                used(a09)
+                used(a10)
+                used(a11)
+                used(a12)
+                used(a13)
+                used(a14)
+                used(a15)
+                used(a16)
+                used(a17)
+                used(a18)
+                used(a19)
+                used(a20)
+                used(a21)
+                used(a22)
+                used(a23)
+                used(a24)
+                used(a25)
+                used(a26)
+                used(a27)
+                used(a28)
+                used(a29)
+                used(a30)
+                used(a31)
             }
         """,
         """
@@ -871,7 +965,38 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 if (%default1 and 0b0001 !== 0) {
                   a31 = 0
                 }
-                print("Hello world!")
+                used(a00)
+                used(a01)
+                used(a02)
+                used(a03)
+                used(a04)
+                used(a05)
+                used(a06)
+                used(a07)
+                used(a08)
+                used(a09)
+                used(a10)
+                used(a11)
+                used(a12)
+                used(a13)
+                used(a14)
+                used(a15)
+                used(a16)
+                used(a17)
+                used(a18)
+                used(a19)
+                used(a20)
+                used(a21)
+                used(a22)
+                used(a23)
+                used(a24)
+                used(a25)
+                used(a26)
+                used(a27)
+                used(a28)
+                used(a29)
+                used(a30)
+                used(a31)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -923,7 +1048,38 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 a30: Int = 0,
                 a31: Foo = Foo()
             ) {
-                print("Hello world!")
+                used(a00)
+                used(a01)
+                used(a02)
+                used(a03)
+                used(a04)
+                used(a05)
+                used(a06)
+                used(a07)
+                used(a08)
+                used(a09)
+                used(a10)
+                used(a11)
+                used(a12)
+                used(a13)
+                used(a14)
+                used(a15)
+                used(a16)
+                used(a17)
+                used(a18)
+                used(a19)
+                used(a20)
+                used(a21)
+                used(a22)
+                used(a23)
+                used(a24)
+                used(a25)
+                used(a26)
+                used(a27)
+                used(a28)
+                used(a29)
+                used(a30)
+                used(a31)
             }
         """,
         """
@@ -1201,7 +1357,38 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                     %dirty3 = %dirty3 and 0b01110000.inv()
                   }
                 }
-                print("Hello world!")
+                used(a00)
+                used(a01)
+                used(a02)
+                used(a03)
+                used(a04)
+                used(a05)
+                used(a06)
+                used(a07)
+                used(a08)
+                used(a09)
+                used(a10)
+                used(a11)
+                used(a12)
+                used(a13)
+                used(a14)
+                used(a15)
+                used(a16)
+                used(a17)
+                used(a18)
+                used(a19)
+                used(a20)
+                used(a21)
+                used(a22)
+                used(a23)
+                used(a24)
+                used(a25)
+                used(a26)
+                used(a27)
+                used(a28)
+                used(a29)
+                used(a30)
+                used(a31)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -1246,7 +1433,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               @Composable
               fun Example(%composer: Composer?, %changed: Int) {
                 %composer.startReplaceableGroup(<>, "C(Example)<foo()>:Test.kt")
-                foo(0, %composer, 0, 0b0001)
+                foo(0, %composer, 0b01110000 and %changed shl 0b0011, 0b0001)
                 %composer.endReplaceableGroup()
               }
               static val %stable: Int = 0

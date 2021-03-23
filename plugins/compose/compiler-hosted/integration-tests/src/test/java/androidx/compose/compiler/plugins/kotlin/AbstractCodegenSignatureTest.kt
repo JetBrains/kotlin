@@ -273,6 +273,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
 
            $text
 
+            fun used(x: Any?) {}
         """,
             dumpClasses
         )
