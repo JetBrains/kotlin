@@ -207,6 +207,27 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test commonizeInterop using posix APIs`() {
+        with(preparedProject("commonizeInteropUsingPosixApis")) {
+            build(":commonizeCInterop") {
+                assertSuccessful()
+                assertTasksExecuted(":cinteropWithPosixTargetA")
+                assertTasksExecuted(":cinteropWithPosixTargetB")
+                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":commonizeCInterop")
+            }
+
+            build(":compileNativeMainKotlinMetadata") {
+                assertSuccessful()
+                assertTasksUpToDate(":cinteropWithPosixTargetA")
+                assertTasksUpToDate(":cinteropWithPosixTargetB")
+                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertTasksUpToDate(":commonizeCInterop")
+            }
+        }
+    }
+
     private fun preparedProject(name: String): Project {
         return Project(name).apply {
             setupWorkingDir()

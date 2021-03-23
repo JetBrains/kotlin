@@ -1,0 +1,33 @@
+plugins {
+    kotlin("multiplatform")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+kotlin {
+    val targetA = <targetA>("targetA")
+    val targetB = <targetB>("targetB")
+
+    val commonMain by sourceSets.getting
+    val nativeMain by sourceSets.creating
+    val targetAMain by sourceSets.getting
+    val targetBMain by sourceSets.getting
+
+    nativeMain.dependsOn(commonMain)
+    targetAMain.dependsOn(nativeMain)
+    targetBMain.dependsOn(nativeMain)
+
+    sourceSets.all {
+        languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+    }
+
+    targetA.compilations.getByName("main").cinterops.create("withPosix") {
+        header(file("libs/withPosix.h"))
+    }
+    targetB.compilations.getByName("main").cinterops.create("withPosix") {
+        header(file("libs/withPosix.h"))
+    }
+}
