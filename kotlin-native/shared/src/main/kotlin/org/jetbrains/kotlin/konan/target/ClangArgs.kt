@@ -64,6 +64,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 else -> configurables.arch
             }
             add(listOf("-arch", arch))
+            add(listOf("-stdlib=libc++"))
         }
         val hasCustomSysroot = configurables is ZephyrConfigurables
                 || configurables is WasmConfigurables
@@ -112,44 +113,30 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 "-mmacosx-version-min=10.16"
         )
 
-        KonanTarget.IOS_ARM32 -> listOf(
-                "-stdlib=libc++",
-                "-miphoneos-version-min=$osVersionMin"
-        )
-
+        KonanTarget.IOS_ARM32,
         KonanTarget.IOS_ARM64 -> listOf(
-                "-stdlib=libc++",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.IOS_X64 -> listOf(
-                "-stdlib=libc++",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.TVOS_ARM64 -> listOf(
-                "-stdlib=libc++",
                 "-mtvos-version-min=$osVersionMin"
         )
 
         KonanTarget.TVOS_X64 -> listOf(
-                "-stdlib=libc++",
                 "-mtvos-simulator-version-min=$osVersionMin"
         )
 
         KonanTarget.WATCHOS_ARM64,
         KonanTarget.WATCHOS_ARM32 -> listOf(
-                "-stdlib=libc++",
                 "-mwatchos-version-min=$osVersionMin"
         )
 
-        KonanTarget.WATCHOS_X86 -> listOf(
-                "-stdlib=libc++",
-                "-mwatchos-simulator-version-min=$osVersionMin"
-        )
-
+        KonanTarget.WATCHOS_X86,
         KonanTarget.WATCHOS_X64 -> listOf(
-                "-stdlib=libc++",
                 "-mwatchos-simulator-version-min=$osVersionMin"
         )
 
