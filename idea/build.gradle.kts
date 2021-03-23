@@ -7,10 +7,6 @@ plugins {
 
 val kotlinVersion: String by rootProject.extra
 
-repositories {
-    maven("https://jetbrains.bintray.com/markdown")
-}
-
 sourceSets {
     "main" {
         projectDefault()
