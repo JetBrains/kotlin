@@ -47,7 +47,10 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             $source
         """.trimIndent(),
         expectedTransformed,
-        "",
+        """
+            package test
+            fun used(x: Any?) {}
+        """,
         validator,
         dumpTree
     )
@@ -349,7 +352,9 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                 }
 
                 @Composable
-                fun Leaf(text: String) { }
+                fun Leaf(text: String) {
+                    used(text)
+                }
 
                 @Composable
                 fun Test(value: Int) {
@@ -385,6 +390,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                     %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
                   }
                   if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    used(text)
                   } else {
                     %composer.skipToGroupEnd()
                   }

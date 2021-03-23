@@ -57,7 +57,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
 
             @Composable fun Example() {
                 @Composable fun A() { }
-                @Composable fun B(content: @Composable () -> Unit) { }
+                @Composable fun B(content: @Composable () -> Unit) { content() }
                 @Composable fun C() {
                     B { A() }
                 }
@@ -75,7 +75,8 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 }
                 @Composable
                 fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-                  %composer.startReplaceableGroup(<>, "C(B):Test.kt")
+                  %composer.startReplaceableGroup(<>, "C(B)<conten...>:Test.kt")
+                  content(%composer, 0b1110 and %changed)
                   %composer.endReplaceableGroup()
                 }
                 @Composable
