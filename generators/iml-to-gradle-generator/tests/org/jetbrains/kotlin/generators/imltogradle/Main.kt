@@ -116,10 +116,7 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
     }
     if (moduleName?.startsWith("intellij.") == true) {
         return intellijModuleNameToGradleDependencyNotationsMapping[moduleName]
-            ?.map {
-                val args = listOfNotNull(it.dependencyNotation, scope, it.dependencyConfiguration, exported).joinToString()
-                jpsLikeJarDependency(it.dependencyNotation, it.dependencyConfiguration)
-            }
+            ?.map { jpsLikeJarDependency(it.dependencyNotation, it.dependencyConfiguration) }
             ?: error("Cannot find mapping for intellij module name = $moduleName")
     }
     if (dep is JpsLibraryDependency) {
