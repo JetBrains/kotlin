@@ -19,21 +19,28 @@ dependencies {
     jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-util-ex") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-xml") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("util") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("extensions") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-util-ex") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-xml") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0", JpsDepScope.COMPILE) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains.intellij.deps:trove4j:1.0.20200330", JpsDepScope.COMPILE)
     jpsLikeJarDependency("com.google.guava:guava:29.0-jre", JpsDepScope.COMPILE)
     jpsLikeJarDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1", JpsDepScope.COMPILE)
     jpsLikeJarDependency("org.jetbrains.intellij.deps:asm-all:9.0", JpsDepScope.COMPILE)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-concurrency") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("jps-model") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:jdom:2.0.6", JpsDepScope.COMPILE) // Exported transitive dependency
 }
 
 sourceSets {

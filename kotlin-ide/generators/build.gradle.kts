@@ -30,11 +30,20 @@ dependencies {
     jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:compiler-plugins:kotlinx-serialization", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:performance-tests", JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("util") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("extensions") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("util") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:asm-all:9.0", JpsDepScope.TEST) // Exported transitive dependency
     jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:compiler-plugins:parcelize", JpsDepScope.TEST)
 }

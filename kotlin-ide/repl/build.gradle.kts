@@ -20,14 +20,27 @@ dependencies {
     jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-ide-util-io") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
-    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-core-ui") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-ide-util-io") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("extensions") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("util") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-util-ex") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("forms_rt") }) // Exported transitive dependency
+    jpsLikeJarDependency("com.jgoodies:forms:1.1-preview", JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-concurrency") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("jps-model") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:jdom:2.0.6", JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0", JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency("org.apache.velocity:velocity:1.7", JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-util-ui") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-core-ui") }) // Exported transitive dependency
 }
 
 sourceSets {

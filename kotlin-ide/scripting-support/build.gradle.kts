@@ -26,12 +26,20 @@ dependencies {
     jpsLikeModuleDependency(":kotlin-ide:jvm-debugger:coroutines", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-dvcs") })
-    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-dvcs") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-ide-util-io") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-util-ex") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("extensions") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("util") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("forms_rt") }) // Exported transitive dependency
+    jpsLikeJarDependency("com.jgoodies:forms:1.1-preview", JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.TEST) // Exported transitive dependency
 }
 
 sourceSets {

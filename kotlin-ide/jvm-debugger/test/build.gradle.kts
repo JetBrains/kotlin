@@ -26,12 +26,26 @@ dependencies {
     jpsLikeModuleDependency(":kotlin-ide:jvm-debugger:evaluation", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:jvm-debugger:sequence", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:jvm-debugger:eval4j", JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-impl") })
-    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijPluginDep("stream-debugger"), JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
+    jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("external-system-rt") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-impl") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-ide-util-io") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-util-ex") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("extensions") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("util") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("forms_rt") }) // Exported transitive dependency
+    jpsLikeJarDependency("com.jgoodies:forms:1.1-preview", JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency(intellijPluginDep("stream-debugger"), JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency("org.apache.httpcomponents:httpmime:4.5.12", JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency("org.apache.maven:maven-resolver-provider:3.6.1", JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency("org.slf4j:slf4j-log4j12:1.7.25", JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency("commons-logging:commons-logging:1.2", JpsDepScope.TEST) // Exported transitive dependency
 }
 
 sourceSets {
