@@ -618,10 +618,10 @@ object PositioningStrategies {
     val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<PsiElement> =
         object : PositioningStrategy<PsiElement>() {
             override fun mark(element: PsiElement): List<TextRange> {
-                when (element) {
+                return when (element) {
                     is KtSecondaryConstructor -> {
                         val valueParameterList = element.valueParameterList ?: return markElement(element)
-                        return markRange(element.getConstructorKeyword(), valueParameterList.lastChild)
+                        markRange(element.getConstructorKeyword(), valueParameterList.lastChild)
                     }
                     is KtConstructorDelegationCall -> {
                         if (element.isImplicit) {
@@ -631,9 +631,9 @@ object PositioningStrategies {
                             val valueParameterList = constructor.valueParameterList ?: return markElement(constructor)
                             return markRange(constructor.getConstructorKeyword(), valueParameterList.lastChild)
                         }
-                        return markElement(element.calleeExpression ?: element)
+                        markElement(element.calleeExpression ?: element)
                     }
-                    else -> error("unexpected element $element")
+                    else -> markElement(element)
                 }
             }
         }
