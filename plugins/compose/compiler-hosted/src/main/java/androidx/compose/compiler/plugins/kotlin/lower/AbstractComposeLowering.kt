@@ -76,7 +76,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -923,19 +922,17 @@ abstract class AbstractComposeLowering(
         isVar: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
     ): IrVariableImpl {
-        val descriptor = WrappedVariableDescriptor()
         return IrVariableImpl(
             value.startOffset,
             value.endOffset,
             origin,
-            IrVariableSymbolImpl(descriptor),
+            IrVariableSymbolImpl(),
             Name.identifier(name),
             irType,
             isVar,
             false,
             false
         ).apply {
-            descriptor.bind(this)
             initializer = value
         }
     }

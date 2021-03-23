@@ -159,7 +159,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             project: Project,
             configuration: CompilerConfiguration
         ) {
-            val KOTLIN_VERSION_EXPECTATION = "1.4.32"
+            val KOTLIN_VERSION_EXPECTATION = "1.5.0"
             KotlinCompilerVersion.getVersion()?.let { version ->
                 val suppressKotlinVersionCheck = configuration.get(
                     ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,

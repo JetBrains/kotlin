@@ -60,11 +60,16 @@ internal interface DecoyTransformBase {
         val signature = symbol.signature
             ?: signatureBuilder.composeSignatureForDeclaration(this)
 
-        return when (signature) {
-            is IdSignature.PublicSignature -> signature.id!!
-            is IdSignature.AccessorSignature -> signature.accessorSignature.id!!
-            is IdSignature.FileLocalSignature -> signature.id
-            is IdSignature.ScopeLocalDeclaration -> signature.id.toLong()
+        return signature.getSignatureId()
+    }
+
+    private fun IdSignature.getSignatureId(): Long {
+        return when (this) {
+            is IdSignature.PublicSignature -> id!!
+            is IdSignature.AccessorSignature -> accessorSignature.id!!
+            is IdSignature.FileLocalSignature -> id
+            is IdSignature.ScopeLocalDeclaration -> id.toLong()
+            is IdSignature.SpecialFakeOverrideSignature -> memberSignature.getSignatureId()
         }
     }
 
