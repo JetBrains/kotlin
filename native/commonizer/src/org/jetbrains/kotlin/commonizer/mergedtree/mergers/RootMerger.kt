@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree.mergers
 
-import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.CommonizerParameters
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.*
-import org.jetbrains.kotlin.commonizer.mergedtree.buildRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
+import org.jetbrains.kotlin.commonizer.prettyName
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class RootMerger(
@@ -30,9 +32,9 @@ internal class RootMerger(
             val (commonModuleInfos, missingModuleInfos) = allModuleInfos.partition { it.name in commonModuleNames }
             val typeResolver = CirTypeResolver.create(
                 providedClassifiers = CirProvidedClassifiers.of(
-                    classifiers.commonDependencies,
+                    CirProvidedClassifiers.by(targetProvider.modulesProvider),
                     CirProvidedClassifiers.by(targetProvider.dependencyModulesProvider),
-                    CirProvidedClassifiers.by(targetProvider.modulesProvider)
+                    classifiers.commonDependencies
                 )
             )
             targetMerger.processTarget(
