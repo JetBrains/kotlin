@@ -2403,7 +2403,8 @@ standaloneTest("check_stacktrace_format") {
 }
 
 standaloneTest("stack_trace_inline") {
-    disabled = !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
+    // TODO: Enable after the test has been fixed.
+    disabled = true || !isAppleTarget(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
     flags = ['-g']
     source = "runtime/exceptions/stack_trace_inline.kt"
 }
