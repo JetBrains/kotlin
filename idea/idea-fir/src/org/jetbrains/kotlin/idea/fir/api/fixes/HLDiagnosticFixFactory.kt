@@ -12,44 +12,44 @@ import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 
-sealed class HLDiagnosticFixFactory<DIAGNOSTIC_PSI : PsiElement, in DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>> {
+sealed class HLDiagnosticFixFactory<in DIAGNOSTIC : KtDiagnosticWithPsi<*>> {
     abstract fun KtAnalysisSession.createQuickFixes(diagnostic: DIAGNOSTIC): List<HLQuickFix<*, *>>
 }
 
-private class HLDiagnosticFixFactoryWithFixedApplicator<DIAGNOSTIC_PSI : PsiElement, DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>, TARGET_PSI : PsiElement, INPUT : HLApplicatorInput>(
+private class HLDiagnosticFixFactoryWithFixedApplicator<DIAGNOSTIC : KtDiagnosticWithPsi<*>, TARGET_PSI : PsiElement, INPUT : HLApplicatorInput>(
     private val applicator: HLApplicator<TARGET_PSI, INPUT>,
     private val createTargets: KtAnalysisSession.(DIAGNOSTIC) -> List<HLApplicatorTargetWithInput<TARGET_PSI, INPUT>>
-) : HLDiagnosticFixFactory<DIAGNOSTIC_PSI, DIAGNOSTIC>() {
+) : HLDiagnosticFixFactory<DIAGNOSTIC>() {
     override fun KtAnalysisSession.createQuickFixes(diagnostic: DIAGNOSTIC): List<HLQuickFix<TARGET_PSI, INPUT>> =
         createTargets.invoke(this, diagnostic).map { (target, input) -> HLQuickFix(target, input, applicator) }
 }
 
-private class HLDiagnosticFixFactoryWithVariableApplicator<DIAGNOSTIC_PSI : PsiElement, DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>>(
+private class HLDiagnosticFixFactoryWithVariableApplicator<DIAGNOSTIC : KtDiagnosticWithPsi<*>>(
     private val createQuickFixes: KtAnalysisSession.(DIAGNOSTIC) -> List<HLQuickFix<*, *>>
-) : HLDiagnosticFixFactory<DIAGNOSTIC_PSI, DIAGNOSTIC>() {
+) : HLDiagnosticFixFactory<DIAGNOSTIC>() {
     override fun KtAnalysisSession.createQuickFixes(diagnostic: DIAGNOSTIC): List<HLQuickFix<*, *>> =
         createQuickFixes.invoke(this, diagnostic)
 }
 
 internal fun <DIAGNOSTIC : KtDiagnosticWithPsi<PsiElement>> KtAnalysisSession.createPlatformQuickFixes(
     diagnostic: DIAGNOSTIC,
-    factory: HLDiagnosticFixFactory<PsiElement, DIAGNOSTIC>
+    factory: HLDiagnosticFixFactory<DIAGNOSTIC>
 ): List<IntentionAction> = with(factory) { createQuickFixes(diagnostic) }
 
 /**
  * Returns a [HLDiagnosticFixFactory] that creates targets and inputs ([HLApplicatorTargetWithInput]) from a diagnostic.
  * The targets and inputs are consumed by the given applicator to apply fixes.
  */
-fun <DIAGNOSTIC_PSI : PsiElement, DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>, TARGET_PSI : PsiElement, INPUT : HLApplicatorInput> diagnosticFixFactory(
+fun <DIAGNOSTIC : KtDiagnosticWithPsi<*>, TARGET_PSI : PsiElement, INPUT : HLApplicatorInput> diagnosticFixFactory(
     applicator: HLApplicator<TARGET_PSI, INPUT>,
     createTargets: KtAnalysisSession.(DIAGNOSTIC) -> List<HLApplicatorTargetWithInput<TARGET_PSI, INPUT>>
-): HLDiagnosticFixFactory<DIAGNOSTIC_PSI, DIAGNOSTIC> =
+): HLDiagnosticFixFactory<DIAGNOSTIC> =
     HLDiagnosticFixFactoryWithFixedApplicator(applicator, createTargets)
 
 /**
  * Returns a [HLDiagnosticFixFactory] that creates [HLQuickFix]es from a diagnostic.
  */
-fun <DIAGNOSTIC_PSI : PsiElement, DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>> diagnosticFixFactory(
+fun <DIAGNOSTIC : KtDiagnosticWithPsi<*>> diagnosticFixFactory(
     createQuickFixes: KtAnalysisSession.(DIAGNOSTIC) -> List<HLQuickFix<*, *>>
-): HLDiagnosticFixFactory<DIAGNOSTIC_PSI, DIAGNOSTIC> =
+): HLDiagnosticFixFactory<DIAGNOSTIC> =
     HLDiagnosticFixFactoryWithVariableApplicator(createQuickFixes)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.fixes
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.fir.api.applicator.applicatorByQuickFix
@@ -40,7 +39,7 @@ object ReplaceCallFixFactories {
     class Input(val notNullNeeded: Boolean) : HLApplicatorInput
 
     val unsafeCallFactory =
-        diagnosticFixFactory<PsiElement, KtFirDiagnostic.UnsafeCall> { diagnostic ->
+        diagnosticFixFactory<KtFirDiagnostic.UnsafeCall> { diagnostic ->
             fun KtExpression.shouldHaveNotNullType(): Boolean {
                 // This function is used to determine if we may need to add an elvis operator after the safe call. For example, to replace
                 // `s.length` in `val x: Int = s.length` with a safe call, it should be replaced with `s.length ?: <caret>`.
