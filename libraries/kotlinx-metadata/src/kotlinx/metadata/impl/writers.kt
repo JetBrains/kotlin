@@ -457,6 +457,13 @@ open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteCo
         t.addSealedSubclassFqName(c.getClassName(name))
     }
 
+    override fun visitInlineClassUnderlyingPropertyName(name: String) {
+        t.inlineClassUnderlyingPropertyName = c[name]
+    }
+
+    override fun visitInlineClassUnderlyingType(flags: Flags): KmTypeVisitor? =
+        writeType(c, flags) { t.inlineClassUnderlyingType = it.build() }
+
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         writeVersionRequirement(c) { t.addVersionRequirement(it) }
 

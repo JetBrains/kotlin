@@ -17,6 +17,7 @@
 - Breaking change: deprecate `KotlinClassHeader.bytecodeVersion` and `KotlinClassHeader`'s constructor that takes a bytecode version array.
   Related to ['KT-41758`](https://youtrack.jetbrains.com/issue/KT-41758).
 - [`KT-45594`](https://youtrack.jetbrains.com/issue/KT-45594) KClass annotation argument containing array of classes is not read/written correctly
+- [`KT-45635`](https://youtrack.jetbrains.com/issue/KT-45635) Add underlying property name & type for inline classes
 
 ## 0.2.0
 

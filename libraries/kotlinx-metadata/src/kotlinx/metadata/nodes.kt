@@ -94,6 +94,16 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
     val sealedSubclasses: MutableList<ClassName> = ArrayList(0)
 
     /**
+     * Name of the underlying property, if this class is `inline`.
+     */
+    var inlineClassUnderlyingPropertyName: String? = null
+
+    /**
+     * Type of the underlying property, if this class is `inline`.
+     */
+    var inlineClassUnderlyingType: KmType? = null
+
+    /**
      * Version requirements on this class.
      */
     val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
@@ -140,6 +150,13 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
         sealedSubclasses.add(name)
     }
 
+    override fun visitInlineClassUnderlyingPropertyName(name: String) {
+        inlineClassUnderlyingPropertyName = name
+    }
+
+    override fun visitInlineClassUnderlyingType(flags: Flags): KmTypeVisitor =
+        KmType(flags).also { inlineClassUnderlyingType = it }
+
     override fun visitVersionRequirement(): KmVersionRequirementVisitor =
         KmVersionRequirement().addTo(versionRequirements)
 
@@ -163,6 +180,8 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
         nestedClasses.forEach(visitor::visitNestedClass)
         enumEntries.forEach(visitor::visitEnumEntry)
         sealedSubclasses.forEach(visitor::visitSealedSubclass)
+        inlineClassUnderlyingPropertyName?.let(visitor::visitInlineClassUnderlyingPropertyName)
+        inlineClassUnderlyingType?.let { visitor.visitInlineClassUnderlyingType(it.flags)?.let(it::accept) }
         versionRequirements.forEach { visitor.visitVersionRequirement()?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
         visitor.visitEnd()

@@ -21,6 +21,10 @@ public final value class Z : kotlin/Any {
   public final val s: kotlin/String
     public final get
 
+  // underlying property: s
+
+  // underlying type: kotlin/String
+
   // module name: test-module
 }
 // META-INF/test-module.kotlin_module

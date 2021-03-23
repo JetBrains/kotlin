@@ -133,6 +133,23 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
     }
 
     /**
+     * Visits the name of the underlying property, if this class is `inline`.
+     *
+     * @param name the name of the underlying property.
+     */
+    open fun visitInlineClassUnderlyingPropertyName(name: String) {
+        delegate?.visitInlineClassUnderlyingPropertyName(name)
+    }
+
+    /**
+     * Visits the type of the underlying property, if this class is `inline`.
+     *
+     * @param flags type flags, consisting of [Flag.Type] flags
+     */
+    open fun visitInlineClassUnderlyingType(flags: Flags): KmTypeVisitor? =
+        delegate?.visitInlineClassUnderlyingType(flags)
+
+    /**
      * Visits the version requirement on this class.
      */
     open fun visitVersionRequirement(): KmVersionRequirementVisitor? =

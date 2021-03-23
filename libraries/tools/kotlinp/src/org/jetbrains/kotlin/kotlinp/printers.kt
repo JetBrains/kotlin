@@ -767,6 +767,17 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
         sb.appendLine("  // sealed subclass: $name")
     }
 
+    override fun visitInlineClassUnderlyingPropertyName(name: String) {
+        sb.appendLine()
+        sb.appendLine("  // underlying property: $name")
+    }
+
+    override fun visitInlineClassUnderlyingType(flags: Flags): KmTypeVisitor? =
+        printType(flags) {
+            sb.appendLine()
+            sb.appendLine("  // underlying type: $it")
+        }
+
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         printVersionRequirement { versionRequirements.add(it) }
 
