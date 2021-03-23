@@ -66,7 +66,7 @@ enum class IrTypeOperator {
     REINTERPRET_CAST;
 }
 
-abstract class IrTypeOperatorCall : IrExpression() {
+abstract class IrTypeOperatorCall : IrExpression(), IrExpressionWithCopy {
     abstract val operator: IrTypeOperator
     abstract var argument: IrExpression
     abstract var typeOperand: IrType

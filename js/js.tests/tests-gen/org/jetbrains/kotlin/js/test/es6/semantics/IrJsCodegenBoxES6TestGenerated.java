@@ -6118,6 +6118,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/coroutines/capturedVarInSuspendLambda.kt");
         }
 
+        @TestMetadata("castWithSuspend.kt")
+        public void testCastWithSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/castWithSuspend.kt");
+        }
+
         @TestMetadata("catchWithInlineInsideSuspend.kt")
         public void testCatchWithInlineInsideSuspend() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/catchWithInlineInsideSuspend.kt");
