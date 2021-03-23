@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,14 +34,14 @@ public class BasicAtomicfuTestGenerated extends AbstractBasicAtomicfuTest {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/ArithmeticTest.kt");
     }
 
-    @TestMetadata("AtomicArrayTest.kt")
-    public void testAtomicArrayTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/AtomicArrayTest.kt");
-    }
-
     @TestMetadata("ArrayInlineFunctionTest.kt")
     public void testArrayInlineFunctionTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/ArrayInlineFunctionTest.kt");
+    }
+
+    @TestMetadata("AtomicArrayTest.kt")
+    public void testAtomicArrayTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/AtomicArrayTest.kt");
     }
 
     @TestMetadata("ExtensionsTest.kt")
@@ -54,14 +54,9 @@ public class BasicAtomicfuTestGenerated extends AbstractBasicAtomicfuTest {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/IndexArrayElementGetterTest.kt");
     }
 
-    @TestMetadata("LockFreeStackTest.kt")
-    public void testLockFreeStackTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LockFreeStackTest.kt");
-    }
-
-    @TestMetadata("LockFreeQueueTest.kt")
-    public void testLockFreeQueueTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LockFreeQueueTest.kt");
+    @TestMetadata("LockFreeIntBitsTest.kt")
+    public void testLockFreeIntBitsTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LockFreeIntBitsTest.kt");
     }
 
     @TestMetadata("LockFreeLongCounterTest.kt")
@@ -69,19 +64,14 @@ public class BasicAtomicfuTestGenerated extends AbstractBasicAtomicfuTest {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LockFreeLongCounterTest.kt");
     }
 
-    @TestMetadata("LockFreeIntBitsTest.kt")
-    public void testLockFreeIntBitsTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LockFreeIntBitsTest.kt");
+    @TestMetadata("LockFreeQueueTest.kt")
+    public void testLockFreeQueueTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LockFreeQueueTest.kt");
     }
 
-    @TestMetadata("LoopTest.kt")
-    public void testLoopTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LoopTest.kt");
-    }
-
-    @TestMetadata("ScopeTest.kt")
-    public void testScopeTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/ScopeTest.kt");
+    @TestMetadata("LockFreeStackTest.kt")
+    public void testLockFreeStackTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LockFreeStackTest.kt");
     }
 
     @TestMetadata("LockTest.kt")
@@ -89,9 +79,29 @@ public class BasicAtomicfuTestGenerated extends AbstractBasicAtomicfuTest {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LockTest.kt");
     }
 
+    @TestMetadata("LoopTest.kt")
+    public void testLoopTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/LoopTest.kt");
+    }
+
     @TestMetadata("MultiInitTest.kt")
     public void testMultiInitTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/MultiInitTest.kt");
+    }
+
+    @TestMetadata("ParameterizedInlineFunExtensionTest.kt")
+    public void testParameterizedInlineFunExtensionTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/ParameterizedInlineFunExtensionTest.kt");
+    }
+
+    @TestMetadata("PropertyDeclarationTest.kt")
+    public void testPropertyDeclarationTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/PropertyDeclarationTest.kt");
+    }
+
+    @TestMetadata("ScopeTest.kt")
+    public void testScopeTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/ScopeTest.kt");
     }
 
     @TestMetadata("SimpleLockTest.kt")
@@ -107,15 +117,5 @@ public class BasicAtomicfuTestGenerated extends AbstractBasicAtomicfuTest {
     @TestMetadata("UncheckedCastTest.kt")
     public void testUncheckedCastTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/UncheckedCastTest.kt");
-    }
-
-    @TestMetadata("PropertyDeclarationTest.kt")
-    public void testPropertyDeclarationTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/PropertyDeclarationTest.kt");
-    }
-
-    @TestMetadata("ParameterizedInlineFunExtensionTest.kt")
-    public void testParameterizedInlineFunExtensionTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/basic/ParameterizedInlineFunExtensionTest.kt");
     }
 }
