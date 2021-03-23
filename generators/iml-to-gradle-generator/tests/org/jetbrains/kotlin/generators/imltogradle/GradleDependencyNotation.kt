@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.generators.imltogradle
 
-import com.google.gson.JsonObject
-
-data class GradleDependencyNotation(val dependencyNotation: String, val dependencyConfiguration: String? = null) {
+sealed class GradleDependencyNotation(val dependencyNotation: String, val dependencyConfiguration: String? = null) {
     init {
         require(dependencyNotation.isNotEmpty())
         require(dependencyConfiguration?.isNotEmpty() ?: true)
@@ -20,19 +18,23 @@ data class GradleDependencyNotation(val dependencyNotation: String, val dependen
         private val pluginsPathToGradleNotationRegex = """^plugins\/$artifactNameSubregex\/.*?$""".toRegex()
         private val jarToGradleNotationRegex = """^$artifactNameSubregex\.jar$""".toRegex()
 
-        fun fromIntellijJsonObject(json: JsonObject): GradleDependencyNotation? {
-            val jarPath = json.get("path").asString
-
+        fun fromJarPath(jarPath: String): GradleDependencyNotation? {
             if (jarPath == "lib/cds/classesLogAgent.jar") {
                 return null // TODO
             }
 
             fun Regex.firstGroup() = matchEntire(jarPath)?.groupValues?.get(1)
 
-            return pluginsPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijPluginDep(\"$it\")") }
-                ?: libPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep()", "{ includeJars(\"$it\") }") }
-                ?: jarToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep()", "{ includeJars(\"$it\") }") }
+            return pluginsPathToGradleNotationRegex.firstGroup()?.let { IntellijPluginDepGradleDependencyNotation(it) }
+                ?: libPathToGradleNotationRegex.firstGroup()?.let { IntellijDepGradleDependencyNotation(it) }
+                ?: jarToGradleNotationRegex.firstGroup()?.let { IntellijDepGradleDependencyNotation(it) }
                 ?: error("Path $jarPath matches none of the regexes")
         }
     }
+
+    data class IntellijPluginDepGradleDependencyNotation(val pluginName: String) :
+        GradleDependencyNotation("intellijPluginDep(\"$pluginName\", forIde = true)")
+
+    data class IntellijDepGradleDependencyNotation(val jarName: String) :
+        GradleDependencyNotation("intellijDep(forIde = true)", "{ includeJars(\"$jarName\") }")
 }

@@ -34,8 +34,7 @@ data class JpsDependencyDescriptor(val moduleOrLibrary: Either<JpsModule, JpsLib
 }
 
 fun JpsModule.flattenExportedTransitiveDependencies(
-    initialScope: JpsJavaDependencyScope,
-    jpsDependencyToDependantModuleIml: (JpsDependencyElement) -> Element?
+    jpsDependencyToDependencyModuleIml: (JpsDependencyElement) -> Element?
 ): Sequence<JpsDependencyDescriptor> {
     val visitedModuleNames = HashSet<String>()
     val toVisit = PriorityQueue<JpsDependencyDescriptor>(compareBy(JpsDependencyScopeCompileClasspathComparator.reversed()) { it.scope })
@@ -51,8 +50,8 @@ fun JpsModule.flattenExportedTransitiveDependencies(
                 yield(current)
                 val elements = jpsModule.dependencies
                     .filter { it.isExported }
-                    .mapNotNull { JpsDependencyDescriptor.from(it, jpsDependencyToDependantModuleIml(it)) }
-                    .map { JpsDependencyDescriptor(it.moduleOrLibrary, it.scope intersect current.scope) }
+                    .mapNotNull { JpsDependencyDescriptor.from(it, jpsDependencyToDependencyModuleIml(it)) }
+                    .map { JpsDependencyDescriptor(it.moduleOrLibrary, it.scope intersectCompileClasspath current.scope) }
                 toVisit.addAll(elements)
                 while (toVisit.isNotEmpty()) {
                     visit(toVisit.poll())
@@ -61,11 +60,18 @@ fun JpsModule.flattenExportedTransitiveDependencies(
             is Either.Second -> yield(current)
         }
     }
-    return sequence { visit(JpsDependencyDescriptor(Either.First(this@flattenExportedTransitiveDependencies), initialScope)) }
+    return sequence {
+        visit(
+            JpsDependencyDescriptor(
+                Either.First(this@flattenExportedTransitiveDependencies),
+                JpsDependencyScopeCompileClasspathComparator.ascending.last()
+            )
+        )
+    }
 }
 
 private object JpsDependencyScopeCompileClasspathComparator : Comparator<JpsJavaDependencyScope> {
-    private val ascending = listOf(
+    val ascending = listOf(
         JpsJavaDependencyScope.RUNTIME,
         JpsJavaDependencyScope.TEST,
         JpsJavaDependencyScope.PROVIDED,
@@ -79,6 +85,6 @@ private object JpsDependencyScopeCompileClasspathComparator : Comparator<JpsJava
     }
 }
 
-private infix fun JpsJavaDependencyScope.intersect(other: JpsJavaDependencyScope): JpsJavaDependencyScope {
+infix fun JpsJavaDependencyScope.intersectCompileClasspath(other: JpsJavaDependencyScope): JpsJavaDependencyScope {
     return minOf(this, other, JpsDependencyScopeCompileClasspathComparator)
 }

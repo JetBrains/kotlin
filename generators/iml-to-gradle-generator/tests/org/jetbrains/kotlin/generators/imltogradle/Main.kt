@@ -17,25 +17,27 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.*
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer
+import org.jetbrains.kotlin.generators.imltogradle.GradleDependencyNotation.IntellijDepGradleDependencyNotation
 import java.io.File
 
 const val KOTLIN_IDE_DIR_NAME = "kotlin-ide"
 
 private lateinit var kotlinIdeJpsModuleNameToGradleModuleNameMapping: Map<String, String>
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
-private lateinit var intellijModuleNameToJpsModuleMapping: Map<String, JpsModule>
+private lateinit var intellijCommunityModuleNameToJpsModuleMapping: Map<String, JpsModule>
 private val KOTLIN_REPO_ROOT = File(".").canonicalFile
 
-private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<String, List<GradleDependencyNotation>> = mapOf(
-    "intellij.platform.debugger.testFramework" to listOf(), // TODO()
-    "intellij.completionMlRanking" to listOf(),
-    "intellij.platform.jps.model.tests" to listOf(),
-    "intellij.platform.externalSystem.tests" to listOf(),
-    "intellij.gradle.toolingExtension.tests" to listOf(),
-    "intellij.gradle.tests" to listOf(),
+private val intellijModuleNameToGradleDependencyNotationsMappingManual: List<Pair<String, GradleDependencyNotation>> = listOf(
+//    "intellij.platform.debugger.testFramework" to null, // TODO()
+//    "intellij.completionMlRanking" to null,
+//    "intellij.platform.jps.model.tests" to null,
+//    "intellij.platform.externalSystem.tests" to null,
+//    "intellij.gradle.toolingExtension.tests" to null,
+//    "intellij.gradle.tests" to null,
+    "intellij.platform.structuralSearch" to IntellijDepGradleDependencyNotation("structuralsearch"), // for some reason it's absent in json mapping :shrug:
 
     // Transitive exported dependencies
-    "intellij.platform.lang.tests" to listOf(),
+//    "intellij.platform.lang.tests" to null,
 )
 
 private val knownBrokenLibraryJars = listOf("lucene-core", "coverage-report") // TODO resolve jar in ivy repo?
@@ -44,12 +46,19 @@ val SKIP_IML = listOf(
     "kotlin-ide/kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml"
 )
 
+fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueSelector: (T) -> V): Map<K, List<V>> {
+    val result = HashMap<K, MutableList<V>>()
+    forEach { result.getOrPut(keySelector(it)) { ArrayList() }.add(valueSelector(it)) }
+    return result
+}
+
+@OptIn(ExperimentalStdlibApi::class)
 fun main(args: Array<String>) {
     val intellijCommunityRoot = args.singleOrNull()
         ?.let { File(it) }
         ?: error("Usage: ./gradlew generateGradleByIml -Pargs=\"path/to/intellij-community\"")
 
-    intellijModuleNameToJpsModuleMapping = intellijCommunityRoot.loadJpsProject().modules.associateBy { it.name }
+    intellijCommunityModuleNameToJpsModuleMapping = intellijCommunityRoot.loadJpsProject().modules.associateBy { it.name }
 
     val kotlinIdeFile = KOTLIN_REPO_ROOT.resolve(KOTLIN_IDE_DIR_NAME)
     val imlFiles = kotlinIdeFile.walk()
@@ -61,25 +70,23 @@ fun main(args: Array<String>) {
         Pair(it.nameWithoutExtension, ":" + it.parentFile.relativeTo(KOTLIN_REPO_ROOT).path.replace("/", ":"))
     }
 
-    intellijModuleNameToGradleDependencyNotationsMapping = intellijModuleNameToGradleDependencyNotationsMappingManual + listOf(
+    intellijModuleNameToGradleDependencyNotationsMapping = (intellijModuleNameToGradleDependencyNotationsMappingManual + listOf(
         object {}.javaClass.getResource("/ideaIU-project-structure-mapping.json"),
         object {}.javaClass.getResource("/intellij-core-project-structure-mapping.json")
     )
         .flatMap { jsonUrl ->
             val jsonStr = File(jsonUrl!!.toURI()).readText()
-            return@flatMap JsonParser.parseString(jsonStr).asJsonArray.mapNotNull {
-                val jsonObject = it.asJsonObject
-                if (jsonObject.get("type").asString != "module-output") {
-                    return@mapNotNull null
-                }
-                Pair(
-                    jsonObject.get("moduleName").asString,
-                    GradleDependencyNotation.fromIntellijJsonObject(jsonObject) ?: return@mapNotNull null
-                )
+            return@flatMap JsonParser.parseString(jsonStr).asJsonArray.mapNotNull { jsonElement ->
+                val jsonObject = jsonElement.asJsonObject
+                val moduleName = jsonObject.get("moduleName")?.asString ?: return@mapNotNull null
+                val jarPath = jsonObject.get("path")?.asString ?: return@mapNotNull null
+                GradleDependencyNotation.fromJarPath(jarPath)?.let { moduleName to it }
             }
-        }
-        .groupBy { it.first }
-        .mapValues { entry -> entry.value.map { it.second } }
+        })
+        .groupBy({ it.second }, { it.first })
+        .filter { entry -> entry.value.all { it in intellijCommunityModuleNameToJpsModuleMapping } }
+        .flatMap { entry -> entry.value.map { it to entry.key } }
+        .groupBy({ it.first }, { it.second })
 
     projectLevelLibraryNameToJpsLibraryMapping = kotlinIdeFile.resolve(".idea/libraries").listFiles()!!
         .map { jpsLibraryXmlFile ->
@@ -165,17 +172,18 @@ fun convertJpsModuleDependency(dep: JpsModuleDependency): List<String> {
             return listOf(jpsLikeModuleDependency(gradleModuleName, dep.scope, dep.isExported))
         }
         moduleName.startsWith("intellij.") -> {
-            val ijModule = intellijModuleNameToJpsModuleMapping[dep.moduleReference.moduleName]
+            val ijModule = intellijCommunityModuleNameToJpsModuleMapping[dep.moduleReference.moduleName]
                 ?: error("Cannot fine intellij module = ${dep.moduleReference}")
-            return ijModule.flattenExportedTransitiveDependencies(initialScope = dep.scope, jpsDependencyToDependantModuleIml = { null })
-                .filter { it.scope != JpsJavaDependencyScope.RUNTIME } // We are interested in compile classpath transitive dependencies
+            return ijModule.flattenExportedTransitiveDependencies(jpsDependencyToDependencyModuleIml = { null })
+                .filter { it.scope != JpsJavaDependencyScope.RUNTIME } // We are interested only in compile classpath transitive dependencies
+                .map { JpsDependencyDescriptor(it.moduleOrLibrary, it.scope intersectCompileClasspath dep.scope) }
                 .flatMap { dependencyDescriptor ->
                     when (val moduleOrLibrary = dependencyDescriptor.moduleOrLibrary) {
                         is Either.First -> {
-                            val dependantModuleName = moduleOrLibrary.value.name
-                            intellijModuleNameToGradleDependencyNotationsMapping[dependantModuleName]
-                                .orElse { error("Cannot find Gradle notation mapping for module = $dependantModuleName") }
-                                .map {
+                            val dependencyModuleName = moduleOrLibrary.value.name
+                            intellijModuleNameToGradleDependencyNotationsMapping[dependencyModuleName]
+                                .also { if (it == null) println("WARNING: Cannot find GradleDependencyNotation for $dependencyModuleName") }
+                                ?.map {
                                     jpsLikeJarDependency(
                                         it.dependencyNotation,
                                         dependencyDescriptor.scope,
@@ -183,13 +191,13 @@ fun convertJpsModuleDependency(dep: JpsModuleDependency): List<String> {
                                         dep.isExported
                                     )
                                 }
-                                .asSequence()
+                                ?.asSequence() ?: emptySequence()
                         }
                         is Either.Second -> sequenceOf(convertJpsLibrary(moduleOrLibrary.value, dependencyDescriptor.scope, dep.isExported))
                     }
                 }
                 .filterNotNull()
-                .map { "$it // Exported transitive dependency" }
+                .mapIndexed { index, s -> if (index != 0) "$s // Exported transitive dependency" else s }
                 .toList()
         }
         else -> error("Cannot convert module dependency to Gradle $dep")
@@ -226,9 +234,26 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         .map { "maven { setUrl(\"$it\") }" }
         .joinToString("\n")
 
+    val compilerArgs = imlFile.readXml().traverseChildren().singleOrNull { it.name == "compilerSettings" }
+        ?.children
+        ?.single()
+        ?.getAttributeValue("value")
+        ?.split(" ")
+        ?.joinToString { "\"$it\"" }
+
+    val compiler = if (compilerArgs != null) {
+        """
+            tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+                kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf($compilerArgs)
+            }
+        """.trimIndent()
+    } else {
+        ""
+    }
+
     val moduleImlRootElement = imlFile.readXml()
     val deps = jpsModule.dependencies.flatMap { convertJpsDependencyElement(it, moduleImlRootElement) }
-        .distinct()
+        .distinctBy { it.substringBefore("//").trim() }
         .filter { it != "implementation()" } // TODO remove hack
         .joinToString("\n")
     return """
@@ -246,6 +271,7 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |}
         |
         |dependencies {
+        |    compileOnly(toolsJarApi())
         |    $deps
         |}
         |
@@ -257,6 +283,14 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |        $test
         |    }
         |}
+        |
+        |java {
+        |    toolchain {
+        |        languageVersion.set(JavaLanguageVersion.of(11))
+        |    }
+        |}
+        |
+        |$compiler
         |
         |testsJar()
     """.trimMarginWithInterpolations()

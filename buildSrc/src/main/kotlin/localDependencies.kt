@@ -42,9 +42,9 @@ private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.ki
     }
 }
 
-private fun Project.ideModuleVersion() = when (IdeVersionConfigurator.currentIde.kind) {
+private fun Project.ideModuleVersion(forIde: Boolean) = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> rootProject.findProperty("versions.androidStudioBuild")
-    Ide.Kind.IntelliJ -> rootProject.findProperty("versions.intellijSdk")
+    Ide.Kind.IntelliJ -> rootProject.findProperty(if (forIde) "versions.intellijSdkForIde" else "versions.intellijSdk")
 }
 
 fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactRepository = ivy {
@@ -69,7 +69,7 @@ fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactReposit
     }
 }
 
-fun Project.intellijDep(module: String? = null) = "kotlin.build:${module ?: ideModuleName()}:${ideModuleVersion()}"
+fun Project.intellijDep(module: String? = null, forIde: Boolean = false) = "kotlin.build:${module ?: ideModuleName()}:${ideModuleVersion(forIde)}"
 
 fun Project.intellijCoreDep() = "kotlin.build:intellij-core:${rootProject.extra["versions.intellijSdk"]}"
 
@@ -94,7 +94,7 @@ fun Project.kotlinxCollectionsImmutable() = "org.jetbrains.kotlinx:kotlinx-colle
  */
 fun Project.intellijRuntimeAnnotations() = "kotlin.build:intellij-runtime-annotations:${rootProject.extra["versions.intellijSdk"]}"
 
-fun Project.intellijPluginDep(plugin: String) = intellijDep(plugin)
+fun Project.intellijPluginDep(plugin: String, forIde: Boolean = false) = intellijDep(plugin, forIde)
 
 fun Project.intellijUltimateDep() = intellijDep("ideaIU")
 
@@ -126,7 +126,7 @@ object IntellijRootUtils {
     fun getIntellijRootDir(project: Project): File = with(project.rootProject) {
         return File(
             getRepositoryRootDir(this),
-            "${ideModuleName()}/${ideModuleVersion()}/artifacts"
+            "${ideModuleName()}/${ideModuleVersion(forIde = false)}/artifacts"
         )
     }
 }

@@ -389,6 +389,23 @@ val defaultJavaHome = jdkPath(if (Platform[203].orHigher()) "11" else defaultJvm
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
 allprojects {
+    val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
+    repositories {
+        kotlinBuildLocalRepo(project)
+        mirrorRepo?.let(::maven)
+        jcenter()
+        maven(protobufRepo)
+        maven(intellijRepo)
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+        maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
+        maven("https://dl.google.com/dl/android/maven2")
+        bootstrapKotlinRepo?.let(::maven)
+        internalBootstrapRepo?.let(::maven)
+    }
+
+    if (this.path.startsWith(":kotlin-ide")) {
+        return@allprojects
+    }
 
     configurations.maybeCreate("embedded").apply {
         isCanBeConsumed = false
@@ -417,20 +434,6 @@ allprojects {
     // therefore it is disabled by default
     // buildDir = File(commonBuildDir, project.name)
 
-    val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
-
-    repositories {
-        kotlinBuildLocalRepo(project)
-        mirrorRepo?.let(::maven)
-        jcenter()
-        maven(protobufRepo)
-        maven(intellijRepo)
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
-        maven("https://dl.google.com/dl/android/maven2")
-        bootstrapKotlinRepo?.let(::maven)
-        internalBootstrapRepo?.let(::maven)
-    }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
 
