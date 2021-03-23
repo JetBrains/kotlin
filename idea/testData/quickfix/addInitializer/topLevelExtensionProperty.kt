@@ -1,4 +1,5 @@
-// "class org.jetbrains.kotlin.idea.quickfix.InitializePropertyQuickFixFactory$AddInitializerFix" "false"
+// "Add initializer" "false"
+// ACTION: Add getter
 // ACTION: Make internal
 // ACTION: Make private
 // ERROR: Extension property must have accessors or be abstract

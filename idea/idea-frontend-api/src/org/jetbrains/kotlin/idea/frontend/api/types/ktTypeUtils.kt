@@ -5,11 +5,22 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 
+val KtType.isMarkedNullable: Boolean get() = (this as? KtTypeWithNullability)?.nullability == KtTypeNullability.NULLABLE
+
 val KtType.isUnit: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
+val KtType.isInt: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.INT)
+val KtType.isLong: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.LONG)
+val KtType.isShort: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.SHORT)
+val KtType.isByte: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.BYTE)
+val KtType.isFloat: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.FLOAT)
+val KtType.isDouble: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.DOUBLE)
+val KtType.isChar: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.CHAR)
+val KtType.isBoolean: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.BOOLEAN)
+val KtType.isString: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.STRING)
+
 
 fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
     if (this !is KtClassType) return false
@@ -18,4 +29,26 @@ fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
 
 private object DefaultTypeClassIds {
     val UNIT = ClassId.topLevel(StandardNames.FqNames.unit.toSafe())
+    val INT = ClassId.topLevel(StandardNames.FqNames._int.toSafe())
+    val LONG = ClassId.topLevel(StandardNames.FqNames._long.toSafe())
+    val SHORT = ClassId.topLevel(StandardNames.FqNames._short.toSafe())
+    val BYTE = ClassId.topLevel(StandardNames.FqNames._byte.toSafe())
+    val FLOAT = ClassId.topLevel(StandardNames.FqNames._float.toSafe())
+    val DOUBLE = ClassId.topLevel(StandardNames.FqNames._double.toSafe())
+    val CHAR = ClassId.topLevel(StandardNames.FqNames._char.toSafe())
+    val BOOLEAN = ClassId.topLevel(StandardNames.FqNames._boolean.toSafe())
+    val STRING = ClassId.topLevel(StandardNames.FqNames.string.toSafe())
 }
+
+val KtType.defaultInitializer: String?
+    get() = when {
+        isMarkedNullable -> "null"
+        isInt || isLong || isShort || isByte -> "0"
+        isFloat -> "0.0f"
+        isDouble -> "0.0"
+        isChar -> "'\\u0000'"
+        isBoolean -> "false"
+        isUnit -> "Unit"
+        isString -> "\"\""
+        else -> null
+    }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.InspectionProfileEntry
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import java.io.File
 import java.nio.file.Paths

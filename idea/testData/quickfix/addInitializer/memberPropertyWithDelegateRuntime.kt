@@ -1,4 +1,5 @@
-// "class org.jetbrains.kotlin.idea.quickfix.InitializePropertyQuickFixFactory$AddInitializerFix" "false"
+// "Add initializer" "false"
+// ACTION: Convert to ordinary property
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Make protected

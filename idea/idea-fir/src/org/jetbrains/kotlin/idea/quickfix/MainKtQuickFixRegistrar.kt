@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixesList
 import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixesListBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.quickfix.fixes.ChangeTypeQuickFix
+import org.jetbrains.kotlin.idea.quickfix.fixes.InitializePropertyQuickFixFactory
 import org.jetbrains.kotlin.idea.quickfix.fixes.ReplaceCallFixFactories
 
 class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
@@ -61,6 +62,7 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
             KtFirDiagnostic.MustBeInitializedOrBeAbstract::class,
             AddModifierFix.addAbstractModifier,
         )
+        registerApplicator(InitializePropertyQuickFixFactory.initializePropertyFactory)
     }
 
     private val overrides = KtQuickFixesListBuilder.registerPsiQuickFix {

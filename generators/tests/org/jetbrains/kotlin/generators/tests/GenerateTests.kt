@@ -1133,6 +1133,7 @@ fun main(args: Array<String>) {
                 model("quickfix/override/typeMismatchOnOverride", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
                 model("quickfix/replaceWithSafeCall", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/variables/changeMutability", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/addInitializer", pattern = pattern, filenameStartsLowerCase = true)
             }
 
             testClass<AbstractHLInspectionTest> {
