@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.fir.api.fixes
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
@@ -30,7 +29,7 @@ class KtQuickFixesList @ForKtQuickFixesListBuilder @OptIn(PrivateForInline::clas
         is HLQuickFixFactory.HLApplicatorBasedFactory -> {
             @Suppress("UNCHECKED_CAST")
             val factory = quickFixFactory.applicatorFactory
-                    as HLDiagnosticFixFactory<PsiElement, KtDiagnosticWithPsi<PsiElement>>
+                    as HLDiagnosticFixFactory<KtDiagnosticWithPsi<PsiElement>>
             createPlatformQuickFixes(diagnostic, factory)
         }
         is HLQuickFixFactory.HLQuickFixesPsiBasedFactory -> quickFixFactory.psiFactory.createQuickFix(diagnostic.psi)
@@ -66,8 +65,8 @@ class KtQuickFixesListBuilder private constructor() {
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <DIAGNOSTIC_PSI : PsiElement, reified DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>> registerApplicator(
-        quickFixFactory: HLDiagnosticFixFactory<DIAGNOSTIC_PSI, DIAGNOSTIC>
+    inline fun <reified DIAGNOSTIC : KtDiagnosticWithPsi<*>> registerApplicator(
+        quickFixFactory: HLDiagnosticFixFactory<DIAGNOSTIC>
     ) {
         registerApplicator(DIAGNOSTIC::class, quickFixFactory)
     }
@@ -82,9 +81,9 @@ class KtQuickFixesListBuilder private constructor() {
 
 
     @PrivateForInline
-    fun <DIAGNOSTIC_PSI : PsiElement, DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>> registerApplicator(
+    fun <DIAGNOSTIC : KtDiagnosticWithPsi<*>> registerApplicator(
         diagnosticClass: KClass<DIAGNOSTIC>,
-        quickFixFactory: HLDiagnosticFixFactory<DIAGNOSTIC_PSI, DIAGNOSTIC>
+        quickFixFactory: HLDiagnosticFixFactory<DIAGNOSTIC>
     ) {
         quickFixes.getOrPut(diagnosticClass) { mutableListOf() }
             .add(HLQuickFixFactory.HLApplicatorBasedFactory(quickFixFactory))
@@ -105,7 +104,7 @@ sealed class HLQuickFixFactory {
     ) : HLQuickFixFactory()
 
     class HLApplicatorBasedFactory(
-        val applicatorFactory: HLDiagnosticFixFactory<*, *>
+        val applicatorFactory: HLDiagnosticFixFactory<*>
     ) : HLQuickFixFactory()
 }
 

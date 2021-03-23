@@ -86,7 +86,7 @@ object ChangeTypeQuickFix {
 
     private inline fun <DIAGNOSTIC : KtDiagnosticWithPsi<KtNamedDeclaration>> changeReturnTypeOnOverride(
         crossinline getCallableSymbol: (DIAGNOSTIC) -> KtCallableSymbol?
-    ) = diagnosticFixFactory<KtNamedDeclaration, DIAGNOSTIC, KtCallableDeclaration, Input>(applicator) { diagnostic ->
+    ) = diagnosticFixFactory<DIAGNOSTIC, KtCallableDeclaration, Input>(applicator) { diagnostic ->
         val declaration = diagnostic.psi as? KtCallableDeclaration ?: return@diagnosticFixFactory emptyList()
         val callable = getCallableSymbol(diagnostic) ?: return@diagnosticFixFactory emptyList()
         listOfNotNull(
