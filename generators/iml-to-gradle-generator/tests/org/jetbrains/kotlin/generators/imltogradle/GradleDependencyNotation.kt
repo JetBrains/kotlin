@@ -14,11 +14,11 @@ data class GradleDependencyNotation(val dependencyNotation: String, val dependen
     }
 
     companion object {
-        const val artifactNameSubregex = """([a-zA-Z\-\._1-9]*?)"""
+        private const val artifactNameSubregex = """([a-zA-Z\-\._1-9]*?)"""
 
-        val libPathToGradleNotationRegex = """^lib\/$artifactNameSubregex\.jar$""".toRegex()
-        val pluginsPathToGradleNotationRegex = """^plugins\/$artifactNameSubregex\/.*?$""".toRegex()
-        val jarToGradleNotationRegex = """^$artifactNameSubregex\.jar$""".toRegex()
+        private val libPathToGradleNotationRegex = """^lib\/$artifactNameSubregex\.jar$""".toRegex()
+        private val pluginsPathToGradleNotationRegex = """^plugins\/$artifactNameSubregex\/.*?$""".toRegex()
+        private val jarToGradleNotationRegex = """^$artifactNameSubregex\.jar$""".toRegex()
 
         fun fromIntellijJsonObject(json: JsonObject): GradleDependencyNotation? {
             val jarPath = json.get("path").asString

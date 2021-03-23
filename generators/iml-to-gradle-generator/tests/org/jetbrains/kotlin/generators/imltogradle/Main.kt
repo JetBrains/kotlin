@@ -24,6 +24,7 @@ const val KOTLIN_IDE_DIR_NAME = "kotlin-ide"
 private lateinit var kotlinIdeJpsModuleNameToGradleModuleNameMapping: Map<String, String>
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
 private lateinit var projectLevelLibraryNameToJpsLibraryMapping: Map<String, JpsLibrary>
+private val KOTLIN_REPO_ROOT = File(".").canonicalFile
 
 private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<String, List<GradleDependencyNotation>> = mapOf(
     "intellij.platform.debugger.testFramework" to listOf(), // TODO()
@@ -39,14 +40,14 @@ val SKIP_IML = listOf(
 )
 
 fun main() {
-    val kotlinIdeFile = File(".").canonicalFile.resolve(KOTLIN_IDE_DIR_NAME)
+    val kotlinIdeFile = KOTLIN_REPO_ROOT.resolve(KOTLIN_IDE_DIR_NAME)
     val imlFiles = kotlinIdeFile.walk()
         .filter { it.isFile && it.extension == "iml" && it.name.startsWith("kotlin.") }
         .filter { file -> SKIP_IML.none { file.endsWith(it) } }
         .toList()
 
     kotlinIdeJpsModuleNameToGradleModuleNameMapping = imlFiles.associate {
-        Pair(it.nameWithoutExtension, ":" + it.parentFile.relativeTo(File(".").canonicalFile).path.replace("/", ":"))
+        Pair(it.nameWithoutExtension, ":" + it.parentFile.relativeTo(KOTLIN_REPO_ROOT).path.replace("/", ":"))
     }
 
     intellijModuleNameToGradleDependencyNotationsMapping = intellijModuleNameToGradleDependencyNotationsMappingManual + listOf(
@@ -132,7 +133,12 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
             return listOf(jpsLikeJarDependency("kotlinStdlib()", dependencyConfiguration = null))
         }
         return if (libraryName.startsWith("kotlinc.")) {
-            listOf(jpsLikeModuleDependency(":prepare:ide-plugin-dependencies:${mavenRepositoryLibraryDescriptor.artifactId}"))
+            val artifactId = mavenRepositoryLibraryDescriptor.artifactId
+            if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$artifactId").exists()){
+                listOf(jpsLikeJarDependency(":prepare:ide-plugin-dependencies:$artifactId", dependencyConfiguration = null))
+            } else {
+                listOf(jpsLikeJarDependency(":$artifactId", dependencyConfiguration = null))
+            }
         } else {
             listOf(jpsLikeJarDependency("\"${mavenRepositoryLibraryDescriptor.mavenId}\"", dependencyConfiguration = null))
         }
