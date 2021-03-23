@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.overrides.isOverridableProperty
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -79,7 +80,9 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 
         private fun collectParents(declaration: IrDeclarationWithName) {
             declaration.parent.acceptVoid(this)
-            classFqnSegments.add(declaration.name.asString())
+            if (declaration !is IrClass || !declaration.isFacadeClass) {
+                classFqnSegments.add(declaration.name.asString())
+            }
         }
 
         private fun setDescription(declaration: IrDeclaration) {
@@ -189,10 +192,6 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
                 collectParents(declaration)
                 hashId = declaration.hashId()
             }
-        }
-
-        override fun visitField(declaration: IrField) {
-            collectFqNames(declaration)
         }
     }
 }
