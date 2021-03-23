@@ -407,7 +407,7 @@ allprojects {
         maven(protobufRepo)
         maven(intellijRepo)
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
+        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
         maven("https://dl.google.com/dl/android/maven2")
         bootstrapKotlinRepo?.let(::maven)
         internalBootstrapRepo?.let(::maven)

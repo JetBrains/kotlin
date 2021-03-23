@@ -86,7 +86,7 @@ repositories {
 
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
     maven("https://plugins.jetbrains.com/maven")
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 }
 
 val intellij by configurations.creating
