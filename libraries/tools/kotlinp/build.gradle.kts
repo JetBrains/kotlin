@@ -12,7 +12,7 @@ val kotlinpAsmVersion = "8.0.1"
 val shadows by configurations.creating
 
 repositories {
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/")
 }
 
 dependencies {

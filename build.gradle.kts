@@ -433,7 +433,7 @@ allprojects {
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         maven("https://dl.google.com/dl/android/maven2")
-        maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
+        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 
         jcenter()
     }

@@ -16,7 +16,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        url "https://jetbrains.bintray.com/intellij-third-party-dependencies/"
+        url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
     }
 }
 
