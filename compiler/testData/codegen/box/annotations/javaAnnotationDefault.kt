@@ -25,6 +25,7 @@ import java.lang.annotation.RetentionPolicy;
     float e() default 1;
     long j() default 1;
     String f() default "default";
+    Class<?> g() default JavaAnn2.class;
 }
 
 // MODULE: main(lib)
@@ -47,6 +48,7 @@ fun box(): String {
     if (ann2.e != 1F) return "fail for e: expected = 1, but was ${ann2.e}"
     if (ann2.j != 1L) return "fail for j: expected = 1, but was ${ann2.j}"
     if (ann2.f != "default") return "fail for f: expected = default, but was ${ann2.f}"
+    if (ann2.g != JavaAnn2::class) return "fail for g: expected = JavaAnn2, but was ${ann2.g}"
 
     return "OK"
 }
