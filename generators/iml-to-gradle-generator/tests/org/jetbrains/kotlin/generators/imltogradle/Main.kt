@@ -226,6 +226,23 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         .map { "maven { setUrl(\"$it\") }" }
         .joinToString("\n")
 
+    val compilerArgs = imlFile.readXml().traverseChildren().singleOrNull { it.name == "compilerSettings" }
+        ?.children
+        ?.single()
+        ?.getAttributeValue("value")
+        ?.split(" ")
+        ?.joinToString { "\"$it\"" }
+
+    val compiler = if (compilerArgs != null) {
+        """
+            tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+                kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf($compilerArgs)
+            }
+        """.trimIndent()
+    } else {
+        ""
+    }
+
     val moduleImlRootElement = imlFile.readXml()
     val deps = jpsModule.dependencies.flatMap { convertJpsDependencyElement(it, moduleImlRootElement) }
         .distinct()
@@ -246,6 +263,7 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |}
         |
         |dependencies {
+        |    compileOnly(toolsJarApi())
         |    $deps
         |}
         |
@@ -257,6 +275,8 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |        $test
         |    }
         |}
+        |
+        |$compiler
         |
         |testsJar()
     """.trimMarginWithInterpolations()
