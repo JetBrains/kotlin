@@ -324,13 +324,10 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 pluginOptions += SubpluginOption("processors", annotationProcessors)
             }
 
-            val apOptions = getAPOptions().get()
-
-            pluginOptions += CompositeSubpluginOption(
-                "apoptions",
-                lazy { encodeList(apOptions.associate { it.key to it.value }) },
-                apOptions
-            )
+            if (aptMode == "apt") {
+                // apOptions are needed only for "apt" mode
+                pluginOptions += getAPOptions().get()
+            }
 
             pluginOptions += SubpluginOption("javacArguments", encodeList(javacOptions.get()))
 
@@ -342,35 +339,46 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         }
     }
 
-    private fun Kapt3SubpluginContext.getAPOptions(): Provider<List<SubpluginOption>> = project.provider {
+    private fun Kapt3SubpluginContext.getAPOptions(): Provider<CompositeSubpluginOption> = project.provider {
         val androidVariantData = KaptWithAndroid.androidVariantData(this)
 
-        val androidPlugin = androidVariantData?.let {
+        val androidOptions = androidVariantData?.annotationProcessorOptions ?: emptyMap()
+        val annotationProcessorProviders = androidVariantData?.annotationProcessorOptionProviders
+
+        val subluginOptionsFromProvidedApOptions = lazy {
+            val apOptionsFromProviders =
+                annotationProcessorProviders?.flatMap {
+                    (it as CommandLineArgumentProvider).asArguments()
+                }.orEmpty()
+
+            apOptionsFromProviders.map {
+                // Use the internal subplugin option type to exclude them from Gradle input/output checks, as their providers are already
+                // properly registered as a nested input:
+
+                // Pass options as they are in the key-only form (key = 'a=b'), kapt will deal with them:
+                InternalSubpluginOption(key = it.removePrefix("-A"), value = "")
+            }
+        }
+
+        val nonAndroidOptions = androidOptions.toList().map { SubpluginOption(it.first, it.second) } + getKaptApOptions().get()
+
+        CompositeSubpluginOption(
+            "apoptions",
+            lazy { encodeList((nonAndroidOptions + subluginOptionsFromProvidedApOptions.value).associate { it.key to it.value }) },
+            nonAndroidOptions
+        )
+    }
+
+    private fun Kapt3SubpluginContext.getKaptApOptions(): Provider<List<SubpluginOption>> = project.provider {
+        val androidVariantData = KaptWithAndroid.androidVariantData(this)
+
+        val androidExtension = androidVariantData?.let {
             project.extensions.findByName("android") as? BaseExtension
         }
 
-        val androidOptions = androidVariantData?.annotationProcessorOptions ?: emptyMap()
-
-        val apOptionsFromProviders =
-            androidVariantData?.annotationProcessorOptionProviders
-                ?.flatMap { (it as CommandLineArgumentProvider).asArguments() }
-                .orEmpty()
-
-        val subluginOptionsFromProvidedApOptions = apOptionsFromProviders.map {
-            // Use the internal subplugin option type to exclude them from Gradle input/output checks, as their providers are already
-            // properly registered as a nested input:
-
-            // Pass options as they are in the key-only form (key = 'a=b'), kapt will deal with them:
-            InternalSubpluginOption(key = it.removePrefix("-A"), value = "")
-        }
-
-        val apOptionsPairsList: List<Pair<String, String>> =
-            kaptExtension.getAdditionalArguments(project, androidVariantData, androidPlugin).toList() +
-                    androidOptions.toList()
-
-        apOptionsPairsList.map { SubpluginOption(it.first, it.second) } +
-                FilesSubpluginOption(KAPT_KOTLIN_GENERATED, listOf(kotlinSourcesOutputDir)) +
-                subluginOptionsFromProvidedApOptions
+        kaptExtension.getAdditionalArguments(project, androidVariantData, androidExtension).toList()
+            .map { SubpluginOption(it.first, it.second) } +
+                FilesSubpluginOption(KAPT_KOTLIN_GENERATED, listOf(kotlinSourcesOutputDir))
     }
 
     private fun Kapt3SubpluginContext.registerSubpluginOptions(
@@ -563,7 +571,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 it.javacOptions = dslJavacOptions.get()
             }
 
-            val subpluginOptions = getAPOptions()
+            val subpluginOptions = getKaptApOptions()
             registerSubpluginOptions(kaptTaskProvider, subpluginOptions)
         }
 

@@ -11,6 +11,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -74,6 +75,14 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         for (option in options) {
             result[option.key] = option.value
         }
+        annotationProcessorOptionProviders.forEach {
+            (it as List<Any>).forEach {
+                (it as CommandLineArgumentProvider).asArguments().forEach {
+                    result[it.removePrefix("-A")] = ""
+                }
+            }
+        }
+
         return result
     }
 
