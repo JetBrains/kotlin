@@ -20,6 +20,8 @@ class KotlinToolingMetadataIT : BaseGradleIT() {
 
     @Test
     fun `new-mpp-published`() = with(transformProjectWithPluginsDsl("new-mpp-published")) {
+        projectDir.resolve("gradle.properties").appendText("\nkotlin.mpp.enableKotlinToolingMetadataArtifact=true")
+
         build("publish") {
             assertSuccessful()
             assertTasksExecuted(
@@ -89,6 +91,7 @@ class KotlinToolingMetadataIT : BaseGradleIT() {
 
     @Test
     fun `kotlin-js-browser-project`() = with(transformProjectWithPluginsDsl("kotlin-js-browser-project")) {
+        projectDir.resolve("gradle.properties").appendText("\nkotlin.mpp.enableKotlinToolingMetadataArtifact=true")
         build(BuildKotlinToolingMetadataTask.defaultTaskName) {
             assertSuccessful()
             assertTasksExecuted(":app:${BuildKotlinToolingMetadataTask.defaultTaskName}")

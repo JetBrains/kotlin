@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.gradle
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
@@ -39,6 +40,10 @@ class BuildKotlinToolingMetadataTest {
     private val project = ProjectBuilder.builder().build() as ProjectInternal
     private val multiplatformExtension get() = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
     private val jsExtension get() = project.extensions.getByType(KotlinJsProjectExtension::class.java)
+
+    init {
+        project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableKotlinToolingMetadataArtifact", "true")
+    }
 
     @Test
     fun `multiplatform empty setup`() {
