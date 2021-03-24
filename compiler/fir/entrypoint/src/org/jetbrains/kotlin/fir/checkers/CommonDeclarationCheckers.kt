@@ -24,6 +24,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirInfixFunctionDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,
         FirSealedSupertypeChecker,
+        FirTypeAliasChecker,
     )
 
     override val functionCheckers: Set<FirFunctionChecker> = setOf(

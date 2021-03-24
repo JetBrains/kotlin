@@ -10,7 +10,6 @@ import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.PrivateForInline
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 
@@ -522,6 +522,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val CONVENTIONS by object : DiagnosticGroup("Conventions") {
         val NO_GET_METHOD by error<FirSourceElement, KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
         val NO_SET_METHOD by error<FirSourceElement, KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
+    }
+
+    val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {
+        val TOPLEVEL_TYPEALIASES_ONLY by error<FirSourceElement, KtTypeAlias>()
     }
 
     val EXTENDED_CHECKERS by object : DiagnosticGroup("Extended checkers") {
