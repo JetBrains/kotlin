@@ -16,6 +16,8 @@ import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
+import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ReplTest : TestCase() {
 
@@ -229,6 +231,26 @@ class ReplTest : TestCase() {
         assertTrue("Expecting 2 got $res1", res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2)
 
         assertTrue("Refinement handler on annotation is not invoked", handlerInvoked)
+    }
+
+    @Test
+    fun testDefinitionWithConstructorArgs() {
+        val scriptDef = createJvmScriptDefinitionFromTemplate<ScriptTemplateWithArgs>(
+            evaluation = {
+                constructorArgs(arrayOf("a"))
+            }
+        )
+
+        checkEvaluateInRepl(
+            sequenceOf(
+                "args[0]",
+                "res0+args[0]",
+                "res1+args[0]"
+            ),
+            sequenceOf("a", "aa", "aaa"),
+            scriptDef.compilationConfiguration,
+            scriptDef.evaluationConfiguration
+        )
     }
 
     companion object {

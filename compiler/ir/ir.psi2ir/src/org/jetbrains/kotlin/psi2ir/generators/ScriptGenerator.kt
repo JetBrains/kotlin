@@ -79,7 +79,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
             // This is part of a hack for implicit receivers that converted to value parameters below
             // The proper schema would be to get properly indexed parameters from frontend (descriptor.implicitReceiversParameters),
             // but it seems would require a proper remapping for the script body
-            // TODO: implement implicit receiver parameters handlin properly
+            // TODO: implement implicit receiver parameters handling properly
             var parametersIndex = 0
 
             irScript.earlierScripts = context.extensions.getPreviousScripts()?.filter {
@@ -101,8 +101,13 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
             }
 
             irScript.explicitCallParameters = descriptor.explicitConstructorParameters.map { valueParameterDescriptor ->
-                parametersIndex++
-                valueParameterDescriptor.toIrValueParameter(startOffset, endOffset, IrDeclarationOrigin.SCRIPT_CALL_PARAMETER).also { it.parent = irScript }
+                context.irFactory.createValueParameter(
+                    startOffset, endOffset, IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrValueParameterSymbolImpl(),
+                    valueParameterDescriptor.name, parametersIndex++,
+                    valueParameterDescriptor.type.toIrType(), valueParameterDescriptor.varargElementType?.toIrType(),
+                    valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
+                    false, false
+                ).also { it.parent = irScript }
             }
 
             irScript.implicitReceiversParameters = descriptor.implicitReceivers.map {
