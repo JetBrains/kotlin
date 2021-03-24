@@ -102,6 +102,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED by error<FirSourceElement, PsiElement>()
         val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by warning<FirSourceElement, PsiElement>()
         val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning<FirSourceElement, PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
+
+        // TODO: change it to KtSuperTypeEntry when possible (after re-targeter implementation)
+        val SUPERTYPE_NOT_INITIALIZED by error<FirSourceElement, KtTypeReference>()
         val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by error<FirSourceElement, PsiElement>()
         val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by warning<FirSourceElement, PsiElement>()
         val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
@@ -166,10 +169,6 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<KtModifierKeywordToken>("modifier")
             parameter<String>("target")
         }
-    }
-
-    val CLASSES_AND_INTERFACES by object : DiagnosticGroup("Classes and interfaces") {
-        val SUPERTYPE_NOT_INITIALIZED by error<FirSourceElement, KtSuperTypeEntry>()
     }
 
     val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {

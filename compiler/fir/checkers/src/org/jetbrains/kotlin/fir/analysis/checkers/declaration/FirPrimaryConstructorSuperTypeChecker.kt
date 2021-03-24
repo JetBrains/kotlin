@@ -6,17 +6,18 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.getParent
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isInterface
 import org.jetbrains.kotlin.fir.declarations.primaryConstructor
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
@@ -54,8 +55,9 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
         val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClass>()
         val delegatedConstructorCall = primaryConstructor.delegatedConstructor ?: return
         // No need to check implicit call to the constructor of `kotlin.Any`.
-        if (delegatedConstructorCall.constructedTypeRef is FirImplicitAnyTypeRef) return
-        val superClass = delegatedConstructorCall.constructedTypeRef.coneType.toRegularClass(context.session) ?: return
+        val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
+        if (constructedTypeRef is FirImplicitAnyTypeRef) return
+        val superClass = constructedTypeRef.coneType.toRegularClass(context.session) ?: return
         // Subclassing a singleton should be reported as SINGLETON_IN_SUPERTYPE
         if (superClass.classKind.isSingleton) return
         if (regularClass.isEffectivelyExpect(containingClass, context) ||
@@ -63,12 +65,11 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
         ) {
             return
         }
-        if (delegatedConstructorCall.source?.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
-            reporter.reportOn(
-                delegatedConstructorCall.constructedTypeRef.source?.getParent(KtNodeTypes.SUPER_TYPE_ENTRY),
-                FirErrors.SUPERTYPE_NOT_INITIALIZED,
-                context
-            )
+        val delegatedCallSource = delegatedConstructorCall.source ?: return
+        if (delegatedCallSource.kind !is FirFakeSourceElementKind) return
+        if (superClass.symbol.classId == StandardClassIds.Enum) return
+        if (delegatedCallSource.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
+            reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED, context)
         }
     }
 

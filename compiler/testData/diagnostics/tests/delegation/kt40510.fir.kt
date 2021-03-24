@@ -11,4 +11,4 @@ public abstract class A {
 // FILE: main.kt
 import foo.A
 
-class DelegatedA(val a: A) : A by a
+class DelegatedA(val a: A) : <!SUPERTYPE_NOT_INITIALIZED!>A<!> by a
