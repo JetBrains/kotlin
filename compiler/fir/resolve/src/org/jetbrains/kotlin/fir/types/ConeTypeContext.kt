@@ -40,6 +40,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeIntegerLiteralType
     }
 
+    override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
+        get() {
+            require(this is ConeTypeVariableTypeConstructor)
+            return this.originalTypeParameter
+        }
+
     override fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker> {
         return (this as? ConeIntegerLiteralType)?.possibleTypes ?: emptyList()
     }
@@ -274,6 +280,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {
         require(this is ConeTypeParameterLookupTag)
         return this
+    }
+
+    override fun TypeParameterMarker.doesFormSelfType(selfConstructor: TypeConstructorMarker): Boolean {
+        require(this is ConeTypeParameterLookupTag)
+        return this.typeParameterSymbol.fir.bounds.any { typeRef ->
+            typeRef.coneType.contains { it.typeConstructor() == this.getTypeConstructor() }
+                    && typeRef.coneType.typeConstructor() == selfConstructor
+        }
     }
 
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {

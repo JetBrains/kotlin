@@ -11742,6 +11742,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("capturedTypesInSelfType.kt")
+            public void testCapturedTypesInSelfType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/capturedTypesInSelfType.kt");
+            }
+
+            @Test
             @TestMetadata("coerceFunctionLiteralToSuspend.kt")
             public void testCoerceFunctionLiteralToSuspend() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/coerceFunctionLiteralToSuspend.kt");

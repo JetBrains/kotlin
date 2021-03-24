@@ -9,4 +9,4 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 
 class TypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSymbol) :
-    ConeTypeVariable(typeParameterSymbol.name.identifier)
+    ConeTypeVariable(typeParameterSymbol.name.identifier, typeParameterSymbol.toLookupTag())
