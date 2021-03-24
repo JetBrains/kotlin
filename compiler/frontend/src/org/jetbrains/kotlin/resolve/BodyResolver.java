@@ -809,6 +809,11 @@ public class BodyResolver {
         resolvePropertyAccessors(c, property, propertyDescriptor);
 
         ForceResolveUtil.forceResolveAllContents(propertyDescriptor.getAnnotations());
+
+        FieldDescriptor backingField = propertyDescriptor.getBackingField();
+        if (backingField != null) {
+            ForceResolveUtil.forceResolveAllContents(backingField.getAnnotations());
+        }
     }
 
     private void resolvePropertyDeclarationBodies(@NotNull BodiesResolveContext c) {
