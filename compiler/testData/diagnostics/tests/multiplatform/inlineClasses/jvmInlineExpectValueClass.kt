@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +MultiPlatformProjects
 // SKIP_TXT
 // MODULE: m1-common
