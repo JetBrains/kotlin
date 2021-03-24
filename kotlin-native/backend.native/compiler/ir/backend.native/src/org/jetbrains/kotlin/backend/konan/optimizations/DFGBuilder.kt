@@ -42,9 +42,8 @@ internal class ExternalModulesDFG(val allTypes: List<DataFlowIR.Type.Declared>,
                                   val publicFunctions: Map<Long, DataFlowIR.FunctionSymbol.Public>,
                                   val functionDFGs: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>)
 
-private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimpleFunction)?.let {
-    it.allOverriddenFunctions.atMostOne { it.parent == this }
-}
+internal object STATEMENT_ORIGIN_PRODUCER_INVOCATION : IrStatementOriginImpl("PRODUCER_INVOCATION")
+internal object STATEMENT_ORIGIN_JOB_INVOCATION : IrStatementOriginImpl("JOB_INVOCATION")
 
 private fun IrTypeOperator.isCast() =
         this == IrTypeOperator.CAST || this == IrTypeOperator.IMPLICIT_CAST || this == IrTypeOperator.SAFE_CAST
@@ -336,7 +335,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         executeImplProducerInvoke.returnType,
                         executeImplProducerInvoke.symbol,
                         executeImplProducerInvoke.symbol.owner.typeParameters.size,
-                        executeImplProducerInvoke.symbol.owner.valueParameters.size)
+                        executeImplProducerInvoke.symbol.owner.valueParameters.size,
+                        STATEMENT_ORIGIN_PRODUCER_INVOCATION)
                 producerInvocation.dispatchReceiver = expression.getValueArgument(2)
 
                 expressions += producerInvocation to currentLoop
@@ -347,7 +347,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         jobFunctionReference.symbol.owner.returnType,
                         jobFunctionReference.symbol as IrSimpleFunctionSymbol,
                         jobFunctionReference.symbol.owner.typeParameters.size,
-                        jobFunctionReference.symbol.owner.valueParameters.size)
+                        jobFunctionReference.symbol.owner.valueParameters.size,
+                        STATEMENT_ORIGIN_JOB_INVOCATION)
                 jobInvocation.putValueArgument(0, producerInvocation)
 
                 expressions += jobInvocation to currentLoop
@@ -706,9 +707,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 getContinuationSymbol -> getContinuation().value
 
                                 in arrayGetSymbols -> {
-                                    val callee = value.symbol.owner
-                                    val actualCallee = (value.superQualifierSymbol?.owner?.getOverridingOf(callee)
-                                            ?: callee).target
+                                    val actualCallee = value.actualCallee
 
                                     DataFlowIR.Node.ArrayRead(
                                             symbolTable.mapFunction(actualCallee),
@@ -719,9 +718,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 }
 
                                 in arraySetSymbols -> {
-                                    val callee = value.symbol.owner
-                                    val actualCallee = (value.superQualifierSymbol?.owner?.getOverridingOf(callee)
-                                            ?: callee).target
+                                    val actualCallee = value.actualCallee
                                     DataFlowIR.Node.ArrayWrite(
                                             symbolTable.mapFunction(actualCallee),
                                             array = expressionToEdge(value.dispatchReceiver!!),
@@ -764,7 +761,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     if (callee is IrConstructor) {
                                         error("Constructor call should be done with IrConstructorCall")
                                     } else {
-                                        if (callee.isOverridable && value.superQualifierSymbol == null) {
+                                        if (value.isVirtualCall) {
                                             val owner = callee.parentAsClass
                                             val actualReceiverType = value.dispatchReceiver!!.type
                                             val actualReceiverClassifier = actualReceiverType.classifierOrFail
@@ -813,7 +810,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                 )
                                             }
                                         } else {
-                                            val actualCallee = (value.superQualifierSymbol?.owner?.getOverridingOf(callee) ?: callee).target
+                                            val actualCallee = value.actualCallee
                                             DataFlowIR.Node.StaticCall(
                                                     symbolTable.mapFunction(actualCallee),
                                                     arguments,

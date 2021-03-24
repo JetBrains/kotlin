@@ -1424,6 +1424,51 @@ standaloneTest("initializers_failInInitializer4") {
     flags = ['-Xir-property-lazy-initialization']
 }
 
+standaloneTest("initializers_when1") {
+    source = "codegen/initializers/when1.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_when2") {
+    source = "codegen/initializers/when2.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_throw1") {
+    source = "codegen/initializers/throw1.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_throw2") {
+    source = "codegen/initializers/throw2.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_while1") {
+    source = "codegen/initializers/while1.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_while2") {
+    source = "codegen/initializers/while2.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_while3") {
+    source = "codegen/initializers/while3.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_return1") {
+    source = "codegen/initializers/return1.kt"
+    goldValue = "42\n"
+}
+
+standaloneTest("initializers_return2") {
+    source = "codegen/initializers/return2.kt"
+    goldValue = "42\n"
+}
+
 linkTest("initializers_linkTest1") {
     goldValue = "1200\n"
     source = "codegen/initializers/linkTest1_main.kt"

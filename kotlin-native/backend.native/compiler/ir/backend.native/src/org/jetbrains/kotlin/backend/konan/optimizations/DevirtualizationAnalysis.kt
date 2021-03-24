@@ -45,6 +45,8 @@ inline fun BitSet.forEachBit(block: (Int) -> Unit) {
     }
 }
 
+fun BitSet.copy() = BitSet(this.size()).apply { this.or(this@copy) }
+
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.
 internal object DevirtualizationAnalysis {
@@ -263,8 +265,6 @@ internal object DevirtualizationAnalysis {
 
             else -> error("Unreachable")
         }
-
-        fun BitSet.copy() = BitSet(this.size()).apply { this.or(this@copy) }
 
         fun logPathToType(reversedEdges: IntArray, node: Node, type: Int) {
             val nodes = constraintGraph.nodes

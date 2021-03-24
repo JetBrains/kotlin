@@ -31,6 +31,11 @@ internal object DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER : IrDeclarationOrigin
 internal object DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("FILE_THREAD_LOCAL_INITIALIZER")
 internal object DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("FILE_STANDALONE_THREAD_LOCAL_INITIALIZER")
 
+internal val IrFunction.isFileInitializer: Boolean
+    get() = origin == DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER
+            || origin == DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
+            || origin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
+
 internal fun IrBuilderWithScope.irCallFileInitializer(initializer: IrFunctionSymbol) =
         irCall(initializer).apply { putValueArgument(0, irFalse()) }
 
