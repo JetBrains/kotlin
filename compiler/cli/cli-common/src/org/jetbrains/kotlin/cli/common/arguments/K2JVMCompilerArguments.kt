@@ -471,6 +471,14 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
     )
     var suppressDeprecatedJvmTargetWarning: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xtype-enhancement-improvements-strict-mode",
+        description = "Enable strict mode for some improvements in the type enhancement for loaded Java types based on nullability annotations," +
+                "including freshly supported reading of the type use annotations from class files. " +
+                "See KT-45671 for more details"
+    )
+    var typeEnhancementImprovementsInStrictMode: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
@@ -501,6 +509,9 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
         val result = super.configureLanguageFeatures(collector)
         if (strictJavaNullabilityAssertions) {
             result[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
+        }
+        if (typeEnhancementImprovementsInStrictMode) {
+            result[LanguageFeature.TypeEnhancementImprovementsInStrictMode] = LanguageFeature.State.ENABLED
         }
         return result
     }
