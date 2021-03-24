@@ -6252,26 +6252,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testSubstituteStubTypeIntolambdaParameterDescriptor() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
             }
-
-            @TestMetadata("topDownCompletionBreakedByNonBuilderInferenceSession.kt")
-            public void testTopDownCompletionBreakedByNonBuilderInferenceSession() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionBreakedByNonBuilderInferenceSession.kt");
-            }
-
-            @TestMetadata("topDownCompletionWithThreeBuilderInferenceCalls.kt")
-            public void testTopDownCompletionWithThreeBuilderInferenceCalls() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithThreeBuilderInferenceCalls.kt");
-            }
-
-            @TestMetadata("topDownCompletionWithThreeBuilderInferenceCallsSameLevel.kt")
-            public void testTopDownCompletionWithThreeBuilderInferenceCallsSameLevel() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithThreeBuilderInferenceCallsSameLevel.kt");
-            }
-
-            @TestMetadata("topDownCompletionWithTwoBuilderInferenceCalls.kt")
-            public void testTopDownCompletionWithTwoBuilderInferenceCalls() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithTwoBuilderInferenceCalls.kt");
-            }
         }
     }
 
