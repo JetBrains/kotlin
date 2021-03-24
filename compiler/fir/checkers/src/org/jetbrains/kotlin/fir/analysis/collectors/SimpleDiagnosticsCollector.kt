@@ -19,7 +19,7 @@ class SimpleDiagnosticsCollector(
     scopeSession: ScopeSession,
     private val disableSuppress: Boolean = false
 ) : AbstractDiagnosticCollector(session, scopeSession) {
-    override val visitor: DiagnosticCollectingVisitor = DiagnosticCollectingVisitor(
+    override val visitor: CheckerRunningDiagnosticCollectorVisitor = CheckerRunningDiagnosticCollectorVisitor(
         PersistentCheckerContext(
             this,
             ReturnTypeCalculatorForFullBodyResolve()
