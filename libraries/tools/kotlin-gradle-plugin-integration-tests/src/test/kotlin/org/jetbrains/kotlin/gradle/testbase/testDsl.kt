@@ -94,7 +94,7 @@ class TestProject(
 private fun TestProject.commonBuildSetup(
     buildArguments: List<String>
 ): List<String> {
-    val buildOptionsArguments = buildOptions.toArguments()
+    val buildOptionsArguments = buildOptions.toArguments(gradleVersion)
     val allBuildArguments = buildOptionsArguments + buildArguments + "--full-stacktrace"
 
     println("<=== Test build: ${this.projectName} ===>")

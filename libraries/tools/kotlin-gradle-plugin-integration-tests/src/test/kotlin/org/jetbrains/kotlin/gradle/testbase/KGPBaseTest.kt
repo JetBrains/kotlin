@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.impldep.org.junit.platform.commons.support.AnnotationSupport.findAnnotation
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 import org.jetbrains.kotlin.test.WithMuteInDatabase
@@ -39,9 +40,13 @@ abstract class KGPBaseTest {
     data class BuildOptions(
         val logLevel: LogLevel = LogLevel.INFO,
         val kotlinVersion: String = KOTLIN_VERSION,
-        val warningMode: WarningMode = WarningMode.Fail
+        val warningMode: WarningMode = WarningMode.Fail,
+        val configurationCache: Boolean = false,
+        val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
     ) {
-        fun toArguments(): List<String> {
+        fun toArguments(
+            gradleVersion: GradleVersion
+        ): List<String> {
             val arguments = mutableListOf<String>()
             when (logLevel) {
                 LogLevel.DEBUG -> arguments.add("--debug")
@@ -56,6 +61,11 @@ abstract class KGPBaseTest {
                 WarningMode.All -> arguments.add("--warning-mode=all")
                 WarningMode.Summary -> arguments.add("--warning-mode=summary")
                 WarningMode.None -> arguments.add("--warning-mode=none")
+            }
+
+            if (gradleVersion >= GradleVersion.version("6.6.0")) {
+                arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCache")
+                arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.toLowerCase()}")
             }
 
             return arguments.toList()
