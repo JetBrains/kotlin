@@ -128,13 +128,16 @@ abstract class BasicIrBoxTest(
         prepareRuntimePirCaches(config, icCache)
 
         if (isMainModule && klibMainModule) {
+            val module = prepareAnalyzedSourceModule(
+                config.project,
+                filesToCompile,
+                config.configuration,
+                allKlibPaths,
+                emptyList(),
+                AnalyzerWithCompilerReport(config.configuration),
+            )
             generateKLib(
-                project = config.project,
-                files = filesToCompile,
-                analyzer = AnalyzerWithCompilerReport(config.configuration),
-                configuration = config.configuration,
-                dependencies = allKlibPaths,
-                friendDependencies = emptyList(),
+                module,
                 irFactory = IrFactoryImpl,
                 outputKlibPath = klibPath,
                 nopack = true,
@@ -168,23 +171,42 @@ abstract class BasicIrBoxTest(
                 PhaseConfig(jsPhases)
             }
 
-            val mainModule = if (!klibMainModule) {
-                MainModule.SourceFiles(filesToCompile)
-            } else {
-                MainModule.Klib(klibPath)
+            fun prepareModule(allowIc: Boolean): ModulesStructure {
+                val useIc = runIcMode && allowIc
+                val icCache = if (useIc) icCache else emptyMap()
+                return if (!klibMainModule) {
+                    prepareAnalyzedSourceModule(
+                        config.project,
+                        filesToCompile,
+                        config.configuration,
+                        allKlibPaths,
+                        emptyList(),
+                        AnalyzerWithCompilerReport(config.configuration),
+                        icUseGlobalSignatures = useIc,
+                        icUseStdlibCache = useIc,
+                        icCache = icCache
+                    )
+                } else {
+                    ModulesStructure(
+                        config.project,
+                        MainModule.Klib(klibPath),
+                        config.configuration,
+                        allKlibPaths,
+                        emptyList(),
+                        icUseGlobalSignatures = useIc,
+                        icUseStdlibCache = useIc,
+                        icCache = icCache
+                    )
+                }
             }
 
             if (!skipRegularMode) {
+                val module = prepareModule(true)
                 val irFactory = if (lowerPerModule) PersistentIrFactory() else IrFactoryImpl
                 val compiledModule = compile(
-                    project = config.project,
-                    mainModule = mainModule,
-                    analyzer = AnalyzerWithCompilerReport(config.configuration),
-                    configuration = config.configuration,
+                    module,
                     phaseConfig = phaseConfig,
                     irFactory = irFactory,
-                    dependencies = allKlibPaths,
-                    friendDependencies = emptyList(),
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                     generateFullJs = true,
@@ -196,8 +218,6 @@ abstract class BasicIrBoxTest(
                     safeExternalBoolean = safeExternalBoolean,
                     safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
                     verifySignatures = !skipMangleVerification,
-                    useStdlibCache = runIcMode,
-                    icCache = icCache
                 )
 
                 compiledModule.outputs!!.writeTo(outputFile, config)
@@ -212,15 +232,11 @@ abstract class BasicIrBoxTest(
             }
 
             if (runIrPir && !skipDceDriven) {
+                val module = prepareModule(false)
                 compile(
-                    project = config.project,
-                    mainModule = mainModule,
-                    analyzer = AnalyzerWithCompilerReport(config.configuration),
-                    configuration = config.configuration,
+                    module,
                     phaseConfig = phaseConfig,
                     irFactory = PersistentIrFactory(),
-                    dependencies = allKlibPaths,
-                    friendDependencies = emptyList(),
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                     dceDriven = true,
@@ -233,13 +249,16 @@ abstract class BasicIrBoxTest(
                 ).outputs!!.writeTo(pirOutputFile, config)
             }
         } else {
+            val module = prepareAnalyzedSourceModule(
+                config.project,
+                filesToCompile,
+                config.configuration,
+                allKlibPaths,
+                emptyList(),
+                AnalyzerWithCompilerReport(config.configuration)
+            )
             generateKLib(
-                project = config.project,
-                files = filesToCompile,
-                analyzer = AnalyzerWithCompilerReport(config.configuration),
-                configuration = config.configuration,
-                dependencies = allKlibPaths,
-                friendDependencies = emptyList(),
+                module,
                 irFactory = IrFactoryImpl,
                 outputKlibPath = actualOutputFile,
                 nopack = true,
@@ -262,7 +281,6 @@ abstract class BasicIrBoxTest(
     private fun createPirCache(path: String, allKlibPaths: Collection<String>, config: JsConfig, icCache: Map<String, SerializedIcData>): SerializedIcData {
         val icData = predefinedKlibHasIcCache[path] ?: prepareSingleLibraryIcCache(
             project = project,
-            analyzer = AnalyzerWithCompilerReport(config.configuration),
             configuration = config.configuration,
             libPath = path,
             dependencies = allKlibPaths,

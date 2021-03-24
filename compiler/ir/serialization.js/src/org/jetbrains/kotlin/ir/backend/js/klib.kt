@@ -120,12 +120,7 @@ private fun IrMessageLogger?.toResolverLogger(): Logger {
 }
 
 fun generateKLib(
-    project: Project,
-    files: List<KtFile>,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
-    dependencies: Collection<String>,
-    friendDependencies: Collection<String>,
+    depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
     outputKlibPath: String,
     nopack: Boolean,
@@ -133,6 +128,10 @@ fun generateKLib(
     abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
     jsOutputName: String?
 ) {
+    val project = depsDescriptors.project
+    val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files
+    val configuration = depsDescriptors.compilerConfiguration
+    val allDependencies = depsDescriptors.allDependencies
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
@@ -167,10 +166,7 @@ fun generateKLib(
         serializedIrFiles = null
     }
 
-    val depsDescriptors =
-        ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, dependencies, friendDependencies, EmptyLoweringsCacheProvider)
-    val allDependencies = depsDescriptors.allDependencies
-    val (psi2IrContext, hasErrors) = runAnalysisAndPreparePsi2Ir(depsDescriptors, errorPolicy, SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory))
+    val (psi2IrContext, hasErrors) = preparePsi2Ir(depsDescriptors, errorPolicy, SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory))
     val irBuiltIns = psi2IrContext.irBuiltIns
 
     val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
@@ -256,27 +252,23 @@ object EmptyLoweringsCacheProvider : LoweringsCacheProvider {
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun loadIr(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
-    dependencies: Collection<String>,
-    friendDependencies: Collection<String>,
+    depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
-    verifySignatures: Boolean,
-    loweringsCacheProvider: LoweringsCacheProvider? = null
+    verifySignatures: Boolean
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, dependencies, friendDependencies, loweringsCacheProvider ?: EmptyLoweringsCacheProvider)
+    val project = depsDescriptors.project
+    val mainModule = depsDescriptors.mainModule
+    val configuration = depsDescriptors.compilerConfiguration
+    val allDependencies = depsDescriptors.allDependencies
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
-    val allDependencies = depsDescriptors.allDependencies
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
-            val (psi2IrContext, _) = runAnalysisAndPreparePsi2Ir(depsDescriptors, errorPolicy, symbolTable)
+            val (psi2IrContext, _) = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable)
             val irBuiltIns = psi2IrContext.irBuiltIns
             val feContext = psi2IrContext.run {
                 JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
@@ -335,12 +327,12 @@ fun loadIr(
                 TypeTranslatorImpl(symbolTable, depsDescriptors.compilerConfiguration.languageVersionSettings, moduleDescriptor)
             val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-            val loweredIcData = if (loweringsCacheProvider == null) emptyMap() else {
+            val loweredIcData = if (!depsDescriptors.icUseStdlibCache && !depsDescriptors.icUseStdlibCache) emptyMap() else {
                 val result = mutableMapOf<ModuleDescriptor, SerializedIcData>()
 
                 for (lib in depsDescriptors.moduleDependencies.keys) {
                     val path = lib.libraryFile.absolutePath
-                    val icData = loweringsCacheProvider.cacheByPath(path)
+                    val icData = depsDescriptors.loweringsCacheProvider.cacheByPath(path)
                     if (icData != null) {
                         val desc = depsDescriptors.getModuleDescriptor(lib)
                         result[desc] = icData
@@ -393,12 +385,31 @@ fun loadIr(
     }
 }
 
-private fun runAnalysisAndPreparePsi2Ir(
+fun prepareAnalyzedSourceModule(
+    project: Project,
+    files: List<KtFile>,
+    configuration: CompilerConfiguration,
+    dependencies: List<String>,
+    friendDependencies: List<String>,
+    analyzer: AbstractAnalyzerWithCompilerReport,
+    icUseGlobalSignatures: Boolean = false,
+    icUseStdlibCache: Boolean = false,
+    icCache: Map<String, SerializedIcData> = emptyMap(),
+    errorPolicy: ErrorTolerancePolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT,
+): ModulesStructure {
+    val mainModule = MainModule.SourceFiles(files)
+    val sourceModule = ModulesStructure(project, mainModule, configuration, dependencies, friendDependencies, icUseGlobalSignatures, icUseStdlibCache, icCache)
+    return sourceModule.apply {
+        runAnalysis(errorPolicy, analyzer)
+    }
+}
+
+private fun preparePsi2Ir(
     depsDescriptors: ModulesStructure,
     errorIgnorancePolicy: ErrorTolerancePolicy,
     symbolTable: SymbolTable,
 ): Pair<GeneratorContext, Boolean> {
-    val analysisResult = depsDescriptors.runAnalysis(errorIgnorancePolicy)
+    val analysisResult = depsDescriptors.jsFrontEndResult
     val psi2Ir = Psi2IrTranslator(
         depsDescriptors.compilerConfiguration.languageVersionSettings,
         Psi2IrConfiguration(errorIgnorancePolicy.allowErrors)
@@ -469,15 +480,26 @@ sealed class MainModule {
     class Klib(val libPath: String) : MainModule()
 }
 
-private class ModulesStructure(
-    private val project: Project,
-    private val mainModule: MainModule,
-    private val analyzer: AbstractAnalyzerWithCompilerReport,
+class ModulesStructure(
+    val project: Project,
+    val mainModule: MainModule,
     val compilerConfiguration: CompilerConfiguration,
-    dependencies: Collection<String>,
+    val dependencies: Collection<String>,
     friendDependenciesPaths: Collection<String>,
-    private val loweringsCacheProvider: LoweringsCacheProvider
+    val icUseGlobalSignatures: Boolean,
+    val icUseStdlibCache: Boolean,
+    val icCache: Map<String, SerializedIcData>,
 ) {
+    val loweringsCacheProvider: LoweringsCacheProvider = when {
+        icUseStdlibCache -> object : LoweringsCacheProvider {
+            override fun cacheByPath(path: String): SerializedIcData? {
+                return icCache[path]
+            }
+        }
+        icUseGlobalSignatures -> EmptyLoweringsCacheProvider
+        else -> EmptyLoweringsCacheProvider
+    }
+
     val allResolvedDependencies = jsResolveLibraries(
         dependencies,
         compilerConfiguration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
@@ -502,9 +524,17 @@ private class ModulesStructure(
 
     val builtInsDep = allDependencies.find { it.library.isBuiltIns }
 
-    class JsFrontEndResult(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext, val hasErrors: Boolean)
+    class JsFrontEndResult(val jsAnalysisResult: AnalysisResult, val hasErrors: Boolean) {
+        val moduleDescriptor: ModuleDescriptor
+            get() = jsAnalysisResult.moduleDescriptor
 
-    fun runAnalysis(errorPolicy: ErrorTolerancePolicy): JsFrontEndResult {
+        val bindingContext: BindingContext
+            get() = jsAnalysisResult.bindingContext
+    }
+
+    lateinit var jsFrontEndResult: JsFrontEndResult
+
+    fun runAnalysis(errorPolicy: ErrorTolerancePolicy, analyzer: AbstractAnalyzerWithCompilerReport) {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
 
@@ -538,7 +568,7 @@ private class ModulesStructure(
 
         hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext, errorPolicy) || hasErrors
 
-        return JsFrontEndResult(analysisResult.moduleDescriptor, analysisResult.bindingContext, hasErrors)
+        jsFrontEndResult = JsFrontEndResult(analysisResult, hasErrors)
     }
 
     private val languageVersionSettings: LanguageVersionSettings = compilerConfiguration.languageVersionSettings

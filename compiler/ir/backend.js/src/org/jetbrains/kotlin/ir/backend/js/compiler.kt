@@ -39,14 +39,9 @@ class CompilationOutputs(
 )
 
 fun compile(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
+    depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
-    dependencies: Collection<String>,
-    friendDependencies: Collection<String>,
     mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
@@ -63,18 +58,11 @@ fun compile(
     lowerPerModule: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-    useStdlibCache: Boolean = false,
-    icCache: Map<String, SerializedIcData> = emptyMap(),
 ): CompilerResult {
 
     if (lowerPerModule) {
         return icCompile(
-            project,
-            mainModule,
-            analyzer,
-            configuration,
-            dependencies,
-            friendDependencies,
+            depsDescriptors,
             mainArguments,
             exportedDeclarations,
             generateFullJs,
@@ -88,13 +76,13 @@ fun compile(
             legacyPropertyAccess,
             safeExternalBoolean,
             safeExternalBooleanDiagnostic,
-            useStdlibCache,
-            icCache,
         )
     }
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(project, mainModule, analyzer, configuration, dependencies, friendDependencies, irFactory, verifySignatures)
+        loadIr(depsDescriptors, irFactory, verifySignatures)
+    val mainModule = depsDescriptors.mainModule
+    val configuration = depsDescriptors.compilerConfiguration
 
     val moduleDescriptor = moduleFragment.descriptor
 
