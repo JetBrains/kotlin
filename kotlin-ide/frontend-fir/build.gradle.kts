@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeModuleDependency(":kotlin-ide:resources-fir", JpsDepScope.TEST)
     jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
     jpsLikeJarDependency(project(":kotlin-reflect"), JpsDepScope.TEST)
@@ -68,6 +69,10 @@ sourceSets {
     "test" {
         java.srcDir("test")
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf("-version", "-Xstrict-java-nullability-assertions", "-Xjvm-default=enable", "-Xskip-prerelease-check")
 }
 
 testsJar()

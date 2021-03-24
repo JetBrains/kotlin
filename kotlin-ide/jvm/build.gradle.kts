@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
     jpsLikeJarDependency("com.google.guava:guava:29.0-jre", JpsDepScope.COMPILE)
     jpsLikeJarDependency("org.swinglabs:swingx-core:1.6.2-2", JpsDepScope.COMPILE)
@@ -101,6 +102,10 @@ sourceSets {
     "test" {
         
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf("-version", "-Xstrict-java-nullability-assertions", "-Xjvm-default=enable", "-Xskip-prerelease-check")
 }
 
 testsJar()

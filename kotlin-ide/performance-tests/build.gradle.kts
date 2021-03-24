@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.TEST)
     jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test:1.4.0", JpsDepScope.TEST)
     jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test-junit:1.3.70", JpsDepScope.TEST)
@@ -83,6 +84,10 @@ sourceSets {
     "test" {
         java.srcDir("test")
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf("-version", "-Xstrict-java-nullability-assertions", "-Xjvm-default=enable", "-Xskip-prerelease-check")
 }
 
 testsJar()

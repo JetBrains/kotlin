@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
     jpsLikeJarDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1", JpsDepScope.COMPILE)
     jpsLikeJarDependency("org.jetbrains.intellij.deps:java-compatibility:1.0.1", JpsDepScope.COMPILE)
@@ -119,6 +120,10 @@ sourceSets {
     "test" {
         java.srcDir("test")
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf("-version", "-Xstrict-java-nullability-assertions", "-Xjvm-default=enable", "-Xskip-prerelease-check")
 }
 
 testsJar()

@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
     jpsLikeJarDependency(intellijPluginDep("gradle"), JpsDepScope.COMPILE) // Exported transitive dependency
     jpsLikeJarDependency("org.slf4j:slf4j-log4j12:1.7.25", JpsDepScope.COMPILE) // Exported transitive dependency
@@ -43,6 +44,10 @@ sourceSets {
     "test" {
         
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf("-version", "-Xstrict-java-nullability-assertions", "-Xjvm-default=enable", "-Xskip-prerelease-check")
 }
 
 testsJar()

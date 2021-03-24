@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
     jpsLikeJarDependency("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9", JpsDepScope.COMPILE)
     jpsLikeJarDependency("io.javaslang:javaslang:2.0.6", JpsDepScope.COMPILE)
@@ -81,6 +82,10 @@ sourceSets {
     "test" {
         
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf("-version", "-Xstrict-java-nullability-assertions", "-Xjvm-default=enable", "-Xskip-prerelease-check")
 }
 
 testsJar()

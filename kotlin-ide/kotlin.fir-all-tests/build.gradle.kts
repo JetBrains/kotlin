@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeModuleDependency(":kotlin-ide:resources-fir", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:fir", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:fir-low-level-api", JpsDepScope.COMPILE)
@@ -41,5 +42,7 @@ sourceSets {
         
     }
 }
+
+
 
 testsJar()

@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     
 }
 
@@ -37,5 +38,7 @@ sourceSets {
         
     }
 }
+
+
 
 testsJar()

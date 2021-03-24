@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeJarDependency(kotlinStdlib(), JpsDepScope.COMPILE)
     jpsLikeJarDependency(project(":kotlin-scripting-common"), JpsDepScope.COMPILE)
     jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") }) // Exported transitive dependency
@@ -44,6 +45,10 @@ sourceSets {
     "test" {
         
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions.freeCompilerArgs = kotlinOptions.freeCompilerArgs + listOf("-version", "-Xstrict-java-nullability-assertions", "-Xjvm-default=enable", "-Xskip-prerelease-check", "-Xallow-kotlin-package")
 }
 
 testsJar()

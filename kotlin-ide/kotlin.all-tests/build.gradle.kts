@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(toolsJarApi())
     jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:compiler-plugins:allopen", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:compiler-plugins:annotation-based-compiler-support", JpsDepScope.COMPILE)
@@ -83,5 +84,7 @@ sourceSets {
         
     }
 }
+
+
 
 testsJar()
