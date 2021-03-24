@@ -24,10 +24,11 @@ class DeserializationFailureTest {
     }
 
     @Test
-    fun `sample2 missing build pluginVersion`() {
+    fun `sample2 missing buildPluginVersion`() {
         @Language("JSON") val json =
             """
             {
+              "schemaVersion": ${SchemaVersion.current},
               "buildSystem": "Gradle",
               "buildSystemVersion": "6.7",
               "buildPlugin": "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper",
@@ -45,6 +46,30 @@ class DeserializationFailureTest {
             "Expected parsing failure, because of missing pluginVersion. Actual: $result"
         )
 
-        assertFailsWith<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow(json) }
+        val exception = assertFailsWith<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow(json) }
+        assertTrue(
+            "buildPluginVersion" in exception.message.orEmpty(),
+            "Expected 'buildPluginVersion' mentioned in error message\n${exception.message}"
+        )
+    }
+
+    @Test
+    fun `sample3 incompatible schemaVersion`() {
+        val majorUpgradeVersion = SchemaVersion.current.copy(major = SchemaVersion.current.major + 1)
+        val metadataString = KotlinToolingMetadata(
+            schemaVersion = majorUpgradeVersion.toString(),
+            buildSystem = "",
+            buildSystemVersion = "",
+            buildPlugin = "",
+            buildPluginVersion = "",
+            projectSettings = KotlinToolingMetadata.ProjectSettings(false, false),
+            projectTargets = emptyList()
+        ).toJsonString()
+
+        val exception = assertFailsWith<IllegalArgumentException> { KotlinToolingMetadata.parseJsonOrThrow(metadataString) }
+        assertTrue(
+            majorUpgradeVersion.toString() in exception.message.orEmpty(),
+            "Expected bad schemaVersion mentioned in error message\n${exception.message}"
+        )
     }
 }

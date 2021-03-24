@@ -118,8 +118,14 @@ fun KotlinToolingMetadata.Companion.parseJsonOrThrow(value: String): KotlinTooli
 }
 
 private fun JsonObject.toKotlinToolingMetadataOrThrow(): KotlinToolingMetadata {
+    val schemaVersion = SchemaVersion.parseStringOrThrow(getOrThrow("schemaVersion").asString)
+    if (!SchemaVersion.current.isCompatible(schemaVersion)) {
+        throw IllegalArgumentException(
+            "Incompatible schemaVersion='$schemaVersion' found. Current schemaVersion='${SchemaVersion.current}'"
+        )
+    }
     return KotlinToolingMetadata(
-        schemaVersion = getOrThrow("schemaVersion").asString,
+        schemaVersion = schemaVersion.toString(),
         buildSystem = getOrThrow("buildSystem").asString,
         buildSystemVersion = getOrThrow("buildSystemVersion").asString,
         buildPlugin = getOrThrow("buildPlugin").asString,
