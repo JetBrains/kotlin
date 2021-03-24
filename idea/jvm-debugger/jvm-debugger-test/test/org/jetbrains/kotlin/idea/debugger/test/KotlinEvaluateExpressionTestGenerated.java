@@ -682,6 +682,21 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/constructor.kt");
+            }
+
+            @TestMetadata("explicitConstructor.kt")
+            public void testExplicitConstructor() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/explicitConstructor.kt");
+            }
+
+            @TestMetadata("explicitConstructor2.kt")
+            public void testExplicitConstructor2() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/explicitConstructor2.kt");
+            }
+
             @TestMetadata("field.kt")
             public void testField() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/field.kt");

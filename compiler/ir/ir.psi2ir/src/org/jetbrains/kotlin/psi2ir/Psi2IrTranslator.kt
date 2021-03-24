@@ -18,15 +18,13 @@ package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -133,6 +131,15 @@ class Psi2IrTranslator(
                     symbolTable.referenceValueParameter(codegenInfo.methodDescriptor.valueParameters[parameterPosition])
                 } else {
                     symbolTable.referenceValueParameter(descriptor)
+                }
+            }
+
+            override fun remapDescriptor(symbolTable: SymbolTable, descriptor: DeclarationDescriptor): IrValueParameterSymbol? {
+                val parameterPosition = codegenInfo.parameters.map { it.targetDescriptor }.indexOf(descriptor)
+                return if (parameterPosition > -1) {
+                    symbolTable.referenceValueParameter(codegenInfo.methodDescriptor.valueParameters[parameterPosition])
+                } else {
+                    null
                 }
             }
         }
