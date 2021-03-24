@@ -1248,7 +1248,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      *  we cannot determine if the result of when is assigned or not.
      */
     private inner class WhenEmittingContext(val expression: IrWhen) {
-        val needsPhi = isUnconditional(expression.branches.last()) && !expression.type.isUnit()
+        val needsPhi = expression.branches.last().isUnconditional() && !expression.type.isUnit()
         val llvmType = codegen.getLLVMType(expression.type)
 
         val bbExit = lazy { functionGenerationContext.basicBlock("when_exit", expression.endLocation) }
@@ -1285,7 +1285,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun generateWhenCase(whenEmittingContext: WhenEmittingContext, branch: IrBranch, bbNext: LLVMBasicBlockRef?) {
-        val brResult = if (isUnconditional(branch))
+        val brResult = if (branch.isUnconditional())
             evaluateExpression(branch.result)
         else {
             val bbCase = functionGenerationContext.basicBlock("when_case", branch.startLocation, branch.endLocation)
@@ -1302,13 +1302,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (bbNext != null)
             functionGenerationContext.positionAtEnd(bbNext)
     }
-
-    //-------------------------------------------------------------------------//
-    // Checks if the branch is unconditional
-
-    private fun isUnconditional(branch: IrBranch): Boolean =
-            branch.condition is IrConst<*>                            // If branch condition is constant.
-                    && (branch.condition as IrConst<*>).value as Boolean  // If condition is "true"
 
     //-------------------------------------------------------------------------//
 
