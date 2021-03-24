@@ -20,12 +20,12 @@ abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
     override val scopeSession: ScopeSession = ScopeSession(),
 ) : SessionHolder {
-    fun collectDiagnostics(firFile: FirFile): List<FirDiagnostic<*>> {
+    fun collectDiagnostics(firDeclaration: FirDeclaration): List<FirDiagnostic<*>> {
         if (!componentsInitialized) {
             throw IllegalStateException("Components are not initialized")
         }
         initializeCollector()
-        firFile.accept(visitor, null)
+        firDeclaration.accept(visitor, null)
         return getCollectedDiagnostics()
     }
 

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerConte
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
@@ -34,23 +35,6 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
 ) : AbstractDiagnosticCollector(
     session
 ) {
-    private val beforeElementDiagnosticCollectionHandler: BeforeElementDiagnosticCollectionHandler? =
-        session.beforeElementDiagnosticCollectionHandler
-
-    @Suppress("LeakingThis")
-    override val visitor = run {
-        val returnTypeCalculator = createReturnTypeCalculatorForIDE(
-            session,
-            ScopeSession(),
-            ImplicitBodyResolveComputationSession(),
-            ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
-        )
-        CollectingVisitor(
-            PersistentCheckerContext(this, returnTypeCalculator),
-            components
-        )
-    }
-
     init {
         val declarationCheckers = CheckersFactory.createDeclarationCheckers(useExtendedCheckers)
         val expressionCheckers = CheckersFactory.createExpressionCheckers(useExtendedCheckers)
@@ -78,19 +62,6 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
 
     override fun initializeCollector() {
         reporter = Reporter()
-    }
-
-    inner class CollectingVisitor(
-        context: PersistentCheckerContext,
-        components: List<AbstractDiagnosticCollectorComponent>
-    ) : DiagnosticCollectingVisitor(context, components) {
-        override fun beforeRunningSingleComponentOnElement(element: FirElement) {
-            checkCanceled()
-        }
-
-        override fun beforeRunningAllComponentsOnElement(element: FirElement) {
-            beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
-        }
     }
 
 
