@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -312,6 +313,9 @@ object FirErrors {
     // Conventions
     val NO_GET_METHOD by error0<FirSourceElement, KtArrayAccessExpression>(SourceElementPositioningStrategies.ARRAY_ACCESS)
     val NO_SET_METHOD by error0<FirSourceElement, KtArrayAccessExpression>(SourceElementPositioningStrategies.ARRAY_ACCESS)
+
+    // Type alias
+    val TOPLEVEL_TYPEALIASES_ONLY by error0<FirSourceElement, KtTypeAlias>()
 
     // Extended checkers
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
