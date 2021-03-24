@@ -205,7 +205,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     cachePath = outputFilePath,
                     project = projectJs,
                     mainModule = mainModule,
-                    analyzer = AnalyzerWithCompilerReport(config.configuration),
                     configuration = config.configuration,
                     dependencies = libraries,
                     friendDependencies = friendLibraries,
@@ -219,18 +218,29 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             return OK
         }
 
+        // Run analysis if main module is sources
+        lateinit var sourceModule: ModulesStructure
+        if (arguments.includes == null) {
+            sourceModule = prepareAnalyzedSourceModule(
+                projectJs,
+                environmentForJS.getSourceFiles(),
+                configurationJs,
+                libraries,
+                friendLibraries,
+                AnalyzerWithCompilerReport(config.configuration),
+                icUseGlobalSignatures = icCaches.isNotEmpty(),
+                icUseStdlibCache = icCaches.isNotEmpty(),
+                icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = arguments.includes).data else emptyMap()
+            )
+        }
+
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             if (arguments.irProduceKlibFile) {
                 require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
             }
 
             generateKLib(
-                project = config.project,
-                files = sourcesFiles,
-                analyzer = AnalyzerWithCompilerReport(config.configuration),
-                configuration = config.configuration,
-                dependencies = libraries,
-                friendDependencies = friendLibraries,
+                sourceModule,
                 irFactory = PersistentIrFactory(), // TODO IrFactoryImpl?
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir,
@@ -246,28 +256,33 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val includes = arguments.includes
 
-            val mainModule = if (includes != null) {
+            val module = if (includes != null) {
                 if (sourcesFiles.isNotEmpty()) {
                     messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
                 }
                 val includesPath = File(includes).canonicalPath
                 val mainLibPath = libraries.find { File(it).canonicalPath == includesPath }
                     ?: error("No library with name $includes ($includesPath) found")
-                MainModule.Klib(mainLibPath)
+                val kLib = MainModule.Klib(mainLibPath)
+                ModulesStructure(
+                    projectJs,
+                    kLib,
+                    configuration,
+                    libraries,
+                    friendLibraries,
+                    icUseGlobalSignatures = icCaches.isNotEmpty(),
+                    icUseStdlibCache = icCaches.isNotEmpty(),
+                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).data else emptyMap()
+                )
             } else {
-                MainModule.SourceFiles(sourcesFiles)
+                sourceModule
             }
 
             if (arguments.wasm) {
                 val res = compileWasm(
-                    projectJs,
-                    mainModule,
-                    AnalyzerWithCompilerReport(config.configuration),
-                    config.configuration,
+                    module,
                     PhaseConfig(wasmPhases),
                     IrFactoryImpl,
-                    dependencies = libraries,
-                    friendDependencies = friendLibraries,
                     exportedDeclarations = setOf(FqName("main"))
                 )
                 val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
@@ -289,14 +304,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val start = System.currentTimeMillis()
 
             val compiledModule = compile(
-                projectJs,
-                mainModule,
-                AnalyzerWithCompilerReport(config.configuration),
-                config.configuration,
+                module,
                 phaseConfig,
                 if (arguments.irDceDriven) PersistentIrFactory() else IrFactoryImpl,
-                dependencies = libraries,
-                friendDependencies = friendLibraries,
                 mainArguments = mainCallArguments,
                 generateFullJs = !arguments.irDce,
                 generateDceJs = arguments.irDce,
@@ -316,8 +326,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     messageCollector
                 ),
                 lowerPerModule = icCaches.isNotEmpty(),
-                useStdlibCache = icCaches.isNotEmpty(),
-                icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).data else emptyMap(),
             )
 
             messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")

@@ -26,7 +26,6 @@ fun buildCache(
     cachePath: String,
     project: Project,
     mainModule: MainModule.Klib,
-    analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     dependencies: Collection<String>,
     friendDependencies: Collection<String>,
@@ -50,7 +49,7 @@ fun buildCache(
     icDir.deleteRecursively()
     icDir.mkdirs()
 
-    val icData = prepareSingleLibraryIcCache(project, analyzer, configuration, mainModule.libPath, dependencies, friendDependencies, exportedDeclarations, icCache.data)
+    val icData = prepareSingleLibraryIcCache(project, configuration, mainModule.libPath, dependencies, friendDependencies, exportedDeclarations, icCache.data)
 
     icData.writeTo(File(cachePath))
 
