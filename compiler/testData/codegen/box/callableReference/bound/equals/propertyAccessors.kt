@@ -8,30 +8,57 @@
 // WITH_REFLECT
 
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.full.*
 
 class C {
     var prop = 42
+    var String.prop: Int
+        get() = 42
+        set(value) {}
 }
 
-val C_propReflect = C::class.memberProperties.find { it.name == "prop" } as? KMutableProperty1 ?: throw AssertionError()
-val C_prop = C::prop
 val cProp = C()::prop
+val C_prop = C::prop
+val C_propReflect = C::class.memberProperties.find { it.name == "prop" } as? KMutableProperty1 ?: throw AssertionError()
+val C_extPropReflect = C::class.memberExtensionProperties.find { it.name == "prop" } as? KMutableProperty2 ?: throw AssertionError()
 
 fun box() =
-        when {
-            C_prop.getter != C_prop.getter -> "C_prop.getter != C_prop.getter"
-            C_propReflect.getter != C_propReflect.getter -> "C_propReflect.getter != C_propReflect.getter"
-            cProp.getter != cProp.getter -> "cProp.getter != cProp.getter"
+    when {
+        C_prop.getter != C_propReflect.getter -> "C_prop.getter != C_propReflect.getter"
+        C_prop.setter != C_propReflect.setter -> "C_prop.setter != C_propReflect.setter"
+        C_propReflect.getter != C_prop.getter -> "C_propReflect.getter != C_prop.getter"
+        C_propReflect.setter != C_prop.setter -> "C_propReflect.setter != C_prop.setter"
 
-            cProp.getter == C_prop.getter -> "cProp.getter == C_prop.getter"
-            C_prop.getter == cProp.getter -> "C_prop.getter == cProp.getter"
-            cProp.getter == C_propReflect.getter -> "cProp.getter == C_propReflect.getter"
-            C_propReflect.getter == cProp.getter -> "C_propReflect.getter == cProp.getter"
+        // reflexive test of acessors of KProperty0, KProperty1, KProperty2
+        cProp.getter != cProp.getter -> "cProp.getter != cProp.getter"
+        cProp.setter != cProp.setter -> "cProp.setter != cProp.setter"
+        C_prop.getter != C_prop.getter -> "C_prop.getter != C_prop.getter"
+        C_prop.setter != C_prop.setter -> "C_prop.setter != C_prop.setter"
+        C_propReflect.getter != C_propReflect.getter -> "C_propReflect.getter != C_propReflect.getter"
+        C_propReflect.setter != C_propReflect.setter -> "C_propReflect.setter != C_propReflect.setter"
+        C_extPropReflect.getter != C_extPropReflect.getter -> "C_extPropReflect.getter != C_extPropReflect.getter"
+        C_extPropReflect.setter != C_extPropReflect.setter -> "C_extPropReflect.setter != C_extPropReflect.setter"
 
-            // TODO https://youtrack.jetbrains.com/issue/KT-13490
-            // cProp.getter != C()::prop.getter -> "cProp.getter != C()::prop.getter"
-            // cProp.setter != C()::prop.setter -> "cProp.setter != C()::prop.setter"
+        // acessors of KProperty0, Kproperty1 and Kproperty2 are not equal to each other
+        cProp.getter == C_prop.getter -> "cProp.getter == C_prop.getter"
+        cProp.setter == C_prop.setter -> "cProp.setter == C_prop.setter"
+        C_prop.getter == cProp.getter -> "C_prop.getter == cProp.getter"
+        C_prop.setter == cProp.setter -> "C_prop.setter == cProp.setter"
+        cProp.getter == C_propReflect.getter -> "cProp.getter == C_propReflect.getter"
+        cProp.setter == C_propReflect.setter -> "cProp.setter == C_propReflect.setter"
+        C_propReflect.getter == cProp.getter -> "C_propReflect.getter == cProp.getter"
+        C_propReflect.setter == cProp.setter -> "C_propReflect.setter == cProp.setter"
 
-            else -> "OK"
-        }
+        cProp.getter == C_extPropReflect.getter -> "cProp.getter == C_extPropReflect.getter"
+        cProp.setter == C_extPropReflect.setter -> "cProp.setter == C_extPropReflect.setter"
+        C_extPropReflect.getter == cProp.getter -> "C_extPropReflect.getter == cProp.getter"
+        C_extPropReflect.setter == cProp.setter -> "C_extPropReflect.setter == cProp.setter"
+
+        C_prop.getter == C_extPropReflect.getter -> "C_prop.getter == C_extPropReflect.getter"
+        C_prop.setter == C_extPropReflect.setter -> "C_prop.setter == C_extPropReflect.setter"
+        C_extPropReflect.getter == C_prop.getter -> "C_extPropReflect.getter == C_prop.getter"
+        C_extPropReflect.setter == C_prop.setter -> "C_extPropReflect.setter == C_prop.setter"
+
+        else -> "OK"
+    }
