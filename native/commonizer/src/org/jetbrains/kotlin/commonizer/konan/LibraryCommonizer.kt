@@ -42,32 +42,23 @@ internal class LibraryCommonizer internal constructor(
 
     private fun commonizeAndSaveResults(allLibraries: TargetDependent<NativeLibrariesToCommonize>) {
         val parameters = CommonizerParameters(
+            targetProviders = commonTarget.targets.mapNotNull { target -> createTargetProvider(target, allLibraries[target]) },
             resultsConsumer = resultsConsumer,
-            manifestDataProvider = TargetDependentNativeManifestDataProvider(allLibraries),
+            commonManifestProvider = CommonNativeManifestDataProvider(commonTarget.targets.map { allLibraries[it] }),
             commonDependencyModulesProvider = DefaultModulesProvider.create(dependencies.getLibraries(commonTarget)),
             statsCollector = statsCollector,
             progressLogger = progressLogger::log
         )
-
-        commonTarget.targets.forEach { target ->
-            parameters.addTarget(target, allLibraries[target])
-        }
-
         runCommonization(parameters)
     }
 
-    private fun CommonizerParameters.addTarget(target: CommonizerTarget, libraries: NativeLibrariesToCommonize) {
-        if (libraries.libraries.isEmpty()) return
-
-        val modulesProvider = DefaultModulesProvider.create(libraries)
-        val dependencyModuleProvider = DefaultModulesProvider.create(dependencies.getLibraries(target))
-
-        addTarget(
-            TargetProvider(
-                target = target,
-                modulesProvider = modulesProvider,
-                dependencyModulesProvider = dependencyModuleProvider
-            )
+    private fun createTargetProvider(target: CommonizerTarget, libraries: NativeLibrariesToCommonize): TargetProvider? {
+        if (libraries.libraries.isEmpty()) return null
+        return TargetProvider(
+            target = target,
+            modulesProvider = DefaultModulesProvider.create(libraries),
+            dependencyModulesProvider = DefaultModulesProvider.create(dependencies.getLibraries(target)),
+            manifestProvider = libraries,
         )
     }
 

@@ -17,17 +17,6 @@ interface NativeManifestDataProvider {
     fun getManifest(libraryName: String): NativeSensitiveManifestData
 }
 
-internal fun TargetDependentNativeManifestDataProvider(
-    libraries: TargetDependent<NativeLibrariesToCommonize>
-): TargetDependent<NativeManifestDataProvider> {
-    return TargetDependent { target ->
-        when (target) {
-            is LeafCommonizerTarget -> libraries[target]
-            is SharedCommonizerTarget -> CommonNativeManifestDataProvider(target.targets.map { libraries[it] })
-        }
-    }
-}
-
 /**
  * A separate Kotlin/Native library.
  */

@@ -206,24 +206,20 @@ private class AnalyzedModules(
 
     fun toCommonizerParameters(
         resultsConsumer: ResultsConsumer,
-        manifestDataProvider: TargetDependent<NativeManifestDataProvider> = MockNativeManifestDataProvider()
+        manifestDataProvider: NativeManifestDataProvider = MockNativeManifestDataProvider()
     ) = CommonizerParameters(
-        resultsConsumer, manifestDataProvider,
-        commonDependencyModulesProvider = dependencyModules[sharedTarget]?.let(MockModulesProvider::create)
-    ).also { parameters ->
-
-        leafTargets.forEach { leafTarget ->
-            val originalModule = originalModules.getValue(leafTarget)
-
-            parameters.addTarget(
-                TargetProvider(
-                    target = leafTarget,
-                    modulesProvider = MockModulesProvider.create(originalModule),
-                    dependencyModulesProvider = dependencyModules[leafTarget]?.let(MockModulesProvider::create)
-                )
+        targetProviders = leafTargets.map { leafTarget ->
+            TargetProvider(
+                target = leafTarget,
+                modulesProvider = MockModulesProvider.create(originalModules.getValue(leafTarget)),
+                dependencyModulesProvider = dependencyModules[leafTarget]?.let(MockModulesProvider::create),
+                manifestProvider = manifestDataProvider
             )
-        }
-    }
+        },
+        resultsConsumer = resultsConsumer,
+        commonManifestProvider = manifestDataProvider,
+        commonDependencyModulesProvider = dependencyModules[sharedTarget]?.let(MockModulesProvider::create)
+    )
 
     companion object {
         fun create(

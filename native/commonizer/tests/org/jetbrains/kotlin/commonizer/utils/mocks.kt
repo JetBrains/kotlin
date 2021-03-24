@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeSensitiveManifestData
-import org.jetbrains.kotlin.commonizer.konan.TargetDependentNativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -176,20 +175,17 @@ fun MockNativeManifestDataProvider(
     exportForwardDeclarations: List<String> = emptyList(),
     nativeTargets: Collection<String> = emptyList(),
     shortName: String? = "mock"
-): TargetDependent<NativeManifestDataProvider> = TargetDependent {
-    object : NativeManifestDataProvider {
-        override fun getManifest(libraryName: String): NativeSensitiveManifestData {
-            return NativeSensitiveManifestData(
-                uniqueName = uniqueName,
-                versions = versions,
-                dependencies = dependencies,
-                isInterop = isInterop,
-                packageFqName = packageFqName,
-                exportForwardDeclarations = exportForwardDeclarations,
-                nativeTargets = nativeTargets,
-                shortName = shortName
-            )
-        }
+): NativeManifestDataProvider = object : NativeManifestDataProvider {
+    override fun getManifest(libraryName: String): NativeSensitiveManifestData {
+        return NativeSensitiveManifestData(
+            uniqueName = uniqueName,
+            versions = versions,
+            dependencies = dependencies,
+            isInterop = isInterop,
+            packageFqName = packageFqName,
+            exportForwardDeclarations = exportForwardDeclarations,
+            nativeTargets = nativeTargets,
+            shortName = shortName
+        )
     }
-
 }

@@ -9,34 +9,35 @@ import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 
 class CommonizerParameters(
+    val targetProviders: List<TargetProvider>,
     val resultsConsumer: ResultsConsumer,
-    val manifestDataProvider: TargetDependent<NativeManifestDataProvider>,
+    val commonManifestProvider: NativeManifestDataProvider,
     val commonDependencyModulesProvider: ModulesProvider? = null,
     val statsCollector: StatsCollector? = null,
     val progressLogger: ((String) -> Unit)? = null
 ) {
-    // use linked hash map to preserve order
-    private val _targetProviders = LinkedHashMap<CommonizerTarget, TargetProvider>()
-    val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
+    internal val commonTarget: SharedCommonizerTarget = SharedCommonizerTarget(targetProviders.map { it.target }.toSet())
 
-    fun addTarget(targetProvider: TargetProvider): CommonizerParameters {
-        require(targetProvider.target !in _targetProviders) { "Target ${targetProvider.target} is already added" }
-        _targetProviders[targetProvider.target] = targetProvider
-
-        return this
-    }
-
-    fun getCommonModuleNames(): Set<String> {
-        if (_targetProviders.size < 2) return emptySet() // too few targets
-
-        val allModuleNames: List<Set<String>> = _targetProviders.values.map { targetProvider ->
-            targetProvider.modulesProvider.loadModuleInfos().mapTo(HashSet()) { it.name }
+    internal val manifestDataProvider: TargetDependent<NativeManifestDataProvider>
+        get() = TargetDependent { target ->
+            if (target == commonTarget) return@TargetDependent commonManifestProvider
+            this.targetProviders.firstOrNull { it.target == target }?.manifestProvider?.let { return@TargetDependent it }
+            null
         }
 
-        return allModuleNames.reduce { a, b -> a intersect b } // there are modules that are present in every target
+}
+
+fun CommonizerParameters.getCommonModuleNames(): Set<String> {
+    if (targetProviders.size < 2) return emptySet() // too few targets
+
+    val allModuleNames: List<Set<String>> = targetProviders.map { targetProvider ->
+        targetProvider.modulesProvider.loadModuleInfos().mapTo(HashSet()) { it.name }
     }
 
-    fun hasAnythingToCommonize(): Boolean {
-        return getCommonModuleNames().isNotEmpty()
-    }
+    return allModuleNames.reduce { a, b -> a intersect b } // there are modules that are present in every target
 }
+
+fun CommonizerParameters.hasAnythingToCommonize(): Boolean {
+    return getCommonModuleNames().isNotEmpty()
+}
+

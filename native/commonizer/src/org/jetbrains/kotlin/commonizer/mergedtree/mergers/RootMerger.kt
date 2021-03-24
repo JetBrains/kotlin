@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree.mergers
 
-import org.jetbrains.kotlin.commonizer.CommonizerParameters
-import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.ModulesProvider
+import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
-import org.jetbrains.kotlin.commonizer.prettyName
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class RootMerger(

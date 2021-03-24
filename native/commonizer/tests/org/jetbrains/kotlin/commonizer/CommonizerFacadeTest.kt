@@ -64,20 +64,22 @@ class CommonizerFacadeTest {
     )
 
     companion object {
+
         private fun Map<String, List<String>>.toCommonizerParameters(
             resultsConsumer: ResultsConsumer,
-            manifestDataProvider: TargetDependent<NativeManifestDataProvider> = MockNativeManifestDataProvider()
-        ) = CommonizerParameters(resultsConsumer, manifestDataProvider).also { parameters ->
-            forEach { (targetName, moduleNames) ->
-                parameters.addTarget(
-                    TargetProvider(
-                        target = LeafCommonizerTarget(targetName),
-                        modulesProvider = MockModulesProvider.create(moduleNames),
-                        dependencyModulesProvider = null
-                    )
+            manifestDataProvider: NativeManifestDataProvider = MockNativeManifestDataProvider()
+        ) = CommonizerParameters(
+            targetProviders = map { (targetName, moduleNames) ->
+                TargetProvider(
+                    target = LeafCommonizerTarget(targetName),
+                    modulesProvider = MockModulesProvider.create(moduleNames),
+                    dependencyModulesProvider = null,
+                    manifestProvider = manifestDataProvider,
                 )
-            }
-        }
+            },
+            resultsConsumer = resultsConsumer,
+            commonManifestProvider = manifestDataProvider
+        )
 
         private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>) {
             val results = MockResultsConsumer()
