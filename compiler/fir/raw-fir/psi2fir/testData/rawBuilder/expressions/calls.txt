@@ -13,7 +13,7 @@ FILE: calls.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] var x: Int = R|<local>/x|
+        public? final? [IsFromPrimaryConstructor=true] var x: Int = R|<local>/x|
             public? get(): Int
             public? set(value: Int): R|kotlin/Unit|
 

@@ -25,10 +25,10 @@ FILE: annotated.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] val x: Int = R|<local>/x|
+        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
             public? get(): Int
 
-        public? final? [IsFromVarargKey=false] val y: Int = R|<local>/y|
+        public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
             public? get(): Int
 
         public final operator fun component1(): Int

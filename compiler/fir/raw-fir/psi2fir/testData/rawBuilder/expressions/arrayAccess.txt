@@ -9,7 +9,7 @@ FILE: arrayAccess.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] val v: IntArray = R|<local>/v|
+        public? final? [IsFromPrimaryConstructor=true] val v: IntArray = R|<local>/v|
             public? get(): IntArray
 
     }

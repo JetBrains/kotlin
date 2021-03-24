@@ -16,7 +16,7 @@ FILE: annotation.kt
             super<R|kotlin/Any|>()
         }
 
-        @base() public? final? [IsFromVarargKey=false] val x: Int = R|<local>/x|
+        @base() public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
             public? get(): Int
 
         @base() public? [ContainingClassKey=correct] constructor(): R|correct| {

@@ -18,7 +18,7 @@ FILE: enums2.kt
             super<R|kotlin/Enum<SomeEnum>|>()
         }
 
-        public? final? [IsFromVarargKey=false] val x: Some = R|<local>/x|
+        public? final? [IsFromPrimaryConstructor=true] val x: Some = R|<local>/x|
             public? get(): Some
 
         public final static [ContainingClassKey=SomeEnum] enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {

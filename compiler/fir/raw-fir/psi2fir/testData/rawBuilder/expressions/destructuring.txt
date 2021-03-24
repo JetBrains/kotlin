@@ -4,13 +4,13 @@ FILE: destructuring.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] val first: Int = R|<local>/first|
+        public? final? [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
             public? get(): Int
 
-        public? final? [IsFromVarargKey=false] val second: Double = R|<local>/second|
+        public? final? [IsFromPrimaryConstructor=true] val second: Double = R|<local>/second|
             public? get(): Double
 
-        public? final? [IsFromVarargKey=false] val third: String = R|<local>/third|
+        public? final? [IsFromPrimaryConstructor=true] val third: String = R|<local>/third|
             public? get(): String
 
         public final operator fun component1(): Int

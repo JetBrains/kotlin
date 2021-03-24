@@ -35,7 +35,7 @@ FILE: unary.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] val i: Int = R|<local>/i|
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
             public? get(): Int
 
     }
@@ -78,7 +78,7 @@ FILE: unary.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] val arr: Array<Int> = R|<local>/arr|
+        public? final? [IsFromPrimaryConstructor=true] val arr: Array<Int> = R|<local>/arr|
             public? get(): Array<Int>
 
     }

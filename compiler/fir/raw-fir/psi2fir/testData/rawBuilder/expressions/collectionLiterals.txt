@@ -4,7 +4,7 @@ FILE: collectionLiterals.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] val arr: IntArray = R|<local>/arr|
+        public? final? [IsFromPrimaryConstructor=true] val arr: IntArray = R|<local>/arr|
             public? get(): IntArray
 
     }
@@ -13,7 +13,7 @@ FILE: collectionLiterals.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] val arr: DoubleArray = R|<local>/arr|
+        public? final? [IsFromPrimaryConstructor=true] val arr: DoubleArray = R|<local>/arr|
             public? get(): DoubleArray
 
     }
@@ -22,7 +22,7 @@ FILE: collectionLiterals.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromVarargKey=false] val arr: Array<String> = R|<local>/arr|
+        public? final? [IsFromPrimaryConstructor=true] val arr: Array<String> = R|<local>/arr|
             public? get(): Array<String>
 
     }

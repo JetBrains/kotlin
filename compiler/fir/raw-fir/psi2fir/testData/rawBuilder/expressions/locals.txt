@@ -5,7 +5,7 @@ FILE: locals.kt
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [IsFromVarargKey=false] val pp: Int = R|<local>/pp|
+            public? final? [IsFromPrimaryConstructor=true] val pp: Int = R|<local>/pp|
                 public? get(): Int
 
             public? final? fun diff(): <implicit> {
