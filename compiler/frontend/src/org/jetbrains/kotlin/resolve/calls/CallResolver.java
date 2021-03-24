@@ -522,8 +522,7 @@ public class CallResolver {
     @Nullable
     private PsiElement calcReportOn(@NotNull KtConstructorDelegationReferenceExpression calleeExpression) {
         PsiElement delegationCall = calleeExpression.getParent();
-        return delegationCall instanceof KtConstructorDelegationCall
-               ? CallResolverUtilKt.reportOnElement((KtConstructorDelegationCall) delegationCall) : delegationCall;
+        return CallResolverUtilKt.reportOnElement(delegationCall);
     }
 
     @NotNull

@@ -1330,8 +1330,7 @@ public class DescriptorResolver {
             }
 
             if (isStaticNestedClass(classDescriptor)) {
-                PsiElement onReport = (reportErrorsOn instanceof KtConstructorDelegationCall)
-                                      ? CallResolverUtilKt.reportOnElement((KtConstructorDelegationCall) reportErrorsOn) : reportErrorsOn;
+                PsiElement onReport = CallResolverUtilKt.reportOnElement(reportErrorsOn);
                 trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(onReport, classDescriptor));
                 return false;
             }
