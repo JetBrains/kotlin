@@ -107,6 +107,7 @@ internal class KtFirFunctionSymbol(
                     fir.createSignature()
                 )
             }
+            KtSymbolKind.ACCESSOR -> TODO("Creating symbol for accessors fun is not supported yet")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
                 callableIdIfNonLocal?.toString() ?: name.asString()
             )

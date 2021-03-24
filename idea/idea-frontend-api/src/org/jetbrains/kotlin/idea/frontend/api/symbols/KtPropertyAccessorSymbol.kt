@@ -13,7 +13,8 @@ sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     KtPossibleMemberSymbol,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
-    KtAnnotatedSymbol {
+    KtAnnotatedSymbol,
+    KtSymbolWithKind {
 
     final override val callableIdIfNonLocal: CallableId? get() = null
 
@@ -22,7 +23,7 @@ sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     abstract val isOverride: Boolean
     abstract val hasBody: Boolean
 
-    abstract val symbolKind: KtSymbolKind
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.ACCESSOR
 
     abstract override fun createPointer(): KtSymbolPointer<KtPropertyAccessorSymbol>
 }

@@ -118,6 +118,7 @@ internal class KtFirKotlinPropertySymbol(
                     fir.createSignature()
                 )
             }
+            KtSymbolKind.ACCESSOR -> TODO("Creating symbol for accessors is not supported yet")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
         }
     }

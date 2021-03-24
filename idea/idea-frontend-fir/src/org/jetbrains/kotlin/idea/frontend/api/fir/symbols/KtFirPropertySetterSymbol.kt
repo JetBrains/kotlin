@@ -62,14 +62,6 @@ internal class KtFirPropertySetterSymbol(
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
 
-    override val symbolKind: KtSymbolKind
-        get() = firRef.withFir { fir ->
-            when (fir.symbol.callableId.classId) {
-                null -> KtSymbolKind.TOP_LEVEL
-                else -> KtSymbolKind.MEMBER
-            }
-        }
-
     override val dispatchType: KtType? by cached {
         firRef.dispatchReceiverTypeAndAnnotations(builder)
     }

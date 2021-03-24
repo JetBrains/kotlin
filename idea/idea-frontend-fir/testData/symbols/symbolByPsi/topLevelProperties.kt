@@ -39,7 +39,7 @@ KtFirPropertyGetterSymbol:
   isOverride: false
   modality: FINAL
   origin: SOURCE
-  symbolKind: TOP_LEVEL
+  symbolKind: ACCESSOR
   visibility: Public
 
 KtFirKotlinPropertySymbol:
