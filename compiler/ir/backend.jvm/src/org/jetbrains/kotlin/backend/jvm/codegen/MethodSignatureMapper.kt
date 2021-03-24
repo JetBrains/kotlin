@@ -203,7 +203,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         isBoxMethodForInlineClass(function) ||
                 forceFoxedReturnTypeOnOverride(function) ||
                 forceBoxedReturnTypeOnDefaultImplFun(function) ||
-                function.isFromJava() && function.returnType.isInlined()
+                function.isFromJava() && function.returnType.isInlineClassType()
 
     private fun forceFoxedReturnTypeOnOverride(function: IrFunction) =
         function is IrSimpleFunction &&
@@ -225,7 +225,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         if (isBoundReceiver) return false
         if (function !is IrSimpleFunction) return false
         if (!function.isInlineCallableReference) return false
-        return type.erasedUpperBound.isInline && !type.isMappedToPrimitive
+        return type.isInlineClassType() && !type.isMappedToPrimitive
     }
 
     fun mapSignatureSkipGeneric(function: IrFunction): JvmMethodSignature =
@@ -341,7 +341,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
     private fun writeParameterType(sw: JvmSignatureWriter, type: IrType, declaration: IrDeclaration, isReceiver: Boolean) {
         if (sw.skipGenericSignature()) {
-            if (type.isInlined() &&
+            if (type.isInlineClassType() &&
                 (declaration.isFromJava() || forceBoxedInlineClassParametersForInliner(declaration, type, isReceiver))
             ) {
                 typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw)

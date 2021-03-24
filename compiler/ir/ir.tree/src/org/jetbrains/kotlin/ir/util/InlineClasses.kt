@@ -17,12 +17,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 
-
 /**
  * Returns inline class for given class or null of type is not inlined
  * TODO: Make this configurable for different backends (currently implements logic of JS BE)
  */
-fun IrType.getInlinedClass(): IrClass? {
+private fun IrType.getInlinedClass(): IrClass? {
     if (this is IrSimpleType) {
         val erased = erase(this) ?: return null
         if (erased.isInline) {
@@ -45,6 +44,13 @@ fun IrType.getInlinedClass(): IrClass? {
     return null
 }
 
+/**
+ * Do not use this function in the JVM backend! Use `isInlineClassType` instead.
+ *
+ * This function has slightly different semantics for generic type parameters with inline class bounds.
+ *
+ * TODO: examine remaining usages in Native and preferably remove this function.
+ */
 fun IrType.isInlined(): Boolean = this.getInlinedClass() != null
 
 private tailrec fun erase(type: IrType): IrClass? {

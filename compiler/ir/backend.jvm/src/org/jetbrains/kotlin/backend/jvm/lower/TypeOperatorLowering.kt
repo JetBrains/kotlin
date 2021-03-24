@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -383,7 +383,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                         irType = context.irBuiltIns.anyNType
                     ) { valueSymbol ->
                         val thenPart =
-                            if (valueSymbol.owner.type.isInlined())
+                            if (valueSymbol.owner.type.isInlineClassType())
                                 lowerCast(irGet(valueSymbol.owner), expression.typeOperand)
                             else
                                 irGet(valueSymbol.owner)

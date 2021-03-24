@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.lower.STUB_FOR_INLINING
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
@@ -131,7 +132,7 @@ object InlineClassAbi {
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
             erasedUpperBound.fqNameWhenAvailable!!.toUnsafe(),
-            isInline = erasedUpperBound.isInline,
+            isInline = isInlineClassType(),
             isNullable = isNullable()
         )
 
@@ -154,7 +155,7 @@ internal val IrFunction.hasMangledParameters: Boolean
             (this is IrConstructor && constructedClass.isInline)
 
 internal val IrFunction.hasMangledReturnType: Boolean
-    get() = returnType.erasedUpperBound.isInline && parentClassOrNull?.isFileClass != true
+    get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
 
 private val IrClass.singlePrimaryConstructorParameter: IrValueParameter
     get() {
@@ -178,6 +179,6 @@ val IrFunction.isInlineCallableReference: Boolean
     get() = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA && name.asString().contains("\$$STUB_FOR_INLINING")
 
 val IrType.isMappedToPrimitive: Boolean
-    get() = erasedUpperBound.isInline &&
+    get() = isInlineClassType() &&
             !(isNullable() && makeNotNull().unboxInlineClass().isNullable()) &&
             makeNotNull().unboxInlineClass().isPrimitiveType()

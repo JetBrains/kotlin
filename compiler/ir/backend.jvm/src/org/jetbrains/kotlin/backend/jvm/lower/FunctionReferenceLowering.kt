@@ -558,7 +558,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             functionReferenceClass.addFunction {
                 setSourceRange(if (isLambda) callee else irFunctionReference)
                 name =
-                    if (samSuperType == null && callee.returnType.erasedUpperBound.isInline && context.state.functionsWithInlineClassReturnTypesMangled) {
+                    if (samSuperType == null && callee.returnType.isInlineClassType() &&
+                        context.state.functionsWithInlineClassReturnTypesMangled
+                    ) {
                         // For functions with inline class return type we need to mangle the invoke method.
                         // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
                         val suffix = InlineClassAbi.hashReturnSuffix(callee)

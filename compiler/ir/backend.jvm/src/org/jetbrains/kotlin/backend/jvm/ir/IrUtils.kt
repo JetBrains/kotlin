@@ -400,3 +400,6 @@ fun IrClass.getSingleAbstractMethod(): IrSimpleFunction? =
 
 fun IrFile.getKtFile(): KtFile? =
     (fileEntry as? PsiIrFileEntry)?.psiFile as KtFile?
+
+fun IrType.isInlineClassType(): Boolean =
+    erasedUpperBound.isInline
