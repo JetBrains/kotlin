@@ -34,10 +34,6 @@ public data class SharedCommonizerTarget(val targets: Set<CommonizerTarget>) : C
             return if (targets.isNotEmpty()) SharedCommonizerTarget(targets) else null
         }
     }
-
-    init {
-        require(targets.isNotEmpty()) { "Empty 'SharedCommonizerTarget': Expected at least one target" }
-    }
 }
 
 public fun CommonizerTarget(konanTargets: Iterable<KonanTarget>): CommonizerTarget {
@@ -101,6 +97,6 @@ public val CommonizerTarget.level: Int
     get() {
         return when (this) {
             is LeafCommonizerTarget -> return 0
-            is SharedCommonizerTarget -> targets.maxOf { it.level } + 1
+            is SharedCommonizerTarget -> if (targets.isNotEmpty()) targets.maxOf { it.level } + 1 else 0
         }
     }

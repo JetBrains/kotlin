@@ -85,6 +85,11 @@ class CommonizerTargetIdentityStringTest {
         )
     }
 
+    @Test
+    fun `empty shared target`() {
+        assertEquals(SharedCommonizerTarget(emptySet<CommonizerTarget>()), parseCommonizerTarget("()"))
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun `fail parsing CommonizerTarget 1`() {
         parseCommonizerTarget("xxx,")
@@ -93,11 +98,6 @@ class CommonizerTargetIdentityStringTest {
     @Test(expected = IllegalArgumentException::class)
     fun `fail parsing CommonizerTarget 2`() {
         parseCommonizerTarget("")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun `fail parsing CommonizerTarget 3`() {
-        parseCommonizerTarget("()")
     }
 
     @Test(expected = IllegalArgumentException::class)
