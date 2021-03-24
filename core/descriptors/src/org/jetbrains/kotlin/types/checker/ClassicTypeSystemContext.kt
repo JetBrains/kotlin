@@ -44,6 +44,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return declarationDescriptor?.classId?.isLocal == true
     }
 
+    override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
+        get() {
+            require(this is NewTypeVariableConstructor, this::errorMessage)
+            return this.originalTypeParameter
+        }
+
     override fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker> {
         val typeConstructor = typeConstructor()
         require(typeConstructor is IntegerLiteralTypeConstructor, this::errorMessage)
@@ -210,6 +216,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {
         require(this is TypeParameterDescriptor, this::errorMessage)
         return this.typeConstructor
+    }
+
+    override fun TypeParameterMarker.doesFormSelfType(selfConstructor: TypeConstructorMarker): Boolean {
+        require(this is TypeParameterDescriptor, this::errorMessage)
+        require(selfConstructor is TypeConstructor, this::errorMessage)
+
+        return doesTypeParameterFormSelfType(this, selfConstructor)
     }
 
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {

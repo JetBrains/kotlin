@@ -314,8 +314,8 @@ class ConeStubType(val variable: ConeTypeVariable, override val nullability: Con
     }
 }
 
-open class ConeTypeVariable(name: String) : TypeVariableMarker {
-    val typeConstructor = ConeTypeVariableTypeConstructor(name)
+open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMarker? = null) : TypeVariableMarker {
+    val typeConstructor = ConeTypeVariableTypeConstructor(name, originalTypeParameter)
     val defaultType = ConeTypeVariableType(ConeNullability.NOT_NULL, typeConstructor)
 
     override fun toString(): String {
@@ -323,7 +323,10 @@ open class ConeTypeVariable(name: String) : TypeVariableMarker {
     }
 }
 
-class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
+class ConeTypeVariableTypeConstructor(
+    val debugName: String,
+    val originalTypeParameter: TypeParameterMarker?
+) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
     override val name: Name get() = Name.identifier(debugName)
 
     var isContainedInInvariantOrContravariantPositions: Boolean = false

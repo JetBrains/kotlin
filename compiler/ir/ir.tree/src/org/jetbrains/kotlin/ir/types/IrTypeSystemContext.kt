@@ -168,6 +168,28 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeParameterMarker.getTypeConstructor() = this as IrTypeParameterSymbol
 
+    private fun KotlinTypeMarker.containsTypeConstructor(constructor: TypeConstructorMarker): Boolean {
+        if (this.typeConstructor() == constructor) return true
+
+        for (i in 0 until this.argumentsCount()) {
+            val typeArgument = this.getArgument(i).takeIf { !it.isStarProjection() } ?: continue
+            if (typeArgument.getType().containsTypeConstructor(constructor)) return true
+        }
+
+        return false
+    }
+
+    override fun TypeParameterMarker.doesFormSelfType(selfConstructor: TypeConstructorMarker): Boolean {
+        for (i in 0 until this.upperBoundCount()) {
+            val upperBound = this.getUpperBound(i)
+            if (upperBound.containsTypeConstructor(selfConstructor) && upperBound.typeConstructor() == selfConstructor) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean =
         if (c1 is IrClassifierSymbol && c2 is IrClassifierSymbol) {
             FqNameEqualityChecker.areEqual(c1 , c2)
@@ -276,6 +298,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         if (this !is IrClassSymbol) return false
         return this.owner.classId?.isLocal == true
     }
+
+    override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
+        get() = error("Type variables is unsupported in IR")
 
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
         require(lowerBound.isNothing())
