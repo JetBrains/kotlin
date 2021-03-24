@@ -217,7 +217,10 @@ class IrDeclarationDeserializer(
                 coordinates.startOffset, coordinates.endOffset,
                 deserializeIrDeclarationOrigin(proto.originName), proto.flags
             )
-            result.annotations += deserializeAnnotations(proto.annotationList)
+            // avoid duplicate annotations for local variables
+            if (result.annotations.isEmpty()) {
+                result.annotations += deserializeAnnotations(proto.annotationList)
+            }
             if (!skipMutableState) {
                 result.parent = currentParent
             }
@@ -531,7 +534,7 @@ class IrDeclarationDeserializer(
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = LocalVariableFlags.decode(fcode)
             val nameType = BinaryNameAndType.decode(proto.nameType)
-            if (symbol.isBound) symbol.owner as IrVariable else IrVariableImpl(
+            (if (symbol.isBound) symbol.owner as IrVariable else IrVariableImpl(
                 startOffset, endOffset, origin,
                 symbol as IrVariableSymbol,
                 deserializeName(nameType.nameIndex),
@@ -539,7 +542,7 @@ class IrDeclarationDeserializer(
                 flags.isVar,
                 flags.isConst,
                 flags.isLateinit
-            ).apply {
+            )).apply {
                 if (proto.hasInitializer())
                     initializer = bodyDeserializer.deserializeExpression(proto.initializer)
             }

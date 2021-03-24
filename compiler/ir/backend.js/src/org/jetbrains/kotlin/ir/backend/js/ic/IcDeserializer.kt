@@ -188,7 +188,8 @@ class IcDeserializer(
 //            println("  carriers:")
 
 
-            if ("$signature" == "public kotlin/KotlinNothingValueException_init_\$Init\$|577819402441288649[0]") {
+            // public kotlin.contracts/Returns.implies|-5823325932675831010[0]
+            if ("$signature" == "public kotlin.contracts/Returns.implies|-5823325932675831010[0]") {
                 1
             }
 

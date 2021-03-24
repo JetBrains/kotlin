@@ -88,7 +88,7 @@ class IrSymbolDeserializer(
                 enqueueLocalTopLevelDeclaration(idSignature.topLevelSignature(), symbolKind)
             }
             return deserializedSymbols.getOrPut(idSignature) {
-                referenceDeserializedSymbol(symbolKind, idSignature)
+                    referenceDeserializedSymbol(symbolKind, idSignature)
             }
         }
 

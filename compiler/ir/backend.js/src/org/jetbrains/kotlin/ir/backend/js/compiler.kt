@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
@@ -143,13 +140,15 @@ fun compile(
             relativeRequirePath = relativeRequirePath
         )
 
-//        PrintWriter("/home/ab/vcs/kotlin/simple-dump.txt").use {
-//            allModules.first().files.forEach { file ->
-//                it.println(file.path)
-//                it.println(file.dumpKotlinLike())
-//                it.println()
-//            }
-//        }
+        if (!useStdlibCache) {
+            PrintWriter("/home/ab/vcs/kotlin/simple-dump.txt").use { out ->
+                allModules.first().files.forEach { file ->
+                    out.println(file.path)
+                    file.declarations.map { it.dumpKotlinLike() }.sorted().forEach { out.print(it) }
+                    out.println()
+                }
+            }
+        }
 
         return transformer.generateModule(allModules)
     }

@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.allUnbound
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
@@ -123,13 +120,21 @@ fun loadIrForIc(
 
         actual += file.path + "\n"
         actual += context.irFactory.stageController.withStage(100) {
-            try {
-                file.dumpKotlinLike()
-            } catch (t: Throwable) {
-                t.printStackTrace()
-            }
+            var r = ""
+
+            file.declarations.map { it.dumpKotlinLike() }.sorted().forEach { r += it }
+
+//            file.declarations.sortedBy { it.nameForIrSerialization.asString() }.forEach { d ->
+//                try {
+//                    r += d.dumpKotlinLike()
+//                } catch (t: Throwable) {
+//                    t.printStackTrace()
+//                }
+//            }
+
+            r
         }
-        actual += "\n\n"
+        actual += "\n"
 
 //        it.println(actual)
 

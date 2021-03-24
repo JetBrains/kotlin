@@ -565,7 +565,7 @@ class LocalDeclarationsLowering(
             localFunctions[declaration]?.let {
                 val baseName = if (declaration.name.isSpecial) "lambda" else declaration.name
                 if (it.index >= 0)
-                    return "$baseName-${it.index}"
+                    return "$baseName"//"{it.index}"
             }
 
             return localNameProvider.localName(declaration)

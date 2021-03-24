@@ -415,7 +415,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             is IrSimpleType -> {
                 // TODO abbreviation
 
-                p.printWithNoIndent((classifier.owner as IrDeclarationWithName).name.asString())
+                try {
+                    p.printWithNoIndent((classifier.owner as IrDeclarationWithName).name.asString())
+                } catch (t: Throwable) {
+                    p.printWithNoIndent("<unbound type>")
+                }
 
                 if (arguments.isNotEmpty()) {
                     p.printWithNoIndent("<")
@@ -499,6 +503,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
+        if ("outlinedJsCode" in declaration.name.asString()) {
+            1
+        }
         declaration.printSimpleFunction(
             "fun ",
             declaration.name.asString(),
@@ -562,6 +569,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             overridden
             dispatchReceiverParameter
          */
+
+        if (name == "uintCompare") {
+            1
+        }
 
         if (options.printFakeOverridesStrategy == FakeOverridesStrategy.NONE && isFakeOverride ||
             options.printFakeOverridesStrategy == FakeOverridesStrategy.ALL_EXCEPT_ANY && isFakeOverriddenFromAny()
@@ -633,10 +644,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun IrFunction.printValueParametersWithNoIndent() {
         p.printWithNoIndent("(")
-        valueParameters.forEachIndexed { i, param ->
-            p(i > 0, ",")
+        try {
+            valueParameters.forEachIndexed { i, param ->
+                p(i > 0, ",")
 
-            param.printAValueParameterWithNoIndent(this)
+                param.printAValueParameterWithNoIndent(this)
+            }
+        } catch (t: Throwable) {
+            p.printWithNoIndent("<unbound>")
         }
         p.printWithNoIndent(")")
     }
@@ -1103,11 +1118,19 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
 
         // it's not valid kotlin
-        p.printWithNoIndent("#" + symbol.owner.name.asString())
+        try {
+            p.printWithNoIndent("#" + symbol.owner.name.asString())
+        } catch (t: Throwable) {
+            p.printWithNoIndent("<unbound>")
+        }
     }
 
     override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?) {
-        p.printWithNoIndent(expression.symbol.owner.name.asString())
+        try {
+            p.printWithNoIndent(expression.symbol.owner.name.asString())
+        } catch (t: Throwable) {
+            p.printWithNoIndent("<unbound>")
+        }
     }
 
     override fun visitSetValue(expression: IrSetValue, data: IrDeclaration?) {
@@ -1246,7 +1269,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) {
         p.printIndent()
         if ((branch.condition as? IrConst<*>)?.value == true) {
-            p.printWithNoIndent("else")
+            p.printWithNoIndent("true")
         } else {
             p.printWithNoIndent("/* else */ ")
             branch.condition.accept(this, data)
