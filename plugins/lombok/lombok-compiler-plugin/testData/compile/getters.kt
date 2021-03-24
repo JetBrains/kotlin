@@ -1,0 +1,38 @@
+//FILE: GetterTest.java
+
+import lombok.AccessLevel;
+import lombok.Getter;
+
+public class GetterTest {
+    @Getter private int age = 10;
+
+    @Getter(AccessLevel.PROTECTED) private String name;
+
+    @Getter private boolean primitiveBoolean;
+
+    @Getter private Boolean boxedBoolean;
+
+    void test() {
+        getAge();
+        isPrimitiveBoolean();
+    }
+
+}
+
+
+//FILE: test.kt
+
+object Test {
+    fun usage() {
+        val obj = GetterTest()
+        val getter = obj.getAge()
+        val property = obj.age
+
+        //todo kotlin doesn't see isBoolean methods as properties
+//        obj.primitiveBoolean
+        obj.isPrimitiveBoolean()
+
+        obj.boxedBoolean
+        obj.getBoxedBoolean()
+    }
+}

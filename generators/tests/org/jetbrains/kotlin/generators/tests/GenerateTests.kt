@@ -166,6 +166,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTes
 import org.jetbrains.kotlin.kapt3.test.AbstractIrClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
+import org.jetbrains.kotlin.lombok.AbstractLombokCompileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinCopyPasteConversionTest
@@ -1856,6 +1857,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractPerformanceCompletionCharFilterTest> {
                 model("handlers/charFilter", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
+
+        testGroup("plugins/lombok/lombok-compiler-plugin/tests", "plugins/lombok/lombok-compiler-plugin/testData") {
+            testClass<AbstractLombokCompileTest> {
+                model("compile")
             }
         }
 /*

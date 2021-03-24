@@ -78,6 +78,7 @@ class LazyJavaClassMemberScope(
             addAll(declaredMemberIndex().getMethodNames())
             addAll(declaredMemberIndex().getRecordComponentNames())
             addAll(computeClassNames(kindFilter, nameFilter))
+            addAll(c.components.syntheticPartsProvider.getSyntheticFunctionNames(ownerDescriptor))
         }
 
     internal val constructors = c.storageManager.createLazyValue {
@@ -496,6 +497,8 @@ class LazyJavaClassMemberScope(
         if (jClass.isRecord && declaredMemberIndex().findRecordComponentByName(name) != null && result.none { it.valueParameters.isEmpty() }) {
             result.add(resolveRecordComponentToFunctionDescriptor(declaredMemberIndex().findRecordComponentByName(name)!!))
         }
+
+        c.components.syntheticPartsProvider.generateSyntheticMethods(ownerDescriptor, name, result)
     }
 
     private fun resolveRecordComponentToFunctionDescriptor(recordComponent: JavaRecordComponent): JavaMethodDescriptor {
