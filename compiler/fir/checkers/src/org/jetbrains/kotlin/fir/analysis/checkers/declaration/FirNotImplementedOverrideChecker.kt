@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.fir.HASHCODE_NAME
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
+import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableAny
@@ -37,9 +37,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val classKind = declaration.classKind
         if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) return
 
-        val classScope = declaration.unsubstitutedScope(
-            context.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false
-        )
+        val classScope = declaration.unsubstitutedScope(context)
 
         val notImplementedSymbols = mutableListOf<FirCallableSymbol<*>>()
         val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()

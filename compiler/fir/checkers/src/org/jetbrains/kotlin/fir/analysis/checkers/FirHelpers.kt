@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+internal fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
+    this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
+
 /**
  * Returns true if this is a superclass of other.
  */
