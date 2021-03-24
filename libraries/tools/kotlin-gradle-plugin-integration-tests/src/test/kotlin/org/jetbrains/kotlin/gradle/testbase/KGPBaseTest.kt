@@ -11,6 +11,7 @@ import org.gradle.internal.impldep.org.junit.platform.commons.support.Annotation
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
+import org.jetbrains.kotlin.test.WithMuteInDatabase
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -28,6 +29,7 @@ import kotlin.streams.asStream
  * Base class for all Kotlin Gradle plugin integration tests.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@WithMuteInDatabase
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()
 

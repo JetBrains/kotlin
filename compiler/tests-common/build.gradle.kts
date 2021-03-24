@@ -97,6 +97,7 @@ dependencies {
 
     testCompile(intellijDep()) { includeJars("platform-util-ui", "platform-concurrency", "platform-objectSerializer") }
     testCompile(intellijDep()) { includeJars("platform-ide-util-io") }
+    testApiJUnit5()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
