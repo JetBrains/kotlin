@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -18,14 +15,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollector(
@@ -48,10 +43,10 @@ abstract class AbstractDiagnosticCollector(
 
     private val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
     private var componentsInitialized = false
-    private val visitor = Visitor()
 
     @Suppress("LeakingThis")
-    private var context = PersistentCheckerContext(this, returnTypeCalculator)
+    private val visitor = Visitor(PersistentCheckerContext(this, returnTypeCalculator))
+
     private var currentAction = DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
@@ -65,7 +60,7 @@ abstract class AbstractDiagnosticCollector(
     protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
     protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
 
-    private inner class Visitor : FirDefaultVisitor<Unit, Any?>() {
+    private inner class Visitor(context: PersistentCheckerContext) : AbstractDiagnosticCollectorVisitor(context) {
         private fun <T : FirElement> T.runComponents() {
             if (currentAction.checkInCurrentDeclaration) {
                 beforeRunningAllComponentsOnElement(this)
@@ -253,24 +248,16 @@ abstract class AbstractDiagnosticCollector(
         }
 
         private fun visitWithQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
-            val existingContext = context
-            context = context.addQualifiedAccess(qualifiedAccess)
-            try {
+            return withQualifiedAccess(qualifiedAccess){
                 qualifiedAccess.runComponents()
                 qualifiedAccess.acceptChildren(this, null)
-            } finally {
-                context = existingContext
             }
         }
 
         private fun visitWithGetClassCall(getClassCall: FirGetClassCall) {
-            val existingContext = context
-            context = context.addGetClassCall(getClassCall)
-            try {
+            return withGetClassCall(getClassCall) {
                 getClassCall.runComponents()
                 getClassCall.acceptChildren(this, null)
-            } finally {
-                context = existingContext
             }
         }
     }
@@ -279,57 +266,6 @@ abstract class AbstractDiagnosticCollector(
         DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
 
     protected open fun onDeclarationExit(declaration: FirDeclaration) {}
-
-    private inline fun <R> withDeclaration(declaration: FirDeclaration, block: () -> R): R {
-        val existingContext = context
-        context = context.addDeclaration(declaration)
-        try {
-            return block()
-        } finally {
-            context = existingContext
-        }
-    }
-
-    private inline fun <R> withLabelAndReceiverType(
-        labelName: Name?,
-        owner: FirDeclaration,
-        type: ConeKotlinType?,
-        block: () -> R
-    ): R {
-        val (implicitReceiverValue, implicitCompanionValues) = collectImplicitReceivers(type, owner)
-        val existingContext = context
-        implicitCompanionValues.forEach { value ->
-            context = context.addImplicitReceiver(null, value)
-        }
-        implicitReceiverValue?.let {
-            context = context.addImplicitReceiver(labelName, it)
-        }
-        try {
-            return block()
-        } finally {
-            context = existingContext
-        }
-    }
-
-    private inline fun <R> withSuppressedDiagnostics(annotationContainer: FirAnnotationContainer, block: () -> R): R {
-        val existingContext = context
-        addSuppressedDiagnosticsToContext(annotationContainer)
-        return try {
-            block()
-        } finally {
-            context = existingContext
-        }
-    }
-
-    private fun addSuppressedDiagnosticsToContext(annotationContainer: FirAnnotationContainer) {
-        val arguments = getDiagnosticsSuppressedForContainer(annotationContainer) ?: return
-        context = context.addSuppressedDiagnostics(
-            arguments,
-            allInfosSuppressed = SUPPRESS_ALL_INFOS in arguments,
-            allWarningsSuppressed = SUPPRESS_ALL_WARNINGS in arguments,
-            allErrorsSuppressed = SUPPRESS_ALL_ERRORS in arguments
-        )
-    }
 
     private inline fun <R> withDiagnosticsAction(action: DiagnosticCollectorDeclarationAction, block: () -> R): R {
         val oldAction = currentAction
