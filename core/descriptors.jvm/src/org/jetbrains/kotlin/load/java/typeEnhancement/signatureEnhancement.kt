@@ -320,10 +320,10 @@ class SignatureEnhancement(
             typeParameterForArgument: TypeParameterDescriptor?,
             isFromStarProjection: Boolean
         ): JavaTypeQualifiers {
-            val areImprovementsEnabled = containerContext.components.settings.typeEnhancementImprovements
+            val areImprovementsInStrictMode = containerContext.components.settings.typeEnhancementImprovementsInStrictMode
 
             val composedAnnotation =
-                if (isHeadTypeConstructor && typeContainer != null && typeContainer !is TypeParameterDescriptor && areImprovementsEnabled) {
+                if (isHeadTypeConstructor && typeContainer != null && typeContainer !is TypeParameterDescriptor && areImprovementsInStrictMode) {
                     val filteredContainerAnnotations = typeContainer.annotations.filter {
                         val (_, targets) = annotationTypeQualifierResolver.resolveAnnotation(it) ?: return@filter false
                         /*
@@ -357,7 +357,7 @@ class SignatureEnhancement(
             val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
                 nullabilityInfoBoundsForTypeParameterUsage()
 
-            val annotationsNullability = composedAnnotation.extractNullability(areImprovementsEnabled, typeParameterBounds)
+            val annotationsNullability = composedAnnotation.extractNullability(areImprovementsInStrictMode, typeParameterBounds)
                 ?.takeUnless { isFromStarProjection }
             val nullabilityInfo =
                 annotationsNullability
