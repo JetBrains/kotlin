@@ -141,7 +141,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
         JavaResolverSettings.create(
             isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
             correctNullabilityForNotNullTypeParameter = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated),
-            typeEnhancementImprovements = languageVersionSettings.supportsFeature(LanguageFeature.ImprovementsAroundTypeEnhancement)
+            typeEnhancementImprovementsInStrictMode = languageVersionSettings.supportsFeature(LanguageFeature.TypeEnhancementImprovementsInStrictMode)
         )
     )
 
