@@ -522,6 +522,42 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
     }
 
     @Test
+    fun testAgpNestedArgsNotEvaluatedDuringConfiguration() = with(Project("AndroidProject")) {
+        setupWorkingDir()
+
+        gradleBuildScript(subproject = "Android").appendText(
+            """
+
+            apply plugin: 'kotlin-kapt'
+
+            class MyNested implements org.gradle.process.CommandLineArgumentProvider {
+                @Override
+                Iterable<String> asArguments() {
+                    throw new RuntimeException("This should not be invoked during configuration.")
+                }
+            }
+
+            def nested = new MyNested()
+
+            android.applicationVariants.all {
+                it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
+            }
+            """.trimIndent()
+        )
+
+        build(":Android:kaptFlavor1DebugKotlin", "--dry-run") {
+            assertSuccessful()
+        }
+
+        build(
+            ":Android:kaptFlavor1DebugKotlin", "--dry-run",
+            options = defaultBuildOptions().copy(kaptOptions = KaptOptions(verbose = false, useWorkers = false))
+        ) {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testOmittedStdlibVersion() = Project("AndroidProject").run {
         setupWorkingDir()
 
