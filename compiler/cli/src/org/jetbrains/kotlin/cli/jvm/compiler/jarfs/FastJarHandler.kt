@@ -14,6 +14,8 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.RandomAccessFile
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 import java.util.*
 
 internal class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) : ZipHandler(path) {
@@ -24,9 +26,9 @@ internal class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) :
 
     init {
         RandomAccessFile(file, "r").use { randomAccessFile ->
-            val bufferedRandomAccessFile = BufferedRandomAccessFile(randomAccessFile)
-            ourEntryMap = bufferedRandomAccessFile.parseCentralDirectory().associateBy { it.relativePath }
-            cachedManifest = ourEntryMap[MANIFEST_PATH]?.let(bufferedRandomAccessFile::contentsToByteArray)
+            val mappedByteBuffer = randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length())
+            ourEntryMap = mappedByteBuffer.parseCentralDirectory().associateBy { it.relativePath }
+            cachedManifest = ourEntryMap[MANIFEST_PATH]?.let(mappedByteBuffer::contentsToByteArray)
         }
 
         val entries: MutableMap<EntryInfo, FastJarVirtualFile> = HashMap()
@@ -139,7 +141,7 @@ internal class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) :
         val zipEntryDescription = ourEntryMap[relativePath] ?: throw FileNotFoundException("$file!/$relativePath")
         return cachedOpenFileHandles[file].use {
             synchronized(it) {
-                it.get().contentsToByteArray(zipEntryDescription)
+                it.get().second.contentsToByteArray(zipEntryDescription)
             }
         }
     }
@@ -147,16 +149,19 @@ internal class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) :
 
 private const val MANIFEST_PATH = "META-INF/MANIFEST.MF"
 
-private val cachedOpenFileHandles: FileAccessorCache<File, BufferedRandomAccessFile> =
-    object : FileAccessorCache<File, BufferedRandomAccessFile>(20, 10) {
+typealias RandomAccessFileAndBuffer = Pair<RandomAccessFile, MappedByteBuffer>
+
+private val cachedOpenFileHandles: FileAccessorCache<File, RandomAccessFileAndBuffer> =
+    object : FileAccessorCache<File, RandomAccessFileAndBuffer>(20, 10) {
         @Throws(IOException::class)
-        override fun createAccessor(file: File): BufferedRandomAccessFile {
-            return BufferedRandomAccessFile(RandomAccessFile(file, "r"))
+        override fun createAccessor(file: File): RandomAccessFileAndBuffer {
+            val randomAccessFile = RandomAccessFile(file, "r")
+            return Pair(randomAccessFile, randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length()))
         }
 
         @Throws(IOException::class)
-        override fun disposeAccessor(fileAccessor: BufferedRandomAccessFile) {
-            fileAccessor.close()
+        override fun disposeAccessor(fileAccessor: RandomAccessFileAndBuffer) {
+            fileAccessor.first.close()
         }
 
         override fun isEqual(val1: File, val2: File): Boolean {

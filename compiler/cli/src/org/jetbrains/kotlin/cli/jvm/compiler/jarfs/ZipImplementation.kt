@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import java.io.File
-import java.io.RandomAccessFile
+import java.nio.MappedByteBuffer
 import java.util.zip.Inflater
 
 
@@ -30,24 +29,17 @@ private const val END_OF_CENTRAL_DIR_SIZE = 22
 private const val LOCAL_FILE_HEADER_EXTRA_OFFSET = 28
 private const val LOCAL_FILE_HEADER_SIZE = LOCAL_FILE_HEADER_EXTRA_OFFSET + 2
 
-fun File.contentsToByteArray(zipEntryDescription: ZipEntryDescription): ByteArray {
-    return RandomAccessFile(this, "r").use { randomAccessFile ->
-        val bufferedRandomAccessFile = BufferedRandomAccessFile(randomAccessFile)
-        bufferedRandomAccessFile.contentsToByteArray(zipEntryDescription)
-    }
-}
-
-fun BufferedRandomAccessFile.contentsToByteArray(
+fun MappedByteBuffer.contentsToByteArray(
     zipEntryDescription: ZipEntryDescription
 ): ByteArray {
     val extraSize =
-        readShortLittleEndianFromOffset((zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_EXTRA_OFFSET).toLong())
+        readShortLittleEndianFromOffset((zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_EXTRA_OFFSET))
 
-    seek(
-        (zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_SIZE + zipEntryDescription.fileNameSize + extraSize).toLong()
+    position(
+        zipEntryDescription.offsetInFile + LOCAL_FILE_HEADER_SIZE + zipEntryDescription.fileNameSize + extraSize
     )
     val compressed = ByteArray(zipEntryDescription.compressedSize + 1)
-    readFully(compressed, zipEntryDescription.compressedSize)
+    get(compressed, 0, zipEntryDescription.compressedSize)
 
     return when (zipEntryDescription.compressionKind) {
         ZipEntryDescription.CompressionKind.DEFLATE -> {
@@ -64,22 +56,15 @@ fun BufferedRandomAccessFile.contentsToByteArray(
     }
 }
 
-fun File.parseCentralDirectory(): List<ZipEntryDescription> {
-    return RandomAccessFile(this, "r").use { randomAccessFile ->
-        BufferedRandomAccessFile(randomAccessFile).parseCentralDirectory()
-    }
-}
+fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
 
-fun BufferedRandomAccessFile.parseCentralDirectory(): List<ZipEntryDescription> {
-    val randomAccessFile = randomAccessFile
-
-    val endOfCentralDirectoryOffset = (randomAccessFile.length() - END_OF_CENTRAL_DIR_SIZE downTo 0).first { offset ->
+    val endOfCentralDirectoryOffset = (capacity() - END_OF_CENTRAL_DIR_SIZE downTo 0).first { offset ->
         // header of "End of central directory"
-        randomAccessFile.readIntLittleEndianFromOffset(offset) == 0x06054b50
+        readIntLittleEndianFromOffset(offset) == 0x06054b50
     }
 
-    val entriesNumber = randomAccessFile.readShortLittleEndianFromOffset(endOfCentralDirectoryOffset + 10)
-    val offsetOfCentralDirectory = randomAccessFile.readIntLittleEndianFromOffset(endOfCentralDirectoryOffset + 16).toLong()
+    val entriesNumber = readShortLittleEndianFromOffset(endOfCentralDirectoryOffset + 10)
+    val offsetOfCentralDirectory = readIntLittleEndianFromOffset(endOfCentralDirectoryOffset + 16)
 
     var currentOffset = offsetOfCentralDirectory
 
@@ -103,7 +88,11 @@ fun BufferedRandomAccessFile.parseCentralDirectory(): List<ZipEntryDescription> 
 
         val offsetOfFileData = readIntLittleEndianFromOffset(currentOffset + 42)
 
-        val name = readString(fileNameLength)
+        val bytesForName = ByteArray(fileNameLength)
+
+        get(bytesForName)
+
+        val name = String(bytesForName)
 
         currentOffset += 46 + fileNameLength + extraLength + fileCommentLength
 
@@ -126,117 +115,28 @@ fun BufferedRandomAccessFile.parseCentralDirectory(): List<ZipEntryDescription> 
     return result
 }
 
-class BufferedRandomAccessFile(
-    val randomAccessFile: RandomAccessFile
-) {
-    private val buffer = ByteArray(BUFFER_SIZE)
-    private var offsetInBuffer: Int = -1
-    private var currentBegin: Long = -1L
-
-    fun seek(globalOffset: Long, force: Boolean = false) {
-        if (!force && currentBegin != -1L && globalOffset >= currentBegin && globalOffset < currentBegin + BUFFER_SIZE) {
-            offsetInBuffer = (globalOffset - currentBegin).toInt()
-            return
-        }
-        offsetInBuffer = 0
-        currentBegin = globalOffset
-        randomAccessFile.seek(globalOffset)
-        randomAccessFile.readFully(buffer, 0, minOf(randomAccessFile.length() - globalOffset, BUFFER_SIZE.toLong()).toInt())
-    }
-
-    fun read(): Int {
-        require(offsetInBuffer < BUFFER_SIZE)
-        return buffer[offsetInBuffer++].let {
-            if (offsetInBuffer == BUFFER_SIZE && currentBegin + BUFFER_SIZE < randomAccessFile.length()) {
-                seek(currentBegin + BUFFER_SIZE)
-            }
-
-            java.lang.Byte.toUnsignedInt(it)
-        }
-    }
-
-    fun readString(length: Int): String {
-        if (length > BUFFER_SIZE) {
-            randomAccessFile.seek(currentBegin + offsetInBuffer)
-            val byteArray = ByteArray(length)
-            randomAccessFile.readFully(byteArray)
-            return String(byteArray)
-        }
-
-        if (length > BUFFER_SIZE - offsetInBuffer) {
-            seek(currentBegin + offsetInBuffer, force = true)
-        }
-
-        return String(buffer, offsetInBuffer, length)
-    }
-
-    fun readFully(dst: ByteArray, length: Int) {
-        if (length > BUFFER_SIZE) {
-            randomAccessFile.seek(currentBegin + offsetInBuffer)
-            randomAccessFile.readFully(dst, 0, length)
-            return
-        }
-
-        if (length > BUFFER_SIZE - offsetInBuffer) {
-            seek(currentBegin + offsetInBuffer, force = true)
-        }
-
-        System.arraycopy(buffer, offsetInBuffer, dst, 0, length)
-    }
-
-    fun close() {
-        randomAccessFile.close()
-    }
-
-    companion object {
-        private const val BUFFER_SIZE = 50000
-    }
-}
-
-private fun RandomAccessFile.readIntLittleEndianFromOffset(offset: Long): Int {
-    seek(offset)
+private fun MappedByteBuffer.readIntLittleEndianFromOffset(offset: Int): Int {
+    position(offset)
     return readIntLittleEndian()
 }
 
-private fun RandomAccessFile.readIntLittleEndian(): Int {
-    val a = this.read()
-    val b = this.read()
-    val c = this.read()
-    val d = this.read()
+private fun MappedByteBuffer.getByteAsInt(): Int = java.lang.Byte.toUnsignedInt(get())
+
+private fun MappedByteBuffer.readIntLittleEndian(): Int {
+    val a = this.getByteAsInt()
+    val b = this.getByteAsInt()
+    val c = this.getByteAsInt()
+    val d = this.getByteAsInt()
     return (d shl 24) + (c shl 16) + (b shl 8) + a
 }
 
-private fun RandomAccessFile.readShortLittleEndianFromOffset(offset: Long): Int {
-    seek(offset)
+private fun MappedByteBuffer.readShortLittleEndianFromOffset(offset: Int): Int {
+    position(offset)
     return readShortLittleEndian()
 }
 
-private fun RandomAccessFile.readShortLittleEndian(): Int {
-    val a = this.read()
-    val b = this.read()
-    return (b shl 8) + a
-}
-
-private fun BufferedRandomAccessFile.readIntLittleEndianFromOffset(offset: Long): Int {
-    seek(offset)
-    return readIntLittleEndian()
-}
-
-private fun BufferedRandomAccessFile.readIntLittleEndian(): Int {
-    val a = this.read()
-    val b = this.read()
-    val c = this.read()
-    val d = this.read()
-    return (d shl 24) + (c shl 16) + (b shl 8) + a
-}
-
-private fun BufferedRandomAccessFile.readShortLittleEndianFromOffset(offset: Long): Int {
-    seek(offset)
-    return readShortLittleEndian()
-}
-
-private fun BufferedRandomAccessFile.readShortLittleEndian(): Int {
-    val a = this.read()
-    val b = this.read()
+private fun MappedByteBuffer.readShortLittleEndian(): Int {
+    val a = this.getByteAsInt()
+    val b = this.getByteAsInt()
     return (b shl 8) + a
 }
