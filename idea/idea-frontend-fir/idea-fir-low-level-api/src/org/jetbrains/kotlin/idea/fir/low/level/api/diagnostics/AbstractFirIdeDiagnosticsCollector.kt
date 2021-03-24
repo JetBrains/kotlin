@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.components.DeclarationCheckersDiagnosticComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.components.ExpressionCheckersDiagnosticComponent
+import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
@@ -34,16 +32,24 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
     session: FirSession,
     useExtendedCheckers: Boolean,
 ) : AbstractDiagnosticCollector(
-    session,
-    returnTypeCalculator = createReturnTypeCalculatorForIDE(
-        session,
-        ScopeSession(),
-        ImplicitBodyResolveComputationSession(),
-        ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
-    )
+    session
 ) {
     private val beforeElementDiagnosticCollectionHandler: BeforeElementDiagnosticCollectionHandler? =
         session.beforeElementDiagnosticCollectionHandler
+
+    @Suppress("LeakingThis")
+    override val visitor = run {
+        val returnTypeCalculator = createReturnTypeCalculatorForIDE(
+            session,
+            ScopeSession(),
+            ImplicitBodyResolveComputationSession(),
+            ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+        )
+        CollectingVisitor(
+            PersistentCheckerContext(this, returnTypeCalculator),
+            components
+        )
+    }
 
     init {
         val declarationCheckers = CheckersFactory.createDeclarationCheckers(useExtendedCheckers)
@@ -74,13 +80,19 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
         reporter = Reporter()
     }
 
-    override fun beforeRunningSingleComponentOnElement(element: FirElement) {
-        checkCanceled()
+    inner class CollectingVisitor(
+        context: PersistentCheckerContext,
+        components: List<AbstractDiagnosticCollectorComponent>
+    ) : DiagnosticCollectingVisitor(context, components) {
+        override fun beforeRunningSingleComponentOnElement(element: FirElement) {
+            checkCanceled()
+        }
+
+        override fun beforeRunningAllComponentsOnElement(element: FirElement) {
+            beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
+        }
     }
 
-    override fun beforeRunningAllComponentsOnElement(element: FirElement) {
-        beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
-    }
 
     override fun getCollectedDiagnostics(): List<FirDiagnostic<*>> {
         // Not necessary in IDE

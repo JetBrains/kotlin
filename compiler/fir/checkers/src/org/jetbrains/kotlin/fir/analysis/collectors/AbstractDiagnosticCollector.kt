@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.name.Name
 abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
     override val scopeSession: ScopeSession = ScopeSession(),
-    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
 ) : SessionHolder {
     fun collectDiagnostics(firFile: FirFile): List<FirDiagnostic<*>> {
         if (!componentsInitialized) {
@@ -41,13 +38,11 @@ abstract class AbstractDiagnosticCollector(
     protected abstract fun getCollectedDiagnostics(): List<FirDiagnostic<*>>
     abstract val reporter: DiagnosticReporter
 
-    private val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
+    protected val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
     private var componentsInitialized = false
 
-    @Suppress("LeakingThis")
-    private val visitor = Visitor(PersistentCheckerContext(this, returnTypeCalculator))
+    protected abstract val visitor: DiagnosticCollectingVisitor
 
-    private var currentAction = DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
@@ -57,10 +52,16 @@ abstract class AbstractDiagnosticCollector(
         componentsInitialized = true
     }
 
-    protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
-    protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
 
-    private inner class Visitor(context: PersistentCheckerContext) : AbstractDiagnosticCollectorVisitor(context) {
+    open class DiagnosticCollectingVisitor(
+        context: PersistentCheckerContext,
+        private val components: List<AbstractDiagnosticCollectorComponent>
+    ) : AbstractDiagnosticCollectorVisitor(context) {
+        private var currentAction = DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
+
+        protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
+        protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
+
         private fun <T : FirElement> T.runComponents() {
             if (currentAction.checkInCurrentDeclaration) {
                 beforeRunningAllComponentsOnElement(this)
@@ -260,20 +261,20 @@ abstract class AbstractDiagnosticCollector(
                 getClassCall.acceptChildren(this, null)
             }
         }
-    }
 
-    protected open fun getDeclarationActionOnDeclarationEnter(declaration: FirDeclaration): DiagnosticCollectorDeclarationAction =
-        DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
+        protected open fun getDeclarationActionOnDeclarationEnter(declaration: FirDeclaration): DiagnosticCollectorDeclarationAction =
+            DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
 
-    protected open fun onDeclarationExit(declaration: FirDeclaration) {}
+        protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
-    private inline fun <R> withDiagnosticsAction(action: DiagnosticCollectorDeclarationAction, block: () -> R): R {
-        val oldAction = currentAction
-        currentAction = action
-        return try {
-            block()
-        } finally {
-            currentAction = oldAction
+        private inline fun <R> withDiagnosticsAction(action: DiagnosticCollectorDeclarationAction, block: () -> R): R {
+            val oldAction = currentAction
+            currentAction = action
+            return try {
+                block()
+            } finally {
+                currentAction = oldAction
+            }
         }
     }
 
