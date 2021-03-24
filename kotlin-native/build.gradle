@@ -626,13 +626,6 @@ configure([bundleRegular, bundlePrebuilt]) {
     dependsOn("distSources")
     dependsOn("distDef")
     from(project.rootDir) {
-        include 'DISTRO_README.md'
-        rename {
-            return "README.md"
-        }
-        into baseName
-    }
-    from(project.rootDir) {
         include 'RELEASE_NOTES.md'
         into baseName
     }
