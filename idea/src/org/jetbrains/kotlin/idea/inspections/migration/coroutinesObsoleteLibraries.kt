@@ -20,7 +20,7 @@ object KotlinxVersionUpdater : VersionUpdater {
             currentVersion.contains("eap13") -> return currentVersion
             currentVersion.contains("rc13") -> return currentVersion
             (VersionComparatorUtil.compare(currentVersion, "0.99.0") >= 0) -> return currentVersion // Do not update starting from 1.0.0
-            (VersionComparatorUtil.compare(currentVersion, "0.27.0") < 0) -> return "0.27.0-eap13"
+            (VersionComparatorUtil.compare(currentVersion, "0.27.0") < 0) -> return "0.27.0"
             else -> "$currentVersion-eap13"
         }
     }
