@@ -24,7 +24,7 @@ fun addImportToFile(
     allUnder: Boolean = false,
     alias: Name? = null
 ) {
-    addImportToFile(project, file, callableId.asFqNameForDebugInfo(), allUnder, alias)
+    addImportToFile(project, file, callableId.asSingleFqName(), allUnder, alias)
 }
 
 /**

@@ -51,7 +51,7 @@ sealed class WhenMissingCase {
     }
 
     class EnumCheckIsMissing(val callableId: CallableId) : WhenMissingCase() {
-        override val branchConditionText: String = callableId.asFqNameForDebugInfo().toString()
+        override val branchConditionText: String = callableId.asSingleFqName().toString()
 
         override fun toString(): String {
             return callableId.callableName.identifier

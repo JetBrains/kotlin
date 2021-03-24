@@ -100,7 +100,7 @@ class AddWhenRemainingBranchesFix(
                         } else {
                             "is "
                         } + case.classId.asSingleFqName().quoteIfNeeded().asString()
-                    is WhenMissingCase.EnumCheckIsMissing -> case.callableId.asFqNameForDebugInfo().quoteIfNeeded().asString()
+                    is WhenMissingCase.EnumCheckIsMissing -> case.callableId.asSingleFqName().quoteIfNeeded().asString()
                 }
                 val entry = psiFactory.createWhenEntry("$branchConditionText -> TODO()")
                 if (elseBranch != null) {

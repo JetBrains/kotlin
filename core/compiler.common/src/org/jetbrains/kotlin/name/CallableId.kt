@@ -54,7 +54,10 @@ data class CallableId(
 
     fun asFqNameForDebugInfo(): FqName {
         if (pathToLocal != null) return pathToLocal.child(callableName)
+        return asSingleFqName()
+    }
 
+    fun asSingleFqName(): FqName {
         return classId?.asSingleFqName()?.child(callableName) ?: packageName.child(callableName)
     }
 

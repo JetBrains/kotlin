@@ -42,7 +42,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
     ): PsiElement? {
         val candidates = if (function.isTopLevel) {
             KotlinTopLevelFunctionFqnNameIndex.getInstance().get(
-                function.symbol.callableId.asFqNameForDebugInfo().asString(),
+                function.symbol.callableId.asSingleFqName().asString(),
                 project,
                 function.scope(project)
             ).filter(KtNamedFunction::isCompiled)
@@ -58,7 +58,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
     private fun provideSourceForProperty(property: FirProperty, project: Project): PsiElement? {
         val candidates = if (property.isTopLevel) {
             KotlinTopLevelFunctionFqnNameIndex.getInstance().get(
-                property.symbol.callableId.asFqNameForDebugInfo().asString(),
+                property.symbol.callableId.asSingleFqName().asString(),
                 project,
                 property.scope(project)
             )

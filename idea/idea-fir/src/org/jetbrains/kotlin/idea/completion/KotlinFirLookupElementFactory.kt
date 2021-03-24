@@ -370,7 +370,7 @@ private fun addCallableImportIfRequired(targetFile: KtFile, nameToImport: Callab
 }
 
 private fun alreadyHasImport(file: KtFile, nameToImport: CallableId): Boolean {
-    if (file.importDirectives.any { it.importPath?.fqName == nameToImport.asFqNameForDebugInfo() }) return true
+    if (file.importDirectives.any { it.importPath?.fqName == nameToImport.asSingleFqName() }) return true
 
     withAllowedResolve {
         analyse(file) {
