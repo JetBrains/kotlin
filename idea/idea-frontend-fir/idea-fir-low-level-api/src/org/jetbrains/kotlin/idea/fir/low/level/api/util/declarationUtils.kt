@@ -124,11 +124,11 @@ private fun KtClassOrObject.findFir(firSymbolProvider: FirSymbolProvider): FirRe
     }
 }
 
-private fun KtTypeAlias.findFir(firSymbolProvider: FirSymbolProvider): FirTypeAlias {
+private fun KtTypeAlias.findFir(firSymbolProvider: FirSymbolProvider): FirTypeAlias? {
     val typeAlias = ClassId(containingKtFile.packageFqName, nameAsSafeName)
     return executeWithoutPCE {
+        // Finding a non-top-level type alias won't work
         firSymbolProvider.getClassLikeSymbolByFqName(typeAlias)?.fir as? FirTypeAlias
-            ?: error("Could not find type alias $typeAlias")
     }
 }
 

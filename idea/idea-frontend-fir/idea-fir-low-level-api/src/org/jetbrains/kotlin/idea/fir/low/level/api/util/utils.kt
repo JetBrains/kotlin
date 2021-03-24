@@ -28,10 +28,11 @@ internal inline fun <T> executeOrReturnDefaultValueOnPCE(defaultValue: T, action
         defaultValue
     }
 
-internal inline fun <T : Any> executeWithoutPCE(crossinline action: () -> T): T {
+internal inline fun <T> executeWithoutPCE(crossinline action: () -> T): T {
     var result: T? = null
     ProgressManager.getInstance().executeNonCancelableSection { result = action() }
-    return result!!
+    @Suppress("UNCHECKED_CAST")
+    return result as T
 }
 
 internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
