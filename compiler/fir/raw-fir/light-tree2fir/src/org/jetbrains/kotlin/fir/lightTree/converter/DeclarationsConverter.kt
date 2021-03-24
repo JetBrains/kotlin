@@ -532,7 +532,8 @@ class DeclarationsConverter(
     fun convertObjectLiteral(objectLiteral: LighterASTNode): FirElement {
         return withChildClassName(ANONYMOUS_OBJECT_NAME) {
             buildAnonymousObject {
-                source = objectLiteral.toFirSourceElement()
+                val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
+                source = objectDeclaration.toFirSourceElement()
                 origin = FirDeclarationOrigin.Source
                 session = baseSession
                 classKind = ClassKind.OBJECT
@@ -551,7 +552,7 @@ class DeclarationsConverter(
                 var delegatedConstructorSource: FirLightSourceElement? = null
                 var delegateFields: List<FirField>? = null
 
-                objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first().forEachChildren {
+                objectDeclaration.forEachChildren {
                     when (it.tokenType) {
                         MODIFIER_LIST -> modifiers = convertModifierList(it)
                         PRIMARY_CONSTRUCTOR -> primaryConstructor = it
@@ -636,7 +637,7 @@ class DeclarationsConverter(
             annotations += modifiers.annotations
             initializer = withChildClassName(enumEntryName) {
                 buildAnonymousObject {
-                    source = this@buildEnumEntry.source
+                    source = enumEntry.toFirSourceElement(FirFakeSourceElementKind.EnumInitializer)
                     session = baseSession
                     origin = FirDeclarationOrigin.Source
                     classKind = ClassKind.ENUM_ENTRY

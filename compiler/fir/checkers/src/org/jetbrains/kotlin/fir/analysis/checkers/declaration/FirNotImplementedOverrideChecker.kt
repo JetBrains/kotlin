@@ -28,16 +28,13 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 object FirNotImplementedOverrideChecker : FirClassChecker() {
 
     override fun check(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
-        // TODO: kt4763Property: reporting on `object` literal causes invalid error in test...FirDiagnosticHandler
-        if (declaration !is FirRegularClass) return
-
         val source = declaration.source ?: return
-        if (source.kind is FirFakeSourceElementKind) return
+        val sourceKind = source.kind
+        if (sourceKind is FirFakeSourceElementKind && sourceKind != FirFakeSourceElementKind.EnumInitializer) return
         val modality = declaration.modality()
         if (modality == Modality.ABSTRACT || modality == Modality.SEALED) return
-        if (declaration.isExpect) return
+        if (declaration is FirRegularClass && declaration.isExpect) return
         val classKind = declaration.classKind
-        // TODO: we should check enum entries (probably as anonymous objects, see above)
         if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) return
 
         val classScope = declaration.unsubstitutedScope(
@@ -70,7 +67,9 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             classScope.processFunctionsByName(name) { namedFunctionSymbol ->
                 val simpleFunction = namedFunctionSymbol.fir
                 if (!simpleFunction.shouldBeImplemented()) return@processFunctionsByName
-                if (declaration.isData && simpleFunction.matchesDataClassSyntheticMemberSignatures) return@processFunctionsByName
+                if (declaration is FirRegularClass && declaration.isData && simpleFunction.matchesDataClassSyntheticMemberSignatures) {
+                    return@processFunctionsByName
+                }
 
                 // TODO: suspend function overridden by a Java class in the middle is not properly regarded as an override
                 if (simpleFunction.isSuspend) return@processFunctionsByName
@@ -94,7 +93,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
 
         if (notImplementedSymbols.isNotEmpty()) {
             val notImplemented = notImplementedSymbols.first().fir
-            if (notImplemented.isFromInterface(context)) {
+            if (notImplemented.isFromInterfaceOrEnum(context)) {
                 reporter.reportOn(source, FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
             } else {
                 reporter.reportOn(source, FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
@@ -110,8 +109,8 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         }
     }
 
-    private fun FirCallableDeclaration<*>.isFromInterface(context: CheckerContext): Boolean =
-        (getContainingClass(context) as? FirRegularClass)?.isInterface == true
+    private fun FirCallableDeclaration<*>.isFromInterfaceOrEnum(context: CheckerContext): Boolean =
+        (getContainingClass(context) as? FirRegularClass)?.let { it.isInterface || it.isEnumClass } == true
 
     private val FirSimpleFunction.matchesDataClassSyntheticMemberSignatures: Boolean
         get() = (this.name == OperatorNameConventions.EQUALS && matchesEqualsSignature) ||

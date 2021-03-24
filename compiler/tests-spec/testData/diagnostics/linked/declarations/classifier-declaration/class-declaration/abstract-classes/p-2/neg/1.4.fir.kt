@@ -44,7 +44,7 @@ class Case2() {
     abstract inner class Impl(override val a: CharSequence) : MainClass.Base3(a) {}
 
     fun boo() {
-        val impl = object : Impl("a") {
+        val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Impl("a") {
             override fun foo(): CharSequence = "foo"
         }
     }

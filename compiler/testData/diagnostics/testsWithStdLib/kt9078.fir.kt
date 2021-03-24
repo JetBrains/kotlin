@@ -4,7 +4,7 @@ abstract class KFunctionKt9005WorkAround<out R: Any?>(private val _functionInsta
 
     private val _parameters: List<kotlin.reflect.KParameter> = run {
         _functionInstance.javaClass.methods.first().<!UNRESOLVED_REFERENCE!>parameters<!>.<!AMBIGUITY!>map<!> {
-            object : kotlin.reflect.KParameter {
+            <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object<!> : kotlin.reflect.KParameter {
                 override val index: Int = 0
             }
         }

@@ -65,7 +65,7 @@ fun case3() {
     val v = Case3()
     v.boo(true)
 
-    val o = object : BaseKotlin() {}
+    val o = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>object<!> : BaseKotlin() {}
 }
 
 /*
@@ -78,6 +78,6 @@ abstract class AbstractClassCase4 : BaseKotlin() {}
 fun case4() {
     val v = Case4()
     v.boo(true)
-    val o = object : AbstractClassCase4() {}
+    val o = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>object<!> : AbstractClassCase4() {}
 
 }

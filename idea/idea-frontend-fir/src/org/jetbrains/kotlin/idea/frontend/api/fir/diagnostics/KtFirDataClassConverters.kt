@@ -882,48 +882,48 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
         AbstractMemberNotImplementedImpl(
-            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
         AbstractClassMemberNotImplementedImpl(
-            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER) { firDiagnostic ->
         InvisibleAbstractMemberFromSuperImpl(
-            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_WARNING) { firDiagnostic ->
         InvisibleAbstractMemberFromSuperWarningImpl(
-            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
         ManyImplMemberNotImplementedImpl(
-            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
         ManyInterfacesMemberNotImplementedImpl(
-            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

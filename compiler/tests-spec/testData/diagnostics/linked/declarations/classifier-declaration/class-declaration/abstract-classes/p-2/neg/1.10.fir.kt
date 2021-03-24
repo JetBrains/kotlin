@@ -33,7 +33,7 @@ class Case2Outer {
 
 // TESTCASE NUMBER: 3
 fun case3() {
-    object : CaseOuter.CaseBase() {}.outerFoo()
+    <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : CaseOuter.CaseBase() {}.outerFoo()
 }
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class B<!>() : CaseOuter.CaseBase() {}

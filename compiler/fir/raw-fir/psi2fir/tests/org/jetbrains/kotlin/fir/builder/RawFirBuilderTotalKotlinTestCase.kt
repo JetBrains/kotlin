@@ -258,6 +258,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         it is KtAnnotatedExpression ||
                         it is KtWhenConditionWithExpression ||
                         it is KtFinallySection ||
+                        it is KtObjectLiteralExpression ||
                         // TODO: KT-24089 (support of dynamic)
                         it is KtDynamicType ||
                         // NB: KtAnnotation is processed via its KtAnnotationEntries

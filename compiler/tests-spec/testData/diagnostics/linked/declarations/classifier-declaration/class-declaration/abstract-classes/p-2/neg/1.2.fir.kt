@@ -44,7 +44,7 @@ fun case1() {
 * NOTE: property is not implemented
 */
 fun case2() {
-    val impl = object : Base() {
+    val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Base() {
         override var b: Any
             get() = TODO()
             set(value) {}
@@ -71,7 +71,7 @@ fun case2() {
 */
 
 fun case3() {
-    val impl = object : Base() {
+    val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Base() {
         override var b: Any
             get() = TODO()
             set(value) {}
