@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
 import org.jetbrains.kotlin.scripting.definitions.discoverScriptTemplatesInClasspath
@@ -74,6 +75,14 @@ class ScriptingCompilerPluginTest : TestCase() {
         configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
 
         return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    }
+
+    fun testUseOldBackendPreservedOnOptionsUpdate() {
+        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
+            put(JVMConfigurationKeys.IR, false)
+            updateWithCompilerOptions(emptyList())
+        }
+        Assert.assertEquals(configuration[JVMConfigurationKeys.IR], false)
     }
 
     fun testScriptResolverEnvironmentArgsParsing() {
