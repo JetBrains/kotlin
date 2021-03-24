@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TestFunctionName")
+
 package org.jetbrains.kotlin.commonizer.utils
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
@@ -13,8 +15,9 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeSensitiveManifestData
-import org.jetbrains.kotlin.commonizer.konan.TargetedNativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.konan.TargetDependentNativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -173,15 +176,20 @@ fun MockNativeManifestDataProvider(
     exportForwardDeclarations: List<String> = emptyList(),
     nativeTargets: Collection<String> = emptyList(),
     shortName: String? = "mock"
-): TargetedNativeManifestDataProvider = TargetedNativeManifestDataProvider { _, _ ->
-    NativeSensitiveManifestData(
-        uniqueName = uniqueName,
-        versions = versions,
-        dependencies = dependencies,
-        isInterop = isInterop,
-        packageFqName = packageFqName,
-        exportForwardDeclarations = exportForwardDeclarations,
-        nativeTargets = nativeTargets,
-        shortName = shortName
-    )
+): TargetDependent<NativeManifestDataProvider> = TargetDependent {
+    object : NativeManifestDataProvider {
+        override fun getManifest(libraryName: String): NativeSensitiveManifestData {
+            return NativeSensitiveManifestData(
+                uniqueName = uniqueName,
+                versions = versions,
+                dependencies = dependencies,
+                isInterop = isInterop,
+                packageFqName = packageFqName,
+                exportForwardDeclarations = exportForwardDeclarations,
+                nativeTargets = nativeTargets,
+                shortName = shortName
+            )
+        }
+    }
+
 }

@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.commonizer.konan.TargetedNativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 
 class CommonizerParameters(
     val resultsConsumer: ResultsConsumer,
-    val manifestDataProvider: TargetedNativeManifestDataProvider,
-    // common module dependencies (ex: Kotlin stdlib)
+    val manifestDataProvider: TargetDependent<NativeManifestDataProvider>,
     val commonDependencyModulesProvider: ModulesProvider? = null,
     val statsCollector: StatsCollector? = null,
     val progressLogger: ((String) -> Unit)? = null

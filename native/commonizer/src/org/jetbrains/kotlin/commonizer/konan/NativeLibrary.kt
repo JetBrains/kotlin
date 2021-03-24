@@ -3,35 +3,28 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.commonizer.konan
 
-import com.intellij.util.containers.FactoryMap
 import gnu.trove.THashMap
-import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.library.KotlinLibrary
 
-fun interface TargetedNativeManifestDataProvider {
-    fun getManifest(target: CommonizerTarget, libraryName: String): NativeSensitiveManifestData
-}
-
-internal interface NativeManifestDataProvider {
+interface NativeManifestDataProvider {
     fun getManifest(libraryName: String): NativeSensitiveManifestData
 }
 
-internal fun TargetedNativeManifestDataProvider(
+internal fun TargetDependentNativeManifestDataProvider(
     libraries: TargetDependent<NativeLibrariesToCommonize>
-): TargetedNativeManifestDataProvider {
-    val cachedManifestProviders: Map<CommonizerTarget, NativeManifestDataProvider> = FactoryMap.create { target ->
+): TargetDependent<NativeManifestDataProvider> {
+    return TargetDependent { target ->
         when (target) {
-            is LeafCommonizerTarget -> libraries.getValue(target)
-            is SharedCommonizerTarget -> CommonNativeManifestDataProvider(libraries.values)
+            is LeafCommonizerTarget -> libraries[target]
+            is SharedCommonizerTarget -> CommonNativeManifestDataProvider(target.targets.map { libraries[it] })
         }
-    }
-    return TargetedNativeManifestDataProvider { target, libraryName ->
-        cachedManifestProviders.getValue(target).getManifest(libraryName)
     }
 }
 

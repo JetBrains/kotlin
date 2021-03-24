@@ -37,20 +37,20 @@ internal class LibraryCommonizer internal constructor(
             }
         }
         progressLogger.log("Resolved libraries to be commonized")
-        return librariesByTargets
+        return TargetDependent(librariesByTargets)
     }
 
     private fun commonizeAndSaveResults(allLibraries: TargetDependent<NativeLibrariesToCommonize>) {
         val parameters = CommonizerParameters(
             resultsConsumer = resultsConsumer,
-            manifestDataProvider = TargetedNativeManifestDataProvider(allLibraries),
+            manifestDataProvider = TargetDependentNativeManifestDataProvider(allLibraries),
             commonDependencyModulesProvider = DefaultModulesProvider.create(dependencies.getLibraries(commonTarget)),
             statsCollector = statsCollector,
             progressLogger = progressLogger::log
         )
 
-        allLibraries.forEach { (target, librariesToCommonize) ->
-            parameters.addTarget(target, librariesToCommonize)
+        commonTarget.targets.forEach { target ->
+            parameters.addTarget(target, allLibraries[target])
         }
 
         runCommonization(parameters)

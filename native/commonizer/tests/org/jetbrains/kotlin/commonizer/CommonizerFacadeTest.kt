@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
-import org.jetbrains.kotlin.commonizer.konan.CommonNativeManifestDataProvider
-import org.jetbrains.kotlin.commonizer.konan.TargetedNativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
 import org.jetbrains.kotlin.commonizer.utils.MockModulesProvider
 import org.jetbrains.kotlin.commonizer.utils.MockNativeManifestDataProvider
@@ -66,7 +65,8 @@ class CommonizerFacadeTest {
 
     companion object {
         private fun Map<String, List<String>>.toCommonizerParameters(
-            resultsConsumer: ResultsConsumer, manifestDataProvider: TargetedNativeManifestDataProvider = MockNativeManifestDataProvider()
+            resultsConsumer: ResultsConsumer,
+            manifestDataProvider: TargetDependent<NativeManifestDataProvider> = MockNativeManifestDataProvider()
         ) = CommonizerParameters(resultsConsumer, manifestDataProvider).also { parameters ->
             forEach { (targetName, moduleNames) ->
                 parameters.addTarget(
