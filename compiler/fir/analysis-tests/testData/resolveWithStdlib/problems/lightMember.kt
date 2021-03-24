@@ -7,6 +7,6 @@ abstract class LightMemberImpl<out D : PsiMember>(computeRealDelegate: () -> D) 
 }
 
 abstract class LightFieldImpl<D : PsiField>(computeRealDelegate: () -> D) : LightMemberImpl<PsiField>(computeRealDelegate) {
-    override val delegate: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>D<!>
+    override val delegate: D
         get() = super.delegate
 }
