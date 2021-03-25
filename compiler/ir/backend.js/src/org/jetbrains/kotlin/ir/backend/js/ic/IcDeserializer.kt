@@ -55,6 +55,10 @@ class IcDeserializer(
         val kindQueue = ArrayDeque<BinarySymbolData.SymbolKind>()
 
         fun IdSignature.enqueue(icDeserializer: IcFileDeserializer, kind: BinarySymbolData.SymbolKind) {
+            if ("$this" == "private kotlin.js.internal/IntCompanionObject.MIN_VALUE|7841734059694520564[0]:15") {
+                1
+            }
+
             if (this !in icDeserializer.visited) {
 //                println("   -> $this (${icDeserializer.fileDeserializer.file.name})")
                 fileQueue.addLast(icDeserializer)
@@ -109,7 +113,8 @@ class IcDeserializer(
             icDeserializer = IcFileDeserializer(
                 linker, fd, icFileData,
                 { idSig, kind ->
-                    idSig.enqueue(this, kind)
+                    val deser = if (idSig is IdSignature.FileLocalSignature) publicSignatureToIcFileDeserializer[idSig] ?: this else this
+                    idSig.enqueue(deser, kind)
                 },
                 pathToFileSymbol = { p -> pathToFileSymbol[p]!! },
                 context.mapping.state,
@@ -120,7 +125,7 @@ class IcDeserializer(
                 }
 
                 existingPublicSymbols[idSig] ?: icDeserializer.privateSymbols[idSig] ?: if (moduleDeserializer.contains(idSig)) moduleDeserializer.deserializeIrSymbol(idSig, kind) else null ?: run {
-                    if (idSig.isPublic) {
+                    if (idSig.isPublic || idSig is IdSignature.FileLocalSignature) {
                         val fileDeserializer = publicSignatureToIcFileDeserializer[idSig.topLevelSignature()]
                             ?: fdToIcFd[fileDeserializers.first { idSig.topLevelSignature() in it.reversedSignatureIndex}]
                             ?: error("file deserializer not found: $idSig")
@@ -148,7 +153,7 @@ class IcDeserializer(
             }
 
             icDeserializer.reversedSignatureIndex.keys.forEach {
-                if (it.isPublic) {
+                if (it.isPublic || it is IdSignature.FileLocalSignature) {
                     publicSignatureToIcFileDeserializer[it] = icDeserializer
                 }
             }
@@ -160,7 +165,7 @@ class IcDeserializer(
 
                 override fun visitDeclaration(declaration: IrDeclarationBase) {
                     declaration.symbol.signature?.let { idSig ->
-                        if (idSig.isPublic) {
+                        if (idSig.isPublic || idSig is IdSignature.FileLocalSignature) {
                             existingPublicSymbols[idSig] = declaration.symbol
                             publicSignatureToIcFileDeserializer[idSig] = icDeserializer
                         } else {
@@ -182,7 +187,7 @@ class IcDeserializer(
             if (signature is IdSignature.FileSignature) continue
 
 
-            if ("$signature" == "public kotlin.contracts/ContractBuilder.callsInPlace\$default|-8084630878733243362[0]") {
+            if ("$signature" == "private kotlin.js.internal/IntCompanionObject.MIN_VALUE|7841734059694520564[0]:4638265728071529947") {
                 1
             }
             if ("$signature" == "private kotlin.contracts/ContractBuilder.callsInPlace\$default|-8084630878733243362[0]:10") {
@@ -327,6 +332,7 @@ class IcDeserializer(
         private val symbolDeserializer = IrSymbolDeserializer(
             linker.symbolTable,
             fileReader,
+            fileDeserializer.file.path,
             emptyList(),
             { idSig, kind -> enqueueLocalTopLevelDeclaration(idSig, kind) },
             { _, s -> s },

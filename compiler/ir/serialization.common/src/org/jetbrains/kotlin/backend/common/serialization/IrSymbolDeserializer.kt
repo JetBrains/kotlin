@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignatur
 class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
     val fileReader: IrLibraryFile,
+    val filePath: String,
     val actuals: List<Actual>,
     val enqueueLocalTopLevelDeclaration: (IdSignature, BinarySymbolData.SymbolKind) -> Unit,
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
@@ -147,7 +148,8 @@ class IrSymbolDeserializer(
     }
 
     private fun deserializeFileLocalIdSignature(proto: ProtoFileLocalIdSignature): IdSignature.FileLocalSignature {
-        return IdSignature.FileLocalSignature(deserializeIdSignature(proto.container), proto.localId)
+        val fp = if (proto.hasFile()) fileReader.deserializeString(proto.file) else filePath
+        return IdSignature.FileLocalSignature(deserializeIdSignature(proto.container), proto.localId, fp)
     }
 
     private fun deserializeScopeLocalIdSignature(proto: Int): IdSignature.ScopeLocalDeclaration {

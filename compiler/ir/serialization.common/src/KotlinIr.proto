@@ -40,6 +40,7 @@ message AccessorIdSignature {
 message FileLocalIdSignature {
   required int32 container = 1;
   required int64 local_id = 2;
+  optional int32 file = 3;
 }
 
 message LoweredIdSignature {

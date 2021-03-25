@@ -112,7 +112,7 @@ fun loadIrForIc(
 //    }
 
 
-    if (false) {
+    if (true) {
 
         println("==== Dumping ====")
 

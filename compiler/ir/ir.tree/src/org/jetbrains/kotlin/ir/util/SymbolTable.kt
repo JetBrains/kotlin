@@ -644,7 +644,8 @@ class SymbolTable(
     override fun referenceFieldFromLinker(sig: IdSignature) =
         fieldSymbolTable.run {
             require(sig.isLocal)
-            IrFieldSymbolImpl()
+//            IrFieldSymbolImpl()
+            fieldSymbolTable.referenced(sig) { IrFieldPublicSymbolImpl(sig) }
         }
 
     val unboundFields: Set<IrFieldSymbol> get() = fieldSymbolTable.unboundSymbols

@@ -66,7 +66,7 @@ class FileDeserializationState(
 ) {
 
     val symbolDeserializer =
-        IrSymbolDeserializer(linker.symbolTable, fileReader, fileProto.actualsList, { idSig, _ -> addIdSignature(idSig) }, linker::handleExpectActualMapping) { idSig, symbolKind ->
+        IrSymbolDeserializer(linker.symbolTable, fileReader, file.path, fileProto.actualsList, { idSig, _ -> addIdSignature(idSig) }, linker::handleExpectActualMapping) { idSig, symbolKind ->
             assert(idSig.isPublic)
 
             val topLevelSig = idSig.topLevelSignature()

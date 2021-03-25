@@ -224,6 +224,7 @@ open class IrFileSerializer(
 
         proto.container = protoIdSignature(signature.container)
         proto.localId = signature.id
+        proto.file = serializeString(signature.filePath)
 
         return proto.build()
     }
