@@ -18,10 +18,12 @@ public fun Regex_1(pattern: kotlin.String): kotlin.text.Regex
 
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.Deprecated(message = "Use CharArray.concatToString() instead", replaceWith = kotlin.ReplaceWith(expression = "chars.concatToString()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.4")
 public fun String(chars: kotlin.CharArray): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.Deprecated(message = "Use CharArray.concatToString(startIndex, endIndex) instead", replaceWith = kotlin.ReplaceWith(expression = "chars.concatToString(offset, offset + length)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.4")
 public fun String(chars: kotlin.CharArray, offset: kotlin.Int, length: kotlin.Int): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.1")

@@ -12,6 +12,7 @@ import kotlin.js.RegExp
  */
 @SinceKotlin("1.2")
 @Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray): String {
     var result = ""
     for (char in chars) {
@@ -28,6 +29,7 @@ public actual fun String(chars: CharArray): String {
  */
 @SinceKotlin("1.2")
 @Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || chars.size - offset < length)
         throw IndexOutOfBoundsException("size: ${chars.size}; offset: $offset; length: $length")
