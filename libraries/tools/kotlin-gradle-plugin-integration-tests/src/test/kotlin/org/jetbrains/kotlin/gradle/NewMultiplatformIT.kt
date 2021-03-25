@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
-import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.plugin.sources.UnsatisfiedSourceSetVisibilityException
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.util.*
@@ -810,17 +809,17 @@ class NewMultiplatformIT : BaseGradleIT() {
         testMonotonousCheck(
             "languageSettings.languageVersion = '1.3'",
             "languageSettings.languageVersion = '1.4'",
-            SourceSetConsistencyChecks.languageVersionCheckHint
+            "The language version of the dependent source set must be greater than or equal to that of its dependency."
         )
 
         testMonotonousCheck(
             "languageSettings.enableLanguageFeature('InlineClasses')",
-            SourceSetConsistencyChecks.unstableFeaturesHint
+            "The dependent source set must enable all unstable language features that its dependency has."
         )
 
         testMonotonousCheck(
             "languageSettings.useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes')",
-            SourceSetConsistencyChecks.experimentalAnnotationsInUseHint
+            "The dependent source set must use all experimental annotations that its dependency uses."
         )
 
         // check that enabling a bugfix feature and progressive mode or advancing API level

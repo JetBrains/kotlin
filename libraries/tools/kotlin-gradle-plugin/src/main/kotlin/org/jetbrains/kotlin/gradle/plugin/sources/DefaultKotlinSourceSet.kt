@@ -202,6 +202,17 @@ class DefaultKotlinSourceSet(
     //endregion
 }
 
+
+internal val defaultSourceSetLanguageSettingsChecker =
+    FragmentConsistencyChecker<KotlinSourceSet>(
+        unitsName = "source sets",
+        name = { name },
+        checks = FragmentConsistencyChecks<KotlinSourceSet>(
+            unitName = "source set",
+            languageSettings = { languageSettings }
+        ).allChecks
+    )
+
 private fun KotlinSourceSet.checkForCircularDependencies() {
     // If adding an edge creates a cycle, than the source node of the edge belongs to the cycle, so run DFS from that node
     // to check whether it became reachable from itself
