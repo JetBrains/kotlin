@@ -189,7 +189,7 @@ fun convertJpsModuleDependency(dep: JpsModuleDependency): List<String> {
                     }
                 }
                 .filterNotNull()
-                .map { "$it // Exported transitive dependency" }
+                .mapIndexed { index, s -> if (index != 0) "$s // Exported transitive dependency" else s }
                 .toList()
         }
         else -> error("Cannot convert module dependency to Gradle $dep")
