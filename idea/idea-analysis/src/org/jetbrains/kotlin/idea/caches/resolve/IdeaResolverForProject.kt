@@ -164,12 +164,16 @@ class IdeaResolverForProject(
         }
 
         private fun findStdlibForModulesBuiltins(module: IdeaModuleInfo): LibraryInfo? {
-            if (IdeBuiltInsLoadingState.isFromClassLoader)
-                return null
-
-            return module.dependencies().lazyClosure { it.dependencies() }.firstOrNull {
-                it is LibraryInfo && it.isKotlinStdlib(projectContextFromSdkResolver.project)
-            } as? LibraryInfo
+            return when (IdeBuiltInsLoadingState.state) {
+                IdeBuiltInsLoadingState.IdeBuiltInsLoading.FROM_CLASSLOADER -> null
+                IdeBuiltInsLoadingState.IdeBuiltInsLoading.FROM_DEPENDENCIES_JVM -> {
+                    if (module.platform.isJvm()) {
+                        module.findJvmStdlibAcrossDependencies()
+                    } else {
+                        null
+                    }
+                }
+            }
         }
     }
 
