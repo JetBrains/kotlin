@@ -5,5 +5,32 @@
 
 package org.jetbrains.kotlin.lombok.config
 
-class LombokConfig {
+import java.io.File
+
+class LombokConfig(private val config: Map<String, String>) {
+
+    fun getString(key: String): String? = config[key]
+
+    fun getBoolean(key: String): Boolean? = getString(key)?.toBoolean()
+
+    fun getBooleanOrDefault(key: String, default: Boolean = false): Boolean = getBoolean(key) ?: default
+
+    companion object {
+
+        val Empty = LombokConfig(emptyMap())
+
+        fun parse(path: File): LombokConfig {
+
+            val config = mutableMapOf<String, String>()
+
+            path.forEachLine { line ->
+                val parts = line.split("=", limit = 2)
+                if (parts.size == 2) {
+                    config[parts[0].trim()] = parts[1].trim()
+                }
+            }
+            return LombokConfig(config)
+        }
+    }
+
 }

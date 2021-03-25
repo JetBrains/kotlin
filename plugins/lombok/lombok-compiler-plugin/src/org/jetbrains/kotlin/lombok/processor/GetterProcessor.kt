@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.Accessors
 import org.jetbrains.kotlin.lombok.config.Getter
+import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.utils.createFunction
 import org.jetbrains.kotlin.lombok.utils.toPreparedBase
 import org.jetbrains.kotlin.name.Name
@@ -19,7 +20,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
-class GetterProcessor : Processor {
+class GetterProcessor(private val config: LombokConfig) : Processor {
+
+    private val noIsPrefix by lazy { config.getBooleanOrDefault("lombok.getter.noIsPrefix") }
 
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
         val clAccessors = Accessors.getOrNull(classDescriptor)
@@ -46,7 +49,7 @@ class GetterProcessor : Processor {
             if (accessors.fluent) {
                 field.name.identifier
             } else {
-                val prefix = if (field.type.isPrimitiveBoolean()) "is" else "get"
+                val prefix = if (field.type.isPrimitiveBoolean() && !noIsPrefix) "is" else "get"
                 prefix + toPreparedBase(field.name.identifier)
             }
         return createFunction(
