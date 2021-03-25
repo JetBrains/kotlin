@@ -38,6 +38,7 @@ dependencies {
     jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijPluginDep("java", forIde = true), JpsDepScope.COMPILE)
     jpsLikeJarDependency(intellijPluginDep("java", forIde = true), JpsDepScope.COMPILE) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.COMPILE, { includeJars("platform-impl") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.COMPILE, { includeJars("resources_en") }) // Exported transitive dependency
@@ -69,6 +70,12 @@ sourceSets {
     }
     "test" {
         java.srcDir("test")
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 

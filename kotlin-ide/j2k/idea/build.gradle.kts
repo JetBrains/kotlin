@@ -34,6 +34,7 @@ dependencies {
     jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
     jpsLikeModuleDependency(":kotlin-ide:j2k:old", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijPluginDep("java", forIde = true), JpsDepScope.COMPILE)
     jpsLikeJarDependency(intellijPluginDep("java", forIde = true), JpsDepScope.COMPILE) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.COMPILE, { includeJars("platform-impl") }) // Exported transitive dependency
@@ -58,6 +59,12 @@ sourceSets {
     }
     "test" {
         
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
