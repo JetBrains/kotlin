@@ -23,11 +23,8 @@ import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.ConfigurablesWithEmulator
+import org.jetbrains.kotlin.konan.target.*
 
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.Xcode
 import java.io.*
 
 import java.nio.file.Path
@@ -256,11 +253,10 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
     }
 
     private val device by lazy {
-        val default = project.findProperty("iosDevice")?.toString() ?: when (target) {
-            KonanTarget.TVOS_X64 -> "Apple TV 4K"
-            KonanTarget.IOS_X64 -> "iPhone 12"
-            KonanTarget.WATCHOS_X64 -> "Apple Watch Series 6 - 40mm"
-            KonanTarget.WATCHOS_X86 -> "Apple Watch Series 5 - 40mm"
+        val default = project.findProperty("iosDevice")?.toString() ?: when (target.family) {
+            Family.TVOS -> "Apple TV 4K"
+            Family.IOS -> "iPhone 12"
+            Family.WATCHOS -> "Apple Watch Series 6 - 40mm"
             else -> error("Unexpected simulation target: $target")
         }
 
