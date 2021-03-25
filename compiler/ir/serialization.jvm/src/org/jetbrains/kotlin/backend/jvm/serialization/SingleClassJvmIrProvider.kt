@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ByteString
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
@@ -231,6 +232,7 @@ class SingleClassJvmIrProvider(
     private fun findFacadeClassName(symbol: IrSymbol): FqName? {
         if (symbol.hasDescriptor) {
             var descriptor = symbol.descriptor
+            if (descriptor is CallableMemberDescriptor) descriptor = descriptor.propertyIfAccessor
             while (descriptor.containingDeclaration !is PackageFragmentDescriptor) {
                 descriptor = descriptor.containingDeclaration!!
             }
