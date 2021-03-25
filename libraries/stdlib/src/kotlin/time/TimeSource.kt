@@ -114,14 +114,3 @@ private class AdjustedTimeMark(val mark: TimeMark, val adjustment: Duration) : T
 
     override fun plus(duration: Duration): TimeMark = AdjustedTimeMark(mark, adjustment + duration)
 }
-
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use TimeSource interface instead.", ReplaceWith("TimeSource", "kotlin.time.TimeSource"), DeprecationLevel.ERROR)
-public typealias Clock = TimeSource
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use TimeMark class instead.", ReplaceWith("TimeMark", "kotlin.time.TimeMark"), DeprecationLevel.ERROR)
-public typealias ClockMark = TimeMark
