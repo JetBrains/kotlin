@@ -97,6 +97,9 @@ fun loadIrForIc(
     context: JsIrBackendContext,
     checkEq: (String, String) -> Unit,
 ) {
+
+    moveBodilessDeclarationsToSeparatePlace(context, module)
+
     val icData = icCache.values.single() // TODO find a stable key present both in klib and module
 
     IcDeserializer(linker, context).injectIcData(module, icData)
