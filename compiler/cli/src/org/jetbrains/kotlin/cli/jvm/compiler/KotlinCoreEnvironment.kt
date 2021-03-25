@@ -689,7 +689,7 @@ class KotlinCoreEnvironment private constructor(
                 // For example, see the `unregisterExtension` call in `GenerationUtils.compileFilesUsingFrontendIR`.
                 // TODO: refactor this to avoid registering unneeded extensions in the first place, and avoid using deprecated API.
                 @Suppress("DEPRECATION")
-                PsiElementFinder.EP.getPoint(project).registerExtension(JavaElementFinder(this, kotlinAsJavaSupport))
+                PsiElementFinder.EP.getPoint(project).registerExtension(JavaElementFinder(this))
                 @Suppress("DEPRECATION")
                 PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(this))
             }
