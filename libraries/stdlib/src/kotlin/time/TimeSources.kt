@@ -103,23 +103,3 @@ public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSEC
         throw IllegalStateException("TestTimeSource will overflow if its reading ${reading}ns is advanced by $duration.")
     }
 }
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use TimeSource.Monotonic instead.", ReplaceWith("TimeSource.Monotonic", "kotlin.time.TimeSource"), DeprecationLevel.ERROR)
-public typealias MonoClock = TimeSource.Monotonic
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use AbstractLongTimeSource instead.", ReplaceWith("AbstractLongTimeSource", "kotlin.time.AbstractLongTimeSource"), DeprecationLevel.ERROR)
-public typealias AbstractLongClock = AbstractLongTimeSource
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use AbstractDoubleTimeSource instead.", ReplaceWith("AbstractDoubleTimeSource", "kotlin.time.AbstractDoubleTimeSource"), DeprecationLevel.ERROR)
-public typealias AbstractDoubleClock = AbstractDoubleTimeSource
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use TestTimeSource instead.", ReplaceWith("TestTimeSource", "kotlin.time.TestTimeSource"), DeprecationLevel.ERROR)
-public typealias TestClock = TestTimeSource
