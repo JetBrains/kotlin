@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
@@ -34,6 +35,9 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -108,8 +112,9 @@ object GenerationUtils {
 
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(session, configuration.languageVersionSettings, files)
-        val extensions = JvmGeneratorExtensions()
-        val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(project, extensions)
+        val symbolTable = SymbolTable(JvmIdSignatureDescriptor(JvmManglerDesc()), IrFactoryImpl)
+        val extensions = JvmGeneratorExtensions(symbolTable)
+        val (moduleFragment, sourceManager, components) = firAnalyzerFacade.convertToIr(project, symbolTable, extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))

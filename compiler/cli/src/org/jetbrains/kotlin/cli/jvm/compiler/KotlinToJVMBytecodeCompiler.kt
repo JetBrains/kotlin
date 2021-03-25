@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
@@ -61,6 +62,9 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
@@ -353,8 +357,9 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyGenerationStarted()
 
             performanceManager?.notifyIRTranslationStarted()
-            val extensions = JvmGeneratorExtensions()
-            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(environment.project, extensions)
+            val symbolTable = SymbolTable(JvmIdSignatureDescriptor(JvmManglerDesc()), IrFactoryImpl)
+            val extensions = JvmGeneratorExtensions(symbolTable)
+            val (moduleFragment, sourceManager, components) = firAnalyzerFacade.convertToIr(environment.project, symbolTable, extensions)
 
             performanceManager?.notifyIRTranslationFinished()
 

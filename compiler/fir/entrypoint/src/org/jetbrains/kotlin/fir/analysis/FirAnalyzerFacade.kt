@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
@@ -84,17 +85,16 @@ class FirAnalyzerFacade(
         return collectedDiagnostics!!
     }
 
-    fun convertToIr(project: Project, extensions: GeneratorExtensions): Fir2IrResult {
+    fun convertToIr(project: Project, symbolTable: SymbolTable, extensions: GeneratorExtensions): Fir2IrResult {
         if (scopeSession == null) runResolution()
-        val signaturer = JvmIdSignatureDescriptor(JvmManglerDesc())
 
         return Fir2IrConverter.createModuleFragment(
             session, scopeSession!!, firFiles!!,
-            languageVersionSettings, signaturer,
-            extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
+            languageVersionSettings, symbolTable,
+            extensions, FirJvmKotlinMangler(session), symbolTable.irFactory,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider()
-        ) { moduleDescriptor, irBuiltIns, symbolTable ->
+        ) { moduleDescriptor, irBuiltIns ->
             SingleClassJvmIrProvider(
                 moduleDescriptor, irBuiltIns, symbolTable,
                 IrFactoryImpl,

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -18,7 +19,10 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -43,8 +47,9 @@ class Fir2IrResultsConverter(
     ): IrBackendInput {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val project = compilerConfigurationProvider.getProject(module)
-        val extensions = JvmGeneratorExtensions()
-        val (irModuleFragment, symbolTable, sourceManager, components) = inputArtifact.firAnalyzerFacade.convertToIr(project, extensions)
+        val symbolTable = SymbolTable(JvmIdSignatureDescriptor(JvmManglerDesc()), IrFactoryImpl)
+        val extensions = JvmGeneratorExtensions(symbolTable)
+        val (irModuleFragment, sourceManager, components) = inputArtifact.firAnalyzerFacade.convertToIr(project, symbolTable, extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)

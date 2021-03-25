@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.codegen.SamType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerIr
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -49,8 +52,10 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
-class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : GeneratorExtensions() {
+class JvmGeneratorExtensions(symbolTable: SymbolTable, private val generateFacades: Boolean = true) : GeneratorExtensions() {
     val classNameOverride = mutableMapOf<IrClass, JvmClassName>()
+
+    private val signaturer = IdSignatureSerializer(JvmManglerIr)
 
     override val samConversion: SamConversion
         get() = JvmSamConversion
@@ -72,7 +77,7 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
         else
             null
 
-    override fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? =
+    override fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin =
         if (descriptor is JavaCallableMemberDescriptor || descriptor is JavaClassDescriptor)
             IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         else
@@ -171,14 +176,20 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
     private val enhancedNullabilityAnnotationClass =
         createSpecialAnnotationClass(ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME, kotlinJvmInternalPackage)
 
-    override val flexibleNullabilityAnnotationConstructor: IrConstructor? =
-        flexibleNullabilityAnnotationClass.constructors.single()
+    override val flexibleNullabilityAnnotationConstructor: IrConstructor =
+        flexibleNullabilityAnnotationClass.constructors.single().also {
+            symbolTable.storeConstructorBySignature(signaturer.composeSignatureForDeclaration(it), it)
+        }
 
-    override val enhancedNullabilityAnnotationConstructor: IrConstructor? =
-        enhancedNullabilityAnnotationClass.constructors.single()
+    override val enhancedNullabilityAnnotationConstructor: IrConstructor =
+        enhancedNullabilityAnnotationClass.constructors.single().also {
+            symbolTable.storeConstructorBySignature(signaturer.composeSignatureForDeclaration(it), it)
+        }
 
-    override val rawTypeAnnotationConstructor: IrConstructor? =
-        rawTypeAnnotationClass.constructors.single()
+    override val rawTypeAnnotationConstructor: IrConstructor =
+        rawTypeAnnotationClass.constructors.single().also {
+            symbolTable.storeConstructorBySignature(signaturer.composeSignatureForDeclaration(it), it)
+        }
 
     companion object {
         val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =

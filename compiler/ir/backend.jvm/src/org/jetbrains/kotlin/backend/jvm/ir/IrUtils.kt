@@ -383,7 +383,7 @@ fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrT
 // See `TypeTranslator.translateTypeAnnotations`.
 private fun JvmBackendContext.makeRawTypeAnnotation() =
     IrConstructorCallImpl.fromSymbolOwner(
-        generatorExtensions.rawTypeAnnotationConstructor!!.constructedClassType,
+        generatorExtensions.rawTypeAnnotationConstructor.constructedClassType,
         generatorExtensions.rawTypeAnnotationConstructor.symbol
     )
 

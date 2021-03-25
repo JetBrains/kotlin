@@ -52,6 +52,8 @@ interface ReferenceSymbolTable {
     fun referenceTypeParameterFromLinker(sig: IdSignature): IrTypeParameterSymbol
     fun referenceTypeAliasFromLinker(sig: IdSignature): IrTypeAliasSymbol
 
+    fun storeConstructorBySignature(sig: IdSignature, declaration: IrConstructor)
+
     fun enterScope(owner: IrSymbol)
     fun enterScope(owner: IrDeclaration)
 
@@ -74,6 +76,7 @@ class SymbolTable(
         abstract fun get(d: D): S?
         abstract fun set(s: S)
         abstract fun get(sig: IdSignature): S?
+        abstract fun set(sig: IdSignature, s: S)
 
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
             synchronized(this) {
@@ -214,6 +217,10 @@ class SymbolTable(
         }
 
         override fun get(sig: IdSignature): S? = idSigToSymbol[sig]
+
+        override fun set(sig: IdSignature, s: S) {
+            idSigToSymbol[sig] = s
+        }
     }
 
     private inner class EnumEntrySymbolTable : FlatSymbolTable<ClassDescriptor, IrEnumEntry, IrEnumEntrySymbol>() {
@@ -245,6 +252,10 @@ class SymbolTable(
                 } else {
                     getByDescriptor(d)
                 }
+            }
+
+            operator fun set(sig: IdSignature, s: S) {
+                idSigToSymbol[sig] = s
             }
 
             fun getLocal(d: D) = descriptorToSymbol[d]
@@ -291,6 +302,12 @@ class SymbolTable(
         override fun get(sig: IdSignature): S? {
             val scope = currentScope ?: return null
             return scope[sig]
+        }
+
+
+        override fun set(sig: IdSignature, s: S) {
+            val scope = currentScope ?: throw AssertionError("No active scope")
+            scope[sig] = s
         }
 
         inline fun declareLocal(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
@@ -524,6 +541,10 @@ class SymbolTable(
             if (sig.isPublic) referenced(sig) { IrConstructorPublicSymbolImpl(sig) }
             else IrConstructorSymbolImpl()
         }
+
+    override fun storeConstructorBySignature(sig: IdSignature, declaration: IrConstructor) {
+        if (sig.isPublic) constructorSymbolTable.set(sig, declaration.symbol)
+    }
 
     val unboundConstructors: Set<IrConstructorSymbol> get() = constructorSymbolTable.unboundSymbols
 

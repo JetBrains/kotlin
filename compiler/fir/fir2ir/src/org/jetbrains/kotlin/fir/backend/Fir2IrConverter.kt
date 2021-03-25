@@ -248,16 +248,15 @@ class Fir2IrConverter(
             scopeSession: ScopeSession,
             firFiles: List<FirFile>,
             languageVersionSettings: LanguageVersionSettings,
-            signaturer: IdSignatureComposer,
+            symbolTable: SymbolTable,
             generatorExtensions: GeneratorExtensions,
             mangler: FirMangler,
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider?,
-            deserializedIrProviderProvider: (FirModuleDescriptor, IrBuiltIns, SymbolTable) -> IrProvider?,
+            deserializedIrProviderProvider: (FirModuleDescriptor, IrBuiltIns) -> IrProvider?,
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
-            val symbolTable = SymbolTable(signaturer, irFactory)
             val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
             val typeTranslator = TypeTranslator(
                 symbolTable,
@@ -292,7 +291,7 @@ class Fir2IrConverter(
             }
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns, irFiles)
             val irProviders =
-                listOfNotNull(deserializedIrProviderProvider(moduleDescriptor, irBuiltIns, symbolTable)) +
+                listOfNotNull(deserializedIrProviderProvider(moduleDescriptor, irBuiltIns)) +
                     generateTypicalIrProviderList(irModuleFragment.descriptor, irBuiltIns, symbolTable, extensions = generatorExtensions)
             val externalDependenciesGenerator = ExternalDependenciesGenerator(
                 symbolTable,
@@ -324,7 +323,7 @@ class Fir2IrConverter(
 
             evaluateConstants(irModuleFragment)
 
-            return Fir2IrResult(irModuleFragment, symbolTable, sourceManager, components)
+            return Fir2IrResult(irModuleFragment, sourceManager, components)
         }
     }
 }
