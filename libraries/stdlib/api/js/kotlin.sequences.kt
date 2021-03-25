@@ -479,16 +479,6 @@ public fun <T, R> kotlin.sequences.Sequence<T>.scan(initial: R, operation: (acc:
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T, R> kotlin.sequences.Sequence<T>.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.sequences.Sequence<R>
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use runningReduce instead.", replaceWith = kotlin.ReplaceWith(expression = "runningReduce(operation)", imports = {}))
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-public fun <S, T : S> kotlin.sequences.Sequence<T>.scanReduce(operation: (acc: S, T) -> S): kotlin.sequences.Sequence<S>
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use runningReduceIndexed instead.", replaceWith = kotlin.ReplaceWith(expression = "runningReduceIndexed(operation)", imports = {}))
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-public fun <S, T : S> kotlin.sequences.Sequence<T>.scanReduceIndexed(operation: (index: kotlin.Int, acc: S, T) -> S): kotlin.sequences.Sequence<S>
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun <T> kotlin.sequences.Sequence<T>.shuffled(): kotlin.sequences.Sequence<T>
 
