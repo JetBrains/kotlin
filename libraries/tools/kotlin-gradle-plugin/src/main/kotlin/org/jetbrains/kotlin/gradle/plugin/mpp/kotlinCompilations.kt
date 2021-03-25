@@ -281,9 +281,6 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val associateWith: List<KotlinCompilation<*>>
         get() = Collections.unmodifiableList(_associateWith.toList())
 
-    override val kotlinOptions: T
-        get() = TODO("Not yet implemented")
-
     override val project: Project
         get() = target.project
 
