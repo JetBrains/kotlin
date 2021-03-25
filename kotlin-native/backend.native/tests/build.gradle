@@ -4722,7 +4722,7 @@ if (isAppleTarget(project)) {
         framework(frameworkName) {
             sources = ['objcexport']
             library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader"]
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc"]
         }
         swiftSources = ['objcexport']
     }
