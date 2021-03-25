@@ -3,5 +3,5 @@ fun test(list: List<String>) {
     list
         // comment
         .<caret>asSequence()
-        .max()
+        .maxOrNull()
 }

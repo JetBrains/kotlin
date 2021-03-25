@@ -1,6 +1,6 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'map{}.max()'"
-// INTENTION_TEXT_2: "Replace with 'asSequence().map{}.max()'"
+// INTENTION_TEXT: "Replace with 'map{}.maxOrNull()'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().map{}.maxOrNull()'"
 fun getMaxLineWidth(lineCount: Int): Float {
     var max_width = 0.0f
     <caret>for (i in 0..lineCount - 1) {

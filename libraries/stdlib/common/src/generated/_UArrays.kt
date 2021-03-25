@@ -5943,7 +5943,7 @@ public inline fun UShortArray.forEachIndexed(action: (index: Int, UShort) -> Uni
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.max(): UInt? {
@@ -5951,7 +5951,7 @@ public fun UIntArray.max(): UInt? {
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.max(): ULong? {
@@ -5959,7 +5959,7 @@ public fun ULongArray.max(): ULong? {
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.max(): UByte? {
@@ -5967,7 +5967,7 @@ public fun UByteArray.max(): UByte? {
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.max(): UShort? {
@@ -5975,7 +5975,7 @@ public fun UShortArray.max(): UShort? {
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -5984,7 +5984,7 @@ public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UI
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -5993,7 +5993,7 @@ public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): 
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -6002,7 +6002,7 @@ public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): 
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -6875,7 +6875,7 @@ public fun UShortArray.maxOrNull(): UShort? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt? {
@@ -6883,7 +6883,7 @@ public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong? {
@@ -6891,7 +6891,7 @@ public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte? {
@@ -6899,7 +6899,7 @@ public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.maxWith(comparator: Comparator<in UShort>): UShort? {
@@ -6967,7 +6967,7 @@ public fun UShortArray.maxWithOrNull(comparator: Comparator<in UShort>): UShort?
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.min(): UInt? {
@@ -6975,7 +6975,7 @@ public fun UIntArray.min(): UInt? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.min(): ULong? {
@@ -6983,7 +6983,7 @@ public fun ULongArray.min(): ULong? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.min(): UByte? {
@@ -6991,7 +6991,7 @@ public fun UByteArray.min(): UByte? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.min(): UShort? {
@@ -6999,7 +6999,7 @@ public fun UShortArray.min(): UShort? {
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -7008,7 +7008,7 @@ public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UI
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -7017,7 +7017,7 @@ public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): 
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -7026,7 +7026,7 @@ public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): 
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -7899,7 +7899,7 @@ public fun UShortArray.minOrNull(): UShort? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt? {
@@ -7907,7 +7907,7 @@ public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong? {
@@ -7915,7 +7915,7 @@ public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte? {
@@ -7923,7 +7923,7 @@ public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort? {

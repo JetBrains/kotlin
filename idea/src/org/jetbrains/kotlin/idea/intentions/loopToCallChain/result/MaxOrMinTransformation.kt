@@ -18,7 +18,7 @@ class MaxOrMinTransformation(
 ) : AssignToVariableResultTransformation(loop, initialization) {
 
     override val presentation: String
-        get() = if (isMax) "max()" else "min()"
+        get() = if (isMax) "maxOrNull()" else "minOrNull()"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
         val call = chainedCallGenerator.generate(presentation)
