@@ -54,6 +54,7 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
     private inner class Reporter : DiagnosticReporter() {
         override fun report(diagnostic: FirDiagnostic<*>?, context: CheckerContext) {
             if (diagnostic !is FirPsiDiagnostic<*>) return
+            if (context.isDiagnosticSuppressed(diagnostic)) return
             onDiagnostic(diagnostic)
         }
     }
