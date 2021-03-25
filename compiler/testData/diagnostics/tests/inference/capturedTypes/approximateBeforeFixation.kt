@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> Array<out T>.intersect(other: Iterable<T>) {
     val set = toMutableSet()
@@ -5,4 +7,4 @@ fun <T> Array<out T>.intersect(other: Iterable<T>) {
 }
 
 fun <X> Array<out X>.toMutableSet(): MutableSet<X> = TODO()
-fun <Y> MutableCollection<in Y>.retainAll(<!UNUSED_PARAMETER!>elements<!>: Iterable<Y>) {}
+fun <Y> MutableCollection<in Y>.retainAll(elements: Iterable<Y>) {}

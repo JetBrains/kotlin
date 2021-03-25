@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 fun foo(f : () -> Unit) {
-    val <!UNUSED_VARIABLE!>x<!> : Unit = f()
+    val x : Unit = f()
 }

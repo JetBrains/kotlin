@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // KT-3343 Type mismatch when function literal consists of try-catch with Int returning call, and Unit is expected
 
 fun main() {
@@ -17,7 +19,7 @@ fun log(str : String) : Int{
     return 0
 }
 
-fun print(<!UNUSED_PARAMETER!>obj<!>: Any) {}
+fun print(obj: Any) {}
 
 
 fun String.prt(action : (String) -> Unit){

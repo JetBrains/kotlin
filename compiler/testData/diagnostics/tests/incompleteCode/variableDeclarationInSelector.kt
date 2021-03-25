@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 fun foo(s: String) {
     s.<!SYNTAX!><!>
-    val <!UNUSED_VARIABLE!>b<!> = 42
+    val b = 42
 }

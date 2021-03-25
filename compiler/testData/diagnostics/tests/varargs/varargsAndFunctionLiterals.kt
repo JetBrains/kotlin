@@ -1,4 +1,6 @@
-fun f(vararg <!UNUSED_PARAMETER!>t<!> : Int, <!UNUSED_PARAMETER!>f<!> : ()->Unit) {
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+fun f(vararg t : Int, f : ()->Unit) {
 }
 
 fun test() {

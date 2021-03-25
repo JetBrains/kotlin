@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 fun test(a: Any) {
-    when (<!UNUSED_EXPRESSION!>a<!>)<!SYNTAX!><!>
+    when (a)<!SYNTAX!><!>
 }

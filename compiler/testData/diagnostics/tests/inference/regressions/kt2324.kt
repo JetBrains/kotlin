@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 
 //KT-2324 Can't resolve generic by type of function result
@@ -25,7 +27,7 @@ fun testSomeFunction() {
 }
 
 //---------------------------------
-fun assertEquals(<!UNUSED_PARAMETER!>expected<!>: Any?, <!UNUSED_PARAMETER!>actual<!>: Any?, <!UNUSED_PARAMETER!>message<!>: String = "") {
+fun assertEquals(expected: Any?, actual: Any?, message: String = "") {
 }
 
 fun <T> arrayList(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))

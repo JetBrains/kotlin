@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 class A {
     operator fun component1() = 1
     operator fun component2() = 1
@@ -8,7 +10,7 @@ class C {
 }
 
 fun test() {
-    for ((<!UNUSED_VARIABLE!>x<!>, <!UNUSED_VARIABLE!>y<!>) in C()) {
+    for ((x, y) in C()) {
 
     }
 }

@@ -1,4 +1,6 @@
-fun foo(<!UNUSED_PARAMETER!>init<!>: A.() -> Unit) { }
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+fun foo(init: A.() -> Unit) { }
 
 class A {
     var x: Int = 0

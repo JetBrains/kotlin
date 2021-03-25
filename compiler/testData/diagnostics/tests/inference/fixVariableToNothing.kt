@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 
 // completion order here: X, Y, WHEN_VARIABLE
 fun <T> List<T>.optimizeReadOnlyList() = when (size) {
@@ -5,7 +7,7 @@ fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     1 -> listOf(this[0])
     else -> this
 }
-fun <X> listOf(<!UNUSED_PARAMETER!>element<!>: X): List<X> = TODO()
+fun <X> listOf(element: X): List<X> = TODO()
 fun <Y> emptyList(): List<Y> = TODO()
 
 

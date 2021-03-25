@@ -1,6 +1,8 @@
-fun foo1(<!UNUSED_PARAMETER!>a<!> : Int) : String = "noarg"
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+fun foo1(a : Int) : String = "noarg"
 
-fun foo1(<!UNUSED_PARAMETER!>a<!> : Int, vararg <!UNUSED_PARAMETER!>t<!> : Int) : String = "vararg"
+fun foo1(a : Int, vararg t : Int) : String = "vararg"
 
 fun test1() {
     foo1(1)

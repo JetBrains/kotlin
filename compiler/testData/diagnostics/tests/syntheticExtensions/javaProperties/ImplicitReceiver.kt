@@ -1,10 +1,12 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: KotlinFile.kt
 fun JavaClass.foo() {
     useInt(getSomething())
     useInt(something)
 }
 
-fun useInt(<!UNUSED_PARAMETER!>i<!>: Int) {}
+fun useInt(i: Int) {}
 
 // FILE: JavaClass.java
 public class JavaClass {

@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 
 package a
@@ -5,7 +7,7 @@ package a
 import java.util.*
 import checkSubtype
 
-fun <A> cons(<!UNUSED_PARAMETER!>x<!>: A, xs: List<A>): List<A> = xs
+fun <A> cons(x: A, xs: List<A>): List<A> = xs
 
 fun <B> nil(): List<B> = arrayList()
 

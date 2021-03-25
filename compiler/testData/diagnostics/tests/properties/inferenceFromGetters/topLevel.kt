@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 val x get() = 1
 val y get() = id(1)
@@ -8,7 +10,7 @@ val z2 get() = l(id(l("")))
 val <T> T.u get() = id(this)
 
 fun <E> id(x: E) = x
-fun <E> l(<!UNUSED_PARAMETER!>x<!>: E): List<E> = null!!
+fun <E> l(x: E): List<E> = null!!
 
 fun foo() {
     x checkType { _<Int>() }

@@ -1,9 +1,11 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 interface A
 interface Foo {
     operator fun A.invoke()
 }
 
-fun test(a: A, <!UNUSED_PARAMETER!>foo<!>: Foo) {
+fun test(a: A, foo: Foo) {
     a.<!UNRESOLVED_REFERENCE!>foo<!>()
 }
 

@@ -1,5 +1,7 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 class A(vararg val t : Int) {
     init {
-        val <!UNUSED_VARIABLE!>t1<!> : IntArray = t
+        val t1 : IntArray = t
     }
 }

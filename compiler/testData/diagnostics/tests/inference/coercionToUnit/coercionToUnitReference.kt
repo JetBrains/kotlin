@@ -1,14 +1,15 @@
+// FIR_IDENTICAL
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNUSED_LAMBDA_EXPRESSION
 // !LANGUAGE: +NewInference
 
 fun foo(f: () -> Unit) {}
 fun bar(): Int = 42
 fun test() {
     foo {
-        <!UNUSED_EXPRESSION!>::bar<!> // should be fine
+        ::bar // should be fine
     }
     foo {
-        <!UNUSED_LAMBDA_EXPRESSION!>{ "something" }<!> // should be fine
+        { "something" } // should be fine
     }
 }

@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 // !WITH_NEW_INFERENCE
 
 package a
@@ -11,7 +13,7 @@ fun <T: Closeable, R> T.foo(block: (T, T)-> R) = block
 
 fun main() {
     C().foo { // no ambiguity here
-        <!UNUSED_ANONYMOUS_PARAMETER!>www<!> ->
+        www ->
         <!UNRESOLVED_REFERENCE!>xs<!>
     }
 }

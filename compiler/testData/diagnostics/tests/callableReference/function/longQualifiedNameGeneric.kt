@@ -1,10 +1,12 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 // FILE: a.kt
 
 package a.b.c
 
 class D<E, F> {
-    fun foo(<!UNUSED_PARAMETER!>e<!>: E, <!UNUSED_PARAMETER!>f<!>: F) = this
+    fun foo(e: E, f: F) = this
 }
 
 // FILE: b.kt

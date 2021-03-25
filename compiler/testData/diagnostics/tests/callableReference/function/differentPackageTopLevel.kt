@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 // FILE: a.kt
 
@@ -6,7 +8,7 @@ package first
 import checkSubtype
 
 fun foo() {}
-fun bar(<!UNUSED_PARAMETER!>x<!>: Int) {}
+fun bar(x: Int) {}
 fun baz() = "OK"
 
 // FILE: b.kt

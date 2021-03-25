@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 
 import kotlin.reflect.*
@@ -5,7 +7,7 @@ import kotlin.reflect.*
 class A
 
 fun foo() {}
-fun bar(<!UNUSED_PARAMETER!>x<!>: Int) {}
+fun bar(x: Int) {}
 fun baz() = "OK"
 
 fun A.main() {

@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 
 // FILE: Predicate.java
@@ -8,7 +10,7 @@ public interface Predicate<T extends CharSequence> {
     boolean invoke(@NotNull T t);
 }
 // FILE: Main.kt
-fun process(<!UNUSED_PARAMETER!>x<!>: Predicate<String>) {}
+fun process(x: Predicate<String>) {}
 fun main() {
     process(Predicate { x -> x checkType { _<String>() }
         true

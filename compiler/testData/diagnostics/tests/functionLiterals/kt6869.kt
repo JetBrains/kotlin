@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_PARAMETER
 fun main() {
     var list = listOf(1)
 
@@ -6,5 +8,5 @@ fun main() {
     a?.let { list += it }
 }
 
-operator fun <T> Iterable<T>.plus(<!UNUSED_PARAMETER!>element<!>: T): List<T> = null!!
-fun <T> listOf(vararg <!UNUSED_PARAMETER!>values<!>: T): List<T> = null!!
+operator fun <T> Iterable<T>.plus(element: T): List<T> = null!!
+fun <T> listOf(vararg values: T): List<T> = null!!

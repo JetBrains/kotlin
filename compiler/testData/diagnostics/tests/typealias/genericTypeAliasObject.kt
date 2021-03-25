@@ -1,9 +1,11 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_TYPEALIAS_PARAMETER
 object AnObject {
     val ok = "OK"
     fun foo() = "OK"
 }
 
-typealias GenericTestObject<<!UNUSED_TYPEALIAS_PARAMETER!>T<!>> = AnObject
+typealias GenericTestObject<T> = AnObject
 
 val test11: AnObject = GenericTestObject
 val test12: GenericTestObject<*> = GenericTestObject

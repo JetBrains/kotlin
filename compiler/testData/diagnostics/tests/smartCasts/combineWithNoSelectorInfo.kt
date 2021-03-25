@@ -1,7 +1,9 @@
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 package foo
 
 fun dispatch(request: Request) {
-    val <!UNUSED_VARIABLE!>url<!> = request.getRequestURI() as String
+    val url = request.getRequestURI() as String
 
     if (request.getMethod()?.length != 0) {
     }
