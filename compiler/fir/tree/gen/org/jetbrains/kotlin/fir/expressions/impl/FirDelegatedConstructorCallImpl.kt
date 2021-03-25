@@ -27,9 +27,9 @@ internal class FirDelegatedConstructorCallImpl(
     override var argumentList: FirArgumentList,
     override var constructedTypeRef: FirTypeRef,
     override var dispatchReceiver: FirExpression,
+    override var calleeReference: FirReference,
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
-    override var calleeReference: FirReference = if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, null, constructedTypeRef)
     override val isSuper: Boolean get() = !isThis
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
