@@ -150,8 +150,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     override val isActive: Boolean
         get() = fragment.isNativeShared()
 
-    override val kotlinOptions: NativeCompileOptions
-        get() = NativeCompileOptions { languageSettings }
+    override val kotlinOptions: NativeCompileOptions = NativeCompileOptions { languageSettings }
 
     override val konanTarget: KonanTarget
         get() {

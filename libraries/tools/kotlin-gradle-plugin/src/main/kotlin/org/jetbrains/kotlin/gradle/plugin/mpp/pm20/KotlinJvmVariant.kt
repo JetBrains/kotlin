@@ -23,8 +23,7 @@ class KotlinJvmVariantCompilationData(val variant: KotlinJvmVariant) : KotlinVar
     override val owner: KotlinJvmVariant get() = variant
 
     // TODO pull out to the variant
-    override val kotlinOptions: KotlinJvmOptions
-        get() = KotlinJvmOptionsImpl()
+    override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
 }
 
 internal fun KotlinGradleVariant.ownModuleName(): String {
