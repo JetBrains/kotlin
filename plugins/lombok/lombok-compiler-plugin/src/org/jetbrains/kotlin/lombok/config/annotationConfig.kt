@@ -48,3 +48,14 @@ data class Getter(val visibility: DescriptorVisibility) {
             )
     }
 }
+
+data class Setter(val visibility: DescriptorVisibility) {
+    companion object : AnnotationCompanion<Setter>() {
+        override val name: FqName = LombokNames.SETTER
+
+        override fun extract(annotation: AnnotationDescriptor): Setter =
+            Setter(
+                visibility = getVisibility(annotation)
+            )
+    }
+}

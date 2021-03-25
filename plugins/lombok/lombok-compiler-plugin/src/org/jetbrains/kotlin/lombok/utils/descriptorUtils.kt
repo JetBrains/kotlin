@@ -8,32 +8,60 @@ package org.jetbrains.kotlin.lombok.utils
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-internal fun createFunction(
-    containingClass: ClassDescriptor,
+internal data class ValueParameter(val name: Name, val type: KotlinType)
+
+internal fun ClassDescriptor.createFunction(
     name: Name,
-    valueParameters: List<ValueParameterDescriptor>,
+    valueParameters: List<ValueParameter>,
     returnType: KotlinType?,
     modality: Modality? = Modality.OPEN,
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
 ): SimpleFunctionDescriptor {
     val methodDescriptor = SimpleFunctionDescriptorImpl.create(
-        containingClass,
+        this,
         Annotations.EMPTY,
         name,
         CallableMemberDescriptor.Kind.SYNTHESIZED,
-        containingClass.source
+        this.source
     )
+
+    val paramDescriptors = valueParameters.mapIndexed { idx, param -> methodDescriptor.makeValueParameter(param, idx) }
+
     methodDescriptor.initialize(
         null,
-        containingClass.thisAsReceiverParameter,
+        this.thisAsReceiverParameter,
         mutableListOf(),
-        valueParameters,
+        paramDescriptors,
         returnType,
         modality,
         visibility
     )
     return methodDescriptor
 }
+
+private fun FunctionDescriptor.makeValueParameter(param: ValueParameter, index: Int): ValueParameterDescriptor {
+    return ValueParameterDescriptorImpl(
+        containingDeclaration = this,
+        original = null,
+        index = index,
+        annotations = Annotations.EMPTY,
+        name = param.name,
+        outType = param.type,
+        declaresDefaultValue = false,
+        isCrossinline = false,
+        isNoinline = false,
+        varargElementType = null,
+        source = this.source
+    )
+}
+
+internal fun ClassDescriptor.getVariables(): List<PropertyDescriptor> =
+    this.unsubstitutedMemberScope.getVariableNames()
+        .map {
+            this.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).single()
+        }
