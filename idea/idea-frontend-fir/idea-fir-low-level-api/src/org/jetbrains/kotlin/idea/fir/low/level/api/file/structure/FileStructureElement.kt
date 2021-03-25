@@ -15,22 +15,24 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileDiagnosticRet
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.LockProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.hasFqName
 import org.jetbrains.kotlin.psi.*
 
-internal sealed class FileStructureElement(val firFile: FirFile) {
+internal sealed class FileStructureElement(val firFile: FirFile, protected val lockProvider: LockProvider<FirFile>) {
     abstract val psi: KtAnnotated
     abstract val mappings: Map<KtElement, FirElement>
     abstract val diagnostics: FileStructureElementDiagnostics
 }
 
-internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S: AbstractFirBasedSymbol<*>>(
+internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : AbstractFirBasedSymbol<*>>(
     firFile: FirFile,
     protected val firSymbol: S,
-) : FileStructureElement(firFile) {
+    lockProvider: LockProvider<FirFile>,
+) : FileStructureElement(firFile, lockProvider) {
     abstract override val psi: KtDeclaration
     abstract val timestamp: Long
 
@@ -48,7 +50,7 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S: Abstra
 
     fun isUpToDate(): Boolean = psi.getModificationStamp() == timestamp
 
-    override val diagnostics = FileStructureElementDiagnostics(firFile, SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir as FirDeclaration))
+    override val diagnostics = FileStructureElementDiagnostics(firFile, lockProvider, SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir as FirDeclaration))
 
     companion object {
         val recorder = FirElementsRecorder()
@@ -59,8 +61,9 @@ internal class ReanalyzableFunctionStructureElement(
     firFile: FirFile,
     override val psi: KtNamedFunction,
     firSymbol: FirFunctionSymbol<*>,
-    override val timestamp: Long
-) : ReanalyzableStructureElement<KtNamedFunction, FirFunctionSymbol<*>>(firFile, firSymbol) {
+    override val timestamp: Long,
+    lockProvider: LockProvider<FirFile>,
+) : ReanalyzableStructureElement<KtNamedFunction, FirFunctionSymbol<*>>(firFile, firSymbol, lockProvider) {
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(firSymbol.fir, recorder)
 
@@ -89,6 +92,7 @@ internal class ReanalyzableFunctionStructureElement(
                     newKtDeclaration,
                     newFunction.symbol,
                     newKtDeclaration.modificationStamp,
+                    lockProvider,
                 )
             }
         }
@@ -99,8 +103,9 @@ internal class ReanalyzablePropertyStructureElement(
     firFile: FirFile,
     override val psi: KtProperty,
     firSymbol: FirPropertySymbol,
-    override val timestamp: Long
-) : ReanalyzableStructureElement<KtProperty, FirPropertySymbol>(firFile, firSymbol) {
+    override val timestamp: Long,
+    lockProvider: LockProvider<FirFile>,
+) : ReanalyzableStructureElement<KtProperty, FirPropertySymbol>(firFile, firSymbol, lockProvider) {
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(firSymbol.fir, recorder)
 
@@ -129,6 +134,7 @@ internal class ReanalyzablePropertyStructureElement(
                     newKtDeclaration,
                     newProperty.symbol,
                     newKtDeclaration.modificationStamp,
+                    lockProvider,
                 )
             }
         }
@@ -139,11 +145,12 @@ internal class NonReanalyzableDeclarationStructureElement(
     firFile: FirFile,
     fir: FirDeclaration,
     override val psi: KtDeclaration,
-) : FileStructureElement(firFile) {
+    lockProvider: LockProvider<FirFile>,
+) : FileStructureElement(firFile, lockProvider) {
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(fir, recorder)
 
-    override val diagnostics = FileStructureElementDiagnostics(firFile, SingleNonLocalDeclarationDiagnosticRetriever(fir))
+    override val diagnostics = FileStructureElementDiagnostics(firFile, lockProvider, SingleNonLocalDeclarationDiagnosticRetriever(fir))
 
 
     companion object {
@@ -169,11 +176,12 @@ internal class NonReanalyzableDeclarationStructureElement(
 internal class RootStructureElement(
     firFile: FirFile,
     override val psi: KtFile,
-) : FileStructureElement(firFile) {
+    lockProvider: LockProvider<FirFile>,
+) : FileStructureElement(firFile, lockProvider) {
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(firFile, recorder)
 
-    override val diagnostics = FileStructureElementDiagnostics(firFile, FileDiagnosticRetriever)
+    override val diagnostics = FileStructureElementDiagnostics(firFile, lockProvider, FileDiagnosticRetriever)
 
     companion object {
         private val recorder = object : FirElementsRecorder() {

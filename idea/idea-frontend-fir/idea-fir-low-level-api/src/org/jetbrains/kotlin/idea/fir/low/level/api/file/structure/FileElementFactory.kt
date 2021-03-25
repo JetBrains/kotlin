@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.LockProvider
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -21,25 +22,29 @@ internal object FileElementFactory {
         firDeclaration: FirDeclaration,
         ktDeclaration: KtDeclaration,
         firFile: FirFile,
+        firFileLockProvider: LockProvider<FirFile>,
     ): FileStructureElement = when {
         ktDeclaration is KtNamedFunction && ktDeclaration.isReanalyzableContainer() -> ReanalyzableFunctionStructureElement(
             firFile,
             ktDeclaration,
             (firDeclaration as FirSimpleFunction).symbol,
-            ktDeclaration.modificationStamp
+            ktDeclaration.modificationStamp,
+            firFileLockProvider,
         )
 
         ktDeclaration is KtProperty && ktDeclaration.isReanalyzableContainer() -> ReanalyzablePropertyStructureElement(
             firFile,
             ktDeclaration,
             (firDeclaration as FirProperty).symbol,
-            ktDeclaration.modificationStamp
+            ktDeclaration.modificationStamp,
+            firFileLockProvider,
         )
 
         else -> NonReanalyzableDeclarationStructureElement(
             firFile,
             firDeclaration,
             ktDeclaration,
+            firFileLockProvider,
         )
     }
 

@@ -12,17 +12,28 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistentCheckerContextFactory
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.LockProvider
 
 internal abstract class FileStructureElementDiagnosticRetriever {
-    abstract fun retrieve(firFile: FirFile, collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList
+    abstract fun retrieve(
+        firFile: FirFile,
+        collector: FileStructureElementDiagnosticsCollector,
+        lockProvider: LockProvider<FirFile>
+    ): FileStructureElementDiagnosticList
 }
 
-internal class SingleNonLocalDeclarationDiagnosticRetriever(
+internal class SingleNonLocalDeclarationDiagnosticRetriever (
     private val declaration: FirDeclaration
 ) : FileStructureElementDiagnosticRetriever() {
-    override fun retrieve(firFile: FirFile, collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList {
+    override fun retrieve(
+        firFile: FirFile,
+        collector: FileStructureElementDiagnosticsCollector,
+        lockProvider: LockProvider<FirFile>
+    ): FileStructureElementDiagnosticList {
         val sessionHolder = SessionHolderImpl.createWithEmptyScopeSession(firFile.session)
-        val context = PersistenceContextCollector.collectContext(sessionHolder, firFile, declaration)
+        val context = lockProvider.withReadLock(firFile) {
+            PersistenceContextCollector.collectContext(sessionHolder, firFile, declaration)
+        }
         return collector.collectForStructureElement(declaration) { components ->
             FirIdeDiagnosticVisitor(context, components)
         }
@@ -30,7 +41,11 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
 }
 
 internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetriever() {
-    override fun retrieve(firFile: FirFile, collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList =
+    override fun retrieve(
+        firFile: FirFile,
+        collector: FileStructureElementDiagnosticsCollector,
+        lockProvider: LockProvider<FirFile>
+    ): FileStructureElementDiagnosticList =
         collector.collectForStructureElement(firFile) { components ->
             Visitor(firFile, components)
         }
