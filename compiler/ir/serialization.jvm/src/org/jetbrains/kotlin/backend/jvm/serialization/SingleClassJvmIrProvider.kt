@@ -91,6 +91,11 @@ class SingleClassJvmIrProvider(
             val declaration = declarationDeserializer.deserializeDeclaration(declProto)
             facadeClass.addMember(declaration)
             declaration.parent = facadeClass
+            if (declaration is IrProperty) {
+                declaration.getter?.parent = facadeClass
+                declaration.setter?.parent = facadeClass
+                declaration.backingField?.parent = facadeClass
+            }
         }
     }
 
