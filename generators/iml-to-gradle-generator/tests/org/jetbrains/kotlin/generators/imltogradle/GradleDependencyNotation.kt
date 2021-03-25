@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.generators.imltogradle
 
 import com.google.gson.JsonObject
 
-data class GradleDependencyNotation(val dependencyNotation: String, val dependencyConfiguration: String? = null) {
+sealed class GradleDependencyNotation(val dependencyNotation: String, val dependencyConfiguration: String? = null) {
     init {
         require(dependencyNotation.isNotEmpty())
         require(dependencyConfiguration?.isNotEmpty() ?: true)
@@ -29,10 +29,16 @@ data class GradleDependencyNotation(val dependencyNotation: String, val dependen
 
             fun Regex.firstGroup() = matchEntire(jarPath)?.groupValues?.get(1)
 
-            return pluginsPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijPluginDep(\"$it\", forIde = true)") }
-                ?: libPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep(forIde = true)", "{ includeJars(\"$it\") }") }
-                ?: jarToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep(forIde = true)", "{ includeJars(\"$it\") }") }
+            return pluginsPathToGradleNotationRegex.firstGroup()?.let { IntellijPluginDepGradleDependencyNotation(it) }
+                ?: libPathToGradleNotationRegex.firstGroup()?.let { IntellijDepGradleDependencyNotation(it) }
+                ?: jarToGradleNotationRegex.firstGroup()?.let { IntellijDepGradleDependencyNotation(it) }
                 ?: error("Path $jarPath matches none of the regexes")
         }
     }
+
+    class IntellijPluginDepGradleDependencyNotation(pluginName: String) :
+        GradleDependencyNotation("intellijPluginDep(\"$pluginName\", forIde = true)")
+
+    class IntellijDepGradleDependencyNotation(jarName: String) :
+        GradleDependencyNotation("intellijDep(forIde = true)", "{ includeJars(\"$jarName\") }")
 }

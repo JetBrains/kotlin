@@ -17,6 +17,8 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.*
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer
+import org.jetbrains.kotlin.generators.imltogradle.GradleDependencyNotation.IntellijDepGradleDependencyNotation
+import org.jetbrains.kotlin.generators.imltogradle.GradleDependencyNotation.IntellijPluginDepGradleDependencyNotation
 import java.io.File
 
 const val KOTLIN_IDE_DIR_NAME = "kotlin-ide"
@@ -33,6 +35,7 @@ private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<Stri
     "intellij.platform.externalSystem.tests" to listOf(),
     "intellij.gradle.toolingExtension.tests" to listOf(),
     "intellij.gradle.tests" to listOf(),
+    "intellij.platform.structuralSearch" to listOf(IntellijDepGradleDependencyNotation("structuralsearch")), // for some reason it's absent in json mapping :shrug:
 
     // Transitive exported dependencies
     "intellij.platform.lang.tests" to listOf(),
@@ -44,6 +47,7 @@ val SKIP_IML = listOf(
     "kotlin-ide/kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml"
 )
 
+@OptIn(ExperimentalStdlibApi::class)
 fun main(args: Array<String>) {
     val intellijCommunityRoot = args.singleOrNull()
         ?.let { File(it) }
@@ -61,25 +65,32 @@ fun main(args: Array<String>) {
         Pair(it.nameWithoutExtension, ":" + it.parentFile.relativeTo(KOTLIN_REPO_ROOT).path.replace("/", ":"))
     }
 
-    intellijModuleNameToGradleDependencyNotationsMapping = intellijModuleNameToGradleDependencyNotationsMappingManual + listOf(
-        object {}.javaClass.getResource("/ideaIU-project-structure-mapping.json"),
-        object {}.javaClass.getResource("/intellij-core-project-structure-mapping.json")
-    )
-        .flatMap { jsonUrl ->
-            val jsonStr = File(jsonUrl!!.toURI()).readText()
-            return@flatMap JsonParser.parseString(jsonStr).asJsonArray.mapNotNull {
-                val jsonObject = it.asJsonObject
-                if (jsonObject.get("type").asString != "module-output") {
-                    return@mapNotNull null
+    intellijModuleNameToGradleDependencyNotationsMapping = buildMap<String, List<GradleDependencyNotation>> {
+        putAll(
+            listOf(
+                object {}.javaClass.getResource("/ideaIU-project-structure-mapping.json"),
+                object {}.javaClass.getResource("/intellij-core-project-structure-mapping.json")
+            )
+                .flatMap { jsonUrl ->
+                    val jsonStr = File(jsonUrl!!.toURI()).readText()
+                    return@flatMap JsonParser.parseString(jsonStr).asJsonArray.mapNotNull {
+                        val jsonObject = it.asJsonObject
+                        if (jsonObject.get("type").asString != "module-output") {
+                            return@mapNotNull null
+                        }
+                        Pair(
+                            jsonObject.get("moduleName").asString,
+                            GradleDependencyNotation.fromIntellijJsonObject(jsonObject) ?: return@mapNotNull null
+                        )
+                    }
                 }
-                Pair(
-                    jsonObject.get("moduleName").asString,
-                    GradleDependencyNotation.fromIntellijJsonObject(jsonObject) ?: return@mapNotNull null
-                )
-            }
+                .groupBy { it.first }
+                .mapValues { entry -> entry.value.map { it.second } }
+        )
+        intellijModuleNameToGradleDependencyNotationsMappingManual.forEach {
+            put(it.key, getOrDefault(it.key, listOf()) + it.value)
         }
-        .groupBy { it.first }
-        .mapValues { entry -> entry.value.map { it.second } }
+    }
 
     projectLevelLibraryNameToJpsLibraryMapping = kotlinIdeFile.resolve(".idea/libraries").listFiles()!!
         .map { jpsLibraryXmlFile ->
