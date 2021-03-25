@@ -37,7 +37,4 @@ fun CommonizerParameters.getCommonModuleNames(): Set<String> {
     return allModuleNames.reduce { a, b -> a intersect b } // there are modules that are present in every target
 }
 
-fun CommonizerParameters.hasAnythingToCommonize(): Boolean {
-    return getCommonModuleNames().isNotEmpty()
-}
 

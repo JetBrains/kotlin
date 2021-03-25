@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
 fun runCommonization(parameters: CommonizerParameters) {
-    if (!parameters.hasAnythingToCommonize()) {
+    if (parameters.getCommonModuleNames().isEmpty()) {
         parameters.resultsConsumer.allConsumed(Status.NOTHING_TO_DO)
         return
     }
