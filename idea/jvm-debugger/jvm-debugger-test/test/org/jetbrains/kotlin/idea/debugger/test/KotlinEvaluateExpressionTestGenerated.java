@@ -726,6 +726,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             public void testSimpleLocalVariable() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleLocalVariable.kt");
             }
+
+            @TestMetadata("varModification.kt")
+            public void testVarModification() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/varModification.kt");
+            }
+
+            @TestMetadata("vars.kt")
+            public void testVars() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/vars.kt");
+            }
         }
 
         @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/extraVariables")

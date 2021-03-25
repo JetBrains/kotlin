@@ -111,14 +111,6 @@ class Psi2IrTranslator(
     ): IrModuleFragment {
         baseModule.isValid
         context.symbolTableInterceptor = object : SymbolTableInterceptor {
-            override fun referenceValue(symbolTable: SymbolTable, descriptor: VariableDescriptor): IrValueSymbol {
-                val parameterPosition = codegenInfo.parameters.map { it.targetDescriptor }.indexOf(descriptor)
-                return if (parameterPosition > -1) {
-                    symbolTable.referenceValueParameter(codegenInfo.methodDescriptor.valueParameters[parameterPosition])
-                } else {
-                    symbolTable.referenceValue(descriptor)
-                }
-            }
 
             override fun referenceValueParameter(
                 symbolTable: SymbolTable,

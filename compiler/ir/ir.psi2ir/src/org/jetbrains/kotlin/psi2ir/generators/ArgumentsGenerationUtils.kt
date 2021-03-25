@@ -86,9 +86,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 else
                     IrGetValueImpl(
                         defaultStartOffset, defaultEndOffset, irReceiverType,
-                        //TODO(kjaa): this must go through the symbol table interceptor
                         context.symbolTableInterceptor.referenceValueParameter(context.symbolTable, receiverClassDescriptor.thisAsReceiverParameter)
-//                        context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter)
                     )
             }
             is ThisClassReceiver ->
