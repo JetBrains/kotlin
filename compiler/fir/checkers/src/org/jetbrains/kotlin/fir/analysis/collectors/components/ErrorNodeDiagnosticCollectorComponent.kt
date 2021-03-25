@@ -34,17 +34,28 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
 
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
         val source = errorNamedReference.source ?: return
-        val qualifiedAccessSource = data.qualifiedAccesses.lastOrNull()?.takeIf {
+        val qualifiedAccess = data.qualifiedAccesses.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccessExpression if it is exactly the call to the erroneous callee.
             it is FirQualifiedAccessExpression && it.calleeReference == errorNamedReference
-        }?.source
+        }
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
         // Already reported in FirConventionFunctionCallChecker
         if (source.kind == FirFakeSourceElementKind.ArrayAccessNameReference &&
             errorNamedReference.diagnostic is ConeUnresolvedNameError
         ) return
-        reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccessSource)
+
+        // If the receiver cannot be resolved, we skip reporting any further problems for this call.
+        if (qualifiedAccess?.dispatchReceiver.hasUnresolvedNameError() || qualifiedAccess?.extensionReceiver.hasUnresolvedNameError() || qualifiedAccess?.explicitReceiver.hasUnresolvedNameError()) return
+
+        reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccess?.source)
+    }
+
+    private fun FirExpression?.hasUnresolvedNameError(): Boolean {
+        return when ((this?.typeRef as? FirErrorTypeRef)?.diagnostic) {
+            is ConeUnresolvedNameError -> true
+            else -> false
+        }
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {

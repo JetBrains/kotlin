@@ -18,4 +18,4 @@
     B.foo()
   }
 
-  val bb = <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: B">B</error>.<error descr="[DEBUG] Reference is not resolved to anything, but is not marked unresolved">foo</error>()
+  val bb = <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: B">B</error>.foo()

@@ -27,27 +27,27 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     with.<!UNRESOLVED_REFERENCE!>Nested<!>()
     with.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>
     with.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>()
-    with.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-    with.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.<!UNRESOLVED_REFERENCE!>A<!>
+    with.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.foo()
+    with.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.A
     with.<!UNRESOLVED_REFERENCE!>NestedObj<!>
     with.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
-    with.<!UNRESOLVED_REFERENCE!>NestedObj<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    with.<!UNRESOLVED_REFERENCE!>NestedObj<!>.foo()
 
     without.<!UNRESOLVED_REFERENCE!>Nested<!>()
     without.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>
     without.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>()
-    without.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-    without.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.<!UNRESOLVED_REFERENCE!>A<!>
+    without.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.foo()
+    without.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.A
     without.<!UNRESOLVED_REFERENCE!>NestedObj<!>
     without.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
-    without.<!UNRESOLVED_REFERENCE!>NestedObj<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    without.<!UNRESOLVED_REFERENCE!>NestedObj<!>.foo()
 
     obj.<!UNRESOLVED_REFERENCE!>Nested<!>()
     obj.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>
     obj.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>()
-    obj.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-    obj.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.<!UNRESOLVED_REFERENCE!>A<!>
+    obj.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.foo()
+    obj.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.A
     obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>
     obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
-    obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>.foo()
 }

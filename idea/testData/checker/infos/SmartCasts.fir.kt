@@ -103,7 +103,7 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
+    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.bar()
   }
 
   a?.foo()

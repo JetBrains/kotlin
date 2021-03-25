@@ -1,1 +1,1 @@
-fun test() = ("").<!UNRESOLVED_REFERENCE!>hashCode<!>::<!UNRESOLVED_REFERENCE!>hashCode<!>
+fun test() = ("").<!UNRESOLVED_REFERENCE!>hashCode<!>::hashCode

@@ -22,7 +22,7 @@ fun testUnresolved() {
         is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
-    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
+    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
        var i: Int = j
        i += 1
        foo1(j)

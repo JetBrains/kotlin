@@ -1,6 +1,6 @@
 // !WITH_NEW_INFERENCE
 fun import() {
-    <!UNRESOLVED_REFERENCE!>import<!> <!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!>.<!><!UNRESOLVED_REFERENCE!>*<!><!SYNTAX!><!>
+    <!UNRESOLVED_REFERENCE!>import<!> a<!SYNTAX!>.<!><!UNRESOLVED_REFERENCE!>*<!><!SYNTAX!><!>
 }
 
 fun composite() {
@@ -8,9 +8,9 @@ fun composite() {
 }
 
 fun html() {
-    <!SYNTAX!><<!><!UNRESOLVED_REFERENCE!>html<!><!UNRESOLVED_REFERENCE!>><!><!SYNTAX!><<!><!UNRESOLVED_REFERENCE!>/<!><!UNRESOLVED_REFERENCE!>html<!>><!SYNTAX!><!>
+    <!SYNTAX!><<!><!UNRESOLVED_REFERENCE!>html<!>><!SYNTAX!><<!><!UNRESOLVED_REFERENCE!>/<!><!UNRESOLVED_REFERENCE!>html<!>><!SYNTAX!><!>
 }
 
 fun html1() {
-    <!SYNTAX!><<!><!UNRESOLVED_REFERENCE!>html<!><!UNRESOLVED_REFERENCE!>><!><!SYNTAX!><<!><!UNRESOLVED_REFERENCE!>/<!><!UNRESOLVED_REFERENCE!>html<!>><!UNRESOLVED_REFERENCE!>html<!>
+    <!SYNTAX!><<!><!UNRESOLVED_REFERENCE!>html<!>><!SYNTAX!><<!><!UNRESOLVED_REFERENCE!>/<!><!UNRESOLVED_REFERENCE!>html<!>><!UNRESOLVED_REFERENCE!>html<!>
 }

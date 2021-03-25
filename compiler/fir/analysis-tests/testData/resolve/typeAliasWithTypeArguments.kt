@@ -79,7 +79,7 @@ fun test_5(a: A, in1: In1<A>, in2: In1<in A>, in3: In1<out A>) {
 
 fun test_6(a: A, out1: Out1<A>, out2: Out1<in A>, out3: Out1<out A>) {
     out1.value().foo()
-    out2.<!UNRESOLVED_REFERENCE!>value<!>().<!UNRESOLVED_REFERENCE!>foo<!>()
+    out2.<!UNRESOLVED_REFERENCE!>value<!>().foo()
     out3.value().foo()
 }
 

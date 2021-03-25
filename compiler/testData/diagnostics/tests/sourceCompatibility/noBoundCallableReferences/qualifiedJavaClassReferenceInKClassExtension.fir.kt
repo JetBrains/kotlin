@@ -6,5 +6,5 @@ val <T : Any> KClass<T>.java: Class<T> get() = null!!
 
 val <T : Any> KClass<T>.foo: Any?
     get() {
-        return java.<!UNRESOLVED_REFERENCE!>lang<!>.<!UNRESOLVED_REFERENCE!>Integer<!>::<!UNRESOLVED_REFERENCE!>hashCode<!>
+        return java.<!UNRESOLVED_REFERENCE!>lang<!>.Integer::hashCode
     }
