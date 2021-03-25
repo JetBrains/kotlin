@@ -17,8 +17,6 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
-import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
@@ -48,6 +45,12 @@ fun ModuleInfo.findSdkAcrossDependencies(): SdkInfo? {
     val project = (this as? IdeaModuleInfo)?.project ?: return null
 
     return SdkInfoCache.getInstance(project).findOrGetCachedSdk(this)
+}
+
+fun IdeaModuleInfo.findJvmStdlibAcrossDependencies(): LibraryInfo? {
+    val project = project ?: return null
+
+    return KotlinStdlibCache.getInstance(project).findStdlibInModuleDependencies(this)
 }
 
 fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): IdeaModuleInfo? =

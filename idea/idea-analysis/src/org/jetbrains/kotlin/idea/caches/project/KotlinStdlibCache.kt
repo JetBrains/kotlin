@@ -17,11 +17,14 @@ import org.jetbrains.kotlin.idea.configuration.IdeBuiltInsLoadingState
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinStdlibIndex
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import java.util.concurrent.ConcurrentHashMap
 
+// TODO(kirpichenkov): works only for JVM (see KT-44552)
 interface KotlinStdlibCache {
     fun isStdlib(libraryInfo: LibraryInfo): Boolean
     fun isStdlibDependency(libraryInfo: LibraryInfo): Boolean
+    fun findStdlibInModuleDependencies(module: IdeaModuleInfo): LibraryInfo?
 
     companion object {
         fun getInstance(project: Project): KotlinStdlibCache =
@@ -35,19 +38,28 @@ interface KotlinStdlibCache {
         val Disabled = object : KotlinStdlibCache {
             override fun isStdlib(libraryInfo: LibraryInfo) = false
             override fun isStdlibDependency(libraryInfo: LibraryInfo) = false
+            override fun findStdlibInModuleDependencies(module: IdeaModuleInfo): LibraryInfo? = null
         }
     }
 }
 
 class KotlinStdlibCacheImpl(val project: Project) : KotlinStdlibCache {
-    private val stdlibCache
+    @JvmInline
+    private value class StdlibDependency(val libraryInfo: LibraryInfo?)
+
+    private val isStdlibCache: MutableMap<LibraryInfo, Boolean>
         get() = project.cacheInvalidatingOnRootModifications {
             ConcurrentHashMap<LibraryInfo, Boolean>()
         }
 
-    private val stdlibDependencyCache
+    private val isStdlibDependencyCache: MutableMap<LibraryInfo, Boolean>
         get() = project.cacheInvalidatingOnRootModifications {
             ConcurrentHashMap<LibraryInfo, Boolean>()
+        }
+
+    private val moduleStdlibDependencyCache: MutableMap<IdeaModuleInfo, StdlibDependency>
+        get() = project.cacheInvalidatingOnRootModifications {
+            ConcurrentHashMap<IdeaModuleInfo, StdlibDependency>()
         }
 
     private class LibraryScope(
@@ -76,15 +88,25 @@ class KotlinStdlibCacheImpl(val project: Project) : KotlinStdlibCache {
         libraryScopeContainsIndexedFilesForNames(libraryInfo, listOf(name))
 
     override fun isStdlib(libraryInfo: LibraryInfo): Boolean {
-        return stdlibCache.getOrPut(libraryInfo) {
+        return isStdlibCache.getOrPut(libraryInfo) {
             libraryScopeContainsIndexedFilesForName(libraryInfo, KotlinStdlibIndex.KOTLIN_STDLIB_NAME)
         }
     }
 
     override fun isStdlibDependency(libraryInfo: LibraryInfo): Boolean {
-        return stdlibDependencyCache.getOrPut(libraryInfo) {
+        return isStdlibDependencyCache.getOrPut(libraryInfo) {
             libraryScopeContainsIndexedFilesForNames(libraryInfo, KotlinStdlibIndex.STANDARD_LIBRARY_DEPENDENCY_NAMES)
         }
+    }
+
+    override fun findStdlibInModuleDependencies(module: IdeaModuleInfo): LibraryInfo? {
+        val stdlibDependency = moduleStdlibDependencyCache.getOrPut(module) {
+            module.dependencies().lazyClosure { it.dependencies() }.firstOrNull {
+                it is LibraryInfo && isStdlib(it)
+            }.let { StdlibDependency(it as? LibraryInfo?) }
+        }
+
+        return stdlibDependency.libraryInfo
     }
 }
 
