@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-interface LanguageSettingsBuilder {
-    var languageVersion: String?
+import org.jetbrains.kotlin.project.model.LanguageSettings
 
-    var apiVersion: String?
+interface LanguageSettingsBuilder : LanguageSettings {
+    override var languageVersion: String?
 
-    var progressiveMode: Boolean
+    override var apiVersion: String?
+
+    override var progressiveMode: Boolean
 
     fun enableLanguageFeature(name: String)
 
-    val enabledLanguageFeatures: Set<String>
+    override val enabledLanguageFeatures: Set<String>
 
     fun useExperimentalAnnotation(name: String)
 
-    val experimentalAnnotationsInUse: Set<String>
+    override val experimentalAnnotationsInUse: Set<String>
 }

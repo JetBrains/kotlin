@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.project.model.*
@@ -32,11 +33,11 @@ class ProjectStructureMetadataModuleBuilder {
     ): KotlinModule {
         val moduleData = BasicKotlinModule(component.toSingleModuleIdentifier()).apply {
             metadata.sourceSetNamesByVariantName.keys.forEach { variantName ->
-                fragments.add(BasicKotlinModuleVariant(this@apply, variantName))
+                fragments.add(BasicKotlinModuleVariant(this@apply, variantName, DefaultLanguageSettingsBuilder()))
             }
             fun fragment(sourceSetName: String): BasicKotlinModuleFragment {
                 if (fragments.none { it.fragmentName == sourceSetName })
-                    fragments.add(BasicKotlinModuleFragment(this@apply, sourceSetName))
+                    fragments.add(BasicKotlinModuleFragment(this@apply, sourceSetName, DefaultLanguageSettingsBuilder()))
                 return fragmentByName(sourceSetName)
             }
             metadata.sourceSetNamesByVariantName.forEach { (variantName, sourceSets) ->
@@ -163,7 +164,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                             ?: listOf(compilation.defaultSourceSetName)
 
                     variantNames.forEach { variantName ->
-                        val variant = BasicKotlinModuleVariant(this@apply, variantName)
+                        val variant = BasicKotlinModuleVariant(this@apply, variantName, DefaultLanguageSettingsBuilder())
                         moduleByFragment[variant] = this@apply
                         variantToCompilation[variant] = compilation
                         fragments.add(variant)
@@ -180,7 +181,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                 // Once all fragments are created, add dependencies between them
                 sourceSetsToInclude.forEach { sourceSet ->
                     val existingVariant = fragments.filterIsInstance<BasicKotlinModuleVariant>().find { it.fragmentName == sourceSet.name }
-                    val fragment = existingVariant ?: BasicKotlinModuleFragment(this@apply, sourceSet.name).also { fragments.add(it) }
+                    val fragment = existingVariant ?: BasicKotlinModuleFragment(this@apply, sourceSet.name, sourceSet.languageSettings).also { fragments.add(it) }
                     moduleByFragment[fragment] = this@apply
                     fragment.kotlinSourceRoots = sourceSet.kotlin.sourceDirectories.toList()
 

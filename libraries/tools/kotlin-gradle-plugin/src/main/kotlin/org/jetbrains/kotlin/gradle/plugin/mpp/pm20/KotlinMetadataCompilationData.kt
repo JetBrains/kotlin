@@ -72,7 +72,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         project.provider { project.buildDir.resolve("processedResources/${fragment.disambiguateName("metadata")}") }
     )
 
-    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder() // FIXME apply settings
+    override val languageSettings: LanguageSettingsBuilder = fragment.languageSettings
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.common
