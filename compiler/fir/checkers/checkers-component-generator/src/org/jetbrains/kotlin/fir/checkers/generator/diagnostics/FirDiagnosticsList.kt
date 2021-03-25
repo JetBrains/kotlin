@@ -118,7 +118,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by error<FirSourceElement, PsiElement>()
         val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by warning<FirSourceElement, PsiElement>()
         val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
-        val EXPLICIT_DELEGATION_CALL_REQUIRED by warning<FirSourceElement, PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
+        val EXPLICIT_DELEGATION_CALL_REQUIRED by error<FirSourceElement, PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
         val SEALED_CLASS_CONSTRUCTOR_CALL by error<FirSourceElement, PsiElement>()
 
         // TODO: Consider creating a parameter list position strategy and report on the parameter list instead

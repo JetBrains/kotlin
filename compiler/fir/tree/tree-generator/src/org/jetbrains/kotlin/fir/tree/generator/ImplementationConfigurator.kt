@@ -87,10 +87,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(doWhileLoop)
 
         impl(delegatedConstructorCall) {
-            default(
-                "calleeReference",
-                "if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, null, constructedTypeRef)"
-            )
             default("isSuper") {
                 value = "!isThis"
                 withGetter = true

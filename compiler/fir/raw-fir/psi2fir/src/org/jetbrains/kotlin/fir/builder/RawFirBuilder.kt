@@ -632,6 +632,11 @@ open class RawFirBuilder(
                 source = constructorCall ?: constructorSource.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                 constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
                 isThis = false
+                calleeReference = buildExplicitSuperReference {
+                    source = superTypeCallEntry?.calleeExpression?.toFirSourceElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                        ?: this@buildDelegatedConstructorCall.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                    superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+                }
                 if (!stubMode) {
                     superTypeCallEntry?.extractArgumentsTo(this)
                 }
@@ -1189,6 +1194,19 @@ open class RawFirBuilder(
                 this.source = source
                 constructedTypeRef = delegatedType.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
                 this.isThis = isThis
+                val calleeKind = if (isImplicit)FirFakeSourceElementKind.ImplicitConstructor else FirFakeSourceElementKind.DelegatingConstructorCall
+                val calleeSource = this@convert.calleeExpression?.toFirSourceElement(calleeKind)
+                    ?: source.fakeElement(calleeKind)
+                this.calleeReference = if (isThis) {
+                    buildExplicitThisReference {
+                        this.source = calleeSource
+                    }
+                } else {
+                    buildExplicitSuperReference {
+                        this.source = calleeSource
+                        this.superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+                    }
+                }
                 if (!stubMode) {
                     extractArgumentsTo(this)
                 }

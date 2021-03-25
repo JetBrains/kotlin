@@ -115,7 +115,7 @@ object FirErrors {
     val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by error0<FirSourceElement, PsiElement>()
     val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
     val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by error0<FirSourceElement, KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val EXPLICIT_DELEGATION_CALL_REQUIRED by warning0<FirSourceElement, PsiElement>(SourceElementPositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
+    val EXPLICIT_DELEGATION_CALL_REQUIRED by error0<FirSourceElement, PsiElement>(SourceElementPositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
     val SEALED_CLASS_CONSTRUCTOR_CALL by error0<FirSourceElement, PsiElement>()
     val DATA_CLASS_WITHOUT_PARAMETERS by error0<FirSourceElement, KtPrimaryConstructor>()
     val DATA_CLASS_VARARG_PARAMETER by error0<FirSourceElement, KtParameter>()

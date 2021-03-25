@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -736,6 +738,11 @@ class DeclarationsConverter(
             source = delegatedConstructorSource ?: selfTypeSource?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
             constructedTypeRef = classWrapper.delegatedSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
             isThis = false
+            calleeReference = buildExplicitSuperReference {
+                source = classWrapper.delegatedSuperTypeRef.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                    ?: this@buildDelegatedConstructorCall.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+            }
             extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
         }
 
@@ -875,6 +882,20 @@ class DeclarationsConverter(
             }
             constructedTypeRef = delegatedType.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
             this.isThis = isThis
+            val calleeKind = if (isImplicit) FirFakeSourceElementKind.ImplicitConstructor else FirFakeSourceElementKind.DelegatingConstructorCall
+            val calleeSource = constructorDelegationCall.getChildNodeByType(CONSTRUCTOR_DELEGATION_REFERENCE)
+                ?.toFirSourceElement(calleeKind)
+                ?: this@buildDelegatedConstructorCall.source?.fakeElement(calleeKind)
+            calleeReference = if (isThis) {
+                buildExplicitThisReference {
+                    this.source = calleeSource
+                }
+            } else {
+                buildExplicitSuperReference {
+                    source = calleeSource
+                    superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+                }
+            }
             extractArgumentsFrom(firValueArguments, stubMode)
         }
     }
