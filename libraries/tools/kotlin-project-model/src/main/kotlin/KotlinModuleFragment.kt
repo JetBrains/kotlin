@@ -14,6 +14,8 @@ interface KotlinModuleFragment {
     val fragmentName: String
     val directRefinesDependencies: Iterable<KotlinModuleFragment>
 
+    val languageSettings: LanguageSettings
+
     // TODO: scopes
     val declaredModuleDependencies: Iterable<KotlinModuleDependency>
 
@@ -46,7 +48,8 @@ val KotlinModuleFragment.refinesClosure: Set<KotlinModuleFragment>
 
 open class BasicKotlinModuleFragment(
     override val containingModule: KotlinModule,
-    override val fragmentName: String
+    override val fragmentName: String,
+    override val languageSettings: LanguageSettings
 ) : KotlinModuleFragment {
 
     override val directRefinesDependencies: MutableSet<BasicKotlinModuleFragment> = mutableSetOf()
@@ -59,10 +62,12 @@ open class BasicKotlinModuleFragment(
 
 class BasicKotlinModuleVariant(
     containingModule: KotlinModule,
-    fragmentName: String
+    fragmentName: String,
+    languageSettings: LanguageSettings
 ) : BasicKotlinModuleFragment (
     containingModule,
-    fragmentName
+    fragmentName,
+    languageSettings
 ), KotlinModuleVariant {
     override val variantAttributes: MutableMap<KotlinAttributeKey, String> = mutableMapOf()
     override fun toString(): String = "variant $fragmentName"

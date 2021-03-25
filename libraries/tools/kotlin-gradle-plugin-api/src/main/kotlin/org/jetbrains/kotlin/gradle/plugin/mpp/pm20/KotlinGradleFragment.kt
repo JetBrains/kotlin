@@ -22,10 +22,7 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Na
 
     override fun getName(): String = fragmentName
 
-    // TODO pull up to KotlinModuleFragment
-    // FIXME apply to compilation
-    // FIXME check for consistency
-    val languageSettings: LanguageSettingsBuilder
+    override val languageSettings: LanguageSettingsBuilder
 
     val project: Project
         get() = containingModule.project

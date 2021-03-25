@@ -77,5 +77,5 @@ internal class KotlinNativeVariantCompilationData(
     override val owner: KotlinNativeVariant
         get() = variant
 
-    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { languageSettings }
+    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { variant.languageSettings }
 }

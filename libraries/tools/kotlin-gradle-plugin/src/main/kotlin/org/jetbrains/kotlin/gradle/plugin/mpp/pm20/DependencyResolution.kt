@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.getProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.project.model.*
 import java.util.ArrayDeque
@@ -148,7 +149,7 @@ class FragmentDependenciesDiscovery(
 internal fun buildSyntheticModule(resolvedComponentResult: ResolvedComponentResult, singleVariantName: String): ExternalSyntheticKotlinModule {
     val moduleDependency = resolvedComponentResult.toModuleDependency()
     return ExternalSyntheticKotlinModule(BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
-        BasicKotlinModuleVariant(this@apply, singleVariantName).apply {
+        BasicKotlinModuleVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder()).apply {
             fragments.add(this)
             this.declaredModuleDependencies.addAll(
                 resolvedComponentResult.dependencies

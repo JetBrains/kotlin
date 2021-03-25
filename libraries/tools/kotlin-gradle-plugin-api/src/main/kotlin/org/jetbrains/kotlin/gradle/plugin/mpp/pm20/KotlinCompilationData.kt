@@ -11,7 +11,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.project.model.LanguageSettings
 
 interface KotlinCompilationData<T : KotlinCommonOptions> {
     val project: Project
@@ -27,7 +27,7 @@ interface KotlinCompilationData<T : KotlinCommonOptions> {
     val compileDependencyFiles: FileCollection
     val output: KotlinCompilationOutput
 
-    val languageSettings: LanguageSettingsBuilder
+    val languageSettings: LanguageSettings
     val platformType: KotlinPlatformType
 
     val moduleName: String
@@ -61,7 +61,7 @@ interface KotlinVariantCompilationData<T : KotlinCommonOptions> : KotlinCompilat
     override val compileDependencyFiles: FileCollection
         get() = owner.compileDependencyFiles
 
-    override val languageSettings: LanguageSettingsBuilder
+    override val languageSettings: LanguageSettings
         get() = owner.languageSettings
 
     override val platformType: KotlinPlatformType
