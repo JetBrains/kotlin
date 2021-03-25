@@ -95,7 +95,7 @@ abstract class AbstractFileRankingTest : LowLevelDebuggerTestBase() {
                     }
                 }
 
-                val fileWithMaxScore = fileWithRankings.maxBy { it.value }!!
+                val fileWithMaxScore = fileWithRankings.maxByOrNull { it.value }!!
                 val actualFile = fileWithMaxScore.key
 
                 if (strictMode) {

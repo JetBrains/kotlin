@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'max()'"
+// INTENTION_TEXT: "Replace with 'maxOrNull()'"
 // IS_APPLICABLE_2: false
 fun getMaxLineWidth(list: List<Float>): Float {
     var max = 0.0f

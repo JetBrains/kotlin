@@ -32,7 +32,7 @@ interface ProfilerHandler {
         fun determinePhasePath(dumpPath: Path, profilerConfig: ProfilerConfig): Path {
             val activityPath = dumpPath.parent.resolve(profilerConfig.path)
             val runNumber =
-                (activityPath.toFile().listFiles()?.maxBy { it.name.toIntOrNull() ?: 0 }?.name?.toIntOrNull()
+                (activityPath.toFile().listFiles()?.maxOfOrNull { it.name.toIntOrNull() ?: 0 }
                     ?: 0) + 1
             val runPath = activityPath.resolve("$runNumber")
             runPath.toFile().mkdirs()

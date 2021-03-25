@@ -18,6 +18,6 @@
 fun doSomethingStrangeWithCollection(collection: Collection<String>): Collection<String>? {
     val groupsByLength = collection.groupBy { s -> { s.length } }
 
-    val maximumSizeOfGroup = groupsByLength.values.maxBy { it.size }.
+    val maximumSizeOfGroup = groupsByLength.values.maxByOrNull { it.size }.
     return groupsByLength.values.firstOrNull { group -> {group.size == <caret>maximumSizeOfGroup} }
 }

@@ -1373,16 +1373,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                     runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/mapTo.kt");
                 }
 
-                @TestMetadata("max.kt")
-                public void testMax() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/max.kt");
-                }
-
-                @TestMetadata("maxBy.kt")
-                public void testMaxBy() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxBy.kt");
-                }
-
                 @TestMetadata("maxByOrNull.kt")
                 public void testMaxByOrNull() throws Exception {
                     runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxByOrNull.kt");
@@ -1413,24 +1403,9 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                     runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOrNull.kt");
                 }
 
-                @TestMetadata("maxWith.kt")
-                public void testMaxWith() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxWith.kt");
-                }
-
                 @TestMetadata("maxWithOrNull.kt")
                 public void testMaxWithOrNull() throws Exception {
                     runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxWithOrNull.kt");
-                }
-
-                @TestMetadata("min.kt")
-                public void testMin() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/min.kt");
-                }
-
-                @TestMetadata("minBy.kt")
-                public void testMinBy() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minBy.kt");
                 }
 
                 @TestMetadata("minByOrNull.kt")
@@ -1461,11 +1436,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 @TestMetadata("minOrNull.kt")
                 public void testMinOrNull() throws Exception {
                     runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOrNull.kt");
-                }
-
-                @TestMetadata("minWith.kt")
-                public void testMinWith() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minWith.kt");
                 }
 
                 @TestMetadata("minWithOrNull.kt")

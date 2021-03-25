@@ -93,7 +93,7 @@ class JKResolver(val project: Project, module: Module?, private val contextEleme
         when {
             typeAliasesPsi.isEmpty() -> classesPsi.firstOrNull()
             classesPsi.isEmpty() -> typeAliasesPsi.firstOrNull()
-            else -> (classesPsi.asSequence() + typeAliasesPsi.asSequence()).minWith(Comparator { o1, o2 ->
+            else -> (classesPsi.asSequence() + typeAliasesPsi.asSequence()).minWithOrNull(Comparator { o1, o2 ->
                 scope.compare(o1.containingFile.virtualFile, o2.containingFile.virtualFile)
             })
         }
