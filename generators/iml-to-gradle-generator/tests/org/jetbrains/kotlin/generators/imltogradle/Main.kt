@@ -167,14 +167,15 @@ fun convertJpsModuleDependency(dep: JpsModuleDependency): List<String> {
         moduleName.startsWith("intellij.") -> {
             val ijModule = intellijModuleNameToJpsModuleMapping[dep.moduleReference.moduleName]
                 ?: error("Cannot fine intellij module = ${dep.moduleReference}")
-            return ijModule.flattenExportedTransitiveDependencies(initialScope = dep.scope, jpsDependencyToDependantModuleIml = { null })
+            return ijModule.flattenExportedTransitiveDependencies(jpsDependencyToDependencyModuleIml = { null })
                 .filter { it.scope != JpsJavaDependencyScope.RUNTIME } // We are interested only in compile classpath transitive dependencies
+                .map { JpsDependencyDescriptor(it.moduleOrLibrary, it.scope intersectCompileClasspath dep.scope) }
                 .flatMap { dependencyDescriptor ->
                     when (val moduleOrLibrary = dependencyDescriptor.moduleOrLibrary) {
                         is Either.First -> {
-                            val dependantModuleName = moduleOrLibrary.value.name
-                            intellijModuleNameToGradleDependencyNotationsMapping[dependantModuleName]
-                                .orElse { error("Cannot find Gradle notation mapping for module = $dependantModuleName") }
+                            val dependencyModuleName = moduleOrLibrary.value.name
+                            intellijModuleNameToGradleDependencyNotationsMapping[dependencyModuleName]
+                                .orElse { error("Cannot find Gradle notation mapping for module = $dependencyModuleName") }
                                 .map {
                                     jpsLikeJarDependency(
                                         it.dependencyNotation,
