@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverrideAttr
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -104,7 +104,7 @@ object FirFakeOverrideGenerator {
             this.session = session
             this.origin = origin
             name = baseFunction.name
-            status = baseFunction.status.updatedStatus(isExpect, newModality, newVisibility)
+            status = baseFunction.status.copy(isExpect, newModality, newVisibility)
             symbol = newSymbol
             resolvePhase = baseFunction.resolvePhase
 
@@ -133,7 +133,7 @@ object FirFakeOverrideGenerator {
             this.session = session
             origin = FirDeclarationOrigin.SubstitutionOverride
             receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
-            status = baseConstructor.status.updatedStatus(isExpect)
+            status = baseConstructor.status.copy(isExpect)
             symbol = fakeOverrideSymbol
 
             typeParameters += configureAnnotationsTypeParametersAndSignature(
@@ -288,7 +288,7 @@ object FirFakeOverrideGenerator {
             isVar = baseProperty.isVar
             this.symbol = newSymbol
             isLocal = false
-            status = baseProperty.status.updatedStatus(isExpect, newModality, newVisibility)
+            status = baseProperty.status.copy(isExpect, newModality, newVisibility)
 
             resolvePhase = baseProperty.resolvePhase
             dispatchReceiverType = newDispatchReceiverType
@@ -450,22 +450,8 @@ object FirFakeOverrideGenerator {
             symbol = FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId)
             delegateGetter = getter
             delegateSetter = setter
+            status = baseProperty.status
         }.symbol
-    }
-
-    private fun FirDeclarationStatus.updatedStatus(
-        isExpect: Boolean,
-        newModality: Modality? = null,
-        newVisibility: Visibility? = null,
-    ): FirDeclarationStatus {
-        return if (this.isExpect == isExpect && newModality == null && newVisibility == null) {
-            this
-        } else {
-            require(this is FirDeclarationStatusImpl) { "Unexpected class ${this::class}" }
-            this.resolved(newVisibility ?: visibility, newModality ?: modality!!).apply {
-                this.isExpect = isExpect
-            }
-        }
     }
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types

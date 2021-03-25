@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -165,4 +165,19 @@ fun FirCheckNotNullCall.copy(
     argumentList = this@copy.argumentList
     this.typeRef = resultType
     this.annotations += annotations
+}
+
+fun FirDeclarationStatus.copy(
+    isExpect: Boolean = this.isExpect,
+    newModality: Modality? = null,
+    newVisibility: Visibility? = null,
+): FirDeclarationStatus {
+    return if (this.isExpect == isExpect && newModality == null && newVisibility == null) {
+        this
+    } else {
+        require(this is FirDeclarationStatusImpl) { "Unexpected class ${this::class}" }
+        this.resolved(newVisibility ?: visibility, newModality ?: modality!!).apply {
+            this.isExpect = isExpect
+        }
+    }
 }
