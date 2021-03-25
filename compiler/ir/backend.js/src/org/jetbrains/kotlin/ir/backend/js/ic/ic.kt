@@ -112,17 +112,20 @@ fun loadIrForIc(
 //    }
 
 
+    if (false) {
 
-    var actual = ""
+        println("==== Dumping ====")
 
-    for (file in module.files) {
-//        it.println(file.path)
+        var actual = ""
 
-        actual += file.path + "\n"
-        actual += context.irFactory.stageController.withStage(100) {
-            var r = ""
+        for (file in module.files) {
+//        println(file.path)
 
-            file.declarations.map { it.dumpKotlinLike() }.sorted().forEach { r += it }
+            actual += file.path + "\n"
+            actual += context.irFactory.stageController.withStage(100) {
+                var r = ""
+
+                file.declarations.map { it.dumpKotlinLike() }.sorted().forEach { r += it }
 
 //            file.declarations.sortedBy { it.nameForIrSerialization.asString() }.forEach { d ->
 //                try {
@@ -132,20 +135,20 @@ fun loadIrForIc(
 //                }
 //            }
 
-            r
-        }
-        actual += "\n"
+                r
+            }
+            actual += "\n"
 
 //        it.println(actual)
 
 //
 //        }
-    }
-    PrintWriter("/home/ab/vcs/kotlin/simple-dump-actual.txt").use {
-        it.println(actual)
-    }
+        }
+        PrintWriter("/home/ab/vcs/kotlin/simple-dump-actual.txt").use {
+            it.println(actual)
+        }
 //    checkEq("/home/ab/vcs/kotlin/simple-dump.txt", actual)
-
+    }
     perFactory.stageController = StageController(0)
 
 //    TODO("=================== loaded!")

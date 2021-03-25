@@ -31,5 +31,7 @@ open class StageController(open val currentStage: Int = 0) {
     open fun canAccessDeclarationsOf(irClass: IrClass): Boolean = true
 
     // Used in JS IC. Declarations created during lowerings need meaningful signatures.
-    open fun createSignature(): IdSignature? = null
+    open fun createSignature(parentSignature: IdSignature): IdSignature? = null
+
+    open val currentDeclaration: IrDeclaration? get() = null
 }

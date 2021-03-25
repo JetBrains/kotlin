@@ -172,7 +172,7 @@ class WholeWorldStageController : StageController() {
 
     // TODO assert lowered
 
-    private var currentDeclaration: IrDeclaration? = null
+    override var currentDeclaration: IrDeclaration? = null
     private var index: Int = 0
 
     override fun <T> restrictTo(declaration: IrDeclaration, fn: () -> T): T {
@@ -190,8 +190,8 @@ class WholeWorldStageController : StageController() {
         }
     }
 
-    override fun createSignature(): IdSignature {
-        return IdSignature.LoweredDeclarationSignature(currentDeclaration!!.symbol.signature!!, currentStage, index)
+    override fun createSignature(parentSignature: IdSignature): IdSignature {
+        return IdSignature.LoweredDeclarationSignature(parentSignature, currentStage, index++)
     }
 }
 

@@ -223,9 +223,9 @@ sealed class IdSignature {
 
         override val hasTopLevel: Boolean get() = false
 
-        override fun topLevelSignature(): IdSignature = error("not implemented")
+        override fun topLevelSignature(): IdSignature = this
 
-        override fun nearestPublicSig(): IdSignature = error("not implemented")
+        override fun nearestPublicSig(): IdSignature = this
 
         override fun packageFqName(): FqName = original.packageFqName()
 
