@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.completion.ml.settings.CompletionMLRankingSettings
+//import com.intellij.completion.ml.settings.CompletionMLRankingSettings
 import org.jetbrains.kotlin.idea.KotlinBundle
 
 object MLCompletionForKotlinFeature : ExperimentalFeature() {
@@ -26,15 +26,16 @@ internal object MLCompletionForKotlin {
 
     var isEnabled: Boolean
         get() {
-            val settings = CompletionMLRankingSettings.getInstance()
-            return settings.isRankingEnabled && settings.isLanguageEnabled("Kotlin")
+//            val settings = CompletionMLRankingSettings.getInstance()
+//            return settings.isRankingEnabled && settings.isLanguageEnabled("Kotlin")
+            error("Foo")
         }
         set(value) {
-            val settings = CompletionMLRankingSettings.getInstance()
-            if (value && !settings.isRankingEnabled) {
-                settings.isRankingEnabled = true
-            }
-
-            settings.setLanguageEnabled("Kotlin", value)
+//            val settings = CompletionMLRankingSettings.getInstance()
+//            if (value && !settings.isRankingEnabled) {
+//                settings.isRankingEnabled = true
+//            }
+//
+//            settings.setLanguageEnabled("Kotlin", value)
         }
 }
