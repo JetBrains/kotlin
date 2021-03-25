@@ -549,10 +549,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(
             else -> buildArgumentMapping(session, javaTypeParameterStack, lookupTag!!, arguments)
         } ?: buildArgumentList {
             this@toFirAnnotationCall.arguments.mapTo(arguments) {
-                val expectedArgumentType = buildErrorTypeRef {
-                    diagnostic = ConeSimpleDiagnostic("java annotation argument without expected type")
-                }
-                it.toFirExpression(session, javaTypeParameterStack, expectedArgumentType)
+                it.toFirExpression(session, javaTypeParameterStack, null)
             }
         }
         calleeReference = FirReferencePlaceholderForResolvedAnnotations
@@ -623,15 +620,17 @@ private fun JavaType?.toConeProjectionWithoutEnhancement(
 }
 
 internal fun JavaAnnotationArgument.toFirExpression(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, expectedTypeRef: FirTypeRef
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, expectedTypeRef: FirTypeRef?
 ): FirExpression {
     return when (this) {
         is JavaLiteralAnnotationArgument -> value.createConstantOrError(session)
         is JavaArrayAnnotationArgument -> buildArrayOfCall {
-            typeRef = expectedTypeRef
-            val argumentTypeRef = buildResolvedTypeRef {
-                type = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.arrayElementType()
-                    ?: ConeClassErrorType(ConeSimpleDiagnostic("expected type is not array type"))
+            val argumentTypeRef = expectedTypeRef?.let {
+                typeRef = it
+                buildResolvedTypeRef {
+                    type = it.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.arrayElementType()
+                        ?: ConeClassErrorType(ConeSimpleDiagnostic("expected type is not array type"))
+                }
             }
             argumentList = buildArgumentList {
                 getElements().mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack, argumentTypeRef) }
