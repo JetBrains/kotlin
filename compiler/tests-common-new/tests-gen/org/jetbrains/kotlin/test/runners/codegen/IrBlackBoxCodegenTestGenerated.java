@@ -15099,6 +15099,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("callableReferenceToStaticFunction.kt")
+        public void testCallableReferenceToStaticFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/callableReferenceToStaticFunction.kt");
+        }
+
+        @Test
         @TestMetadata("ClassBuilder.kt")
         public void testClassBuilder() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");
