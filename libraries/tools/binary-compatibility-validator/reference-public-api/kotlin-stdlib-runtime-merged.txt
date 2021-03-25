@@ -4402,8 +4402,8 @@ public final class kotlin/ranges/LongRange$Companion {
 }
 
 public final class kotlin/ranges/RangesKt {
-	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;F)Z
+	public static final synthetic fun byteRangeContains (Lkotlin/ranges/ClosedRange;D)Z
+	public static final synthetic fun byteRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;J)Z
 	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;S)Z
@@ -4432,11 +4432,11 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedFloatingPointRange;)Ljava/lang/Comparable;
 	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedRange;)Ljava/lang/Comparable;
 	public static final fun coerceIn (SSS)S
-	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;B)Z
+	public static final synthetic fun doubleRangeContains (Lkotlin/ranges/ClosedRange;B)Z
 	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;F)Z
-	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;I)Z
-	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;J)Z
-	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;S)Z
+	public static final synthetic fun doubleRangeContains (Lkotlin/ranges/ClosedRange;I)Z
+	public static final synthetic fun doubleRangeContains (Lkotlin/ranges/ClosedRange;J)Z
+	public static final synthetic fun doubleRangeContains (Lkotlin/ranges/ClosedRange;S)Z
 	public static final fun downTo (BB)Lkotlin/ranges/IntProgression;
 	public static final fun downTo (BI)Lkotlin/ranges/IntProgression;
 	public static final fun downTo (BJ)Lkotlin/ranges/LongProgression;
@@ -4454,19 +4454,19 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun downTo (SI)Lkotlin/ranges/IntProgression;
 	public static final fun downTo (SJ)Lkotlin/ranges/LongProgression;
 	public static final fun downTo (SS)Lkotlin/ranges/IntProgression;
-	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;B)Z
+	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;B)Z
 	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;I)Z
-	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;J)Z
-	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;S)Z
+	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;I)Z
+	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;J)Z
+	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;S)Z
 	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;B)Z
-	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;F)Z
+	public static final synthetic fun intRangeContains (Lkotlin/ranges/ClosedRange;D)Z
+	public static final synthetic fun intRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;J)Z
 	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;S)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;B)Z
-	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;F)Z
+	public static final synthetic fun longRangeContains (Lkotlin/ranges/ClosedRange;D)Z
+	public static final synthetic fun longRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;S)Z
 	public static final fun random (Lkotlin/ranges/CharRange;Lkotlin/random/Random;)C
@@ -4482,8 +4482,8 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun reversed (Lkotlin/ranges/IntProgression;)Lkotlin/ranges/IntProgression;
 	public static final fun reversed (Lkotlin/ranges/LongProgression;)Lkotlin/ranges/LongProgression;
 	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;B)Z
-	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;F)Z
+	public static final synthetic fun shortRangeContains (Lkotlin/ranges/ClosedRange;D)Z
+	public static final synthetic fun shortRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;J)Z
 	public static final fun step (Lkotlin/ranges/CharProgression;I)Lkotlin/ranges/CharProgression;

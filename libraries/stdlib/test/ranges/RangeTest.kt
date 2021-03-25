@@ -31,10 +31,6 @@ public class RangeTest {
         assertTrue(1.toShort() in range)
         assertTrue(1.toByte() in range)
         assertTrue(1.toLong() in range)
-        run @Suppress("DEPRECATION_ERROR") {
-            assertTrue(1.toFloat() in range)
-            assertTrue(1.toDouble() in range)
-        }
 
         assertFalse(Long.MAX_VALUE in range)
 
@@ -70,10 +66,6 @@ public class RangeTest {
         assertTrue(1.toShort() in range)
         assertTrue(1.toInt() in range)
         assertTrue(1.toLong() in range)
-        run @Suppress("DEPRECATION_ERROR") {
-            assertTrue(1.toFloat() in range)
-            assertTrue(1.toDouble() in range)
-        }
 
         assertFalse(Long.MAX_VALUE in range)
 
@@ -108,10 +100,6 @@ public class RangeTest {
         assertTrue(1.toByte() in range)
         assertTrue(1.toInt() in range)
         assertTrue(1.toLong() in range)
-        run @Suppress("DEPRECATION_ERROR") {
-            assertTrue(1.toFloat() in range)
-            assertTrue(1.toDouble() in range)
-        }
 
         assertFalse(Long.MAX_VALUE in range)
 
@@ -148,12 +136,6 @@ public class RangeTest {
         assertTrue(1.toByte() in range)
         assertTrue(1.toShort() in range)
         assertTrue(1.toInt() in range)
-        run @Suppress("DEPRECATION_ERROR") {
-            assertTrue(1.toFloat() in range)
-            assertTrue(1.toDouble() in range)
-
-            assertFalse(Double.MAX_VALUE in range)
-        }
 
         assertFalse(null in range)
         assertTrue(1L as Long? in range)
@@ -218,12 +200,6 @@ public class RangeTest {
 
         assertFalse(range.isEmpty())
 
-        run @Suppress("DEPRECATION_ERROR") {
-            assertTrue(1.toByte() in range)
-            assertTrue(1.toShort() in range)
-            assertTrue(1.toInt() in range)
-            assertTrue(1.toLong() in range)
-        }
         assertTrue(1.toFloat() in range)
 
         val zeroRange = 0.0..-0.0
@@ -266,12 +242,6 @@ public class RangeTest {
 
         assertFalse(range.isEmpty())
 
-        run @Suppress("DEPRECATION_ERROR") {
-            assertTrue(1.toByte() in range)
-            assertTrue(1.toShort() in range)
-            assertTrue(1.toInt() in range)
-            assertTrue(1.toLong() in range)
-        }
         assertTrue(1.toDouble() in range)
 
         assertFalse(Double.MAX_VALUE in range)
