@@ -25,4 +25,4 @@ package nestedObjects
   val b = B
   val c = A.B
   val d = A.B.A
-  val e = B.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: A">A</error>.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: B">B</error>
+  val e = B.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: A">A</error>.B

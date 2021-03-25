@@ -19,5 +19,5 @@ class C(p: Any, val v: Any) {
 
     var test5
         get() { return <!UNRESOLVED_REFERENCE!>p<!> }
-        set(nv) { <!UNRESOLVED_REFERENCE!>p<!>.<!INAPPLICABLE_CANDIDATE!>let<!> {} }
+        set(nv) { <!UNRESOLVED_REFERENCE!>p<!>.let {} }
 }

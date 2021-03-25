@@ -10,15 +10,15 @@ fun test1() {
 
     A::<!UNRESOLVED_REFERENCE!>bar<!>
 
-    <!UNRESOLVED_REFERENCE!>B<!>::<!UNRESOLVED_REFERENCE!>bar<!>
+    <!UNRESOLVED_REFERENCE!>B<!>::bar
 }
 
 fun test2() {
     fun foo(x: Any) {}
     fun foo() {}
 
-    <!UNRESOLVED_REFERENCE!>Unresolved<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>Unresolved<!>::<!UNRESOLVED_REFERENCE!>foo<!>)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>Unresolved<!>::<!UNRESOLVED_REFERENCE!>unresolved<!>)
+    <!UNRESOLVED_REFERENCE!>Unresolved<!>::foo
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>Unresolved<!>::foo)
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>Unresolved<!>::unresolved)
     ::<!UNRESOLVED_REFERENCE!>unresolved<!>
 }

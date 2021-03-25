@@ -89,17 +89,17 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
 
   a?.foo()
   if (!(a is B)) {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
   else {
     a.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
 
   a?.foo()
@@ -109,7 +109,7 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
 
   if (!(a is B) || !(a is C)) {

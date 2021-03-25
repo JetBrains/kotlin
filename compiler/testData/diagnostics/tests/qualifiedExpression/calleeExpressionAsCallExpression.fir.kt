@@ -1,2 +1,2 @@
 // !WITH_NEW_INFERENCE
-val unwrapped = <!UNRESOLVED_REFERENCE!>some<!><!UNRESOLVED_REFERENCE!><<!><!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>sdf<!>()<!>()<!><out Any>::<!UNRESOLVED_REFERENCE!>unwrap<!>
+val unwrapped = <!UNRESOLVED_REFERENCE!>some<!><<!UNRESOLVED_REFERENCE!>sdf<!>()()<out Any>::unwrap

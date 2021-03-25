@@ -32,7 +32,7 @@ fun case4() {
             run {
                 <!UNRESOLVED_REFERENCE!>s<!> = "hello"
             }
-            <!UNRESOLVED_REFERENCE!>s<!>.<!UNRESOLVED_REFERENCE!>length<!>
+            <!UNRESOLVED_REFERENCE!>s<!>.length
         }
     }
 }

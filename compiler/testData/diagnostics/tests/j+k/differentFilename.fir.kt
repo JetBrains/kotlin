@@ -22,5 +22,5 @@ fun main(x: A) {
     x.b().<!UNRESOLVED_REFERENCE!>bar<!>()
     x.f().<!UNRESOLVED_REFERENCE!>foobaz<!>()
 
-    <!UNRESOLVED_REFERENCE!>D<!>().<!UNRESOLVED_REFERENCE!>baz<!>()
+    <!UNRESOLVED_REFERENCE!>D<!>().baz()
 }

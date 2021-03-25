@@ -38,7 +38,7 @@ fun f() {
     C.E2.B()
 
     C.E2.<!UNRESOLVED_REFERENCE!>O<!>
-    C.E3.<!UNRESOLVED_REFERENCE!>O<!>.<!UNRESOLVED_REFERENCE!>InO<!>
+    C.E3.<!UNRESOLVED_REFERENCE!>O<!>.InO
 
     C.O
     C.O.InO

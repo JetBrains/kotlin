@@ -22,6 +22,6 @@ fun test() {
     bar(1, z = "", y = 2)
     <!INAPPLICABLE_CANDIDATE!>bar<!>(z = "", 1)
     <!INAPPLICABLE_CANDIDATE!>bar<!>(1, zz = "",
-           <!UNRESOLVED_REFERENCE!>zz<!>.<!UNRESOLVED_REFERENCE!>foo<!>
+           <!UNRESOLVED_REFERENCE!>zz<!>.foo
            )
 }

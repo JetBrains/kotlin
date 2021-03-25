@@ -6,6 +6,6 @@ class Outer {
     }
 
     constructor(x: Int)
-    constructor(x: Int, y: Int, z: Int = x + Inner().prop <!AMBIGUITY!>+<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNRESOLVED_REFERENCE!>Inner<!>().<!UNRESOLVED_REFERENCE!>prop<!>) :
-        this(x + Inner().prop <!AMBIGUITY!>+<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNRESOLVED_REFERENCE!>Inner<!>().<!UNRESOLVED_REFERENCE!>prop<!>)
+    constructor(x: Int, y: Int, z: Int = x + Inner().prop <!AMBIGUITY!>+<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNRESOLVED_REFERENCE!>Inner<!>().prop) :
+        this(x + Inner().prop <!AMBIGUITY!>+<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNRESOLVED_REFERENCE!>Inner<!>().prop)
 }

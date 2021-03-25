@@ -8,35 +8,35 @@ fun foo(block: (A) -> Unit) { }
 
 fun bar() {
     foo { (_, b) ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     foo { (a, _) ->
         a checkType { _<Int>() }
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (_, _) ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (_: Int, b: String) ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     foo { (a: Int, _: String) ->
         a checkType { _<Int>() }
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (_: Int, _: String) ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (_, _): A ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (`_`, _) ->
@@ -52,12 +52,12 @@ fun bar() {
     }
 
     foo { (_: String, b) ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     <!INAPPLICABLE_CANDIDATE!>foo<!> { (_, b): B ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<Short>() }
     }
 }

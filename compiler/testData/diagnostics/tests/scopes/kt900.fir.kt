@@ -5,11 +5,11 @@ package a
 
 fun foo() {
     val b : <!UNRESOLVED_REFERENCE!>B<!> = <!UNRESOLVED_REFERENCE!>B<!>() //only B() is unresolved, but in ": B" and "B.foo()" B should also be unresolved
-    <!UNRESOLVED_REFERENCE!>B<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    <!UNRESOLVED_REFERENCE!>B<!>.foo()
 
-    <!UNRESOLVED_REFERENCE!>P<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    <!UNRESOLVED_REFERENCE!>P<!>.foo()
 
-    <!UNRESOLVED_REFERENCE!>M<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>M<!>.bar()
 }
 
 class A() {

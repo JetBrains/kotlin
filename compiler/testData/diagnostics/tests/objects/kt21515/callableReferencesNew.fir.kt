@@ -115,28 +115,28 @@ class C : O.B() {
     val n = FromCompanionC::foo
 
     // INVISIBLE: direct superclasses themselves.
-    val a = <!UNRESOLVED_REFERENCE!>A<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    val b = <!UNRESOLVED_REFERENCE!>A<!>::<!UNRESOLVED_REFERENCE!>foo<!>
+    val a = <!UNRESOLVED_REFERENCE!>A<!>::foo
+    val b = <!UNRESOLVED_REFERENCE!>A<!>::foo
 
     // DEPRECATED: Classifiers from companions of direct superclasses
-    val e = <!UNRESOLVED_REFERENCE!>FromCompanionA<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    val f = <!UNRESOLVED_REFERENCE!>FromCompanionB<!>::<!UNRESOLVED_REFERENCE!>foo<!>
+    val e = <!UNRESOLVED_REFERENCE!>FromCompanionA<!>::foo
+    val f = <!UNRESOLVED_REFERENCE!>FromCompanionB<!>::foo
 
     // INVISIBLE: "cousin" supertypes themselves
-    val g = <!UNRESOLVED_REFERENCE!>Alpha<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    val h = <!UNRESOLVED_REFERENCE!>Beta<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    val i = <!UNRESOLVED_REFERENCE!>Gamma<!>::<!UNRESOLVED_REFERENCE!>foo<!>
+    val g = <!UNRESOLVED_REFERENCE!>Alpha<!>::foo
+    val h = <!UNRESOLVED_REFERENCE!>Beta<!>::foo
+    val i = <!UNRESOLVED_REFERENCE!>Gamma<!>::foo
 
     // DEPRECATED: classifiers from "cousin" superclasses
-    val k = <!UNRESOLVED_REFERENCE!>FromAlpha<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    val l = <!UNRESOLVED_REFERENCE!>FromBeta<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    val m = <!UNRESOLVED_REFERENCE!>FromGamma<!>::<!UNRESOLVED_REFERENCE!>foo<!>
+    val k = <!UNRESOLVED_REFERENCE!>FromAlpha<!>::foo
+    val l = <!UNRESOLVED_REFERENCE!>FromBeta<!>::foo
+    val m = <!UNRESOLVED_REFERENCE!>FromGamma<!>::foo
 
     // INVISIBLE: We don't see classifiers from companions of "cousin" superclasses
-    val o = <!UNRESOLVED_REFERENCE!>FromCompanionAlpha<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    val p = <!UNRESOLVED_REFERENCE!>FromCompanionBeta<!>::<!UNRESOLVED_REFERENCE!>foo<!>
-    val q = <!UNRESOLVED_REFERENCE!>FromCompanionGamma<!>::<!UNRESOLVED_REFERENCE!>foo<!>
+    val o = <!UNRESOLVED_REFERENCE!>FromCompanionAlpha<!>::foo
+    val p = <!UNRESOLVED_REFERENCE!>FromCompanionBeta<!>::foo
+    val q = <!UNRESOLVED_REFERENCE!>FromCompanionGamma<!>::foo
 
     // DEPRECATED: Classifiers from supertypes of our own companion
-    val r = <!UNRESOLVED_REFERENCE!>FromDelta<!>::<!UNRESOLVED_REFERENCE!>foo<!>
+    val r = <!UNRESOLVED_REFERENCE!>FromDelta<!>::foo
 }

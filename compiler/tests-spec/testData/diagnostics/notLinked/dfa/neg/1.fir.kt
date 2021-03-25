@@ -191,7 +191,7 @@ fun case_13(x: <!UNRESOLVED_REFERENCE!>otherpackage.Case13?<!>) =
 class Case14 {
     val x: <!UNRESOLVED_REFERENCE!>otherpackage.Case14?<!>
     init {
-        x = <!UNRESOLVED_REFERENCE!>otherpackage<!>.<!UNRESOLVED_REFERENCE!>Case14<!>()
+        x = <!UNRESOLVED_REFERENCE!>otherpackage<!>.Case14()
     }
 }
 

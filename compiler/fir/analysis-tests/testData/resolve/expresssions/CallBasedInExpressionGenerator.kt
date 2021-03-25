@@ -15,13 +15,13 @@ class CallBasedInExpressionGenerator(
     operatorReference: KtSimpleNameExpression
 ) : InExpressionGenerator {
     private val resolvedCall = operatorReference.<!UNRESOLVED_REFERENCE!>getResolvedCallWithAssert<!>(codegen.<!UNRESOLVED_REFERENCE!>bindingContext<!>)
-    private val isInverted = operatorReference.<!UNRESOLVED_REFERENCE!>getReferencedNameElementType<!>() == <!UNRESOLVED_REFERENCE!>KtTokens<!>.<!UNRESOLVED_REFERENCE!>NOT_IN<!>
+    private val isInverted = operatorReference.<!UNRESOLVED_REFERENCE!>getReferencedNameElementType<!>() == <!UNRESOLVED_REFERENCE!>KtTokens<!>.NOT_IN
 
     override fun generate(argument: StackValue): BranchedValue =
         gen(argument).let { if (isInverted) <!UNRESOLVED_REFERENCE!>Invert<!>(it) else it }
 
     private fun gen(argument: StackValue): BranchedValue =
-        object : <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>BranchedValue<!>(argument, null, argument.<!UNRESOLVED_REFERENCE!>type<!>, <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFEQ<!>)<!> {
+        object : <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>BranchedValue<!>(argument, null, argument.<!UNRESOLVED_REFERENCE!>type<!>, <!UNRESOLVED_REFERENCE!>Opcodes<!>.IFEQ)<!> {
             override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
                 invokeFunction(v)
                 <!UNRESOLVED_REFERENCE!>coerceTo<!>(type, kotlinType, v)
@@ -29,7 +29,7 @@ class CallBasedInExpressionGenerator(
 
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 invokeFunction(v)
-                v.<!UNRESOLVED_REFERENCE!>visitJumpInsn<!>(if (jumpIfFalse) <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFEQ<!> else <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFNE<!>, jumpLabel)
+                v.<!UNRESOLVED_REFERENCE!>visitJumpInsn<!>(if (jumpIfFalse) <!UNRESOLVED_REFERENCE!>Opcodes<!>.IFEQ else <!UNRESOLVED_REFERENCE!>Opcodes<!>.IFNE, jumpLabel)
             }
 
             private fun invokeFunction(v: InstructionAdapter) {
