@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
+import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecks
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.KotlinModuleDependency
@@ -46,6 +48,10 @@ open class KotlinGradleFragmentInternal @Inject constructor(
             KotlinGradleFragment::transitiveImplementationConfigurationName
         ).forEach { getConfiguration ->
             project.addExtendsFromRelation(getConfiguration(this), getConfiguration(other.get())) // todo eager instantiation; fix?
+        }
+
+        project.whenEvaluated {
+            kotlinGradleFragmentConsistencyChecker.runAllChecks(this@KotlinGradleFragmentInternal, other.get())
         }
     }
 
@@ -99,3 +105,13 @@ internal fun KotlinModuleFragment.disambiguateName(simpleName: String) =
 
 val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
     get() = (this as KotlinModuleFragment).refinesClosure.map { it as KotlinGradleFragment }.toSet()
+
+internal val kotlinGradleFragmentConsistencyChecker =
+    FragmentConsistencyChecker<KotlinGradleFragment>(
+        unitsName = "fragments",
+        name = { name },
+        checks = FragmentConsistencyChecks<KotlinGradleFragment>(
+            unitName = "fragment",
+            languageSettings = { languageSettings }
+        ).allChecks
+    )
