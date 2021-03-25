@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.processor.GetterProcessor
 import org.jetbrains.kotlin.lombok.processor.Parts
 import org.jetbrains.kotlin.lombok.processor.Processor
+import org.jetbrains.kotlin.lombok.processor.SetterProcessor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.SyntheticJavaPartsProvider
 import java.util.*
@@ -23,7 +24,8 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
 
     private fun initProcessors(): List<Processor> =
         listOf(
-            GetterProcessor(config)
+            GetterProcessor(config),
+            SetterProcessor(config)
         )
 
     private val partsCache: MutableMap<ClassDescriptor, Parts> = WeakHashMap()
@@ -36,9 +38,8 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
         name: Name,
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
-        getSyntheticParts(thisDescriptor).methods.find { it.name == name }?.let {
-            result.add(it)
-        }
+        val methods = getSyntheticParts(thisDescriptor).methods.filter { it.name == name }
+        result.addAll(methods)
     }
 
     private fun extractClass(descriptor: ClassDescriptor): JavaClassImpl? =

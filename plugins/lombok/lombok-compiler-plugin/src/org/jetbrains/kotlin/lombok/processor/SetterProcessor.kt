@@ -10,37 +10,29 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.Accessors
-import org.jetbrains.kotlin.lombok.config.Getter
 import org.jetbrains.kotlin.lombok.config.LombokConfig
-import org.jetbrains.kotlin.lombok.utils.collectWithNotNull
-import org.jetbrains.kotlin.lombok.utils.createFunction
-import org.jetbrains.kotlin.lombok.utils.getVariables
-import org.jetbrains.kotlin.lombok.utils.toPreparedBase
+import org.jetbrains.kotlin.lombok.config.Setter
+import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
-class GetterProcessor(private val config: LombokConfig) : Processor {
-
-    private val noIsPrefix by lazy { config.getBooleanOrDefault("lombok.getter.noIsPrefix") }
+class SetterProcessor(private val config: LombokConfig) : Processor {
 
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
         val clAccessors = Accessors.getOrNull(classDescriptor)
-        val clGetter = Getter.getOrNull(classDescriptor)
+        val clSetter = Setter.getOrNull(classDescriptor)
 
         val functions = classDescriptor
             .getVariables()
-            .collectWithNotNull { Getter.getOrNull(it) ?: clGetter }
-            .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation, clAccessors) }
-
+            .collectWithNotNull { field -> Setter.getOrNull(field) ?: clSetter.takeIf { field.isVar } }
+            .mapNotNull { (field, setter) -> createSetter(classDescriptor, field, setter, clAccessors) }
         return Parts(functions)
     }
 
-    private fun createGetter(
+    private fun createSetter(
         classDescriptor: ClassDescriptor,
         field: PropertyDescriptor,
-        getter: Getter,
+        getter: Setter,
         classLevelAccessors: Accessors?
     ): SimpleFunctionDescriptor? {
         val accessors = Accessors.getOrNull(field) ?: classLevelAccessors ?: Accessors.default
@@ -49,17 +41,16 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
             if (accessors.fluent) {
                 field.name.identifier
             } else {
-                val prefix = if (field.type.isPrimitiveBoolean() && !noIsPrefix) "is" else "get"
-                prefix + toPreparedBase(field.name.identifier)
+                "set" + toPreparedBase(field.name.identifier)
             }
+
+        val returnType = if (accessors.chain) classDescriptor.defaultType else classDescriptor.builtIns.unitType
+
         return classDescriptor.createFunction(
             Name.identifier(functionName),
-            emptyList(),
-            field.returnType,
+            listOf(ValueParameter(field.name, field.type)),
+            returnType,
             visibility = getter.visibility
         )
     }
-
-    private fun KotlinType.isPrimitiveBoolean(): Boolean = this is SimpleTypeMarker && isBoolean()  //todo
-
 }
