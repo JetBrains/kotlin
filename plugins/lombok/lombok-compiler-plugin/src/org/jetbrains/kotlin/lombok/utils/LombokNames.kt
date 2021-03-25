@@ -12,5 +12,6 @@ object LombokNames {
     val ACCESSORS = FqName("lombok.experimental.Accessors")
     val GETTER = FqName("lombok.Getter")
     val SETTER = FqName("lombok.Setter")
+    val WITH = FqName("lombok.With")
 
 }

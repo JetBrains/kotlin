@@ -70,4 +70,9 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
     public void testSimple() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/simple.kt");
     }
+
+    @TestMetadata("with.kt")
+    public void testWith() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/with.kt");
+    }
 }
