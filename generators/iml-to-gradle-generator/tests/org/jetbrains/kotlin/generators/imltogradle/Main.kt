@@ -277,6 +277,12 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |    }
         |}
         |
+        |java {
+        |    toolchain {
+        |        languageVersion.set(JavaLanguageVersion.of(11))
+        |    }
+        |}
+        |
         |$compiler
         |
         |testsJar()
