@@ -291,6 +291,7 @@ public actual fun CharSequence.repeat(n: Int): String {
  * Converts the characters in the specified array to a string.
  */
 @Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray): String = chars.concatToString()
 
 /**
@@ -300,6 +301,7 @@ public actual fun String(chars: CharArray): String = chars.concatToString()
  * or `offset + length` is out of [chars] array bounds.
  */
 @Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || offset + length > chars.size)
         throw ArrayIndexOutOfBoundsException()

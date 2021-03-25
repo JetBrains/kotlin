@@ -15,5 +15,5 @@ import kotlin.test.*
         print(" ")
     }
     println()
-    println(String(array, 0, array.size))
+    println(array.concatToString(0, array.size))
 }
