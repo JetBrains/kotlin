@@ -40,14 +40,11 @@ dependencies {
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("intellij-core") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("util") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("resources_en") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-api") })
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("extensions") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("bootstrap") })
     jpsLikeJarDependency(intellijPluginDep("java", forIde = true), JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijPluginDep("java", forIde = true), JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-api") }) // Exported transitive dependency
 }
 
 sourceSets {

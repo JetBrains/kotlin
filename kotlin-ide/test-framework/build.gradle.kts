@@ -81,7 +81,6 @@ dependencies {
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("extensions") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("util") }) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-api") })
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("external-system-rt") }) // Exported transitive dependency
 }
 

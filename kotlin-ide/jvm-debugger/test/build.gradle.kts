@@ -52,8 +52,6 @@ dependencies {
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("external-system-rt") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-impl") })
     jpsLikeJarDependency(intellijPluginDep("java", forIde = true), JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijPluginDep("java", forIde = true), JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-api") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-ide-util-io") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-util-ex") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("intellij-core") }) // Exported transitive dependency
@@ -63,7 +61,6 @@ dependencies {
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("forms_rt") }) // Exported transitive dependency
     jpsLikeJarDependency("com.jgoodies:forms:1.1-preview", JpsDepScope.TEST) // Exported transitive dependency
     jpsLikeJarDependency(intellijPluginDep("stream-debugger", forIde = true), JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijPluginDep("stream-debugger", forIde = true), JpsDepScope.TEST) // Exported transitive dependency
     jpsLikeJarDependency("org.apache.httpcomponents:httpmime:4.5.12", JpsDepScope.TEST) // Exported transitive dependency
     jpsLikeJarDependency("org.apache.maven:maven-resolver-provider:3.6.1", JpsDepScope.TEST) // Exported transitive dependency
     jpsLikeJarDependency("org.slf4j:slf4j-log4j12:1.7.25", JpsDepScope.TEST) // Exported transitive dependency
