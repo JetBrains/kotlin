@@ -17757,6 +17757,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/conflictingOverloadsForThrowableInheritors.kt");
         }
 
+        @TestMetadata("conflictingOverloadsForThrowableInheritors2.kt")
+        public void testConflictingOverloadsForThrowableInheritors2() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/conflictingOverloadsForThrowableInheritors2.kt");
+        }
+
         @TestMetadata("genericSamProjectedOut.kt")
         public void testGenericSamProjectedOut() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOut.kt");

@@ -111,6 +111,7 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.testImportedObjectMember.importedObjectMemberWithVarargs' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun importedObjectMemberWithVarargs (p0: kotlin.Int): kotlin.String declared in <root>.testImportedObjectMember' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+              $receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
   FUN name:testDefault0 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDefault0 (): kotlin.String declared in <root>'

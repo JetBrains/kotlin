@@ -31,6 +31,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                   xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p0: kotlin.Int declared in <root>.Host.testImplicitThis.withVararg' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testImplicitThis' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+              $receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.testImplicitThis' type=<root>.Host origin=null
     FUN name:testBoundReceiverLocalVal visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY

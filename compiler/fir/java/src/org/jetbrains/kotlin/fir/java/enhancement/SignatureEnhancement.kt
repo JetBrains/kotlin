@@ -137,6 +137,7 @@ class FirSignatureEnhancement(
                     symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId)
                     delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
+                    status = firElement.status
                 }.symbol
             }
             else -> {

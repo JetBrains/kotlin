@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -57,20 +58,31 @@ class JavaClassUseSiteMemberScope(
     private fun generateAccessorSymbol(
         getterSymbol: FirNamedFunctionSymbol,
         setterSymbol: FirNamedFunctionSymbol?,
-        syntheticPropertyName: Name,
+        property: FirProperty,
     ): FirAccessorSymbol {
-        return accessorByNameMap.getOrPut(syntheticPropertyName) {
+        return accessorByNameMap.getOrPut(property.name) {
             buildSyntheticProperty {
                 session = this@JavaClassUseSiteMemberScope.session
-                name = syntheticPropertyName
+                name = property.name
                 symbol = FirAccessorSymbol(
                     accessorId = getterSymbol.callableId,
-                    callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, syntheticPropertyName)
+                    callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name)
                 )
                 delegateGetter = getterSymbol.fir
                 delegateSetter = setterSymbol?.fir
+                status = getterSymbol.fir.status.copy(newModality = chooseModalityForAccessor(property, delegateGetter))
             }.symbol
         }
+    }
+
+    private fun chooseModalityForAccessor(property: FirProperty, getter: FirSimpleFunction): Modality? {
+        val a = property.modality
+        val b = getter.modality
+
+        if (a == null) return b
+        if (b == null) return a
+
+        return minOf(a, b)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -95,7 +107,9 @@ class JavaClassUseSiteMemberScope(
                 continue
             }
             if (propertyFromSupertype !is FirPropertySymbol) continue
-            val overrideInClass = propertyFromSupertype.createOverridePropertyIfExists(declaredMemberScope)
+            val overrideInClass =
+                propertyFromSupertype.createOverridePropertyIfExists(declaredMemberScope)
+                    ?: propertyFromSupertype.createOverridePropertyIfExists(superTypesScope)
             when {
                 overrideInClass != null -> {
                     directOverriddenProperties.getOrPut(overrideInClass) { mutableListOf() }.add(propertyFromSupertype)
@@ -117,7 +131,7 @@ class JavaClassUseSiteMemberScope(
                 null
         if (setterSymbol != null && setterSymbol.fir.modality != getterSymbol.fir.modality) return null
 
-        return generateAccessorSymbol(getterSymbol, setterSymbol, fir.name)
+        return generateAccessorSymbol(getterSymbol, setterSymbol, fir)
     }
 
     private fun FirPropertySymbol.findGetterOverride(
@@ -227,10 +241,10 @@ class JavaClassUseSiteMemberScope(
 
         val overrideCandidates = result.toMutableSet()
 
-        superTypesScope.processFunctionsByName(name) {
-            val overriddenBy = it.getOverridden(overrideCandidates)
-            if (overriddenBy == null) {
-                result += it
+        superTypesScope.processFunctionsByName(name) { functionSymbol ->
+            val overriddenBy = functionSymbol.getOverridden(overrideCandidates)
+            if (overriddenBy == null && overriddenProperties.none { it.isOverriddenInClassBy(functionSymbol) }) {
+                result += functionSymbol
             }
         }
 
@@ -240,7 +254,13 @@ class JavaClassUseSiteMemberScope(
     private fun FirPropertySymbol.isOverriddenInClassBy(functionSymbol: FirNamedFunctionSymbol): Boolean {
         val fir = fir as? FirSyntheticProperty ?: return false
 
-        return fir.getter.delegate.symbol == functionSymbol || fir.setter?.delegate?.symbol == functionSymbol
+        if (fir.getter.delegate.symbol == functionSymbol || fir.setter?.delegate?.symbol == functionSymbol) return true
+
+        val currentJvmDescriptor = functionSymbol.fir.computeJvmDescriptor(includeReturnType = false)
+        val getterJvmDescriptor = fir.getter.delegate.computeJvmDescriptor(includeReturnType = false)
+        val setterJvmDescriptor = fir.setter?.delegate?.computeJvmDescriptor(includeReturnType = false)
+
+        return currentJvmDescriptor == getterJvmDescriptor || currentJvmDescriptor == setterJvmDescriptor
     }
 
     private fun addOverriddenSpecialMethods(

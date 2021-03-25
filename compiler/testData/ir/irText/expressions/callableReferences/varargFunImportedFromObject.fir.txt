@@ -46,6 +46,7 @@ FILE fqName:<root> fileName:/varargFunImportedFromObject.kt
                     x: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                       GET_VAR 'p0: kotlin.String declared in <root>.test1.foo' type=kotlin.String origin=null
             FUNCTION_REFERENCE 'local final fun foo (p0: kotlin.String): kotlin.String declared in <root>.test1' type=kotlin.Function1<kotlin.String, kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+              $receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.String declared in <root>'
