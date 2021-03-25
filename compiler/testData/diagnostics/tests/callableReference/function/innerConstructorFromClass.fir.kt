@@ -26,7 +26,7 @@ class A {
 
 class B {
     fun main() {
-        <!UNRESOLVED_REFERENCE!>::Inner<!>
+        ::<!UNRESOLVED_REFERENCE!>Inner<!>
         val y = A::Inner
 
         checkSubtype<KFunction1<A, A.Inner>>(y)

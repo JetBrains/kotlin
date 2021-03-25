@@ -22,7 +22,7 @@ fun B.foo(): Double = 0.0
 fun call(a: Any) {}
 
 fun testA(a: A) {
-    call(<!UNRESOLVED_REFERENCE!>A::foo<!>)
+    call(A::<!UNRESOLVED_REFERENCE!>foo<!>)
     call(A.Companion::foo)
 }
 

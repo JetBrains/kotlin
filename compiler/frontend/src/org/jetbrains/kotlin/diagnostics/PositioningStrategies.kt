@@ -753,6 +753,7 @@ object PositioningStrategies {
                         is KtReferenceExpression -> return mark(selectorExpression)
                     }
                 }
+                is KtCallableReferenceExpression -> return mark(element.callableReference)
                 is KtCallExpression -> return mark(element.calleeExpression ?: element)
                 is KtConstructorDelegationCall -> return mark(element.calleeExpression ?: element)
                 is KtSuperTypeCallEntry -> return mark(element.calleeExpression)

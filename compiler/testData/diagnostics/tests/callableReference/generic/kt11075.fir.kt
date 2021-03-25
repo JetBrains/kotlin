@@ -6,5 +6,5 @@ object TestCallableReferences {
 
     fun test0(): (String) -> String = TestCallableReferences::foo
 
-    fun <T> test1(): (List<T>) -> List<T> = <!UNRESOLVED_REFERENCE!>TestCallableReferences::foo<!>
+    fun <T> test1(): (List<T>) -> List<T> = TestCallableReferences::<!UNRESOLVED_REFERENCE!>foo<!>
 }

@@ -24,7 +24,7 @@ fun <T> Foo2<T>.setX(y: T): T {
 fun Float.bar() {}
 
 fun test1() {
-    val fooSetRef = <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>Foo<*>::setX<!>
+    val fooSetRef = <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>Foo<*>::<!UNRESOLVED_REFERENCE!>setX<!><!>
     val foo = Foo<Float>(1f)
 
     fooSetRef.<!UNRESOLVED_REFERENCE!>invoke<!>(foo, 1)
@@ -42,7 +42,7 @@ fun test2() {
 }
 
 fun test3() {
-    val fooSetRef = <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>Foo2<*>::setX<!>
+    val fooSetRef = <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>Foo2<*>::<!UNRESOLVED_REFERENCE!>setX<!><!>
     val foo = Foo2<Int>(1)
 
     fooSetRef.<!UNRESOLVED_REFERENCE!>invoke<!>(foo, "")

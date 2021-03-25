@@ -25,7 +25,7 @@ fun test() {
 
             val t3 = bar(::baz)
 
-            bar(<!UNRESOLVED_REFERENCE!>::foo<!>)
+            bar(::<!UNRESOLVED_REFERENCE!>foo<!>)
         }
     }
 }

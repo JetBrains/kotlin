@@ -23,6 +23,6 @@ fun main(c: CollectionWithSize) {
     CompressionType.ZIP.<!AMBIGUITY!>name<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Double>() }
     c.<!AMBIGUITY!>size<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
 
-    <!UNRESOLVED_REFERENCE!>CompressionType.ZIP::name<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><kotlin.reflect.KProperty0<Double>>() }
-    <!UNRESOLVED_REFERENCE!>c::size<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><kotlin.reflect.KProperty0<String>>() }
+    CompressionType.ZIP::<!UNRESOLVED_REFERENCE!>name<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><kotlin.reflect.KProperty0<Double>>() }
+    c::<!UNRESOLVED_REFERENCE!>size<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><kotlin.reflect.KProperty0<String>>() }
 }
