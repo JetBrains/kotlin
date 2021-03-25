@@ -8,6 +8,6 @@ inline fun foo(mkString: () -> String): String =
         mkString()
 
 fun bar (xs: CharArray = charArrayOf('O','K')) =
-        String(xs)
+        xs.concatToString()
 
 fun box(): String = foo(::bar)

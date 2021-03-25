@@ -74,6 +74,7 @@ expect fun Char.isLowSurrogate(): Boolean
  */
 @SinceKotlin("1.2")
 @Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public expect fun String(chars: CharArray): String
 
 /**
@@ -84,6 +85,7 @@ public expect fun String(chars: CharArray): String
  */
 @SinceKotlin("1.2")
 @Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public expect fun String(chars: CharArray, offset: Int, length: Int): String
 
 /**
