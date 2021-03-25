@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: +UNUSED_VARIABLE
 //KT-2125 Inconsistent error message on UNSAFE_CALL
 
 package e
