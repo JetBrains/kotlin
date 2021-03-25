@@ -63,7 +63,7 @@ internal class CommonizationVisitor(
 
     @Suppress("DuplicatedCode")
     override fun visitClassNode(node: CirClassNode, data: Unit) {
-        val commonClass = node.commonDeclaration() // commonized class
+        val commonClass = node.commonDeclaration() ?: return // No need to commonize class members
 
         node.constructors.values.forEach { constructor ->
             constructor.accept(this, Unit)
@@ -81,22 +81,21 @@ internal class CommonizationVisitor(
             clazz.accept(this, Unit)
         }
 
-        if (commonClass != null) {
-            // companion object should have the same name for each target class, then it could be set to common class
-            val companionObjectName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
-            if (companionObjectName != null) {
-                val companionObjectNode = node.classes[companionObjectName]
-                    ?: error("Can't find node for companion object $companionObjectName in node for class ${node.classifierName}")
 
-                if (companionObjectNode.commonDeclaration() != null) {
-                    // companion object has been successfully commonized
-                    commonClass.companion = companionObjectName
-                }
+        // companion object should have the same name for each target class, then it could be set to common class
+        val companionObjectName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
+        if (companionObjectName != null) {
+            val companionObjectNode = node.classes[companionObjectName]
+                ?: error("Can't find node for companion object $companionObjectName in node for class ${node.classifierName}")
+
+            if (companionObjectNode.commonDeclaration() != null) {
+                // companion object has been successfully commonized
+                commonClass.companion = companionObjectName
             }
-
-            // find out common (and commonized) supertypes
-            commonClass.commonizeSupertypes(node.collectCommonSupertypes())
         }
+
+        // find out common (and commonized) supertypes
+        commonClass.commonizeSupertypes(node.collectCommonSupertypes())
     }
 
     override fun visitClassConstructorNode(node: CirClassConstructorNode, data: Unit) {

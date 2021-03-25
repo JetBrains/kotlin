@@ -469,7 +469,6 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
                             classifiers = classifiers,
-                            parentCommonDeclaration = null,
                             classId = type.classifierId
                         )
                     }

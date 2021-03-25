@@ -21,16 +21,14 @@ internal object PropertyMerger {
         if (property.isFakeOverride())
             return
 
-        val maybeClassOwnerNode: CirClassNode? = ownerNode as? CirClassNode
-
         val approximationKey = PropertyApproximationKey(property, context.typeResolver)
         val propertyNode: CirPropertyNode = ownerNode.properties.getOrPut(approximationKey) {
-            buildPropertyNode(storageManager, targets, classifiers, maybeClassOwnerNode?.commonDeclaration)
+            buildPropertyNode(storageManager, targets, classifiers)
         }
         propertyNode.targetDeclarations[context.targetIndex] = CirDeserializers.property(
             name = approximationKey.name,
             source = property,
-            containingClass = maybeClassOwnerNode?.targetDeclarations?.get(context.targetIndex),
+            containingClass = ownerNode.run { this as? CirClassNode }?.targetDeclarations?.get(context.targetIndex),
             typeResolver = context.typeResolver
         )
     }

@@ -19,7 +19,7 @@ internal object ClassConstructorMerger {
     ) = with(context) {
         val approximationKey = ConstructorApproximationKey(constructor, context.typeResolver)
         val constructorNode: CirClassConstructorNode = classNode.constructors.getOrPut(approximationKey) {
-            buildClassConstructorNode(storageManager, targets, classifiers, classNode.commonDeclaration)
+            buildClassConstructorNode(storageManager, targets, classifiers)
         }
         constructorNode.targetDeclarations[context.targetIndex] = CirDeserializers.constructor(
             source = constructor,

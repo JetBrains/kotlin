@@ -26,9 +26,8 @@ internal class ClassMerger(
         val classId = classEntry.classId
         val className = classId.relativeNameSegments.last()
 
-        val maybeClassOwnerNode: CirClassNode? = ownerNode as? CirClassNode
         val classNode: CirClassNode = ownerNode.classes.getOrPut(className) {
-            buildClassNode(storageManager, targets, classifiers, maybeClassOwnerNode?.commonDeclaration, classId)
+            buildClassNode(storageManager, targets, classifiers, classId)
         }
 
         val clazz: KmClass?
