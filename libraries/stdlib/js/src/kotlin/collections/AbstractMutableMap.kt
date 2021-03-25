@@ -50,6 +50,8 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
     internal abstract class AbstractEntrySet<E : Map.Entry<K, V>, K, V> : AbstractMutableSet<E>() {
         final override fun contains(element: E): Boolean = containsEntry(element)
         abstract fun containsEntry(element: Map.Entry<K, V>): Boolean
+        final override fun remove(element: E): Boolean = removeEntry(element)
+        abstract fun removeEntry(element: Map.Entry<K, V>): Boolean
     }
 
     actual override fun clear() {

@@ -90,7 +90,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
 
         override operator fun iterator(): MutableIterator<MutableEntry<K, V>> = EntryIterator()
 
-        override fun remove(element: MutableEntry<K, V>): Boolean {
+        override fun removeEntry(element: Map.Entry<K, V>): Boolean {
             checkIsMutable()
             if (contains(element)) {
                 this@LinkedHashMap.remove(element.key)
