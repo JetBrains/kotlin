@@ -113,7 +113,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             startOffset = invokeFun.startOffset
             endOffset = invokeFun.endOffset
             // Since box/unbox is done on declaration side in case of suspend function use the specified type
-            returnType = if (invokeFun.isSuspend) invokeFun.returnType else superInvokeFun.returnType
+            returnType = /*if (invokeFun.isSuspend) */invokeFun.returnType/* else superInvokeFun.returnType*/
             visibility = DescriptorVisibilities.LOCAL
             name = lambdaName
             isSuspend = invokeFun.isSuspend
@@ -121,7 +121,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         lambdaDeclaration.parent = factoryFunction
 
-        lambdaDeclaration.valueParameters = superInvokeFun.valueParameters.map { it.copyTo(lambdaDeclaration) }
+        lambdaDeclaration.valueParameters = invokeFun.valueParameters.map { it.copyTo(lambdaDeclaration) }
 
         val statements = ArrayList<IrStatement>(4)
 

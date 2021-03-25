@@ -140,15 +140,15 @@ fun compile(
             relativeRequirePath = relativeRequirePath
         )
 
-        if (!useStdlibCache) {
-            PrintWriter("/home/ab/vcs/kotlin/simple-dump.txt").use { out ->
-                allModules.first().files.forEach { file ->
-                    out.println(file.path)
-                    file.declarations.map { it.dumpKotlinLike() }.sorted().forEach { out.print(it) }
-                    out.println()
-                }
-            }
-        }
+//        if (!useStdlibCache) {
+//            PrintWriter("/home/ab/vcs/kotlin/simple-dump.txt").use { out ->
+//                allModules.first().files.forEach { file ->
+//                    out.println(file.path)
+//                    file.declarations.map { it.dumpKotlinLike() }.sorted().forEach { out.print(it) }
+//                    out.println()
+//                }
+//            }
+//        }
 
         return transformer.generateModule(allModules)
     }

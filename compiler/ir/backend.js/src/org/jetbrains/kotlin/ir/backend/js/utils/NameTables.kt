@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -182,6 +183,10 @@ class NameTables(
                     override fun visitDeclaration(declaration: IrDeclarationBase) {
                         processNonTopLevelLocalDecl(declaration)
                         super.visitDeclaration(declaration)
+                    }
+
+                    override fun visitFunction(declaration: IrFunction) {
+                        if (!declaration.isFakeOverride) super.visitFunction(declaration)
                     }
                 })
                 if (declaration is IrScript) {

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFil
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsMappingState
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.DeclarationId
 import org.jetbrains.kotlin.library.impl.DeclarationIrTableMemoryReader
@@ -149,6 +152,24 @@ class IcDeserializer(
                     publicSignatureToIcFileDeserializer[it] = icDeserializer
                 }
             }
+
+            fd.file.acceptChildrenVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitDeclaration(declaration: IrDeclarationBase) {
+                    declaration.symbol.signature?.let { idSig ->
+                        if (idSig.isPublic) {
+                            existingPublicSymbols[idSig] = declaration.symbol
+                            publicSignatureToIcFileDeserializer[idSig] = icDeserializer
+                        } else {
+                            icDeserializer.privateSymbols[idSig] = declaration.symbol
+                        }
+                    }
+                    super.visitDeclaration(declaration)
+                }
+            })
         }
 
         println("==== Queue ==== ")
@@ -255,12 +276,22 @@ class IcDeserializer(
                     if (containerSig in icDeserializer.visited) {
                         val irClass = icDeserializer.signatureToDeclaration[containerSig]!! as IrClass
 
+                        val localSignatureMap = mutableMapOf<IdSignature?, IrSymbol>()
+                        irClass.declarations.forEach {
+                            localSignatureMap[it.symbol.signature] = it.symbol
+                            if (it is IrProperty) {
+                                it.backingField?.let { localSignatureMap[it.symbol.signature] = it.symbol }
+                                it.getter?.let { localSignatureMap[it.symbol.signature] = it.symbol }
+                                it.setter?.let { localSignatureMap[it.symbol.signature] = it.symbol }
+                            }
+                        }
+
                         irClass.declarations.clear()
 
                         for (j in 1 until indices.size) {
                             val idSig = icDeserializer.deserializeIdSignature(indices[j])
 
-                            val symbol = existingPublicSymbols[idSig] ?: icDeserializer.privateSymbols[idSig]
+                            val symbol = localSignatureMap[idSig] ?: existingPublicSymbols[idSig] ?: icDeserializer.privateSymbols[idSig]
 
                             val declaration = if (symbol != null && symbol.isBound) symbol.owner as IrDeclaration else icDeserializer.signatureToDeclaration[idSig]
                             if (declaration == null) continue

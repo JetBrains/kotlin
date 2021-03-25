@@ -95,7 +95,7 @@ class IcSerializer(
 
             // TODO add local bodies
 
-            if ("ExceptionsH.kt" in file.name) {
+            if ("Effect.kt" in file.name) {
                 1
             }
 
