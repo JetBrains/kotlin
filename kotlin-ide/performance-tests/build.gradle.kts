@@ -45,26 +45,26 @@ dependencies {
     jpsLikeModuleDependency(":kotlin-ide:jvm", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
     jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-impl") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-concurrency") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-util-ex") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("jps-model") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-impl") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("resources_en") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-api") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-concurrency") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-util-ex") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("jps-model") }) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains.intellij.deps:jdom:2.0.6", JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("intellij-core") }) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains:annotations:20.1.0", JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("extensions") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("util") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("extensions") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("util") }) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0", JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-dvcs") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-ide-util-io") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("forms_rt") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("intellij-dvcs") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("platform-ide-util-io") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("resources") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("forms_rt") }) // Exported transitive dependency
     jpsLikeJarDependency("com.jgoodies:forms:1.1-preview", JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijPluginDep("gradle"), JpsDepScope.TEST) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("external-system-rt") }) // Exported transitive dependency
+    jpsLikeJarDependency(intellijPluginDep("gradle", forIde = true), JpsDepScope.TEST) // Exported transitive dependency
+    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.TEST, { includeJars("external-system-rt") }) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains.intellij.deps:gradle-api:6.7", JpsDepScope.TEST) // Exported transitive dependency
     jpsLikeJarDependency("org.slf4j:slf4j-log4j12:1.7.25", JpsDepScope.TEST) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains.teamcity:serviceMessages:2019.1.4", JpsDepScope.TEST) // Exported transitive dependency
