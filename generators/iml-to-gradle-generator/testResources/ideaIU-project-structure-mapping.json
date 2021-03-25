@@ -390,21 +390,6 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.xml.dom",
-    "path": "lib/openapi.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.platform.webide",
-    "path": "lib/openapi.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.platform.graph",
-    "path": "lib/openapi.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.platform.commercial.license",
     "path": "lib/idea.jar",
     "type": "module-output"
