@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.processor.GetterProcessor
 import org.jetbrains.kotlin.lombok.processor.Parts
 import org.jetbrains.kotlin.lombok.processor.Processor
@@ -16,13 +17,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.SyntheticJavaPartsProvider
 import java.util.*
 
-class LombokSyntheticJavaPartsProvider : SyntheticJavaPartsProvider {
+class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : SyntheticJavaPartsProvider {
 
     private val processors = initProcessors()
 
     private fun initProcessors(): List<Processor> =
         listOf(
-            GetterProcessor()
+            GetterProcessor(config)
         )
 
     private val partsCache: MutableMap<ClassDescriptor, Parts> = WeakHashMap()
