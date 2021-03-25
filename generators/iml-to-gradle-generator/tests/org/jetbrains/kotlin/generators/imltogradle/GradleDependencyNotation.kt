@@ -29,9 +29,9 @@ data class GradleDependencyNotation(val dependencyNotation: String, val dependen
 
             fun Regex.firstGroup() = matchEntire(jarPath)?.groupValues?.get(1)
 
-            return pluginsPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijPluginDep(\"$it\")") }
-                ?: libPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep()", "{ includeJars(\"$it\") }") }
-                ?: jarToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep()", "{ includeJars(\"$it\") }") }
+            return pluginsPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijPluginDep(\"$it\", forIde = true)") }
+                ?: libPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep(forIde = true)", "{ includeJars(\"$it\") }") }
+                ?: jarToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep(forIde = true)", "{ includeJars(\"$it\") }") }
                 ?: error("Path $jarPath matches none of the regexes")
         }
     }
