@@ -246,7 +246,7 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
 
     val moduleImlRootElement = imlFile.readXml()
     val deps = jpsModule.dependencies.flatMap { convertJpsDependencyElement(it, moduleImlRootElement) }
-        .distinct()
+        .distinctBy { it.substringBefore("//").trim() }
         .filter { it != "implementation()" } // TODO remove hack
         .joinToString("\n")
     return """
