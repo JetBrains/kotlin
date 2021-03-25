@@ -2000,20 +2000,6 @@ public inline fun <R> CharSequence.scanIndexed(initial: R, operation: (index: In
     return runningFoldIndexed(initial, operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun CharSequence.scanReduce(operation: (acc: Char, Char) -> Char): List<Char> {
-    return runningReduce(operation)
-}
-
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun CharSequence.scanReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
-    return runningReduceIndexed(operation)
-}
-
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
