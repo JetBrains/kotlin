@@ -42,7 +42,8 @@ internal class LibraryCommonizer internal constructor(
 
     private fun commonizeAndSaveResults(allLibraries: TargetDependent<NativeLibrariesToCommonize>) {
         val parameters = CommonizerParameters(
-            targetProviders = commonTarget.targets.mapNotNull { target -> createTargetProvider(target, allLibraries[target]) },
+            targetProviders = TargetDependent(commonTarget.targets) { target -> createTargetProvider(target, allLibraries[target]) }
+                .filterNonNull(),
             resultsConsumer = resultsConsumer,
             commonManifestProvider = CommonNativeManifestDataProvider(commonTarget.targets.map { allLibraries[it] }),
             commonDependencyModulesProvider = DefaultModulesProvider.create(dependencies.getLibraries(commonTarget)),

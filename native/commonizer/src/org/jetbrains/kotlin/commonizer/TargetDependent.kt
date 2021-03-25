@@ -7,43 +7,95 @@
 
 package org.jetbrains.kotlin.commonizer
 
-sealed interface TargetDependent<T : Any> {
-    fun getOrNull(target: CommonizerTarget): T?
-    operator fun get(target: CommonizerTarget): T {
-        return getOrNull(target) ?: throw NoSuchElementException("Missing element for target ${target.prettyName}")
+sealed interface TargetDependent<T> : Iterable<T> {
+    val size: Int get() = targets.size
+    val targets: List<CommonizerTarget>
+    fun indexOf(target: CommonizerTarget): Int = targets.indexOf(target)
+
+    fun <R : Any> map(mapper: (target: CommonizerTarget, T) -> R): TargetDependent<R> {
+        return TargetDependent(targets) { target ->
+            mapper(target, get(target))
+        }
+    }
+
+    override fun iterator(): Iterator<T> {
+        return iterator { for (key in targets) yield(this@TargetDependent[key]) }
+    }
+
+    operator fun get(target: CommonizerTarget): T
+
+    fun getOrNull(target: CommonizerTarget): T? {
+        return if (target in targets) get(target) else null
     }
 }
 
-internal fun <T : Any> Map<CommonizerTarget, T>.toTargetDependent(): TargetDependent<T> {
+internal fun <T : Any> TargetDependent<T?>.filterNonNull(): TargetDependent<T> {
+    val nonNullTargets = targets.filter { this[it] != null }
+    return TargetDependent(nonNullTargets) { target -> this@filterNonNull[target] ?: throw NullPointerException() }
+}
+
+internal fun <T> TargetDependent<T>.toMap(): Map<CommonizerTarget, T> {
+    return mutableMapOf<CommonizerTarget, T>().apply {
+        for (key in keys) {
+            put(key, this@toMap[key])
+        }
+    }
+}
+
+internal fun <T> Map<out CommonizerTarget, T>.toTargetDependent(): TargetDependent<T> {
     return TargetDependent(toMap())
 }
 
-internal fun <T : Any> Map<CommonizerTarget, T>.asTargetDependent(): TargetDependent<T> {
-    return TargetDependent(this)
+internal fun <T, R> TargetDependent<T>.mapValue(mapper: (T) -> R): TargetDependent<R> {
+    return TargetDependent(targets) { target -> this@mapValue.get(target).let(mapper) }
 }
 
-internal fun <T : Any, R : Any> TargetDependent<T>.map(mapper: (T) -> R): TargetDependent<R> {
-    return TargetDependent { target -> this@map.getOrNull(target)?.let(mapper) }
+internal fun <T, R> TargetDependent<T>.mapTargets(mapper: (CommonizerTarget) -> R): TargetDependent<R> {
+    return TargetDependent(targets) { target -> mapper(target) }
 }
 
-internal fun <T : Any> TargetDependent(map: Map<CommonizerTarget, T>): TargetDependent<T> {
+
+internal fun <T> TargetDependent(map: Map<CommonizerTarget, T>): TargetDependent<T> {
     return MapBasedTargetDependent(map)
 }
 
-internal fun <T : Any> TargetDependent(factory: (target: CommonizerTarget) -> T?): TargetDependent<T> {
-    return FactoryBasedTargetDependent(factory)
+internal fun <T> TargetDependent(keys: Iterable<CommonizerTarget>, factory: (target: CommonizerTarget) -> T): TargetDependent<T> {
+    return FactoryBasedTargetDependent(keys.toList(), factory)
 }
 
-private class MapBasedTargetDependent<T : Any>(private val map: Map<CommonizerTarget, T>) : TargetDependent<T> {
-    override fun getOrNull(target: CommonizerTarget): T? = map[target]
+private class MapBasedTargetDependent<T>(private val map: Map<CommonizerTarget, T>) : TargetDependent<T> {
+    override val targets: List<CommonizerTarget> = map.keys.toList()
+    override fun get(target: CommonizerTarget): T = map.getValue(target)
 }
 
-private class FactoryBasedTargetDependent<T : Any>(private val factory: (target: CommonizerTarget) -> T?) : TargetDependent<T> {
-    private val values = mutableMapOf<CommonizerTarget, Any>()
-    override fun getOrNull(target: CommonizerTarget): T? {
-        @Suppress("unchecked_cast")
-        return values.getOrPut(target) { factory(target) ?: Null }.takeIf { it != Null }?.run { this as T }
+/**
+ * Not thread safe!
+ */
+private class FactoryBasedTargetDependent<T>(
+    override val targets: List<CommonizerTarget>,
+    private var factory: ((target: CommonizerTarget) -> T)?
+) : TargetDependent<T> {
+
+    private object Uninitialized
+
+    private val values: Array<Any?> = Array(targets.size) { Uninitialized }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun get(target: CommonizerTarget): T {
+        val indexOfTarget = indexOf(target)
+        if (indexOfTarget < 0) throw NoSuchElementException("Missing target $target")
+        val storedValue = values[indexOfTarget]
+        if (storedValue == Uninitialized) {
+            val producedValue = factory?.invoke(target)
+            values[indexOfTarget] = producedValue
+
+            /* All values initialized. Factory can be released */
+            if (values.none { it === Uninitialized }) {
+                factory = null
+            }
+            return producedValue as T
+        }
+
+        return storedValue as T
     }
-
-    private object Null
 }

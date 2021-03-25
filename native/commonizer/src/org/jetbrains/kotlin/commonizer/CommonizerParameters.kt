@@ -9,20 +9,20 @@ import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 
 class CommonizerParameters(
-    val targetProviders: List<TargetProvider>,
+    val targetProviders: TargetDependent<TargetProvider>,
     val resultsConsumer: ResultsConsumer,
     val commonManifestProvider: NativeManifestDataProvider,
     val commonDependencyModulesProvider: ModulesProvider? = null,
     val statsCollector: StatsCollector? = null,
     val progressLogger: ((String) -> Unit)? = null
 ) {
-    internal val commonTarget: SharedCommonizerTarget = SharedCommonizerTarget(targetProviders.map { it.target }.toSet())
+    internal val commonTarget: SharedCommonizerTarget = SharedCommonizerTarget(targetProviders.targets.toSet())
 
     internal val manifestDataProvider: TargetDependent<NativeManifestDataProvider>
-        get() = TargetDependent { target ->
+        get() = TargetDependent(setOf(SharedCommonizerTarget(targetProviders.targets.toSet())) + targetProviders.targets) { target ->
             if (target == commonTarget) return@TargetDependent commonManifestProvider
             this.targetProviders.firstOrNull { it.target == target }?.manifestProvider?.let { return@TargetDependent it }
-            null
+            throw IllegalStateException("Illegal target $target")
         }
 
 }
@@ -30,7 +30,7 @@ class CommonizerParameters(
 fun CommonizerParameters.getCommonModuleNames(): Set<String> {
     if (targetProviders.size < 2) return emptySet() // too few targets
 
-    val allModuleNames: List<Set<String>> = targetProviders.map { targetProvider ->
+    val allModuleNames: List<Set<String>> = targetProviders.toList().map { targetProvider ->
         targetProvider.modulesProvider.loadModuleInfos().mapTo(HashSet()) { it.name }
     }
 

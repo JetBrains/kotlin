@@ -63,7 +63,11 @@ internal class ClassesToProcess {
         }
     }
 
+    fun classesInScope(parentClassId: CirEntityId?): List<ClassEntry> {
+        return groupedByParentClassId[parentClassId ?: NON_EXISTING_CLASSIFIER_ID].orEmpty()
+    }
+
     fun forEachClassInScope(parentClassId: CirEntityId?, block: (ClassEntry) -> Unit) {
-        groupedByParentClassId[parentClassId ?: NON_EXISTING_CLASSIFIER_ID]?.forEach { classEntry -> block(classEntry) }
+        classesInScope(parentClassId).forEach { classEntry -> block(classEntry) }
     }
 }

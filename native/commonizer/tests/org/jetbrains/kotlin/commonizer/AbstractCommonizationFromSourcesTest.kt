@@ -16,15 +16,15 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedF
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -208,7 +208,7 @@ private class AnalyzedModules(
         resultsConsumer: ResultsConsumer,
         manifestDataProvider: NativeManifestDataProvider = MockNativeManifestDataProvider()
     ) = CommonizerParameters(
-        targetProviders = leafTargets.map { leafTarget ->
+        targetProviders = TargetDependent(leafTargets) { leafTarget ->
             TargetProvider(
                 target = leafTarget,
                 modulesProvider = MockModulesProvider.create(originalModules.getValue(leafTarget)),

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
-import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
 import org.jetbrains.kotlin.commonizer.utils.MockModulesProvider
 import org.jetbrains.kotlin.commonizer.utils.MockNativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
 import org.junit.Test
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
@@ -69,14 +69,15 @@ class CommonizerFacadeTest {
             resultsConsumer: ResultsConsumer,
             manifestDataProvider: NativeManifestDataProvider = MockNativeManifestDataProvider()
         ) = CommonizerParameters(
-            targetProviders = map { (targetName, moduleNames) ->
-                TargetProvider(
-                    target = LeafCommonizerTarget(targetName),
-                    modulesProvider = MockModulesProvider.create(moduleNames),
-                    dependencyModulesProvider = null,
-                    manifestProvider = manifestDataProvider,
-                )
-            },
+            targetProviders = mapKeys { (targetName, _) -> LeafCommonizerTarget(targetName) }.toTargetDependent()
+                .map { target, moduleNames ->
+                    TargetProvider(
+                        target = target,
+                        modulesProvider = MockModulesProvider.create(moduleNames),
+                        dependencyModulesProvider = null,
+                        manifestProvider = manifestDataProvider,
+                    )
+                },
             resultsConsumer = resultsConsumer,
             commonManifestProvider = manifestDataProvider
         )
