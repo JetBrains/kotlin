@@ -70,7 +70,7 @@ fun main(args: Array<String>) {
         Pair(it.nameWithoutExtension, ":" + it.parentFile.relativeTo(KOTLIN_REPO_ROOT).path.replace("/", ":"))
     }
 
-    intellijModuleNameToGradleDependencyNotationsMapping = (intellijModuleNameToGradleDependencyNotationsMappingManual + listOf(
+    intellijModuleNameToGradleDependencyNotationsMapping = listOf(
         object {}.javaClass.getResource("/ideaIU-project-structure-mapping.json"),
         object {}.javaClass.getResource("/intellij-core-project-structure-mapping.json")
     )
@@ -80,12 +80,14 @@ fun main(args: Array<String>) {
                 val jsonObject = jsonElement.asJsonObject
                 val moduleName = jsonObject.get("moduleName")?.asString ?: return@mapNotNull null
                 val jarPath = jsonObject.get("path")?.asString ?: return@mapNotNull null
-                GradleDependencyNotation.fromJarPath(jarPath)?.let { moduleName to it }
+                moduleName to jarPath
             }
-        })
+        }
         .groupBy({ it.second }, { it.first })
         .filter { entry -> entry.value.all { it in intellijCommunityModuleNameToJpsModuleMapping } }
         .flatMap { entry -> entry.value.map { it to entry.key } }
+        .mapNotNull { Pair(it.first, GradleDependencyNotation.fromJarPath(it.second) ?: return@mapNotNull null) }
+        .plus(intellijModuleNameToGradleDependencyNotationsMappingManual)
         .groupBy({ it.first }, { it.second })
 
     projectLevelLibraryNameToJpsLibraryMapping = kotlinIdeFile.resolve(".idea/libraries").listFiles()!!
