@@ -67,12 +67,6 @@ abstract class AbstractDiagnosticCollector(
     }
 }
 
-enum class DiagnosticCollectorDeclarationAction(val checkInCurrentDeclaration: Boolean, val lookupForNestedDeclaration: Boolean) {
-    CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED(checkInCurrentDeclaration = true, lookupForNestedDeclaration = true),
-    CHECK_IN_CURRENT_DECLARATION_AND_DO_NOT_LOOKUP_FOR_NESTED(checkInCurrentDeclaration = true, lookupForNestedDeclaration = false),
-    DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED(checkInCurrentDeclaration = false, lookupForNestedDeclaration = true),
-    SKIP(checkInCurrentDeclaration = false, lookupForNestedDeclaration = false),
-}
 
 fun AbstractDiagnosticCollector.registerAllComponents() {
     initializeComponents(

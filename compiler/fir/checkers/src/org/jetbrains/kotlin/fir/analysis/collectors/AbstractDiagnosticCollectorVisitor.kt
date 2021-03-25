@@ -28,7 +28,6 @@ abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: PersistentCheckerContext,
     protected val components: List<AbstractDiagnosticCollectorComponent>,
 ) : FirDefaultVisitor<Unit, Nothing?>() {
-    protected var currentAction = DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
 
     protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
     protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
@@ -182,16 +181,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
         declaration: FirDeclaration,
         block: () -> Unit = { declaration.acceptChildren(this, null) }
     ) {
-        if (!currentAction.lookupForNestedDeclaration) return
-
-        val action = getDeclarationActionOnDeclarationEnter(declaration)
-        withDiagnosticsAction(action) {
-            runComponents(declaration)
-            withDeclaration(declaration) {
-                block()
-            }
+        runComponents(declaration)
+        withDeclaration(declaration) {
+            block()
         }
-        onDeclarationExit(declaration)
     }
 
     private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverTypeRef: FirTypeRef?) {
@@ -217,21 +210,6 @@ abstract class AbstractDiagnosticCollectorVisitor(
         return withGetClassCall(getClassCall) {
             runComponents(getClassCall)
             goToNestedDeclarations(getClassCall)
-        }
-    }
-
-    protected open fun getDeclarationActionOnDeclarationEnter(declaration: FirDeclaration): DiagnosticCollectorDeclarationAction =
-        DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-
-    protected open fun onDeclarationExit(declaration: FirDeclaration) {}
-
-    private inline fun <R> withDiagnosticsAction(action: DiagnosticCollectorDeclarationAction, block: () -> R): R {
-        val oldAction = currentAction
-        currentAction = action
-        return try {
-            block()
-        } finally {
-            currentAction = oldAction
         }
     }
 

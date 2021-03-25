@@ -6,25 +6,19 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarationAction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnosticList
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnosticRetriever
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnostics
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnosticsCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.hasFqName
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.isGeneratedDeclaration
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
 import org.jetbrains.kotlin.psi.*
 
 internal sealed class FileStructureElement(val firFile: FirFile) {
@@ -179,16 +173,7 @@ internal class RootStructureElement(
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(firFile, recorder)
 
-    override val diagnostics = FileStructureElementDiagnostics(firFile, DiagnosticRetriever)
-
-    private object DiagnosticRetriever : FileStructureElementDiagnosticRetriever() {
-        override fun retrieve(firFile: FirFile, collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList {
-            return collector.collectForStructureElement(firFile, initialContext = null) { firDeclaration ->
-                if (firDeclaration is FirFile) DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_DO_NOT_LOOKUP_FOR_NESTED
-                else DiagnosticCollectorDeclarationAction.SKIP
-            }
-        }
-    }
+    override val diagnostics = FileStructureElementDiagnostics(firFile, FileDiagnosticRetriever)
 
     companion object {
         private val recorder = object : FirElementsRecorder() {

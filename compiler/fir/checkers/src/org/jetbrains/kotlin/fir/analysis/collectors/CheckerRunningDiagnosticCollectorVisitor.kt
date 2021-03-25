@@ -20,12 +20,10 @@ open class CheckerRunningDiagnosticCollectorVisitor(
     }
 
     override fun runComponents(element: FirElement) {
-        if (currentAction.checkInCurrentDeclaration) {
-            beforeRunningAllComponentsOnElement(element)
-            components.forEach {
-                beforeRunningSingleComponentOnElement(element)
-                element.accept(it, context)
-            }
+        beforeRunningAllComponentsOnElement(element)
+        components.forEach {
+            beforeRunningSingleComponentOnElement(element)
+            element.accept(it, context)
         }
     }
 }

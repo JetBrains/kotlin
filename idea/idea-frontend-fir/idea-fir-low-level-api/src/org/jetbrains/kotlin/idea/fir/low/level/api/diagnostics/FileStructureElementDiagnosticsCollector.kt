@@ -5,15 +5,10 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
-import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarationAction
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
+import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
+import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistentCheckerContextFactory
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.addValueFor
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.FirIdeStructureElementDiagnosticsCollector
 
 internal class FileStructureElementDiagnosticsCollector private constructor(private val useExtendedCheckers: Boolean) {
     companion object {
@@ -23,51 +18,14 @@ internal class FileStructureElementDiagnosticsCollector private constructor(priv
 
     fun collectForStructureElement(
         firDeclaration: FirDeclaration,
-        initialContext: PersistentCheckerContext?,
-        onDeclarationExit: (FirDeclaration) -> Unit = {},
-        onDeclarationEnter: (FirDeclaration) -> DiagnosticCollectorDeclarationAction = {
-            DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-        },
+        createVisitor: (components: List<AbstractDiagnosticCollectorComponent>) -> CheckerRunningDiagnosticCollectorVisitor,
     ): FileStructureElementDiagnosticList =
         FirIdeStructureElementDiagnosticsCollector(
             firDeclaration.session,
-            initialContext,
+            createVisitor,
             useExtendedCheckers,
-            onDeclarationEnter,
-            onDeclarationExit
         ).let { collector ->
             collector.collectDiagnostics(firDeclaration)
             FileStructureElementDiagnosticList(collector.result)
         }
-
-    private class FirIdeStructureElementDiagnosticsCollector(
-        session: FirSession,
-        initialContext: PersistentCheckerContext?,
-        useExtendedCheckers: Boolean,
-        private val onDeclarationEnter: (FirDeclaration) -> DiagnosticCollectorDeclarationAction,
-        private val onDeclarationExit: (FirDeclaration) -> Unit
-    ) : AbstractFirIdeDiagnosticsCollector(
-        session,
-        useExtendedCheckers,
-    ) {
-        val result = mutableMapOf<PsiElement, MutableList<FirPsiDiagnostic<*>>>()
-
-        override fun onDiagnostic(diagnostic: FirPsiDiagnostic<*>) {
-            result.addValueFor(diagnostic.psiElement, diagnostic)
-        }
-
-        override val visitor = object : FirIdeDiagnosticVisitor(
-            initialContext ?: PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(this),
-            components
-        ) {
-            override fun getDeclarationActionOnDeclarationEnter(
-                declaration: FirDeclaration,
-            ): DiagnosticCollectorDeclarationAction =
-                onDeclarationEnter.invoke(declaration)
-
-            override fun onDeclarationExit(declaration: FirDeclaration) {
-                onDeclarationExit.invoke(declaration)
-            }
-        }
-    }
 }

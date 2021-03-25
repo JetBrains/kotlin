@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 
-open class FirIdeDiagnosticVisitor(
+internal open class FirIdeDiagnosticVisitor(
     context: PersistentCheckerContext,
     components: List<AbstractDiagnosticCollectorComponent>
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
