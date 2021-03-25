@@ -24,7 +24,7 @@ fun test() {
 
     B::bar checkType { _<KFunction1<B, Unit>>() }
 
-    <!UNRESOLVED_REFERENCE!>B::bas<!>
+    B::<!UNRESOLVED_REFERENCE!>bas<!>
 
-    <!UNRESOLVED_REFERENCE!>::fas<!>
+    ::<!UNRESOLVED_REFERENCE!>fas<!>
 }

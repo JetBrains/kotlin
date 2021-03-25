@@ -11,7 +11,7 @@ class Case1() {
     }
 
     fun case() {
-        <!NONE_APPLICABLE!>Companion<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
+        <!NONE_APPLICABLE!>Companion<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
     }
 
     val x = ""
@@ -27,7 +27,7 @@ class Case2() {
     }
 
     fun case() {
-        <!NONE_APPLICABLE!>Companion<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
+        <!NONE_APPLICABLE!>Companion<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
     }
 
     val x = C()
@@ -54,8 +54,8 @@ class Case3() : I {
     fun x() = "" as CharSequence
 
     fun case() {
-        I.<!AMBIGUITY!>invoke<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
-        <!AMBIGUITY!>I<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
-        <!AMBIGUITY!>Case3<!>(<!UNRESOLVED_REFERENCE!>::x<!>)
+        I.<!AMBIGUITY!>invoke<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
+        <!AMBIGUITY!>I<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
+        <!AMBIGUITY!>Case3<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
     }
 }

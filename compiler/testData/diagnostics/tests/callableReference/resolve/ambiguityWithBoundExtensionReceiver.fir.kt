@@ -10,6 +10,6 @@ fun A.foo() = ""
 
 class A {
     fun main() {
-        bar(<!UNRESOLVED_REFERENCE!>::foo<!>) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        bar(::<!UNRESOLVED_REFERENCE!>foo<!>) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
     }
 }

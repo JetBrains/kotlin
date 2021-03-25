@@ -18,9 +18,9 @@ class Test {
     val <T> List<T>.b: Int? get() = size
 
     fun <T> List<T>.testCallable1(): () -> Unit = a<T>::foo
-    fun <T> List<T>.testCallable2(): () -> Unit = <!UNRESOLVED_REFERENCE!>b?::foo<!>
-    fun <T> List<T>.testCallable3(): () -> Unit = <!UNRESOLVED_REFERENCE!>b<T, Any>::foo<!>
-    fun <T> List<T>.testCallable4(): () -> Unit = <!UNRESOLVED_REFERENCE!>b<T>?::foo<!>
+    fun <T> List<T>.testCallable2(): () -> Unit = b?::<!UNRESOLVED_REFERENCE!>foo<!>
+    fun <T> List<T>.testCallable3(): () -> Unit = b<T, Any>::<!UNRESOLVED_REFERENCE!>foo<!>
+    fun <T> List<T>.testCallable4(): () -> Unit = b<T>?::<!UNRESOLVED_REFERENCE!>foo<!>
 
     fun <T> List<T>.testClassLiteral1() = a<T>::class
     fun <T> List<T>.testClassLiteral2() = <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>b<!>?::class

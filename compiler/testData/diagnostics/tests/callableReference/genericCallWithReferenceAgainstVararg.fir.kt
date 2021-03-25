@@ -5,7 +5,7 @@ fun foo(vararg ints: Int) {}
 fun test(i: IntArray) {
     myLet(i, ::foo)
     myLet(::foo)
-    <!INAPPLICABLE_CANDIDATE!>myLet<!><Int>(<!UNRESOLVED_REFERENCE!>::foo<!>)
+    <!INAPPLICABLE_CANDIDATE!>myLet<!><Int>(::<!UNRESOLVED_REFERENCE!>foo<!>)
     myLet<IntArray>(::foo)
     myLetExplicit1(::foo)
     myLetExplicit2(::foo)

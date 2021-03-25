@@ -14,14 +14,14 @@ class A {
 
 fun A.foo(): String = "A"
 
-val x0 = <!UNRESOLVED_REFERENCE!>A::foo<!>
+val x0 = A::<!UNRESOLVED_REFERENCE!>foo<!>
 
 val x1 = ofType<(A) -> Unit>(A::foo)
 val x2 = ofType<KProperty1<A, Int>>(A::foo)
 val x3: KProperty1<A, Int> = A::foo
 val x4: (A) -> String = A::foo
 
-val y0 = <!UNRESOLVED_REFERENCE!>A::bar<!>
+val y0 = A::<!UNRESOLVED_REFERENCE!>bar<!>
 val y1 = ofType<(A) -> Unit>(A::bar)
 val y2 = ofType<KProperty1<A, Int>>(A::bar)
 val y3: KProperty1<A, Int> = A::bar
