@@ -34,5 +34,14 @@ object Test {
 
         obj.boxedBoolean
         obj.getBoxedBoolean()
+
+        //shouldn't be accesible from here
+//        obj.getName()
+    }
+
+    class OverridenGetterTest : GetterTest() {
+        fun usage() {
+            getName()
+        }
     }
 }

@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.lombok.utils
 
 import org.jetbrains.kotlin.name.FqName
 
-object LombokAnnotationNames {
+object LombokNames {
 
+    val ACCESSORS = FqName("lombok.experimental.Accessors")
     val GETTER = FqName("lombok.Getter")
     val SETTER = FqName("lombok.Setter")
 

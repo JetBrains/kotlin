@@ -5,52 +5,56 @@
 
 package org.jetbrains.kotlin.lombok.processor
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.lombok.utils.LombokAnnotationNames
+import org.jetbrains.kotlin.lombok.config.Accessors
+import org.jetbrains.kotlin.lombok.config.Getter
 import org.jetbrains.kotlin.lombok.utils.createFunction
-import org.jetbrains.kotlin.lombok.utils.getVisibility
 import org.jetbrains.kotlin.lombok.utils.toPreparedBase
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class GetterProcessor : Processor {
 
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
+        val clAccessors = Accessors.getOrNull(classDescriptor)
+        val clGetter = Getter.getOrNull(classDescriptor)
 
         val functions = classDescriptor.unsubstitutedMemberScope.getVariableNames()
             .map {
                 classDescriptor.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).single()
-            }.collectWithNotNull { it.annotations.findAnnotation(LombokAnnotationNames.GETTER) }
-            .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation) }
+            }.collectWithNotNull { Getter.getOrNull(it) ?: clGetter }
+            .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation, clAccessors) }
 
-//        val functions = jClass.fields.collectWithNotNull { it.findAnnotation(LombokAnnotationNames.GETTER) }.mapNotNull { (field, annotation) ->
-//            createGetter(classDescriptor, field, annotation)
-//        }
         return Parts(functions)
     }
 
     private fun createGetter(
         classDescriptor: ClassDescriptor,
         field: PropertyDescriptor,
-        annotation: AnnotationDescriptor
+        getter: Getter,
+        classLevelAccessors: Accessors?
     ): SimpleFunctionDescriptor? {
-        val prefix = if (field.type.isPrimitiveBoolean()) "is" else "get"
-        val functionName = Name.identifier(prefix + toPreparedBase(field.name.identifier))
+        val accessors = Accessors.getOrNull(field) ?: classLevelAccessors ?: Accessors.default
+
+        val functionName =
+            if (accessors.fluent) {
+                field.name.identifier
+            } else {
+                val prefix = if (field.type.isPrimitiveBoolean()) "is" else "get"
+                prefix + toPreparedBase(field.name.identifier)
+            }
         return createFunction(
             classDescriptor,
-            functionName,
+            Name.identifier(functionName),
             emptyList(),
             field.returnType,
-            visibility = getVisibility(annotation)
+            visibility = getter.visibility
         )
     }
 
