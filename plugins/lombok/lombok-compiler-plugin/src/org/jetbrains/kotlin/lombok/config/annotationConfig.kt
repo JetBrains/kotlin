@@ -59,3 +59,14 @@ data class Setter(val visibility: DescriptorVisibility) {
             )
     }
 }
+
+data class With(val visibility: DescriptorVisibility) {
+    companion object : AnnotationCompanion<With>() {
+        override val name: FqName = LombokNames.WITH
+
+        override fun extract(annotation: AnnotationDescriptor): With =
+            With(
+                visibility = getVisibility(annotation)
+            )
+    }
+}
