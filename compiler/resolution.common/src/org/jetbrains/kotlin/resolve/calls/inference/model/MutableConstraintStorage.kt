@@ -32,12 +32,12 @@ class MutableVariableWithConstraints private constructor(
         }
 
     // see @OnlyInputTypes annotation
-    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<KotlinTypeMarker> {
+    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<Pair<KotlinTypeMarker, ConstraintKind>> {
         return with(utilContext) {
             mutableConstraints
                 .mapNotNullTo(SmartList()) {
                     if (it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null)
-                        it.type.unCapture()
+                        it.type.unCapture() to it.kind
                     else null
                 }
         }

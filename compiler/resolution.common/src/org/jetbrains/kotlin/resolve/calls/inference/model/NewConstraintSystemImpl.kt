@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -361,24 +363,41 @@ class NewConstraintSystemImpl(
         }
     }
 
-    private fun KotlinTypeMarker.substituteIfNecessary(substitutor: TypeSubstitutorMarker): KotlinTypeMarker {
+    private fun KotlinTypeMarker.substituteAndApproximateIfNecessary(
+        substitutor: TypeSubstitutorMarker,
+        approximator: AbstractTypeApproximator,
+        constraintKind: ConstraintKind
+    ): KotlinTypeMarker {
         val doesInputTypeContainsOtherVariables = this.contains { it.typeConstructor() is TypeVariableTypeConstructorMarker }
-        return if (doesInputTypeContainsOtherVariables) substitutor.safeSubstitute(this) else this
+        val substitutedType = if (doesInputTypeContainsOtherVariables) substitutor.safeSubstitute(this) else this
+        // Appoximation here is the same as ResultTypeResolver do
+        val approximatedType = when (constraintKind) {
+            ConstraintKind.LOWER ->
+                approximator.approximateToSuperType(substitutedType, TypeApproximatorConfiguration.InternalTypesApproximation)
+            ConstraintKind.UPPER ->
+                approximator.approximateToSubType(substitutedType, TypeApproximatorConfiguration.InternalTypesApproximation)
+            ConstraintKind.EQUALITY -> substitutedType
+        } ?: substitutedType
+
+        return approximatedType
     }
 
     private fun checkOnlyInputTypesAnnotation(variableWithConstraints: MutableVariableWithConstraints, resultType: KotlinTypeMarker) {
         val substitutor = buildCurrentSubstitutor()
-        val isResultTypeEqualSomeInputType = variableWithConstraints.getProjectedInputCallTypes(utilContext).any { inputType ->
-            val inputTypeConstructor = inputType.typeConstructor()
+        val approximator = constraintInjector.typeApproximator
+        val isResultTypeEqualSomeInputType =
+            variableWithConstraints.getProjectedInputCallTypes(utilContext).any { (inputType, constraintKind) ->
+                val inputTypeConstructor = inputType.typeConstructor()
+                val otherResultType = inputType.substituteAndApproximateIfNecessary(substitutor, approximator, constraintKind)
 
-            if (inputTypeConstructor.isIntersection()) {
+                if (AbstractTypeChecker.equalTypes(this, resultType, otherResultType)) return@any true
+                if (!inputTypeConstructor.isIntersection()) return@any false
+
                 inputTypeConstructor.supertypes().any {
-                    AbstractTypeChecker.equalTypes(this, resultType, it.substituteIfNecessary(substitutor))
+                    val intersectionComponentResultType = it.substituteAndApproximateIfNecessary(substitutor, approximator, constraintKind)
+                    AbstractTypeChecker.equalTypes(this, resultType, intersectionComponentResultType)
                 }
-            } else {
-                AbstractTypeChecker.equalTypes(this, resultType, inputType.substituteIfNecessary(substitutor))
             }
-        }
         if (!isResultTypeEqualSomeInputType) {
             addError(OnlyInputTypesDiagnostic(variableWithConstraints.typeVariable))
         }
