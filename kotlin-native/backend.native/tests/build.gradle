@@ -209,6 +209,8 @@ task resultsTask() {
         }
 
         ExternalReportUtilsKt.saveReport("$testOutputExternal/reports.json", statistics, reports)
+        def reportPath = project.file("$testOutputExternal/reports.json").absolutePath
+        println("Test report saved: $reportPath")
         use(KonanTestSuiteReportKt) {
             project.logger.quiet("DONE.\n\n" +
                     "TOTAL: $statistics.total\n" +
