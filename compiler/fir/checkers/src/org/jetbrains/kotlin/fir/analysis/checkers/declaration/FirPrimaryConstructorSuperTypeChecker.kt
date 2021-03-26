@@ -25,6 +25,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.isInterface) {
+            for (superTypeRef in declaration.superTypeRefs) {
+                val source = superTypeRef.source ?: continue
+                if (source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE) {
+                    reporter.reportOn(source, FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE, context)
+                }
+            }
             return
         }
 

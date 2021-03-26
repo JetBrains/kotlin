@@ -58,7 +58,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirManyCompanionObjectsChecker,
         FirMethodOfAnyImplementedInInterfaceChecker,
         FirDataClassPrimaryConstructorChecker,
-        FirSupertypeInitializedInInterfaceChecker,
         FirPrimaryConstructorSuperTypeChecker,
         FirTypeParametersInObjectChecker,
         FirMemberFunctionsChecker,
