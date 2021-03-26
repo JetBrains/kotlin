@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCo
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 internal sealed class EnclosingDeclarationContext {
     companion object {
         fun detect(originalFile: KtFile, positionInFakeFile: KtElement): EnclosingDeclarationContext {
-            val fakeFunction = positionInFakeFile.parentsOfType<KtNamedFunction>().firstOrNull { !it.isLocal }
+            val fakeFunction = positionInFakeFile.parentsOfType<KtNamedFunction>().firstOrNull {
+                it.isTopLevel || it.containingClassOrObject?.isLocal == false
+            }
             if (fakeFunction != null) {
                 val originalFunction = originalFile.findDeclarationOfTypeAt<KtNamedFunction>(fakeFunction.textOffset)
                     ?: error("Cannot find original function matching to ${fakeFunction.getElementTextInContext()} in $originalFile")
@@ -25,7 +28,10 @@ internal sealed class EnclosingDeclarationContext {
                 return FunctionContext(fakeFunction, originalFunction)
             }
 
-            val fakeProperty = positionInFakeFile.parentsOfType<KtProperty>().firstOrNull { !it.isLocal }
+            val fakeProperty = positionInFakeFile.parentsOfType<KtProperty>().firstOrNull {
+                it.isTopLevel || it.containingClassOrObject?.isLocal == false
+            }
+
             if (fakeProperty != null) {
                 val originalProperty = originalFile.findDeclarationOfTypeAt<KtProperty>(fakeProperty.textOffset)
                     ?: error("Cannot find original property matching to ${fakeProperty.getElementTextInContext()} in $originalFile")
