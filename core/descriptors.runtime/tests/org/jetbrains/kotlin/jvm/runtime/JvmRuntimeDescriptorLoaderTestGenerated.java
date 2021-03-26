@@ -58,6 +58,11 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInAnnotationArguments.kt");
             }
 
+            @TestMetadata("AnnotationInArray.kt")
+            public void testAnnotationInArray() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInArray.kt");
+            }
+
             @TestMetadata("ClassLiteralArguments.kt")
             public void testClassLiteralArguments() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/ClassLiteralArguments.kt");

@@ -111,6 +111,17 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                         elements.add(KClassValue(value))
                     }
 
+                    override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                        val list = ArrayList<AnnotationDescriptor>()
+                        val visitor = loadAnnotation(classId, SourceElement.NO_SOURCE, list)!!
+                        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                            override fun visitEnd() {
+                                visitor.visitEnd()
+                                elements.add(AnnotationValue(list.single()))
+                            }
+                        }
+                    }
+
                     override fun visitEnd() {
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {

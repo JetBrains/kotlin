@@ -108,6 +108,17 @@ internal class AnnotationsLoader(private val session: FirSession) {
                         )
                     }
 
+                    override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                        val list = mutableListOf<FirAnnotationCall>()
+                        val visitor = loadAnnotation(classId, list)
+                        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                            override fun visitEnd() {
+                                visitor.visitEnd()
+                                elements.add(list.single())
+                            }
+                        }
+                    }
+
                     override fun visitEnd() {
                         argumentMap[name] = buildArrayOfCall {
                             argumentList = buildArgumentList {
