@@ -1169,10 +1169,10 @@ internal class RedeclarationImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
-internal class AnyMethodImplementedInInterfaceImpl(
+internal class MethodOfAnyImplementedInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnyMethodImplementedInInterface(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.MethodOfAnyImplementedInInterface(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

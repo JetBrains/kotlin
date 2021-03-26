@@ -730,8 +730,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val conflictingDeclarations: List<KtSymbol>
     }
 
-    abstract class AnyMethodImplementedInInterface : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = AnyMethodImplementedInInterface::class
+    abstract class MethodOfAnyImplementedInInterface : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = MethodOfAnyImplementedInInterface::class
     }
 
     abstract class LocalObjectNotAllowed : KtFirDiagnostic<KtNamedDeclaration>() {

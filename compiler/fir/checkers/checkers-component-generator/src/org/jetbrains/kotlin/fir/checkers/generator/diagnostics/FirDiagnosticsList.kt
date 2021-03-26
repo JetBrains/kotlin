@@ -361,7 +361,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val REDECLARATION by error<FirSourceElement, PsiElement>() {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("conflictingDeclarations")
         }
-        val ANY_METHOD_IMPLEMENTED_IN_INTERFACE by error<FirSourceElement, PsiElement>()
+        val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE by error<FirSourceElement, PsiElement>()
     }
 
     val INVALID_LOCAL_DECLARATIONS by object : DiagnosticGroup("Invalid local declarations") {

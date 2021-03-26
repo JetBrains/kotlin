@@ -1025,8 +1025,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ANY_METHOD_IMPLEMENTED_IN_INTERFACE) { firDiagnostic ->
-        AnyMethodImplementedInInterfaceImpl(
+    add(FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE) { firDiagnostic ->
+        MethodOfAnyImplementedInInterfaceImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

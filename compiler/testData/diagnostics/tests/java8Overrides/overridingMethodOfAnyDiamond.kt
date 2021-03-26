@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface ILeft {
     override fun toString(): String
 }

@@ -55,7 +55,7 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), F
             val inspector = getInspector(context)
 
             if (inspector.contains(it)) {
-                reporter.reportOn(it.source, FirErrors.ANY_METHOD_IMPLEMENTED_IN_INTERFACE, context)
+                reporter.reportOn(it.source, FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, context)
             }
         }
     }
