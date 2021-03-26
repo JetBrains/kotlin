@@ -11,11 +11,13 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.accessors.runtime.addDependencyTo
+import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
@@ -114,6 +116,87 @@ fun Project.kotlinBuiltins(forJvm: Boolean): Any =
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
+
+enum class JpsDepScope {
+    COMPILE, TEST, RUNTIME, PROVIDED
+}
+
+fun DependencyHandler.add(configurationName: String, dependencyNotation: Any, configure: (ModuleDependency.() -> Unit)?) {
+    // Avoid `dependencyNotation` to `ModuleDependency` class cast exception if possible
+    if (configure != null) {
+        add(configurationName, dependencyNotation, closureOf(configure))
+    } else {
+        add(configurationName, dependencyNotation)
+    }
+}
+
+fun DependencyHandler.jpsLikeJarDependency(
+    dependencyNotation: Any,
+    scope: JpsDepScope,
+    dependencyConfiguration: (ModuleDependency.() -> Unit)? = null,
+    exported: Boolean = false
+) {
+    when (scope) {
+        JpsDepScope.COMPILE -> {
+            if (exported) {
+                add("api", dependencyNotation, dependencyConfiguration)
+                add("testCompile", dependencyNotation, dependencyConfiguration)
+            } else {
+                add("implementation", dependencyNotation, dependencyConfiguration)
+            }
+        }
+        JpsDepScope.TEST -> {
+            if (exported) {
+                add("testCompile", dependencyNotation, dependencyConfiguration)
+            } else {
+                add("testImplementation", dependencyNotation, dependencyConfiguration)
+            }
+        }
+        JpsDepScope.RUNTIME -> {
+            add("testRuntimeOnly", dependencyNotation, dependencyConfiguration)
+        }
+        JpsDepScope.PROVIDED -> {
+            if (exported) {
+                add("compileOnlyApi", dependencyNotation, dependencyConfiguration)
+                add("testCompile", dependencyNotation, dependencyConfiguration)
+            } else {
+                add("compileOnly", dependencyNotation, dependencyConfiguration)
+                add("testImplementation", dependencyNotation, dependencyConfiguration)
+            }
+        }
+    }
+}
+
+fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepScope, exported: Boolean = false) {
+    jpsLikeJarDependency(project(moduleName), scope, exported = exported)
+    when (scope) {
+        JpsDepScope.COMPILE -> {
+            if (exported) {
+                add("testCompile", projectTests(moduleName))
+            } else {
+                add("testImplementation", projectTests(moduleName))
+            }
+        }
+        JpsDepScope.TEST -> {
+            if (exported) {
+                add("testCompile", projectTests(moduleName))
+            } else {
+                add("testImplementation", projectTests(moduleName))
+            }
+        }
+        JpsDepScope.RUNTIME -> {
+            add("runtimeOnly", projectTests(moduleName))
+        }
+        JpsDepScope.PROVIDED -> {
+            if (exported) {
+                add("testCompile", projectTests(moduleName))
+            } else {
+                add("testImplementation", projectTests(moduleName))
+            }
+        }
+    }
+}
+
 
 fun Project.testApiJUnit5(
     vintageEngine: Boolean = false,

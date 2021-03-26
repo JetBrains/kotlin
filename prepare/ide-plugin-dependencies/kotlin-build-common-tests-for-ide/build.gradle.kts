@@ -1,3 +1,5 @@
-idePluginDependency {
-    publishTestJar(":kotlin-build-common")
+plugins {
+    kotlin("jvm")
 }
+
+publishTestJarForIde(":kotlin-build-common")

@@ -1,3 +1,5 @@
-idePluginDependency {
-    publishTestJar(":compiler:incremental-compilation-impl")
+plugins {
+    kotlin("jvm")
 }
+
+publishTestJarForIde(":compiler:incremental-compilation-impl")
