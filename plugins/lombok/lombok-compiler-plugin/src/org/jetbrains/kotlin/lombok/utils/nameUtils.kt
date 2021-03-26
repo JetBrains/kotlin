@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.lombok.utils
 
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
-internal fun toPreparedBase(name: String): String = name.capitalizeAsciiOnly()
+fun toPreparedBase(name: String): String = name.capitalizeAsciiOnly()

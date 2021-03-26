@@ -25,7 +25,7 @@ Features support:
   
 [~] [@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor](https://projectlombok.org/features/constructor)
  - [x] @NoArgsConstructor
- - [ ] @AllArgsConstructor
+ - [x] @AllArgsConstructor
  - [ ] @RequiredArgsConstructor
 
 [ ] [@Data](https://projectlombok.org/features/Data)

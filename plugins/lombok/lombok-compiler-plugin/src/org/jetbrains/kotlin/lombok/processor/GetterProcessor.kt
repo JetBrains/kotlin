@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.lombok.config.Getter
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.utils.collectWithNotNull
 import org.jetbrains.kotlin.lombok.utils.createFunction
-import org.jetbrains.kotlin.lombok.utils.getVariables
+import org.jetbrains.kotlin.lombok.utils.getJavaFields
 import org.jetbrains.kotlin.lombok.utils.toPreparedBase
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -30,7 +30,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
         val clGetter = Getter.getOrNull(classDescriptor)
 
         val functions = classDescriptor
-            .getVariables()
+            .getJavaFields()
             .collectWithNotNull { Getter.getOrNull(it) ?: clGetter }
             .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation, clAccessors) }
 

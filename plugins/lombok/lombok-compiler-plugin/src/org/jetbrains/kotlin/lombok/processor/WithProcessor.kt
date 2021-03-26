@@ -20,7 +20,7 @@ class WithProcessor(private val config: LombokConfig) : Processor {
         val clWith = With.getOrNull(classDescriptor)
 
         val functions = classDescriptor
-            .getVariables()
+            .getJavaFields()
             .collectWithNotNull { With.getOrNull(it) ?: clWith }
             .mapNotNull { (field, annotation) -> createWith(classDescriptor, field, annotation) }
 

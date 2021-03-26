@@ -14,5 +14,6 @@ object LombokNames {
     val SETTER = FqName("lombok.Setter")
     val WITH = FqName("lombok.With")
     val NO_ARGS_CONSTRUCTOR = FqName("lombok.NoArgsConstructor")
+    val ALL_ARGS_CONSTRUCTOR = FqName("lombok.AllArgsConstructor")
 
 }
