@@ -1,0 +1,20 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public final val value: R|kotlin/Array<test/Bnno>|
+        public get(): R|kotlin/Array<test/Bnno>|
+
+    public constructor(value: R|kotlin/Array<test/Bnno>|): R|test/Anno|
+
+}
+
+@R|test/Anno|(value = <implicitArrayOf>(@R|test/Bnno|(value = String(x)) , @R|test/Bnno|(value = String(y)) )) public final class AnnotationInArray : R|kotlin/Any| {
+    public constructor(): R|test/AnnotationInArray|
+
+}
+
+public final annotation class Bnno : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/Bnno|
+
+}
