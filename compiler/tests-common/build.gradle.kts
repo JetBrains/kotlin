@@ -72,7 +72,7 @@ dependencies {
         testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
     }
     Platform[203].orHigher {
-        testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
+        testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
     }
     testCompile(intellijDep()) {
         includeJars(

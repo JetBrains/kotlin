@@ -208,6 +208,7 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 extra["IntellijCoreDependencies"] =
     listOf(
         when {
+            Platform[203].orHigher() -> "asm-all-9.0"
             Platform[202].orHigher() -> "asm-all-8.0.1"
             else -> "asm-all-7.0.1"
         },
@@ -386,7 +387,7 @@ fun Task.listConfigurationContents(configName: String) {
 }
 
 val defaultJvmTarget = "1.8"
-val defaultJavaHome = jdkPath(if (Platform[203].orHigher()) "11" else defaultJvmTarget)
+val defaultJavaHome = jdkPath(defaultJvmTarget)
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
 
 allprojects {
