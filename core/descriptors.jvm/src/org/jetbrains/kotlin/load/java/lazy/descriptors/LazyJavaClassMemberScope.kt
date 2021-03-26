@@ -99,6 +99,8 @@ class LazyJavaClassMemberScope(
             }
         }
 
+        c.components.syntheticPartsProvider.generateSyntheticConstructors(ownerDescriptor, result)
+
         c.components.signatureEnhancement.enhanceSignatures(
             c,
             result.ifEmpty { listOfNotNull(createDefaultConstructor()) }
