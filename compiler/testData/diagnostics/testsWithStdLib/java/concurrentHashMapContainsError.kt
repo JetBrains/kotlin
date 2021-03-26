@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitConcurrentHashMapContains -NonStrictOnlyInputTypesChecks
+// !LANGUAGE: +ProhibitConcurrentHashMapContains
 // !WITH_NEW_INFERENCE
 // FULL_JDK
 

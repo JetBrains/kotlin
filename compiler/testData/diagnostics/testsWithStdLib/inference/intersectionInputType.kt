@@ -8,5 +8,5 @@ fun test() {
         else -> 1.0
     }
 
-    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING!>assertEquals<!>(42, u)
+    assertEquals(42, u)
 }
