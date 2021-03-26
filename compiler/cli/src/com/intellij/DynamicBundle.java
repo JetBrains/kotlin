@@ -12,6 +12,8 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Map;
@@ -19,7 +21,6 @@ import java.util.ResourceBundle;
 
 public abstract class DynamicBundle extends AbstractBundle {
   private final static Logger LOG = Logger.getInstance(DynamicBundle.class);
-  private final static Method SET_PARENT = ReflectionUtil.getDeclaredMethod(ResourceBundle.class, "setParent", ResourceBundle.class);
 
   protected DynamicBundle(@NotNull String pathToBundle) {
     super(pathToBundle);
@@ -39,16 +40,35 @@ public abstract class DynamicBundle extends AbstractBundle {
     if (pluginBundle == null) return base;
 
     try {
-      if (SET_PARENT != null) {
-        SET_PARENT.invoke(pluginBundle, base);
+      if (DynamicBundleInternal.SET_PARENT != null) {
+        DynamicBundleInternal.SET_PARENT.invoke(pluginBundle, base);
       }
     }
-    catch (Exception e) {
+    catch (Throwable e) {
       LOG.warn(e);
       return base;
     }
     return pluginBundle;
   }
+
+  /**
+   * "SET_PARENT" has been temporary moved into the internal class to fix Kotlin compiler.
+   * It's to be refactored with "ResourceBundleProvider" since 'core-api' module will use java 1.9+
+   */
+ private static class DynamicBundleInternal {
+   private static final MethodHandle SET_PARENT;
+
+   static {
+     try {
+       Method method = ResourceBundle.class.getDeclaredMethod("setParent", ResourceBundle.class);
+       method.setAccessible(true);
+       SET_PARENT = MethodHandles.lookup().unreflect(method);
+     }
+     catch (NoSuchMethodException | IllegalAccessException e) {
+       throw new RuntimeException(e);
+     }
+   }
+ }
 
   // todo: one language per application
   @Nullable
