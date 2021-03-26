@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !LANGUAGE: -NonStrictOnlyInputTypesChecks
 // !WITH_NEW_INFERENCE
 
 class Inv<T>

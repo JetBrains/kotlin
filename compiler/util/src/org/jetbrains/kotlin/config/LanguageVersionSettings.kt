@@ -148,6 +148,7 @@ enum class LanguageFeature(
     JvmIrEnabledByDefault(KOTLIN_1_5),
     // Disabled until the breaking change is approved by the committee, see KT-10884.
     PackagePrivateFileClassesWithAllPrivateMembers(KOTLIN_1_5, defaultState = State.DISABLED),
+    StrictOnlyInputTypesChecks(sinceVersion = KOTLIN_1_5),
 
     /*
      * Improvements include the following:
@@ -185,7 +186,6 @@ enum class LanguageFeature(
     SamConversionForKotlinFunctions(sinceVersion = KOTLIN_1_4),
     SamConversionPerArgument(sinceVersion = KOTLIN_1_4),
     FunctionReferenceWithDefaultValueAsOtherType(sinceVersion = KOTLIN_1_4),
-    NonStrictOnlyInputTypesChecks(sinceVersion = KOTLIN_1_4),
     SuspendConversion(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
     UnitConversion(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
     OverloadResolutionByLambdaReturnType(sinceVersion = KOTLIN_1_4),

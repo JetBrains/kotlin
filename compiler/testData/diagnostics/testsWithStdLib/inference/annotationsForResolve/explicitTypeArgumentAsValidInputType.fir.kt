@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE -UNUSED_PARAMETER
-// !LANGUAGE: -NonStrictOnlyInputTypesChecks
 
 interface Parent
 object ChildA : Parent

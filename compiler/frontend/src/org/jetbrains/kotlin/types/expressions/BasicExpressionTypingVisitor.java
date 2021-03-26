@@ -1411,7 +1411,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         boolean areAllCandidatesFailedWithOnlyInputTypesError = allCandidates.stream().allMatch((resolvedCall) ->
             resolvedCall instanceof NewAbstractResolvedCall<?> && ((NewAbstractResolvedCall<?>) resolvedCall).containsOnlyOnlyInputTypesErrors()
         );
-        boolean isNonStrictOnlyInputTypesCheckEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.NonStrictOnlyInputTypesChecks);
+        boolean isNonStrictOnlyInputTypesCheckEnabled = !context.languageVersionSettings.supportsFeature(LanguageFeature.StrictOnlyInputTypesChecks);
 
         return areAllCandidatesFailedWithOnlyInputTypesError && isNonStrictOnlyInputTypesCheckEnabled;
     }
