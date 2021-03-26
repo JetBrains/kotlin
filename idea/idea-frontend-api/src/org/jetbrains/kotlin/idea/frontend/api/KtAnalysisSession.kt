@@ -40,7 +40,8 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     KtSymbolsMixIn,
     KtReferenceResolveMixIn,
     KtReferenceShortenerMixIn,
-    KtSymbolDeclarationRendererMixIn {
+    KtSymbolDeclarationRendererMixIn,
+    KtVisibilityCheckerMixIn {
 
     override val analysisSession: KtAnalysisSession get() = this
 
@@ -90,4 +91,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     internal val expressionInfoProvider: KtExpressionInfoProvider get() = expressionInfoProviderImpl
     protected abstract val expressionInfoProviderImpl: KtExpressionInfoProvider
+
+    internal val visibilityChecker: KtVisibilityChecker get() = visibilityCheckerImpl
+    protected abstract val visibilityCheckerImpl: KtVisibilityChecker
 }

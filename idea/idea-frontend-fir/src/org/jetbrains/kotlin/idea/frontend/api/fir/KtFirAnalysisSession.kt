@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.components.KtVisibilityChecker
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolDeclarationRendererProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
@@ -60,6 +61,8 @@ private constructor(
         KtFirSymbolDeclarationRendererProvider(this, token)
 
     override val expressionInfoProviderImpl = KtFirExpressionInfoProvider(this, token)
+
+    override val visibilityCheckerImpl: KtVisibilityChecker = KtFirVisibilityChecker(this, token)
 
     override val typeProviderImpl = KtFirTypeProvider(this, token)
 
