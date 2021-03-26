@@ -1173,7 +1173,7 @@ task enum_nested(type: KonanLocalTest) {
 }
 
 task enum_isFrozen(type: KonanLocalTest) {
-    goldValue = "true\n"
+    goldValue = isExperimentalMM ? "false\n" : "true\n"
     source = "codegen/enum/isFrozen.kt"
 }
 

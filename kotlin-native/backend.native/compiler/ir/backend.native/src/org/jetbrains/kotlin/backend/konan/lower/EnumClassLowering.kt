@@ -303,9 +303,6 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                         else -> error("Unexpected initializer: $initializer")
                     }
                 }
-                +irCall(this@EnumClassLowering.context.ir.symbols.freeze, listOf(arrayType)).apply {
-                    extensionReceiver = irGet(receiver)
-                }
             }
             (constructor.body as IrBlockBody).statements += valuesInitializer
         }
