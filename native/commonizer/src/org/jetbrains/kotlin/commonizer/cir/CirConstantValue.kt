@@ -16,10 +16,17 @@ sealed class CirConstantValue<out T> {
     data class IntValue(override val value: Int) : CirConstantValue<Int>()
     data class LongValue(override val value: Long) : CirConstantValue<Long>()
 
-    data class UByteValue(override val value: Byte) : CirConstantValue<Byte>()
-    data class UShortValue(override val value: Short) : CirConstantValue<Short>()
-    data class UIntValue(override val value: Int) : CirConstantValue<Int>()
-    data class ULongValue(override val value: Long) : CirConstantValue<Long>()
+    @ExperimentalUnsignedTypes
+    data class UByteValue(override val value: UByte) : CirConstantValue<UByte>()
+
+    @ExperimentalUnsignedTypes
+    data class UShortValue(override val value: UShort) : CirConstantValue<UShort>()
+
+    @ExperimentalUnsignedTypes
+    data class UIntValue(override val value: UInt) : CirConstantValue<UInt>()
+
+    @ExperimentalUnsignedTypes
+    data class ULongValue(override val value: ULong) : CirConstantValue<ULong>()
 
     data class FloatValue(override val value: Float) : CirConstantValue<Float>()
     data class DoubleValue(override val value: Double) : CirConstantValue<Double>()

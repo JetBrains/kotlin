@@ -446,7 +446,7 @@ private fun renderAnnotation(annotation: KmAnnotation): String =
         }
 
 @OptIn(ExperimentalUnsignedTypes::class)
-private fun renderAnnotationArgument(arg: KmAnnotationArgument<*>): String =
+private fun renderAnnotationArgument(arg: KmAnnotationArgument): String =
     when (arg) {
         is KmAnnotationArgument.ByteValue -> arg.value.toString() + ".toByte()"
         is KmAnnotationArgument.CharValue -> "'${arg.value.toString().sanitize(quote = '\'')}'"
@@ -455,10 +455,10 @@ private fun renderAnnotationArgument(arg: KmAnnotationArgument<*>): String =
         is KmAnnotationArgument.LongValue -> arg.value.toString() + "L"
         is KmAnnotationArgument.FloatValue -> arg.value.toString() + "f"
         is KmAnnotationArgument.DoubleValue -> arg.value.toString()
-        is KmAnnotationArgument.UByteValue -> arg.value.toUByte().toString() + ".toUByte()"
-        is KmAnnotationArgument.UShortValue -> arg.value.toUShort().toString() + ".toUShort()"
-        is KmAnnotationArgument.UIntValue -> arg.value.toUInt().toString() + "u"
-        is KmAnnotationArgument.ULongValue -> arg.value.toULong().toString() + "uL"
+        is KmAnnotationArgument.UByteValue -> arg.value.toString() + ".toUByte()"
+        is KmAnnotationArgument.UShortValue -> arg.value.toString() + ".toUShort()"
+        is KmAnnotationArgument.UIntValue -> arg.value.toString() + "u"
+        is KmAnnotationArgument.ULongValue -> arg.value.toString() + "uL"
         is KmAnnotationArgument.BooleanValue -> arg.value.toString()
         is KmAnnotationArgument.StringValue -> "\"${arg.value.sanitize(quote = '"')}\""
         is KmAnnotationArgument.KClassValue -> buildString {
@@ -466,14 +466,14 @@ private fun renderAnnotationArgument(arg: KmAnnotationArgument<*>): String =
             append(arg.className).append("::class")
             repeat(arg.arrayDimensionCount) { append(">") }
         }
-        is KmAnnotationArgument.EnumValue -> arg.value
-        is KmAnnotationArgument.AnnotationValue -> arg.value.let { annotation ->
+        is KmAnnotationArgument.EnumValue -> "${arg.enumClassName}.${arg.enumEntryName}"
+        is KmAnnotationArgument.AnnotationValue -> arg.annotation.let { annotation ->
             val args = annotation.arguments.entries.joinToString { (name, argument) ->
                 "$name = ${renderAnnotationArgument(argument)}"
             }
             "${annotation.className}($args)"
         }
-        is KmAnnotationArgument.ArrayValue -> arg.value.joinToString(prefix = "[", postfix = "]", transform = ::renderAnnotationArgument)
+        is KmAnnotationArgument.ArrayValue -> arg.elements.joinToString(prefix = "[", postfix = "]", transform = ::renderAnnotationArgument)
     }
 
 private fun String.sanitize(quote: Char): String =

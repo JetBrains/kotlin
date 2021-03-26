@@ -62,7 +62,7 @@ var KmProperty.file: Int?
         klibExtensions.file = value
     }
 
-var KmProperty.compileTimeValue: KmAnnotationArgument<*>?
+var KmProperty.compileTimeValue: KmAnnotationArgument?
     get() = klibExtensions.compileTimeValue
     set(value) {
         klibExtensions.compileTimeValue = value

@@ -4,6 +4,14 @@
 
 - Update to Kotlin 1.5 with metadata version 1.5.
   Note: metadata of version 1.5 is readable by Kotlin compiler/reflection of versions 1.4 and later.
+- Breaking change: improve API of annotation arguments.
+  `KmAnnotationArgument` doesn't have `val value: T` anymore, it was moved to a subclass named `KmAnnotationArgument.LiteralValue<T>`.
+  The property `value` is:
+  - renamed to `annotation` in `AnnotationValue`
+  - renamed to `elements` in `ArrayValue`
+  - removed in favor of `enumClassName`/`enumEntryName` in `EnumValue`
+  - removed in favor of `className`/`arrayDimensionCount` in `KClassValue`
+  - changed type from signed to unsigned integer types in `UByteValue`, `UShortValue`, `UIntValue`, `ULongValue`
 - [`KT-44783`](https://youtrack.jetbrains.com/issue/KT-44783) Add Flag.IS_VALUE for value classes
   - Breaking change: `Flag.IS_INLINE` is deprecated, use `Flag.IS_VALUE` instead
 - Breaking change: deprecate `KotlinClassHeader.bytecodeVersion` and `KotlinClassHeader`'s constructor that takes a bytecode version array.

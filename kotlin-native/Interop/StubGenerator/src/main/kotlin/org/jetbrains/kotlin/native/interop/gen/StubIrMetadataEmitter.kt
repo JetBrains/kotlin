@@ -534,28 +534,28 @@ private class MappingExtensions(
         TypeArgument.Variance.OUT -> KmVariance.OUT
     }
 
-    fun ConstantStub.mapToAnnotationArgument(): KmAnnotationArgument<*> = when (this) {
+    fun ConstantStub.mapToAnnotationArgument(): KmAnnotationArgument = when (this) {
         is StringConstantStub -> KmAnnotationArgument.StringValue(value)
         is IntegralConstantStub -> when (size) {
             1 -> if (isSigned) {
                 KmAnnotationArgument.ByteValue(value.toByte())
             } else {
-                KmAnnotationArgument.UByteValue(value.toByte())
+                KmAnnotationArgument.UByteValue(value.toUByte())
             }
             2 -> if (isSigned) {
                 KmAnnotationArgument.ShortValue(value.toShort())
             } else {
-                KmAnnotationArgument.UShortValue(value.toShort())
+                KmAnnotationArgument.UShortValue(value.toUShort())
             }
             4 -> if (isSigned) {
                 KmAnnotationArgument.IntValue(value.toInt())
             } else {
-                KmAnnotationArgument.UIntValue(value.toInt())
+                KmAnnotationArgument.UIntValue(value.toUInt())
             }
             8 -> if (isSigned) {
                 KmAnnotationArgument.LongValue(value)
             } else {
-                KmAnnotationArgument.ULongValue(value)
+                KmAnnotationArgument.ULongValue(value.toULong())
             }
 
             else -> error("Integral constant of value $value with unexpected size of $size.")
