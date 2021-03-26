@@ -17,7 +17,7 @@ dependencies {
     compile(jpsStandalone()) { includeJars("jps-model") }
     compile(intellijPluginDep("java"))
     compile(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compile("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:$benchmarks_version")
+    compile("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
 }
 
 sourceSets {
