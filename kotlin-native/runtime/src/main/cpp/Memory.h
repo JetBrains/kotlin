@@ -66,6 +66,8 @@ struct ObjHeader {
       return createMetaObject(this);
   }
 
+  MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMeta_); }
+
   ALWAYS_INLINE ObjHeader** GetWeakCounterLocation();
 
 #ifdef KONAN_OBJC_INTEROP
@@ -109,7 +111,6 @@ struct ArrayHeader {
   uint32_t count_;
 };
 
-ALWAYS_INLINE bool isFrozen(const ObjHeader* obj);
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
 ALWAYS_INLINE bool isShareable(const ObjHeader* obj);
 

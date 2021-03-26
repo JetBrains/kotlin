@@ -7,24 +7,7 @@
 
 #include "KAssert.h"
 
-ALWAYS_INLINE bool isFrozen(const ObjHeader* obj) {
-    // TODO: Unimplemented
-    return false;
-}
-
 extern "C" {
-
-void MutationCheck(ObjHeader* obj) {
-    // TODO: Unimplemented
-}
-
-void FreezeSubgraph(ObjHeader* obj) {
-    // TODO: Unimplemented
-}
-
-void EnsureNeverFrozen(ObjHeader* obj) {
-    TODO();
-}
 
 void Kotlin_native_internal_GC_suspend(ObjHeader*) {
     TODO();
