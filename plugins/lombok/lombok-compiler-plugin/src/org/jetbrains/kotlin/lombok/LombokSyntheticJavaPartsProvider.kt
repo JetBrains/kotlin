@@ -26,7 +26,8 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
             SetterProcessor(config),
             WithProcessor(config),
             NoArgsConstructorProcessor(),
-            AllArgsConstructorProcessor()
+            AllArgsConstructorProcessor(),
+            RequiredArgsConstructorProcessor()
         )
 
     private val partsCache: MutableMap<ClassDescriptor, Parts> = WeakHashMap()
