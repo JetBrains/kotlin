@@ -46,7 +46,6 @@ dependencies {
     jpsLikeJarDependency(intellijPluginDep("maven-model", forIde = true), JpsDepScope.COMPILE) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains.intellij.deps:trove4j:1.0.20200330", JpsDepScope.COMPILE) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.COMPILE, { includeJars("dom-openapi") }) // Exported transitive dependency
-    jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.COMPILE, { includeJars("openapi") }) // Exported transitive dependency
     jpsLikeJarDependency("org.jetbrains:annotations-java5:20.1.0", JpsDepScope.COMPILE) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.COMPILE, { includeJars("platform-ide-util-io") }) // Exported transitive dependency
     jpsLikeJarDependency(intellijDep(forIde = true), JpsDepScope.COMPILE, { includeJars("resources") }) // Exported transitive dependency
