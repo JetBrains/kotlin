@@ -8,3 +8,5 @@ package org.jetbrains.kotlin.lombok.utils
 @Suppress("UNCHECKED_CAST")
 internal fun <E, R> Collection<E>.collectWithNotNull(f: (E) -> R?): List<Pair<E, R>> =
     map { it to f(it) }.filter { it.second != null } as List<Pair<E, R>>
+
+internal fun String?.trimToNull(): String? = this?.trim()?.takeIf { it.isNotEmpty() }

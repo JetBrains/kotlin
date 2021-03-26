@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.utils
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -44,7 +45,30 @@ internal fun ClassDescriptor.createFunction(
     return methodDescriptor
 }
 
-private fun FunctionDescriptor.makeValueParameter(param: ValueParameter, index: Int): ValueParameterDescriptor {
+internal fun ClassDescriptor.createConstructor(
+    valueParameters: List<ValueParameter>,
+    visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
+): ClassConstructorDescriptor {
+    val constructor = ClassConstructorDescriptorImpl.create(
+        this,
+        Annotations.EMPTY,
+        false,
+        this.source
+    )
+    val paramDescriptors = valueParameters.mapIndexed { idx, param -> constructor.makeValueParameter(param, idx) }
+    constructor.initialize(
+        null,
+        constructor.calculateDispatchReceiverParameter(),
+        emptyList(),
+        paramDescriptors,
+        this.defaultType,
+        Modality.OPEN,
+        visibility
+    )
+    return constructor
+}
+
+private fun CallableDescriptor.makeValueParameter(param: ValueParameter, index: Int): ValueParameterDescriptor {
     return ValueParameterDescriptorImpl(
         containingDeclaration = this,
         original = null,

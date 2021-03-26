@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 
 internal fun getVisibility(annotation: AnnotationDescriptor, field: String = "value"): DescriptorVisibility {
-    val value = annotation.getStringArgument(field, "PUBLIC")
+    val value = annotation.getStringArgument(field) ?: "PUBLIC"
     val visibility = when (value) {
         "PUBLIC" -> Visibilities.Public
         "PROTECTED" -> Visibilities.Protected
@@ -26,9 +26,9 @@ internal fun getVisibility(annotation: AnnotationDescriptor, field: String = "va
     return DescriptorVisibilities.toDescriptorVisibility(visibility)
 }
 
-private fun AnnotationDescriptor.getStringArgument(argumentName: String, default: String): String {
+internal fun AnnotationDescriptor.getStringArgument(argumentName: String): String? {
     val argument = allValueArguments[Name.identifier(argumentName)]
-        ?: return default
+        ?: return null
 
     return when (argument) {
         is EnumValue -> argument.enumEntryName.identifier
