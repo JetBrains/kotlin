@@ -33,11 +33,11 @@ class ProjectStructureMetadataModuleBuilder {
     ): KotlinModule {
         val moduleData = BasicKotlinModule(component.toSingleModuleIdentifier()).apply {
             metadata.sourceSetNamesByVariantName.keys.forEach { variantName ->
-                fragments.add(BasicKotlinModuleVariant(this@apply, variantName, DefaultLanguageSettingsBuilder()))
+                fragments.add(BasicKotlinModuleVariant(this@apply, variantName))
             }
             fun fragment(sourceSetName: String): BasicKotlinModuleFragment {
                 if (fragments.none { it.fragmentName == sourceSetName })
-                    fragments.add(BasicKotlinModuleFragment(this@apply, sourceSetName, DefaultLanguageSettingsBuilder()))
+                    fragments.add(BasicKotlinModuleFragment(this@apply, sourceSetName))
                 return fragmentByName(sourceSetName)
             }
             metadata.sourceSetNamesByVariantName.forEach { (variantName, sourceSets) ->
