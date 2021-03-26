@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.lombok.config
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.lombok.utils.LombokNames
+import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.lombok.utils.getBooleanArgument
+import org.jetbrains.kotlin.lombok.utils.getStringArgument
 import org.jetbrains.kotlin.lombok.utils.getVisibility
 import org.jetbrains.kotlin.name.FqName
 
@@ -67,6 +68,21 @@ data class With(val visibility: DescriptorVisibility) {
         override fun extract(annotation: AnnotationDescriptor): With =
             With(
                 visibility = getVisibility(annotation)
+            )
+    }
+}
+
+data class NoArgsConstructor(
+    val visibility: DescriptorVisibility,
+    val staticName: String?
+) {
+    companion object : AnnotationCompanion<NoArgsConstructor>() {
+        override val name: FqName = LombokNames.NO_ARGS_CONSTRUCTOR
+
+        override fun extract(annotation: AnnotationDescriptor): NoArgsConstructor =
+            NoArgsConstructor(
+                visibility = getVisibility(annotation),
+                staticName = annotation.getStringArgument("staticName").trimToNull()
             )
     }
 }
