@@ -16,7 +16,27 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <idea-version since-build="202.6397.94" until-build="202.*"/>
 
   <change-notes><![CDATA[
+    <h3>1.5.0-M2</h3>
+    <ul>
+      <li><a href="https://kotlinlang.org/docs/fun-interfaces.html?utm_source=product&utm_medium=link">SAM adapters</a> use `invokedynamic` on the JVM by default.</li>
+      <li>Deprecation of `-Xjvm-default=enable` and `-Xjvm-default=compatibility` compiler modes and `@JvmDefault` annotation.</li>
+      <li>Standard library: math functions `floorDiv()` and `mod()`, collection function `firstNotNullOf()`, strict version of String.toBoolean().</li>
+    </ul>
+    Learn more about Kotlin 1.5.0-M2 in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.0-M2/">changelog</a> and <a href="https://blog.jetbrains.com/kotlin/2021/03/kotlin-1-5-0-m2-released/?utm_source=product&utm_medium=link">this blog post</a>.
+    <br><br>
+    <h3>1.5.0-M1</h3>
+    Released: <b>March 3, 2021</b>
+    <ul>
+      <li><a href="https://kotlinlang.org/docs/whatsnew14.html?utm_source=product&utm_medium=link#new-jvm-ir-backend">JVM IR backend</a> by default.</li>
+      <li>New language features by default: inline value classes, sealed interfaces, and JVM records support.</li>
+      <li>Kotlin/JVM: new default target: 1.8 (1.6 is deprecated), string concatenation uses `invokedynamic` by default.</li>
+      <li>Kotlin/Native compilation time improvements.</li>
+      <li>Fixed compiler exceptions.</li>
+    </ul>
+    Learn more about Kotlin 1.5.0-M1 in the <a href="https://github.com/JetBrains/kotlin/releases/tag/v1.5.0-M1/">changelog</a>.
+    <br><br>
     <h3>1.4.30</h3>
+    Released: <b>February 4, 2021</b>
     <ul>
       <li>Preview of new language features: JVM records support, sealed interfaces, and stable inline classes.</li>
       <li>Kotlin/JVM: IR backend is now in Beta.</li>
