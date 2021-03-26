@@ -65,23 +65,6 @@ repositories {
                 artifact()
             }
         }
-
-        ivy {
-            url = URI("https://dl.bintray.com/kotlin/as/")
-
-            patternLayout {
-                artifact("[artifact]-[revision]-$androidStudioOs.[ext]")
-            }
-
-            credentials {
-                username = System.getenv("AS_BINTRAY_USER_NAME") ?: findProperty("bintray.user") as String?
-                password = System.getenv("AS_BINTRAY_API_KEY") ?: findProperty("bintray.apikey") as String?
-            }
-
-            metadataSources {
-                artifact()
-            }
-        }
     }
 
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
