@@ -29,11 +29,10 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
         super.setUp()
         consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
         ScriptConfigurationManager.updateScriptDependenciesSynchronously(consoleRunner!!.consoleFile)
-        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(testRootDisposable, KtTestUtil.getHomeDirectory())
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
         consoleRunner?.dispose()
         consoleRunner = null
         super.tearDown()

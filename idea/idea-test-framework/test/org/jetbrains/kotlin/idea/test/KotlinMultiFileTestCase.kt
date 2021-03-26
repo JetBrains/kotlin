@@ -24,7 +24,7 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
 
     override fun setUp() {
         super.setUp()
-        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(testRootDisposable, KtTestUtil.getHomeDirectory())
 
         runWriteAction {
             PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk6)
@@ -72,10 +72,5 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
         } else {
             PsiTestUtil.addSourceContentToRoots(myModule, rootDir)
         }
-    }
-
-    override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
-        super.tearDown()
     }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.repl
 import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.testFramework.PlatformTestCase
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
@@ -39,9 +40,9 @@ class IdeReplExecutionTest : PlatformTestCase() {
         super.tearDown()
     }
 
-    override fun runTest() {
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
         runTest {
-            super.runTest()
+            super.runTestRunnable(testRunnable)
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -203,7 +203,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     private fun createTestModuleByName(name: String): Module {
         val newModuleDir = runWriteAction { VfsUtil.createDirectoryIfMissing(project.baseDir, name) }
-        val newModule = createModuleAt(name, project, JavaModuleType.getModuleType(), newModuleDir.path)
+        val newModule = createModuleAt(name, project, JavaModuleType.getModuleType(), VfsUtil.virtualToIoFile(newModuleDir).toPath())
 
         PsiTestUtil.addSourceContentToRoots(newModule, newModuleDir)
         return newModule

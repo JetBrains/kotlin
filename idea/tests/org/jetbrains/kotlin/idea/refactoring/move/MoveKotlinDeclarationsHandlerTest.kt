@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler
@@ -31,7 +30,7 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
 
     private fun doTest(action: (rootDir: VirtualFile, handler: MoveKotlinDeclarationsHandler) -> Unit) {
         val path = "$testDataPath$testRoot/${getTestName(true)}"
-        val rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false)
+        val rootDir = createTestProjectStructure(myProject, myModule, path, false)
         prepareProject(rootDir)
         PsiDocumentManager.getInstance(myProject).commitAllDocuments()
         action(rootDir, MoveKotlinDeclarationsHandler())

@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.TempFiles;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.util.ThrowableRunnable;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -88,9 +89,8 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
     }
 
     @Override
-    protected void runTest() throws Throwable {
-        //noinspection Convert2MethodRef
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
+    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
+        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 
     protected boolean isFirPlugin() {

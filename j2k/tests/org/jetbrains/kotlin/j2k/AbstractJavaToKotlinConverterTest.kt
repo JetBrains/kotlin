@@ -40,7 +40,7 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
             LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_1_8
         }
 
-        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(getTestRootDisposable(), KtTestUtil.getHomeDirectory())
 
         invalidateLibraryCache(project)
 
@@ -49,8 +49,6 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
-
         project.DEBUG_LOG_ENABLE_PerModulePackageCache = false
         super.tearDown()
     }

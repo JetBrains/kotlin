@@ -47,7 +47,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     override fun setUp() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
-        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(testRootDisposable, KtTestUtil.getHomeDirectory())
     }
 
     fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
@@ -67,7 +67,6 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     }
 
     override fun tearDown() = runAll(
-        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory()) },
         ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
         ThrowableRunnable { super.tearDown() },
     )
@@ -76,8 +75,8 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         return super.createModule(path, moduleType)
     }
 
-    override fun runTest() {
-        runTest { super.runTest() }
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        runTest { super.runTestRunnable(testRunnable) }
     }
 
     fun addRoot(module: Module, sourceDirInTestData: File, isTestRoot: Boolean, transformContainedFiles: ((File) -> Unit)? = null) {
@@ -135,6 +134,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             ?: error("Facet settings are not found")
 
         facetSettings.useProjectSettings = false
+        facetSettings.coroutineSupport = LanguageFeature.State.ENABLED
     }
 
     protected fun checkFiles(

@@ -10,9 +10,9 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.PsiTestUtil
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.mockJdk
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.io.File
 
 abstract class AbstractRunConfigurationTest : @Suppress("DEPRECATION") KotlinCodeInsightTestCase() {
@@ -24,7 +24,7 @@ abstract class AbstractRunConfigurationTest : @Suppress("DEPRECATION") KotlinCod
         val srcDir: VirtualFile?
 
         if (File(srcPath).exists()) {
-            srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, myFilesToDelete, false)
+            srcDir = createTestProjectStructure(project, configModule, srcPath, false)
             PsiTestUtil.addSourceRoot(module, srcDir, false)
         } else {
             srcDir = null
@@ -35,7 +35,7 @@ abstract class AbstractRunConfigurationTest : @Suppress("DEPRECATION") KotlinCod
 
         if (File(testPath).exists()) {
             testDir = if (srcDir == null) {
-                PsiTestUtil.createTestProjectStructure(project, configModule, testPath, myFilesToDelete, false)
+                createTestProjectStructure(project, configModule, testPath, false)
             } else {
                 val canonicalPath = File(testPath).canonicalPath.replace(File.separatorChar, '/')
                 LocalFileSystem.getInstance().refreshAndFindFileByPath(canonicalPath)

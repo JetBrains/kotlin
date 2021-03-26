@@ -22,7 +22,7 @@ class KtContractEffectElementType(debugName: String, psiClass: Class<KtContractE
         return KotlinContractEffectStubImpl(parentStub, this)
     }
 
-    override fun createStub(psi: KtContractEffect, parentStub: StubElement<PsiElement>?): KotlinContractEffectStub {
+    override fun createStub(psi: KtContractEffect, parentStub: StubElement<*>?): KotlinContractEffectStub {
         return KotlinContractEffectStubImpl(parentStub, this)
     }
 }

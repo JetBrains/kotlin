@@ -42,7 +42,10 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.execution.*;
+import org.jetbrains.idea.maven.execution.MavenExecutor;
+import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
+import org.jetbrains.idea.maven.execution.MavenRunnerSettings;
+import org.jetbrains.idea.maven.execution.SoutMavenConsole;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenExplicitProfiles;
 import org.jetbrains.idea.maven.project.*;
@@ -68,12 +71,12 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
 
     @Override
     protected void setUp() throws Exception {
-        VfsRootAccess.allowRootAccess(PathManager.getConfigPath());
+        VfsRootAccess.allowRootAccess(getTestRootDisposable(), PathManager.getConfigPath());
         super.setUp();
         myGlobalSettingsFile =
                 MavenWorkspaceSettingsComponent.getInstance(myProject).getSettings().generalSettings.getEffectiveGlobalSettingsIoFile();
         if (myGlobalSettingsFile != null) {
-            VfsRootAccess.allowRootAccess(myGlobalSettingsFile.getAbsolutePath());
+            VfsRootAccess.allowRootAccess(getTestRootDisposable(), myGlobalSettingsFile.getAbsolutePath());
         }
         sdkCreationChecker = new KotlinSdkCreationChecker();
     }
@@ -89,10 +92,6 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
     protected void tearDown() throws Exception {
         try {
             JavaAwareProjectJdkTableImpl.removeInternalJdkInTests();
-            if (myGlobalSettingsFile != null) {
-                VfsRootAccess.disallowRootAccess(myGlobalSettingsFile.getAbsolutePath());
-            }
-            VfsRootAccess.disallowRootAccess(PathManager.getConfigPath());
             Messages.setTestDialog(TestDialog.DEFAULT);
             removeFromLocalRepository("test");
             FileUtil.delete(BuildManager.getInstance().getBuildSystemDirectory().toFile());

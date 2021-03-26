@@ -65,10 +65,6 @@ fun AsmType.getClassDescriptor(
     }
 
     return runReadAction {
-        val classes = JavaPsiFacade.getInstance(scope.project).findClasses(jvmName.asString(), scope)
-        if (classes.isEmpty()) null
-        else {
-            classes.first().getJavaClassDescriptor()
-        }
+        scope.project?.let(JavaPsiFacade::getInstance)?.findClasses(jvmName.asString(), scope)?.firstOrNull()?.getJavaClassDescriptor()
     }
 }

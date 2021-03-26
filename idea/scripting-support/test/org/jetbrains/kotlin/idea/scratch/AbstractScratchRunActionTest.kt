@@ -312,22 +312,17 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(getTestRootDisposable(), KtTestUtil.getHomeDirectory())
 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
     }
 
     override fun tearDown() {
-//        myFixture?.file?.virtualFile?.let {
-//            runWriteAction {
-//                if (it.isValid) {
-//                    it.delete(this)
-//                }
-//            }
-//        }
         super.tearDown()
 
-        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
+        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
+            runWriteAction { file.delete(this) }
+        }
     }
 
     companion object {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scratch.ui
 
-import com.intellij.execution.ui.ConfigurationModuleSelector
+import com.intellij.core.JavaPsiBundle
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.isKotlinWorksheet
+import java.util.function.Supplier
 import javax.swing.JComponent
 
 class ModulesComboBoxAction(private val scratchFile: ScratchFile) :
@@ -28,7 +29,7 @@ class ModulesComboBoxAction(private val scratchFile: ScratchFile) :
 {
     override fun createPopupActionGroup(button: JComponent): DefaultActionGroup {
         val actionGroup = DefaultActionGroup()
-        actionGroup.add(ModuleIsNotSelectedAction(ConfigurationModuleSelector.NO_MODULE_TEXT))
+        actionGroup.add(ModuleIsNotSelectedAction(JavaPsiBundle.messagePointer("list.item.no.module")))
 
         val modules = ModuleManager.getInstance(scratchFile.project).modules.filter {
             it.productionSourceInfo() != null || it.testSourceInfo() != null
@@ -55,7 +56,7 @@ class ModulesComboBoxAction(private val scratchFile: ScratchFile) :
 
         e.presentation.apply {
             icon = selectedModule?.let { ModuleType.get(it).icon }
-            text = selectedModule?.name ?: ConfigurationModuleSelector.NO_MODULE_TEXT
+            text = selectedModule?.name ?: JavaPsiBundle.message("list.item.no.module")
         }
 
         e.presentation.isVisible = isModuleSelectorVisible()
@@ -66,7 +67,7 @@ class ModulesComboBoxAction(private val scratchFile: ScratchFile) :
         return !scratchFile.file.isKotlinWorksheet
     }
 
-    private inner class ModuleIsNotSelectedAction(placeholder: String) : DumbAwareAction(placeholder) {
+    private inner class ModuleIsNotSelectedAction(placeholder: Supplier<String>) : DumbAwareAction(placeholder) {
         override fun actionPerformed(e: AnActionEvent) {
             scratchFile.setModule(null)
         }
