@@ -269,8 +269,12 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 // assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
 
                 return typeParameter.superTypes.fold<IrType, IrExpression?>(null) { r, t ->
-                    require(argument is IrExpressionWithCopy) { "Not a copyable expression: ${argument.render()}" }
-                    val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull())
+                    val copy = if (argument is IrExpressionWithCopy) {
+                        argument.copy()
+                    } else {
+                        argument.deepCopyWithSymbols()
+                    }
+                    val check = generateTypeCheckNonNull(copy, t.makeNotNull())
 
                     if (r == null) {
                         check

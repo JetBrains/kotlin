@@ -46,14 +46,4 @@ class IrTypeOperatorCallImpl(
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         argument = argument.transform(transformer, data)
     }
-
-    override fun copy(): IrExpression =
-        IrTypeOperatorCallImpl(
-            startOffset,
-            endOffset,
-            type,
-            operator,
-            typeOperand,
-            argument
-        )
 }
