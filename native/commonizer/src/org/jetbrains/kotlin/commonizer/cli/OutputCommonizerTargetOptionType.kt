@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 internal object OutputCommonizerTargetOptionType : OptionType<SharedCommonizerTarget>(
     alias = "output-commonizer-target",
     description = "Shared commonizer target representing the commonized output hierarchy",
-    mandatory = true
+    mandatory = false
 ) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<SharedCommonizerTarget> {
         return try {

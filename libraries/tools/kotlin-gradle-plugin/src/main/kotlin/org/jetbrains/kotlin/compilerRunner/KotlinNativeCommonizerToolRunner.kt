@@ -31,7 +31,7 @@ internal class KotlinNativeCommonizerToolRunner(project: Project) : KotlinToolRu
 
     override val defaultMaxHeapSize: String get() = "4G"
 
-    override val mustRunViaExec get() = false // because it's not enough the standard Gradle wrapper's heap size
+    override val mustRunViaExec get() = true // because it's not enough the standard Gradle wrapper's heap size
 
     override fun getCustomJvmArgs() = PropertiesProvider(project).commonizerJvmArgs?.split("\\s+".toRegex()).orEmpty()
 }

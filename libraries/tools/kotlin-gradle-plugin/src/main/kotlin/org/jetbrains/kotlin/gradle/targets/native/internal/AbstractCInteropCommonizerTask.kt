@@ -27,9 +27,10 @@ internal abstract class AbstractCInteropCommonizerTask : DefaultTask() {
     internal abstract fun getCommonizationParameters(compilation: KotlinSharedNativeCompilation): CInteropCommonizationParameters?
 
     internal fun getLibraries(compilation: KotlinSharedNativeCompilation): FileCollection {
+        val compilationCommonizerTarget = project.getCommonizerTarget(compilation) ?: return project.files()
         val fileProvider = project.provider<Set<File>> {
             val parameters = getCommonizationParameters(compilation) ?: return@provider emptySet()
-            HierarchicalCommonizerOutputLayout.getTargetDirectory(outputDirectory(parameters), parameters.commonizerTarget)
+            HierarchicalCommonizerOutputLayout.getTargetDirectory(outputDirectory(parameters), compilationCommonizerTarget)
                 .listFiles().orEmpty().toSet()
         }
 

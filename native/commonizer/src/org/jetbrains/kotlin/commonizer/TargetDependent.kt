@@ -63,6 +63,9 @@ internal fun <T> TargetDependent(keys: Iterable<CommonizerTarget>, factory: (tar
     return FactoryBasedTargetDependent(keys.toList(), factory)
 }
 
+internal fun <T> EagerTargetDependent(keys: Iterable<CommonizerTarget>, factory: (target: CommonizerTarget) -> T): TargetDependent<T> {
+    return keys.associateWith(factory).toTargetDependent()
+}
 private class MapBasedTargetDependent<T>(private val map: Map<CommonizerTarget, T>) : TargetDependent<T> {
     override val targets: List<CommonizerTarget> = map.keys.toList()
     override fun get(target: CommonizerTarget): T = map.getValue(target)

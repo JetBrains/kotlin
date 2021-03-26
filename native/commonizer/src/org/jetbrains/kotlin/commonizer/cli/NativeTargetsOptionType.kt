@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.commonizer.cli
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.Companion.predefinedTargets
 
-internal object NativeTargetsOptionType : OptionType<List<KonanTarget>>("targets", "Comma-separated list of hardware targets") {
+internal object NativeTargetsOptionType : OptionType<List<KonanTarget>>(
+    "targets", "Comma-separated list of hardware targets", mandatory = false) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<List<KonanTarget>> {
         val targetNames = rawValue.split(',')
         if (targetNames.isEmpty()) onError("No hardware targets specified: $rawValue")

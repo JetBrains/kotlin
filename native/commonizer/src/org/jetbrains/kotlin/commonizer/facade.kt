@@ -61,7 +61,7 @@ private fun commonize(
 private fun getCirTree(
     parameters: CommonizerParameters, storageManager: StorageManager, target: SharedCommonizerTarget
 ): TargetDependent<CirTreeRoot> {
-    return TargetDependent(target.targets) { childTarget ->
+    return EagerTargetDependent(target.targets) { childTarget ->
         when (childTarget) {
             is LeafCommonizerTarget -> deserializeCirTree(parameters, parameters.targetProviders[childTarget])
             is SharedCommonizerTarget -> commonize(parameters, storageManager, childTarget).assembleCirTree()

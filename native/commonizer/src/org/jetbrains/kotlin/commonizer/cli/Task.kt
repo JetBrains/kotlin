@@ -35,7 +35,7 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
         return option.value as T
     }
 
-    protected inline fun <reified T, reified O : OptionType<T>> getOptional(nameFilter: (String) -> Boolean = { true }): T? {
+    internal inline fun <reified T, reified O : OptionType<T>> getOptional(nameFilter: (String) -> Boolean = { true }): T? {
         val option = options.filter { it.type is O }.singleOrNull { nameFilter(it.type.alias) }
         if (option != null) check(!option.type.mandatory)
 

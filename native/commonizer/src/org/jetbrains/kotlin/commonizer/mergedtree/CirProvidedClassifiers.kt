@@ -50,10 +50,6 @@ interface CirProvidedClassifiers {
             }
         }
 
-        fun of(delegates: Iterable<CirProvidedClassifiers?>): CirProvidedClassifiers {
-            return of(*delegates.filterNotNull().toTypedArray())
-        }
-
         fun by(modulesProvider: ModulesProvider?): CirProvidedClassifiers =
             if (modulesProvider != null) CirProvidedClassifiersByModules.load(modulesProvider) else EMPTY
     }

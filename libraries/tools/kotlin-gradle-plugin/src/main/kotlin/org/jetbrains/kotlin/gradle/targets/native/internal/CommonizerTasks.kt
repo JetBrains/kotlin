@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal val Project.isCInteropCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableCInteropCommonization
 
+internal val Project.isHierarchicalCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableHierarchicalCommonization
+
 internal val Project.commonizeTask: TaskProvider<Task>
     get() = locateOrRegisterTask(
         "commonize",
@@ -25,7 +27,6 @@ internal val Project.commonizeTask: TaskProvider<Task>
             description = "Aggregator task for all c-interop & Native distribution commonizer tasks"
         }
     )
-
 
 /**
  * Keeping this task/task name for IDE compatibility which is invoking 'runCommonizer' during sync
@@ -46,7 +47,10 @@ internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
         if (isCInteropCommonizationEnabled) {
             return locateOrRegisterTask(
                 "commonizeCInterop",
-                invokeWhenRegistered = { commonizeTask.dependsOn(this); dependsOn(commonizeNativeDistributionTask) },
+                invokeWhenRegistered = {
+                    commonizeTask.dependsOn(this)
+                    commonizeNativeDistributionHierarchicalTask?.let(this::dependsOn) ?: dependsOn(commonizeNativeDistributionTask)
+                },
                 configureTask = {
                     group = "interop"
                     description = "Invokes the commonizer on c-interop bindings of the project"
@@ -81,6 +85,19 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
             description = "Invokes the commonizer on the platform libraries provided by the Kotlin/Native distribution"
         }
     )
+
+internal val Project.commonizeNativeDistributionHierarchicalTask: TaskProvider<HierarchicalNativeDistributionCommonizerTask>?
+    get() {
+        if (!isHierarchicalCommonizationEnabled) return null
+        return locateOrRegisterTask(
+            "commonizeNativeDistributionHierarchically",
+            invokeWhenRegistered = { commonizeTask.dependsOn(this) },
+            configureTask = {
+                group = "interop"
+                description = "Invokes the commonizer on platform libraries provided by the Kotlin/Native distribution"
+            }
+        )
+    }
 
 private inline fun <reified T : Task> Project.locateOrRegisterTask(
     name: String,

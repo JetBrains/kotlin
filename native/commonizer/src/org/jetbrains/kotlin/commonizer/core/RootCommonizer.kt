@@ -5,23 +5,23 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.cir.CirRoot
 
 class RootCommonizer : AbstractStandardCommonizer<CirRoot, CirRoot>() {
-    private val leafTargets = mutableSetOf<LeafCommonizerTarget>()
+    private val targets = mutableSetOf<CommonizerTarget>()
 
     override fun commonizationResult() = CirRoot.create(
-        target = SharedCommonizerTarget(leafTargets)
+        target = SharedCommonizerTarget(targets)
     )
 
     override fun initialize(first: CirRoot) {
-        leafTargets += first.target as LeafCommonizerTarget
+        targets += first.target
     }
 
     override fun doCommonizeWith(next: CirRoot): Boolean {
-        leafTargets += next.target as LeafCommonizerTarget
+        targets += next.target
         return true
     }
 }

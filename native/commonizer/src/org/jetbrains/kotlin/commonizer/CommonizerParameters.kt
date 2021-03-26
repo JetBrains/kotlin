@@ -32,8 +32,11 @@ fun CommonizerParameters.getCommonModuleNames(): Set<String> {
 
 internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget): CirProvidedClassifiers {
     val modules = outputTarget.withAllAncestors()
+        .sortedBy { it.level }
         .filter { it == target || it isAncestorOf target }
         .mapNotNull { compatibleTarget -> dependenciesProvider[compatibleTarget] }
 
-    return CirProvidedClassifiers.of(modules.map { module -> CirProvidedClassifiers.by(module) } + CirFictitiousFunctionClassifiers)
+    return modules.fold<ModulesProvider, CirProvidedClassifiers>(CirFictitiousFunctionClassifiers) { classifiers, module ->
+        CirProvidedClassifiers.of(classifiers, CirProvidedClassifiers.by(module))
+    }
 }
