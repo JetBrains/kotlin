@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.utils.transitiveClosure
+import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.utils.fileProvider
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -211,7 +211,7 @@ private operator fun CommonizerTarget.contains(other: CommonizerTarget): Boolean
 }
 
 private fun SharedCommonizerTarget.withAllTransitiveTargets(): Set<CommonizerTarget> {
-    return setOf(this) + this.transitiveClosure<CommonizerTarget> { if (this is SharedCommonizerTarget) this.targets else emptySet() }
+    return setOf(this) + transitiveClosure<CommonizerTarget>(this) { if (this is SharedCommonizerTarget) this.targets else emptySet() }
 }
 
 private fun Project.getDependingNativeCompilations(compilation: KotlinSharedNativeCompilation): Set<KotlinNativeCompilation> {

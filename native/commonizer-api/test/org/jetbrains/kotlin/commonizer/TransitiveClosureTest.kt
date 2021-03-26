@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.utils
+package org.jetbrains.kotlin.commonizer
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +25,7 @@ class TransitiveClosureTest {
         }
     }
 
-    private fun Node.transitiveClosure() = transitiveClosure { children }
+    private fun Node.transitiveClosure() = org.jetbrains.kotlin.commonizer.util.transitiveClosure(this) { children }
 
     @Test
     fun `transitiveClosure does not include root node`() {

@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -246,7 +247,7 @@ internal operator fun KotlinSourceSet.plus(sourceSets: Set<KotlinSourceSet>): Se
 }
 
 internal fun KotlinSourceSet.resolveAllDependsOnSourceSets(): Set<KotlinSourceSet> {
-    return transitiveClosure { dependsOn }
+    return transitiveClosure(this) { dependsOn }
 }
 
 internal fun Iterable<KotlinSourceSet>.resolveAllDependsOnSourceSets(): Set<KotlinSourceSet> {
@@ -254,5 +255,5 @@ internal fun Iterable<KotlinSourceSet>.resolveAllDependsOnSourceSets(): Set<Kotl
 }
 
 internal fun KotlinMultiplatformExtension.resolveAllSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
-    return sourceSet.transitiveClosure { sourceSets.filter { otherSourceSet -> this in otherSourceSet.dependsOn } }
+    return transitiveClosure(sourceSet) { sourceSets.filter { otherSourceSet -> this in otherSourceSet.dependsOn } }
 }
