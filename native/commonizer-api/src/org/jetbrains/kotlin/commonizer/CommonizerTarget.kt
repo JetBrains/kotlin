@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.Serializable
 
@@ -101,6 +102,14 @@ public val CommonizerTarget.level: Int
         }
     }
 
+public fun CommonizerTarget.withAllAncestors(): Set<CommonizerTarget> {
+    return setOf(this) + transitiveClosure(this) {
+        when (this) {
+            is SharedCommonizerTarget -> targets
+            is LeafCommonizerTarget -> emptyList()
+        }
+    }
+}
 
 public infix fun CommonizerTarget.isAncestorOf(other: CommonizerTarget): Boolean {
     if (this is SharedCommonizerTarget) {

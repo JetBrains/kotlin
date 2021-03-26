@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.commonizer
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -28,4 +29,29 @@ class CommonizerTargetUtilsTest {
         assertTrue(parseCommonizerTarget("(c, d)") isDescendentOf hierarchicalParent)
         assertTrue(LeafCommonizerTarget("e") isDescendentOf hierarchicalParent)
     }
+
+    @Test
+    fun withAllAncestors() {
+        val target = parseCommonizerTarget("((a, b), (c, d), (e, (f, g)))")
+
+        assertEquals(
+            setOf(
+                target,
+                parseCommonizerTarget("(a, b)"),
+                parseCommonizerTarget("(c, d)"),
+                parseCommonizerTarget("(e, (f, g))"),
+                parseCommonizerTarget("(f, g)"),
+                LeafCommonizerTarget("a"),
+                LeafCommonizerTarget("b"),
+                LeafCommonizerTarget("c"),
+                LeafCommonizerTarget("d"),
+                LeafCommonizerTarget("e"),
+                LeafCommonizerTarget("f"),
+                LeafCommonizerTarget("g")
+            ),
+            target.withAllAncestors(),
+            "Expected all targets present"
+        )
+    }
 }
+
