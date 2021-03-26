@@ -11,7 +11,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import java.io.File
 
 private const val MODULE_DELIMITER = ",\\s*"
 // These patterns are copies from
@@ -34,8 +33,7 @@ fun buildCompileList(source: Path, outputDirectory: String): List<TestFile> {
     val srcText = srcFile.readText().replace(Regex("<!.*?!>(.*?)<!>")) { match -> match.groupValues[1] }
 
     if (srcText.contains("// WITH_COROUTINES")) {
-        result.add(TestFile("helpers.kt", "$outputDirectory/helpers.kt",
-                createTextForHelpers(true), TestModule.support))
+        result.add(TestFile("helpers.kt", "$outputDirectory/helpers.kt", createTextForHelpers(), TestModule.support))
     }
 
     val matcher = FILE_OR_MODULE_PATTERN.matcher(srcText)

@@ -65,10 +65,10 @@ abstract class BasicIrBoxTest(
 
     private val cachedDependencies = mutableMapOf<String, Collection<String>>()
 
-    override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
+    override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters) {
         compilationCache.clear()
         cachedDependencies.clear()
-        super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
+        super.doTest(filePath, expectedResult, mainCallParameters)
     }
 
     override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker

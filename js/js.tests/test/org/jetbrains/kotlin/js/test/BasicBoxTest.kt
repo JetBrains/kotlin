@@ -101,17 +101,13 @@ abstract class BasicBoxTest(
 
 
     fun doTest(filePath: String) {
-        doTestWithIgnoringByFailFile(filePath, coroutinesPackage = "")
+        doTestWithIgnoringByFailFile(filePath)
     }
 
-    fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
-        doTestWithIgnoringByFailFile(filePath, coroutinesPackage)
-    }
-
-    fun doTestWithIgnoringByFailFile(filePath: String, coroutinesPackage: String) {
+    fun doTestWithIgnoringByFailFile(filePath: String) {
         val failFile = File("$filePath.fail")
         try {
-            doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
+            doTest(filePath, "OK", MainCallParameters.noCall())
         } catch (e: Throwable) {
             if (failFile.exists()) {
                 KotlinTestUtils.assertEqualsToFile(failFile, e.message ?: "")
@@ -121,7 +117,7 @@ abstract class BasicBoxTest(
         }
     }
 
-    open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
+    open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters) {
         val file = File(filePath)
 
         logger.logFile("Test file", file)
@@ -130,9 +126,6 @@ abstract class BasicBoxTest(
         val dceOutputDir = getOutputDir(file, testGroupOutputDirForMinification)
         val pirOutputDir = getOutputDir(file, testGroupOutputDirForPir)
         var fileContent = KtTestUtil.doLoadFile(file)
-        if (coroutinesPackage.isNotEmpty()) {
-            fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
 
         val needsFullIrRuntime = KJS_WITH_FULL_RUNTIME.matcher(fileContent).find() || WITH_RUNTIME.matcher(fileContent).find() || WITH_STDLIB.matcher(fileContent).find()
 
@@ -157,7 +150,7 @@ abstract class BasicBoxTest(
 
         val propertyLazyInitialization = PROPERTY_LAZY_INITIALIZATION.matcher(fileContent).find()
 
-        TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
+        TestFileFactoryImpl().use { testFactory ->
             val inputFiles = TestFiles.createTestFiles(
                 file.name,
                 fileContent,
@@ -957,7 +950,7 @@ abstract class BasicBoxTest(
         TestCase.assertEquals(expectedResult, result)
     }
 
-    private inner class TestFileFactoryImpl(val coroutinesPackage: String) : TestFiles.TestFileFactory<TestModule, TestFile>, Closeable {
+    private inner class TestFileFactoryImpl() : TestFiles.TestFileFactory<TestModule, TestFile>, Closeable {
         var testPackage: String? = null
         val tmpDir = KtTestUtil.tmpDir("js-tests")
         val defaultModule = TestModule(TEST_MODULE, emptyList(), emptyList())
