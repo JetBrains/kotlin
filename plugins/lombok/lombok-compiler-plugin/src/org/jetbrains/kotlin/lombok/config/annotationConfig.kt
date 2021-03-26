@@ -72,31 +72,51 @@ data class With(val visibility: DescriptorVisibility) {
     }
 }
 
-data class NoArgsConstructor(
-    val visibility: DescriptorVisibility,
+interface ConstructorAnnotation {
+    val visibility: DescriptorVisibility
     val staticName: String?
-) {
+}
+
+data class NoArgsConstructor(
+    override val visibility: DescriptorVisibility,
+    override val staticName: String?
+) : ConstructorAnnotation {
     companion object : AnnotationCompanion<NoArgsConstructor>() {
         override val name: FqName = LombokNames.NO_ARGS_CONSTRUCTOR
 
         override fun extract(annotation: AnnotationDescriptor): NoArgsConstructor =
             NoArgsConstructor(
-                visibility = getVisibility(annotation),
+                visibility = getVisibility(annotation, "access"),
                 staticName = annotation.getNonBlankStringArgument("staticName")
             )
     }
 }
 
 data class AllArgsConstructor(
-    val visibility: DescriptorVisibility,
-    val staticName: String?
-) {
+    override val visibility: DescriptorVisibility,
+    override val staticName: String?
+) : ConstructorAnnotation {
     companion object : AnnotationCompanion<AllArgsConstructor>() {
         override val name: FqName = LombokNames.ALL_ARGS_CONSTRUCTOR
 
         override fun extract(annotation: AnnotationDescriptor): AllArgsConstructor =
             AllArgsConstructor(
-                visibility = getVisibility(annotation),
+                visibility = getVisibility(annotation, "access"),
+                staticName = annotation.getNonBlankStringArgument("staticName")
+            )
+    }
+}
+
+data class RequiredArgsConstructor(
+    override val visibility: DescriptorVisibility,
+    override val staticName: String?
+) : ConstructorAnnotation {
+    companion object : AnnotationCompanion<RequiredArgsConstructor>() {
+        override val name: FqName = LombokNames.REQUIRED_ARGS_CONSTRUCTOR
+
+        override fun extract(annotation: AnnotationDescriptor): RequiredArgsConstructor =
+            RequiredArgsConstructor(
+                visibility = getVisibility(annotation, "access"),
                 staticName = annotation.getNonBlankStringArgument("staticName")
             )
     }
