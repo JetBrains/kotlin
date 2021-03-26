@@ -111,6 +111,10 @@ public fun CommonizerTarget.withAllAncestors(): Set<CommonizerTarget> {
     }
 }
 
+public fun CommonizerTarget.allLeaves(): Set<LeafCommonizerTarget> {
+    return withAllAncestors().filterIsInstance<LeafCommonizerTarget>().toSet()
+}
+
 public infix fun CommonizerTarget.isAncestorOf(other: CommonizerTarget): Boolean {
     if (this is SharedCommonizerTarget) {
         return targets.any { it == other } || targets.any { it.isAncestorOf(other) }

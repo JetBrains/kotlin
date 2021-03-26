@@ -53,5 +53,28 @@ class CommonizerTargetUtilsTest {
             "Expected all targets present"
         )
     }
+
+    @Test
+    fun allLeaves() {
+        val target = parseCommonizerTarget("((a, b), (c, d), (e, (f, g)))")
+        assertEquals(
+            setOf(
+                LeafCommonizerTarget("a"),
+                LeafCommonizerTarget("b"),
+                LeafCommonizerTarget("c"),
+                LeafCommonizerTarget("d"),
+                LeafCommonizerTarget("e"),
+                LeafCommonizerTarget("f"),
+                LeafCommonizerTarget("g")
+            ),
+            target.allLeaves(),
+            "Expected leaf targets present"
+        )
+
+        assertEquals(
+            setOf(LeafCommonizerTarget("a")), LeafCommonizerTarget("a").allLeaves(),
+            "Expected LeafCommonizerTarget returns itself in 'allLeaves'"
+        )
+    }
 }
 
