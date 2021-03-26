@@ -76,6 +76,21 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/requiredArgsConstructorStatic.kt");
     }
 
+    @TestMetadata("genericsAccessors.kt")
+    public void testGenericsAccessors() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/genericsAccessors.kt");
+    }
+
+    @TestMetadata("genericsConstructors.kt")
+    public void testGenericsConstructors() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/genericsConstructors.kt");
+    }
+
+    @TestMetadata("genericsConstructorsStatic.kt")
+    public void testGenericsConstructorsStatic() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/genericsConstructorsStatic.kt");
+    }
+
     @TestMetadata("getters.kt")
     public void testGetters() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/getters.kt");

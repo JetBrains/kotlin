@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -21,6 +22,7 @@ fun ClassDescriptor.createFunction(
     name: Name,
     valueParameters: List<ValueParameter>,
     returnType: KotlinType?,
+    typeParameters: List<TypeParameterDescriptor> = emptyList(),
     modality: Modality? = Modality.OPEN,
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
     receiver: ReceiverParameterDescriptor? = this.thisAsReceiverParameter
@@ -38,7 +40,7 @@ fun ClassDescriptor.createFunction(
     methodDescriptor.initialize(
         null,
         receiver,
-        mutableListOf(),
+        typeParameters,
         paramDescriptors,
         returnType,
         modality,
@@ -47,11 +49,11 @@ fun ClassDescriptor.createFunction(
     return methodDescriptor
 }
 
-fun ClassDescriptor.createConstructor(
+fun ClassDescriptor.createJavaConstructor(
     valueParameters: List<ValueParameter>,
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
 ): ClassConstructorDescriptor {
-    val constructor = ClassConstructorDescriptorImpl.create(
+    val constructor = JavaClassConstructorDescriptor.create(
         this,
         Annotations.EMPTY,
         false,
@@ -61,7 +63,7 @@ fun ClassDescriptor.createConstructor(
     constructor.initialize(
         null,
         constructor.calculateDispatchReceiverParameter(),
-        emptyList(),
+        this.declaredTypeParameters,
         paramDescriptors,
         this.defaultType,
         Modality.OPEN,

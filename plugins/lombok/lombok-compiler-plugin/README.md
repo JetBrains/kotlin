@@ -36,7 +36,7 @@ Features support:
 
 
 Other todos:
- - [ ] Generic classes
+ - [x] Generic classes
  - [ ] Actually run compiled code 
  - [ ] Don't generate members that already exist (if having a duplicate is a problem)
  - [ ] Gradle integration (as subplugin or just a way to enable lombok support)

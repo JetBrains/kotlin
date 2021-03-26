@@ -28,7 +28,7 @@ object Test {
         val getter = obj.getAge()
         val property = obj.age
 
-        //todo kotlin doesn't see isBoolean methods as properties
+        //todo kotlin doesn't see isBoolean methods as property
 //        obj.primitiveBoolean
         obj.isPrimitiveBoolean()
 

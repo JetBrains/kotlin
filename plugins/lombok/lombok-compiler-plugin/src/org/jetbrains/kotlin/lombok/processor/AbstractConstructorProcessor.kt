@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.lombok.config.AllArgsConstructor
 import org.jetbrains.kotlin.lombok.config.AnnotationCompanion
 import org.jetbrains.kotlin.lombok.config.ConstructorAnnotation
 import org.jetbrains.kotlin.lombok.utils.ValueParameter
-import org.jetbrains.kotlin.lombok.utils.createConstructor
+import org.jetbrains.kotlin.lombok.utils.createJavaConstructor
 import org.jetbrains.kotlin.lombok.utils.createFunction
-import org.jetbrains.kotlin.lombok.utils.getJavaFields
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractConstructorProcessor<A : ConstructorAnnotation>(
@@ -28,7 +26,7 @@ abstract class AbstractConstructorProcessor<A : ConstructorAnnotation>(
 
         val result = annotationCompanion.getOrNull(classDescriptor)?.let { annotation ->
             if (annotation.staticName == null) {
-                val constructor = classDescriptor.createConstructor(
+                val constructor = classDescriptor.createJavaConstructor(
                     valueParameters = valueParameters,
                     visibility = annotation.visibility
                 )
@@ -38,6 +36,7 @@ abstract class AbstractConstructorProcessor<A : ConstructorAnnotation>(
                     Name.identifier(annotation.staticName!!),
                     valueParameters,
                     classDescriptor.defaultType,
+                    typeParameters = classDescriptor.declaredTypeParameters,
                     visibility = annotation.visibility,
                     receiver = null
                 )
