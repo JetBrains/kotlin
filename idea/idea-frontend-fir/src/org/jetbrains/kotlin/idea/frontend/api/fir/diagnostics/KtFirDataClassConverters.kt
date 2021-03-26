@@ -200,12 +200,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.TYPE_PARAMETER_AS_SUPERTYPE) { firDiagnostic ->
-        TypeParameterAsSupertypeImpl(
-            firDiagnostic as FirPsiDiagnostic<*>,
-            token,
-        )
-    }
     add(FirErrors.ENUM_AS_SUPERTYPE) { firDiagnostic ->
         EnumAsSupertypeImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

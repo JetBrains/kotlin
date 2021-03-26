@@ -136,7 +136,6 @@ private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceEl
         DiagnosticKind.IllegalUnderscore -> FirErrors.ILLEGAL_UNDERSCORE
         DiagnosticKind.DeserializationError -> FirErrors.DESERIALIZATION_ERROR
         DiagnosticKind.InferenceError -> FirErrors.INFERENCE_ERROR
-        DiagnosticKind.TypeParameterAsSupertype -> FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
         DiagnosticKind.EnumAsSupertype -> FirErrors.ENUM_AS_SUPERTYPE
         DiagnosticKind.RecursionInSupertypes -> FirErrors.RECURSION_IN_SUPERTYPES
         DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES

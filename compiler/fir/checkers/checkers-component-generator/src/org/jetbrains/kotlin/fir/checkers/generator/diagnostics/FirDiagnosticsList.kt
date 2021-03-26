@@ -88,7 +88,6 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {
-        val TYPE_PARAMETER_AS_SUPERTYPE by error<FirSourceElement, PsiElement>()
         val ENUM_AS_SUPERTYPE by error<FirSourceElement, PsiElement>()
         val RECURSION_IN_SUPERTYPES by error<FirSourceElement, PsiElement>()
         val NOT_A_SUPERTYPE by error<FirSourceElement, PsiElement>()

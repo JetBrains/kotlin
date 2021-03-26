@@ -198,7 +198,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_REIFIED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
@@ -290,7 +289,6 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             )
 
             // Supertypes
-            map.put(TYPE_PARAMETER_AS_SUPERTYPE, "Type parameter as supertype")
             map.put(ENUM_AS_SUPERTYPE, "Enum as supertype")
             map.put(RECURSION_IN_SUPERTYPES, "Recursion in supertypes")
             map.put(NOT_A_SUPERTYPE, "Not an immediate supertype")

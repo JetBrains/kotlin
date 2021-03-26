@@ -92,7 +92,6 @@ object FirErrors {
     val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error1<FirSourceElement, PsiElement, String>()
 
     // Supertypes
-    val TYPE_PARAMETER_AS_SUPERTYPE by error0<FirSourceElement, PsiElement>()
     val ENUM_AS_SUPERTYPE by error0<FirSourceElement, PsiElement>()
     val RECURSION_IN_SUPERTYPES by error0<FirSourceElement, PsiElement>()
     val NOT_A_SUPERTYPE by error0<FirSourceElement, PsiElement>()

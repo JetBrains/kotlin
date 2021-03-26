@@ -233,13 +233,6 @@ internal class InstanceAccessBeforeSuperCallImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
-internal class TypeParameterAsSupertypeImpl(
-    firDiagnostic: FirPsiDiagnostic<*>,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.TypeParameterAsSupertype(), KtAbstractFirDiagnostic<PsiElement> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-}
-
 internal class EnumAsSupertypeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

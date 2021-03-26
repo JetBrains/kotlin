@@ -157,10 +157,6 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val target: String
     }
 
-    abstract class TypeParameterAsSupertype : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = TypeParameterAsSupertype::class
-    }
-
     abstract class EnumAsSupertype : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = EnumAsSupertype::class
     }
