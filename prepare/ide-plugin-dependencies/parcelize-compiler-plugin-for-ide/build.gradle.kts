@@ -1,7 +1,5 @@
-idePluginDependency {
-    publishProjectJars(
-        listOf(
-            ":plugins:parcelize:parcelize-compiler"
-        )
-    )
+plugins {
+    kotlin("jvm")
 }
+
+publishJarsForIde(listOf(":plugins:parcelize:parcelize-compiler"))

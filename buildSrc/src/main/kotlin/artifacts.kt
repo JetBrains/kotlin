@@ -236,6 +236,31 @@ fun Project.idePluginDependency(block: () -> Unit) {
     }
 }
 
+fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
+    idePluginDependency {
+        publishProjectJars(projects, libraryDependencies)
+    }
+    dependencies {
+        projects.forEach {
+            jpsLikeJarDependency(project(it), JpsDepScope.COMPILE, { isTransitive = false }, exported = true)
+        }
+        libraryDependencies.forEach {
+            jpsLikeJarDependency(it, JpsDepScope.COMPILE, exported = true)
+        }
+    }
+}
+
+fun Project.publishTestJarsForIde(projectNames: List<String>) {
+    idePluginDependency {
+        publishTestJar(projectNames)
+    }
+    dependencies {
+        for (projectName in projectNames) {
+            jpsLikeJarDependency(projectTests(projectName), JpsDepScope.COMPILE, exported = true)
+        }
+    }
+}
+
 fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
     apply<JavaPlugin>()
 
