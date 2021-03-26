@@ -197,7 +197,6 @@ tasks.withType<Test> {
     useAndroidSdk()
 
     maxHeapSize = "512m"
-    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
     useJUnitPlatform()
 
     testLogging {
@@ -231,5 +230,16 @@ tasks.withType<Test> {
             override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {}
             override fun beforeTest(testDescriptor: TestDescriptor) {}
         })
+    }
+}
+
+tasks.register<Test>("kgpJunit5Tests") {
+    group = "Verification"
+    description = "Run only JUnit 5 tests for Kotlin Gradle Plugin"
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
+
+    useJUnitPlatform {
+        includeTags("JUnit5")
+        includeEngines("junit-jupiter")
     }
 }
