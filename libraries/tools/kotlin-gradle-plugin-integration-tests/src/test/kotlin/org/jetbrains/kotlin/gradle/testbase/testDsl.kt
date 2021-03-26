@@ -38,7 +38,7 @@ fun KGPBaseTest.project(
     val gradleRunner = GradleRunner
         .create()
         .withProjectDir(projectPath.toFile())
-        .withTestKitDir(Paths.get(".").testKitDir.toAbsolutePath().toFile())
+        .withTestKitDir(testKitDir.toAbsolutePath().toFile())
         .withGradleVersion(gradleVersion.version)
         .also {
             if (forceOutput) it.forwardOutput()
@@ -105,7 +105,10 @@ private fun TestProject.commonBuildSetup(
     return allBuildArguments
 }
 
-private val Path.testKitDir get() = resolve(".testKitDir")
+/**
+ * On changing test kit dir location update related location in 'cleanTestKitCache' task.
+ */
+private val testKitDir get() = Paths.get(".").resolve(".testKitDir")
 
 private fun setupProjectFromTestResources(
     projectName: String,

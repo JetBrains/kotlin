@@ -61,6 +61,14 @@ val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
                 ?.toBoolean() ?: false
         } catch (_: Exception) { false }
 
+
+val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
+    group = "Build"
+    description = "Deletes temporary Gradle TestKit cache"
+
+    delete(project.file(".testKitDir"))
+}
+
 fun Test.includeMppAndAndroid(include: Boolean) {
     if (isTeamcityBuild) {
         val mppAndAndroidTestPatterns = listOf("*Multiplatform*", "*Mpp*", "*Android*")
@@ -95,6 +103,7 @@ projectTest(
 ) {
     includeMppAndAndroid(false)
     includeNative(false)
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 projectTest(
@@ -105,6 +114,8 @@ projectTest(
     advanceGradleVersion()
     includeMppAndAndroid(false)
     includeNative(false)
+
+    if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
 if (isTeamcityBuild) {
@@ -114,6 +125,7 @@ if (isTeamcityBuild) {
         jUnit5Enabled = true
     ) {
         includeNative(true)
+        finalizedBy(cleanTestKitCacheTask)
     }
 
     projectTest(
@@ -123,6 +135,7 @@ if (isTeamcityBuild) {
     ) {
         advanceGradleVersion()
         includeNative(true)
+        finalizedBy(cleanTestKitCacheTask)
     }
 
     projectTest(
@@ -131,6 +144,7 @@ if (isTeamcityBuild) {
         jUnit5Enabled = true
     ) {
         includeMppAndAndroid(true)
+        finalizedBy(cleanTestKitCacheTask)
     }
 
     projectTest(
@@ -140,6 +154,7 @@ if (isTeamcityBuild) {
     ) {
         advanceGradleVersion()
         includeMppAndAndroid(true)
+        finalizedBy(cleanTestKitCacheTask)
     }
 }
 
@@ -150,6 +165,7 @@ tasks.named<Task>("check") {
         dependsOn("testMppAndAndroid")
         dependsOn("testNative")
         dependsOn("testAdvanceGradleVersionNative")
+        finalizedBy(cleanTestKitCacheTask)
     }
 }
 
