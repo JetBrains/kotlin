@@ -64,6 +64,8 @@ interface KotlinJvmBinaryClass {
 
         fun visitClassLiteral(value: ClassLiteralValue)
 
+        fun visitAnnotation(classId: ClassId): AnnotationArgumentVisitor?
+
         fun visitEnd()
     }
 }

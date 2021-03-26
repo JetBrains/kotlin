@@ -243,6 +243,10 @@ private object ReflectClassStructure {
                     componentType == Class::class.java -> for (element in value as Array<*>) {
                         v.visitClassLiteral((element as Class<*>).classLiteralValue())
                     }
+                    Annotation::class.java.isAssignableFrom(componentType) -> for (element in value as Array<*>) {
+                        val vv = v.visitAnnotation(componentType.classId) ?: continue
+                        processAnnotationArguments(vv, element as Annotation, componentType)
+                    }
                     else -> for (element in value as Array<*>) {
                         v.visit(element)
                     }
