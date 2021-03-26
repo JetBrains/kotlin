@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.api.applicator
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 
 /**

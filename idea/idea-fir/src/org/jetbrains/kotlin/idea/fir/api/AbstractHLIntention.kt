@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.idea.fir.api
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicator
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicabilityRange
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicator
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInputProvider
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.analyseWithReadAction
@@ -22,7 +22,8 @@ abstract class AbstractHLIntention<PSI : KtElement, INPUT : HLApplicatorInput>(
     elementType: KClass<PSI>,
 ) : SelfTargetingIntention<PSI>(elementType.java, { "" }, { "" }) {
     final override fun isApplicableTo(element: PSI, caretOffset: Int): Boolean {
-        if (!applicator.isApplicableByPsi(element)) return false
+        val project = element.project// TODO expensive operation, may require traversing the tree up to containing PsiFile
+        if (!applicator.isApplicableByPsi(element, project)) return false
         val ranges = applicabilityRange.getApplicabilityRanges(element)
         if (ranges.isEmpty()) return false
         val input = getInput(element)

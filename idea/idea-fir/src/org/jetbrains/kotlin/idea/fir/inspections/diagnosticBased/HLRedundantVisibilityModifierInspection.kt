@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.fir.inspections.diagnosticBased
 
 import com.intellij.codeInspection.ProblemHighlightType
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicator
+import org.jetbrains.kotlin.idea.api.applicator.with
 import org.jetbrains.kotlin.idea.fir.api.AbstractHLDiagnosticBasedInspection
 import org.jetbrains.kotlin.idea.fir.api.applicator.*
 import org.jetbrains.kotlin.idea.fir.api.inputByDiagnosticProvider

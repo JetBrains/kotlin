@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir.api.applicator
+package org.jetbrains.kotlin.idea.api.applicator
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
-import org.jetbrains.kotlin.idea.frontend.api.ForbidKtResolve
+import org.jetbrains.kotlin.idea.api.forbidResolveIn
 import org.jetbrains.kotlin.idea.quickfix.KotlinPsiOnlyQuickFixAction
+import org.jetbrains.kotlin.miniStdLib.annotations.PrivateForInline
 import kotlin.experimental.ExperimentalTypeInference
 import kotlin.reflect.KClass
 
@@ -28,14 +28,14 @@ sealed class HLApplicator<in PSI : PsiElement, in INPUT : HLApplicatorInput> {
      * @param psi a [PsiElement] to apply fix to
      * @param input additional data needed to apply the fix, the [input] can be collected by [HLApplicatorInputProvider
      */
-    fun applyTo(psi: PSI, input: INPUT, project: Project, editor: Editor?) = ForbidKtResolve.forbidResolveIn("HLApplicator.applyTo") {
+    fun applyTo(psi: PSI, input: INPUT, project: Project, editor: Editor?) = forbidResolveIn(project, "HLApplicator.applyTo") {
         applyToImpl(psi, input, project, editor)
     }
 
     /**
      * Checks if applicator is applicable to specific element, can not use resolve inside
      */
-    fun isApplicableByPsi(psi: PSI): Boolean = ForbidKtResolve.forbidResolveIn("HLApplicator.isApplicableByPsi") {
+    fun isApplicableByPsi(psi: PSI, project: Project): Boolean = forbidResolveIn(project, "HLApplicator.isApplicableByPsi") {
         isApplicableByPsiImpl(psi)
     }
 
@@ -44,18 +44,16 @@ sealed class HLApplicator<in PSI : PsiElement, in INPUT : HLApplicatorInput> {
      *
      * @see com.intellij.codeInsight.intention.IntentionAction.getText
      */
-    fun getActionName(psi: PSI, input: INPUT): String = ForbidKtResolve.forbidResolveIn("HLApplicator.getActionName") {
-        getActionNameImpl(psi, input)
-    }
+    fun getActionName(psi: PSI, input: INPUT): String = getActionNameImpl(psi, input)
 
+    
     /**
      * Family name which will be used in inspections/intentions
      *
      * @see com.intellij.codeInsight.intention.IntentionAction.getFamilyName
      */
-    fun getFamilyName(): String = ForbidKtResolve.forbidResolveIn("HLApplicator.getFamilyName") {
-        getFamilyNameImpl()
-    }
+    fun getFamilyName(): String = getFamilyNameImpl()
+
 
     protected abstract fun applyToImpl(psi: PSI, input: INPUT, project: Project, editor: Editor?)
     protected abstract fun isApplicableByPsiImpl(psi: PSI): Boolean

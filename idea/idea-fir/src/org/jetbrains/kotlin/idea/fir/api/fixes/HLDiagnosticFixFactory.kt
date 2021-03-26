@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.idea.fir.api.fixes
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicator
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicator
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 

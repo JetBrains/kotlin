@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.idea.fir.intentions.declarations
 
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.fir.api.*
+import org.jetbrains.kotlin.idea.api.applicator.with
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicabilityRange
 import org.jetbrains.kotlin.idea.fir.api.applicator.inputProvider
-import org.jetbrains.kotlin.idea.fir.api.applicator.with
 import org.jetbrains.kotlin.idea.fir.applicators.ApplicabilityRanges
 import org.jetbrains.kotlin.idea.fir.applicators.CallableReturnTypeUpdaterApplicator
 import org.jetbrains.kotlin.psi.*

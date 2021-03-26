@@ -9,6 +9,8 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicator
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.fir.api.applicator.*
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.analyseWithReadAction
@@ -33,7 +35,7 @@ abstract class AbstractHLInspection<PSI : KtElement, INPUT : HLApplicatorInput>(
         }
 
     private fun visitTargetElement(element: PSI, holder: ProblemsHolder, isOnTheFly: Boolean) {
-        if (!applicator.isApplicableByPsi(element)) return
+        if (!applicator.isApplicableByPsi(element, holder.project)) return
         val targets = applicabilityRange.getApplicabilityRanges(element)
         if (targets.isEmpty()) return
 
@@ -101,7 +103,7 @@ private fun <PSI : PsiElement, INPUT : HLApplicatorInput> HLApplicator<PSI, INPU
         @Suppress("UNCHECKED_CAST")
         val element = descriptor.psiElement as PSI
 
-        if (isApplicableByPsi(element) && input.isValidFor(element)) {
+        if (isApplicableByPsi(element, project) && input.isValidFor(element)) {
             applyTo(element, input, project, editor = null)
         }
     }

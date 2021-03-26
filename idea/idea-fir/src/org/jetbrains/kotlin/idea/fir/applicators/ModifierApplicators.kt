@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.idea.fir.applicators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
-import org.jetbrains.kotlin.idea.fir.api.applicator.applicator
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicatorInput
+import org.jetbrains.kotlin.idea.api.applicator.applicator
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 

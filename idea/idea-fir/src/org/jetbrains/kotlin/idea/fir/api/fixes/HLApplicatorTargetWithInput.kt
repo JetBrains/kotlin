@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.api.fixes
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicatorInput
 
 class HLApplicatorTargetWithInput<PSI : PsiElement, INPUT : HLApplicatorInput>(
     val target: PSI,

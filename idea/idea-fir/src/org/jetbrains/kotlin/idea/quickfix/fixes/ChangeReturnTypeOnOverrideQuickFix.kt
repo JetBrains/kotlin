@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.idea.quickfix.fixes
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
-import org.jetbrains.kotlin.idea.fir.api.*
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
-import org.jetbrains.kotlin.idea.fir.api.applicator.applicator
+import org.jetbrains.kotlin.idea.api.applicator.HLApplicatorInput
+import org.jetbrains.kotlin.idea.api.applicator.applicator
 import org.jetbrains.kotlin.idea.fir.api.fixes.HLApplicatorTargetWithInput
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
 import org.jetbrains.kotlin.idea.fir.api.fixes.withInput
