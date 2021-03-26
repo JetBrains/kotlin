@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ @kotlin.internal.OnlyInputTypes T> assertEquals(/*0*/ expected: T, /*1*/ actual: T, /*2*/ message: kotlin.String? = ...): kotlin.Unit
+public fun main(): kotlin.Unit
