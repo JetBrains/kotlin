@@ -10,10 +10,15 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 
 data class Parts(
     val methods: List<SimpleFunctionDescriptor> = emptyList(),
+    val staticFunctions: List<SimpleFunctionDescriptor> = emptyList(),
     val constructors: List<ClassConstructorDescriptor> = emptyList()
 ) {
 
-    operator fun plus(other: Parts): Parts = Parts(methods + other.methods, constructors + other.constructors)
+    operator fun plus(other: Parts): Parts = Parts(
+        methods + other.methods,
+        staticFunctions + other.staticFunctions,
+        constructors + other.constructors
+    )
 
     companion object {
         val Empty = Parts()

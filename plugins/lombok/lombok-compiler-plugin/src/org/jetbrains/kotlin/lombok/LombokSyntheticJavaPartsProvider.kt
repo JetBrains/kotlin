@@ -30,10 +30,10 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
 
     private val partsCache: MutableMap<ClassDescriptor, Parts> = WeakHashMap()
 
-    override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
+    override fun getMethodNames(thisDescriptor: ClassDescriptor): List<Name> =
         getSyntheticParts(thisDescriptor).methods.map { it.name }
 
-    override fun generateSyntheticMethods(
+    override fun generateMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
         result: MutableCollection<SimpleFunctionDescriptor>
@@ -42,7 +42,15 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
         result.addAll(methods)
     }
 
-    override fun generateSyntheticConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
+    override fun getStaticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
+        getSyntheticParts(thisDescriptor).staticFunctions.map { it.name }
+
+    override fun generateStaticFunctions(thisDescriptor: ClassDescriptor, name: Name, result: MutableCollection<SimpleFunctionDescriptor>) {
+        val functions = getSyntheticParts(thisDescriptor).staticFunctions.filter { it.name == name }
+        result.addAll(functions)
+    }
+
+    override fun generateConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
         val constructors = getSyntheticParts(thisDescriptor).constructors
         result.addAll(constructors)
     }

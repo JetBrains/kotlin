@@ -16,31 +16,46 @@ interface SyntheticJavaPartsProvider {
         val EMPTY = CompositeSyntheticJavaPartsProvider(emptyList())
     }
 
-    fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name>
+    fun getMethodNames(thisDescriptor: ClassDescriptor): List<Name>
 
-    fun generateSyntheticMethods(
+    fun generateMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
         result: MutableCollection<SimpleFunctionDescriptor>
     )
 
-    fun generateSyntheticConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>)
+    fun getStaticFunctionNames(thisDescriptor: ClassDescriptor): List<Name>
+
+    fun generateStaticFunctions(
+        thisDescriptor: ClassDescriptor,
+        name: Name,
+        result: MutableCollection<SimpleFunctionDescriptor>
+    )
+
+    fun generateConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>)
 
 }
 
 class CompositeSyntheticJavaPartsProvider(private val inner: List<SyntheticJavaPartsProvider>) : SyntheticJavaPartsProvider {
-    override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
-        inner.flatMap { it.getSyntheticFunctionNames(thisDescriptor) }
+    override fun getMethodNames(thisDescriptor: ClassDescriptor): List<Name> =
+        inner.flatMap { it.getMethodNames(thisDescriptor) }
 
-    override fun generateSyntheticMethods(
+    override fun generateMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
-        inner.forEach { it.generateSyntheticMethods(thisDescriptor, name, result) }
+        inner.forEach { it.generateMethods(thisDescriptor, name, result) }
     }
 
-    override fun generateSyntheticConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
-        inner.forEach { it.generateSyntheticConstructors(thisDescriptor, result) }
+    override fun getStaticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
+        inner.flatMap { it.getStaticFunctionNames(thisDescriptor) }
+
+    override fun generateStaticFunctions(thisDescriptor: ClassDescriptor, name: Name, result: MutableCollection<SimpleFunctionDescriptor>) {
+        inner.forEach { it.generateStaticFunctions(thisDescriptor, name, result) }
+    }
+
+    override fun generateConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
+        inner.forEach { it.generateConstructors(thisDescriptor, result) }
     }
 }

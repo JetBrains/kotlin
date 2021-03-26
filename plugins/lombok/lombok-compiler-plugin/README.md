@@ -23,9 +23,10 @@ Features support:
   - [x] Basic support
   - [ ] Copy annotations
   
-[ ] [@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor](https://projectlombok.org/features/constructor)
- - [ ] Generate constructors
- - [ ] Generate static factory method
+[~] [@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor](https://projectlombok.org/features/constructor)
+ - [x] @NoArgsConstructor
+ - [ ] @AllArgsConstructor
+ - [ ] @RequiredArgsConstructor
 
 [ ] [@Data](https://projectlombok.org/features/Data)
 

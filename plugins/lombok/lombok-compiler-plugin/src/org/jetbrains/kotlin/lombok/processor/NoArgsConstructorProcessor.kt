@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.NoArgsConstructor
 import org.jetbrains.kotlin.lombok.utils.createConstructor
+import org.jetbrains.kotlin.lombok.utils.createFunction
+import org.jetbrains.kotlin.name.Name
 
 class NoArgsConstructorProcessor : Processor {
 
@@ -21,7 +23,14 @@ class NoArgsConstructorProcessor : Processor {
                 )
                 Parts(constructors = listOfNotNull(constructor))
             } else {
-                null
+                val function = classDescriptor.createFunction(
+                    Name.identifier(annotation.staticName),
+                    emptyList(),
+                    classDescriptor.defaultType,
+                    visibility = annotation.visibility,
+                    receiver = null
+                )
+                Parts(staticFunctions = listOf(function))
             }
         }
         return result ?: Parts.Empty
