@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-internal data class ValueParameter(val name: Name, val type: KotlinType)
+data class ValueParameter(val name: Name, val type: KotlinType)
 
-internal fun ClassDescriptor.createFunction(
+fun ClassDescriptor.createFunction(
     name: Name,
     valueParameters: List<ValueParameter>,
     returnType: KotlinType?,
@@ -46,7 +47,7 @@ internal fun ClassDescriptor.createFunction(
     return methodDescriptor
 }
 
-internal fun ClassDescriptor.createConstructor(
+fun ClassDescriptor.createConstructor(
     valueParameters: List<ValueParameter>,
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
 ): ClassConstructorDescriptor {
@@ -85,8 +86,8 @@ private fun CallableDescriptor.makeValueParameter(param: ValueParameter, index: 
     )
 }
 
-internal fun ClassDescriptor.getVariables(): List<PropertyDescriptor> =
+fun ClassDescriptor.getJavaFields(): List<PropertyDescriptor> =
     this.unsubstitutedMemberScope.getVariableNames()
         .map {
             this.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).single()
-        }
+        }.filter { it.isJavaField }
