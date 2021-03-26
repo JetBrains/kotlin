@@ -71,7 +71,7 @@ class IrSymbolDeserializer(
     }
 
     fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
-        assert(signature.isLocal)
+//        assert(signature.isLocal)
         deserializedSymbols.putIfAbsent(signature, symbol)
     }
 

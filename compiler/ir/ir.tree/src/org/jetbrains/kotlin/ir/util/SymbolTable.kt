@@ -643,7 +643,7 @@ class SymbolTable(
 
     override fun referenceFieldFromLinker(sig: IdSignature) =
         fieldSymbolTable.run {
-            require(sig.isLocal)
+//            require(sig.isLocal)
 //            IrFieldSymbolImpl()
             fieldSymbolTable.referenced(sig) { IrFieldPublicSymbolImpl(sig) }
         }
@@ -872,7 +872,7 @@ class SymbolTable(
         symbolFactory: () -> IrTypeParameterSymbol,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter
     ): IrTypeParameter {
-        require(sig.isLocal)
+//        require(sig.isLocal)
         return globalTypeParameterSymbolTable.declare(sig, symbolFactory, typeParameterFactory)
     }
 
@@ -963,7 +963,7 @@ class SymbolTable(
         }
 
     override fun referenceTypeParameterFromLinker(sig: IdSignature): IrTypeParameterSymbol {
-        require(sig.isLocal)
+//        require(sig.isLocal)
         return scopedTypeParameterSymbolTable.get(sig) ?: globalTypeParameterSymbolTable.referenced(sig) {
             IrTypeParameterSymbolImpl()
         }

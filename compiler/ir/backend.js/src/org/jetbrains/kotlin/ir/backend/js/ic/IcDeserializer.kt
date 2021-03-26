@@ -204,7 +204,7 @@ class IcDeserializer(
 //
             if (declaration == null) {
                 if (kind != BinarySymbolData.SymbolKind.VARIABLE_SYMBOL) {
-                    println("skipped $signature [$kind] (${icFileDeserializer.fileDeserializer.file.name});")
+//                    println("skipped $signature [$kind] (${icFileDeserializer.fileDeserializer.file.name});")
                 }
                 continue
             }
@@ -258,7 +258,7 @@ class IcDeserializer(
                     1
                 }
 
-                println(fd.file.name)
+//                println(fd.file.name)
 
                 fd.file.declarations.clear()
 

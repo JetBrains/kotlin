@@ -52,7 +52,7 @@ class PersistentIrFactory : IrFactory {
     }
 
     fun declarationSignature(declaration: IrDeclaration): IdSignature? {
-        return /*symbolToSignatureMap[declaration.symbol] ?:*/ declaration.symbol.signature
+        return symbolToSignatureMap[declaration.symbol] ?: declaration.symbol.signature
     }
 
     override fun createAnonymousInitializer(

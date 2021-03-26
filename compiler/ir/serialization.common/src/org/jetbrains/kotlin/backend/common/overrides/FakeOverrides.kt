@@ -142,6 +142,11 @@ class FakeOverrideBuilder(
         signaturer.composeSignatureForDeclaration(declaration)
 
     private fun declareFunctionFakeOverride(declaration: IrFakeOverrideFunction, signature: IdSignature) {
+
+        if (!signature.isPublic) {
+            1
+        }
+
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(parent, signature)
             ?: symbolTable.referenceSimpleFunctionFromLinker(signature)

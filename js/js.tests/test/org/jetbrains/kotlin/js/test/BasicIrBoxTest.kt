@@ -51,7 +51,7 @@ abstract class BasicIrBoxTest(
 
     override val skipRegularMode: Boolean = getBoolean("kotlin.js.ir.skipRegularMode")
 
-    override val runIrDce: Boolean = getBoolean("kotlin.js.ir.dce", true)
+    override val runIrDce: Boolean = false//getBoolean("kotlin.js.ir.dce", true)
 
     override val runIrPir: Boolean = getBoolean("kotlin.js.ir.pir", true)
 
