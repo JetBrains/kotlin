@@ -28,7 +28,6 @@ import androidx.compose.runtime.Recomposer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import org.robolectric.Robolectric
@@ -115,7 +114,6 @@ class RobolectricComposeTester internal constructor(
     }
 
     companion object {
-        @OptIn(ExperimentalCoroutinesApi::class)
         private val recomposer = run {
             val mainScope = CoroutineScope(
                 NonCancellable + Dispatchers.Main
