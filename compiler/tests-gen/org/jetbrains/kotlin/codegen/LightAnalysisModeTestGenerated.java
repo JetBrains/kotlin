@@ -2362,6 +2362,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargWithDefaultValue.kt");
             }
 
+            @TestMetadata("withReceiver.kt")
+            public void testWithReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/withReceiver.kt");
+            }
+
             @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

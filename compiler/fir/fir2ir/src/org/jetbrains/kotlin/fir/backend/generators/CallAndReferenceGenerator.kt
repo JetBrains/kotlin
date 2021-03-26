@@ -92,7 +92,7 @@ class CallAndReferenceGenerator(
                         getter = referencedPropertyGetter?.symbol,
                         setter = referencedPropertySetterSymbol,
                         origin = origin
-                    )
+                    ).applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
                 }
                 is IrLocalDelegatedPropertySymbol -> {
                     IrLocalDelegatedPropertyReferenceImpl(
@@ -122,7 +122,7 @@ class CallAndReferenceGenerator(
                         getter = if (referencedField.isStatic) null else propertySymbol.owner.getter?.symbol,
                         setter = if (referencedField.isStatic) null else propertySymbol.owner.setter?.symbol,
                         origin
-                    )
+                    ).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
                 }
                 is IrFunctionSymbol -> {
                     assert(type.isFunctionTypeOrSubtype()) {
@@ -131,6 +131,7 @@ class CallAndReferenceGenerator(
                     type as IrSimpleType
                     val function = symbol.owner
                     if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
+                        // Receivers are being applied inside
                         with(adapterGenerator) {
                             val adaptedType = callableReferenceAccess.typeRef.coneType.kFunctionTypeToFunctionType()
                             generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, symbol, adaptedType)
@@ -144,7 +145,8 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = typeArgumentCount,
                             valueArgumentsCount = function.valueParameters.size,
                             reflectionTarget = symbol
-                        )
+                        ).applyTypeArguments(callableReferenceAccess)
+                            .applyReceivers(callableReferenceAccess, explicitReceiverExpression)
                     }
                 }
                 else -> {
@@ -153,7 +155,7 @@ class CallAndReferenceGenerator(
                     )
                 }
             }
-        }.applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+        }
     }
 
     private fun computeFieldSymbolForCallableReference(

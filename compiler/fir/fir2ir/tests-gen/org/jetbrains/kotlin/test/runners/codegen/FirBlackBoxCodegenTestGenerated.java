@@ -2695,6 +2695,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/varargWithDefaultValue.kt");
             }
 
+            @Test
+            @TestMetadata("withReceiver.kt")
+            public void testWithReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/withReceiver.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion")
             @TestDataPath("$PROJECT_ROOT")
