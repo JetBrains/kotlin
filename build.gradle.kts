@@ -162,7 +162,11 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
     listOf(
-        "asm-all-8.0.1",
+        when {
+            Platform[203].orHigher() -> "asm-all-9.0"
+            Platform[202].orHigher() -> "asm-all-8.0.1"
+            else -> "asm-all-7.0.1"
+        },
         "guava",
         "jdom",
         "jna",
@@ -862,8 +866,8 @@ tasks {
             ":idea-frontend-fir:idea-fir-low-level-api:test"
         )
     }
-    
-    
+
+
 
     register("android-ide-tests") {
         dependsOn("dist")
