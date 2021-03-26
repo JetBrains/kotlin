@@ -5,15 +5,10 @@
 
 package org.jetbrains.kotlin.idea.quickfix.fixes
 
-import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
-import org.jetbrains.kotlin.idea.fir.api.applicator.applicatorByQuickFix
-import org.jetbrains.kotlin.idea.fir.api.fixes.HLQuickFix
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeWithNullability
-import org.jetbrains.kotlin.idea.quickfix.ReplaceCallFix
 import org.jetbrains.kotlin.idea.quickfix.ReplaceImplicitReceiverCallFix
 import org.jetbrains.kotlin.idea.quickfix.ReplaceWithSafeCallFix
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -21,23 +16,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 object ReplaceCallFixFactories {
-    private val replaceWithSafeCallFixApplicator =
-        applicatorByQuickFix<KtExpression, Input, ReplaceCallFix>(
-            getFamilyName = KotlinBundle.lazyMessage("replace.with.safe.call"),
-            isApplicableByPsi = { psi -> psi is KtDotQualifiedExpression }
-        ) { psi, input ->
-            ReplaceWithSafeCallFix(psi as KtDotQualifiedExpression, input.notNullNeeded)
-        }
-
-    private val replaceImplicitReceiverCallFixApplicator =
-        applicatorByQuickFix<KtExpression, Input, ReplaceImplicitReceiverCallFix>(
-            getFamilyName = KotlinBundle.lazyMessage("replace.with.safe.this.call")
-        ) { psi, input ->
-            ReplaceImplicitReceiverCallFix(psi, input.notNullNeeded)
-        }
-
-    class Input(val notNullNeeded: Boolean) : HLApplicatorInput
-
     val unsafeCallFactory =
         diagnosticFixFactory<KtFirDiagnostic.UnsafeCall> { diagnostic ->
             fun KtExpression.shouldHaveNotNullType(): Boolean {
@@ -48,13 +26,13 @@ object ReplaceCallFixFactories {
             }
 
             when (val psi = diagnostic.psi) {
-                is KtDotQualifiedExpression -> listOf(HLQuickFix(psi, Input(psi.shouldHaveNotNullType()), replaceWithSafeCallFixApplicator))
+                is KtDotQualifiedExpression -> listOf(ReplaceWithSafeCallFix(psi, psi.shouldHaveNotNullType()))
                 is KtNameReferenceExpression -> {
                     // TODO: As a safety precaution, resolve the expression to determine if it is a call with an implicit receiver.
                     // This is a defensive check to ensure that the diagnostic was reported on such a call and not some other name reference.
                     // This isn't strictly needed because FIR checkers aren't reporting on wrong elements, but ReplaceWithSafeCallFixFactory
                     // in FE1.0 does so.
-                    listOf(HLQuickFix(psi, Input(psi.shouldHaveNotNullType()), replaceImplicitReceiverCallFixApplicator))
+                    listOf(ReplaceImplicitReceiverCallFix(psi, psi.shouldHaveNotNullType()))
                 }
                 else -> emptyList()
             }
