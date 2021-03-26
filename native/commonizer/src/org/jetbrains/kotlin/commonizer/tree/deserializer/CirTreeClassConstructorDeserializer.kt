@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.commonizer.metadata.CirDeserializers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeClassConstructor
 
-internal object ClassConstructorCirTreeDeserializer {
+internal object CirTreeClassConstructorDeserializer {
     operator fun invoke(
         constructor: KmConstructor, containingClass: CirContainingClass, typeResolver: CirTypeResolver
     ): CirTreeClassConstructor {

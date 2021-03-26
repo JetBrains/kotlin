@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.commonizer.utils.isFakeOverride
 import org.jetbrains.kotlin.commonizer.utils.isKniBridgeFunction
 import org.jetbrains.kotlin.commonizer.utils.isTopLevelDeprecatedFunction
 
-object FunctionCirTreeDeserializer {
+object CirTreeFunctionDeserializer {
     operator fun invoke(function: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirTreeFunction? {
         val functionTypeResolver = typeResolver.create(function.typeParameters)
         if (function.isFakeOverride()

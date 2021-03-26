@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.commonizer.metadata.CirDeserializers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeClass
 
-internal class ClassCirTreeDeserializer(
-    private val propertyDeserializer: PropertyCirTreeDeserializer,
-    private val functionDeserializer: FunctionCirTreeDeserializer,
-    private val constructorDeserializer: ClassConstructorCirTreeDeserializer,
+internal class CirTreeClassDeserializer(
+    private val propertyDeserializer: CirTreePropertyDeserializer,
+    private val functionDeserializer: CirTreeFunctionDeserializer,
+    private val constructorDeserializer: CirTreeClassConstructorDeserializer,
 ) {
     operator fun invoke(
         classEntry: ClassesToProcess.ClassEntry, classesToProcess: ClassesToProcess, typeResolver: CirTypeResolver

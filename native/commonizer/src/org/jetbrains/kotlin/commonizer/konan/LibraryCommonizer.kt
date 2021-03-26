@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.utils.ProgressLogger
 
 internal class LibraryCommonizer internal constructor(
+    private val outputTarget: SharedCommonizerTarget,
     private val repository: Repository,
     private val dependencies: Repository,
-    private val commonTarget: SharedCommonizerTarget,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
     private val progressLogger: ProgressLogger
@@ -27,7 +27,7 @@ internal class LibraryCommonizer internal constructor(
     }
 
     private fun loadLibraries(): TargetDependent<NativeLibrariesToCommonize> {
-        val librariesByTargets = commonTarget.targets.associateWith { target ->
+        val librariesByTargets = outputTarget.allLeaves().associateWith { target ->
             NativeLibrariesToCommonize(repository.getLibraries(target).toList())
         }
 
@@ -42,11 +42,12 @@ internal class LibraryCommonizer internal constructor(
 
     private fun commonizeAndSaveResults(allLibraries: TargetDependent<NativeLibrariesToCommonize>) {
         val parameters = CommonizerParameters(
-            targetProviders = TargetDependent(commonTarget.targets) { target -> createTargetProvider(target, allLibraries[target]) }
+            outputTarget = outputTarget,
+            targetProviders = TargetDependent(outputTarget.allLeaves()) { target -> createTargetProvider(target, allLibraries[target]) }
                 .filterNonNull(),
+            manifestProvider = createManifestProvider(allLibraries),
+            dependenciesProvider = createDependenciesProvider(),
             resultsConsumer = resultsConsumer,
-            commonManifestProvider = CommonNativeManifestDataProvider(commonTarget.targets.map { allLibraries[it] }),
-            commonDependencyModulesProvider = DefaultModulesProvider.create(dependencies.getLibraries(commonTarget)),
             statsCollector = statsCollector,
             progressLogger = progressLogger::log
         )
@@ -57,16 +58,33 @@ internal class LibraryCommonizer internal constructor(
         if (libraries.libraries.isEmpty()) return null
         return TargetProvider(
             target = target,
-            modulesProvider = DefaultModulesProvider.create(libraries),
-            dependencyModulesProvider = DefaultModulesProvider.create(dependencies.getLibraries(target)),
-            manifestProvider = libraries,
+            modulesProvider = DefaultModulesProvider.create(libraries)
         )
     }
 
+    private fun createDependenciesProvider(): TargetDependent<ModulesProvider?> {
+        return TargetDependent(outputTarget.withAllAncestors()) { target ->
+            DefaultModulesProvider.create(dependencies.getLibraries(target))
+        }
+    }
+
+    private fun createManifestProvider(
+        libraries: TargetDependent<NativeLibrariesToCommonize>
+    ): TargetDependent<NativeManifestDataProvider> {
+        return TargetDependent(outputTarget.withAllAncestors()) { target ->
+            when (target) {
+                is LeafCommonizerTarget -> libraries[target]
+                is SharedCommonizerTarget -> CommonNativeManifestDataProvider(
+                    target.allLeaves().map { leafTarget -> libraries[leafTarget] }
+                )
+            }
+        }
+    }
+
     private fun checkPreconditions() {
-        when (commonTarget.targets.size) {
+        when (outputTarget.allLeaves().size) {
             0 -> progressLogger.fatal("No targets specified")
-            1 -> progressLogger.fatal("Too few targets specified: $commonTarget")
+            1 -> progressLogger.fatal("Too few targets specified: $outputTarget")
         }
     }
 }

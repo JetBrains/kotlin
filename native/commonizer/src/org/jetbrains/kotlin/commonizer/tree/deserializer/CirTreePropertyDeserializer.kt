@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeProperty
 import org.jetbrains.kotlin.commonizer.utils.isFakeOverride
 
-object PropertyCirTreeDeserializer {
+object CirTreePropertyDeserializer {
     operator fun invoke(property: KmProperty, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirTreeProperty? {
         if (property.isFakeOverride()) return null
         val propertyTypeResolver = typeResolver.create(property.typeParameters)

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.types.Variance
 
 /** A set of classes and type aliases provided by libraries (either the libraries to commonize, or their dependency libraries)/ */
@@ -48,6 +48,10 @@ interface CirProvidedClassifiers {
                 1 -> unwrappedDelegates.first()
                 else -> CompositeClassifiers(unwrappedDelegates)
             }
+        }
+
+        fun of(delegates: Iterable<CirProvidedClassifiers?>): CirProvidedClassifiers {
+            return of(*delegates.filterNotNull().toTypedArray())
         }
 
         fun by(modulesProvider: ModulesProvider?): CirProvidedClassifiers =

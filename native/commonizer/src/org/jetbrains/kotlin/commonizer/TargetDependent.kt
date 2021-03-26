@@ -36,8 +36,8 @@ internal fun <T : Any> TargetDependent<T?>.filterNonNull(): TargetDependent<T> {
 
 internal fun <T> TargetDependent<T>.toMap(): Map<CommonizerTarget, T> {
     return mutableMapOf<CommonizerTarget, T>().apply {
-        for (key in keys) {
-            put(key, this@toMap[key])
+        for (target in targets) {
+            put(target, this@toMap[target])
         }
     }
 }
@@ -55,8 +55,8 @@ internal fun <T, R> TargetDependent<T>.mapTargets(mapper: (CommonizerTarget) -> 
 }
 
 
-internal fun <T> TargetDependent(map: Map<CommonizerTarget, T>): TargetDependent<T> {
-    return MapBasedTargetDependent(map)
+internal fun <T> TargetDependent(map: Map<out CommonizerTarget, T>): TargetDependent<T> {
+    return MapBasedTargetDependent(map.toMap())
 }
 
 internal fun <T> TargetDependent(keys: Iterable<CommonizerTarget>, factory: (target: CommonizerTarget) -> T): TargetDependent<T> {

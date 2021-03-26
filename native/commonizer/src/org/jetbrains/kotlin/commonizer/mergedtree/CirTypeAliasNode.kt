@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.commonizer.mergedtree
 
 import org.jetbrains.kotlin.commonizer.cir.CirClassifier
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirTypeAliasNode(
+    val id: CirEntityId,
     override val targetDeclarations: CommonizedGroup<CirTypeAlias>,
     override val commonDeclaration: NullableLazyValue<CirClassifier>,
 ) : CirClassifierNode<CirTypeAlias, CirClassifier>, CirNodeWithLiftingUp<CirTypeAlias, CirClassifier> {

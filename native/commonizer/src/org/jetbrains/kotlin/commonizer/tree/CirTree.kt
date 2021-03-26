@@ -37,19 +37,23 @@ data class CirTreeFunction(
     val function: CirFunction
 )
 
+sealed interface CirTreeClassifier {
+    val id: CirEntityId
+}
+
 data class CirTreeTypeAlias(
-    val id: CirEntityId,
+    override val id: CirEntityId,
     val typeAlias: CirTypeAlias
-)
+) : CirTreeClassifier
 
 data class CirTreeClass(
-    val id: CirEntityId,
+    override val id: CirEntityId,
     val clazz: CirClass,
     val properties: List<CirTreeProperty>,
     val functions: List<CirTreeFunction>,
     val constructors: List<CirTreeClassConstructor>,
     val classes: List<CirTreeClass>,
-)
+) : CirTreeClassifier
 
 class CirTreeClassConstructor(
     val approximationKey: ConstructorApproximationKey,

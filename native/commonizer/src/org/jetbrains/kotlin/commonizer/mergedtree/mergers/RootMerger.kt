@@ -30,8 +30,7 @@ internal class RootMerger(
             val typeResolver = CirTypeResolver.create(
                 providedClassifiers = CirProvidedClassifiers.of(
                     CirProvidedClassifiers.by(targetProvider.modulesProvider),
-                    CirProvidedClassifiers.by(targetProvider.dependencyModulesProvider),
-                    classifiers.commonDependencies
+                    parameters.dependencyClassifiers(targetProvider.target)
                 )
             )
             targetMerger.processTarget(

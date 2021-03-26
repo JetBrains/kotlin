@@ -68,7 +68,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         }
 
         LibraryCommonizer(
-            commonTarget = outputCommonizerTarget,
+            outputTarget = outputCommonizerTarget,
             repository = repository,
             dependencies = StdlibRepository(distribution, libraryLoader) +
                     FilesRepository(dependencyLibraries.toSet(), libraryLoader),
@@ -119,7 +119,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         println(description)
 
         LibraryCommonizer(
-            commonTarget = SharedCommonizerTarget(commonizerTargets.toSet()),
+            outputTarget = SharedCommonizerTarget(commonizerTargets.toSet()),
             repository = repository,
             dependencies = StdlibRepository(distribution, libraryLoader),
             resultsConsumer = resultsConsumer,

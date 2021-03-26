@@ -53,7 +53,8 @@ private fun createValidClassifierId(classifierId: String): CirEntityId {
 
 internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
     commonizedNodes = object : CirCommonizedClassifierNodes {
-        private val MOCK_CLASS_NODE = CirClassNode(
+        override fun classNode(classId: CirEntityId) = CirClassNode(
+            classId,
             CommonizedGroup(0),
             LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
                 CirClass.create(
@@ -73,7 +74,6 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
             }
         )
 
-        override fun classNode(classId: CirEntityId) = MOCK_CLASS_NODE
         override fun typeAliasNode(typeAliasId: CirEntityId) = error("This method should not be called")
         override fun addClassNode(classId: CirEntityId, node: CirClassNode) = error("This method should not be called")
         override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) = error("This method should not be called")

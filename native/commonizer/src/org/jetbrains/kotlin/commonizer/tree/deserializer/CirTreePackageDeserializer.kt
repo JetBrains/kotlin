@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.commonizer.mergedtree.mergers.ClassesToProcess
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreePackage
 
-internal class PackageCirTreeDeserializer(
-    private val propertyDeserializer: PropertyCirTreeDeserializer,
-    private val functionDeserializer: FunctionCirTreeDeserializer,
-    private val typeAliasDeserializer: TypeAliasCirTreeDeserializer,
-    private val classDeserializer: ClassCirTreeDeserializer,
+internal class CirTreePackageDeserializer(
+    private val propertyDeserializer: CirTreePropertyDeserializer,
+    private val functionDeserializer: CirTreeFunctionDeserializer,
+    private val typeAliasDeserializer: CirTreeTypeAliasDeserializer,
+    private val classDeserializer: CirTreeClassDeserializer,
 ) {
     operator fun invoke(
         packageName: CirPackageName,

@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.commonizer.utils.foldToMap
 import org.jetbrains.kotlin.library.SerializedMetadata
 
-internal class ModuleCirTreeDeserializer(
-    private val packageDeserializer: PackageCirTreeDeserializer
+internal class CirTreeModuleDeserializer(
+    private val packageDeserializer: CirTreePackageDeserializer
 ) {
     operator fun invoke(metadata: SerializedMetadata, typeResolver: CirTypeResolver): CirTreeModule {
         val module = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(metadata))

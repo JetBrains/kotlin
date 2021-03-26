@@ -6,26 +6,19 @@
 package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.mergedtree.CirFictitiousFunctionClassifiers
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 
 class CommonizerParameters(
+    val outputTarget: SharedCommonizerTarget,
+    val manifestProvider: TargetDependent<NativeManifestDataProvider>,
+    val dependenciesProvider: TargetDependent<ModulesProvider?>,
     val targetProviders: TargetDependent<TargetProvider>,
     val resultsConsumer: ResultsConsumer,
-    val commonManifestProvider: NativeManifestDataProvider,
-    val commonDependencyModulesProvider: ModulesProvider? = null,
     val statsCollector: StatsCollector? = null,
     val progressLogger: ((String) -> Unit)? = null
-) {
-    internal val commonTarget: SharedCommonizerTarget = SharedCommonizerTarget(targetProviders.targets.toSet())
-
-    internal val manifestDataProvider: TargetDependent<NativeManifestDataProvider>
-        get() = TargetDependent(setOf(SharedCommonizerTarget(targetProviders.targets.toSet())) + targetProviders.targets) { target ->
-            if (target == commonTarget) return@TargetDependent commonManifestProvider
-            this.targetProviders.firstOrNull { it.target == target }?.manifestProvider?.let { return@TargetDependent it }
-            throw IllegalStateException("Illegal target $target")
-        }
-
-}
+)
 
 fun CommonizerParameters.getCommonModuleNames(): Set<String> {
     if (targetProviders.size < 2) return emptySet() // too few targets
@@ -37,4 +30,10 @@ fun CommonizerParameters.getCommonModuleNames(): Set<String> {
     return allModuleNames.reduce { a, b -> a intersect b } // there are modules that are present in every target
 }
 
+internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget): CirProvidedClassifiers {
+    val modules = outputTarget.withAllAncestors()
+        .filter { it == target || it isAncestorOf target }
+        .mapNotNull { compatibleTarget -> dependenciesProvider[compatibleTarget] }
 
+    return CirProvidedClassifiers.of(modules.map { module -> CirProvidedClassifiers.by(module) } + CirFictitiousFunctionClassifiers)
+}

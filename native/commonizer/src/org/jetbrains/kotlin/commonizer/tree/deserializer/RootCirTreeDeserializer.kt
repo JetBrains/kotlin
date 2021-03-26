@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import org.jetbrains.kotlin.commonizer.CommonizerParameters
 import org.jetbrains.kotlin.commonizer.TargetProvider
+import org.jetbrains.kotlin.commonizer.dependencyClassifiers
 import org.jetbrains.kotlin.commonizer.getCommonModuleNames
-import org.jetbrains.kotlin.commonizer.mergedtree.CirFictitiousFunctionClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 
 internal class RootCirTreeDeserializer(
-    private val moduleDeserializer: ModuleCirTreeDeserializer
+    private val moduleDeserializer: CirTreeModuleDeserializer
 ) {
     operator fun invoke(parameters: CommonizerParameters, targetProvider: TargetProvider): CirTreeRoot {
 
@@ -24,11 +24,7 @@ internal class RootCirTreeDeserializer(
         val typeResolver = CirTypeResolver.create(
             providedClassifiers = CirProvidedClassifiers.of(
                 CirProvidedClassifiers.by(targetProvider.modulesProvider),
-                CirProvidedClassifiers.by(targetProvider.dependencyModulesProvider),
-                CirProvidedClassifiers.of(
-                    CirFictitiousFunctionClassifiers,
-                    CirProvidedClassifiers.by(parameters.commonDependencyModulesProvider)
-                )
+                parameters.dependencyClassifiers(targetProvider.target)
             )
         )
 

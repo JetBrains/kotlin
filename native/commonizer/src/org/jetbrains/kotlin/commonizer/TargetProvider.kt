@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
 
 class TargetProvider(
     val target: CommonizerTarget,
-    val modulesProvider: ModulesProvider,
-    val dependencyModulesProvider: ModulesProvider?,
-    val manifestProvider: NativeManifestDataProvider
+    val modulesProvider: ModulesProvider
 )
 
 interface ModulesProvider {
