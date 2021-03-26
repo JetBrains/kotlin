@@ -12168,6 +12168,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("onlyInputTypesWithMultilevelIncorporation.kt")
+            public void testOnlyInputTypesWithMultilevelIncorporation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/onlyInputTypesWithMultilevelIncorporation.kt");
+            }
+
+            @Test
             @TestMetadata("opposite.kt")
             public void testOpposite() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/opposite.kt");

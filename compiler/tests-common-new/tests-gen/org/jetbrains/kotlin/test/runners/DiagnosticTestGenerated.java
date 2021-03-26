@@ -12174,6 +12174,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("onlyInputTypesWithMultilevelIncorporation.kt")
+            public void testOnlyInputTypesWithMultilevelIncorporation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/onlyInputTypesWithMultilevelIncorporation.kt");
+            }
+
+            @Test
             @TestMetadata("opposite.kt")
             public void testOpposite() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/opposite.kt");
