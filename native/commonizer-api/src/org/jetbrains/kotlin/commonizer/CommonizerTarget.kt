@@ -100,3 +100,15 @@ public val CommonizerTarget.level: Int
             is SharedCommonizerTarget -> if (targets.isNotEmpty()) targets.maxOf { it.level } + 1 else 0
         }
     }
+
+
+public infix fun CommonizerTarget.isAncestorOf(other: CommonizerTarget): Boolean {
+    if (this is SharedCommonizerTarget) {
+        return targets.any { it == other } || targets.any { it.isAncestorOf(other) }
+    }
+    return false
+}
+
+public infix fun CommonizerTarget.isDescendentOf(other: CommonizerTarget): Boolean {
+    return other.isAncestorOf(this)
+}

@@ -10,10 +10,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.workers.WorkParameters
-import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.NativeDistributionCommonizerOutputLayout
-import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.commonizer.level
+import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -210,8 +207,7 @@ private fun removeRedundantParameters(parameters: Set<CInteropCommonizationParam
 
 private operator fun CommonizerTarget.contains(other: CommonizerTarget): Boolean {
     if (this == other) return true
-    if (this !is SharedCommonizerTarget) return false
-    return targets.any { child -> other in child }
+    return this.isAncestorOf(other)
 }
 
 private fun SharedCommonizerTarget.withAllTransitiveTargets(): Set<CommonizerTarget> {
