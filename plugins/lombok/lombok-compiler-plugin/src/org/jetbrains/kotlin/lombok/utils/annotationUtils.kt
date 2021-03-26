@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 
 internal fun getVisibility(annotation: AnnotationDescriptor, field: String = "value"): DescriptorVisibility {
     val value = annotation.getStringArgument(field) ?: "PUBLIC"
@@ -32,6 +33,7 @@ internal fun AnnotationDescriptor.getStringArgument(argumentName: String): Strin
 
     return when (argument) {
         is EnumValue -> argument.enumEntryName.identifier
+        is StringValue -> argument.value
         else -> throw RuntimeException("Argument $argument is not supported")
     }
 }

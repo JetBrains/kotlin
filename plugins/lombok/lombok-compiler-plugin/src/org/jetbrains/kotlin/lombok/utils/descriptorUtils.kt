@@ -21,7 +21,8 @@ internal fun ClassDescriptor.createFunction(
     valueParameters: List<ValueParameter>,
     returnType: KotlinType?,
     modality: Modality? = Modality.OPEN,
-    visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
+    visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
+    receiver: ReceiverParameterDescriptor? = this.thisAsReceiverParameter
 ): SimpleFunctionDescriptor {
     val methodDescriptor = SimpleFunctionDescriptorImpl.create(
         this,
@@ -35,7 +36,7 @@ internal fun ClassDescriptor.createFunction(
 
     methodDescriptor.initialize(
         null,
-        this.thisAsReceiverParameter,
+        receiver,
         mutableListOf(),
         paramDescriptors,
         returnType,
