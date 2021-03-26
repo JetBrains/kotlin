@@ -100,6 +100,7 @@ interface DokkaConfiguration : Serializable {
     val pluginsConfiguration: List<PluginConfiguration>
     val delayTemplateSubstitution: Boolean
     val suppressObviousFunctions: Boolean
+    val includes: Set<File>
 
     enum class SerializationFormat : Serializable {
         JSON, XML
