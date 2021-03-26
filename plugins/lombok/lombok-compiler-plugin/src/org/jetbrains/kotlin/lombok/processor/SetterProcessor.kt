@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.processor
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.Accessors
 import org.jetbrains.kotlin.lombok.config.LombokConfig
@@ -19,6 +17,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 class SetterProcessor(private val config: LombokConfig) : Processor {
 
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
+        //lombok doesn't generate setters for enums
+        if (classDescriptor.kind == ClassKind.ENUM_CLASS) return Parts.Empty
+
         val clAccessors = Accessors.getOrNull(classDescriptor)
         val clSetter = Setter.getOrNull(classDescriptor)
 

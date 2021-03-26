@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok
 
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
@@ -38,6 +39,11 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
     ) {
         val methods = getSyntheticParts(thisDescriptor).methods.filter { it.name == name }
         result.addAll(methods)
+    }
+
+    override fun generateSyntheticConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
+        val constructors = getSyntheticParts(thisDescriptor).constructors
+        result.addAll(constructors)
     }
 
     private fun extractClass(descriptor: ClassDescriptor): JavaClassImpl? =

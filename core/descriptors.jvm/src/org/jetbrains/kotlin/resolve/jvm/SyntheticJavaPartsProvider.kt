@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -23,6 +24,8 @@ interface SyntheticJavaPartsProvider {
         result: MutableCollection<SimpleFunctionDescriptor>
     )
 
+    fun generateSyntheticConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>)
+
 }
 
 class CompositeSyntheticJavaPartsProvider(private val inner: List<SyntheticJavaPartsProvider>) : SyntheticJavaPartsProvider {
@@ -33,5 +36,11 @@ class CompositeSyntheticJavaPartsProvider(private val inner: List<SyntheticJavaP
         thisDescriptor: ClassDescriptor,
         name: Name,
         result: MutableCollection<SimpleFunctionDescriptor>
-    ) = inner.forEach { it.generateSyntheticMethods(thisDescriptor, name, result) }
+    ) {
+        inner.forEach { it.generateSyntheticMethods(thisDescriptor, name, result) }
+    }
+
+    override fun generateSyntheticConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
+        inner.forEach { it.generateSyntheticConstructors(thisDescriptor, result) }
+    }
 }

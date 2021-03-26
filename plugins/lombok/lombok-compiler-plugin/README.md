@@ -15,7 +15,8 @@ Features support:
  - [x] @Accessors config support: chain and fluent
  - [ ] Config support (_lombok.getter.noIsPrefix_ only supported)
  - [ ] Copy annotations
- - [ ] strip defined prefixes - in config and @Accessors
+ - [ ] Strip defined prefixes - in config and @Accessors
+ - [ ] Skip generation with AccessLevel.NONE
 
 [~] [@With](https://projectlombok.org/features/With)
   
@@ -23,12 +24,21 @@ Features support:
   - [ ] Copy annotations
   
 [ ] [@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor](https://projectlombok.org/features/constructor)
+ - [ ] Generate constructors
+ - [ ] Generate static factory method
 
 [ ] [@Data](https://projectlombok.org/features/Data)
 
 [ ] [@Value](https://projectlombok.org/features/Value)
 
 [ ] [@Builder](https://projectlombok.org/features/Builder)
+
+
+Other todos:
+ - [ ] Generic classes
+ - [ ] Don't generate members that already exist (if having a duplicate is a problem)
+ - [ ] Gradle integration (as subplugin or just a way to enable lombok support)
+ - [ ] Maven integration (as subplugin or just a way to enable lombok support)
 
 
 
