@@ -19400,6 +19400,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt45503_1.kt")
+            public void testKt45503_1() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/kt45503_1.kt");
+            }
+
+            @Test
+            @TestMetadata("kt45503_2.kt")
+            public void testKt45503_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/kt45503_2.kt");
+            }
+
+            @Test
+            @TestMetadata("kt45503_3.kt")
+            public void testKt45503_3() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/kt45503_3.kt");
+            }
+
+            @Test
             @TestMetadata("plusAssignOnArray.kt")
             public void testPlusAssignOnArray() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/plusAssignOnArray.kt");
@@ -19415,6 +19433,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("plusAssignOnProperty.kt")
             public void testPlusAssignOnProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/plusAssignOnProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("plusAssignOnVarAndCollections.kt")
+            public void testPlusAssignOnVarAndCollections() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/plusAssignOnVarAndCollections.kt");
             }
         }
 
