@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.primitiveTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import java.util.*
 
 class BoxedTypeOperationsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
@@ -38,9 +39,15 @@ class BoxedTypeOperationsConversion(context: NewJ2kConverterContext) : Recursive
                 } ?: return null
         val primitiveTypeName = boxedTypeToPrimitiveType[boxedJavaType] ?: return null
         if (operationType !in primitiveTypeNames) return null
+
+        val shouldConvertToIntFirst =
+            primitiveTypeName in floatingPointPrimitiveTypeNames && operationType in typeNameOfIntegersLesserThanInt
+
+        val conversionType = if (shouldConvertToIntFirst) "Int" else operationType.capitalize(Locale.US)
+
         return JKCallExpressionImpl(
             symbolProvider.provideMethodSymbol(
-                "kotlin.${primitiveTypeName.capitalize(Locale.US)}.to${operationType.capitalize(Locale.US)}"
+                "kotlin.${primitiveTypeName.capitalize(Locale.US)}.to$conversionType"
             ),
             JKArgumentList()
         ).withFormattingFrom(methodCallExpression)
@@ -58,5 +65,11 @@ class BoxedTypeOperationsConversion(context: NewJ2kConverterContext) : Recursive
 
         private val primitiveTypeUnwrapRegexp =
             """([\w.]+)\.(\w+)Value""".toRegex()
+
+        private val floatingPointPrimitiveTypeNames =
+            listOf(JvmPrimitiveType.DOUBLE.javaKeywordName, JvmPrimitiveType.FLOAT.javaKeywordName)
+
+        private val typeNameOfIntegersLesserThanInt =
+            listOf(JvmPrimitiveType.SHORT.javaKeywordName, JvmPrimitiveType.BYTE.javaKeywordName)
     }
 }

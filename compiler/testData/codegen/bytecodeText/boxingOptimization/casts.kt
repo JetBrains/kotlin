@@ -9,7 +9,7 @@ fun bar() {
     foo(1L) { x -> x!!.toByte() }
     foo(1L) { x -> x!!.toShort() }
     foo('a') { x -> x!!.toDouble() }
-    foo(1.0) { x -> x!!.toByte() }
+    foo(1.0) { x -> x!!.toInt() }
 }
 
 // 0 valueOf
@@ -17,6 +17,6 @@ fun bar() {
 // 1 I2L
 // 2 L2I
 // 2 I2S
-// 2 I2B
+// 1 I2B
 // 1 I2D
 // 1 D2I
