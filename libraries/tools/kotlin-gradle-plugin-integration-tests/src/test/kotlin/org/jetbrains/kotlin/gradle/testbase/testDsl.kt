@@ -9,11 +9,17 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import kotlin.test.assertTrue
+import java.io.File
 import java.nio.file.*
 import java.nio.file.Files.copy
 import java.nio.file.Files.createDirectories
 
 import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createFile
+import kotlin.io.path.exists
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
 /**
  * Create new test project.
@@ -26,6 +32,7 @@ fun KGPBaseTest.project(
     gradleVersion: GradleVersion,
     buildOptions: KGPBaseTest.BuildOptions = defaultBuildOptions,
     forceOutput: Boolean = false,
+    addHeapDumpOptions: Boolean = true,
     test: TestProject.() -> Unit
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -34,6 +41,7 @@ fun KGPBaseTest.project(
         workingDir
     )
     projectPath.addDefaultBuildFiles()
+    if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
     val gradleRunner = GradleRunner
         .create()
@@ -147,6 +155,52 @@ private fun Path.addDefaultBuildFiles() {
                     """.trimIndent()
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalPathApi::class)
+private fun Path.addHeapDumpOptions() {
+    val propertiesFile = resolve("gradle.properties")
+    if (!propertiesFile.exists()) propertiesFile.createFile()
+
+    val propertiesContent = propertiesFile.readText()
+    val (existingJvmArgsLine, otherLines) = propertiesContent
+        .lines()
+        .partition {
+            it.trim().startsWith("org.gradle.jvmargs")
+        }
+
+    val heapDumpOutOfErrorStr = "-XX:+HeapDumpOnOutOfMemoryError"
+    val heapDumpPathStr = "-XX:HeapDumpPath=\"${System.getProperty("user.dir")}${File.separatorChar}build\""
+
+    if (existingJvmArgsLine.isEmpty()) {
+        propertiesFile.writeText(
+            """
+            # modified in addHeapDumpOptions
+            org.gradle.jvmargs=$heapDumpOutOfErrorStr $heapDumpPathStr
+             
+            $propertiesContent
+            """.trimIndent()
+        )
+    } else {
+        val argsLine = existingJvmArgsLine.first()
+        val appendedOptions = buildString {
+            if (!argsLine.contains("HeapDumpOnOutOfMemoryError")) append(" $heapDumpOutOfErrorStr")
+            if (!argsLine.contains("HeapDumpPath")) append(" $heapDumpPathStr")
+        }
+
+        if (appendedOptions.isNotEmpty()) {
+            propertiesFile.writeText(
+                """
+                # modified in addHeapDumpOptions
+                $argsLine$appendedOptions
+                
+                ${otherLines.joinToString(separator = "\n")}
+                """.trimIndent()
+            )
+        } else {
+            println("<=== Heap dump options are already exists! ===>")
         }
     }
 }
