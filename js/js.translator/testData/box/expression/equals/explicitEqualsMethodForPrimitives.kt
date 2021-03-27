@@ -10,8 +10,8 @@ fun box(): String {
     if (!("a".equals(c))) return "fail4"
     if (!((null as Any?)?.equals(null) ?: true)) return "fail5"
     val d = 5.6
-    if (!(d.toShort().equals(5.toShort()))) return "fail6"
-    if (!(d.toByte().equals(5.toByte()))) return "fail7"
+    if (!(d.toInt().toShort().equals(5.toShort()))) return "fail6"
+    if (!(d.toInt().toByte().equals(5.toByte()))) return "fail7"
     if (!(d.toFloat().equals(5.6.toFloat()))) return "fail8"
     if (!(d.toInt().equals(5))) return "fail9"
     if (true.equals(false)) return "fail10"

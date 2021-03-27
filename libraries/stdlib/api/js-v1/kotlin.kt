@@ -1171,6 +1171,7 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun times(other: kotlin.Short): kotlin.Double
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toByte(): kotlin.Byte
 
     public open override fun toChar(): kotlin.Char
@@ -1184,6 +1185,7 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public open override fun toLong(): kotlin.Long
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toShort(): kotlin.Short
 
     public final operator fun unaryMinus(): kotlin.Double
@@ -1406,6 +1408,7 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun times(other: kotlin.Short): kotlin.Float
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toByte(): kotlin.Byte
 
     public open override fun toChar(): kotlin.Char
@@ -1419,6 +1422,7 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public open override fun toLong(): kotlin.Long
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toShort(): kotlin.Short
 
     public final operator fun unaryMinus(): kotlin.Float

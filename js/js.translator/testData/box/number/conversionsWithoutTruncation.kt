@@ -25,8 +25,6 @@ fun box(): String {
     assertEquals(true, 65.0f == doubleX.toFloat())
     assertEquals(true, 65L == doubleX.toLong())
     assertEquals(true, 65 == doubleX.toInt())
-    assertEquals(true, 65.toShort() == doubleX.toShort())
-    assertEquals(true, 65.toByte() == doubleX.toByte())
     assertEquals(true, 'A' == doubleX.toChar())
 
     var floatX: Float = 65.0f
@@ -34,8 +32,6 @@ fun box(): String {
     assertEquals(true, 65.0f == floatX.toFloat())
     assertEquals(true, 65L == floatX.toLong())
     assertEquals(true, 65 == floatX.toInt())
-    assertEquals(true, 65.toShort() == floatX.toShort())
-    assertEquals(true, 65.toByte() == floatX.toByte())
     assertEquals(true, 'A' == floatX.toChar())
 
     val longX: Long = 65L
