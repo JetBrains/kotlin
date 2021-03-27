@@ -10,8 +10,6 @@ dependencies {
     compile(project(":idea:idea-frontend-independent"))
     compile(project(":idea:idea-frontend-api"))
     compile(project(":idea:idea-core"))
-    compile(project(":compiler:fir:fir2ir"))
-    compile(project(":compiler:ir.tree"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:java"))
