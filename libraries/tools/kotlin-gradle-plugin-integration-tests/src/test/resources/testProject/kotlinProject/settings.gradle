@@ -1,0 +1,12 @@
+// Required to be here until all tests using this project will migrate
+// to new DSL
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.jvm" version "$kotlin_version"
+    }
+}

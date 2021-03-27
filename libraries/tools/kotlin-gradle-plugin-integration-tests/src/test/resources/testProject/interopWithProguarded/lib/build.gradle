@@ -1,15 +1,12 @@
-apply plugin: 'java'
-apply plugin: 'kotlin'
-
 buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'net.sf.proguard:proguard-gradle:6.2.2'
     }
+}
+
+plugins {
+    id "java"
+    id "org.jetbrains.kotlin.jvm"
 }
 
 repositories {
@@ -50,5 +47,3 @@ artifacts {
         builtBy obfuscate
     }
 }
-
-

@@ -1,15 +1,7 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "java"
 }
-
-apply plugin: "java"
-apply plugin: "kotlin"
 
 repositories {
     mavenLocal()
@@ -17,9 +9,14 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testImplementation'junit:junit:4.12'
 }
 
 // important to test that destinationDir is configured before evaluation
 test.testClassesDirs = files(project.tasks.compileTestKotlin.destinationDir)
+
+test {
+    testLogging {
+        info.events = ["passed", "failed"]
+    }
+}
