@@ -959,6 +959,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
      * The resulting `Byte` value is equal to `this.toInt().toByte()`.
      */
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
+    @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     public override fun toByte(): Byte
     /**
      * Converts this [Float] value to [Char].
@@ -972,6 +973,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
      * The resulting `Short` value is equal to `this.toInt().toShort()`.
      */
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
+    @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     public override fun toShort(): Short
     /**
      * Converts this [Float] value to [Int].
@@ -1201,6 +1203,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
      * The resulting `Byte` value is equal to `this.toInt().toByte()`.
      */
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", ReplaceWith("toInt().toByte()"))
+    @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     public override fun toByte(): Byte
     /**
      * Converts this [Double] value to [Char].
@@ -1214,6 +1217,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
      * The resulting `Short` value is equal to `this.toInt().toShort()`.
      */
     @Deprecated("Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", ReplaceWith("toInt().toShort()"))
+    @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
     public override fun toShort(): Short
     /**
      * Converts this [Double] value to [Int].
