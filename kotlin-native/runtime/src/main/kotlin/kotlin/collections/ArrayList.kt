@@ -160,7 +160,7 @@ actual class ArrayList<E> private constructor(
     }
 
     override fun toString(): String {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return array.subarrayContentToString(offset, length)
     }
 
