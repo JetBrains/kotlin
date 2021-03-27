@@ -160,4 +160,8 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
      * Mutable maps that are built (frozen) must throw `UnsupportedOperationException`.
      */
     internal open fun checkIsMutable(): Unit {}
+
+    // workaround for KT-45673 in legacy JS
+    override fun equals(other: Any?): Boolean = super.equals(other)
+    override fun hashCode(): Int = super.hashCode()
 }

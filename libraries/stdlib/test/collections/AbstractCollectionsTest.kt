@@ -20,14 +20,20 @@ class AbstractCollectionsTest {
         private val data = arrayOf("ok")
         override val size: Int get() = 1
         override fun iterator(): Iterator<String> = data.iterator()
+        override fun equals(other: Any?): Boolean = super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
     }
 
     class ReadOnlyList(override val size: Int = 1) : AbstractList<String>() {
         override fun get(index: Int): String = index.takeIf { it in indices }?.let { "ok" } ?: throw IndexOutOfBoundsException()
+        override fun equals(other: Any?): Boolean = super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
     }
 
     class ReadOnlyMap : AbstractMap<String, Int>() {
         override val entries: Set<Map.Entry<String, Int>> = mapOf("ok" to 42).entries
+        override fun equals(other: Any?): Boolean = super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
     }
 
 
@@ -88,17 +94,23 @@ class AbstractCollectionsTest {
         override fun add(index: Int, element: String) = storage.add(index, element)
         override fun removeAt(index: Int): String = storage.removeAt(index)
         override fun set(index: Int, element: String): String = storage.set(index, element)
+        override fun equals(other: Any?): Boolean = super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
     }
 
     class MutSet(val storage: MutableSet<String> = mutableSetOf<String>()) : AbstractMutableSet<String>() {
         override val size: Int get() = storage.size
         override fun iterator(): MutableIterator<String> = storage.iterator()
         override fun add(element: String): Boolean = storage.add(element)
+        override fun equals(other: Any?): Boolean = super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
     }
 
     class MutMap(val storage: MutableMap<String, Int> = mutableMapOf()) : AbstractMutableMap<String, Int>() {
         override fun put(key: String, value: Int): Int? = storage.put(key, value)
         override val entries: MutableSet<MutableMap.MutableEntry<String, Int>> get() = storage.entries
+        override fun equals(other: Any?): Boolean = super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
     }
 
     @Test
