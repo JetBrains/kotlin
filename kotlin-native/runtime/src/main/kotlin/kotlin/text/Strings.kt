@@ -328,6 +328,18 @@ public actual fun CharArray.concatToString(startIndex: Int, endIndex: Int): Stri
     return unsafeStringFromCharArray(this, startIndex, endIndex - startIndex)
 }
 
+internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
+    if (startIndex < 0 || endIndex > size) {
+        throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
+    }
+    if (startIndex > endIndex) {
+        throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
+    }
+}
+
+@SymbolName("Kotlin_String_unsafeStringFromCharArray")
+internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
+
 /**
  * Returns a [CharArray] containing characters of this string or its substring.
  *
@@ -398,6 +410,18 @@ public actual fun String.encodeToByteArray(startIndex: Int, endIndex: Int, throw
     else
         unsafeStringToUtf8(startIndex, endIndex - startIndex)
 }
+
+@SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8")
+internal external fun ByteArray.unsafeStringFromUtf8(start: Int, size: Int) : String
+
+@SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8OrThrow")
+internal external fun ByteArray.unsafeStringFromUtf8OrThrow(start: Int, size: Int) : String
+
+@SymbolName("Kotlin_String_unsafeStringToUtf8")
+internal external fun String.unsafeStringToUtf8(start: Int, size: Int) : ByteArray
+
+@SymbolName("Kotlin_String_unsafeStringToUtf8OrThrow")
+internal external fun String.unsafeStringToUtf8OrThrow(start: Int, size: Int) : ByteArray
 
 internal fun compareToIgnoreCase(thiz: String, other: String): Int {
     val length = minOf(thiz.length, other.length)

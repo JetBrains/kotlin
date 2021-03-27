@@ -799,6 +799,17 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
         this.insertRange(index, value, startIndex, endIndex)
 
+
+internal fun insertString(array: CharArray, start: Int, value: String): Int =
+        insertString(array, start, value, 0, value.length)
+
+@SymbolName("Kotlin_StringBuilder_insertString")
+internal external fun insertString(array: CharArray, distIndex: Int, value: String, sourceIndex: Int, count: Int): Int
+
+@SymbolName("Kotlin_StringBuilder_insertInt")
+internal external fun insertInt(array: CharArray, start: Int, value: Int): Int
+
+
 // Method parameters renamings
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @Deprecated("Use append(value: Boolean) instead", ReplaceWith("append(value = it)"), DeprecationLevel.WARNING)
