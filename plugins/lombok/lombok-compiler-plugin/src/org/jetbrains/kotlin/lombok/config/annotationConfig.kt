@@ -31,11 +31,13 @@ data class Accessors(val fluent: Boolean = false, val chain: Boolean = false) {
 
         override val name: FqName = LombokNames.ACCESSORS
 
-        override fun extract(annotation: AnnotationDescriptor): Accessors =
-            Accessors(
-                fluent = annotation.getBooleanArgument("fluent"),
-                chain = annotation.getBooleanArgument("chain")
+        override fun extract(annotation: AnnotationDescriptor): Accessors {
+            val fluent = annotation.getBooleanArgument("fluent")
+            return Accessors(
+                fluent = fluent,
+                chain = annotation.getBooleanArgument("chain", default = fluent)
             )
+        }
     }
 }
 

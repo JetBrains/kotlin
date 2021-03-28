@@ -21,8 +21,8 @@ public class ConstructorExample<A, B> {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val generated: ConstructorExample<Long, Boolean> = ConstructorExample.of(12, 42L, true)
         val generatedReq: ConstructorExample<String, Boolean> = ConstructorExample.of("234");
     }

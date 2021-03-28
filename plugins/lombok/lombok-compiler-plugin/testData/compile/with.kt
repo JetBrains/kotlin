@@ -26,8 +26,8 @@ public class WithExample {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val obj: WithExample = WithExample().withAge(16).withName("fooo")
     }
 }

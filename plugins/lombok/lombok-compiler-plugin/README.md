@@ -17,6 +17,7 @@ Features support:
  - [ ] Copy annotations
  - [ ] Strip defined prefixes - in config and @Accessors
  - [ ] Skip generation with AccessLevel.NONE
+ - [ ] Strip 'is' prefix for boolean fields
 
 [~] [@With](https://projectlombok.org/features/With)
   
@@ -37,7 +38,7 @@ Features support:
 
 Other todos:
  - [x] Generic classes
- - [ ] Actually run compiled code 
+ - [x] Actually run compiled code 
  - [ ] Don't generate members that already exist (if having a duplicate is a problem)
  - [ ] Gradle integration (as subplugin or just a way to enable lombok support)
  - [ ] Maven integration (as subplugin or just a way to enable lombok support)
