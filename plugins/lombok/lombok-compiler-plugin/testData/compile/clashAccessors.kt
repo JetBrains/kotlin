@@ -11,7 +11,6 @@ public class SuperClass {
 
 }
 
-
 //FILE: ClashTest.java
 
 import lombok.*;
@@ -76,7 +75,7 @@ public class ChildClass extends ClashTest{
 
 class KotlinChildClass : ClashTest() {
 
-    override fun getToOverride(): Int = super.getToOverride()
+    override fun getToOverride(): Int? = super.getToOverride()
 
 }
 
@@ -85,10 +84,10 @@ class Test {
         val obj = ClashTest()
 
         obj.getAge()
-        //todo thats shouldn't work
-        obj.setAge(41)
+        //thats shouldn't work because lombok doesn't generate clashing method
+//        obj.setAge(41)
+//        obj.age = 12
         val age = obj.age
-        obj.age = 12
 
 
         obj.getName()

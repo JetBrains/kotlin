@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -41,7 +42,7 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
         val methods = getSyntheticParts(thisDescriptor).methods.filter { it.name == name }
-        result.addAll(methods)
+        addNonExistent(result, methods)
     }
 
     override fun getStaticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
@@ -49,12 +50,12 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
 
     override fun generateStaticFunctions(thisDescriptor: ClassDescriptor, name: Name, result: MutableCollection<SimpleFunctionDescriptor>) {
         val functions = getSyntheticParts(thisDescriptor).staticFunctions.filter { it.name == name }
-        result.addAll(functions)
+        addNonExistent(result, functions)
     }
 
     override fun generateConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
         val constructors = getSyntheticParts(thisDescriptor).constructors
-        result.addAll(constructors)
+        addNonExistent(result, constructors)
     }
 
     private fun extractClass(descriptor: ClassDescriptor): JavaClassImpl? =
@@ -70,5 +71,39 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
     private fun computeSyntheticParts(descriptor: ClassDescriptor, jClass: JavaClassImpl): Parts =
         processors.map { it.contribute(descriptor, jClass) }.reduce { a, b -> a + b }
 
+    private fun <T : FunctionDescriptor> addNonExistent(result: MutableCollection<T>, toAdd: List<T>) {
+        if (toAdd.isEmpty()) return
 
+        val index = mutableMapOf<Name, List<T>>()
+
+        fun addToIndex(f: T) {
+            index.merge(f.name, listOf(f)) { a, b -> a + b}
+        }
+
+        result.forEach(::addToIndex)
+
+        toAdd.forEach { f ->
+            val existing = index.getOrDefault(f.name, emptyList())
+            if (existing.none { sameSignature (it, f) } ) {
+                result += f
+                addToIndex(f)
+            }
+        }
+    }
+
+
+    companion object {
+
+        /**
+         * Lombok treat functions as having the same signature by arguments count only
+         */
+        private fun sameSignature(a: FunctionDescriptor, b: FunctionDescriptor): Boolean {
+            val aVararg = a.valueParameters.any { it.varargElementType != null }
+            val bVararg = b.valueParameters.any { it.varargElementType != null }
+            return aVararg && bVararg ||
+                    aVararg && b.valueParameters.size >= (a.valueParameters.size - 1) ||
+                    bVararg && a.valueParameters.size >= (b.valueParameters.size - 1) ||
+                    a.valueParameters.size == b.valueParameters.size
+        }
+    }
 }
