@@ -85,10 +85,12 @@ fun main() {
     val testRun = FeatureTest()
     testRun.ctorDefault()
     testRun.ctorWithParam()
-	
-	val a0 = retByValue(null)
-	println("a0.useContents {iPub} = ${a0.useContents {iPub}}" )
-	println("a0.useContents { foo() } = ${a0.useContents { foo() }}" )
+
+    // By value for C++ requires further design of stubs mechanism.
+    // So not supported for now.
+	//val a0 = retByValue(null)
+	//println("a0.useContents {iPub} = ${a0.useContents {iPub}}" )
+	//println("a0.useContents { foo() } = ${a0.useContents { foo() }}" )
 	
 //	retByValue(null)!!.getValue().foo()
 //	val a1 = interpretPointed<CppTest>(retByValue(null).rawValue)

@@ -67,8 +67,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
 
                 val signatureParameters = function.parameters.mapIndexed { index, parameter ->
                     val type = parameter.type.getStringRepresentation()
-                    val forcePointer = if (parameter.type.unwrapTypedefs() is RecordType) "*" else ""
-                    Parameter(type+forcePointer, "p$index")
+                    Parameter(type, "p$index")
                 }
                 val bodyParameters = function.parameters.mapIndexed { index, parameter ->
 

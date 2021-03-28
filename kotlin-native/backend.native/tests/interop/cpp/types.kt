@@ -3,7 +3,7 @@ import kotlin.test.*
 import kotlin.random.*
 
 import cpptypes.*
-
+/*
 @Test
 fun test_retByValue(k: Int) {
     memScoped {
@@ -11,6 +11,7 @@ fun test_retByValue(k: Int) {
         assertEquals(k, x.get())
     }
 }
+*/
 
 @Test
 fun test_retByPtr(k: Int) {
@@ -35,7 +36,7 @@ fun test_retByRefConst(k: Int) {
     val x = interpretPointed<CppTest>(retByRefConst(k).rawValue)
     assertEquals(k, x.get())
 }
-
+/*
 @Test
 fun test_paramByValue(k: Int) {
     val x = nativeHeap.alloc<CppTest>() {}
@@ -43,7 +44,7 @@ fun test_paramByValue(k: Int) {
     assertEquals(k, paramByValue(x.readValue()))
     nativeHeap.free(x)
 }
-
+*/
 @Test
 fun test_paramByPtr(k: Int) {
     val x = nativeHeap.alloc<CppTest>() {}
@@ -80,12 +81,12 @@ fun main() {
     val seed = Random.nextInt()
     val r = Random(seed)
 
-    test_retByValue(r.nextInt())
+    //test_retByValue(r.nextInt())
     test_retByPtr(r.nextInt())
     test_retByPtrConst(r.nextInt())
     test_retByRef(r.nextInt())
     test_retByRefConst(r.nextInt())
-    test_paramByValue(r.nextInt())
+    //test_paramByValue(r.nextInt())
     test_paramByPtr(r.nextInt())
     test_paramByPtrConst(r.nextInt())
     test_paramByRef(r.nextInt())

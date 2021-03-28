@@ -214,9 +214,7 @@ internal class StructStubBuilder(
                         } catch (e: Throwable) {
                             null
                         }
-                    }.filterNotNull().also {
-                        println("STRUCT ${decl.spelling} SECONDARY CONSTRUCTORS: ${it}")
-                    }
+                    }.filterNotNull()
 
         val classFields = def.staticFields
                 .map { field -> (GlobalStubBuilder(context, field).build().map{ it as PropertyStub }).single() }
