@@ -199,6 +199,51 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     @Test
+    fun testListErrorsWithRefinementCallbacks() = test {
+        val compilerArgs = mutableListOf<String>()
+
+        val configuration = ScriptCompilationConfiguration {
+            refineConfiguration {
+                onAnnotations(CompilerArg::class, handler = { context ->
+                    val annotationsValues = context.collectedData?.get(ScriptCollectedData.foundAnnotations).orEmpty().mapNotNull {
+                        (it as? CompilerArg)?.value
+                    }
+                    compilerArgs.addAll(annotationsValues)
+                    context.compilationConfiguration.asSuccess()
+                })
+
+                beforeCompiling { context ->
+                    context.compilationConfiguration.with {
+                        compilerOptions(compilerArgs)
+                    }.asSuccess()
+                }
+            }
+        }
+
+        run {
+            compilationConfiguration = configuration
+            code = """
+                @file:CompilerArg("-Xopt-in=kotlin.RequiresOptIn")
+            """.trimIndent()
+            doCompile
+        }
+
+        run {
+            compilationConfiguration = configuration
+            code = """
+                import kotlin.time.*
+                @OptIn(ExperimentalTime::class)
+                val mark = TimeSource.Monotonic.markNow()
+            """.trimIndent()
+            doErrorCheck
+
+            expect {
+                errors.mode = ComparisonType.EQUALS
+            }
+        }
+    }
+
+    @Test
     fun testCompletionDuplication() = test {
         for (i in 1..6) {
             run {

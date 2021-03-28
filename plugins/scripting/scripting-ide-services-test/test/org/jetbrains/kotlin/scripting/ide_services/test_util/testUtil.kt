@@ -55,3 +55,8 @@ fun <T> ResultWithDiagnostics<Iterable<T>>.toList() = this.valueOrNull()?.toList
 
 @JvmName("sequenceToList")
 fun <T> ResultWithDiagnostics<Sequence<T>>.toList() = this.valueOrNull()?.toList().orEmpty()
+
+@Target(AnnotationTarget.FILE)
+@Repeatable
+@Retention(AnnotationRetention.SOURCE)
+annotation class CompilerArg(val value: String)
