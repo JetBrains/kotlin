@@ -23,8 +23,8 @@ public class SetterTest {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val obj = SetterTest()
         obj.setAge(42)
         obj.age = 42

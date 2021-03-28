@@ -27,8 +27,8 @@ public class FluentTest {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val obj = FluentTest()
         val getter = obj.age()
 
@@ -38,6 +38,8 @@ object Test {
 
         obj.overrideAnnotation
         obj.getOverrideAnnotation()
+
+        OverridenGetterTest().usage()
     }
 
     class OverridenGetterTest : FluentTest() {

@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.net.URLClassLoader
 
 abstract class AbstractLombokCompileTest : CodegenTestCase() {
 
+    private val commonClassLoader = URLClassLoader(arrayOf(getLombokJar().toURI().toURL()))
+
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        compile(files)
+        compile(files, true, true)
     }
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
@@ -32,6 +35,19 @@ abstract class AbstractLombokCompileTest : CodegenTestCase() {
     override fun configureTestSpecific(configuration: CompilerConfiguration, testFiles: List<TestFile>) {
         writeLombokConfig(configuration.javaSourceRoots.first(), testFiles)?.let { file ->
             configuration.put(LombokConfigurationKeys.CONFIG_FILE, file)
+        }
+    }
+
+    override fun postCompile(kotlinOut: File, javaOut: File?) {
+        //run compiled code, Test.run() method is expected to be in generated classes
+        val cp = listOfNotNull(kotlinOut, javaOut).map { it.toURI().toURL() }.toTypedArray()
+        val classLoader = URLClassLoader(cp, commonClassLoader)
+        try {
+            val clazz = classLoader.loadClass("Test")
+            clazz.getMethod("run").invoke(clazz.newInstance())
+        } catch (t: Throwable) {
+            LOG.error("Error running Test.run()", t)
+            fail("Error running compiled code: $t")
         }
     }
 

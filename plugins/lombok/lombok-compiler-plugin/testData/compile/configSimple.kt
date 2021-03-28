@@ -15,8 +15,8 @@ public class GetterTest {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val obj = GetterTest()
 
         obj.primitiveBoolean

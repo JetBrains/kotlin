@@ -25,10 +25,10 @@ public class SetterTest {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val obj = SetterTest()
-        obj.fluent(12);
+        obj.fluent(12)
         obj.setChained("zz").getChained()
         obj.whyNotBoth("zzz").whyNotBoth()
     }

@@ -439,6 +439,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
         }
 
+        javaClassesOutputDirectory = null;
         if (compileJavaFiles) {
             List<String> javaClasspath = new ArrayList<>();
             javaClasspath.add(kotlinOut.getPath());
@@ -463,6 +464,13 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                 throw ExceptionUtilsKt.rethrow(e);
             }
         }
+        if (kotlinOut != null) {
+            postCompile(kotlinOut, javaClassesOutputDirectory);
+        }
+    }
+
+    protected void postCompile(@NotNull File kotlinOut, @Nullable File javaOut) {
+
     }
 
     protected void runJavacTask(@NotNull Collection<File> files, @NotNull List<String> options) throws IOException {

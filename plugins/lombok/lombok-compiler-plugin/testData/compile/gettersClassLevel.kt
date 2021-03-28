@@ -23,8 +23,8 @@ public class ClassLevelGetterTest {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val obj = ClassLevelGetterTest()
         val getter = obj.getAge()
         val property = obj.age
@@ -36,6 +36,8 @@ object Test {
 
         //shouldn't be accesible from here
 //        obj.getName()
+
+        OverridenGetterTest().usage()
     }
 
     class OverridenGetterTest : ClassLevelGetterTest() {

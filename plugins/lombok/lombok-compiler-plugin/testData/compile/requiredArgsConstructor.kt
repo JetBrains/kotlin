@@ -33,8 +33,8 @@ public class ConstructorExample {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val generated = ConstructorExample("foo", true)
     }
 }

@@ -20,8 +20,8 @@ public class SetterTest {
 
 //FILE: test.kt
 
-object Test {
-    fun usage() {
+class Test {
+    fun run() {
         val obj = SetterTest()
         obj.setAge(42)
         obj.age = 42
@@ -32,6 +32,8 @@ object Test {
 
         //shouldn't be accesible from here
 //        obj.setName("abc")
+
+        OverridenGetterTest().usage()
     }
 
     class OverridenGetterTest : SetterTest() {
