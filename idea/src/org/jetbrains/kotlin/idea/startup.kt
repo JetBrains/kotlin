@@ -14,7 +14,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.concurrency.AppExecutorUtil
 import java.util.concurrent.Callable
 
-// FIX ME WHEN BUNCH 201 REMOVED
 
 fun runActivity(project: Project) {
     nonBlocking(Callable {

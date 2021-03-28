@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
 import com.intellij.usages.Usage
 import com.intellij.usages.UsageInfo2UsageAdapter
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.maskExtensions
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase
@@ -23,7 +24,11 @@ class CustomUsageSearcherTest : KotlinLightCodeInsightFixtureTestCaseBase() {
 
     fun testAddCustomUsagesForKotlin() {
         val customUsageSearcher = object : CustomUsageSearcher() {
-            override fun processElementUsages(element: PsiElement, processor: ProcessorInCompat<Usage>, options: FindUsagesOptions) {
+            override fun processElementUsages(
+                element: PsiElement,
+                processor: Processor<in Usage>,
+                options: FindUsagesOptions
+            ) {
                 runReadAction { processor.process(UsageInfo2UsageAdapter(UsageInfo(element))) }
             }
         }
