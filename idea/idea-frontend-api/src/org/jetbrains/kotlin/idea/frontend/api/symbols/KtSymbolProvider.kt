@@ -27,6 +27,11 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
             literalExpression?.let(::getAnonymousObjectSymbol) ?: getClassOrObjectSymbol(psi)
         }
         is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
+        is KtFunctionLiteral -> {
+            val literalExpression = psi.parent as? KtLambdaExpression
+            check(literalExpression != null) { "Unexpected parent for KtFunctionLiteral" }
+            getAnonymousFunctionSymbol(literalExpression)
+        }
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
