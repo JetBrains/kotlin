@@ -95,7 +95,7 @@ class Fir2IrDeclarationStorage(
     private val fakeOverridesInClass = mutableMapOf<IrClass, MutableMap<FirCallableDeclaration<*>, FirCallableDeclaration<*>>>()
 
     // For pure fields (from Java) only
-    private val fieldToPropertyCache = ConcurrentHashMap<FirField, IrProperty>()
+    private val fieldToPropertyCache = ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty>()
 
     private val delegatedReverseCache = ConcurrentHashMap<IrDeclaration, FirDeclaration>()
 
@@ -719,9 +719,13 @@ class Fir2IrDeclarationStorage(
         field: FirField,
         irParent: IrDeclarationParent
     ): IrProperty {
-        fieldToPropertyCache[field]?.let { return it }
-        return createIrProperty(field.toStubProperty(), irParent).apply {
-            fieldToPropertyCache[field] = this
+        return fieldToPropertyCache.getOrPut(field to irParent) {
+            val containingClassId = (irParent as? IrClass)?.classId
+            createIrProperty(
+                field.toStubProperty(),
+                irParent,
+                containingClass = containingClassId?.let { ConeClassLikeLookupTagImpl(it) }
+            )
         }
     }
 

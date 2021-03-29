@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
@@ -103,7 +104,8 @@ class CallAndReferenceGenerator(
                     )
                 }
                 is IrFieldSymbol -> {
-                    val referencedField = symbol.owner
+                    val fieldSymbol = computeFieldSymbolForCallableReference(callableReferenceAccess, symbol)
+                    val referencedField = fieldSymbol.owner
                     val propertySymbol = referencedField.correspondingPropertySymbol
                         ?: run {
                             // In case of [IrField] without the corresponding property, we've created it directly from [FirField].
@@ -116,7 +118,7 @@ class CallAndReferenceGenerator(
                         startOffset, endOffset, type,
                         propertySymbol,
                         typeArgumentsCount = (type as? IrSimpleType)?.arguments?.size ?: 0,
-                        field = symbol,
+                        field = fieldSymbol,
                         getter = if (referencedField.isStatic) null else propertySymbol.owner.getter?.symbol,
                         setter = if (referencedField.isStatic) null else propertySymbol.owner.setter?.symbol,
                         origin
@@ -152,6 +154,33 @@ class CallAndReferenceGenerator(
                 }
             }
         }.applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+    }
+
+    private fun computeFieldSymbolForCallableReference(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        symbol: IrFieldSymbol
+    ): IrFieldSymbol {
+        val receiverClass = when (val receiverExpression = callableReferenceAccess.explicitReceiver) {
+            is FirResolvedQualifier -> receiverExpression.symbol
+            null -> null
+            else -> receiverExpression.typeRef.coneType.toSymbol(session)
+        } as? FirClassSymbol<*>
+        val newParent = receiverClass?.let { classifierStorage.getIrClassSymbol(it) }?.owner ?: return symbol
+        return IrFieldSymbolImpl().also { newSymbol ->
+            val field = symbol.owner
+            irFactory.createField(
+                startOffset = -1,
+                endOffset = -1,
+                field.origin,
+                newSymbol,
+                field.name,
+                field.type,
+                field.visibility,
+                field.isFinal,
+                field.isExternal,
+                field.isStatic,
+            ).also { it.parent = newParent }
+        }
     }
 
     private fun FirQualifiedAccess.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {
