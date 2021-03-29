@@ -3,12 +3,12 @@
 @Retention(AnnotationRetention.SOURCE)
 annotation class test
 
-fun foo(@test <!UNUSED_PARAMETER!>f<!> : Int) {}
+fun foo(@test f : Int) {}
 
 var bar : Int = 1
-    set(@test <!UNUSED_PARAMETER!>v<!>) {}
+    set(@test v) {}
 
 val x : (Int) -> Int = {@test <!TYPE_MISMATCH, UNINITIALIZED_VARIABLE!>x<!> <!SYNTAX!>: Int -> x<!>} // todo fix parser annotation on lambda parameter
 
-class Hello(@test <!UNUSED_PARAMETER!>args<!>: Any) {
+class Hello(@test args: Any) {
 }

@@ -8,5 +8,5 @@ fun test1(l: List<Number>) {
 
     val i: Int = l.firstTyped()
 
-    val s: String = <!TYPE_MISMATCH!>l.<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!><!TYPE_MISMATCH!>firstTyped<!>()<!><!>
+    val s: String = <!TYPE_MISMATCH{NI}!>l.<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!><!TYPE_MISMATCH{NI}!>firstTyped<!>()<!><!>
 }

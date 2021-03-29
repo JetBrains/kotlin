@@ -7,14 +7,14 @@ fun <T>id(t: T): T = t
 fun doList(l: List<Int>) = l
 fun doInt(i: Int) = i
 
-fun <T> strangeNullableList(<!UNUSED_PARAMETER!>f<!>: (T) -> Unit): List<T>? = throw Exception()
+fun <T> strangeNullableList(f: (T) -> Unit): List<T>? = throw Exception()
 fun <T: A> emptyNullableListOfA(): List<T>? = null
 
 //-------------------------------
 
 fun testExclExcl() {
     doList(<!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>emptyNullableListOfA<!>()!!) //should be an error here
-    val <!UNUSED_VARIABLE!>l<!>: List<Int> = <!TYPE_MISMATCH!><!TYPE_MISMATCH!>id<!>(<!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}, TYPE_MISMATCH!>emptyNullableListOfA<!>()<!TYPE_MISMATCH!>!!<!>)<!>
+    val l: List<Int> = <!TYPE_MISMATCH{NI}!><!TYPE_MISMATCH{NI}!>id<!>(<!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}, TYPE_MISMATCH{NI}!>emptyNullableListOfA<!>()<!TYPE_MISMATCH{NI}!>!!<!>)<!>
 
     doList(strangeNullableList { doInt(it) }!!) //lambda should be analyzed (at completion phase)
 }

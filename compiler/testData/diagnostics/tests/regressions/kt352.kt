@@ -6,7 +6,7 @@ package kt352
 val f : (Any) -> Unit = {  <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!>-> }  //type mismatch
 
 fun foo() {
-    val <!UNUSED_VARIABLE!>f<!> : (Any) -> Unit = { <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!>-> }  //!!! no error
+    val f : (Any) -> Unit = { <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!>-> }  //!!! no error
 }
 
 class A() {
@@ -14,13 +14,13 @@ class A() {
 }
 
 //more tests
-val g : () -> Unit = { <!UNUSED_EXPRESSION!>42<!> }
+val g : () -> Unit = { 42 }
 val gFunction : () -> Unit = <!TYPE_MISMATCH!>fun(): Int = 1<!>
 
 val h : () -> Unit = { doSmth() }
 
 fun doSmth(): Int = 42
-fun doSmth(<!UNUSED_PARAMETER!>a<!>: String) {}
+fun doSmth(a: String) {}
 
 val testIt : (Any) -> Unit = {
     if (it is String) {

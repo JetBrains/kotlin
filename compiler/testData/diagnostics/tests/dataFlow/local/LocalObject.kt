@@ -6,4 +6,4 @@ fun foo(x: Any?) {
     }
 }
 
-open class Base(<!UNUSED_PARAMETER!>s<!>: String)
+open class Base(s: String)

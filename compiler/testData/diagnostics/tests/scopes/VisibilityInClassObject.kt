@@ -1,4 +1,4 @@
-fun devNull(<!UNUSED_PARAMETER!>obj<!>: Any?) {}
+fun devNull(obj: Any?) {}
 
 open class A {
     companion object {

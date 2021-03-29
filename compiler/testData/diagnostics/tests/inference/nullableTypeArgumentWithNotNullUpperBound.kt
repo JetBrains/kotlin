@@ -3,7 +3,7 @@ fun <S : Any> foo1(x: Array<out S?>, y: Array<in S?>) {
     val yo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>inANullable(y)<!>
 
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>f<!>: Array<S> = xo
-    <!UNUSED_VALUE!>f =<!> yo
+    f = yo
 }
 
 fun <S : Any> foo2(x: Array<out S>, y: Array<in S>) {
@@ -11,7 +11,7 @@ fun <S : Any> foo2(x: Array<out S>, y: Array<in S>) {
     val yo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>inA(y)<!>
 
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>f<!>: Array<S> = xo
-    <!UNUSED_VALUE!>f =<!> yo
+    f = yo
 }
 
 class A1<S : Any>(x: Array<out S?>, y: Array<in S?>) {
@@ -24,8 +24,8 @@ class A2<S : Any>(x: Array<out S>, y: Array<in S>) {
     val yo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>inA(y)<!>
 }
 
-fun <X : Any> outANullable(<!UNUSED_PARAMETER!>x<!>: Array<out X?>): Array<X> = TODO()
-fun <Y : Any> inANullable(<!UNUSED_PARAMETER!>x<!>: Array<in Y?>): Array<Y> = TODO()
+fun <X : Any> outANullable(x: Array<out X?>): Array<X> = TODO()
+fun <Y : Any> inANullable(x: Array<in Y?>): Array<Y> = TODO()
 
-fun <X : Any> outA(<!UNUSED_PARAMETER!>x<!>: Array<out X>): Array<X> = TODO()
-fun <Y : Any> inA(<!UNUSED_PARAMETER!>x<!>: Array<in Y>): Array<Y> = TODO()
+fun <X : Any> outA(x: Array<out X>): Array<X> = TODO()
+fun <Y : Any> inA(x: Array<in Y>): Array<Y> = TODO()

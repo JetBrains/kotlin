@@ -1,7 +1,8 @@
+// FIR_IDENTICAL
 annotation class ann
 
-fun test(@ann <!UNUSED_PARAMETER!>p<!>: Int) {
+fun test(@ann p: Int) {
 
 }
 
-val bar = fun(@ann <!UNUSED_ANONYMOUS_PARAMETER!>g<!>: Int) {}
+val bar = fun(@ann g: Int) {}

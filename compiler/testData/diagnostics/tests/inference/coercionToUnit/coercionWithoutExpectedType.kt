@@ -3,16 +3,16 @@
 fun <T> materialize(): T = TODO()
 
 fun implicitCoercion() {
-    val <!UNUSED_VARIABLE!>a<!> = {
+    val a = {
         // Block is implicitly Unit-coerced, so it is allowed to place statement at the end of lambda
-        if (true) <!UNUSED_EXPRESSION!>42<!>
+        if (true) 42
     }
 
-    val <!UNUSED_VARIABLE!>b<!> = l@{
+    val b = l@{
         return@l
     }
 
-    val <!UNUSED_VARIABLE!>c<!> = l@{
+    val c = l@{
         // Error: block doesn't have an expected type, so call can't be inferred!
         return@l <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>materialize<!>()
     }

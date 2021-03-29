@@ -2,7 +2,7 @@
 package a
 
 class MyClass {
-    fun component1(<!UNUSED_PARAMETER!>i<!>: Int) {}
+    fun component1(i: Int) {}
 }
 
 class MyClass2 {}

@@ -17,9 +17,9 @@ class Test<in I, out O, P>(
         var type9: In<<!TYPE_VARIANCE_CONFLICT("I; in; invariant; In<I>")!>I<!>>,
         var type0: In<<!TYPE_VARIANCE_CONFLICT("O; out; invariant; In<O>")!>O<!>>,
 
-        <!UNUSED_PARAMETER!>type11<!>: I,
-        <!UNUSED_PARAMETER!>type12<!>: O,
-        <!UNUSED_PARAMETER!>type13<!>: P,
-        <!UNUSED_PARAMETER!>type14<!>: In<I>,
-        <!UNUSED_PARAMETER!>type15<!>: In<O>
+        type11: I,
+        type12: O,
+        type13: P,
+        type14: In<I>,
+        type15: In<O>
 )

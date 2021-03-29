@@ -8,7 +8,7 @@ class Test<in I, out O> {
         apply(this.i)
     }
 
-    fun apply(<!UNUSED_PARAMETER!>i<!>: I) {}
+    fun apply(i: I) {}
 
     fun test() {
         apply(i)

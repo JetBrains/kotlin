@@ -1,6 +1,6 @@
 private class X
 
-private operator fun X?.plus(<!UNUSED_PARAMETER!>p<!>: Int) = X()
+private operator fun X?.plus(p: Int) = X()
 
 class C {
     private val map = hashMapOf<String, X>()

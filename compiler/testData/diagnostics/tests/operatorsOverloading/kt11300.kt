@@ -2,7 +2,7 @@
 
 class A {
     operator fun get(x: Int): Int = x
-    fun set(<!UNUSED_PARAMETER!>x<!>: Int, <!UNUSED_PARAMETER!>y<!>: Int) {} // no `operator` modifier
+    fun set(x: Int, y: Int) {} // no `operator` modifier
 }
 
 fun main() {

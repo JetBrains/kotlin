@@ -9,17 +9,17 @@ fun f() {
     }
     )
 }
-fun invoker(<!UNUSED_PARAMETER!>gen<!> : () -> Int) : Int  = 0
+fun invoker(gen : () -> Int) : Int  = 0
 
 //more tests
 fun t1() {
-    val <!UNUSED_VARIABLE!>v<!> = l@{
+    val v = l@{
         return@l 111
     }
 }
 
 fun t2() : String {
-    val <!UNUSED_VARIABLE!>g<!> : ()-> Int = l@{
+    val g : ()-> Int = l@{
         if (true) {
             return@l 1
         }
@@ -54,10 +54,10 @@ fun t3() : String {
 }
 
 fun t4() : Int {
-    val <!UNUSED_VARIABLE!>h<!> :  ()-> String = l@{
+    val h :  ()-> String = l@{
         return@l "a"
     }
-    val <!UNUSED_VARIABLE!>g<!> :  ()-> String = l@{
+    val g :  ()-> String = l@{
         return@l "a"
     }
 

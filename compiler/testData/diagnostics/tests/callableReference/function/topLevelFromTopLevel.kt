@@ -1,9 +1,10 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 
 import kotlin.reflect.*
 
 fun foo() {}
-fun bar(<!UNUSED_PARAMETER!>x<!>: Int) {}
+fun bar(x: Int) {}
 fun baz() = "OK"
 
 fun main() {

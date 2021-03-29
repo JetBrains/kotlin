@@ -8,7 +8,7 @@ val a: () -> Unit = l@{
 
     // Expected type here is Unit, but it also implies coercion,
     // so we can end lambda body with statement
-    if (true) <!UNUSED_EXPRESSION!>42<!>
+    if (true) 42
 }
 
 val b: () -> Unit = l@{
@@ -16,7 +16,7 @@ val b: () -> Unit = l@{
     if (true) return@l <!TYPE_MISMATCH!>"hello"<!>
 
     // However, this is OK, because here coercion is applied
-    <!UNUSED_EXPRESSION!>"hello"<!>
+    "hello"
 }
 
 val c: () -> Unit = {

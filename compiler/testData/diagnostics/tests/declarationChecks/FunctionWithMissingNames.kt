@@ -18,9 +18,9 @@ class Outer {
 }
 
 fun outerFun() {
-    <!UNUSED_EXPRESSION!>fun () {}<!>
-    <!UNUSED_EXPRESSION!>fun B.() {}<!>
+    fun () {}
+    fun B.() {}
 
-    <!UNUSED_EXPRESSION!>@a fun () {}<!>
-    <!UNUSED_EXPRESSION!>fun @a A.() {}<!>
+    @a fun () {}
+    fun @a A.() {}
 }

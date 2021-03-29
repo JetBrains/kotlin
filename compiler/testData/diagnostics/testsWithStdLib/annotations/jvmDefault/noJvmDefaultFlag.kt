@@ -25,5 +25,5 @@ interface B {
     <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!>
     var prop4: String<!>
         get() = ""
-        set(<!UNUSED_PARAMETER!>value<!>) {}
+        set(value) {}
 }

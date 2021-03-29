@@ -3,13 +3,13 @@
 fun <T> funny(f : () -> T) : T = f()
 
 fun testFunny() {
-    val <!UNUSED_VARIABLE!>a<!> : Int = funny {1}
+    val a : Int = funny {1}
 }
 
-fun <T> funny2(<!UNUSED_PARAMETER!>f<!> : (t : T) -> T) : T {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T> funny2(f : (t : T) -> T) : T {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun testFunny2() {
-    val <!UNUSED_VARIABLE!>a<!> : Int = funny2 {it}
+    val a : Int = funny2 {it}
 }
 
 fun box() : String {
@@ -25,7 +25,7 @@ infix fun <T> T.with(f :  T.() -> Unit) {
 }
 
 fun main() {
-    val <!UNUSED_VARIABLE!>a<!> = 1 with {
+    val a = 1 with {
         plus(1)
     }
 }

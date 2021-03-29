@@ -19,7 +19,7 @@ fun bbb() {
     return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 
-fun foo(<!UNUSED_PARAMETER!>expr<!>: StringBuilder): Int {
+fun foo(expr: StringBuilder): Int {
     val c = 'a'
     when(c) {
         0.toChar() -> throw Exception("zero")
@@ -37,7 +37,7 @@ fun intShortInfer() = 1
 fun intShort() : Int = 1
 //fun intBlockInfer()  {1}
 fun intBlock() : Int {return 1}
-fun intBlock1() : Int {<!UNUSED_EXPRESSION!>1<!><!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun intBlock1() : Int {1<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun intString(): Int = <!TYPE_MISMATCH!>"s"<!>
 fun intFunctionLiteral(): Int = <!TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN!>{ 10 }<!>
@@ -48,7 +48,7 @@ fun blockReturnValueTypeMatch() : Int {return 1}
 fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>Unit<!>}
 
 fun blockAndAndMismatch() : Int {
-    <!UNUSED_EXPRESSION!>true && false<!>
+    true && false
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockAndAndMismatch1() : Int {
     return <!TYPE_MISMATCH!>true && false<!>
@@ -58,7 +58,7 @@ fun blockAndAndMismatch2() : Int {
 }
 
 fun blockAndAndMismatch3() : Int {
-    <!UNUSED_EXPRESSION!>true || false<!>
+    true || false
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockAndAndMismatch4() : Int {
     return <!TYPE_MISMATCH!>true || false<!>
@@ -92,18 +92,18 @@ fun blockReturnValueTypeMatch6() : Int {
 }
 fun blockReturnValueTypeMatch7() : Int {
     if (1 > 2)
-    <!UNUSED_EXPRESSION!>1.0<!>
-    else <!UNUSED_EXPRESSION!>2.0<!>
+    1.0
+    else 2.0
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch8() : Int {
     if (1 > 2)
-    <!UNUSED_EXPRESSION!>1.0<!>
-    else <!UNUSED_EXPRESSION!>2.0<!>
+    1.0
+    else 2.0
     return 1
 }
 fun blockReturnValueTypeMatch9() : Int {
     if (1 > 2)
-    <!UNUSED_EXPRESSION!>1.0<!>
+    1.0
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch10() : Int {
     return <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2)
@@ -111,7 +111,7 @@ fun blockReturnValueTypeMatch10() : Int {
 }
 fun blockReturnValueTypeMatch11() : Int {
     if (1 > 2)
-    else <!UNUSED_EXPRESSION!>1.0<!>
+    else 1.0
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockReturnValueTypeMatch12() : Int {
     if (1 > 2)
@@ -119,7 +119,7 @@ fun blockReturnValueTypeMatch12() : Int {
     else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
 }
 fun blockNoReturnIfValDeclaration(): Int {
-    val <!UNUSED_VARIABLE!>x<!> = 1
+    val x = 1
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun blockNoReturnIfEmptyIf(): Int {
     if (1 < 2) {} else {}
@@ -171,37 +171,37 @@ class B() {
 }
 
 fun testFunctionLiterals() {
-    val <!UNUSED_VARIABLE!>endsWithVarDeclaration<!> : () -> Boolean = {
-        <!EXPECTED_TYPE_MISMATCH!>val <!UNUSED_VARIABLE!>x<!> = 2<!>
+    val endsWithVarDeclaration : () -> Boolean = {
+        <!EXPECTED_TYPE_MISMATCH!>val x = 2<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithAssignment<!>: () -> Int = {
+    val endsWithAssignment: () -> Int = {
         var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 1
-        <!EXPECTED_TYPE_MISMATCH!><!UNUSED_VALUE!>x =<!> 333<!>
+        <!EXPECTED_TYPE_MISMATCH!>x = 333<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithReAssignment<!>: () -> Int = {
+    val endsWithReAssignment: () -> Int = {
         var x = 1
         <!ASSIGNMENT_TYPE_MISMATCH!>x += 333<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithFunDeclaration<!> : () -> String = {
+    val endsWithFunDeclaration : () -> String = {
         var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 1
-        <!UNUSED_VALUE!>x =<!> 333
+        x = 333
         <!EXPECTED_TYPE_MISMATCH!>fun meow() : Unit {}<!>
     }
 
-    val <!UNUSED_VARIABLE!>endsWithObjectDeclaration<!> : () -> Int = {
+    val endsWithObjectDeclaration : () -> Int = {
         var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 1
-        <!UNUSED_VALUE!>x =<!> 333
+        x = 333
         <!EXPECTED_TYPE_MISMATCH, LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}
     }
 
-    val <!UNUSED_VARIABLE!>expectedUnitReturnType1<!>: () -> Unit = {
-        val <!UNUSED_VARIABLE!>x<!> = 1
+    val expectedUnitReturnType1: () -> Unit = {
+        val x = 1
     }
 
-    val <!UNUSED_VARIABLE!>expectedUnitReturnType2<!>: () -> Unit = {
+    val expectedUnitReturnType2: () -> Unit = {
         fun meow() : Unit {}
         <!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}
     }

@@ -13,27 +13,27 @@ object S {
 
     val prop: String = ""
 
-    fun o(<!UNUSED_PARAMETER!>s<!>: String) = Unit
-    fun o(<!UNUSED_PARAMETER!>i<!>: Int) = Unit
+    fun o(s: String) = Unit
+    fun o(i: Int) = Unit
 
     fun Int.ext() = Unit
     var String.ext: Int
         get() = 3
-        set(<!UNUSED_PARAMETER!>i<!>) {
+        set(i) {
         }
 
-    fun A(<!UNUSED_PARAMETER!>c<!>: Int) = A()
+    fun A(c: Int) = A()
 
     class A()
 
-    fun <T> genericFun(t: T, <!UNUSED_PARAMETER!>t2<!>: T): T = t
+    fun <T> genericFun(t: T, t2: T): T = t
 }
 
 open class Base {
     fun f() {
     }
 
-    fun <T> g(<!UNUSED_PARAMETER!>t<!>: T) {
+    fun <T> g(t: T) {
     }
 
     val p = 1
@@ -78,18 +78,18 @@ fun testImportFromObjectByName() {
     o(3)
     3.ext()
     "".ext = 3
-    val <!UNUSED_VARIABLE!>c<!>: Int = "".ext
+    val c: Int = "".ext
 
     3.extRenamed()
     "".extRenamed = 3
-    val <!UNUSED_VARIABLE!>c2<!>: Int = "".extRenamed
+    val c2: Int = "".extRenamed
 
     A()
     A(3)
 
-    val <!UNUSED_VARIABLE!>a<!>: Int = genericFun(3, 3)
-    val <!UNUSED_VARIABLE!>s<!>: String = genericFun("A", "b")
-    val <!UNUSED_VARIABLE!>b<!>: Boolean = genericFun(true, false)
+    val a: Int = genericFun(3, 3)
+    val s: String = genericFun("A", "b")
+    val b: Boolean = genericFun(true, false)
 }
 
 fun <T> t(t: T): T {

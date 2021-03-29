@@ -32,8 +32,8 @@ fun foo(k: KotlinClass) {
     k.something5 = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 
-fun useInt(<!UNUSED_PARAMETER!>i<!>: Int) {}
-fun useString(<!UNUSED_PARAMETER!>i<!>: String) {}
+fun useInt(i: Int) {}
+fun useString(i: String) {}
 
 // FILE: JavaClass.java
 public class JavaClass {

@@ -34,12 +34,12 @@ class A {
     <!UNSUPPORTED_FEATURE!>val <T> T.u get() = id(this)<!>
 }
 fun <E> id(x: E) = x
-fun <E> l(<!UNUSED_PARAMETER!>x<!>: E): List<E> = null!!
+fun <E> l(x: E): List<E> = null!!
 
 // vars
 <!UNSUPPORTED_FEATURE!>var x3
     get() = 1
-    set(<!UNUSED_PARAMETER!>q<!>) {
+    set(q) {
     }<!>
 
 // recursive

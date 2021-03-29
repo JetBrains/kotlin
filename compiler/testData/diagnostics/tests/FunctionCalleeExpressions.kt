@@ -40,8 +40,8 @@ fun main(args : Array<String>) {
     foo2()({})
     foo2()<!TOO_MANY_ARGUMENTS!>{}<!>
     (foo2()){}
-    (foo2())<!TYPE_MISMATCH{NI}!>{<!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH, UNUSED_ANONYMOUS_PARAMETER!>x<!> -> }<!>
-    foo2()(<!TYPE_MISMATCH{NI}!>{<!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH, UNUSED_ANONYMOUS_PARAMETER!>x<!> -> }<!>)
+    (foo2())<!TYPE_MISMATCH{NI}!>{<!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>x<!> -> }<!>
+    foo2()(<!TYPE_MISMATCH{NI}!>{<!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>x<!> -> }<!>)
 
     val a = fooT1(1)()
     checkSubtype<Int>(a)
@@ -76,7 +76,7 @@ fun main1() {
 }
 
 fun test() {
-    {<!UNUSED_ANONYMOUS_PARAMETER!>x<!> : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
+    {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
     (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
     <!TYPE_MISMATCH{OI}!>"sd"<!>.<!FUNCTION_EXPECTED{NI}!>(fun Int.() = 1)<!>()
     val i : Int? = null

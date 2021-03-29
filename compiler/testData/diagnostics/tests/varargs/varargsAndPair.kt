@@ -1,8 +1,8 @@
 // !CHECK_TYPE
 
-fun <T: Any> foo(vararg <!UNUSED_PARAMETER!>ts<!>: T): T? = null
+fun <T: Any> foo(vararg ts: T): T? = null
 
-class Pair<A>(<!UNUSED_PARAMETER!>a<!>: A)
+class Pair<A>(a: A)
 
 fun test() {
     val v = foo(Pair(1))

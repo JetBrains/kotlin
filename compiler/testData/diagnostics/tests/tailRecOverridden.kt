@@ -26,7 +26,7 @@ class C: A() {
         gav(y - 1, z - 1)
     }
 
-    tailrec fun bar(<!UNUSED_PARAMETER!>y<!>: Int = 1, z: Int = 2) {
+    tailrec fun bar(y: Int = 1, z: Int = 2) {
         bar(z)
     }
 }

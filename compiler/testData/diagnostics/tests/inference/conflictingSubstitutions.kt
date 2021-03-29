@@ -4,13 +4,13 @@ package conflictingSubstitutions
 
 import java.util.*
 
-fun <R> elemAndList(r: R, <!UNUSED_PARAMETER!>t<!>: MutableList<R>): R = r
-fun <R> R.elemAndListWithReceiver(r: R, <!UNUSED_PARAMETER!>t<!>: MutableList<R>): R = r
+fun <R> elemAndList(r: R, t: MutableList<R>): R = r
+fun <R> R.elemAndListWithReceiver(r: R, t: MutableList<R>): R = r
 
 fun test() {
-    val <!UNUSED_VARIABLE!>s<!> = <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>elemAndList<!>(11, list("72"))
+    val s = <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>elemAndList<!>(11, list("72"))
 
-    val <!UNUSED_VARIABLE!>u<!> = 11.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>elemAndListWithReceiver<!>(4, list("7"))
+    val u = 11.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>elemAndListWithReceiver<!>(4, list("7"))
 }
 
 fun <T> list(value: T) : ArrayList<T> {

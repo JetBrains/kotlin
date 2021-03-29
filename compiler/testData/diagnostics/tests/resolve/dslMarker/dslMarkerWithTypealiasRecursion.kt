@@ -13,7 +13,7 @@ typealias YBar = <!RECURSIVE_TYPEALIAS_EXPANSION!>ZBar<!>
 typealias ZBar = <!RECURSIVE_TYPEALIAS_EXPANSION!>YBar<!>
 
 fun Foo.foo(body: Foo.() -> Unit) = body()
-fun Foo.zbar(<!UNUSED_PARAMETER{OI}!>body<!>: <!RECURSIVE_TYPEALIAS_EXPANSION!>ZBar<!>.() -> Unit) = Bar().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{OI}!>body<!>()
+fun Foo.zbar(body: <!RECURSIVE_TYPEALIAS_EXPANSION!>ZBar<!>.() -> Unit) = Bar().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{OI}!>body<!>()
 
 fun test() {
     Foo().foo {

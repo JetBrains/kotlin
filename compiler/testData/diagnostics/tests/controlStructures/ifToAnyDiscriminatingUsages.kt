@@ -23,7 +23,7 @@ fun testResultOfAnonFun1() =
 
 fun testResultOfAnonFun2() =
         run(fun () {
-            if (true) <!UNUSED_EXPRESSION!>42<!> else println()
+            if (true) 42 else println()
         })
 
 fun testReturnFromAnonFun() =

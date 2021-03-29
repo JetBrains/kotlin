@@ -7,10 +7,10 @@ import checkSubtype
 
 fun <T> id(t: T): T = t
 
-fun <T> either(t1: T, <!UNUSED_PARAMETER!>t2<!>: T): T = t1
+fun <T> either(t1: T, t2: T): T = t1
 
 fun test() {
-    val <!UNUSED_VARIABLE!>a<!>: Float = id(2.0.toFloat())
+    val a: Float = id(2.0.toFloat())
 
     val b = id(2.0)
     checkSubtype<Double>(b)
@@ -21,5 +21,5 @@ fun test() {
     val d = either(11, 2.3)
     checkSubtype<Any>(d)
 
-    val <!UNUSED_VARIABLE!>e<!>: Float = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>id(1)<!>
+    val e: Float = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>id(1)<!>
 }

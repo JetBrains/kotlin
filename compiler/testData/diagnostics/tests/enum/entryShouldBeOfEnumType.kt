@@ -5,5 +5,5 @@ enum class E {
 
 fun foo() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>e<!> = E.E1
-    <!UNUSED_VALUE!>e =<!> E.E2
+    e = E.E2
 }

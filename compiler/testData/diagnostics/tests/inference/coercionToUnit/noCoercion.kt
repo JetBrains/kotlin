@@ -10,13 +10,13 @@ fun noCoercionLastExpressionUsedAsReturnArgument() {
 }
 
 fun noCoercionBlockHasExplicitType() {
-    val <!UNUSED_VARIABLE!>b<!>: () -> Int = {
-        <!TYPE_MISMATCH!>if (true) <!UNUSED_EXPRESSION!>42<!><!>
+    val b: () -> Int = {
+        <!TYPE_MISMATCH!>if (true) 42<!>
     }
 }
 
 fun noCoercionBlockHasExplicitReturn() {
-    val <!UNUSED_VARIABLE!>c<!> = l@{
+    val c = l@{
         if (true) return@l 42
 
         <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 239

@@ -12,7 +12,7 @@ fun foo(k: KotlinClass) {
     k.something = ""
 }
 
-fun useString(<!UNUSED_PARAMETER!>i<!>: String) {}
+fun useString(i: String) {}
 
 // FILE: JavaInterface1.java
 public interface JavaInterface1 {

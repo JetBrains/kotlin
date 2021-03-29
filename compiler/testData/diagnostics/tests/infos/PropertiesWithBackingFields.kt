@@ -23,17 +23,17 @@ abstract class Test() {
     abstract var y2 : Int set
     abstract var y3 : Int set get
     abstract var y4 : Int set <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 1<!>
-    abstract var y5 : Int <!ABSTRACT_PROPERTY_WITH_SETTER!>set(<!UNUSED_PARAMETER!>x<!>) {}<!> <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 1<!>
-    abstract var y6 : Int <!ABSTRACT_PROPERTY_WITH_SETTER!>set(<!UNUSED_PARAMETER!>x<!>) {}<!>
+    abstract var y5 : Int <!ABSTRACT_PROPERTY_WITH_SETTER!>set(x) {}<!> <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 1<!>
+    abstract var y6 : Int <!ABSTRACT_PROPERTY_WITH_SETTER!>set(x) {}<!>
 
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v : Int<!>
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v1 : Int<!> get
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v2 : Int<!> get set
     <!MUST_BE_INITIALIZED!>var v3 : Int<!> get() = 1; set
-    var v4 : Int get() = 1; set(<!UNUSED_PARAMETER!>x<!>){}
+    var v4 : Int get() = 1; set(x){}
 
     <!MUST_BE_INITIALIZED!>var v5 : Int<!> get() = 1; set(x){field = x}
-    <!MUST_BE_INITIALIZED!>var v6 : Int<!> get() = field + 1; set(<!UNUSED_PARAMETER!>x<!>){}
+    <!MUST_BE_INITIALIZED!>var v6 : Int<!> get() = field + 1; set(x){}
 
   abstract val v7 : Int get
   abstract var v8 : Int get set
@@ -44,9 +44,9 @@ abstract class Test() {
 
 }
 
-open class Super(<!UNUSED_PARAMETER!>i<!> : Int)
+open class Super(i : Int)
 
-class TestPCParameters(w : Int, <!UNUSED_PARAMETER!>x<!> : Int, val y : Int, var z : Int) : Super(w) {
+class TestPCParameters(w : Int, x : Int, val y : Int, var z : Int) : Super(w) {
 
   val xx = w
 

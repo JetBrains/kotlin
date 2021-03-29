@@ -2,7 +2,7 @@
 fun trans(n: Int, f: () -> Boolean) = if (f()) n else null
 
 fun foo() {
-    var i: Int? = 5    
+    var i: Int? = 5
     if (i != null) {
         fun can(): Boolean {
             i = null

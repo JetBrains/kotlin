@@ -3,7 +3,7 @@
 
 typealias FunAlias = IsolatedFunFace
 
-fun referIsolatedFunFace(<!UNUSED_PARAMETER!>iff<!>: IsolatedFunFace) {}
+fun referIsolatedFunFace(iff: IsolatedFunFace) {}
 
 fun callIsolatedFunFace() {
     referIsolatedFunFace(<!RESOLUTION_TO_CLASSIFIER!>IsolatedFunFace<!> {})

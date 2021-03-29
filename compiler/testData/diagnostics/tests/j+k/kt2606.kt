@@ -5,7 +5,7 @@ import java.util.*
 import java.lang.annotation.*
 
 fun bar() : Iterator<Int>? {
-    val <!UNUSED_VARIABLE!>i<!> : Iterable<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>
-    val <!UNUSED_VARIABLE!>a<!> : Annotation
+    val i : Iterable<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>
+    val a : Annotation
     return null
 }

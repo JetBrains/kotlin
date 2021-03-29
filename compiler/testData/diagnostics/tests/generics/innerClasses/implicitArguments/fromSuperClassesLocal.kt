@@ -45,7 +45,7 @@ fun test() {
     x().foo().a() checkType { _<A<String, Double, Short, Long>>() }
     x().bar() checkType { _<A<String, Double, Short, Char>>() }
 
-    x = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH!>foobar<Int>()<!>
+    x = <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>foobar<Int>()<!>
 
     var y = noParameters()
     y = noParameters()

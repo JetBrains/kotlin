@@ -7,11 +7,11 @@ final class FinalProperty {
 
     inline var varProp: Int
         get() = 1
-        set(<!UNUSED_PARAMETER!>p<!>: Int) {}
+        set(p: Int) {}
 
     var varProp_2: Int
         get() = 1
-        inline set(<!UNUSED_PARAMETER!>p<!>: Int) {}
+        inline set(p: Int) {}
 }
 
 
@@ -24,11 +24,11 @@ open class OpenProperty {
 
     <!DECLARATION_CANT_BE_INLINED!>inline open var varProp: Int<!>
         get() = 1
-        set(<!UNUSED_PARAMETER!>p<!>: Int) {}
+        set(p: Int) {}
 
     <!DECLARATION_CANT_BE_INLINED!>open var varProp_2: Int<!>
         get() = 1
-        inline set(<!UNUSED_PARAMETER!>p<!>: Int) {}
+        inline set(p: Int) {}
 }
 
 

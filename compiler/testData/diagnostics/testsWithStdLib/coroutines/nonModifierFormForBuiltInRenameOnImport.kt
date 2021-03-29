@@ -26,5 +26,5 @@ fun bar() {
         println()
     }
 
-    val <!UNUSED_VARIABLE!>w<!>: (suspend () -> Int) -> Any? = ::<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspendLambda<!>
+    val w: (suspend () -> Int) -> Any? = ::<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspendLambda<!>
 }

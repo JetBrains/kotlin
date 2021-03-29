@@ -7,7 +7,7 @@ open class B() {
 
 class C() : B() {
     var x = 4
-    fun foo(<!UNUSED_PARAMETER!>c<!>: C) {
+    fun foo(c: C) {
         this.x = 34
         this.b = 123
         super.b = 23
@@ -17,7 +17,7 @@ class C() : B() {
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }
 
-    fun foo1(<!UNUSED_PARAMETER!>c<!>: C) {
+    fun foo1(c: C) {
         <!VAL_REASSIGNMENT!>super.c<!> = 34
     }
 
@@ -51,18 +51,18 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
 
-fun canBe(i0: Int, <!UNUSED_PARAMETER!>j<!>: Int) {
+fun canBe(i0: Int, j: Int) {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = i0
-    <!UNUSED_VALUE!>(label@ i) =<!> 34
+    (label@ i) = 34
 
-    <!UNUSED_VALUE!>(label@ <!VAL_REASSIGNMENT!>j<!>) =<!> 34 //repeat for j
+    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34 //repeat for j
 
     val a = A()
     (l@ a.a) = 3894
 }
 
-fun canBe2(<!UNUSED_PARAMETER!>j<!>: Int) {
-    <!UNUSED_VALUE!>(label@ <!VAL_REASSIGNMENT!>j<!>) =<!> 34
+fun canBe2(j: Int) {
+    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34
 }
 
 class A() {
@@ -107,7 +107,7 @@ class Test() {
 
         a++
         (<!REDUNDANT_LABEL_WARNING!>l@<!> a)++
-        <!UNUSED_CHANGED_VALUE!>(a)++<!>
+        (a)++
     }
 
     fun testVariables1() {

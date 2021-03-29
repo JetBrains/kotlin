@@ -13,7 +13,7 @@ fun foo(javaClass: JavaClass) {
     javaClass.something2 = javaClass.something2 + 1
 }
 
-fun useInt(<!UNUSED_PARAMETER!>i<!>: Int) {}
+fun useInt(i: Int) {}
 
 // FILE: JavaClass.java
 public class JavaClass extends KotlinClass implements JavaInterface {

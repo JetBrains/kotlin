@@ -6,11 +6,11 @@ interface T1<!CONSTRUCTOR_IN_INTERFACE!>(val x: String)<!> {}
 
 interface T2 <!CONSTRUCTOR_IN_INTERFACE!>constructor()<!> {}
 
-interface T3 private <!CONSTRUCTOR_IN_INTERFACE!>constructor(<!UNUSED_PARAMETER!>a<!>: Int)<!> {}
+interface T3 private <!CONSTRUCTOR_IN_INTERFACE!>constructor(a: Int)<!> {}
 
 interface T4 {
-    <!CONSTRUCTOR_IN_INTERFACE!>constructor(<!UNUSED_PARAMETER!>a<!>: Int)<!> {
-        val <!UNUSED_VARIABLE!>b<!>: Int = 1
+    <!CONSTRUCTOR_IN_INTERFACE!>constructor(a: Int)<!> {
+        val b: Int = 1
     }
 }
 

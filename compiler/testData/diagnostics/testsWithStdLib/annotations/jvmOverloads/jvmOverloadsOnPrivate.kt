@@ -16,7 +16,7 @@ fun foo() {
         }
     }
 
-    val <!UNUSED_VARIABLE!>x<!> = object {
+    val x = object {
         <!OVERLOADS_LOCAL!>@kotlin.jvm.JvmOverloads<!> fun foo(s: String = "OK") {
         }
     }

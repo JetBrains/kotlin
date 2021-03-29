@@ -28,5 +28,5 @@ abstract class MySettingsListener<S extends MyComparableSettings> {}
 fun test() {
     val a = MySettings.getSettings()
     a.getLinkedProjectsSettings()
-    a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{OI}, TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>linkedProjectsSettings<!>
+    a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{OI}, TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>linkedProjectsSettings<!>
 }

@@ -4,7 +4,7 @@ class O : Function2<Int, String, Unit> {
 }
 
 fun test() {
-    val a = fun(<!UNUSED_ANONYMOUS_PARAMETER!>o<!>: O) {
+    val a = fun(o: O) {
     }
     a <!TYPE_MISMATCH!>{}<!>
 }
@@ -13,5 +13,5 @@ fun test() {
 }
 
 fun test2() {
-    val <!UNUSED_VARIABLE!>f<!>: Ext = <!TYPE_MISMATCH!>{}<!>
+    val f: Ext = <!TYPE_MISMATCH!>{}<!>
 }

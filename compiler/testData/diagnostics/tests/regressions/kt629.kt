@@ -4,7 +4,7 @@ package kt629
 
 class A() {
     var p = "yeah"
-    operator fun rem(<!UNUSED_PARAMETER!>other<!> : A) : A {
+    operator fun rem(other : A) : A {
         return A();
     }
 }

@@ -2,12 +2,12 @@
 // FILE: foo.kt
 package foo
 
-fun <T> f(<!UNUSED_PARAMETER!>l<!>: List<T>) {}
+fun <T> f(l: List<T>) {}
 
 // FILE: bar.kt
 package bar
 
-fun <T> f(<!UNUSED_PARAMETER!>l<!>: List<T>) {}
+fun <T> f(l: List<T>) {}
 
 // FILE: main.kt
 

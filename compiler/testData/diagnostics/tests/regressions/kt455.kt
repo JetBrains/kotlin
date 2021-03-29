@@ -7,4 +7,4 @@ fun foo() {
     doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)   //error
     doSmth(a)   //no repeat error
 }
-fun doSmth(<!UNUSED_PARAMETER!>i<!>: Int) {}
+fun doSmth(i: Int) {}

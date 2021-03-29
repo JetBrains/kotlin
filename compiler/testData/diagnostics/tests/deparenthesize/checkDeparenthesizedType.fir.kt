@@ -23,7 +23,7 @@ fun test(i: Int?) {
     <!INAPPLICABLE_CANDIDATE!>foo<!>((""))
     foo(<!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(""))
     <!INAPPLICABLE_CANDIDATE!>foo<!>(<!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Long>(""))
-    
+
     use(a, b, c, d)
 }
 

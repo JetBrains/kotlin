@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     <!CONFLICTING_OVERLOADS!>operator fun component1()<!> = 1
     <!CONFLICTING_OVERLOADS!>operator fun component1()<!> = 1
@@ -9,7 +10,7 @@ class C {
 }
 
 fun test() {
-    for ((<!UNUSED_VARIABLE!>x<!>, <!UNUSED_VARIABLE!>y<!>) in <!COMPONENT_FUNCTION_AMBIGUITY!>C()<!>) {
+    for ((x, y) in <!COMPONENT_FUNCTION_AMBIGUITY!>C()<!>) {
 
     }
 }

@@ -8,7 +8,7 @@ interface B
 object CAB : A, B
 object DAB : A, B
 
-fun m(<!UNUSED_PARAMETER!>args<!> : Array<A>) {
+fun m(args : Array<A>) {
 
 }
 
@@ -17,4 +17,4 @@ fun test122() {
 }
 
 //from library
-fun <T> array(vararg <!UNUSED_PARAMETER!>t<!>: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T> array(vararg t: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

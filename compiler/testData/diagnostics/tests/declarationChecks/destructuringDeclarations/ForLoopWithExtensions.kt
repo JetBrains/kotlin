@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
 }
 operator fun A.component1() = 1
@@ -8,7 +9,7 @@ class C {
 }
 
 fun test() {
-    for ((<!UNUSED_VARIABLE!>x<!>, <!UNUSED_VARIABLE!>y<!>) in C()) {
+    for ((x, y) in C()) {
 
     }
 }

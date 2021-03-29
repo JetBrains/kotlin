@@ -63,7 +63,7 @@ fun test() {
 
     takeUByte(<!TYPE_MISMATCH!>LONG_CONST<!>)
     takeUByte(<!TYPE_MISMATCH!>NON_CONST<!>)
-    takeUByte(<!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>BIGGER_THAN_UBYTE<!>)
+    takeUByte(<!TYPE_MISMATCH, TYPE_MISMATCH!>BIGGER_THAN_UBYTE<!>)
     takeUByte(<!TYPE_MISMATCH!>UINT_CONST<!>)
     takeUIntWithoutAnnotaion(<!TYPE_MISMATCH!>IMPLICIT_INT<!>)
 }

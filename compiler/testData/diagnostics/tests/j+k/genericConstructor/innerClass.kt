@@ -14,5 +14,5 @@ fun test(x: List<Int>, y: List<String>) {
     Outer<Int>().Inner<CharSequence, String, Int>("", y, 1) checkType { _<Outer<Int>.Inner<CharSequence>>() }
 
     Outer<Int>().Inner("", x, 1) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Outer<Int>.Inner<Any>>() }
-    Outer<Int>().Inner<CharSequence, String, Int>("", <!TYPE_MISMATCH{NI}, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>, 1)
+    Outer<Int>().Inner<CharSequence, String, Int>("", <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>, 1)
 }

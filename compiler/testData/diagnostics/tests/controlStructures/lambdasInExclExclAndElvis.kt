@@ -11,6 +11,6 @@ fun test() {
     <!TYPE_MISMATCH{OI}!>{ }<!> <!USELESS_ELVIS!>?: 1<!>
     use({ 2 } <!USELESS_ELVIS!>?: 1<!>);
 
-    1 <!USELESS_ELVIS!>?: <!TYPE_MISMATCH{OI}, UNUSED_LAMBDA_EXPRESSION!>{ }<!><!>
+    1 <!USELESS_ELVIS!>?: <!TYPE_MISMATCH{OI}!>{ }<!><!>
     use(1 <!USELESS_ELVIS!>?: { }<!>)
 }

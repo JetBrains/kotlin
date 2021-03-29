@@ -17,10 +17,10 @@ fun String.topLevelExtensionFun(){}
 val String.topLevelExtensionProperty: Int get() = 1
 
 open class A {
-    constructor(<!UNUSED_PARAMETER!>p<!>: Int) : this(<!TYPE_MISMATCH!>""<!>) {}
+    constructor(p: Int) : this(<!TYPE_MISMATCH!>""<!>) {}
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
-    constructor(<!UNUSED_PARAMETER!>s<!>: String){}
+    constructor(s: String){}
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     open fun memberFun(){}

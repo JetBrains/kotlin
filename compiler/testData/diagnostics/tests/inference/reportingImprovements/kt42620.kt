@@ -10,6 +10,6 @@ fun main2() = if (true) <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo::<!UNR
 
 fun main3() = if (true) { Foo::<!UNRESOLVED_REFERENCE!>minus<!> } else { Foo::<!UNRESOLVED_REFERENCE!>times<!> }
 
-fun main4() = try { Foo::<!UNRESOLVED_REFERENCE!>minus<!> } finally { <!UNUSED_EXPRESSION!>Foo::<!UNRESOLVED_REFERENCE!>times<!><!> }
+fun main4() = try { Foo::<!UNRESOLVED_REFERENCE!>minus<!> } finally { Foo::<!UNRESOLVED_REFERENCE!>times<!> }
 
 fun main5() = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo::<!UNRESOLVED_REFERENCE!>minus<!><!> ?: <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo::<!UNRESOLVED_REFERENCE!>times<!><!>

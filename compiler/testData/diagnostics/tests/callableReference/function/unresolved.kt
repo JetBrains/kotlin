@@ -4,7 +4,7 @@
 class A
 
 fun test1() {
-    val <!UNUSED_VARIABLE!>foo<!> = ::<!UNRESOLVED_REFERENCE!>foo<!>
+    val foo = ::<!UNRESOLVED_REFERENCE!>foo<!>
 
     ::<!UNRESOLVED_REFERENCE!>bar<!>
 

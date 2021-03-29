@@ -4,5 +4,5 @@ fun <T : Any> T?._sure() : T { if (this != null) return <!DEBUG_INFO_SMARTCAST!>
 
 fun test() {
     val i : Int? = 10
-    val <!UNUSED_VARIABLE!>i2<!> : Int = i._sure() // inferred type is Int? but Int was excepted
+    val i2 : Int = i._sure() // inferred type is Int? but Int was excepted
 }

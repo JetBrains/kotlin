@@ -37,7 +37,7 @@ fun test() {
         severalParams("", 89) checkType { _<Double>() }
 
         // TODO: should we allow somehow to call with passing continuation explicitly?
-        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>6.9<!>) checkType { <!DEBUG_INFO_UNRESOLVED_WITH_TARGET{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Unit>() }
-        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>this <!CAST_NEVER_SUCCEEDS!>as<!> Continuation<Double><!>) checkType { <!DEBUG_INFO_UNRESOLVED_WITH_TARGET{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Unit>() }
+        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>6.9<!>) checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Unit>() }
+        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>this <!CAST_NEVER_SUCCEEDS!>as<!> Continuation<Double><!>) checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Unit>() }
     }
 }

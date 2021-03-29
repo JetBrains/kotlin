@@ -2,7 +2,7 @@
 inline fun call(a: A) {
     a.test()
     publishedTopLevel()
-    
+
     a.publishedVar
     a.publishedVar = 1
 

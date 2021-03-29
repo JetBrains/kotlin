@@ -2,8 +2,8 @@
 
 typealias L<T> = List<T>
 typealias NL<T> = List<T>?
-typealias LStar<<!UNUSED_TYPEALIAS_PARAMETER!>T<!>> = List<*>
-typealias MyList<<!UNUSED_TYPEALIAS_PARAMETER!>T<!>, X> = List<X>
+typealias LStar<T> = List<*>
+typealias MyList<T, X> = List<X>
 
 fun testL1(x: Collection<Any>) = x is L
 fun testL2(x: Collection<Int>): List<Int> = x as L

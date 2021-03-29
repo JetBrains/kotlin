@@ -30,7 +30,7 @@ fun foo7() {
     val x: <!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@Foo<!> (<!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@Foo<!> () -> Unit) -> Unit = { x: <!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@Foo<!> () -> Unit -> }
 }
 
-fun foo8(<!UNUSED_PARAMETER!>x<!>: Any?) {
+fun foo8(x: Any?) {
     val <!NAME_SHADOWING!>x<!>: (<!NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES!>@Foo<!> () -> Unit)? = {}
 }
 

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
@@ -30,6 +32,20 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 
 abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
+    companion object {
+        val DISABLED_BY_DEFAULT_UNUSED_DIAGNOSTICS = listOf(
+            "UNUSED_VARIABLE",
+            "UNUSED_PARAMETER",
+            "UNUSED_ANONYMOUS_PARAMETER",
+            "UNUSED_DESTRUCTURED_PARAMETER_ENTRY",
+            "UNUSED_TYPEALIAS_PARAMETER",
+            "UNUSED_VALUE",
+            "UNUSED_CHANGED_VALUE",
+            "UNUSED_EXPRESSION",
+            "UNUSED_LAMBDA_EXPRESSION",
+        ).map { "-$it" }
+    }
+
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
@@ -73,6 +89,12 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitApi/*") {
             defaultDirectives {
                 EXPLICIT_API_MODE with ExplicitApiMode.STRICT
+            }
+        }
+
+        forTestsNotMatching("compiler/testData/diagnostics/tests/controlFlowAnalysis/*") {
+            defaultDirectives {
+                DIAGNOSTICS with DISABLED_BY_DEFAULT_UNUSED_DIAGNOSTICS
             }
         }
 

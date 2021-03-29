@@ -34,7 +34,7 @@ fun foo() {
         else -> {}
     })
 
-    <!UNUSED_EXPRESSION!>1<!>
+    1
     <!UNRESOLVED_REFERENCE, UNSUPPORTED!>sealed<!><!SYNTAX!><!> when {
         else -> {}
     }

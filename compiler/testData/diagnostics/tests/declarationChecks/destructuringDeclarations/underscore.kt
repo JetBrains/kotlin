@@ -45,7 +45,7 @@ fun test() {
 
     foo(<!TYPE_MISMATCH, UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, y)
 
-    val (<!UNUSED_VARIABLE!>unused<!>, _) = A()
+    val (unused, _) = A()
 }
 
-fun foo(<!UNUSED_PARAMETER!>x<!>: Int, <!UNUSED_PARAMETER!>y<!>: String) {}
+fun foo(x: Int, y: String) {}

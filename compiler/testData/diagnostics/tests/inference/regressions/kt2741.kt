@@ -3,11 +3,11 @@
 
 package a
 
-fun <T, R: Comparable<R>> Iterable<T>._sortBy(<!UNUSED_PARAMETER!>f<!>: (T) -> R): List<T> = throw Exception()
-fun <T> _arrayList(vararg <!UNUSED_PARAMETER!>values<!>: T) : List<T> = throw Exception()
+fun <T, R: Comparable<R>> Iterable<T>._sortBy(f: (T) -> R): List<T> = throw Exception()
+fun <T> _arrayList(vararg values: T) : List<T> = throw Exception()
 
 class _Pair<A>(val a: A)
 
 fun test() {
-    _arrayList(_Pair(1))._sortBy <!TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>{ <!UNUSED_ANONYMOUS_PARAMETER!>it<!> -> <!UNRESOLVED_REFERENCE!>xxx<!> }<!>
+    _arrayList(_Pair(1))._sortBy <!TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>{ it -> <!UNRESOLVED_REFERENCE!>xxx<!> }<!>
 }

@@ -6,7 +6,7 @@ class Foo {
     operator fun <T> getValue(thisRef: Any?, property: KProperty<*>) = 1
 }
 
-fun main(<!UNUSED_PARAMETER!>x<!>: Int) {
+fun main(x: Int) {
     val f = Foo()
     val a: Int
     <!UNRESOLVED_REFERENCE!>get<!>() = f.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>getValue<!>(null, ::<!UNSUPPORTED!>x<!>) // no exception after fix

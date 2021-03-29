@@ -14,6 +14,6 @@ import a.C
 
 class A : C() {
     fun test() {
-        val <!UNUSED_VARIABLE!>v<!> = <!INVISIBLE_MEMBER!>myValue<!>
+        val v = <!INVISIBLE_MEMBER!>myValue<!>
     }
 }

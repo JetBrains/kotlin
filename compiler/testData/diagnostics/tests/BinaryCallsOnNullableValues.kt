@@ -26,7 +26,7 @@ fun f(): Unit {
     <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!> in 1..2
 
     val y : Boolean? = true
-    <!UNUSED_EXPRESSION!>false || <!TYPE_MISMATCH!>y<!><!>
-    <!UNUSED_EXPRESSION!><!TYPE_MISMATCH!>y<!> && true<!>
-    <!UNUSED_EXPRESSION!><!TYPE_MISMATCH!>y<!> && <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!><!>
+    false || <!TYPE_MISMATCH!>y<!>
+    <!TYPE_MISMATCH!>y<!> && true
+    <!TYPE_MISMATCH!>y<!> && <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }

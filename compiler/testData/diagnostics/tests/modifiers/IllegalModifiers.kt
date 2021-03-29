@@ -18,7 +18,7 @@ class FinalClass() {
     val i: Int = 1
         <!WRONG_MODIFIER_TARGET!>open<!> get(): Int = field
     var j: Int = 1
-        <!WRONG_MODIFIER_TARGET!>open<!> set(<!UNUSED_PARAMETER!>v<!>: Int) {}
+        <!WRONG_MODIFIER_TARGET!>open<!> set(v: Int) {}
 }
 
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class C
@@ -28,7 +28,7 @@ class FinalClass() {
 annotation class annotated(val text: String = "not given")
 
 //Check legal modifiers in constructor
-class LegalModifier(val a: Int, @annotated private var b: String, @annotated vararg <!UNUSED_PARAMETER!>v<!>: Int)
+class LegalModifier(val a: Int, @annotated private var b: String, @annotated vararg v: Int)
 
 //Check illegal modifier in constructor parameters
 class IllegalModifiers1(
@@ -38,17 +38,17 @@ class IllegalModifiers1(
     <!WRONG_MODIFIER_TARGET!>enum<!>
     <!WRONG_MODIFIER_TARGET!>private<!>
     <!WRONG_MODIFIER_TARGET!>const<!>
-    <!UNUSED_PARAMETER!>a<!>: Int)
+    a: Int)
 
 //Check multiple illegal modifiers in constructor
-class IllegalModifiers2(<!WRONG_MODIFIER_TARGET!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!UNUSED_PARAMETER!>a<!>: Int)
+class IllegalModifiers2(<!WRONG_MODIFIER_TARGET!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> a: Int)
 
 
 //Check annotations with illegal modifiers in constructor
-class IllegalModifiers3(@annotated <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!UNUSED_PARAMETER!>b<!>: String)
+class IllegalModifiers3(@annotated <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> b: String)
 
 //Check annotations and vararg with illegal modifiers in constructor
-class IllegalModifiers4(val a: Int, @annotated("a text") <!WRONG_MODIFIER_TARGET!>protected<!> vararg <!UNUSED_PARAMETER!>v<!>: Int)
+class IllegalModifiers4(val a: Int, @annotated("a text") <!WRONG_MODIFIER_TARGET!>protected<!> vararg v: Int)
 
 //Check illegal modifiers for functions and catch block
 abstract class IllegalModifiers5() {
@@ -132,12 +132,12 @@ class IllegalModifiers8 {
     <!INCOMPATIBLE_MODIFIERS!>const<!><!SYNTAX!><!>
     constructor() {}
 
-    constructor(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!UNUSED_PARAMETER!>x<!>: Int) {}
+    constructor(<!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> x: Int) {}
 }
 
 class IllegalModifiers9 {
     <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor() {}
-    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> constructor(<!UNUSED_PARAMETER!>x<!>: Int) {}
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> constructor(x: Int) {}
 }
 
 // Illegal modifiers on primary constructor

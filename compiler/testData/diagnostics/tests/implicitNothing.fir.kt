@@ -45,7 +45,7 @@ interface Base {
 
 class Derived : Base {
     // Ok for override
-    
+
     override val x = null!!
 
     override fun foo() = null!!

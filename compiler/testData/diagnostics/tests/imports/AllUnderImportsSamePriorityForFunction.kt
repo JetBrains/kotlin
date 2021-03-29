@@ -1,7 +1,8 @@
+// FIR_IDENTICAL
 // FILE: a.kt
 package a
 
-fun X(<!UNUSED_PARAMETER!>p<!>: Int) {}
+fun X(p: Int) {}
 
 // FILE: b.kt
 package b
@@ -15,5 +16,5 @@ import b.*
 import a.X
 
 fun foo() {
-    val <!UNUSED_VARIABLE!>v<!>: Int = X()
+    val v: Int = X()
 }

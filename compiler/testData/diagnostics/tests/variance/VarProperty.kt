@@ -36,15 +36,15 @@ abstract class Test<in I, out O, P> {
     abstract var In<<!TYPE_VARIANCE_CONFLICT("I; in; out; In<I>")!>I<!>>.receiver4: Int
     abstract var In<O>.receiver5: Int
 
-    var <X : I> X.typeParameter1: Int get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
-    var <X : <!TYPE_VARIANCE_CONFLICT("O; out; in; O")!>O<!>> X.typeParameter2: Int get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
-    var <X : P> X.typeParameter3: Int get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
-    var <X : In<<!TYPE_VARIANCE_CONFLICT("I; in; out; In<I>")!>I<!>>> X.typeParameter4: Int get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
-    var <X : In<O>> X.typeParameter5: Int get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
+    var <X : I> X.typeParameter1: Int get() = 0; set(i) {}
+    var <X : <!TYPE_VARIANCE_CONFLICT("O; out; in; O")!>O<!>> X.typeParameter2: Int get() = 0; set(i) {}
+    var <X : P> X.typeParameter3: Int get() = 0; set(i) {}
+    var <X : In<<!TYPE_VARIANCE_CONFLICT("I; in; out; In<I>")!>I<!>>> X.typeParameter4: Int get() = 0; set(i) {}
+    var <X : In<O>> X.typeParameter5: Int get() = 0; set(i) {}
 
-    var <X> X.typeParameter6: Int where X : I get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
-    var <X> X.typeParameter7: Int where X : <!TYPE_VARIANCE_CONFLICT("O; out; in; O")!>O<!> get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
-    var <X> X.typeParameter8: Int where X : P get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
-    var <X> X.typeParameter9: Int where X : In<<!TYPE_VARIANCE_CONFLICT("I; in; out; In<I>")!>I<!>> get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
-    var <X> X.typeParameter0: Int where X : In<O> get() = 0; set(<!UNUSED_PARAMETER!>i<!>) {}
+    var <X> X.typeParameter6: Int where X : I get() = 0; set(i) {}
+    var <X> X.typeParameter7: Int where X : <!TYPE_VARIANCE_CONFLICT("O; out; in; O")!>O<!> get() = 0; set(i) {}
+    var <X> X.typeParameter8: Int where X : P get() = 0; set(i) {}
+    var <X> X.typeParameter9: Int where X : In<<!TYPE_VARIANCE_CONFLICT("I; in; out; In<I>")!>I<!>> get() = 0; set(i) {}
+    var <X> X.typeParameter0: Int where X : In<O> get() = 0; set(i) {}
 }

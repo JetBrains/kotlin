@@ -32,7 +32,7 @@ fun main() {
     checkSubtype<Outer<*>.Inner<*>>(outer.Inner<Int>())
 
     checkSubtype<Outer<CharSequence>.Inner<CharSequence>>(<!TYPE_MISMATCH!>outer.bar()<!>)
-    checkSubtype<Outer<CharSequence>.Inner<CharSequence>>(<!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>outer.<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!>Inner()<!><!>)
+    checkSubtype<Outer<CharSequence>.Inner<CharSequence>>(<!TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>outer.<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!>Inner()<!><!>)
 
     outer.set(outer.bar())
     outer.set(outer.Inner())

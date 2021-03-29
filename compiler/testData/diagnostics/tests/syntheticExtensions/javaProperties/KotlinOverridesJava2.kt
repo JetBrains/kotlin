@@ -12,7 +12,7 @@ fun foo(k: KotlinClass) {
     <!VAL_REASSIGNMENT!>k.something<!> = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 
-fun useString(<!UNUSED_PARAMETER!>i<!>: String) {}
+fun useString(i: String) {}
 
 // FILE: JavaInterface1.java
 public interface JavaInterface1 {

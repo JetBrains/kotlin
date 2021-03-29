@@ -12,7 +12,7 @@ fun main() {
     join(1, "2", "3")
     join(<!NON_VARARG_SPREAD!>*<!>1, "2")
     join(1, *<!TYPE_MISMATCH!>"2"<!>)
-    join(x = 1, a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH{NI}!>"2"<!>)
+    join(x = 1, a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH!>"2"<!>)
     join(x = <!NON_VARARG_SPREAD!>*<!>1, a = *<!TYPE_MISMATCH!>"2"<!>)
     join(x = 1, a = a)
     join(x = 1, a = <!TYPE_MISMATCH!>b<!>)
@@ -33,7 +33,7 @@ fun main() {
     joinG<String>(<!NON_VARARG_SPREAD!>*<!>1, "2")
     joinG<String>(1, *<!TYPE_MISMATCH!>"2"<!>)
     joinG<String>(x = 1, a = a)
-    joinG<String>(x = 1, a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH{NI}!>"2"<!>)
+    joinG<String>(x = 1, a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH!>"2"<!>)
     joinG<String>(x = <!NON_VARARG_SPREAD!>*<!>1, a = *<!TYPE_MISMATCH!>"2"<!>)
     joinG<String>(1, *a)
     joinG<String>(1, *a, "3")
@@ -46,7 +46,7 @@ fun main() {
     joinG(<!NON_VARARG_SPREAD!>*<!>1, "2")
     <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>joinG<!>(1, *<!TYPE_MISMATCH!>"2"<!>)
     joinG(x = 1, a = a)
-    joinG(x = 1, a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH{NI}!>"2"<!>)
+    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>joinG<!>(x = 1, a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH!>"2"<!>)
     <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>joinG<!>(x = <!NON_VARARG_SPREAD!>*<!>1, a = *<!TYPE_MISMATCH!>"2"<!>)
     joinG(1, *a)
     joinG(1, *a, "3")
@@ -91,6 +91,6 @@ fun <T> joinG(x : Int, vararg a : T) : String {
     return b.toString()
 }
 
-fun <T: Any> joinT(<!UNUSED_PARAMETER!>x<!> : Int, vararg <!UNUSED_PARAMETER!>a<!> : T) : T? {
+fun <T: Any> joinT(x : Int, vararg a : T) : T? {
     return null
 }

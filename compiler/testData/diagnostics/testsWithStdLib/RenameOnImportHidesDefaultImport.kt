@@ -6,4 +6,4 @@ fun f() {
     listOf(1).<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>map<!> { <!UNRESOLVED_REFERENCE!>it<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>() }
 }
 
-fun g(<!UNUSED_PARAMETER!>a1<!>: KotlinArray<Int>, <!UNUSED_PARAMETER!>a2<!>: <!UNRESOLVED_REFERENCE!>Array<!><Int>){}
+fun g(a1: KotlinArray<Int>, a2: <!UNRESOLVED_REFERENCE!>Array<!><Int>){}

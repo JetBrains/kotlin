@@ -18,5 +18,5 @@ object B {
     fun test() {}
 
     <!JVM_DEFAULT_NOT_IN_INTERFACE!>@<!DEPRECATION!>JvmDefault<!><!>
-    fun test2(<!UNUSED_PARAMETER!>s<!>: String = "") {}
+    fun test2(s: String = "") {}
 }

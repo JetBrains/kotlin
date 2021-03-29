@@ -1,8 +1,9 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 
 interface Predicate<T>
 
-fun <T> Predicate(<!UNUSED_PARAMETER!>x<!>: (T?) -> Boolean): Predicate<T> = null!!
+fun <T> Predicate(x: (T?) -> Boolean): Predicate<T> = null!!
 
 fun foo() {
     process(Predicate {
@@ -12,4 +13,4 @@ fun foo() {
     })
 }
 
-fun process(<!UNUSED_PARAMETER!>x<!>: Predicate<String>) {}
+fun process(x: Predicate<String>) {}

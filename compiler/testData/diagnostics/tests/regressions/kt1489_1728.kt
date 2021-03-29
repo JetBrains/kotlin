@@ -13,7 +13,7 @@ class C {
         }
     }
 
-    fun <X : AutoCloseable> foo(<!UNUSED_PARAMETER!>x<!> : X, <!UNUSED_PARAMETER!>body<!> : (X) -> Unit) {
+    fun <X : AutoCloseable> foo(x : X, body : (X) -> Unit) {
     }
 
     fun p() : Resource? = null

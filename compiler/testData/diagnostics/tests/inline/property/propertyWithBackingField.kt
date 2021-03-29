@@ -16,7 +16,7 @@ open class A {
     <!INLINE_PROPERTY_WITH_BACKING_FIELD!>inline var z2<!> = 1
 
     <!INLINE_PROPERTY_WITH_BACKING_FIELD!>var z2_1<!> = 1
-        inline set(<!UNUSED_PARAMETER!>p<!>: Int) {}
+        inline set(p: Int) {}
 
     <!INLINE_PROPERTY_WITH_BACKING_FIELD!>inline val z<!> by Delegate()
 }

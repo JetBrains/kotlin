@@ -10,7 +10,7 @@ private open class A {
 private var x: Int = 10
 
 var xx: Int = 20
-  private set(<!UNUSED_PARAMETER!>value<!>: Int) {}
+  private set(value: Int) {}
 
 private fun foo() {}
 

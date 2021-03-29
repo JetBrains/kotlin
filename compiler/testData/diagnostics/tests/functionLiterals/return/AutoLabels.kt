@@ -18,5 +18,4 @@ fun f() {
     }
 }
 
-fun foo(<!UNUSED_PARAMETER!>a<!>: Any) {}
-
+fun foo(a: Any) {}

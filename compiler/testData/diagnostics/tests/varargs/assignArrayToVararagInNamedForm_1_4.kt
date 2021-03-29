@@ -16,11 +16,11 @@ fun test_fun(s: String, arr: Array<String>) {
     withVararg(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>arr<!>) // Warning
 
     withVararg(s) // OK
-    withVararg(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH{NI}!>s<!>) // Error
+    withVararg(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH!>s<!>) // Error
 }
 
 fun test_ann(s: String, arr: Array<String>) {
-    @Ann(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>[""]<!>, x = 1)
+    @Ann(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>, x = 1)
     foo()
     @Ann(*[""], x = 1)
     foo()
@@ -31,6 +31,6 @@ fun test_ann(s: String, arr: Array<String>) {
 
     @Ann("", x = 1)
     foo()
-    @Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR, TYPE_MISMATCH{NI}!>""<!>, x = 1)
+    @Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR, TYPE_MISMATCH!>""<!>, x = 1)
     foo()
 }

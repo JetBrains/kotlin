@@ -10,7 +10,7 @@ val a = run { // () -> Unit
 // Unit
 val b = run {
     if (flag) return@run
-    <!UNUSED_EXPRESSION!>5<!>
+    5
 }
 
 // Unit

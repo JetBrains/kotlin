@@ -27,7 +27,7 @@ var mutable = ""
 
 var mutableWithGetter
     get() = ""
-    set(<!UNUSED_PARAMETER!>x<!>) = TODO()
+    set(x) = TODO()
 
 object WithLateinit {
     lateinit var kClass: KClass<*>

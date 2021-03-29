@@ -31,11 +31,11 @@ fun test() {
 
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Double>(1)
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Float>(1)
-    
+
     1 as Byte
     1 as Int
     0xff as Long
-    
+
     1.1 as Int
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(1.1)
 
