@@ -98,6 +98,9 @@ if (Ide.IJ()) {
     }
 }
 
+jvmTarget = "11"
+javaHome = rootProject.extra["JDK_11"] as String
+
 testsJar()
 
 projectTest(parallel = true) {

@@ -52,6 +52,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+jvmTarget = "11"
+javaHome = rootProject.extra["JDK_11"] as String
+
 runtimeJar()
 
 sourcesJar()

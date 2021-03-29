@@ -100,7 +100,7 @@ dependencies {
 
     implementation(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
     Ide.IJ {
-        implementation(intellijPluginDep("stats-collector"))
+//        implementation(intellijPluginDep("stats-collector"))
     }
 
     compileOnly(commonDep("org.jetbrains", "markdown"))
@@ -200,6 +200,9 @@ dependencies {
         testRuntime(intellijPluginDep("platform-images"))
     }
 }
+
+jvmTarget = "11"
+javaHome = rootProject.extra["JDK_11"] as String
 
 tasks.named<Copy>("processResources") {
     val currentIde = IdeVersionConfigurator.currentIde

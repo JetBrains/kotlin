@@ -25,6 +25,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+jvmTarget = "11"
+javaHome = rootProject.extra["JDK_11"] as String
+
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
         freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"

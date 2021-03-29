@@ -86,6 +86,9 @@ sourceSets {
     "test" { }
 }
 
+jvmTarget = "11"
+javaHome = rootProject.extra["JDK_11"] as String
+
 projectTest(parallel = true) {
     workingDir = rootDir
     useAndroidSdk()

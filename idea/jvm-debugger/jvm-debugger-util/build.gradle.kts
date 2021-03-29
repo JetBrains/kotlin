@@ -24,3 +24,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+jvmTarget = "11"
+javaHome = rootProject.extra["JDK_11"] as String
