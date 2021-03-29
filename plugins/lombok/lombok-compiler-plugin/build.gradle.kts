@@ -33,10 +33,10 @@ projectTest(parallel = true) {
     dependsOn(":dist")
 }
 
-publish()
-
 runtimeJar()
 testsJar()
 
 sourcesJar()
 javadocJar()
+
+apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")
