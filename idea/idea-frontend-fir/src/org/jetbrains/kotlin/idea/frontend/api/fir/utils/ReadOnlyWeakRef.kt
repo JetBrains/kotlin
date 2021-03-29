@@ -18,7 +18,7 @@ constructor(value: V, val token: ValidityToken) {
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun getValue(thisRef: Any, property: KProperty<*>): V =
         weakRef.get() ?: if (token.isValid()) {
-            error("Value of $property was garbage collected while analysis session is still valid")
+            throw EntityWasGarbageCollectedException(property.toString())
         } else {
             error("Accessing the invalid value of $property")
         }
