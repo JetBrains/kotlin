@@ -21,6 +21,11 @@ val KtType.isChar: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.CH
 val KtType.isBoolean: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.BOOLEAN)
 val KtType.isString: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.STRING)
 
+val KtType.isUInt: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uInt)
+val KtType.isULong: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uLong)
+val KtType.isUShort: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uShort)
+val KtType.isUByte: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uByte)
+
 
 fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
     if (this !is KtClassType) return false
@@ -57,5 +62,9 @@ val KtType.defaultInitializer: String?
         isBoolean -> "false"
         isUnit -> "Unit"
         isString -> "\"\""
+        isUInt -> "0.toUInt()"
+        isULong -> "0.toULong()"
+        isUShort -> "0.toUShort()"
+        isUByte -> "0.toUByte()"
         else -> null
     }
