@@ -5663,6 +5663,13 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun getInMinutes-impl (J)D
 	public static final fun getInNanoseconds-impl (J)D
 	public static final fun getInSeconds-impl (J)D
+	public static final fun getInWholeDays-impl (J)J
+	public static final fun getInWholeHours-impl (J)J
+	public static final fun getInWholeMicroseconds-impl (J)J
+	public static final fun getInWholeMilliseconds-impl (J)J
+	public static final fun getInWholeMinutes-impl (J)J
+	public static final fun getInWholeNanoseconds-impl (J)J
+	public static final fun getInWholeSeconds-impl (J)J
 	public fun hashCode ()I
 	public static fun hashCode-impl (J)I
 	public static final fun isFinite-impl (J)Z
