@@ -17,6 +17,7 @@ import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
+import org.jetbrains.kotlin.gradle.utils.LegacyTestDescriptorInternal
 import org.slf4j.Logger
 import java.text.ParseException
 
@@ -389,11 +390,12 @@ internal open class TCServiceMessagesClient(
     }
 
     inner class RootNode(val ownerBuildOperationId: OperationIdentifier) : GroupNode(null, settings.rootNodeName) {
-        override val descriptor: TestDescriptorInternal = object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId) {
-            override fun getOwnerBuildOperationId(): Any? = this@RootNode.ownerBuildOperationId
-            override fun getParent(): TestDescriptorInternal? = null
-            override fun toString(): String = name
-        }
+        override val descriptor: TestDescriptorInternal =
+            object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId), LegacyTestDescriptorInternal {
+                override fun getOwnerBuildOperationId(): Any? = this@RootNode.ownerBuildOperationId
+                override fun getParent(): TestDescriptorInternal? = null
+                override fun toString(): String = name
+            }
 
         override fun requireReportingNode(): TestDescriptorInternal = descriptor
 
@@ -435,7 +437,7 @@ internal open class TCServiceMessagesClient(
             val reportingParent = parents.last() as RootNode
             this.reportingParent = reportingParent
 
-            descriptor = object : DefaultTestSuiteDescriptor(id, fullName) {
+            descriptor = object : DefaultTestSuiteDescriptor(id, fullName), LegacyTestDescriptorInternal {
                 override fun getDisplayName(): String = fullNameWithoutRoot
                 override fun getClassName(): String? = fullNameWithoutRoot
                 override fun getOwnerBuildOperationId(): Any? = rootOperationId
@@ -481,7 +483,7 @@ internal open class TCServiceMessagesClient(
         private val parentDescriptor = (this@TestNode.parent as GroupNode).requireReportingNode()
 
         override val descriptor: TestDescriptorInternal =
-            object : DefaultTestDescriptor(id, className, methodName, classDisplayName, displayName) {
+            object : DefaultTestDescriptor(id, className, methodName, classDisplayName, displayName), LegacyTestDescriptorInternal {
                 override fun getOwnerBuildOperationId(): Any? = rootOperationId
                 override fun getParent(): TestDescriptorInternal = parentDescriptor
             }
