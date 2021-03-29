@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.test.util.*
 
 class DiagnosticsService(val testServices: TestServices) : TestService {
     private val conditionsPerModule: MutableMap<TestModule, Condition<String>> = mutableMapOf()
-    private val globalDefinedDiagnostics by lazy {
-        testServices.moduleStructure.allDirectives[DiagnosticsDirectives.DIAGNOSTICS]
-    }
 
     fun shouldRenderDiagnostic(module: TestModule, name: String): Boolean {
         val condition = conditionsPerModule.getOrPut(module) {
@@ -23,7 +20,7 @@ class DiagnosticsService(val testServices: TestServices) : TestService {
     }
 
     private fun computeDiagnosticConditionForModule(module: TestModule): Condition<String> {
-        val diagnosticsInDirective = module.directives[DiagnosticsDirectives.DIAGNOSTICS] + globalDefinedDiagnostics
+        val diagnosticsInDirective = module.directives[DiagnosticsDirectives.DIAGNOSTICS]
         val enabledNames = mutableSetOf<String>()
         val disabledNames = mutableSetOf<String>()
         for (diagnosticInDirective in diagnosticsInDirective) {
