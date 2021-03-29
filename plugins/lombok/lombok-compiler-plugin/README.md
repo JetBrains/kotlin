@@ -13,7 +13,7 @@ Features support:
  - [x] Basic support
  - [x] Class-level 
  - [x] @Accessors config support: chain and fluent
- - [ ] Config support (_lombok.getter.noIsPrefix_ only supported)
+ - [ ] Config support (_lombok.getter.noIsPrefix_ only supported atm)
  - [ ] Copy annotations
  - [ ] Strip defined prefixes - in config and @Accessors
  - [ ] Skip generation with AccessLevel.NONE
@@ -40,7 +40,7 @@ Other todos:
  - [x] Generic classes
  - [x] Actually run compiled code 
  - [x] Don't generate members that already exist (if having a duplicate is a problem)
- - [ ] Gradle integration (as subplugin or just a way to enable lombok support)
+ - [x] Gradle integration (as subplugin or just a way to enable lombok support)
  - [ ] Maven integration (as subplugin or just a way to enable lombok support)
  - [ ] Nullability from annotations. Check if it is inherited from variable definition
 

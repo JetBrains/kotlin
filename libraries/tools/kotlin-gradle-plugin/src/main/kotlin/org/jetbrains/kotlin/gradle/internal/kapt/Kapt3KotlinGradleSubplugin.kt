@@ -700,7 +700,9 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             val newCompilerArgs = oldCompilerArgs.filterTo(mutableListOf()) {
                 it !is CharSequence || !it.toString().startsWith("-proc:")
             }
-            newCompilerArgs.add("-proc:none")
+            if (!kaptExtension.keepJavacAnnotationProcessors) {
+                newCompilerArgs.add("-proc:none")
+            }
             @Suppress("UNCHECKED_CAST")
             options.compilerArgs = newCompilerArgs as List<String>
 

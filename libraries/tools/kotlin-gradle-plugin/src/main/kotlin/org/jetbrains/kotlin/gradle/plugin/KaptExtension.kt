@@ -46,6 +46,11 @@ open class KaptExtension {
     @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
 
+    /**
+     * If true keeps annotation processors added via `annotationProcessor(..)` configuration for javac java-files compilation
+     */
+    open var keepJavacAnnotationProcessors: Boolean = false
+
     /** Opt-out switch for Kapt caching. Should be used when annotation processors used by this project are suspected of
      * using anything aside from the task inputs in their logic and are not guaranteed to produce the same
      * output on subsequent runs without input changes. */
