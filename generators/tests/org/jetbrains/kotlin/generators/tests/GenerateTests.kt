@@ -54,10 +54,8 @@ import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletio
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletionWeigherTest
 import org.jetbrains.kotlin.idea.completion.wheigher.AbstractHighLevelWeigherTest
 import org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest
-import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCopyPasteTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopyPasteTest
-import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractCodeFragmentAutoImportTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.AbstractCodeFragmentCompletionHandlerTest
@@ -153,9 +151,6 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
-import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
-import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.dependeciestxt.actualizeMppJpsIncTestCaseDirs
 import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
@@ -725,13 +720,6 @@ fun main(args: Array<String>) {
                 model("dataFlowValueRendering")
             }
 
-            testClass<AbstractJavaToKotlinCopyPasteConversionTest> {
-                model("copyPaste/conversion", pattern = """^([^\.]+)\.java$""")
-            }
-
-            testClass<AbstractTextJavaToKotlinCopyPasteConversionTest> {
-                model("copyPaste/plainTextConversion", pattern = """^([^\.]+)\.txt$""")
-            }
 
             testClass<AbstractLiteralTextToKotlinCopyPasteTest> {
                 model("copyPaste/plainTextLiteral", pattern = """^([^\.]+)\.txt$""")
@@ -1470,21 +1458,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("j2k/tests", "j2k/testData") {
-            testClass<AbstractJavaToKotlinConverterSingleFileTest> {
-                model("fileOrElement", extension = "java")
-            }
-        }
-        testGroup("j2k/tests", "j2k/testData") {
-            testClass<AbstractJavaToKotlinConverterMultiFileTest> {
-                model("multiFile", extension = null, recursive = false)
-            }
-        }
-        testGroup("j2k/tests", "j2k/testData") {
-            testClass<AbstractJavaToKotlinConverterForWebDemoTest> {
-                model("fileOrElement", extension = "java")
-            }
-        }
 
         testGroup("nj2k/tests", "nj2k/testData") {
             testClass<AbstractNewJavaToKotlinConverterSingleFileTest> {

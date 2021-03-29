@@ -814,7 +814,6 @@ tasks {
         dependsOn("dist")
         dependsOn(
             ":idea:idea-maven:test",
-            ":j2k:test",
             ":nj2k:test",
             ":idea:jvm-debugger:jvm-debugger-core:test",
             ":idea:jvm-debugger:jvm-debugger-evaluation:test",
