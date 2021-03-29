@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.io.InputStream
 
-//TODO make thread safe
 @ThreadSafeMutableState
 open class FirBuiltinSymbolProvider(
     session: FirSession,
