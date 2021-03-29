@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 
@@ -45,7 +44,7 @@ class SimpleJsClientTemplate : JsClientTemplate() {
         buildList {
             if (useKotlinxHtml.reference.settingValue()) {
                 +ArtifactBasedLibraryDependencyIR(
-                    MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html"),
+                    MavenArtifact(Repositories.KOTLINX_HTML, "org.jetbrains.kotlinx", "kotlinx-html"),
                     Versions.KOTLINX.KOTLINX_HTML,
                     DependencyType.MAIN
                 )
