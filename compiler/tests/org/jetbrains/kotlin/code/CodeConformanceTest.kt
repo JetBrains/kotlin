@@ -321,20 +321,7 @@ class CodeConformanceTest : TestCase() {
             ),
             RepoAllowList("kotlin/ktor", root, setOf("gradle/cacheRedirector.gradle.kts")),
             RepoAllowList("bintray.com/kotlin-dependencies", root, setOf("gradle/cacheRedirector.gradle.kts")),
-            RepoAllowList("api.bintray.com/maven/kotlin/kotlin-dependencies", root, setOf()),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
-                    "kotlin-ultimate/build.gradle.kts",
-                    "gradle/cacheRedirector.gradle.kts"
-                )
-            ),
-            RepoAllowList(
-                "https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
-                    "kotlin-ultimate/build.gradle.kts",
-                    "gradle/cacheRedirector.gradle.kts"
-                )
-            ),
+            RepoAllowList("api.bintray.com/maven/kotlin/kotlin-dependencies", root, setOf())
         )
 
         data class RepoOccurance(val repo: String, val file: File)
