@@ -51,7 +51,7 @@ class KtorServerTemplate : Template() {
                 +ktorArtifactDependency(serverEngine.reference.settingValue.dependencyName, kotlinVersion)
                 +ktorArtifactDependency("ktor-html-builder", kotlinVersion)
                 +ArtifactBasedLibraryDependencyIR(
-                    MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html-jvm"),
+                    MavenArtifact(Repositories.KOTLINX_HTML, "org.jetbrains.kotlinx", "kotlinx-html-jvm"),
                     Versions.KOTLINX.KOTLINX_HTML,
                     DependencyType.MAIN
                 )

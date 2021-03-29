@@ -33,8 +33,7 @@ class KotlinVersionProviderTestWizardService() : KotlinVersionProviderService(),
     companion object {
         private const val CACHE_REDIRECTOR_JETBRAINS_SPACE_URL = "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space"
 
-        val KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/p/kotlin/dev", CACHE_REDIRECTOR_JETBRAINS_SPACE_URL)
-
+        val KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR = CustomMavenRepositoryImpl("kotlin/p/kotlin/dev", CACHE_REDIRECTOR_JETBRAINS_SPACE_URL)
 
         val TEST_KOTLIN_VERSION by lazy {
             EapVersionDownloader.getLatestEapVersion()!!
