@@ -40,25 +40,19 @@ enum class CompilerSystemProperties(val property: String) {
     ;
 
     var value
-        get() = systemPropertyGetter(property)
+        get() = (systemPropertyGetter ?: System::getProperty)(property)
         set(value) {
-            systemPropertySetter(property, value!!)
+            (systemPropertySetter ?: System::setProperty)(property, value!!)
         }
 
-    fun clear(): String? = systemPropertyCleaner(property)
+    fun clear(): String? = (systemPropertyCleaner ?: System::clearProperty)(property)
 
     companion object {
-        var systemPropertyGetter: (String) -> String? = {
-            System.getProperty(it)
-        }
+        var systemPropertyGetter: ((String) -> String?)? = null
 
-        var systemPropertySetter: (String, String) -> String? = { key, value ->
-            System.setProperty(key, value)
-        }
+        var systemPropertySetter: ((String, String) -> String?)? = null
 
-        var systemPropertyCleaner: (String) -> String? = { key ->
-            System.clearProperty(key)
-        }
+        var systemPropertyCleaner: ((String) -> String?)? = null
     }
 }
 
