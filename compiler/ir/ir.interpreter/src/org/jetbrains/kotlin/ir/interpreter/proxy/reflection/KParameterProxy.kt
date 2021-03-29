@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KParameterState
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
-internal class KParameterProxy(override val state: KParameterState, override val interpreter: IrInterpreter) : ReflectionProxy, KParameter {
+internal class KParameterProxy(override val state: KParameterState, override val callInterceptor: CallInterceptor) : ReflectionProxy, KParameter {
     override val index: Int
         get() = state.index
     override val name: String?
         get() = if (kind == KParameter.Kind.VALUE) state.irParameter.name.asString() else null
     override val type: KType
-        get() = state.getType(interpreter)
+        get() = state.getType(callInterceptor)
     override val kind: KParameter.Kind
         get() = state.kind
     override val isOptional: Boolean

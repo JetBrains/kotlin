@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -16,10 +16,10 @@ internal class KParameterState(
 ) : ReflectionState() {
     private var _type: KType? = null
 
-    fun getType(interpreter: IrInterpreter): KType {
+    fun getType(callInterceptor: CallInterceptor): KType {
         if (_type != null) return _type!!
         val kTypeIrClass = irClass.getIrClassOfReflection("type")
-        _type = KTypeProxy(KTypeState(irParameter.type, kTypeIrClass), interpreter)
+        _type = KTypeProxy(KTypeState(irParameter.type, kTypeIrClass), callInterceptor)
         return _type!!
     }
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.toState
@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import kotlin.reflect.*
 
 internal open class KProperty0Proxy(
-    override val state: KPropertyState, override val interpreter: IrInterpreter
-) : AbstractKPropertyProxy(state, interpreter), KProperty0<Any?> {
+    override val state: KPropertyState, override val callInterceptor: CallInterceptor
+) : AbstractKPropertyProxy(state, callInterceptor), KProperty0<Any?> {
     override val getter: KProperty0.Getter<Any?>
         get() = object : Getter(state.property.getter!!), KProperty0.Getter<Any?> {
             override fun invoke(): Any? = call()
@@ -40,8 +40,8 @@ internal open class KProperty0Proxy(
 }
 
 internal class KMutableProperty0Proxy(
-    override val state: KPropertyState, override val interpreter: IrInterpreter
-) : KProperty0Proxy(state, interpreter), KMutableProperty0<Any?> {
+    override val state: KPropertyState, override val callInterceptor: CallInterceptor
+) : KProperty0Proxy(state, callInterceptor), KMutableProperty0<Any?> {
     override val setter: KMutableProperty0.Setter<Any?> =
         object : Setter(state.property.setter!!), KMutableProperty0.Setter<Any?> {
             override fun invoke(p1: Any?) = call(p1)

@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.internalName
-import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import kotlin.reflect.KCallable
@@ -28,7 +27,7 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
 
     constructor(classReference: IrClassReference) : this(classReference.symbol.owner as IrClass, classReference.type.classOrNull!!.owner)
 
-    fun getMembers(interpreter: IrInterpreter): Collection<KCallable<*>> {
+    fun getMembers(callInterceptor: CallInterceptor): Collection<KCallable<*>> {
         if (_members != null) return _members!!
         _members = classReference.declarations
             .filter { it !is IrClass && it !is IrConstructor }
@@ -38,47 +37,47 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
                         val withExtension = it.getter?.extensionReceiverParameter != null
                         when {
                             !withExtension && !it.isVar ->
-                                KProperty1Proxy(KPropertyState(it, interpreter.irBuiltIns.getKPropertyClass(false, 1).owner), interpreter)
+                                KProperty1Proxy(KPropertyState(it, callInterceptor.irBuiltIns.getKPropertyClass(false, 1).owner), callInterceptor)
                             !withExtension && it.isVar ->
                                 KMutableProperty1Proxy(
-                                    KPropertyState(it, interpreter.irBuiltIns.getKPropertyClass(true, 1).owner), interpreter
+                                    KPropertyState(it, callInterceptor.irBuiltIns.getKPropertyClass(true, 1).owner), callInterceptor
                                 )
                             withExtension && !it.isVar ->
-                                KProperty2Proxy(KPropertyState(it, interpreter.irBuiltIns.getKPropertyClass(false, 2).owner), interpreter)
+                                KProperty2Proxy(KPropertyState(it, callInterceptor.irBuiltIns.getKPropertyClass(false, 2).owner), callInterceptor)
                             !withExtension && it.isVar ->
                                 KMutableProperty2Proxy(
-                                    KPropertyState(it, interpreter.irBuiltIns.getKPropertyClass(true, 2).owner), interpreter
+                                    KPropertyState(it, callInterceptor.irBuiltIns.getKPropertyClass(true, 2).owner), callInterceptor
                                 )
                             else -> TODO()
                         }
                     }
-                    is IrFunction -> KFunctionProxy(KFunctionState(it, interpreter.irBuiltIns.functionFactory), interpreter)
+                    is IrFunction -> KFunctionProxy(KFunctionState(it, callInterceptor.irBuiltIns.functionFactory), callInterceptor)
                     else -> TODO()
                 }
             }
         return _members!!
     }
 
-    fun getConstructors(interpreter: IrInterpreter): Collection<KFunction<*>> {
+    fun getConstructors(callInterceptor: CallInterceptor): Collection<KFunction<*>> {
         if (_constructors != null) return _constructors!!
         _constructors = classReference.declarations
             .filterIsInstance<IrConstructor>()
-            .map { KFunctionProxy(KFunctionState(it, interpreter.irBuiltIns.functionFactory), interpreter) }
+            .map { KFunctionProxy(KFunctionState(it, callInterceptor.irBuiltIns.functionFactory), callInterceptor) }
         return _constructors!!
     }
 
-    fun getTypeParameters(interpreter: IrInterpreter): List<KTypeParameter> {
+    fun getTypeParameters(callInterceptor: CallInterceptor): List<KTypeParameter> {
         if (_typeParameters != null) return _typeParameters!!
         val kTypeParameterIrClass = irClass.getIrClassOfReflectionFromList("typeParameters")
-        _typeParameters = classReference.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParameterIrClass), interpreter) }
+        _typeParameters = classReference.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParameterIrClass), callInterceptor) }
         return _typeParameters!!
     }
 
-    fun getSupertypes(interpreter: IrInterpreter): List<KType> {
+    fun getSupertypes(callInterceptor: CallInterceptor): List<KType> {
         if (_supertypes != null) return _supertypes!!
         val kTypeIrClass = irClass.getIrClassOfReflectionFromList("supertypes")
-        _supertypes = (classReference.superTypes.map { it } + interpreter.irBuiltIns.anyType).toSet()
-            .map { KTypeProxy(KTypeState(it, kTypeIrClass), interpreter) }
+        _supertypes = (classReference.superTypes.map { it } + callInterceptor.irBuiltIns.anyType).toSet()
+            .map { KTypeProxy(KTypeState(it, kTypeIrClass), callInterceptor) }
         return _supertypes!!
     }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter.state.reflection
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.state.State
@@ -26,22 +26,22 @@ internal class KPropertyState(
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
 
-    fun getParameters(interpreter: IrInterpreter): List<KParameter> {
+    fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
         if (_parameters != null) return _parameters!!
         val kParameterIrClass = irClass.getIrClassOfReflectionFromList("parameters")
         var index = 0
         val instanceParameter = property.getter?.dispatchReceiverParameter?.takeIf { dispatchReceiver == null }
-            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), interpreter) }
+            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), callInterceptor) }
         val extensionParameter = property.getter?.extensionReceiverParameter
-            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), interpreter) }
+            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), callInterceptor) }
         _parameters = listOfNotNull(instanceParameter, extensionParameter)
         return _parameters!!
     }
 
-    fun getReturnType(interpreter: IrInterpreter): KType {
+    fun getReturnType(callInterceptor: CallInterceptor): KType {
         if (_returnType != null) return _returnType!!
         val kTypeIrClass = irClass.getIrClassOfReflection("returnType")
-        _returnType = KTypeProxy(KTypeState(property.getter!!.returnType, kTypeIrClass), interpreter)
+        _returnType = KTypeProxy(KTypeState(property.getter!!.returnType, kTypeIrClass), callInterceptor)
         return _returnType!!
     }
 

@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.toState
 import kotlin.reflect.*
 
 internal open class KProperty2Proxy(
-    override val state: KPropertyState, override val interpreter: IrInterpreter
-) : AbstractKPropertyProxy(state, interpreter), KProperty2<Any?, Any?, Any?> {
+    override val state: KPropertyState, override val callInterceptor: CallInterceptor
+) : AbstractKPropertyProxy(state, callInterceptor), KProperty2<Any?, Any?, Any?> {
     override val getter: KProperty2.Getter<Any?, Any?, Any?>
         get() = object : Getter(state.property.getter!!), KProperty2.Getter<Any?, Any?, Any?> {
             override fun invoke(p1: Any?, p2: Any?): Any? = call(p1, p2)
@@ -22,7 +22,7 @@ internal open class KProperty2Proxy(
                 checkArguments(2, args.size)
                 val dispatch = Variable(getter.dispatchReceiverParameter!!.symbol, args[0].toState(getter.dispatchReceiverParameter!!.type))
                 val extension = Variable(getter.extensionReceiverParameter!!.symbol, args[1].toState(getter.extensionReceiverParameter!!.type))
-                return with(this@KProperty2Proxy.interpreter) { getter.proxyInterpret(listOf(dispatch, extension)) }
+                return callInterceptor.interceptProxy(getter, listOf(dispatch, extension))
             }
 
             override fun callBy(args: Map<KParameter, Any?>): Any? {
@@ -40,8 +40,8 @@ internal open class KProperty2Proxy(
 }
 
 internal class KMutableProperty2Proxy(
-    override val state: KPropertyState, override val interpreter: IrInterpreter
-) : KProperty2Proxy(state, interpreter), KMutableProperty2<Any?, Any?, Any?> {
+    override val state: KPropertyState, override val callInterceptor: CallInterceptor
+) : KProperty2Proxy(state, callInterceptor), KMutableProperty2<Any?, Any?, Any?> {
     override val setter: KMutableProperty2.Setter<Any?, Any?, Any?>
         get() = object : Setter(state.property.setter!!), KMutableProperty2.Setter<Any?, Any?, Any?> {
             override fun invoke(p1: Any?, p2: Any?, p3: Any?) = call(p1, p2, p3)

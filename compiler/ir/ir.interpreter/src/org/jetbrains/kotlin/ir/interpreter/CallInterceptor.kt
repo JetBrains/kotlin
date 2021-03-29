@@ -33,7 +33,10 @@ import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
     val environment: IrInterpreterEnvironment
+    val irBuiltIns: IrBuiltIns
     val interpreter: IrInterpreter
+
+    fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*> = Any::class.java): Any?
     fun interceptCall(call: IrCall, irFunction: IrFunction, receiver: State?, args: List<State>)
     fun interceptConstructor(constructorCall: IrFunctionAccessExpression, receiver: State, args: List<State>)
     fun interceptGetObjectValue(expression: IrGetObjectValue)
@@ -43,12 +46,16 @@ internal interface CallInterceptor {
 
 internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) : CallInterceptor {
     override val environment: IrInterpreterEnvironment = interpreter.environment
-    private val callStack: CallStack
-        get() = environment.callStack
-    private val irBuiltIns: IrBuiltIns
-        get() = environment.irBuiltIns
-    private val bodyMap: Map<IdSignature, IrBody>
-        get() = interpreter.bodyMap
+    private val callStack: CallStack = environment.callStack
+    override val irBuiltIns: IrBuiltIns = environment.irBuiltIns
+    private val bodyMap: Map<IdSignature, IrBody> = interpreter.bodyMap
+
+    override fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*>): Any? {
+        return interpreter.withNewCallStack(irFunction) {
+            this@withNewCallStack.environment.callStack.addInstruction(CompoundInstruction(irFunction))
+            valueArguments.forEach { this@withNewCallStack.environment.callStack.addVariable(it) }
+        }.wrap(this@DefaultCallInterceptor, expectedResultClass)
+    }
 
     override fun interceptCall(call: IrCall, irFunction: IrFunction, receiver: State?, args: List<State>) {
         val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
@@ -126,7 +133,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
 
     private fun MethodHandle?.invokeMethod(irFunction: IrFunction, args: List<State>) {
         this ?: return handleIntrinsicMethods(irFunction)
-        val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(interpreter, this.type(), args)
+        val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(this@DefaultCallInterceptor, this.type(), args)
         withExceptionHandler(environment) {
             val result = this.invokeWithArguments(argsForMethodInvocation)
             callStack.pushState(result.toState(result.getType(irFunction.returnType)))
@@ -145,7 +152,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
 
         val receiverType = irFunction.dispatchReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
-        val argsValues = args.map { it.wrap(interpreter, calledFromBuiltIns = methodName !in setOf("plus", IrBuiltIns.OperatorNames.EQEQ)) }
+        val argsValues = args.map { it.wrap(this, calledFromBuiltIns = methodName !in setOf("plus", IrBuiltIns.OperatorNames.EQEQ)) }
 
         fun IrType.getOnlyName(): String {
             return when {

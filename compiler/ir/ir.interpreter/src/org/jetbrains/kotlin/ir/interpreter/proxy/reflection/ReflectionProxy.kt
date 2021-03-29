@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
 import kotlin.reflect.KVisibility
@@ -24,22 +24,22 @@ internal interface ReflectionProxy : Proxy {
     }
 
     companion object {
-        internal fun ReflectionState.asProxy(interpreter: IrInterpreter): ReflectionProxy {
+        internal fun ReflectionState.asProxy(callInterceptor: CallInterceptor): ReflectionProxy {
             return when (this) {
                 is KPropertyState -> when {
-                    this.isKMutableProperty0() -> KMutableProperty0Proxy(this, interpreter)
-                    this.isKProperty0() -> KProperty0Proxy(this, interpreter)
-                    this.isKMutableProperty1() -> KMutableProperty1Proxy(this, interpreter)
-                    this.isKProperty1() -> KProperty1Proxy(this, interpreter)
-                    this.isKMutableProperty2() -> KMutableProperty2Proxy(this, interpreter)
-                    this.isKProperty2() -> KProperty2Proxy(this, interpreter)
+                    this.isKMutableProperty0() -> KMutableProperty0Proxy(this, callInterceptor)
+                    this.isKProperty0() -> KProperty0Proxy(this, callInterceptor)
+                    this.isKMutableProperty1() -> KMutableProperty1Proxy(this, callInterceptor)
+                    this.isKProperty1() -> KProperty1Proxy(this, callInterceptor)
+                    this.isKMutableProperty2() -> KMutableProperty2Proxy(this, callInterceptor)
+                    this.isKProperty2() -> KProperty2Proxy(this, callInterceptor)
                     else -> TODO()
                 }
-                is KFunctionState -> KFunctionProxy(this, interpreter)
-                is KClassState -> KClassProxy(this, interpreter)
-                is KTypeState -> KTypeProxy(this, interpreter)
-                is KTypeParameterState -> KTypeParameterProxy(this, interpreter)
-                is KParameterState -> KParameterProxy(this, interpreter)
+                is KFunctionState -> KFunctionProxy(this, callInterceptor)
+                is KClassState -> KClassProxy(this, callInterceptor)
+                is KTypeState -> KTypeProxy(this, callInterceptor)
+                is KTypeParameterState -> KTypeParameterProxy(this, callInterceptor)
+                is KParameterState -> KParameterProxy(this, callInterceptor)
                 else -> TODO("not supported reference state")
             }
         }

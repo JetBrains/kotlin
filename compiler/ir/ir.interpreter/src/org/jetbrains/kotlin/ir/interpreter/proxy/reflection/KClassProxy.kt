@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.internalName
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
 import kotlin.reflect.*
 
 internal class KClassProxy(
-    override val state: KClassState, override val interpreter: IrInterpreter
+    override val state: KClassState, override val callInterceptor: CallInterceptor
 ) : ReflectionProxy, KClass<Proxy> {
     override val simpleName: String?
         get() = state.classReference.name.takeIf { !it.isSpecial }?.asString()
@@ -22,17 +22,17 @@ internal class KClassProxy(
 
     @Suppress("UNCHECKED_CAST")
     override val constructors: Collection<KFunction<Proxy>>
-        get() = state.getConstructors(interpreter) as Collection<KFunction<Proxy>>
+        get() = state.getConstructors(callInterceptor) as Collection<KFunction<Proxy>>
     override val members: Collection<KCallable<*>>
-        get() = state.getMembers(interpreter)
+        get() = state.getMembers(callInterceptor)
     override val nestedClasses: Collection<KClass<*>>
         get() = TODO("Not yet implemented")
     override val objectInstance: Proxy?
         get() = TODO("Not yet implemented")
     override val typeParameters: List<KTypeParameter>
-        get() = state.getTypeParameters(interpreter)
+        get() = state.getTypeParameters(callInterceptor)
     override val supertypes: List<KType>
-        get() = state.getSupertypes(interpreter)
+        get() = state.getSupertypes(callInterceptor)
     override val sealedSubclasses: List<KClass<out Proxy>>
         get() = TODO("Not yet implemented")
     override val annotations: List<Annotation>

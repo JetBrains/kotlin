@@ -5,23 +5,18 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeParameterState
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 
-internal class KTypeProxy(override val state: KTypeState, override val interpreter: IrInterpreter) : ReflectionProxy, KType {
+internal class KTypeProxy(override val state: KTypeState, override val callInterceptor: CallInterceptor) : ReflectionProxy, KType {
     override val classifier: KClassifier?
-        get() = state.getClassifier(interpreter)
+        get() = state.getClassifier(callInterceptor)
     override val arguments: List<KTypeProjection>
-        get() = state.getArguments(interpreter)
+        get() = state.getArguments(callInterceptor)
     override val isMarkedNullable: Boolean
         get() = state.irType.isMarkedNullable()
     override val annotations: List<Annotation>

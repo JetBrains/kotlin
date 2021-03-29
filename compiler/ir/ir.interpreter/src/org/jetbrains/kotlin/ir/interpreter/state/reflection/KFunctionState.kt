@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
@@ -33,30 +33,30 @@ internal class KFunctionState(val irFunction: IrFunction, override val irClass: 
     constructor(irFunction: IrFunction, functionFactory: IrAbstractFunctionFactory) :
             this(irFunction, functionFactory.kFunctionN(irFunction.valueParameters.size))
 
-    fun getParameters(interpreter: IrInterpreter): List<KParameter> {
+    fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
         if (_parameters != null) return _parameters!!
         val kParameterIrClass = irClass.getIrClassOfReflectionFromList("parameters")
         var index = 0
         val instanceParameter = irFunction.dispatchReceiverParameter
-            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), interpreter) }
+            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), callInterceptor) }
         val extensionParameter = irFunction.extensionReceiverParameter
-            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), interpreter) }
+            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), callInterceptor) }
         _parameters = listOfNotNull(instanceParameter, extensionParameter) +
-                irFunction.valueParameters.map { KParameterProxy(KParameterState(kParameterIrClass, it, index++), interpreter) }
+                irFunction.valueParameters.map { KParameterProxy(KParameterState(kParameterIrClass, it, index++), callInterceptor) }
         return _parameters!!
     }
 
-    fun getReturnType(interpreter: IrInterpreter): KType {
+    fun getReturnType(callInterceptor: CallInterceptor): KType {
         if (_returnType != null) return _returnType!!
         val kTypeIrClass = irClass.getIrClassOfReflection("returnType")
-        _returnType = KTypeProxy(KTypeState(irFunction.returnType, kTypeIrClass), interpreter)
+        _returnType = KTypeProxy(KTypeState(irFunction.returnType, kTypeIrClass), callInterceptor)
         return _returnType!!
     }
 
-    fun getTypeParameters(interpreter: IrInterpreter): List<KTypeParameter> {
+    fun getTypeParameters(callInterceptor: CallInterceptor): List<KTypeParameter> {
         if (_typeParameters != null) return _typeParameters!!
         val kTypeParametersIrClass = irClass.getIrClassOfReflectionFromList("typeParameters")
-        _typeParameters = irClass.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParametersIrClass), interpreter) }
+        _typeParameters = irClass.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParametersIrClass), callInterceptor) }
         return _typeParameters!!
     }
 

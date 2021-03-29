@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.toState
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.isSuspend
 import kotlin.reflect.*
 
 internal class KFunctionProxy(
-    override val state: KFunctionState, override val interpreter: IrInterpreter
+    override val state: KFunctionState, override val callInterceptor: CallInterceptor
 ) : ReflectionProxy, KFunction<Any?>, FunctionWithAllInvokes {
     override val arity: Int = state.getArity() ?: BuiltInFunctionArity.BIG_ARITY
 
@@ -35,11 +35,11 @@ internal class KFunctionProxy(
     override val annotations: List<Annotation>
         get() = TODO("Not yet implemented")
     override val parameters: List<KParameter>
-        get() = state.getParameters(interpreter)
+        get() = state.getParameters(callInterceptor)
     override val returnType: KType
-        get() = state.getReturnType(interpreter)
+        get() = state.getReturnType(callInterceptor)
     override val typeParameters: List<KTypeParameter>
-        get() = state.getTypeParameters(interpreter)
+        get() = state.getTypeParameters(callInterceptor)
 
     override fun call(vararg args: Any?): Any? {
         // TODO check arity
@@ -48,7 +48,7 @@ internal class KFunctionProxy(
         val extensionReceiver = state.irFunction.extensionReceiverParameter?.let { Variable(it.symbol, args[index++].toState(it.type)) }
         val valueArguments = listOfNotNull(dispatchReceiver, extensionReceiver) +
                 state.irFunction.valueParameters.map { parameter -> Variable(parameter.symbol, args[index++].toState(parameter.type)) }
-        return with(interpreter) { state.irFunction.proxyInterpret(valueArguments) }
+        return callInterceptor.interceptProxy(state.irFunction, valueArguments)
     }
 
     override fun callBy(args: Map<KParameter, Any?>): Any? {

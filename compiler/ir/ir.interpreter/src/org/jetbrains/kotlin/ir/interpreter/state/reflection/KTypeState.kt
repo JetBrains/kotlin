@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KClassProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
@@ -22,28 +22,28 @@ internal class KTypeState(val irType: IrType, override val irClass: IrClass) : R
     private var _classifier: KClassifier? = null
     private var _arguments: List<KTypeProjection>? = null
 
-    fun getClassifier(interpreter: IrInterpreter): KClassifier? {
+    fun getClassifier(callInterceptor: CallInterceptor): KClassifier? {
         if (_classifier != null) return _classifier!!
         _classifier = when (val classifier = irType.classifierOrFail.owner) {
-            is IrClass -> KClassProxy(KClassState(classifier, interpreter.irBuiltIns.kClassClass.owner), interpreter)
+            is IrClass -> KClassProxy(KClassState(classifier, callInterceptor.irBuiltIns.kClassClass.owner), callInterceptor)
             is IrTypeParameter -> {
-                val kTypeParameterIrClass = interpreter.irBuiltIns.kClassClass.owner.getIrClassOfReflectionFromList("typeParameters")
-                KTypeParameterProxy(KTypeParameterState(classifier, kTypeParameterIrClass), interpreter)
+                val kTypeParameterIrClass = callInterceptor.irBuiltIns.kClassClass.owner.getIrClassOfReflectionFromList("typeParameters")
+                KTypeParameterProxy(KTypeParameterState(classifier, kTypeParameterIrClass), callInterceptor)
             }
             else -> TODO()
         }
         return _classifier!!
     }
 
-    fun getArguments(interpreter: IrInterpreter): List<KTypeProjection> {
+    fun getArguments(callInterceptor: CallInterceptor): List<KTypeProjection> {
         if (_arguments != null) return _arguments!!
         Wrapper.associateJavaClassWithIrClass(KTypeProjection::class.java, irClass.getIrClassOfReflectionFromList("arguments"))
         _arguments = (irType as IrSimpleType).arguments
             .map {
                 when (it.getVariance()) {
-                    Variance.INVARIANT -> KTypeProjection.invariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), interpreter))
-                    Variance.IN_VARIANCE -> KTypeProjection.contravariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), interpreter))
-                    Variance.OUT_VARIANCE -> KTypeProjection.covariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), interpreter))
+                    Variance.INVARIANT -> KTypeProjection.invariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), callInterceptor))
+                    Variance.IN_VARIANCE -> KTypeProjection.contravariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), callInterceptor))
+                    Variance.OUT_VARIANCE -> KTypeProjection.covariant(KTypeProxy(KTypeState(it.typeOrNull!!, irClass), callInterceptor))
                     null -> KTypeProjection.STAR
                 }
             }

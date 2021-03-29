@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeParameterState
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.*
 
 internal class KTypeParameterProxy(
-    override val state: KTypeParameterState, override val interpreter: IrInterpreter
+    override val state: KTypeParameterState, override val callInterceptor: CallInterceptor
 ) : ReflectionProxy, KTypeParameter {
     override val name: String
         get() = state.irTypeParameter.name.asString()
     override val upperBounds: List<KType>
-        get() = state.getUpperBounds(interpreter)
+        get() = state.getUpperBounds(callInterceptor)
     override val variance: KVariance
         get() = when (state.irTypeParameter.variance) {
             Variance.INVARIANT -> KVariance.INVARIANT

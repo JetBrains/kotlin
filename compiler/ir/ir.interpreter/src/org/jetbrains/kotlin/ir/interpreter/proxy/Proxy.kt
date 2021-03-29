@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy
 
+import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.ReflectionProxy.Companion.asProxy
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 
 internal interface Proxy {
     val state: State
-    val interpreter: IrInterpreter
+    val callInterceptor: CallInterceptor
 
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
@@ -23,13 +24,13 @@ internal interface Proxy {
 /**
  * Prepare state object to be passed in outer world
  */
-internal fun State.wrap(interpreter: IrInterpreter, extendFrom: Class<*>? = null, calledFromBuiltIns: Boolean = false): Any? {
+internal fun State.wrap(callInterceptor: CallInterceptor, extendFrom: Class<*>? = null, calledFromBuiltIns: Boolean = false): Any? {
     return when (this) {
         is ExceptionState -> this
         is Wrapper -> this.value
         is Primitive<*> -> this.value
-        is Common -> this.asProxy(interpreter, extendFrom, calledFromBuiltIns)
-        is ReflectionState -> this.asProxy(interpreter)
+        is Common -> this.asProxy(callInterceptor, extendFrom, calledFromBuiltIns)
+        is ReflectionState -> this.asProxy(callInterceptor)
         else -> throw AssertionError("${this::class} is unsupported as argument for wrap function")
     }
 }
