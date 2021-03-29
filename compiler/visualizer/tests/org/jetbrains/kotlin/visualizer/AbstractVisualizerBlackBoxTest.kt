@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -62,34 +61,31 @@ abstract class AbstractVisualizerBlackBoxTest {
         )
     }
 
+    private fun createConfiguration(filePath: String, frontend: FrontendKind<*>) = testConfiguration(filePath) {
+        commonConfiguration()
+        globalDefaults { this.frontend = frontend }
+    }
+
     fun runTest(filePath: String) {
         lateinit var psiRenderResult: String
         lateinit var firRenderResult: String
 
-        val psiConfiguration = testConfiguration(filePath) {
-            commonConfiguration()
-            globalDefaults { frontend = FrontendKinds.ClassicFrontend }
-        }
+        val psiConfiguration = createConfiguration(filePath, FrontendKinds.ClassicFrontend)
         TestRunner(psiConfiguration).runTest(filePath) { testConfiguration ->
-            val psiDependencyProvider = testConfiguration.testServices.dependencyProvider
-            val psiModule = psiDependencyProvider.getTestModule("main")
-            val psiArtifact = psiDependencyProvider.getArtifact(psiModule, FrontendKinds.ClassicFrontend)
-
-            val psiRenderer = psiArtifact.ktFiles.values.firstOrNull()?.let { PsiVisualizer(it, psiArtifact.analysisResult) }
-            psiRenderResult = psiRenderer?.render()?.trim() ?: ""
+            testConfiguration.testServices.moduleStructure.modules.forEach { psiModule ->
+                val psiArtifact = testConfiguration.testServices.dependencyProvider.getArtifact(psiModule, FrontendKinds.ClassicFrontend)
+                val psiRenderer = psiArtifact.ktFiles.values.firstOrNull()?.let { PsiVisualizer(it, psiArtifact.analysisResult) }
+                psiRenderResult = psiRenderer?.render()?.trim() ?: ""
+            }
         }
 
-        val firConfiguration = testConfiguration(filePath) {
-            commonConfiguration()
-            globalDefaults { frontend = FrontendKinds.FIR }
-        }
+        val firConfiguration = createConfiguration(filePath, FrontendKinds.FIR)
         TestRunner(firConfiguration).runTest(filePath) { testConfiguration ->
-            val firDependencyProvider = testConfiguration.testServices.dependencyProvider
-            val firModule = firDependencyProvider.getTestModule("main")
-            val firArtifact = firDependencyProvider.getArtifact(firModule, FrontendKinds.FIR)
-
-            val firRenderer = firArtifact.firFiles.values.firstOrNull()?.let { FirVisualizer(it) }
-            firRenderResult = firRenderer?.render()?.trim() ?: ""
+            testConfiguration.testServices.moduleStructure.modules.forEach { firModule ->
+                val firArtifact = testConfiguration.testServices.dependencyProvider.getArtifact(firModule, FrontendKinds.FIR)
+                val firRenderer = firArtifact.firFiles.values.firstOrNull()?.let { FirVisualizer(it) }
+                firRenderResult = firRenderer?.render()?.trim() ?: ""
+            }
         }
 
         psiConfiguration.testServices.assertions.assertEquals(psiRenderResult, firRenderResult)
