@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2021 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.config;
+package org.jetbrains.kotlin.config
 
-public class CompilerRunnerConstants {
-    public static final String KOTLIN_COMPILER_NAME = "Kotlin";
-    public static final String INTERNAL_ERROR_PREFIX = "[Internal Error] ";
+object CompilerRunnerConstants {
+    const val KOTLIN_COMPILER_NAME = "Kotlin"
+    const val INTERNAL_ERROR_PREFIX = "[Internal Error] "
 }
