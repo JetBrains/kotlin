@@ -70,8 +70,20 @@ class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic() {
     override val reason: String get() = "Not a legal annotation: $name"
 }
 
-class ConeWrongNumberOfTypeArgumentsError(val desiredCount: Int, val type: FirClassLikeSymbol<*>) : ConeDiagnostic() {
+abstract class ConeUnmatchedTypeArgumentsError(val desiredCount: Int, val type: FirClassLikeSymbol<*>) : ConeDiagnostic()
+
+class ConeWrongNumberOfTypeArgumentsError(
+    desiredCount: Int,
+    type: FirClassLikeSymbol<*>
+) : ConeUnmatchedTypeArgumentsError(desiredCount, type) {
     override val reason: String get() = "Wrong number of type arguments"
+}
+
+class ConeNoTypeArgumentsOnRhsError(
+    desiredCount: Int,
+    type: FirClassLikeSymbol<*>
+) : ConeUnmatchedTypeArgumentsError(desiredCount, type) {
+    override val reason: String get() = "No type arguments on RHS"
 }
 
 class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic() {

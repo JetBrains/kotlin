@@ -192,6 +192,7 @@ object FirErrors {
     val UPPER_BOUND_VIOLATED by error2<FirSourceElement, PsiElement, FirTypeParameterSymbol, ConeKotlinType>()
     val TYPE_ARGUMENTS_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
     val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error2<FirSourceElement, PsiElement, Int, FirClassLikeSymbol<*>>()
+    val NO_TYPE_ARGUMENTS_ON_RHS by error2<FirSourceElement, PsiElement, Int, FirClassLikeSymbol<*>>()
     val TYPE_PARAMETERS_IN_OBJECT by error0<FirSourceElement, PsiElement>()
     val ILLEGAL_PROJECTION_USAGE by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETERS_IN_ENUM by error0<FirSourceElement, PsiElement>()

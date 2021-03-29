@@ -502,7 +502,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val originalType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return this
         val newType = computeRepresentativeTypeForBareType(type, originalType) ?: return buildErrorTypeRef {
             source = this@withTypeArgumentsForBareType.source
-            diagnostic = ConeWrongNumberOfTypeArgumentsError(firClass.typeParameters.size, firClass.symbol)
+            diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
         }
         return if (newType.typeArguments.isEmpty()) this else withReplacedConeType(newType)
     }

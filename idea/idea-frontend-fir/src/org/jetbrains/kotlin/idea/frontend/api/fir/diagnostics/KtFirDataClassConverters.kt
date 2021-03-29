@@ -763,6 +763,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NO_TYPE_ARGUMENTS_ON_RHS) { firDiagnostic ->
+        NoTypeArgumentsOnRhsImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b.fir as FirClass<*>),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.TYPE_PARAMETERS_IN_OBJECT) { firDiagnostic ->
         TypeParametersInObjectImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

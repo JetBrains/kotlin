@@ -44,6 +44,8 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, this.name.asString())
     is ConeWrongNumberOfTypeArgumentsError ->
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifiedAccessSource ?: source, this.desiredCount, this.type)
+    is ConeNoTypeArgumentsOnRhsError ->
+        FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.on(qualifiedAccessSource ?: source, this.desiredCount, this.type)
     is ConeSimpleDiagnostic -> when {
         source.kind is FirFakeSourceElementKind -> null
         else -> this.getFactory().on(qualifiedAccessSource ?: source)

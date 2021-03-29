@@ -250,6 +250,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<Int>("expectedCount")
             parameter<FirClassLikeSymbol<*>>("classifier")
         }
+        val NO_TYPE_ARGUMENTS_ON_RHS by error<FirSourceElement, PsiElement> {
+            parameter<Int>("expectedCount")
+            parameter<FirClassLikeSymbol<*>>("classifier")
+        }
         val TYPE_PARAMETERS_IN_OBJECT by error<FirSourceElement, PsiElement>()
         val ILLEGAL_PROJECTION_USAGE by error<FirSourceElement, PsiElement>()
         val TYPE_PARAMETERS_IN_ENUM by error<FirSourceElement, PsiElement>()

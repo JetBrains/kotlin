@@ -874,6 +874,15 @@ internal class WrongNumberOfTypeArgumentsImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class NoTypeArgumentsOnRhsImpl(
+    override val expectedCount: Int,
+    override val classifier: KtClassLikeSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoTypeArgumentsOnRhs(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class TypeParametersInObjectImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
