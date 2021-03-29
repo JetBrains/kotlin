@@ -177,13 +177,8 @@ private class KotlinCommonCompletionProvider(
         val typeOfPossibleReceiver = explicitReceiver.getKtType()
         val possibleReceiverScope = typeOfPossibleReceiver.getTypeScope() ?: return
 
-        val nonExtensionMembers = possibleReceiverScope
-            .getCallableSymbols(scopeNameFilter)
-            .filterNot { it.isExtension }
-
-        val extensionNonMembers = implicitScopes
-            .getCallableSymbols(scopeNameFilter)
-            .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
+        val nonExtensionMembers = possibleReceiverScope.collectNonExtensions()
+        val extensionNonMembers = implicitScopes.collectSuitableExtensions(hasSuitableExtensionReceiver)
 
         nonExtensionMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionNonMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
@@ -201,13 +196,8 @@ private class KotlinCommonCompletionProvider(
     ) {
         val (implicitScopes, implicitReceiversTypes) = implicitScopesContext
 
-        val availableNonExtensions = implicitScopes
-            .getCallableSymbols(scopeNameFilter)
-            .filterNot { it.isExtension }
-
-        val extensionsWhichCanBeCalled = implicitScopes
-            .getCallableSymbols(scopeNameFilter)
-            .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
+        val availableNonExtensions = implicitScopes.collectNonExtensions()
+        val extensionsWhichCanBeCalled = implicitScopes.collectSuitableExtensions(hasSuitableExtensionReceiver)
 
         availableNonExtensions.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(result, expectedType, it) }
@@ -236,6 +226,14 @@ private class KotlinCommonCompletionProvider(
             .map { it.getSymbol() as KtCallableSymbol }
             .filter(hasSuitableExtensionReceiver)
     }
+
+    private fun KtScope.collectNonExtensions(): Sequence<KtCallableSymbol> =
+        getCallableSymbols(scopeNameFilter).filterNot { it.isExtension }
+
+    private fun KtScope.collectSuitableExtensions(
+        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean
+    ): Sequence<KtCallableSymbol> =
+        getCallableSymbols(scopeNameFilter).filter { it.isExtension && it.hasSuitableExtensionReceiver() }
 
     private fun KtAnalysisSession.findAllNamesOfTypes(implicitReceiversTypes: List<KtType>) =
         implicitReceiversTypes.flatMapTo(hashSetOf()) { with(typeNamesProvider) { findAllNames(it) } }
