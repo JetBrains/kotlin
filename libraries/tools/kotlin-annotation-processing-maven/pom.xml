@@ -79,6 +79,9 @@
           <annotationPaths>
             <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
           </annotationPaths>
+          <args>
+            <arg>-Xskip-prerelease-check</arg>
+          </args>
         </configuration>
 
         <executions>

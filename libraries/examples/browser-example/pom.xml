@@ -74,6 +74,11 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <args>
+                        <arg>-Xskip-prerelease-check</arg>
+                    </args>
+                </configuration>
             </plugin>
 
             <plugin>
