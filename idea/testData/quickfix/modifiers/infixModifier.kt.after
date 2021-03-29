@@ -6,3 +6,4 @@ class A {
 fun foo() {
     A() xyz<caret>zy 5
 }
+/* IGNORE_FIR */

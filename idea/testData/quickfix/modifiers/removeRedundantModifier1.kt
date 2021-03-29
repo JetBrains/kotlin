@@ -7,4 +7,3 @@ abstract class A() : B() {
     <caret>open abstract override fun foo()
 }
 
-/* FIR_COMPARISON */

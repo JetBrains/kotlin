@@ -2,3 +2,5 @@
 fun test(value : Int) : Int {
     return value<caret>
 }
+
+/* IGNORE_FIR */

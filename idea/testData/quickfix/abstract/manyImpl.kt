@@ -19,4 +19,3 @@ object Impl : D, E {
 }
 
 <caret>class X : D by Impl, E by Impl {}
-/* FIR_COMPARISON */

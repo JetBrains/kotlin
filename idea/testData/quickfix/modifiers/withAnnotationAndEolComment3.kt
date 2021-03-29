@@ -4,3 +4,4 @@ class A @Deprecated("") // ds
 final<caret> constructor() {
 
 }
+/* IGNORE_FIR */

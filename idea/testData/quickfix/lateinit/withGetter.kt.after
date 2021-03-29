@@ -4,3 +4,4 @@ class A {
     <caret>lateinit var str: String
         
 }
+/* IGNORE_FIR */

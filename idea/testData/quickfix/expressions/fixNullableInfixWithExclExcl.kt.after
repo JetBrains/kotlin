@@ -7,3 +7,4 @@ class SafeType {
 fun safeB(p: SafeType?) {
     val v = p!! op 42
 }
+/* IGNORE_FIR */

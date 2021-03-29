@@ -2,3 +2,5 @@
 abstract class A {
     abstract var i: Int
 }
+
+/* IGNORE_FIR */

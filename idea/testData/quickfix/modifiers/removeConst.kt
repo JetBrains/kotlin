@@ -5,3 +5,4 @@ class Foo
 object Test {
     <caret>const val c = Foo()
 }
+/* IGNORE_FIR */

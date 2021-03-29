@@ -2,3 +2,5 @@
 fun <T: Collection<Int>?> foo(c: T) {
     for (i in <caret>c) { }
 }
+
+/* IGNORE_FIR */

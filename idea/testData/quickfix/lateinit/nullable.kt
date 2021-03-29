@@ -3,3 +3,4 @@
 class A() {
     <caret>lateinit var foo: String?
 }
+/* IGNORE_FIR */

@@ -3,4 +3,3 @@
 fun foo(s: String?) {
     1 + (s?.length ?: <caret>)
 }
-/* FIR_COMPARISON */

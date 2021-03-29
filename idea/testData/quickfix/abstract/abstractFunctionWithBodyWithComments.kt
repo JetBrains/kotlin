@@ -4,3 +4,5 @@ abstract class A() {
         // 3
     }
 }
+
+/* IGNORE_FIR */

@@ -14,4 +14,3 @@ abstract class B : A(), X {
     override abstract fun foo(): Int<caret>
 }
 
-/* FIR_COMPARISON */

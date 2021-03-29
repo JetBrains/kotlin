@@ -3,3 +3,5 @@ fun foo() {
     val test : Collection<Int>? = null!!
     for (i in <caret>test) { }
 }
+
+/* IGNORE_FIR */

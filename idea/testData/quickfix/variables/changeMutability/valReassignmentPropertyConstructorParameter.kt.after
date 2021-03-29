@@ -4,3 +4,5 @@ class A(var a: Int) {
         a = 5
     }
 }
+
+/* IGNORE_FIR */

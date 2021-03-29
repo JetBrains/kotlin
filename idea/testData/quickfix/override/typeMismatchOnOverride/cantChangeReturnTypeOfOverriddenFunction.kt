@@ -12,4 +12,3 @@ interface C : A, B {
     override fun foo(): <caret>Long
 }
 
-/* FIR_COMPARISON */

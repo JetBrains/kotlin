@@ -2,3 +2,5 @@
 class A() {
     <caret>enum fun foo() {}
 }
+
+/* IGNORE_FIR */

@@ -3,4 +3,3 @@
 interface My {
     fun foo()
 }
-/* FIR_COMPARISON */

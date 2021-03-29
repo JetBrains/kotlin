@@ -4,3 +4,4 @@
 val functions: Map<String, () -> Any> = TODO()
 
 fun run(name: String) = functions[name]?.invoke()
+/* IGNORE_FIR */

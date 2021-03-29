@@ -6,4 +6,3 @@ open class A {
 class B : A() {
     override var x: Int = 3;
 }
-/* FIR_COMPARISON */

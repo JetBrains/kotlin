@@ -8,4 +8,3 @@
 object O {
     <caret>fun foo()
 }
-/* FIR_COMPARISON */

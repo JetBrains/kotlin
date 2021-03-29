@@ -6,4 +6,3 @@ open class A {
 class B : A() {
     override val<caret> x: Int = 3;
 }
-/* FIR_COMPARISON */

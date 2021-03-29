@@ -3,4 +3,3 @@
 class A() {
     <caret>lateinit var foo: String
 }
-/* FIR_COMPARISON */

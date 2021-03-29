@@ -4,3 +4,5 @@ class A {
 }
 
 fun foo() = 0 i<caret>n A()
+
+/* IGNORE_FIR */

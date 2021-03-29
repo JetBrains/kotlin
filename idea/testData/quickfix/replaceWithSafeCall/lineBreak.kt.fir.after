@@ -4,4 +4,3 @@ fun foo(a: String?) {
     val b = a
         ?.length ?: <caret>
 }
-/* FIR_COMPARISON */

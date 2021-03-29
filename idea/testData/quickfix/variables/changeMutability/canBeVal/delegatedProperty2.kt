@@ -13,4 +13,3 @@ class Delegate {
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {
     }
 }
-/* FIR_COMPARISON */

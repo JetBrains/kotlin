@@ -8,3 +8,5 @@ object Bar : Foo()
 fun test(): Any {
     return Bar<caret>[5]
 }
+
+/* IGNORE_FIR */

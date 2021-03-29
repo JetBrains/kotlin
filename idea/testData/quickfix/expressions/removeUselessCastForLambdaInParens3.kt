@@ -7,3 +7,4 @@ fun test() {
     A().foo()
     ({ "" } as<caret> () -> String)
 }
+/* IGNORE_FIR */

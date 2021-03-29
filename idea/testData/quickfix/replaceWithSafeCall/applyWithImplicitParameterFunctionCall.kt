@@ -5,3 +5,4 @@ fun foo(a: String?) {
         <caret>toLowerCase()
     }
 }
+/* IGNORE_FIR */

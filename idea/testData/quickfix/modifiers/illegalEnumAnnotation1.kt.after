@@ -1,3 +1,5 @@
 // "Remove 'enum' modifier" "true"
 <caret>interface A {
 }
+
+/* IGNORE_FIR */

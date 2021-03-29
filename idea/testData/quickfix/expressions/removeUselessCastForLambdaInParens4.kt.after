@@ -3,3 +3,4 @@ fun test() {
     class A()
     ({ "" })
 }
+/* IGNORE_FIR */

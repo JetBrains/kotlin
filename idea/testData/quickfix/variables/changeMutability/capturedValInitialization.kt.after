@@ -7,3 +7,5 @@ fun foo() {
         x = 42
     }
 }
+
+/* IGNORE_FIR */

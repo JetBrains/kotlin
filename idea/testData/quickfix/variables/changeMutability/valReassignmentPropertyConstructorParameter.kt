@@ -4,3 +4,5 @@ class A(val a: Int) {
         <caret>a = 5
     }
 }
+
+/* IGNORE_FIR */

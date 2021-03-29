@@ -3,4 +3,3 @@
 interface My {
     <caret>open fun foo()
 }
-/* FIR_COMPARISON */

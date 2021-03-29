@@ -5,3 +5,5 @@ abstract class C : ClassLoader() {
         throw ClassNotFoundException(var1)
     }
 }
+
+/* IGNORE_FIR */

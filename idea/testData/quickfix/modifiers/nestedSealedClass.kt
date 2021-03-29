@@ -8,4 +8,3 @@ class A() {
         sealed class <caret>C
     }
 }
-/* FIR_COMPARISON */

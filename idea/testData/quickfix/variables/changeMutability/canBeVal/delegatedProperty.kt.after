@@ -10,3 +10,4 @@ class Delegate {
         return ""
     }
 }
+/* IGNORE_FIR */

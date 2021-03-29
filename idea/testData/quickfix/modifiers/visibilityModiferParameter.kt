@@ -7,3 +7,4 @@ interface ParseResult<out T> {
 class Success<T>(<caret>internal override val value : T) : ParseResult<T> {
     public override val success : Boolean = true
 }
+/* IGNORE_FIR */

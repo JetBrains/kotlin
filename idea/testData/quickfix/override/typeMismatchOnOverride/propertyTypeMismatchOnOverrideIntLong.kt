@@ -7,4 +7,3 @@ abstract class B : A() {
     override abstract var x: Long<caret>
 }
 
-/* FIR_COMPARISON */

@@ -2,3 +2,5 @@
 abstract class A {
     abstract var i: Int<caret>
 }
+
+/* IGNORE_FIR */

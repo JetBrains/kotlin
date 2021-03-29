@@ -2,3 +2,4 @@
 
 operator fun Int.get(row: Int, column: Int) = this
 fun foo(arg: Int?) = arg!![42, 13]
+/* IGNORE_FIR */

@@ -6,3 +6,5 @@ class A {
 fun foo() {
     A() <caret>+ A()
 }
+
+/* IGNORE_FIR */

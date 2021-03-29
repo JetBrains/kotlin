@@ -6,3 +6,4 @@ object A {
         <caret>A = 10
     }
 }
+/* IGNORE_FIR */

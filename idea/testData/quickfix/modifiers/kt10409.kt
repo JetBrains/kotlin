@@ -12,3 +12,5 @@ interface Pipeline<TPipeline> {
     override fun pipe(block: Pipeline<T>) {
     }
 }
+
+/* IGNORE_FIR */

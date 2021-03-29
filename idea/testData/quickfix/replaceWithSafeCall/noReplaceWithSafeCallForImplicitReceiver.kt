@@ -11,4 +11,3 @@ class A {
 fun A?.bar() {
     <caret>foo()
 }
-/* FIR_COMPARISON */

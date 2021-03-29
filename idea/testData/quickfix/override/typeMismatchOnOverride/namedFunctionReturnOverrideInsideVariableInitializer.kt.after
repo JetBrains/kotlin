@@ -9,3 +9,5 @@ fun foo() {
         override fun foo(): Boolean = true
     }
 }
+
+/* IGNORE_FIR */

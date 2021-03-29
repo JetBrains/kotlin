@@ -4,4 +4,3 @@ interface A {
 }
 
 class B(override val x: CharSequence) : A
-/* FIR_COMPARISON */

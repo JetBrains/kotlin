@@ -5,3 +5,4 @@ class A {
         get() = ""
         set(value) {}
 }
+/* IGNORE_FIR */

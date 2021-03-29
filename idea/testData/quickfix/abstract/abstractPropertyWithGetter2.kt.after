@@ -3,3 +3,4 @@ abstract class B {
     abstract val i: Int<caret>
 
 }
+/* IGNORE_FIR */

@@ -5,3 +5,4 @@ class Foo
 object Test {
     val c = Foo()
 }
+/* IGNORE_FIR */

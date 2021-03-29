@@ -175,7 +175,10 @@ object IgnoreTests {
     object DIRECTIVES {
         const val FIR_COMPARISON = "// FIR_COMPARISON"
         const val FIR_COMPARISON_MULTILINE_COMMENT = "/* FIR_COMPARISON */"
+
         const val IGNORE_FIR = "// IGNORE_FIR"
+        const val IGNORE_FIR_MULTILINE_COMMENT = "/* IGNORE_FIR */"
+
         const val FIX_ME = "// FIX_ME: "
         const val FIR_IDENTICAL = "// FIR_IDENTICAL"
     }

@@ -3,3 +3,5 @@
 class A <caret>abstract() {
 
 }
+
+/* IGNORE_FIR */

@@ -8,4 +8,3 @@ class Owner {
         <caret>abstract val x: Int
     }
 }
-/* FIR_COMPARISON */

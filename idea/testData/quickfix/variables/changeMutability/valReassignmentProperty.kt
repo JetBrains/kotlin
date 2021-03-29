@@ -6,3 +6,5 @@ class A() {
         <caret>a = 5
     }
 }
+
+/* IGNORE_FIR */

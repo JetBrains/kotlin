@@ -5,4 +5,3 @@ class Test {
             return 1
         }
 }
-/* FIR_COMPARISON */

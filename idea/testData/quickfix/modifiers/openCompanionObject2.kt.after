@@ -4,3 +4,4 @@ class A {
         fun a(): Int = 1
     }
 }
+/* IGNORE_FIR */

@@ -5,4 +5,3 @@ fun foo(a: String?) {
         it?.length
     }
 }
-/* FIR_COMPARISON */

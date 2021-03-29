@@ -2,4 +2,3 @@
 class A() {
     fun foo() {}
 }
-/* FIR_COMPARISON */

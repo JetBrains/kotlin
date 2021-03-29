@@ -7,4 +7,3 @@ fun foo(a: String?) {
         i = this?.length ?: 0
     }
 }
-/* FIR_COMPARISON */

@@ -3,3 +3,5 @@ abstract class A() {
     /*1*/
     abstract fun foo()  // 3
 }
+
+/* IGNORE_FIR */

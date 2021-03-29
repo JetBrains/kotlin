@@ -5,3 +5,4 @@ fun test() {
     class B : A()
     ({ "" })
 }
+/* IGNORE_FIR */

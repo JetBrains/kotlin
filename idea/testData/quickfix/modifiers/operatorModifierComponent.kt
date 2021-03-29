@@ -10,3 +10,5 @@ fun foo() {
     val (<caret>zero, one) = A()
 }
 
+
+/* IGNORE_FIR */

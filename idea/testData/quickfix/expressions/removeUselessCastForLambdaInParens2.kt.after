@@ -6,3 +6,4 @@ fun test() {
     // comment
     ({ "" })
 }
+/* IGNORE_FIR */

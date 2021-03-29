@@ -2,3 +2,5 @@
 interface A {
     class B
 }
+
+/* IGNORE_FIR */

@@ -3,3 +3,4 @@
 class B {
     <caret>external val foo: Int = 23
 }
+/* IGNORE_FIR */

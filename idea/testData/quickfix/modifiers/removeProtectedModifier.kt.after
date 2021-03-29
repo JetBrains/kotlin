@@ -3,4 +3,3 @@
 class A private constructor() {
 
 }
-/* FIR_COMPARISON */

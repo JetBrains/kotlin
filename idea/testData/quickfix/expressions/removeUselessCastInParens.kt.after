@@ -5,3 +5,5 @@ fun test(x: Any): Int {
     }
     return -1
 }
+
+/* IGNORE_FIR */

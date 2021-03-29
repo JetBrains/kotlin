@@ -2,4 +2,3 @@
 class A() {
     <caret>abstract fun foo() {}
 }
-/* FIR_COMPARISON */

@@ -6,4 +6,3 @@
 class T {
     fun foo(s: String?): Int = s?.length ?: <caret>
 }
-/* FIR_COMPARISON */

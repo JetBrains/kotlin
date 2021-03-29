@@ -6,3 +6,4 @@ val String.prop: Int
         <caret>p = 2
         return p
     }
+/* IGNORE_FIR */

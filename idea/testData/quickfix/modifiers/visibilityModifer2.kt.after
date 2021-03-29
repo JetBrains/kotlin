@@ -6,3 +6,5 @@ open class A {
 class B : A() {
     <caret>override fun run() {}
 }
+
+/* IGNORE_FIR */

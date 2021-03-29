@@ -7,3 +7,5 @@ fun foo() {
     val test: Some? = Some()
     for (i in test!!) { }
 }
+
+/* IGNORE_FIR */

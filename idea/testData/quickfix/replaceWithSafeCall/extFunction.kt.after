@@ -3,3 +3,4 @@
 fun String?.foo() {
     this?.toLowerCase()
 }
+/* IGNORE_FIR */

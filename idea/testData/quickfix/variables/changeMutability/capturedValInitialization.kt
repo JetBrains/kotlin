@@ -7,3 +7,5 @@ fun foo() {
         <caret>x = 42
     }
 }
+
+/* IGNORE_FIR */

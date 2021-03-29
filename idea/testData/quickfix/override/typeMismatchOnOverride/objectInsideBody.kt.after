@@ -11,3 +11,4 @@ class Other {
         }
     }
 }
+/* IGNORE_FIR */

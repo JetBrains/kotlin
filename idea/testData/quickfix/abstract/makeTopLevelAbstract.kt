@@ -6,4 +6,3 @@
 // ERROR: Function 'foo' must have a body
 
 <caret>fun foo()
-/* FIR_COMPARISON */

@@ -2,3 +2,5 @@
 fun foo(a: Any) {
     val b = a<caret>
 }
+
+/* IGNORE_FIR */

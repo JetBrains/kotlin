@@ -8,4 +8,3 @@ fun main() {
 fun foo(): String? {
     return ""
 }
-/* FIR_COMPARISON */

@@ -3,4 +3,3 @@
 class T(s: String?) {
     var i: Int = s?.length ?: <caret>
 }
-/* FIR_COMPARISON */

@@ -3,4 +3,3 @@
 class T {
     fun foo(s: String?) = s<caret>.length
 }
-/* FIR_COMPARISON */

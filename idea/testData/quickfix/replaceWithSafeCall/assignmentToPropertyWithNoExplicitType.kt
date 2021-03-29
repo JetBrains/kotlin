@@ -3,4 +3,3 @@
 class T(s: String?) {
     var i = s<caret>.length
 }
-/* FIR_COMPARISON */

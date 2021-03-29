@@ -4,4 +4,3 @@ class A() {
         abstract inner class C
     }
 }
-/* FIR_COMPARISON */

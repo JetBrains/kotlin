@@ -14,3 +14,4 @@ class Test {
         t.some()
     }
 }
+/* IGNORE_FIR */

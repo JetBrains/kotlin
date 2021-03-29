@@ -10,4 +10,3 @@ interface I {
 }
 
 inline class A<caret> : I
-/* FIR_COMPARISON */

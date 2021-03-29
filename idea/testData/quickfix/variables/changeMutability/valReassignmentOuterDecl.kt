@@ -4,3 +4,5 @@ val a = 4
 fun bar() {
     <caret>a = 5
 }
+
+/* IGNORE_FIR */

@@ -7,4 +7,3 @@ fun foo(a: String?) {
         i = <caret>length ?: 0
     }
 }
-/* FIR_COMPARISON */

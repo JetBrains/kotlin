@@ -3,4 +3,3 @@ annotation class Ann(
     val a: Int,
     val b: Int
 )
-/* FIR_COMPARISON */

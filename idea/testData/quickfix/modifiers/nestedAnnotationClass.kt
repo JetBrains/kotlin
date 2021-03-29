@@ -5,4 +5,3 @@ class A() {
         annotation class <caret>C
     }
 }
-/* FIR_COMPARISON */

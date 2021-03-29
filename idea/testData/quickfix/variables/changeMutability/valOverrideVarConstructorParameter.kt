@@ -4,4 +4,3 @@ open class A {
 }
 
 class B(override val<caret> x: Int) : A()
-/* FIR_COMPARISON */

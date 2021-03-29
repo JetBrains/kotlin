@@ -2,3 +2,5 @@
 fun foo(a: Int?) {
     a!!.plus(1)
 }
+
+/* IGNORE_FIR */

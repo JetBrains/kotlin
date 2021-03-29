@@ -7,4 +7,3 @@ abstract class B : A() {
     override abstract var x: Int
 }
 
-/* FIR_COMPARISON */

@@ -4,3 +4,5 @@ fun foo(a: String) {
 
     }
 }
+
+/* IGNORE_FIR */

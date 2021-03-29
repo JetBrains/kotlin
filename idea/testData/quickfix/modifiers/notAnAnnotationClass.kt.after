@@ -2,3 +2,5 @@
 annotation class fancy
 
 @fancy class foo {}
+
+/* IGNORE_FIR */

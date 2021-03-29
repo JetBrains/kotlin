@@ -15,9 +15,9 @@ import java.nio.file.Paths
 
 abstract class AbstractHighLevelQuickFixTest : AbstractQuickFixTest() {
     override fun doTest(beforeFileName: String) {
-        IgnoreTests.runTestIfEnabledByFileDirective(
+        IgnoreTests.runTestIfNotDisabledByFileDirective(
             Paths.get(beforeFileName),
-            enableTestDirective = IgnoreTests.DIRECTIVES.FIR_COMPARISON_MULTILINE_COMMENT,
+            disableTestDirective = IgnoreTests.DIRECTIVES.IGNORE_FIR_MULTILINE_COMMENT,
             directivePosition = IgnoreTests.DirectivePosition.LAST_LINE_IN_FILE,
             additionalFilesExtensions = arrayOf("after")
         ) {
