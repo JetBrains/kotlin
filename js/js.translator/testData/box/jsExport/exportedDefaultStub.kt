@@ -26,6 +26,12 @@ fun bing(a: String = "A", b: Int = 1): String {
 }
 
 @JsExport
+class Foo {
+    @JsName("foo")
+    fun value(value: Long = 5L) = if (value == 5L) "C" else "fail"
+}
+
+@JsExport
 fun transform(i: Int = 10, t: (Int) -> Int = {it * it}): Int {
     return t(i)
 }
@@ -49,6 +55,8 @@ external interface JsResult {
     val Ping_ping11: Int
 
     val Pong_ping00: Int
+
+    val Foo: String
 }
 
 @JsModule("lib")
@@ -100,6 +108,10 @@ fun box(): String {
     }
     if (res.Pong_ping00 != 9) {
         return "fail13: ${res.Pong_ping00}"
+    }
+
+    if (res.Foo != "C") {
+        return "fail14: ${res.Foo}"
     }
 
     return "OK"
