@@ -183,19 +183,47 @@ public abstract class AbstractLongTimeSource : kotlin.time.TimeSource {
 public final inline class Duration : kotlin.Comparable<kotlin.time.Duration> {
     public final val absoluteValue: kotlin.time.Duration { get; }
 
+    @kotlin.Deprecated(message = "Use inWholeDays property instead or convert toDouble(DAYS) if a double value is required.", replaceWith = kotlin.ReplaceWith(expression = "toDouble(DurationUnit.DAYS)", imports = {}))
     public final val inDays: kotlin.Double { get; }
 
+    @kotlin.Deprecated(message = "Use inWholeHours property instead or convert toDouble(HOURS) if a double value is required.", replaceWith = kotlin.ReplaceWith(expression = "toDouble(DurationUnit.HOURS)", imports = {}))
     public final val inHours: kotlin.Double { get; }
 
+    @kotlin.Deprecated(message = "Use inWholeMicroseconds property instead or convert toDouble(MICROSECONDS) if a double value is required.", replaceWith = kotlin.ReplaceWith(expression = "toDouble(DurationUnit.MICROSECONDS)", imports = {}))
     public final val inMicroseconds: kotlin.Double { get; }
 
+    @kotlin.Deprecated(message = "Use inWholeMilliseconds property instead or convert toDouble(MILLISECONDS) if a double value is required.", replaceWith = kotlin.ReplaceWith(expression = "toDouble(DurationUnit.MILLISECONDS)", imports = {}))
     public final val inMilliseconds: kotlin.Double { get; }
 
+    @kotlin.Deprecated(message = "Use inWholeMinutes property instead or convert toDouble(MINUTES) if a double value is required.", replaceWith = kotlin.ReplaceWith(expression = "toDouble(DurationUnit.MINUTES)", imports = {}))
     public final val inMinutes: kotlin.Double { get; }
 
+    @kotlin.Deprecated(message = "Use inWholeNanoseconds property instead or convert toDouble(NANOSECONDS) if a double value is required.", replaceWith = kotlin.ReplaceWith(expression = "toDouble(DurationUnit.NANOSECONDS)", imports = {}))
     public final val inNanoseconds: kotlin.Double { get; }
 
+    @kotlin.Deprecated(message = "Use inWholeSeconds property instead or convert toDouble(SECONDS) if a double value is required.", replaceWith = kotlin.ReplaceWith(expression = "toDouble(DurationUnit.SECONDS)", imports = {}))
     public final val inSeconds: kotlin.Double { get; }
+
+    @kotlin.SinceKotlin(version = "1.5")
+    public final val inWholeDays: kotlin.Long { get; }
+
+    @kotlin.SinceKotlin(version = "1.5")
+    public final val inWholeHours: kotlin.Long { get; }
+
+    @kotlin.SinceKotlin(version = "1.5")
+    public final val inWholeMicroseconds: kotlin.Long { get; }
+
+    @kotlin.SinceKotlin(version = "1.5")
+    public final val inWholeMilliseconds: kotlin.Long { get; }
+
+    @kotlin.SinceKotlin(version = "1.5")
+    public final val inWholeMinutes: kotlin.Long { get; }
+
+    @kotlin.SinceKotlin(version = "1.5")
+    public final val inWholeNanoseconds: kotlin.Long { get; }
+
+    @kotlin.SinceKotlin(version = "1.5")
+    public final val inWholeSeconds: kotlin.Long { get; }
 
     public open override operator fun compareTo(other: kotlin.time.Duration): kotlin.Int
 
@@ -241,8 +269,10 @@ public final inline class Duration : kotlin.Comparable<kotlin.time.Duration> {
 
     public final fun toLong(unit: kotlin.time.DurationUnit): kotlin.Long
 
+    @kotlin.Deprecated(message = "Use inWholeMilliseconds property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.inWholeMilliseconds", imports = {}))
     public final fun toLongMilliseconds(): kotlin.Long
 
+    @kotlin.Deprecated(message = "Use inWholeNanoseconds property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.inWholeNanoseconds", imports = {}))
     public final fun toLongNanoseconds(): kotlin.Long
 
     public open override fun toString(): kotlin.String

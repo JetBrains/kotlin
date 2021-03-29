@@ -24,22 +24,22 @@ class DurationTest {
         // nanosecond precision
         val testValues = listOf(0L, 1L, MAX_NANOS) + List(100) { Random.nextLong(0, MAX_NANOS) }
         for (value in testValues) {
-            assertEquals(value, value.toDuration(DurationUnit.NANOSECONDS).toLongNanoseconds())
-            assertEquals(-value, -value.toDuration(DurationUnit.NANOSECONDS).toLongNanoseconds())
+            assertEquals(value, value.toDuration(DurationUnit.NANOSECONDS).inWholeNanoseconds)
+            assertEquals(-value, -value.toDuration(DurationUnit.NANOSECONDS).inWholeNanoseconds)
         }
         // expressible as long nanoseconds but stored as milliseconds
         for (delta in testValues) {
             val value = (MAX_NANOS + 1) + delta
             val expected = value - (value % NANOS_IN_MILLIS)
-            assertEquals(expected, value.toDuration(DurationUnit.NANOSECONDS).toLongNanoseconds())
-            assertEquals(-expected, -value.toDuration(DurationUnit.NANOSECONDS).toLongNanoseconds())
+            assertEquals(expected, value.toDuration(DurationUnit.NANOSECONDS).inWholeNanoseconds)
+            assertEquals(-expected, -value.toDuration(DurationUnit.NANOSECONDS).inWholeNanoseconds)
         }
         // any int value of small units can always be represented in nanoseconds
         for (unit in units.filter { it <= DurationUnit.SECONDS }) {
             val scale = convertDurationUnitOverflow(1L, unit, DurationUnit.NANOSECONDS)
             repeat(100) {
                 val value = Random.nextInt()
-                assertEquals(value * scale, value.toDuration(unit).toLongNanoseconds())
+                assertEquals(value * scale, value.toDuration(unit).inWholeNanoseconds)
             }
         }
 
@@ -51,7 +51,7 @@ class DurationTest {
             assertEquals(d2, d2 + Duration.nanoseconds(1))
         }
 
-        assertEquals(Long.MAX_VALUE / 1000, Long.MAX_VALUE.toDuration(DurationUnit.MICROSECONDS).toLongMilliseconds())
+        assertEquals(Long.MAX_VALUE / 1000, Long.MAX_VALUE.toDuration(DurationUnit.MICROSECONDS).inWholeMilliseconds)
         assertEquals(Long.MAX_VALUE / 1000 * 1000, Long.MAX_VALUE.toDuration(DurationUnit.MICROSECONDS).toLong(DurationUnit.MICROSECONDS))
 
         assertEquals(Duration.INFINITE, (MAX_MILLIS).toDuration(DurationUnit.MILLISECONDS))
@@ -60,8 +60,8 @@ class DurationTest {
         run {
             val maxNsDouble = MAX_NANOS.toDouble()
             val lessThanMaxDouble = maxNsDouble.nextDown()
-            val maxNs = maxNsDouble.toDuration(DurationUnit.NANOSECONDS).toLongNanoseconds()
-            val lessThanMaxNs = lessThanMaxDouble.toDuration(DurationUnit.NANOSECONDS).toLongNanoseconds()
+            val maxNs = maxNsDouble.toDuration(DurationUnit.NANOSECONDS).inWholeNanoseconds
+            val lessThanMaxNs = lessThanMaxDouble.toDuration(DurationUnit.NANOSECONDS).inWholeNanoseconds
             assertTrue(maxNs > lessThanMaxNs, "$maxNs should be > $lessThanMaxNs")
         }
 
@@ -95,10 +95,10 @@ class DurationTest {
             }
         }
 
-        run { // invariant Duration.nanoseconds(d.toLongNanoseconds()) == d when duration does not overflow nanoseconds
+        run { // invariant Duration.nanoseconds(d.inWholeNanoseconds) == d when whole nanoseconds fits into Long range
             val d1 = Duration.nanoseconds(MAX_NANOS + 1)
-            val d2 = Duration.nanoseconds(d1.toLongNanoseconds())
-            assertEquals(d1.toLongNanoseconds(), d2.toLongNanoseconds())
+            val d2 = Duration.nanoseconds(d1.inWholeNanoseconds)
+            assertEquals(d1.inWholeNanoseconds, d2.inWholeNanoseconds)
             assertEquals(d1, d2)
         }
     }
@@ -109,8 +109,8 @@ class DurationTest {
             assertTrue(d1 > d2, message)
             assertFalse(d1 <= d2, message)
             assertTrue(
-                d1.toLongNanoseconds() > d2.toLongNanoseconds() ||
-                        d1.toLongNanoseconds() == d2.toLongNanoseconds() && d1.toLongMilliseconds() > d2.toLongMilliseconds(),
+                d1.inWholeNanoseconds > d2.inWholeNanoseconds ||
+                        d1.inWholeNanoseconds == d2.inWholeNanoseconds && d1.inWholeMilliseconds > d2.inWholeMilliseconds,
                 message
             )
         }
@@ -167,23 +167,26 @@ class DurationTest {
 
     @Test
     fun conversionToNumber() {
-        assertEquals(24.0, Duration.days(1).inHours)
-        assertEquals(0.5, Duration.hours(12).inDays)
-        assertEquals(15.0, Duration.hours(0.25).inMinutes)
-        assertEquals(600.0, Duration.minutes(10).inSeconds)
-        assertEquals(500.0, Duration.seconds(0.5).inMilliseconds)
-        assertEquals(50_000.0, Duration.seconds(0.05).inMicroseconds)
-        assertEquals(50_000.0, Duration.milliseconds(0.05).inNanoseconds)
+        assertEquals(24, Duration.days(1).inWholeHours)
+        assertEquals(0.5, Duration.hours(12).toDouble(DurationUnit.DAYS))
+        assertEquals(0, Duration.hours(12).inWholeDays)
+        assertEquals(15, Duration.hours(0.25).inWholeMinutes)
+        assertEquals(600, Duration.minutes(10).inWholeSeconds)
+        assertEquals(500, Duration.seconds(0.5).inWholeMilliseconds)
+        assertEquals(50_000, Duration.seconds(0.05).inWholeMicroseconds)
+        assertEquals(50_000, Duration.milliseconds(0.05).inWholeNanoseconds)
 
-        assertEquals(365 * 86400e9, Duration.days(365).inNanoseconds)
+        assertEquals(365 * 86400 * 1_000_000_000L, Duration.days(365).inWholeNanoseconds)
 
-        assertEquals(0.0, Duration.ZERO.inNanoseconds)
+        assertEquals(0, Duration.ZERO.inWholeNanoseconds)
+        assertEquals(0, Duration.ZERO.inWholeMicroseconds)
+        assertEquals(0, Duration.ZERO.inWholeMilliseconds)
 
-        assertEquals(10500, Duration.seconds(10.5).toLongMilliseconds())
-        assertEquals(11, Duration.milliseconds(11.5).toLongMilliseconds())
-        assertEquals(-11, Duration.milliseconds((-11.5)).toLongMilliseconds())
-        assertEquals(252_000_000, Duration.milliseconds(252).toLongNanoseconds())
-        assertEquals(Long.MAX_VALUE, (Duration.days(365) * 293).toLongNanoseconds()) // clamping overflowed value
+        assertEquals(10500, Duration.seconds(10.5).inWholeMilliseconds)
+        assertEquals(11, Duration.milliseconds(11.5).inWholeMilliseconds)
+        assertEquals(-11, Duration.milliseconds((-11.5)).inWholeMilliseconds)
+        assertEquals(252_000_000, Duration.milliseconds(252).inWholeNanoseconds)
+        assertEquals(Long.MAX_VALUE, (Duration.days(365) * 293).inWholeNanoseconds) // clamping overflowed value
 
         repeat(100) {
             val value = Random.nextLong(1000)
@@ -206,28 +209,29 @@ class DurationTest {
     @Test
     fun componentsOfProperSum() {
         repeat(100) {
+            val d = Random.nextInt(365 * 50) // fits in Int seconds
             val h = Random.nextInt(24)
             val m = Random.nextInt(60)
             val s = Random.nextInt(60)
             val ns = Random.nextInt(1e9.toInt())
-            (Duration.hours(h) + Duration.minutes(m) + Duration.seconds(s) + Duration.nanoseconds(ns)).run {
+            (Duration.days(d) + Duration.hours(h) + Duration.minutes(m) + Duration.seconds(s) + Duration.nanoseconds(ns)).run {
                 toComponents { seconds, nanoseconds ->
-                    assertEquals(h.toLong() * 3600 + m * 60 + s, seconds)
+                    assertEquals(d.toLong() * 86400 + h * 3600 + m * 60 + s, seconds)
                     assertEquals(ns, nanoseconds)
                 }
                 toComponents { minutes, seconds, nanoseconds ->
-                    assertEquals(h * 60 + m, minutes)
+                    assertEquals(d * 1440 + h * 60 + m, minutes)
                     assertEquals(s, seconds)
                     assertEquals(ns, nanoseconds)
                 }
                 toComponents { hours, minutes, seconds, nanoseconds ->
-                    assertEquals(h, hours)
+                    assertEquals(d * 24 + h, hours)
                     assertEquals(m, minutes)
                     assertEquals(s, seconds)
-                    assertEquals(ns, nanoseconds, "ns component of duration ${toIsoString()} differs too much, expected: $ns, actual: $nanoseconds")
+                    assertEquals(ns, nanoseconds)
                 }
                 toComponents { days, hours, minutes, seconds, nanoseconds ->
-                    assertEquals(0, days)
+                    assertEquals(d, days)
                     assertEquals(h, hours)
                     assertEquals(m, minutes)
                     assertEquals(s, seconds)
@@ -302,9 +306,9 @@ class DurationTest {
             assertFalse(value.isPositive())
             assertEquals(Duration.ZERO.toString(), value.toString())
             assertEquals(Duration.ZERO.toIsoString(), value.toIsoString())
-            assertEquals(Duration.ZERO.inSeconds, value.inSeconds)
+            assertEquals(Duration.ZERO.toDouble(DurationUnit.SECONDS), value.toDouble(DurationUnit.SECONDS))
             assertEquals(0, Duration.ZERO.compareTo(value))
-            assertEquals(0, Duration.ZERO.inNanoseconds.compareTo(value.inNanoseconds))
+            assertEquals(0, Duration.ZERO.toDouble(DurationUnit.NANOSECONDS).compareTo(value.toDouble(DurationUnit.NANOSECONDS)))
         }
         equivalentToZero(Duration.seconds(-0.0))
         equivalentToZero((-0.0).toDuration(DurationUnit.DAYS))
@@ -345,8 +349,8 @@ class DurationTest {
             val offset = 2L * NANOS_IN_MILLIS
             val value = MAX_NANOS + offset
             val base = Duration.nanoseconds(value)
-            val baseNs = base.toLongMilliseconds() * NANOS_IN_MILLIS
-            assertEquals(baseNs, base.toLongNanoseconds())  // base stored as millis
+            val baseNs = base.inWholeMilliseconds * NANOS_IN_MILLIS
+            assertEquals(baseNs, base.inWholeNanoseconds)  // base stored as millis
 
             val smallDeltas = listOf(1L, 2L, 1000L, NANOS_IN_MILLIS - 1L) + List(10) { Random.nextLong(NANOS_IN_MILLIS.toLong()) }
             for (smallDeltaNs in smallDeltas) {
@@ -358,8 +362,8 @@ class DurationTest {
                     List(100) { Random.nextLong(offset + 1500, MAX_NANOS) }
             for (deltaNs in deltas) {
                 val delta = Duration.nanoseconds(deltaNs)
-                assertEquals(deltaNs, delta.toLongNanoseconds())
-                assertEquals(baseNs - deltaNs, (base - delta).toLongNanoseconds(), "base: $baseNs, delta: $deltaNs")
+                assertEquals(deltaNs, delta.inWholeNanoseconds)
+                assertEquals(baseNs - deltaNs, (base - delta).inWholeNanoseconds, "base: $baseNs, delta: $deltaNs")
             }
         }
 
@@ -389,8 +393,8 @@ class DurationTest {
 
         run { // promoting nanos range to millis range after multiplication
             val value = MAX_NANOS
-            assertEquals(value, (Duration.nanoseconds(value) * 1_000_000).toLongMilliseconds())
-            assertEquals(value / 1000, (Duration.nanoseconds(value) * 1_000).toLongMilliseconds())
+            assertEquals(value, (Duration.nanoseconds(value) * 1_000_000).inWholeMilliseconds)
+            assertEquals(value / 1000, (Duration.nanoseconds(value) * 1_000).inWholeMilliseconds)
             assertEquals(Duration.INFINITE, Duration.nanoseconds(Long.MAX_VALUE / 1000 + 1) * 1_000_000_000)
         }
 
@@ -421,7 +425,7 @@ class DurationTest {
 
         run {
             val value = MAX_NANOS
-            assertEquals(value, (Duration.milliseconds(value) / 1_000_000).toLongNanoseconds())
+            assertEquals(value, (Duration.milliseconds(value) / 1_000_000).inWholeNanoseconds)
         }
 
         assertEquals(Duration.INFINITE, Duration.seconds(1) / 0)
