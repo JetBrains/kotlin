@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2021 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.config;
+package org.jetbrains.kotlin.config
 
-public class SettingConstants {
-    private SettingConstants() {}
-
-    public static final String KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION = "KotlinCommonCompilerArguments";
-    public static final String KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION = "Kotlin2JsCompilerArguments";
-    public static final String KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION = "Kotlin2JvmCompilerArguments";
-    public static final String KOTLIN_COMPILER_SETTINGS_SECTION = "KotlinCompilerSettings";
-
-    public static final String KOTLIN_COMPILER_SETTINGS_FILE = "kotlinc.xml";
+object SettingConstants {
+    const val KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION = "KotlinCommonCompilerArguments"
+    const val KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION = "Kotlin2JsCompilerArguments"
+    const val KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION = "Kotlin2JvmCompilerArguments"
+    const val KOTLIN_COMPILER_SETTINGS_SECTION = "KotlinCompilerSettings"
+    const val KOTLIN_COMPILER_SETTINGS_FILE = "kotlinc.xml"
 }
