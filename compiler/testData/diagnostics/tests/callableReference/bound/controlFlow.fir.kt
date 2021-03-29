@@ -1,3 +1,5 @@
+// !DIAGNOSICS: +UNUSED_EXPRESSION
+
 fun unusedExpression(s: String) {
     s::hashCode
     s::class

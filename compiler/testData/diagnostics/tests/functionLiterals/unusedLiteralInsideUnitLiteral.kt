@@ -1,3 +1,5 @@
+// !DIAGNOSICS: +UNUSED_LAMBDA_EXPRESSION
+
 fun main() {
     "".run {
         <!UNUSED_LAMBDA_EXPRESSION!>{}<!>

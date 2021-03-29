@@ -1,4 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
+// !DIAGNOSICS: +UNUSED_VARIABLE
 
 fun foo(): Any = 42
 

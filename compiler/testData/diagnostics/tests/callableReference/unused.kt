@@ -1,3 +1,4 @@
+// !DIAGNOSICS: +UNUSED_EXPRESSION
 fun foo() {
 
 }
