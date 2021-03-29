@@ -6,10 +6,10 @@
     class C : A<C>()
 
     val a = B<C>()
-    val a1 = B<Int>()
+    val a1 = B<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol@29263cc3'">Int</error>>()
 
     class X<A, B : A>()
 
     val b = X<Any, X<A<C>, C>>()
-    val b0 = X<Any, Any?>()
-    val b1 = X<Any, X<A<C>, String>>()
+    val b0 = X<Any, <error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol@2826285f'">Any?</error>>()
+    val b1 = X<Any, <error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol@2826285f'">X<A<C>, String></error>>()

@@ -35,11 +35,11 @@ internal class ComposedExpressionCheckers : ExpressionCheckers() {
 
     @CheckersComponentInternal
     internal fun register(checkers: ExpressionCheckers) {
-        _basicExpressionCheckers += checkers.allBasicExpressionCheckers
-        _qualifiedAccessCheckers += checkers.allQualifiedAccessCheckers
-        _functionCallCheckers += checkers.allFunctionCallCheckers
-        _variableAssignmentCheckers += checkers.allVariableAssignmentCheckers
-        _tryExpressionCheckers += checkers.allTryExpressionCheckers
-        _whenExpressionCheckers += checkers.allWhenExpressionCheckers
+        _basicExpressionCheckers += checkers.basicExpressionCheckers
+        _qualifiedAccessCheckers += checkers.qualifiedAccessCheckers
+        _functionCallCheckers += checkers.functionCallCheckers
+        _variableAssignmentCheckers += checkers.variableAssignmentCheckers
+        _tryExpressionCheckers += checkers.tryExpressionCheckers
+        _whenExpressionCheckers += checkers.whenExpressionCheckers
     }
 }

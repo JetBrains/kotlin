@@ -22,16 +22,16 @@ class Test1<T>()
   {
 
   fun test(t : T) {
-    T.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: foo">foo</error>()
-    T.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
+    <error descr="[TYPE_PARAMETER_ON_LHS_OF_DOT] Type parameter 'T' cannot have or inherit a companion object, so it cannot be on the left hand side of dot">T</error>.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: foo">foo</error>()
+    <error descr="[TYPE_PARAMETER_ON_LHS_OF_DOT] Type parameter 'T' cannot have or inherit a companion object, so it cannot be on the left hand side of dot">T</error>.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
     t.foo()
     t.bar()
   }
 }
 
 fun test() {
-  Test1<B>()
-  Test1<A>()
+  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol@4c663d20'">B</error>>()
+  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol@4c663d20'">A</error>>()
   Test1<C>()
 }
 
@@ -50,8 +50,8 @@ fun <T> test2(t : T)
     T : B,
     B : T
 {
-  T.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: foo">foo</error>()
-  T.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
+  <error descr="[TYPE_PARAMETER_ON_LHS_OF_DOT] Type parameter 'T' cannot have or inherit a companion object, so it cannot be on the left hand side of dot">T</error>.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: foo">foo</error>()
+  <error descr="[TYPE_PARAMETER_ON_LHS_OF_DOT] Type parameter 'T' cannot have or inherit a companion object, so it cannot be on the left hand side of dot">T</error>.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
   t.foo()
   t.bar()
 }
