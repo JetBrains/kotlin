@@ -333,8 +333,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         gradleBuildScript().appendText(
             "\n" + """
             configurations.create("custom")
-            repositories.maven { setUrl("https://dl.bintray.com/kotlin/kotlinx") }
-            dependencies { custom("org.jetbrains.kotlinx:kotlinx-cli:0.3.2") }
+            dependencies { custom("org.jetbrains.kotlinx:atomicfu:0.15.2") }
             tasks.register("resolveCustom") { doLast { println("###" + configurations.custom.toList()) } }
             """.trimIndent()
         )
@@ -343,7 +342,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             assertSuccessful()
             val printedLine = output.lines().single { "###[" in it }.substringAfter("###")
             val items = printedLine.removeSurrounding("[", "]").split(", ")
-            assertTrue(items.toString()) { items.any { "kotlinx-cli-jvm" in it } }
+            assertTrue(items.toString()) { items.any { "atomicfu-jvm" in it } }
         }
     }
 
