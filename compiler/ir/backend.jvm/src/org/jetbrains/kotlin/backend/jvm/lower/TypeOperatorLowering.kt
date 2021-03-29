@@ -406,7 +406,14 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                     "${owner.name.asString()}(...)"
                 } else {
                     val (startOffset, endOffset) = expression.extents()
-                    sourceViewFor(parent as IrDeclaration).subSequence(startOffset, endOffset).toString()
+                    val declarationParent = parent as? IrDeclaration
+                    val sourceView = declarationParent?.let(::sourceViewFor)
+                    if (sourceView != null && startOffset >= 0 && endOffset < sourceView.length) {
+                        sourceView.subSequence(startOffset, endOffset).toString()
+                    } else {
+                        // Fallback for inconsistent line numbers
+                        declarationParent.safeAs<IrDeclarationWithName>()?.name?.asString() ?: "Unknown Declaration"
+                    }
                 }
 
                 irLetS(expression.argument.transformVoid(), irType = context.irBuiltIns.anyNType) { valueSymbol ->
@@ -432,14 +439,14 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 origin == IrDeclarationOrigin.DELEGATED_MEMBER
 
     private fun IrElement.extents(): Pair<Int, Int> {
-        var startOffset = UNDEFINED_OFFSET
-        var endOffset = UNDEFINED_OFFSET
+        var startOffset = Int.MAX_VALUE
+        var endOffset = 0
         acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
-                if (startOffset == UNDEFINED_OFFSET || element.startOffset != UNDEFINED_OFFSET && element.startOffset < startOffset)
+                if (element.startOffset in 0 until startOffset)
                     startOffset = element.startOffset
-                if (endOffset == UNDEFINED_OFFSET || element.endOffset != UNDEFINED_OFFSET && endOffset < element.endOffset)
+                if (endOffset < element.endOffset)
                     endOffset = element.endOffset
             }
         })
