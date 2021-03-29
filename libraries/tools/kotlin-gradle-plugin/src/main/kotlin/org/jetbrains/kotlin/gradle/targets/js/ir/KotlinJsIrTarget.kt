@@ -222,7 +222,5 @@ constructor(
 
     private fun KotlinJsOptions.configureCommonJsOptions() {
         moduleKind = "commonjs"
-        sourceMap = true
-        sourceMapEmbedSources = null
     }
 }
