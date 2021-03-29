@@ -50,7 +50,7 @@ import java.io.InputStream
 
 //TODO make thread safe
 @ThreadSafeMutableState
-class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider(session) {
+open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider(session) {
 
     private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassKind, val arity: Int)
 
@@ -243,6 +243,10 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+        getTopLevelFunctionSymbolsToByPackageFragments(destination, packageFqName, name)
+    }
+
+    protected fun getTopLevelFunctionSymbolsToByPackageFragments(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
         allPackageFragments[packageFqName]?.flatMapTo(destination) {
             it.getTopLevelFunctionSymbols(name)
         }
