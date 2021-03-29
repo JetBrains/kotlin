@@ -5,3 +5,4 @@ class Test {
             return 1
         }
 }
+/* IGNORE_FIR */

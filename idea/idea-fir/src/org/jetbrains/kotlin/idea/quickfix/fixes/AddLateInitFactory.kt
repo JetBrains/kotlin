@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtProperty
 
 object AddLateInitFactory {
-
-    @OptIn(ExperimentalStdlibApi::class)
     val addLateInitFactory = diagnosticFixFactory<KtFirDiagnostic.MustBeInitializedOrBeAbstract> { diagnostic ->
         val property: KtProperty = diagnostic.psi
         if (!property.isVar) return@diagnosticFixFactory emptyList()
