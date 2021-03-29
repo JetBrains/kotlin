@@ -21,6 +21,8 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
         get() = _memberDeclarationCheckers
     override val functionCheckers: Set<FirFunctionChecker>
         get() = _functionCheckers
+    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        get() = _simpleFunctionCheckers
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = _propertyCheckers
     override val classCheckers: Set<FirClassChecker>
@@ -39,6 +41,7 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
     private val _basicDeclarationCheckers: MutableSet<FirBasicDeclarationChecker> = mutableSetOf()
     private val _memberDeclarationCheckers: MutableSet<FirMemberDeclarationChecker> = mutableSetOf()
     private val _functionCheckers: MutableSet<FirFunctionChecker> = mutableSetOf()
+    private val _simpleFunctionCheckers: MutableSet<FirSimpleFunctionChecker> = mutableSetOf()
     private val _propertyCheckers: MutableSet<FirPropertyChecker> = mutableSetOf()
     private val _classCheckers: MutableSet<FirClassChecker> = mutableSetOf()
     private val _regularClassCheckers: MutableSet<FirRegularClassChecker> = mutableSetOf()
@@ -49,14 +52,15 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
 
     @CheckersComponentInternal
     internal fun register(checkers: DeclarationCheckers) {
-        _basicDeclarationCheckers += checkers.allBasicDeclarationCheckers
-        _memberDeclarationCheckers += checkers.allMemberDeclarationCheckers
-        _functionCheckers += checkers.allFunctionCheckers
-        _propertyCheckers += checkers.allPropertyCheckers
-        _classCheckers += checkers.allClassCheckers
-        _regularClassCheckers += checkers.allRegularClassCheckers
-        _constructorCheckers += checkers.allConstructorCheckers
-        _fileCheckers += checkers.allFileCheckers
+        _basicDeclarationCheckers += checkers.basicDeclarationCheckers
+        _memberDeclarationCheckers += checkers.memberDeclarationCheckers
+        _functionCheckers += checkers.functionCheckers
+        _simpleFunctionCheckers += checkers.simpleFunctionCheckers
+        _propertyCheckers += checkers.propertyCheckers
+        _classCheckers += checkers.classCheckers
+        _regularClassCheckers += checkers.regularClassCheckers
+        _constructorCheckers += checkers.constructorCheckers
+        _fileCheckers += checkers.fileCheckers
         _controlFlowAnalyserCheckers += checkers.controlFlowAnalyserCheckers
         _variableAssignmentCfaBasedCheckers += checkers.variableAssignmentCfaBasedCheckers
     }

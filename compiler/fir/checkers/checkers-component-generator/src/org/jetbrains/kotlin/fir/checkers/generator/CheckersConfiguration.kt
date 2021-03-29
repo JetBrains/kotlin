@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.checkers.generator
 
 import kotlin.reflect.KClass
-import kotlin.reflect.full.superclasses
+import kotlin.reflect.full.allSuperclasses
 
 class CheckersConfiguration(
     val aliases: Map<KClass<*>, String>,
@@ -17,19 +17,17 @@ class CheckersConfiguration(
     init {
         val parents: MutableMap<KClass<*>, List<KClass<*>>> = mutableMapOf()
         for (firKClass in aliases.keys) {
-            val directParents = mutableListOf<KClass<*>>()
+            val allParents = mutableListOf<KClass<*>>()
             bfs(
                 firKClass,
-                childrenExtractor = { it.superclasses }
+                childrenExtractor = { it.allSuperclasses }
             ) {
                 if (it in aliases) {
-                    directParents += it
-                    false
-                } else {
-                    true
+                    allParents += it
                 }
+                true
             }
-            parents[firKClass] = directParents
+            parents[firKClass] = allParents
         }
         parentsMap = parents
     }

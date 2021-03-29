@@ -18,10 +18,12 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 
 typealias FirBasicDeclarationChecker = FirDeclarationChecker<FirDeclaration>
 typealias FirMemberDeclarationChecker = FirDeclarationChecker<FirMemberDeclaration>
 typealias FirFunctionChecker = FirDeclarationChecker<FirFunction<*>>
+typealias FirSimpleFunctionChecker = FirDeclarationChecker<FirSimpleFunction>
 typealias FirPropertyChecker = FirDeclarationChecker<FirProperty>
 typealias FirClassChecker = FirDeclarationChecker<FirClass<*>>
 typealias FirRegularClassChecker = FirDeclarationChecker<FirRegularClass>

@@ -16,7 +16,7 @@ import java.util.*
 
     protected fun <T : Element> initTag(init :  T.() -> Unit) : T
       {
-      val tag = T.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: create">create</error>()
+      val tag = <error descr="[TYPE_PARAMETER_ON_LHS_OF_DOT] Type parameter 'T' cannot have or inherit a companion object, so it cannot be on the left hand side of dot">T</error>.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: create">create</error>()
       tag.init()
       children.add(tag)
       return tag
