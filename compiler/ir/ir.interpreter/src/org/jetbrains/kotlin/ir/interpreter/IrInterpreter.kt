@@ -11,38 +11,18 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.ir.interpreter.builtins.interpretBinaryFunction
-import org.jetbrains.kotlin.ir.interpreter.builtins.interpretTernaryFunction
-import org.jetbrains.kotlin.ir.interpreter.builtins.interpretUnaryFunction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterTimeOutError
-import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.Complex
-import org.jetbrains.kotlin.ir.interpreter.state.ExceptionState
-import org.jetbrains.kotlin.ir.interpreter.state.Primitive
-import org.jetbrains.kotlin.ir.interpreter.state.State
-import org.jetbrains.kotlin.ir.interpreter.state.asBoolean
-import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import java.lang.invoke.MethodHandle
 
 internal interface Instruction {
     val element: IrElement?
@@ -56,13 +36,13 @@ internal class CustomInstruction(val evaluate: () -> Unit) : Instruction {
 }
 
 class IrInterpreter private constructor(
-    private val bodyMap: Map<IdSignature, IrBody>,
-    private val environment: IrInterpreterEnvironment
+    internal val bodyMap: Map<IdSignature, IrBody>, internal val environment: IrInterpreterEnvironment
 ) {
     val irBuiltIns: IrBuiltIns
         get() = environment.irBuiltIns
     private val callStack: CallStack
         get() = environment.callStack
+    private val callInterceptor: CallInterceptor = DefaultCallInterceptor(this)
     private var commandCount = 0
 
     constructor(irBuiltIns: IrBuiltIns, bodyMap: Map<IdSignature, IrBody> = emptyMap()) :
@@ -76,22 +56,6 @@ class IrInterpreter private constructor(
     private fun incrementAndCheckCommands() {
         commandCount++
         if (commandCount >= IrInterpreterEnvironment.MAX_COMMANDS) InterpreterTimeOutError().handleUserException(environment)
-    }
-
-    private fun Any?.getType(defaultType: IrType): IrType {
-        return when (this) {
-            is Boolean -> irBuiltIns.booleanType
-            is Char -> irBuiltIns.charType
-            is Byte -> irBuiltIns.byteType
-            is Short -> irBuiltIns.shortType
-            is Int -> irBuiltIns.intType
-            is Long -> irBuiltIns.longType
-            is String -> irBuiltIns.stringType
-            is Float -> irBuiltIns.floatType
-            is Double -> irBuiltIns.doubleType
-            null -> irBuiltIns.nothingNType
-            else -> defaultType
-        }
     }
 
     private fun getUnitState(): State {
@@ -177,76 +141,16 @@ class IrInterpreter private constructor(
         }
     }
 
+    private fun IrFunction.tryResetFunctionBody() {
+        val signature = this.symbol.signature ?: return
+        if (bodyMap[signature] != null) this.body = null
+    }
+
     private fun interpretFunction(function: IrSimpleFunction) {
         function.tryResetFunctionBody()
         if (function.checkCast(environment)) {
             callStack.dropFrameAndCopyResult()
         }
-    }
-
-    private fun MethodHandle?.invokeMethod(irFunction: IrFunction, args: List<State>) {
-        this ?: return handleIntrinsicMethods(irFunction)
-        val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(this@IrInterpreter, this.type(), args)
-        withExceptionHandler(environment) {
-            val result = this.invokeWithArguments(argsForMethodInvocation)
-            callStack.pushState(result.toState(result.getType(irFunction.returnType)))
-        }
-    }
-
-    private fun handleIntrinsicMethods(irFunction: IrFunction) {
-        IntrinsicEvaluator.unwindInstructions(irFunction, environment).forEach { callStack.addInstruction(it) }
-    }
-
-    private fun calculateBuiltIns(irFunction: IrFunction, args: List<State>) {
-        val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
-            null -> irFunction.name.asString()
-            else -> property.owner.name.asString()
-        }
-
-        val receiverType = irFunction.dispatchReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
-        val argsValues = args.map { it.wrap(this, calledFromBuiltIns = methodName !in setOf("plus", IrBuiltIns.OperatorNames.EQEQ)) }
-
-        fun IrType.getOnlyName(): String {
-            return when {
-                this.originalKotlinType != null -> this.originalKotlinType.toString()
-                this is IrSimpleType -> (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + (if (this.hasQuestionMark) "?" else "")
-                else -> this.render()
-            }
-        }
-
-        // TODO replace unary, binary, ternary functions with vararg
-        withExceptionHandler(environment) {
-            val result = when (argsType.size) {
-                1 -> interpretUnaryFunction(methodName, argsType[0].getOnlyName(), argsValues[0])
-                2 -> when (methodName) {
-                    "rangeTo" -> return calculateRangeTo(irFunction.returnType, args)
-                    else -> interpretBinaryFunction(
-                        methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsValues[0], argsValues[1]
-                    )
-                }
-                3 -> interpretTernaryFunction(
-                    methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsType[2].getOnlyName(),
-                    argsValues[0], argsValues[1], argsValues[2]
-                )
-                else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin functions")
-            }
-            // TODO check "result is Unit"
-            callStack.pushState(result.toState(result.getType(irFunction.returnType)))
-        }
-    }
-
-    private fun calculateRangeTo(type: IrType, args: List<State>) {
-        val constructor = type.classOrNull!!.owner.constructors.first()
-        val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-        val constructorValueParameters = constructor.valueParameters.map { it.symbol }
-
-        val primitiveValueParameters = args.map { it as Primitive<*> }
-        primitiveValueParameters.forEachIndexed { index, primitive ->
-            constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
-        }
-
-        callStack.addInstruction(CompoundInstruction(constructorCall))
     }
 
     private fun interpretValueParameter(valueParameter: IrValueParameter) {
@@ -314,39 +218,7 @@ class IrInterpreter private constructor(
             generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
         }
 
-        val states = args.map { it.state }
-        // inline only methods are not presented in lookup table, so must be interpreted instead of execution
-        val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
-        when {
-            dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction, states)
-            irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, states)
-            dispatchReceiver is KFunctionState && call.symbol.owner.name.asString() == "invoke" -> callStack.addInstruction(CompoundInstruction(irFunction))
-            dispatchReceiver is ReflectionState -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, states)
-            dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction, states) // 'is Primitive' check for js char, js long and get field for primitives
-            irFunction.body is IrSyntheticBody -> handleIntrinsicMethods(irFunction)
-            irFunction.body == null ->
-                irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction, states)
-            else -> callStack.addInstruction(CompoundInstruction(irFunction))
-        }
-    }
-
-    private fun IrFunction.trySubstituteFunctionBody(): IrElement? {
-        val signature = this.symbol.signature ?: return null
-        this.body = bodyMap[signature] ?: return null
-        callStack.addInstruction(CompoundInstruction(this))
-        return body
-    }
-
-    private fun IrFunction.tryResetFunctionBody() {
-        val signature = this.symbol.signature ?: return
-        if (bodyMap[signature] != null) this.body = null
-    }
-
-    // TODO fix in FIR2IR; const val getter must have body with IrGetField node
-    private fun IrFunction.tryCalculateLazyConst(): IrExpression? {
-        if (this !is IrSimpleFunction) return null
-        val expression = this.correspondingPropertySymbol?.owner?.backingField?.initializer?.expression
-        return expression?.apply { callStack.addInstruction(CompoundInstruction(this)) }
+        callInterceptor.interceptCall(call, irFunction, dispatchReceiver, args.map { it.state })
     }
 
     private fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall) {
@@ -408,26 +280,7 @@ class IrInterpreter private constructor(
         }
         superReceiver?.let { callStack.addVariable(Variable(it, objectVar.state)) }
 
-        when {
-            irClass.hasAnnotation(evaluateIntrinsicAnnotation) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java")) -> {
-                Wrapper.getConstructorMethod(constructor).invokeMethod(constructor, valueArguments)
-                if (constructorCall !is IrConstructorCall) (objectVar.state as Common).superWrapperClass = callStack.popState() as Wrapper
-            }
-            irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray() -> {
-                // array constructor doesn't have body so must be treated separately
-                callStack.addVariable(Variable(constructor.symbol, KTypeState(constructorCall.type, irBuiltIns.anyClass.owner)))
-                handleIntrinsicMethods(constructor)
-            }
-            irClass.defaultType.isUnsignedType() && valueArguments.size == 1 && constructor.valueParameters.size == 1 -> {
-                callStack.pushState(objectVar.state.apply { fields.add(valueArguments.single()) })
-                callStack.addInstruction(SimpleInstruction(constructor))
-            }
-            else -> {
-                callStack.pushState(objectVar.state)
-                callStack.addInstruction(CompoundInstruction(constructor))
-            }
-        }
-
+        callInterceptor.interceptConstructor(constructorCall, objectVar.state, valueArguments)
     }
 
     private fun interpretDelegatingConstructorCall(constructorCall: IrDelegatingConstructorCall) {
@@ -507,12 +360,12 @@ class IrInterpreter private constructor(
     private fun interpretGetField(expression: IrGetField) {
         val receiver = (expression.receiver as? IrDeclarationReference)?.symbol
         val field = expression.symbol.owner
-        // for java static variables
         when {
             field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic -> {
+                // for java static variables
                 when (val initializerExpression = field.initializer?.expression) {
                     is IrConst<*> -> callStack.addInstruction(SimpleInstruction(initializerExpression))
-                    else -> callStack.pushState(Wrapper.getStaticGetter(field)!!.invokeWithArguments().toState(field.type))
+                    else -> callInterceptor.interceptJavaStaticField(expression)
                 }
             }
             field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.correspondingPropertySymbol?.owner?.isConst == true -> {
@@ -534,13 +387,7 @@ class IrInterpreter private constructor(
 
     private fun interpretGetObjectValue(expression: IrGetObjectValue) {
         callStack.dropSubFrame()
-
-        val objectClass = expression.symbol.owner
-        if (objectClass.hasAnnotation(evaluateIntrinsicAnnotation)) {
-            val result = Wrapper.getCompanionObject(objectClass)
-            environment.mapOfObjects[expression.symbol] = result
-            callStack.pushState(result)
-        }
+        callInterceptor.interceptGetObjectValue(expression)
     }
 
     private fun interpretGetEnumValue(expression: IrGetEnumValue) {
@@ -548,21 +395,7 @@ class IrInterpreter private constructor(
     }
 
     private fun interpretEnumEntry(enumEntry: IrEnumEntry) {
-        val enumClass = enumEntry.symbol.owner.parentAsClass
-
-        when {
-            enumClass.hasAnnotation(evaluateIntrinsicAnnotation) -> {
-                val enumEntryName = enumEntry.name.asString().toState(environment.irBuiltIns.stringType)
-                val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
-                Wrapper.getEnumEntry(enumClass)!!.invokeMethod(valueOfFun, listOf(enumEntryName))
-                environment.mapOfEnums[enumEntry.symbol] = callStack.popState() as Complex
-            }
-            else -> {
-                val enumSuperCall = (enumClass.primaryConstructor?.body?.statements?.firstOrNull() as? IrEnumConstructorCall)
-                enumSuperCall?.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
-                callStack.dropSubFrame()
-            }
-        }
+        callInterceptor.interceptEnumEntry(enumEntry)
     }
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall) {
