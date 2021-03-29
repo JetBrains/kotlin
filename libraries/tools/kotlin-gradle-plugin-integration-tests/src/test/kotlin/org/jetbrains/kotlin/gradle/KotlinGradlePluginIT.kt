@@ -413,8 +413,10 @@ class KotlinGradleIT : BaseGradleIT() {
         val project = Project("kotlinProject")
         project.setupWorkingDir()
         File(project.projectDir, "build.gradle").modify {
-            it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) } + "\n" + """
-            apply plugin: 'maven-publish'
+            """
+            $it
+            
+            plugins.apply('maven-publish')
             
             group = "com.example"
             version = "1.0"
@@ -442,7 +444,7 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
             val pomLines = File(project.projectDir, "build/publications/myLibrary/pom-default.xml").readLines()
-            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
+            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib-jdk8</artifactId>" in it } + 1
             val versionLine = pomLines[stdlibVersionLineNumber]
             assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
         }
@@ -1116,14 +1118,16 @@ class KotlinGradleIT : BaseGradleIT() {
         }
 
     @Test
-    fun testLoadCompilerEmbeddableAfterOtherKotlinArtifacts() = with(Project("simpleProject")) {
+    fun testLoadCompilerEmbeddableAfterOtherKotlinArtifacts() = with(Project("simpleProjectClasspath")) {
         setupWorkingDir()
         val buildscriptClasspathPrefix = "buildscript-classpath = "
-        gradleBuildScript().appendText(
-            "\n" + """
+        gradleBuildScript()
+            .appendText(
+                """
+               
                 println "$buildscriptClasspathPrefix" + Arrays.toString(buildscript.classLoader.getURLs())
-            """.trimIndent()
-        )
+                """.trimIndent()
+            )
 
         // get the classpath, then reorder it so that kotlin-compiler-embeddable is loaded after all other JARs
         lateinit var classpath: List<String>

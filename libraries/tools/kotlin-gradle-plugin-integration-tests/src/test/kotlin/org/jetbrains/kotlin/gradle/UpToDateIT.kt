@@ -115,8 +115,7 @@ class UpToDateIT : BaseGradleIT() {
         override fun initProject(project: Project) = with(project) {
             buildGradle.appendText(
                 "\n" + """
-                buildscript { dependencies { classpath "org.jetbrains.kotlin:kotlin-allopen:${'$'}kotlin_version" } }
-                apply plugin: "kotlin-allopen"
+                plugins.apply("org.jetbrains.kotlin.plugin.allopen")
                 allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
             """.trimIndent()
             )
