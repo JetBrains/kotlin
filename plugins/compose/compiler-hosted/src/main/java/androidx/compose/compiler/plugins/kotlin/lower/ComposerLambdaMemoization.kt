@@ -77,6 +77,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -266,6 +267,8 @@ class ComposerLambdaMemoization(
         val filePath = declaration.fileEntry.name
         val fileName = filePath.split('/').last()
         val current = context.irFactory.buildClass {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
             kind = ClassKind.OBJECT
             visibility = DescriptorVisibilities.INTERNAL
             val shortName = PackagePartClassUtils.getFilePartShortName(fileName)
@@ -549,6 +552,8 @@ class ComposerLambdaMemoization(
             visibility = DescriptorVisibilities.INTERNAL
         }.also { p ->
             p.backingField = context.irFactory.buildField {
+                startOffset = SYNTHETIC_OFFSET
+                endOffset = SYNTHETIC_OFFSET
                 name = Name.identifier(lambdaName)
                 type = lambdaType
                 visibility = DescriptorVisibilities.INTERNAL
