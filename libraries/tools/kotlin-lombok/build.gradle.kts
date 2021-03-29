@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import plugins.configureDefaultPublishing
 
 description = "Kotlin lombok compiler plugin"
 
