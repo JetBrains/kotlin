@@ -127,6 +127,7 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
@@ -920,17 +921,19 @@ abstract class AbstractComposeLowering(
         isVar: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
     ): IrVariableImpl {
+        val descriptor = WrappedVariableDescriptor()
         return IrVariableImpl(
             value.startOffset,
             value.endOffset,
             origin,
-            IrVariableSymbolImpl(WrappedVariableDescriptor()),
+            IrVariableSymbolImpl(descriptor),
             Name.identifier(name),
             irType,
             isVar,
             false,
             false
         ).apply {
+            descriptor.bind(this)
             initializer = value
         }
     }
@@ -1044,6 +1047,8 @@ abstract class AbstractComposeLowering(
 
     fun makeStabilityField(): IrField {
         return context.irFactory.buildField {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
             name = KtxNameConventions.STABILITY_FLAG
             isStatic = true
             isFinal = true
