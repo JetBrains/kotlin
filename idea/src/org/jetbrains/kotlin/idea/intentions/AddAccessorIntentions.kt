@@ -7,25 +7,20 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-abstract class AbstractAddAccessorsIntention(
-    private val addGetter: Boolean,
-    private val addSetter: Boolean
-) : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, createFamilyName(addGetter, addSetter)) {
+abstract class AddAccessorsIntention(
+    addGetter: Boolean,
+    addSetter: Boolean
+) : AbstractAddAccessorsIntention(addGetter, addSetter) {
 
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (element.isLocal || element.isAbstract() || element.hasDelegate() ||
@@ -43,35 +38,6 @@ abstract class AbstractAddAccessorsIntention(
         if (addSetter && (!element.isVar || element.setter != null)) return null
         if (addGetter && element.getter != null) return null
         return if (hasInitializer) element.nameIdentifier?.textRange else element.textRange
-    }
-
-    override fun applyTo(element: KtProperty, editor: Editor?) {
-        val hasInitializer = element.hasInitializer()
-        val psiFactory = KtPsiFactory(element)
-        if (addGetter) {
-            val expression = if (hasInitializer) psiFactory.createExpression("field") else psiFactory.createBlock("TODO()")
-            val getter = psiFactory.createPropertyGetter(expression)
-            val added = if (element.setter != null) {
-                element.addBefore(getter, element.setter)
-            } else {
-                element.add(getter)
-            }
-            if (!hasInitializer) {
-                (added as? KtPropertyAccessor)?.bodyBlockExpression?.statements?.firstOrNull()?.let {
-                    editor?.caretModel?.moveToOffset(it.startOffset)
-                }
-            }
-        }
-        if (addSetter) {
-            val expression = if (hasInitializer) psiFactory.createBlock("field = value") else psiFactory.createEmptyBody()
-            val setter = psiFactory.createPropertySetter(expression)
-            val added = element.add(setter)
-            if (!hasInitializer && !addGetter) {
-                (added as? KtPropertyAccessor)?.bodyBlockExpression?.lBrace?.let {
-                    editor?.caretModel?.moveToOffset(it.startOffset + 1)
-                }
-            }
-        }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -92,15 +58,8 @@ abstract class AbstractAddAccessorsIntention(
     }
 }
 
-private fun createFamilyName(addGetter: Boolean, addSetter: Boolean): () -> String = when {
-    addGetter && addSetter -> KotlinBundle.lazyMessage("text.add.getter.and.setter")
-    addGetter -> KotlinBundle.lazyMessage("text.add.getter")
-    addSetter -> KotlinBundle.lazyMessage("text.add.setter")
-    else -> throw AssertionError("At least one from (addGetter, addSetter) should be true")
-}
+class AddPropertyAccessorsIntention : AddAccessorsIntention(true, true), LowPriorityAction
 
-class AddPropertyAccessorsIntention : AbstractAddAccessorsIntention(true, true), LowPriorityAction
+class AddPropertyGetterIntention : AddAccessorsIntention(true, false)
 
-class AddPropertyGetterIntention : AbstractAddAccessorsIntention(true, false)
-
-class AddPropertySetterIntention : AbstractAddAccessorsIntention(false, true)
+class AddPropertySetterIntention : AddAccessorsIntention(false, true)
