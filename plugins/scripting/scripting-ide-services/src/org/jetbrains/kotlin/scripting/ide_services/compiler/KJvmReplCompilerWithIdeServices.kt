@@ -111,7 +111,7 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
             newSnippet,
             messageCollector,
             compilationState,
-            checkSyntaxErrors = false
+            failOnSyntaxErrors = false
         ).valueOr { return it }
 
         val analysisResult =

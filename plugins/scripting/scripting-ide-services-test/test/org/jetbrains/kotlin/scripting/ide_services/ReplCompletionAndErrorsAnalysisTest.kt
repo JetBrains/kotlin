@@ -199,6 +199,20 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     @Test
+    fun testIncompleteCode() = test {
+        run {
+            doErrorCheck
+
+            code = "fun g(): Int { return 1"
+
+            expect {
+                addError(1, 24, 1, 24, "Expecting '}'", "ERROR")
+                errors.add(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code"))
+            }
+        }
+    }
+
+    @Test
     fun testCompletionDuplication() = test {
         for (i in 1..6) {
             run {

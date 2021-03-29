@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -57,6 +58,28 @@ class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: Mess
             _diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
         }
         parentMessageCollector?.report(severity, message, location)
+    }
+
+    fun report(diagnostic: ScriptDiagnostic) {
+        _diagnostics.add(diagnostic)
+
+        if (parentMessageCollector == null) return
+        if (parentMessageCollector is ScriptDiagnosticsMessageCollector) {
+            parentMessageCollector.report(diagnostic)
+            return
+        }
+
+        val locationStart = diagnostic.location?.start
+        parentMessageCollector.report(
+            diagnostic.severity.toCompilerMessageSeverity(),
+            diagnostic.message,
+            CompilerMessageLocation.create(
+                null,
+                locationStart?.line ?: -1,
+                locationStart?.col ?: -1,
+                null
+            )
+        )
     }
 }
 
