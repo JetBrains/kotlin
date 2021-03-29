@@ -17209,6 +17209,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/boundMemberRef.kt");
                 }
 
+                @TestMetadata("boundRefToSuperClassMethod.kt")
+                public void testBoundRefToSuperClassMethod() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/boundRefToSuperClassMethod.kt");
+                }
+
+                @TestMetadata("boundRefToSuperInterfaceMethod.kt")
+                public void testBoundRefToSuperInterfaceMethod() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/boundRefToSuperInterfaceMethod.kt");
+                }
+
                 @TestMetadata("constructorRef.kt")
                 public void testConstructorRef() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/constructorRef.kt");

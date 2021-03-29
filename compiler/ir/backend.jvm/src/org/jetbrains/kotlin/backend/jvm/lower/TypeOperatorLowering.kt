@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -294,7 +293,8 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             when (targetFun) {
                 is IrSimpleFunction -> {
                     if (refDispatchReceiver != null) {
-                        addValueParameter("p${syntheticParameterIndex++}", targetFun.dispatchReceiverParameter!!.type)
+                        // Fake overrides may have inexact dispatch receiver type.
+                        addValueParameter("p${syntheticParameterIndex++}", targetFun.parentAsClass.defaultType)
                         dynamicCallArguments.add(refDispatchReceiver)
                     }
                     if (refExtensionReceiver != null) {
