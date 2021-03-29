@@ -86,7 +86,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                     declaration.initializer =
                             if (initExpression is IrConst<*> &&
                                     declaration.correspondingPropertySymbol?.owner?.isConst == true) {
-                                IrExpressionBodyImpl(initExpression.copy())
+                                IrExpressionBodyImpl(initExpression.shallowCopy())
                             } else {
                                 null
                             }

@@ -814,7 +814,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         require(initializer is IrConst<*>) { renderCompilerError(expression) }
 
         // Avoid node duplication
-        return initializer.copy()
+        return initializer.shallowCopy()
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
