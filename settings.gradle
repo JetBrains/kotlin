@@ -346,7 +346,8 @@ include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-runtime",
         ":kotlin-parcelize-compiler"
 
-include ":plugins:lombok:lombok-compiler-plugin"
+include ":plugins:lombok:lombok-compiler-plugin",
+        ":kotlin-lombok"
 
 include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
@@ -527,6 +528,7 @@ project(':kotlin-tooling-metadata').projectDir = "$rootDir/libraries/tools/kotli
 project(':kotlin-allopen').projectDir = "$rootDir/libraries/tools/kotlin-allopen" as File
 project(':kotlin-noarg').projectDir = "$rootDir/libraries/tools/kotlin-noarg" as File
 project(':kotlin-sam-with-receiver').projectDir = "$rootDir/libraries/tools/kotlin-sam-with-receiver" as File
+project(':kotlin-lombok').projectDir = "$rootDir/libraries/tools/kotlin-lombok" as File
 project(':kotlin-gradle-subplugin-example').projectDir = "$rootDir/libraries/examples/kotlin-gradle-subplugin-example" as File
 project(':examples:annotation-processor-example').projectDir = "$rootDir/libraries/examples/annotation-processor-example" as File
 project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File
