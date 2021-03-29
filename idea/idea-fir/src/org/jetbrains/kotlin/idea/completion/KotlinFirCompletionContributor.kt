@@ -82,6 +82,10 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
     }
 }
 
+private fun interface ExtensionApplicabilityChecker {
+    fun isApplicable(symbol: KtCallableSymbol): Boolean
+}
+
 /**
  * Currently, this class is responsible for collecting all possible completion variants.
  *
@@ -138,8 +142,9 @@ private class KotlinCommonCompletionProvider(
 
             val scopesContext = originalFile.getScopeContextForPosition(nameExpression)
 
-            fun KtCallableSymbol.hasSuitableExtensionReceiver(): Boolean =
-                checkExtensionIsSuitable(originalFile, nameExpression, explicitReceiver)
+            val extensionChecker = ExtensionApplicabilityChecker {
+                it.checkExtensionIsSuitable(originalFile, nameExpression, explicitReceiver)
+            }
 
             when {
                 nameExpression.parent is KtUserType -> collectTypesCompletion(result, scopesContext.scopes, expectedType)
@@ -148,9 +153,9 @@ private class KotlinCommonCompletionProvider(
                     scopesContext.scopes,
                     explicitReceiver,
                     expectedType,
-                    KtCallableSymbol::hasSuitableExtensionReceiver
+                    extensionChecker
                 )
-                else -> collectDefaultCompletion(result, scopesContext, expectedType, KtCallableSymbol::hasSuitableExtensionReceiver)
+                else -> collectDefaultCompletion(result, scopesContext, expectedType, extensionChecker)
             }
         }
     }
@@ -172,18 +177,18 @@ private class KotlinCommonCompletionProvider(
         implicitScopes: KtCompositeScope,
         explicitReceiver: KtExpression,
         expectedType: KtType?,
-        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean
+        extensionChecker: ExtensionApplicabilityChecker,
     ) {
         val typeOfPossibleReceiver = explicitReceiver.getKtType()
         val possibleReceiverScope = typeOfPossibleReceiver.getTypeScope() ?: return
 
         val nonExtensionMembers = possibleReceiverScope.collectNonExtensions()
-        val extensionNonMembers = implicitScopes.collectSuitableExtensions(hasSuitableExtensionReceiver)
+        val extensionNonMembers = implicitScopes.collectSuitableExtensions(extensionChecker)
 
         nonExtensionMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionNonMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
 
-        collectTopLevelExtensionsFromIndices(listOf(typeOfPossibleReceiver), hasSuitableExtensionReceiver)
+        collectTopLevelExtensionsFromIndices(listOf(typeOfPossibleReceiver), extensionChecker)
             .forEach { addSymbolToCompletion(result, expectedType, it) }
 
     }
@@ -192,12 +197,12 @@ private class KotlinCommonCompletionProvider(
         result: CompletionResultSet,
         implicitScopesContext: KtScopeContext,
         expectedType: KtType?,
-        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean,
+        extensionChecker: ExtensionApplicabilityChecker,
     ) {
         val (implicitScopes, implicitReceiversTypes) = implicitScopesContext
 
         val availableNonExtensions = implicitScopes.collectNonExtensions()
-        val extensionsWhichCanBeCalled = implicitScopes.collectSuitableExtensions(hasSuitableExtensionReceiver)
+        val extensionsWhichCanBeCalled = implicitScopes.collectSuitableExtensions(extensionChecker)
 
         availableNonExtensions.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(result, expectedType, it) }
@@ -209,7 +214,7 @@ private class KotlinCommonCompletionProvider(
                 .forEach { addSymbolToCompletion(result, expectedType, it) }
         }
 
-        collectTopLevelExtensionsFromIndices(implicitReceiversTypes, hasSuitableExtensionReceiver)
+        collectTopLevelExtensionsFromIndices(implicitReceiversTypes, extensionChecker)
             .forEach { addSymbolToCompletion(result, expectedType, it) }
 
         collectTypesCompletion(result, implicitScopes, expectedType)
@@ -217,23 +222,21 @@ private class KotlinCommonCompletionProvider(
 
     private fun KtAnalysisSession.collectTopLevelExtensionsFromIndices(
         receiverTypes: List<KtType>,
-        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean
+        extensionChecker: ExtensionApplicabilityChecker,
     ): Sequence<KtCallableSymbol> {
         val implicitReceiverNames = findAllNamesOfTypes(receiverTypes)
         val topLevelExtensions = indexHelper.getTopLevelExtensions(scopeNameFilter, implicitReceiverNames)
 
         return topLevelExtensions.asSequence()
             .map { it.getSymbol() as KtCallableSymbol }
-            .filter(hasSuitableExtensionReceiver)
+            .filter { extensionChecker.isApplicable(it) }
     }
 
     private fun KtScope.collectNonExtensions(): Sequence<KtCallableSymbol> =
         getCallableSymbols(scopeNameFilter).filterNot { it.isExtension }
 
-    private fun KtScope.collectSuitableExtensions(
-        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean
-    ): Sequence<KtCallableSymbol> =
-        getCallableSymbols(scopeNameFilter).filter { it.isExtension && it.hasSuitableExtensionReceiver() }
+    private fun KtScope.collectSuitableExtensions(extensionChecker: ExtensionApplicabilityChecker): Sequence<KtCallableSymbol> =
+        getCallableSymbols(scopeNameFilter).filter { it.isExtension && extensionChecker.isApplicable(it) }
 
     private fun KtAnalysisSession.findAllNamesOfTypes(implicitReceiversTypes: List<KtType>) =
         implicitReceiversTypes.flatMapTo(hashSetOf()) { with(typeNamesProvider) { findAllNames(it) } }
