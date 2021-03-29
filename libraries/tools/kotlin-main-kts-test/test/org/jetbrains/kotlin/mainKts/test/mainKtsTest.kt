@@ -69,7 +69,8 @@ class MainKtsTest {
 
         val resultValue = resOk.valueOrThrow().returnValue
         assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
-        assertEquals("John Smith", (resultValue as ResultValue.Value).value)
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("MimeTypedResult", value::class.simpleName)
     }
 
 //    @Test
