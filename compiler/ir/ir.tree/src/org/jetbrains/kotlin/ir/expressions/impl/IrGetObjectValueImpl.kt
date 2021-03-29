@@ -30,8 +30,4 @@ class IrGetObjectValueImpl(
 ) : IrGetObjectValue() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetObjectValue(this, data)
-
-    override fun copy(): IrExpression {
-        return IrGetObjectValueImpl(startOffset, endOffset, type, symbol)
-    }
 }

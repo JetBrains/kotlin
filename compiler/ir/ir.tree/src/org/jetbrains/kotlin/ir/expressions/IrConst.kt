@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrConst<T> : IrExpression(), IrExpressionWithCopy {
+abstract class IrConst<T> : IrExpression() {
     abstract val kind: IrConstKind<T>
     abstract val value: T
 
-    abstract override fun copy(): IrConst<T>
     abstract fun copyWithOffsets(startOffset: Int, endOffset: Int): IrConst<T>
 }
 

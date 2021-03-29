@@ -122,7 +122,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
                 correspondingPropertySymbol = property.symbol
                 annotations += oldField.annotations
                 initializer = with(oldField.initializer!!) {
-                    IrExpressionBodyImpl(startOffset, endOffset, (expression as IrConst<*>).copy())
+                    IrExpressionBodyImpl(startOffset, endOffset, (expression as IrConst<*>).shallowCopy())
                 }
 
                 if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {

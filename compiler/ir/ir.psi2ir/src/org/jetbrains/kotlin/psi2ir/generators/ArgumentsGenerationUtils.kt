@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isTrivial
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
@@ -109,7 +110,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 TODO("Receiver: ${receiver::class.java.simpleName}")
         }
 
-        if (receiverExpression is IrExpressionWithCopy)
+        if (receiverExpression.isTrivial())
             RematerializableValue(receiverExpression.type, receiverExpression)
         else
             OnceExpressionValue(receiverExpression)

@@ -592,10 +592,6 @@ class FunctionInlining(
         override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
             visitor.visitGetValue(this, data)
 
-        override fun copy(): IrGetValue {
-            TODO("not implemented")
-        }
-
         fun withLocation(startOffset: Int, endOffset: Int) =
             IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
     }

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -262,20 +263,20 @@ private class Transformer(
                 additionalStatements.addIfNotNull(lowerVar)
                 additionalStatements.addIfNotNull(upperVar)
             }
-            lowerExpression = tmpLowerExpression.copy()
-            upperExpression = tmpUpperExpression.copy()
+            lowerExpression = tmpLowerExpression.shallowCopy()
+            upperExpression = tmpUpperExpression.shallowCopy()
             useLowerClauseOnLeftSide = true
         } else if (lower.canHaveSideEffects && upper.canHaveSideEffects) {
             if (shouldUpperComeFirst) {
                 val (upperVar, tmpUpperExpression) = createTemporaryVariableIfNecessary(upper, "containsUpper")
                 additionalStatements.add(upperVar!!)
                 lowerExpression = lower
-                upperExpression = tmpUpperExpression.copy()
+                upperExpression = tmpUpperExpression.shallowCopy()
                 useLowerClauseOnLeftSide = true
             } else {
                 val (lowerVar, tmpLowerExpression) = createTemporaryVariableIfNecessary(lower, "containsLower")
                 additionalStatements.add(lowerVar!!)
-                lowerExpression = tmpLowerExpression.copy()
+                lowerExpression = tmpLowerExpression.shallowCopy()
                 upperExpression = upper
                 useLowerClauseOnLeftSide = false
             }
@@ -311,27 +312,27 @@ private class Transformer(
             irCall(lowerCompFun).apply {
                 putValueArgument(0, irInt(0))
                 putValueArgument(1, irCall(compareToFun).apply {
-                    dispatchReceiver = argExpression.copy()
+                    dispatchReceiver = argExpression.shallowCopy()
                     putValueArgument(0, lowerExpression)
                 })
             }
         } else {
             irCall(lowerCompFun).apply {
                 putValueArgument(0, lowerExpression)
-                putValueArgument(1, argExpression.copy())
+                putValueArgument(1, argExpression.shallowCopy())
             }
         }
         val upperClause = if (useCompareTo) {
             irCall(upperCompFun).apply {
                 putValueArgument(0, irCall(compareToFun).apply {
-                    dispatchReceiver = argExpression.copy()
+                    dispatchReceiver = argExpression.shallowCopy()
                     putValueArgument(0, upperExpression)
                 })
                 putValueArgument(1, irInt(0))
             }
         } else {
             irCall(upperCompFun).apply {
-                putValueArgument(0, argExpression.copy())
+                putValueArgument(0, argExpression.shallowCopy())
                 putValueArgument(1, upperExpression)
             }
         }

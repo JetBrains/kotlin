@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
@@ -559,3 +557,49 @@ val IrFunction.originalFunction: IrFunction
 
 val IrProperty.originalProperty: IrProperty
     get() = attributeOwnerId as? IrProperty ?: this
+
+fun IrExpression.isTrivial() =
+    this is IrConst<*> ||
+            this is IrGetValue ||
+            this is IrGetObjectValue ||
+            this is IrErrorExpressionImpl
+
+fun IrExpression.shallowCopy(): IrExpression =
+    shallowCopyOrNull()
+        ?: error("Not a copyable expression: ${render()}")
+
+fun IrExpression.shallowCopyOrNull(): IrExpression? =
+    when (this) {
+        is IrConst<*> -> shallowCopy()
+        is IrGetObjectValue ->
+            IrGetObjectValueImpl(
+                startOffset,
+                endOffset,
+                type,
+                symbol
+            )
+        is IrGetValueImpl ->
+            IrGetValueImpl(
+                startOffset,
+                endOffset,
+                type,
+                symbol,
+                origin
+            )
+        is IrErrorExpressionImpl ->
+            IrErrorExpressionImpl(
+                startOffset,
+                endOffset,
+                type,
+                description
+            )
+        else -> null
+    }
+
+internal fun <T> IrConst<T>.shallowCopy() = IrConstImpl(
+    startOffset,
+    endOffset,
+    type,
+    kind,
+    value
+)

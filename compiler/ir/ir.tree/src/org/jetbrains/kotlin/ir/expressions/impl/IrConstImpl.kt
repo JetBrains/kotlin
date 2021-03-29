@@ -32,9 +32,6 @@ class IrConstImpl<T>(
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConst(this, data)
 
-    override fun copy(): IrConst<T> =
-        IrConstImpl(startOffset, endOffset, type, kind, value)
-
     override fun copyWithOffsets(startOffset: Int, endOffset: Int) =
         IrConstImpl(startOffset, endOffset, type, kind, value)
 

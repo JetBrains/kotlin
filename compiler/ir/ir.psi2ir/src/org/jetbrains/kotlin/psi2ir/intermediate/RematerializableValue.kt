@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.shallowCopy
 
-class RematerializableValue(override val type: IrType, val irExpression: IrExpressionWithCopy) : IntermediateValue {
-    override fun load(): IrExpression = irExpression.copy()
+class RematerializableValue(override val type: IrType, val irExpression: IrExpression) : IntermediateValue {
+    override fun load(): IrExpression = irExpression.shallowCopy()
 }
 
 fun Scope.createTemporaryVariableInBlock(

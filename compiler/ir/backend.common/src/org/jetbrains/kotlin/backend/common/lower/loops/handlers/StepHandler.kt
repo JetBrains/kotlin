@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.name.FqName
 import kotlin.math.absoluteValue
 
@@ -79,7 +79,7 @@ internal class StepHandler(
                 irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                     val exceptionMessage = irConcat()
                     exceptionMessage.addArgument(irString("Step must be positive, was: "))
-                    exceptionMessage.addArgument(stepArgExpression.copy())
+                    exceptionMessage.addArgument(stepArgExpression.shallowCopy())
                     exceptionMessage.addArgument(irString("."))
                     putValueArgument(0, exceptionMessage)
                 }
@@ -89,7 +89,7 @@ internal class StepHandler(
                 stepArgValueAsLong == null -> {
                     // Step argument is not a constant. In this case, we check if step <= 0.
                     val stepNonPositiveCheck = irCall(stepCompFun).apply {
-                        putValueArgument(0, stepArgExpression.copy())
+                        putValueArgument(0, stepArgExpression.shallowCopy())
                         putValueArgument(1, data.run { zeroStepExpression() })
                     }
                     irIfThen(
@@ -118,7 +118,7 @@ internal class StepHandler(
                 ProgressionDirection.INCREASING -> stepArgExpression
                 ProgressionDirection.DECREASING -> {
                     if (stepArgVar == null) {
-                        stepNegation = scope.createTmpVariable(stepArgExpression.copy().negate())
+                        stepNegation = scope.createTmpVariable(stepArgExpression.shallowCopy().negate())
                         irGet(stepNegation)
                     } else {
                         // Step is already stored in a variable, just negate it.
@@ -133,7 +133,7 @@ internal class StepHandler(
                     val (tmpNestedStepVar, nestedStepExpression) = createTemporaryVariableIfNecessary(nestedStep, "nestedStep")
                     nestedStepVar = tmpNestedStepVar
                     val nestedStepNonPositiveCheck = irCall(stepCompFun).apply {
-                        putValueArgument(0, nestedStepExpression.copy())
+                        putValueArgument(0, nestedStepExpression.shallowCopy())
                         putValueArgument(1, data.run { zeroStepExpression() })
                     }
                     if (stepArgVar == null) {
@@ -142,8 +142,8 @@ internal class StepHandler(
                             irIfThenElse(
                                 stepType,
                                 nestedStepNonPositiveCheck,
-                                stepArgExpression.copy().negate(),
-                                stepArgExpression.copy()
+                                stepArgExpression.shallowCopy().negate(),
+                                stepArgExpression.shallowCopy()
                             ),
                             nameHint = "maybeNegatedStep"
                         )
@@ -272,9 +272,9 @@ internal class StepHandler(
 
             return ProgressionHeaderInfo(
                 data,
-                first = nestedFirstExpression.copy(),
+                first = nestedFirstExpression.shallowCopy(),
                 last = recalculatedLast,
-                step = finalStepExpression.copy(),
+                step = finalStepExpression.shallowCopy(),
                 isReversed = nestedInfo.isReversed,
                 additionalStatements = additionalStatements,
                 direction = nestedInfo.direction
@@ -283,13 +283,13 @@ internal class StepHandler(
 
     private fun DeclarationIrBuilder.callGetProgressionLastElementIfNecessary(
         progressionType: ProgressionType,
-        first: IrExpressionWithCopy,
-        last: IrExpressionWithCopy,
-        step: IrExpressionWithCopy
+        first: IrExpression,
+        last: IrExpression,
+        step: IrExpression
     ): IrExpression {
         // Calling getProgressionLastElement() is not needed if step == 1 or -1; the "last" value is unchanged in such cases.
         if (step.constLongValue?.absoluteValue == 1L) {
-            return last.copy()
+            return last.shallowCopy()
         }
 
         // Call `getProgressionLastElement(first, last, step)`. The following overloads are present in the stdlib:
@@ -304,17 +304,17 @@ internal class StepHandler(
                 // Bounds are signed for unsigned progressions but `getProgressionLastElement` expects unsigned.
                 // The return value is finally converted back to signed since it will be assigned back to `last`.
                 irCall(getProgressionLastElementFun).apply {
-                    putValueArgument(0, first.copy().asElementType().asUnsigned())
-                    putValueArgument(1, last.copy().asElementType().asUnsigned())
-                    putValueArgument(2, step.copy().asStepType())
+                    putValueArgument(0, first.shallowCopy().asElementType().asUnsigned())
+                    putValueArgument(1, last.shallowCopy().asElementType().asUnsigned())
+                    putValueArgument(2, step.shallowCopy().asStepType())
                 }.asSigned()
             } else {
                 irCall(getProgressionLastElementFun).apply {
                     // Step type is used for casting because it works for all signed progressions. In particular,
                     // getProgressionLastElement(Int, Int, Int) is called for CharProgression, which uses an Int step.
-                    putValueArgument(0, first.copy().asStepType())
-                    putValueArgument(1, last.copy().asStepType())
-                    putValueArgument(2, step.copy().asStepType())
+                    putValueArgument(0, first.shallowCopy().asStepType())
+                    putValueArgument(1, last.shallowCopy().asStepType())
+                    putValueArgument(2, step.shallowCopy().asStepType())
                 }
             }
         }

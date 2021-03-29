@@ -25,9 +25,7 @@ abstract class IrValueAccessExpression : IrDeclarationReference() {
     abstract val origin: IrStatementOrigin?
 }
 
-abstract class IrGetValue : IrValueAccessExpression(), IrExpressionWithCopy {
-    abstract override fun copy(): IrGetValue
-}
+abstract class IrGetValue : IrValueAccessExpression()
 
 abstract class IrSetValue : IrValueAccessExpression() {
     abstract override val symbol: IrValueSymbol

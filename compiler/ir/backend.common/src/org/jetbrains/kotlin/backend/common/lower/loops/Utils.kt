@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.lower.loops
 
-import org.jetbrains.kotlin.backend.common.ir.isTrivial
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -14,13 +13,12 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.isTrivial
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -82,9 +80,6 @@ private fun Any?.toLong(): Long? =
         else -> null
     }
 
-internal val IrExpressionWithCopy.constLongValue: Long?
-    get() = if (this is IrConst<*>) value.toLong() else null
-
 internal val IrExpression.constLongValue: Long?
     get() = if (this is IrConst<*>) value.toLong() else null
 
@@ -97,13 +92,10 @@ internal val IrExpression.constLongValue: Long?
 internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(
     expression: IrExpression, nameHint: String? = null,
     irType: IrType? = null, isMutable: Boolean = false
-): Pair<IrVariable?, IrExpressionWithCopy> =
+): Pair<IrVariable?, IrExpression> =
     if (expression.canHaveSideEffects) {
         scope.createTmpVariable(expression, nameHint = nameHint, irType = irType, isMutable = isMutable).let { Pair(it, irGet(it)) }
     } else {
-        require(expression is IrExpressionWithCopy) {
-            "Not a copyable expression: ${expression.render()}"
-        }
         Pair(null, expression)
     }
 
