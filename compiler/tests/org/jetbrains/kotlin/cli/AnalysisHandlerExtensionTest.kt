@@ -58,7 +58,7 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
     }
 
     fun testShouldNotGenerateCodeJVM() {
-        runTest(K2JVMCompiler(), classNotFound)
+        runTest(K2JVMCompiler(), classNotFound, listOf("-d", tmpdir.resolve("out").absolutePath))
     }
 
     fun testShouldNotGenerateCodeJS() {
@@ -70,7 +70,7 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
     }
 
     fun testRepeatedAnalysisJVM() {
-        runTest(K2JVMCompiler(), repeatedAnalysis)
+        runTest(K2JVMCompiler(), repeatedAnalysis, listOf("-d", tmpdir.resolve("out").absolutePath))
     }
 
     fun testRepeatedAnalysisJS() {
