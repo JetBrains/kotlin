@@ -15,10 +15,11 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
             VAR FOR_LOOP_VARIABLE name:arg type:kotlin.Int [val]
               CALL 'public final fun next (): kotlin.Int [operator] declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'val tmp_0: kotlin.collections.IntIterator [val] declared in <root>.sum' type=kotlin.collections.IntIterator origin=null
-            SET_VAR 'var result: kotlin.Int [var] declared in <root>.sum' type=kotlin.Unit origin=EQ
-              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.sum' type=kotlin.Int origin=null
-                other: GET_VAR 'val arg: kotlin.Int [val] declared in <root>.sum' type=kotlin.Int origin=null
+            BLOCK type=kotlin.Unit origin=null
+              SET_VAR 'var result: kotlin.Int [var] declared in <root>.sum' type=kotlin.Unit origin=EQ
+                CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.sum' type=kotlin.Int origin=null
+                  other: GET_VAR 'val arg: kotlin.Int [val] declared in <root>.sum' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>'
         GET_VAR 'var result: kotlin.Int [var] declared in <root>.sum' type=kotlin.Int origin=null
   FUN name:nsum visibility:public modality:FINAL <> (args:kotlin.Array<out kotlin.Number>) returnType:kotlin.Int

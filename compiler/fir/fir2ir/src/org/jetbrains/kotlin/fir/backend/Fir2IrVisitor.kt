@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
@@ -745,14 +746,44 @@ class Fir2IrVisitor(
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: Any?): IrElement {
         return whileLoop.convertWithOffsets { startOffset, endOffset ->
-            val origin = if (whileLoop.source?.elementType == KtNodeTypes.FOR) IrStatementOrigin.FOR_LOOP_INNER_WHILE
-            else IrStatementOrigin.WHILE_LOOP
+            val isForLoop = whileLoop.source?.elementType == KtNodeTypes.FOR
+            val origin = if (isForLoop) IrStatementOrigin.FOR_LOOP_INNER_WHILE else IrStatementOrigin.WHILE_LOOP
+            val firLoopBody = whileLoop.block
             IrWhileLoopImpl(startOffset, endOffset, irBuiltIns.unitType, origin).apply {
                 loopMap[whileLoop] = this
                 label = whileLoop.label?.name
                 condition = convertToIrExpression(whileLoop.condition)
-                // NB: here we have strange origin logic, made to be compatible with FE 1.0
-                body = whileLoop.block.convertToIrExpressionOrBlock(origin.takeIf { it != IrStatementOrigin.WHILE_LOOP })
+                body = if (isForLoop) {
+                    /*
+                     * for loops in IR should have specific for of their body, because some of lowerings (e.g. `ForLoopLowering`) expects
+                     *   exactly that shape:
+                     *
+                     * for (x in list) { ...body...}
+                     *
+                     * IR (loop body):
+                     *   IrBlock:
+                     *     x = <iterator>.next()
+                     *     IrBlock:
+                     *         ...body...
+                     */
+                    firLoopBody.convertWithOffsets { innerStartOffset, innerEndOffset ->
+                        val irInnerBody = IrBlockImpl(innerStartOffset, innerEndOffset, irBuiltIns.unitType, origin)
+                        irInnerBody.statements += firLoopBody.statements.first().toIrStatement()
+                            ?: error("Unexpected shape of body of for loop")
+                        if (firLoopBody.statements.size > 1) {
+                            val tmpBlock = buildBlock {
+                                source = firLoopBody.source
+                                for (i in 1 until firLoopBody.statements.size) {
+                                    statements += firLoopBody.statements[i]
+                                }
+                            }
+                            irInnerBody.statements += tmpBlock.convertToIrExpressionOrBlock()
+                        }
+                        irInnerBody
+                    }
+                } else {
+                    firLoopBody.convertToIrExpressionOrBlock()
+                }
                 loopMap.remove(whileLoop)
             }
         }.also {

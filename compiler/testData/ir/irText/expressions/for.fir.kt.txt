@@ -22,10 +22,12 @@ fun testDestructuring(pp: List<Pair<Int, String>>) {
     val <iterator>: Iterator<Pair<Int, String>> = pp.iterator()
     while (<iterator>.hasNext()) { // BLOCK
       val <destruct>: Pair<Int, String> = <iterator>.next()
-      val i: Int = <destruct>.component1()
-      val s: String = <destruct>.component2()
-      println(message = i)
-      println(message = s)
+      { // BLOCK
+        val i: Int = <destruct>.component1()
+        val s: String = <destruct>.component2()
+        println(message = i)
+        println(message = s)
+      }
     }
   }
 }
@@ -38,3 +40,4 @@ fun testRange() {
     }
   }
 }
+

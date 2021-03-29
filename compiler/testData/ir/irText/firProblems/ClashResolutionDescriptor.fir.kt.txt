@@ -49,14 +49,17 @@ fun resolveClashesIfAny(container: ComponentContainer, clashResolvers: List<Plat
     val <iterator>: Iterator<PlatformExtensionsClashResolver<*>> = clashResolvers.iterator()
     while (<iterator>.hasNext()) { // BLOCK
       val resolver: PlatformExtensionsClashResolver<*> = <iterator>.next()
-      val clashedComponents: Collection<ComponentDescriptor> = { // BLOCK
-        val <elvis>: Collection<ComponentDescriptor>? = <get-registrationMap>().get(p0 = resolver.<get-applicableTo>()) as? Collection<ComponentDescriptor>
-        when {
-          EQEQ(arg0 = <elvis>, arg1 = null) -> continue
-          else -> <elvis>
+      { // BLOCK
+        val clashedComponents: Collection<ComponentDescriptor> = { // BLOCK
+          val <elvis>: Collection<ComponentDescriptor>? = <get-registrationMap>().get(p0 = resolver.<get-applicableTo>()) as? Collection<ComponentDescriptor>
+          when {
+            EQEQ(arg0 = <elvis>, arg1 = null) -> continue
+            else -> <elvis>
+          }
         }
+        val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>> = ClashResolutionDescriptor<PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>>(container = container, resolver = resolver, clashedComponents = clashedComponents.toList<ComponentDescriptor>())
       }
-      val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>> = ClashResolutionDescriptor<PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>>(container = container, resolver = resolver, clashedComponents = clashedComponents.toList<ComponentDescriptor>())
     }
   }
 }
+
