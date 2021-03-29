@@ -255,7 +255,7 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
     private val device by lazy {
         val default = project.findProperty("iosDevice")?.toString() ?: when (target.family) {
             Family.TVOS -> "Apple TV 4K"
-            Family.IOS -> "iPhone 12"
+            Family.IOS -> "iPhone 11"
             Family.WATCHOS -> "Apple Watch Series 6 - 40mm"
             else -> error("Unexpected simulation target: $target")
         }
