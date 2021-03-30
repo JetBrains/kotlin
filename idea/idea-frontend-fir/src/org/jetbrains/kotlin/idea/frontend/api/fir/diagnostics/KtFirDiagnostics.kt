@@ -510,6 +510,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidate: KtSymbol
     }
 
+    abstract class ArgumentTypeMismatch : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ArgumentTypeMismatch::class
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
+    }
+
     abstract class InapplicableLateinitModifier : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = InapplicableLateinitModifier::class
         abstract val reason: String

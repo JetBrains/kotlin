@@ -91,4 +91,4 @@ class ArgumentTypeMismatch(
     val expectedType: ConeKotlinType,
     val actualType: ConeKotlinType,
     val argument: FirExpression
-) : ResolutionDiagnostic(MAY_THROW_RUNTIME_ERROR)
+) : ResolutionDiagnostic(INAPPLICABLE)
