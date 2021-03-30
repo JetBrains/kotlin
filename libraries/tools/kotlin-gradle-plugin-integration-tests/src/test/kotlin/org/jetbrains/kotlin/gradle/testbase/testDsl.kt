@@ -33,6 +33,7 @@ fun KGPBaseTest.project(
     buildOptions: KGPBaseTest.BuildOptions = defaultBuildOptions,
     forceOutput: Boolean = false,
     addHeapDumpOptions: Boolean = true,
+    enableGradleDebug: Boolean = false,
     test: TestProject.() -> Unit
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -45,6 +46,7 @@ fun KGPBaseTest.project(
 
     val gradleRunner = GradleRunner
         .create()
+        .withDebug(enableGradleDebug)
         .withProjectDir(projectPath.toFile())
         .withTestKitDir(testKitDir.toAbsolutePath().toFile())
         .withGradleVersion(gradleVersion.version)
