@@ -9717,6 +9717,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
+        @TestMetadata("delegationDifferentModule.kt")
+        public void testDelegationDifferentModule() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/delegationDifferentModule.kt");
+        }
+
         @TestMetadata("delegationWithPrivateConstructor.kt")
         public void testDelegationWithPrivateConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/delegationWithPrivateConstructor.kt");

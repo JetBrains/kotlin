@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.deserialization.CONTINUATION_INTERFACE_CLASS_ID
@@ -23,18 +22,19 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.suspendFunctionTypeToFunctionTypeWithContinuation
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.processAllFunctions
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class FirElementSerializer private constructor(
     private val session: FirSession,
+    private val scopeSession: ScopeSession,
     private val containingDeclaration: FirDeclaration?,
     private val typeParameters: Interner<FirTypeParameter>,
     private val extension: FirSerializerExtension,
@@ -139,7 +140,7 @@ class FirElementSerializer private constructor(
 
         val callableMembers =
             extension.customClassMembersProducer?.getCallableMembers(klass)
-                ?: klass.declarations.filterIsInstance<FirCallableMemberDeclaration<*>>()
+                ?: klass.declarations()
                     .sortedWith(FirCallableMemberDeclarationComparator)
 
         for (declaration in callableMembers) {
@@ -195,6 +196,32 @@ class FirElementSerializer private constructor(
             builder.versionRequirementTable = versionRequirementTableProto
         }
         return builder
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun FirClass<*>.declarations(): List<FirCallableMemberDeclaration<*>> = buildList {
+        val memberScope =
+            defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+                ?: error("Null scope for $this")
+
+        fun addDeclarationIfNeeded(symbol: FirCallableSymbol<*>) {
+            val declaration = symbol.fir as? FirCallableMemberDeclaration<*> ?: return
+            if (declaration.isSubstitutionOrIntersectionOverride) return
+
+            // non-intersection or substitution fake override
+            if (!declaration.isStatic && declaration.dispatchReceiverClassOrNull() != this@declarations.symbol.toLookupTag()) return
+
+            add(declaration)
+        }
+
+        memberScope.processAllFunctions(::addDeclarationIfNeeded)
+        memberScope.processAllProperties(::addDeclarationIfNeeded)
+
+        for (declaration in declarations) {
+            if (declaration is FirCallableMemberDeclaration<*> && declaration.isStatic) {
+                add(declaration)
+            }
+        }
     }
 
     private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession, property: FirProperty): List<FirAnnotationCall> =
@@ -747,7 +774,7 @@ class FirElementSerializer private constructor(
 
     private fun createChildSerializer(declaration: FirDeclaration): FirElementSerializer =
         FirElementSerializer(
-            session, declaration, Interner(typeParameters), extension,
+            session, scopeSession, declaration, Interner(typeParameters), extension,
             typeTable, versionRequirementTable, serializeTypeTableToFunction = false,
             typeApproximator
         )
@@ -876,11 +903,12 @@ class FirElementSerializer private constructor(
         @JvmStatic
         fun createTopLevel(
             session: FirSession,
+            scopeSession: ScopeSession,
             extension: FirSerializerExtension,
             typeApproximator: AbstractTypeApproximator,
         ): FirElementSerializer =
             FirElementSerializer(
-                session, null,
+                session, scopeSession, null,
                 Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
                 serializeTypeTableToFunction = false,
                 typeApproximator
@@ -889,11 +917,12 @@ class FirElementSerializer private constructor(
         @JvmStatic
         fun createForLambda(
             session: FirSession,
+            scopeSession: ScopeSession,
             extension: FirSerializerExtension,
             typeApproximator: AbstractTypeApproximator,
         ): FirElementSerializer =
             FirElementSerializer(
-                session, null,
+                session, scopeSession, null,
                 Interner(), extension, MutableTypeTable(),
                 versionRequirementTable = null, serializeTypeTableToFunction = true,
                 typeApproximator
@@ -901,6 +930,7 @@ class FirElementSerializer private constructor(
 
         @JvmStatic
         fun create(
+            scopeSession: ScopeSession,
             klass: FirClass<*>,
             extension: FirSerializerExtension,
             parentSerializer: FirElementSerializer?,
@@ -909,9 +939,9 @@ class FirElementSerializer private constructor(
             val parentClassId = klass.symbol.classId.outerClassId
             val parent = if (parentClassId != null && !parentClassId.isLocal) {
                 val parentClass = klass.session.symbolProvider.getClassLikeSymbolByFqName(parentClassId)!!.fir as FirRegularClass
-                parentSerializer ?: create(parentClass, extension, null, typeApproximator)
+                parentSerializer ?: create(scopeSession, parentClass, extension, null, typeApproximator)
             } else {
-                createTopLevel(klass.session, extension, typeApproximator)
+                createTopLevel(klass.session, scopeSession, extension, typeApproximator)
             }
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
@@ -919,6 +949,7 @@ class FirElementSerializer private constructor(
             // Otherwise our interner can get wrong ids because we may serialize classes in any order.
             val serializer = FirElementSerializer(
                 klass.session,
+                scopeSession,
                 klass,
                 Interner(parent.typeParameters),
                 extension,

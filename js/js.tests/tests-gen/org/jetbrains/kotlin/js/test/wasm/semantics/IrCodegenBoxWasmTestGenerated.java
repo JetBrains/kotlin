@@ -4282,6 +4282,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
+        @TestMetadata("delegationDifferentModule.kt")
+        public void testDelegationDifferentModule() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/delegationDifferentModule.kt");
+        }
+
         @TestMetadata("delegationWithPrivateConstructor.kt")
         public void testDelegationWithPrivateConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/delegationWithPrivateConstructor.kt");

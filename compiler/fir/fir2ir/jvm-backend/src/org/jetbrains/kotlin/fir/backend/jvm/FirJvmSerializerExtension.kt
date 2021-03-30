@@ -45,7 +45,7 @@ class FirJvmSerializerExtension(
     private val localDelegatedProperties: List<FirProperty>,
     private val approximator: AbstractTypeApproximator,
     typeMapper: IrTypeMapper,
-    components: Fir2IrComponents
+    private val components: Fir2IrComponents
 ) : FirSerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
     override val stringTable = FirJvmElementAwareStringTable(typeMapper, components)
@@ -137,7 +137,7 @@ class FirJvmSerializerExtension(
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {
         for (localVariable in localDelegatedProperties) {
-            val serializer = FirElementSerializer.createForLambda(session, this, approximator)
+            val serializer = FirElementSerializer.createForLambda(session, components.scopeSession,this, approximator)
             proto.addExtension(extension, serializer.propertyProto(localVariable)?.build() ?: continue)
         }
     }
