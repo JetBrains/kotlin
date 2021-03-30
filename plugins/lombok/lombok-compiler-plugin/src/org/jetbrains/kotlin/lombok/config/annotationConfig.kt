@@ -96,8 +96,8 @@ data class NoArgsConstructor(
 }
 
 data class AllArgsConstructor(
-    override val visibility: DescriptorVisibility,
-    override val staticName: String?
+    override val visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
+    override val staticName: String? = null
 ) : ConstructorAnnotation {
     companion object : AnnotationCompanion<AllArgsConstructor>() {
         override val name: FqName = LombokNames.ALL_ARGS_CONSTRUCTOR
@@ -140,6 +140,25 @@ data class Data(val staticConstructor: String?) {
 
         override fun extract(annotation: AnnotationDescriptor): Data =
             Data(
+                staticConstructor = annotation.getNonBlankStringArgument("staticConstructor")
+            )
+
+    }
+}
+
+data class Value(val staticConstructor: String?) {
+
+    fun asGetter(): Getter = Getter()
+
+    fun asAllArgsConstructor(): AllArgsConstructor = AllArgsConstructor(
+        staticName = staticConstructor
+    )
+
+    companion object : AnnotationCompanion<Value>() {
+        override val name: FqName = LombokNames.VALUE
+
+        override fun extract(annotation: AnnotationDescriptor): Value =
+            Value(
                 staticConstructor = annotation.getNonBlankStringArgument("staticConstructor")
             )
 
