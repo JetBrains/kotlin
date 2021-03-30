@@ -21,10 +21,9 @@ import org.jetbrains.kotlin.idea.frontend.api.analyseInFakeAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isExtension
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -86,6 +85,18 @@ private fun interface ExtensionApplicabilityChecker {
     fun isApplicable(symbol: KtCallableSymbol): Boolean
 }
 
+private fun interface CompletionVisibilityChecker {
+    fun isVisible(symbol: KtSymbolWithVisibility): Boolean
+
+    fun isVisible(symbol: KtCallableSymbol): Boolean {
+        return symbol !is KtSymbolWithVisibility || isVisible(symbol as KtSymbolWithVisibility)
+    }
+
+    fun isVisible(symbol: KtClassifierSymbol): Boolean {
+        return symbol !is KtSymbolWithVisibility || isVisible(symbol as KtSymbolWithVisibility)
+    }
+}
+
 /**
  * Currently, this class is responsible for collecting all possible completion variants.
  *
@@ -138,6 +149,7 @@ private class KotlinCommonCompletionProvider(
         val explicitReceiver = nameExpression.getReceiverExpression()
 
         analyseInFakeAnalysisSession(originalFile, nameExpression) {
+            val fileSymbol = originalFile.getFileSymbol()
             val expectedType = nameExpression.getExpectedType()
 
             val scopesContext = originalFile.getScopeContextForPosition(nameExpression)
@@ -146,16 +158,24 @@ private class KotlinCommonCompletionProvider(
                 it.checkExtensionIsSuitable(originalFile, nameExpression, explicitReceiver)
             }
 
+            val visibilityChecker = CompletionVisibilityChecker {
+                parameters.invocationCount > 1 || isVisible(it, fileSymbol, explicitReceiver, parameters.position)
+            }
+
             when {
-                nameExpression.parent is KtUserType -> collectTypesCompletion(result, scopesContext.scopes, expectedType)
-                explicitReceiver != null -> collectDotCompletion(
-                    result,
-                    scopesContext.scopes,
-                    explicitReceiver,
-                    expectedType,
-                    extensionChecker
-                )
-                else -> collectDefaultCompletion(result, scopesContext, expectedType, extensionChecker)
+                nameExpression.parent is KtUserType -> collectTypesCompletion(result, scopesContext.scopes, expectedType, visibilityChecker)
+                explicitReceiver != null -> {
+                    collectDotCompletion(
+                        result,
+                        scopesContext.scopes,
+                        explicitReceiver,
+                        expectedType,
+                        extensionChecker,
+                        visibilityChecker,
+                    )
+                }
+
+                else -> collectDefaultCompletion(result, scopesContext, expectedType, extensionChecker, visibilityChecker)
             }
         }
     }
@@ -164,12 +184,19 @@ private class KotlinCommonCompletionProvider(
         result: CompletionResultSet,
         implicitScopes: KtScope,
         expectedType: KtType?,
+        visibilityChecker: CompletionVisibilityChecker,
     ) {
-        val classesFromScopes = implicitScopes.getClassifierSymbols(scopeNameFilter)
+        val classesFromScopes = implicitScopes
+            .getClassifierSymbols(scopeNameFilter)
+            .filter { visibilityChecker.isVisible(it) }
+
         classesFromScopes.forEach { addSymbolToCompletion(result, expectedType, it) }
 
         val kotlinClassesFromIndices = indexHelper.getKotlinClasses(scopeNameFilter, psiFilter = { it !is KtEnumEntry })
-        kotlinClassesFromIndices.forEach { addSymbolToCompletion(result, expectedType, it.getSymbol()) }
+        kotlinClassesFromIndices.asSequence()
+            .map { it.getSymbol() as KtClassifierSymbol }
+            .filter { visibilityChecker.isVisible(it) }
+            .forEach { addSymbolToCompletion(result, expectedType, it) }
     }
 
     private fun KtAnalysisSession.collectDotCompletion(
@@ -178,19 +205,19 @@ private class KotlinCommonCompletionProvider(
         explicitReceiver: KtExpression,
         expectedType: KtType?,
         extensionChecker: ExtensionApplicabilityChecker,
+        visibilityChecker: CompletionVisibilityChecker,
     ) {
         val typeOfPossibleReceiver = explicitReceiver.getKtType()
         val possibleReceiverScope = typeOfPossibleReceiver.getTypeScope() ?: return
 
-        val nonExtensionMembers = possibleReceiverScope.collectNonExtensions()
-        val extensionNonMembers = implicitScopes.collectSuitableExtensions(extensionChecker)
+        val nonExtensionMembers = possibleReceiverScope.collectNonExtensions(visibilityChecker)
+        val extensionNonMembers = implicitScopes.collectSuitableExtensions(extensionChecker, visibilityChecker)
 
         nonExtensionMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionNonMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
 
-        collectTopLevelExtensionsFromIndices(listOf(typeOfPossibleReceiver), extensionChecker)
+        collectTopLevelExtensionsFromIndices(listOf(typeOfPossibleReceiver), extensionChecker, visibilityChecker)
             .forEach { addSymbolToCompletion(result, expectedType, it) }
-
     }
 
     private fun KtAnalysisSession.collectDefaultCompletion(
@@ -198,11 +225,12 @@ private class KotlinCommonCompletionProvider(
         implicitScopesContext: KtScopeContext,
         expectedType: KtType?,
         extensionChecker: ExtensionApplicabilityChecker,
+        visibilityChecker: CompletionVisibilityChecker,
     ) {
         val (implicitScopes, implicitReceiversTypes) = implicitScopesContext
 
-        val availableNonExtensions = implicitScopes.collectNonExtensions()
-        val extensionsWhichCanBeCalled = implicitScopes.collectSuitableExtensions(extensionChecker)
+        val availableNonExtensions = implicitScopes.collectNonExtensions(visibilityChecker)
+        val extensionsWhichCanBeCalled = implicitScopes.collectSuitableExtensions(extensionChecker, visibilityChecker)
 
         availableNonExtensions.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(result, expectedType, it) }
@@ -210,33 +238,44 @@ private class KotlinCommonCompletionProvider(
         if (shouldCompleteTopLevelCallablesFromIndex) {
             val topLevelCallables = indexHelper.getTopLevelCallables(scopeNameFilter)
             topLevelCallables.asSequence()
-                .map { it.getSymbol() }
+                .map { it.getSymbol() as KtCallableSymbol }
+                .filter { visibilityChecker.isVisible(it) }
                 .forEach { addSymbolToCompletion(result, expectedType, it) }
         }
 
-        collectTopLevelExtensionsFromIndices(implicitReceiversTypes, extensionChecker)
+        collectTopLevelExtensionsFromIndices(implicitReceiversTypes, extensionChecker, visibilityChecker)
             .forEach { addSymbolToCompletion(result, expectedType, it) }
 
-        collectTypesCompletion(result, implicitScopes, expectedType)
+        collectTypesCompletion(result, implicitScopes, expectedType, visibilityChecker)
     }
 
     private fun KtAnalysisSession.collectTopLevelExtensionsFromIndices(
         receiverTypes: List<KtType>,
         extensionChecker: ExtensionApplicabilityChecker,
+        visibilityChecker: CompletionVisibilityChecker,
     ): Sequence<KtCallableSymbol> {
         val implicitReceiverNames = findAllNamesOfTypes(receiverTypes)
         val topLevelExtensions = indexHelper.getTopLevelExtensions(scopeNameFilter, implicitReceiverNames)
 
         return topLevelExtensions.asSequence()
             .map { it.getSymbol() as KtCallableSymbol }
+            .filter { visibilityChecker.isVisible(it) }
             .filter { extensionChecker.isApplicable(it) }
     }
 
-    private fun KtScope.collectNonExtensions(): Sequence<KtCallableSymbol> =
-        getCallableSymbols(scopeNameFilter).filterNot { it.isExtension }
+    private fun KtScope.collectNonExtensions(visibilityChecker: CompletionVisibilityChecker) =
+        getCallableSymbols(scopeNameFilter)
+            .filterNot { it.isExtension }
+            .filter { visibilityChecker.isVisible(it) }
 
-    private fun KtScope.collectSuitableExtensions(extensionChecker: ExtensionApplicabilityChecker): Sequence<KtCallableSymbol> =
-        getCallableSymbols(scopeNameFilter).filter { it.isExtension && extensionChecker.isApplicable(it) }
+    private fun KtCompositeScope.collectSuitableExtensions(
+        hasSuitableExtensionReceiver: ExtensionApplicabilityChecker,
+        visibilityChecker: CompletionVisibilityChecker,
+    ): Sequence<KtCallableSymbol> =
+        getCallableSymbols(scopeNameFilter)
+            .filter { it.isExtension }
+            .filter { visibilityChecker.isVisible(it) }
+            .filter { hasSuitableExtensionReceiver.isApplicable(it) }
 
     private fun KtAnalysisSession.findAllNamesOfTypes(implicitReceiversTypes: List<KtType>) =
         implicitReceiversTypes.flatMapTo(hashSetOf()) { with(typeNamesProvider) { findAllNames(it) } }

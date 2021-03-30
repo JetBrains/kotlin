@@ -6,3 +6,4 @@ fun firstFun() {
 }
 
 // EXIST: secondFun
+// ABSENT: secondFunPrivate

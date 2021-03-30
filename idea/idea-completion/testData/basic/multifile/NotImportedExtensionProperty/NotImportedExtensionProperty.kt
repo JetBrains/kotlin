@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package first
 
 fun firstFun() {
@@ -5,8 +6,9 @@ fun firstFun() {
     a.hello<caret>
 }
 
-// EXIST: { lookupString: "helloProp1", attributes: "bold" }
-// EXIST: { lookupString: "helloProp2", attributes: "bold" }
+// EXIST: helloProp1
+// EXIST: helloProp2
 // ABSENT: helloProp3
 // ABSENT: helloProp4
+// ABSENT: helloPropPrivate
 // NOTHING_ELSE
