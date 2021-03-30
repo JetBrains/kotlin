@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.Accessors
+import org.jetbrains.kotlin.lombok.config.Data
 import org.jetbrains.kotlin.lombok.config.Getter
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.utils.collectWithNotNull
@@ -27,7 +28,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
 
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
         val clAccessors = Accessors.getOrNull(classDescriptor)
-        val clGetter = Getter.getOrNull(classDescriptor)
+        val clGetter = Getter.getOrNull(classDescriptor) ?: Data.getOrNull(classDescriptor)?.asGetter()
 
         val functions = classDescriptor
             .getJavaFields()
