@@ -435,8 +435,7 @@ fun runTest() {
             "compiler/testData/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt",    // KT-33091
             "compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt",          // KT-41901
             "compiler/testData/codegen/box/coroutines/multiModule/",                                // KT-40121
-            "compiler/testData/codegen/box/defaultArguments/recursiveDefaultArguments.kt",          // KT-42684
-            "compiler/testData/codegen/box/inlineClasses/nestedInlineClass.kt"                      // KT-45139
+            "compiler/testData/codegen/box/compileKotlinAgainstKotlin/clashingFakeOverrideSignatures.kt"   // KT-42020
     ]
 
     boolean isEnabledForNativeBackend(String fileName) {
