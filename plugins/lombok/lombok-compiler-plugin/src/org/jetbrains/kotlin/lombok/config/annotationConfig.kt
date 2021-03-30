@@ -15,6 +15,14 @@ import org.jetbrains.kotlin.lombok.utils.getNonBlankStringArgument
 import org.jetbrains.kotlin.lombok.utils.getVisibility
 import org.jetbrains.kotlin.name.FqName
 
+/*
+ * Lombok has two ways of configuration - lombok.config file and directly in annotations. Annotations has priority.
+ * Not all things can be configured in annotations
+ * So to make things easier I put all configuration in 'annotations' classes, but populate them from config too. So far it allows
+ * keeping processors' code unaware about configuration origin.
+ *
+ */
+
 abstract class AnnotationCompanion<T> {
 
     abstract val name: FqName
@@ -25,19 +33,44 @@ abstract class AnnotationCompanion<T> {
         annotated.annotations.findAnnotation(name)?.let(this::extract)
 }
 
+abstract class AnnotationAndConfigCompanion<T> {
+
+    abstract val annotationName: FqName
+
+
+    abstract fun extract(annotation: AnnotationDescriptor?, config: LombokConfig): T
+
+    /**
+     * Get from annotation or config or default
+     */
+    fun get(annotated: Annotated, config: LombokConfig): T =
+        extract(annotated.annotations.findAnnotation(annotationName), config)
+
+    /**
+     * If element is annotated, get from it or config or default
+     */
+    fun getIfAnnotated(annotated: Annotated, config: LombokConfig): T? =
+        annotated.annotations.findAnnotation(annotationName)?.let { annotation ->
+            extract(annotation, config)
+        }
+
+}
+
 data class Accessors(val fluent: Boolean = false, val chain: Boolean = false) {
-    companion object : AnnotationCompanion<Accessors>() {
+    companion object : AnnotationAndConfigCompanion<Accessors>() {
 
-        val default = Accessors()
+        override val annotationName: FqName = LombokNames.ACCESSORS
 
-        override val name: FqName = LombokNames.ACCESSORS
-
-        override fun extract(annotation: AnnotationDescriptor): Accessors {
-            val fluent = annotation.getBooleanArgument("fluent")
-            return Accessors(
-                fluent = fluent,
-                chain = annotation.getBooleanArgument("chain", default = fluent)
-            )
+        override fun extract(annotation: AnnotationDescriptor?, config: LombokConfig): Accessors {
+            val fluent =
+                annotation?.getBooleanArgument("fluent")
+                    ?: config.getBoolean("lombok.accessors.fluent")
+                    ?: false
+            val chain =
+                annotation?.getBooleanArgument("chain")
+                    ?: config.getBoolean("lombok.accessors.chain")
+                    ?: fluent
+            return Accessors(fluent, chain)
         }
     }
 }

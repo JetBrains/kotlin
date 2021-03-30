@@ -42,9 +42,9 @@ fun AnnotationDescriptor.getStringArgument(argumentName: String): String? {
 fun AnnotationDescriptor.getNonBlankStringArgument(argumentName: String): String? =
     getStringArgument(argumentName).trimToNull()
 
-fun AnnotationDescriptor.getBooleanArgument(argumentName: String, default: Boolean = false): Boolean {
+fun AnnotationDescriptor.getBooleanArgument(argumentName: String): Boolean? {
     val argument = allValueArguments[Name.identifier(argumentName)]
-        ?: return default
+        ?: return null
 
     return when (argument) {
         is BooleanValue -> argument.value

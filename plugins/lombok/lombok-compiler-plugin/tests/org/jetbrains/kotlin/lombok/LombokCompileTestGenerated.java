@@ -31,11 +31,6 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/lombok/lombok-compiler-plugin/testData/compile"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("configSimple.kt")
-    public void testConfigSimple() throws Exception {
-        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/configSimple.kt");
-    }
-
     @TestMetadata("allArgsConstructor.kt")
     public void testAllArgsConstructor() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/allArgsConstructor.kt");
@@ -49,6 +44,21 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
     @TestMetadata("clashAccessors.kt")
     public void testClashAccessors() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/clashAccessors.kt");
+    }
+
+    @TestMetadata("configAccessors.kt")
+    public void testConfigAccessors() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/configAccessors.kt");
+    }
+
+    @TestMetadata("configAccessorsOverride.kt")
+    public void testConfigAccessorsOverride() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/configAccessorsOverride.kt");
+    }
+
+    @TestMetadata("configSimple.kt")
+    public void testConfigSimple() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/configSimple.kt");
     }
 
     @TestMetadata("data.kt")

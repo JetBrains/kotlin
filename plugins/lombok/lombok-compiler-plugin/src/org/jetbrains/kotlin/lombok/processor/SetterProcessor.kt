@@ -21,13 +21,13 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
         //lombok doesn't generate setters for enums
         if (classDescriptor.kind == ClassKind.ENUM_CLASS) return Parts.Empty
 
-        val clAccessors = Accessors.getOrNull(classDescriptor)
+        val globalAccessors = Accessors.get(classDescriptor, config)
         val clSetter = Setter.getOrNull(classDescriptor) ?: Data.getOrNull(classDescriptor)?.asSetter()
 
         val functions = classDescriptor
             .getJavaFields()
             .collectWithNotNull { field -> Setter.getOrNull(field) ?: clSetter.takeIf { field.isVar } }
-            .mapNotNull { (field, setter) -> createSetter(classDescriptor, field, setter, clAccessors) }
+            .mapNotNull { (field, setter) -> createSetter(classDescriptor, field, setter, globalAccessors) }
         return Parts(functions)
     }
 
@@ -35,9 +35,9 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
         classDescriptor: ClassDescriptor,
         field: PropertyDescriptor,
         getter: Setter,
-        classLevelAccessors: Accessors?
+        globalAccessors: Accessors
     ): SimpleFunctionDescriptor? {
-        val accessors = Accessors.getOrNull(field) ?: classLevelAccessors ?: Accessors.default
+        val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
 
         val functionName =
             if (accessors.fluent) {

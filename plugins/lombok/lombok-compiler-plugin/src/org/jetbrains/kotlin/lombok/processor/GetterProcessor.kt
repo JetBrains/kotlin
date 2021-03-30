@@ -24,7 +24,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
     private val noIsPrefix by lazy { config.getBooleanOrDefault("lombok.getter.noIsPrefix") }
 
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
-        val clAccessors = Accessors.getOrNull(classDescriptor)
+        val globalAccessors = Accessors.get(classDescriptor, config)
         val clGetter =
             Getter.getOrNull(classDescriptor)
                 ?: Data.getOrNull(classDescriptor)?.asGetter()
@@ -33,7 +33,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
         val functions = classDescriptor
             .getJavaFields()
             .collectWithNotNull { Getter.getOrNull(it) ?: clGetter }
-            .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation, clAccessors) }
+            .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation, globalAccessors) }
 
         return Parts(functions)
     }
@@ -42,9 +42,9 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
         classDescriptor: ClassDescriptor,
         field: PropertyDescriptor,
         getter: Getter,
-        classLevelAccessors: Accessors?
+        globalAccessors: Accessors
     ): SimpleFunctionDescriptor? {
-        val accessors = Accessors.getOrNull(field) ?: classLevelAccessors ?: Accessors.default
+        val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
 
         val functionName =
             if (accessors.fluent) {
