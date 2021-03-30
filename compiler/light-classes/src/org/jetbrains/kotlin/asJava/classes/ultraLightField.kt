@@ -67,6 +67,9 @@ internal class KtUltraLightFieldForSourceDeclaration(
 ) : KtUltraLightFieldImpl(declaration, name, containingClass, support, modifiers),
     KtLightFieldForSourceDeclarationSupport {
 
+    private val lightIdentifier = KtLightIdentifier(this, declaration)
+
+    override fun getNameIdentifier(): PsiIdentifier = lightIdentifier
     override fun getText(): String? = kotlinOrigin.text
     override fun getTextRange(): TextRange = kotlinOrigin.textRange
     override fun getTextOffset(): Int = kotlinOrigin.textOffset
