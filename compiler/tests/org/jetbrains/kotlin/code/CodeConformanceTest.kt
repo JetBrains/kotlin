@@ -294,7 +294,7 @@ class CodeConformanceTest : TestCase() {
     }
 
     fun testRepositoriesAbuse() {
-        class RepoAllowList(val repo: String, root: File, allowList: Set<String>) {
+        class RepoAllowList(val repo: String, root: File, allowList: Set<String>, val exclude: String? = null) {
             val matcher = FileMatcher(root, allowList)
         }
 
@@ -320,8 +320,7 @@ class CodeConformanceTest : TestCase() {
                 setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList("kotlin/ktor", root, setOf("gradle/cacheRedirector.gradle.kts")),
-            RepoAllowList("bintray.com/kotlin-dependencies", root, setOf("gradle/cacheRedirector.gradle.kts")),
-            RepoAllowList("api.bintray.com/maven/kotlin/kotlin-dependencies", root, setOf())
+            RepoAllowList("bintray.com", root, setOf("gradle/cacheRedirector.gradle.kts"), exclude = "jcenter.bintray.com")
         )
 
         data class RepoOccurance(val repo: String, val file: File)
@@ -339,7 +338,7 @@ class CodeConformanceTest : TestCase() {
                     file.useLines { lines ->
                         for (line in lines) {
                             for (checker in checkers) {
-                                if (line.contains(checker.repo)) {
+                                if (line.contains(checker.repo) && (checker.exclude == null || !line.contains(checker.exclude))) {
                                     occurrences.add(RepoOccurance(checker.repo, file))
                                 }
                             }
