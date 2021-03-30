@@ -40,11 +40,19 @@ public annotation class CCall(val id: String) {
     @Retention(AnnotationRetention.BINARY)
     annotation class WCString
 
-    @Target(AnnotationTarget.FUNCTION)
+    @Target(
+            AnnotationTarget.FUNCTION,
+            AnnotationTarget.PROPERTY_GETTER,
+            AnnotationTarget.PROPERTY_SETTER
+    )
     @Retention(AnnotationRetention.BINARY)
     annotation class ReturnsRetained
 
-    @Target(AnnotationTarget.FUNCTION)
+    @Target(
+            AnnotationTarget.FUNCTION,
+            AnnotationTarget.PROPERTY_GETTER,
+            AnnotationTarget.PROPERTY_SETTER
+    )
     @Retention(AnnotationRetention.BINARY)
     annotation class ConsumesReceiver
 
