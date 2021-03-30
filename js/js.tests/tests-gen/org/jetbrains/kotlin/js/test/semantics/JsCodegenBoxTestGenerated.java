@@ -4240,6 +4240,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/constants/float.kt");
         }
 
+        @TestMetadata("foldingBinaryOpsUnsigned.kt")
+        public void testFoldingBinaryOpsUnsigned() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/foldingBinaryOpsUnsigned.kt");
+        }
+
         @TestMetadata("kt9532.kt")
         public void testKt9532() throws Exception {
             runTest("compiler/testData/codegen/box/constants/kt9532.kt");
@@ -26695,11 +26700,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt25784.kt")
         public void testKt25784() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/kt25784.kt");
-        }
-
-        @TestMetadata("kt30402.kt")
-        public void testKt30402() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/kt30402.kt");
         }
 
         @TestMetadata("kt43286.kt")

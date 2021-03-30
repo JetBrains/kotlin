@@ -166,13 +166,13 @@ class FoldConstantLowering(
             evaluateBinary(
                 call.symbol.owner.name.toString(),
                 lhs.kind.toString(),
-                lhs.value!!,
+                normalizeUnsignedValue(lhs)!!,
                 // 1. Although some operators have nullable parameters, evaluators deals with non-nullable types only.
                 //    The passed parameters are guaranteed to be non-null, since they are from IrConst.
                 // 2. The operators are registered with prototype as if virtual member functions. They are identified by
                 //    actual_receiver_type.operator_name(parameter_type_in_prototype).
                 call.symbol.owner.valueParameters[0].type.typeConstructorName(),
-                rhs.value!!
+                normalizeUnsignedValue(rhs)!!
             ) ?: return call
         } catch (e: Exception) {
             // Don't cast a runtime exception into compile time. E.g., division by zero.
@@ -201,7 +201,24 @@ class FoldConstantLowering(
         return buildIrConstant(call.startOffset, call.endOffset, call.type, evaluated)
     }
 
-    // Unsigned constants are represented through signed constants with a different IrType.
+    private fun normalizeUnsignedValue(const: IrConst<*>): Any? {
+        // Unsigned constants are represented through signed constants with a different IrType
+        if (const.type.isUnsigned()) {
+            @OptIn(ExperimentalUnsignedTypes::class)
+            when (val kind = const.kind) {
+                is IrConstKind.Byte ->
+                    return kind.valueOf(const).toUByte()
+                is IrConstKind.Short ->
+                    return kind.valueOf(const).toUShort()
+                is IrConstKind.Int ->
+                    return kind.valueOf(const).toUInt()
+                is IrConstKind.Long ->
+                    return kind.valueOf(const).toULong()
+            }
+        }
+        return const.value
+    }
+
     private fun constToString(const: IrConst<*>): String {
         if (floatSpecial) {
             when (val kind = const.kind) {
@@ -224,20 +241,7 @@ class FoldConstantLowering(
             }
         }
 
-        if (const.type.isUnsigned()) {
-            @OptIn(ExperimentalUnsignedTypes::class)
-            when (val kind = const.kind) {
-                is IrConstKind.Byte ->
-                    return kind.valueOf(const).toUByte().toString()
-                is IrConstKind.Short ->
-                    return kind.valueOf(const).toUShort().toString()
-                is IrConstKind.Int ->
-                    return kind.valueOf(const).toUInt().toString()
-                is IrConstKind.Long ->
-                    return kind.valueOf(const).toULong().toString()
-            }
-        }
-        return const.value.toString()
+        return normalizeUnsignedValue(const).toString()
     }
 
     @ExperimentalUnsignedTypes
