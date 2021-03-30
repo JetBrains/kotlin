@@ -11,20 +11,20 @@ import org.jetbrains.kotlin.commonizer.mergedtree.FunctionApproximationKey
 import org.jetbrains.kotlin.commonizer.mergedtree.PropertyApproximationKey
 
 data class CirTreeRoot(
-    val modules: List<CirTreeModule>
+    val modules: List<CirTreeModule> = emptyList()
 )
 
 data class CirTreeModule(
     val module: CirModule,
-    val packages: List<CirTreePackage>
+    val packages: List<CirTreePackage> = emptyList()
 )
 
 data class CirTreePackage(
     val pkg: CirPackage,
-    val properties: List<CirTreeProperty>,
-    val functions: List<CirTreeFunction>,
-    val classes: List<CirTreeClass>,
-    val typeAliases: List<CirTreeTypeAlias>
+    val properties: List<CirTreeProperty> = emptyList(),
+    val functions: List<CirTreeFunction> = emptyList(),
+    val classes: List<CirTreeClass> = emptyList(),
+    val typeAliases: List<CirTreeTypeAlias> = emptyList()
 )
 
 data class CirTreeProperty(
@@ -49,10 +49,10 @@ data class CirTreeTypeAlias(
 data class CirTreeClass(
     override val id: CirEntityId,
     val clazz: CirClass,
-    val properties: List<CirTreeProperty>,
-    val functions: List<CirTreeFunction>,
-    val constructors: List<CirTreeClassConstructor>,
-    val classes: List<CirTreeClass>,
+    val properties: List<CirTreeProperty> = emptyList(),
+    val functions: List<CirTreeFunction> = emptyList(),
+    val constructors: List<CirTreeClassConstructor> = emptyList(),
+    val classes: List<CirTreeClass> = emptyList(),
 ) : CirTreeClassifier
 
 class CirTreeClassConstructor(
