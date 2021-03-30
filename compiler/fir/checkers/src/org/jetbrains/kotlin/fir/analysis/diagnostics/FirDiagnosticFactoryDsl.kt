@@ -35,6 +35,12 @@ fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> warning3(
     return DiagnosticFactory3DelegateProvider(Severity.WARNING, positioningStrategy)
 }
 
+fun <E : FirSourceElement, P : PsiElement> error0ForSupertypeList(
+    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategies.SUPERTYPES_LIST
+): DiagnosticFactory0DelegateProvider<E, P> {
+    return DiagnosticFactory0DelegateProvider(Severity.ERROR, positioningStrategy)
+}
+
 fun <E : FirSourceElement, P : PsiElement> error0(
     positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
 ): DiagnosticFactory0DelegateProvider<E, P> {

@@ -379,6 +379,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/statusResolveForTypealiasAsSuperClass.kt");
     }
 
+    @TestMetadata("supertypesForAnnotationClass.kt")
+    public void testSupertypesForAnnotationClass() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/supertypesForAnnotationClass.kt");
+    }
+
     @TestMetadata("syntheticsVsNormalProperties.kt")
     public void testSyntheticsVsNormalProperties() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/syntheticsVsNormalProperties.kt");

@@ -68,6 +68,20 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val SUPERTYPES_LIST: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            val supertypes = ((
+                    element as? KtClass
+                    ) ?: return markElement(element)
+                    ).superTypeListEntries
+            return if (supertypes.isEmpty())
+                markElement(element)
+            else
+                markRange(supertypes[0], supertypes.last())
+        }
+    }
+
+    @JvmField
     val DECLARATION_RETURN_TYPE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
         override fun mark(element: KtDeclaration): List<TextRange> {
             return markElement(getElementToMark(element))

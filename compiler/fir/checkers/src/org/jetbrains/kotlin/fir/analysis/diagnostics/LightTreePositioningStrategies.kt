@@ -43,6 +43,18 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val SUPERTYPES_LIST = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val target = tree.supertypesList(node) ?: node
+            return markElement(target, startOffset, endOffset, tree, node)
+        }
+    }
+
     val VAL_OR_VAR_NODE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -548,6 +560,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.primaryConstructor(nod
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.valueParameterList(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.VALUE_PARAMETER_LIST)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.supertypesList(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtNodeTypes.SUPER_TYPE_LIST)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.typeReference(node: LighterASTNode): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode?>>()
