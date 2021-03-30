@@ -95,11 +95,10 @@ class MavenResolverTest : ResolversTestBase() {
             )
         )
 
-        // @Repository( "https://dl.bintray.com/jakubriegel/kotlin-shell")
         val repositories = repositoryConstructor.callBy(
             mapOf(
                 repositoryConstructor.parameters.first() to arrayOf(
-                    "https://dl.bintray.com/jakubriegel/kotlin-shell"
+                    "TODO - REWRITE TEST TO OTHER REPOSITORY: https://dl.bbiintray.com/jakubriegel/kotlin-shell"
                 )
             )
         )
