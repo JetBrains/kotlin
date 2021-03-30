@@ -42,13 +42,13 @@ fun testStructWithNSObject() {
         struct.dictionary = null
         assertEquals(null, struct.dictionary)
         struct.dictionary = mapOf("k1" to "v1", "k2" to "v2")
-        assertEquals(mapOf("k1" to "v1", "k2" to "v2"), struct.dictionary)
+        assertEquals(mapOf<Any?, String>("k1" to "v1", "k2" to "v2"), struct.dictionary)
 
         struct.mutableArray = null
         assertEquals(null, struct.mutableArray)
         struct.mutableArray = mutableListOf(1, 2)
         struct.mutableArray!! += 3
-        assertEquals(mutableListOf(1, 2, 3), struct.mutableArray)
+        assertEquals(mutableListOf<Any?>(1, 2, 3), struct.mutableArray)
 
         // Check that subtyping via Nothing-returning functions does not break compiler.
         assertFailsWith<NotImplementedError> {
