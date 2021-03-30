@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.createType
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
@@ -252,8 +253,13 @@ class ComposerParamTransformer(
         endOffset: Int = UNDEFINED_OFFSET
     ): IrExpression {
         val classSymbol = classOrNull
-        if (this !is IrSimpleType || hasQuestionMark || classSymbol?.owner?.isInline != true)
-            return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
+        if (this !is IrSimpleType || hasQuestionMark || classSymbol?.owner?.isInline != true) {
+            return if (isMarkedNullable()) {
+                IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
+            } else {
+                IrConstImpl.defaultValueForType(startOffset, endOffset, this)
+            }
+        }
 
         val klass = classSymbol.owner
         val ctor = classSymbol.constructors.first()
