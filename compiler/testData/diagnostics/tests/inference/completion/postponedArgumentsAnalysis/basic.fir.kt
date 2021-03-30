@@ -151,7 +151,7 @@ fun main() {
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this<!> })
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x: String, y: String -> x })
     // Convert to extension lambda is impossible because the lambda parameter types aren't specified explicitly
-    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x, y -> x })
+    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> x })
     select(id(id(fun(x: String, y: String) { }), <!TOO_MANY_ARGUMENTS!>fun String.(x: String) {}<!>), { x, y -> x })
     val x26: Int.(String) -> Int = fun (x: String) = 10 // it must be error, see KT-38439
     // Receiver must be specified in anonymous function declaration
