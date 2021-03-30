@@ -564,6 +564,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("argParamTypeMismatch.kt")
+            public void testArgParamTypeMismatch() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argParamTypeMismatch.kt");
+            }
+
+            @Test
             @TestMetadata("argumentsOfAnnotations.kt")
             public void testArgumentsOfAnnotations() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argumentsOfAnnotations.kt");
