@@ -19761,11 +19761,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JvmStatic extends AbstractLightAnalysisModeTest {
-        @TestMetadata("companionObjectProtected.kt")
-        public void ignoreCompanionObjectProtected() throws Exception {
-            runTest("compiler/testData/codegen/box/jvmStatic/companionObjectProtected.kt");
-        }
-
         @TestMetadata("extensionPropertyGetter.kt")
         public void ignoreExtensionPropertyGetter() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/extensionPropertyGetter.kt");
@@ -19947,6 +19942,34 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("syntheticAccessor.kt")
         public void testSyntheticAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/syntheticAccessor.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ProtectedInSuperClass extends AbstractLightAnalysisModeTest {
+            @TestMetadata("defaultArguments.kt")
+            public void ignoreDefaultArguments() throws Exception {
+                runTest("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass/defaultArguments.kt");
+            }
+
+            @TestMetadata("simpleFunction.kt")
+            public void ignoreSimpleFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass/simpleFunction.kt");
+            }
+
+            @TestMetadata("simpleProperty.kt")
+            public void ignoreSimpleProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass/simpleProperty.kt");
+            }
+
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInProtectedInSuperClass() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
         }
     }
 
