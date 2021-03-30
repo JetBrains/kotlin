@@ -60,7 +60,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         KotlinSourceFilterScope.projectAndLibrariesSources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project)
     ) {
         private val projectIndex = ProjectRootManager.getInstance(myDebugProcess.project).fileIndex
-        private val scopeComparator = Comparator.comparing(projectIndex::isInSourceContent).thenComparing(projectIndex::isInLibrarySource)
+        private val scopeComparator = Comparator
+            .comparing<VirtualFile?, Boolean?> { projectIndex.isInSourceContent(it) }
+            .thenComparing<Boolean?> { projectIndex.isInLibrarySource(it) }
             .thenComparing { file1, file2 -> super.compare(file1, file2) }
 
         override fun compare(file1: VirtualFile, file2: VirtualFile): Int = scopeComparator.compare(file1, file2)
