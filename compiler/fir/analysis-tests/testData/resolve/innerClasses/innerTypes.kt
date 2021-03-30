@@ -12,10 +12,10 @@ val rr = Outer<String>().Inner<Int>()
 val rrq = Boxed<String>().substitute()
 
 fun check() {
-    <!INAPPLICABLE_CANDIDATE!>accept<!>(Outer<Int>().Inner<Int>()) // illegal
-    <!INAPPLICABLE_CANDIDATE!>accept<!>(Outer<String>().Inner<String>()) // illegal
+    accept(<!ARGUMENT_TYPE_MISMATCH!>Outer<Int>().Inner<Int>()<!>) // illegal
+    accept(<!ARGUMENT_TYPE_MISMATCH!>Outer<String>().Inner<String>()<!>) // illegal
     accept(Outer<String>().Inner<Int>()) // ok
 
-    <!INAPPLICABLE_CANDIDATE!>accept<!>(Boxed<Int>().substitute()) // illegal
+    accept(<!ARGUMENT_TYPE_MISMATCH!>Boxed<Int>().substitute()<!>) // illegal
     accept(Boxed<String>().substitute()) // ok
 }

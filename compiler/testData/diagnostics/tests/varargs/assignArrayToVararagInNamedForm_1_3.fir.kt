@@ -10,13 +10,13 @@ fun withVararg(vararg s: String) {}
 fun foo() {}
 
 fun test_fun(s: String, arr: Array<String>) {
-    <!INAPPLICABLE_CANDIDATE!>withVararg<!>(arr) // Error
+    withVararg(<!ARGUMENT_TYPE_MISMATCH!>arr<!>) // Error
     withVararg(*arr) // OK
     withVararg(s = arr) // Error
     withVararg(s = *arr) // OK
 
     withVararg(s) // OK
-    <!INAPPLICABLE_CANDIDATE!>withVararg<!>(s = s) // Error
+    withVararg(s = <!ARGUMENT_TYPE_MISMATCH!>s<!>) // Error
 }
 
 fun test_ann(s: String, arr: Array<String>) {

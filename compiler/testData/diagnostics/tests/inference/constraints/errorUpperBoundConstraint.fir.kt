@@ -21,6 +21,6 @@ public class Foo {
 
 fun test(e: <!UNRESOLVED_REFERENCE!>ErrorType<!>) {
     Foo.foo {
-        Sam.Result.<!INAPPLICABLE_CANDIDATE!>create<!>(e)
+        Sam.Result.create(<!ARGUMENT_TYPE_MISMATCH!>e<!>)
     }
 }

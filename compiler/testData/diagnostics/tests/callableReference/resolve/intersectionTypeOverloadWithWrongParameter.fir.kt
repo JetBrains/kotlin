@@ -11,7 +11,7 @@ class Foo {
     }
 
     fun foo() {
-        <!NONE_APPLICABLE!>installRoute<!><Any>(::route)
+        <!AMBIGUITY!>installRoute<!><Any>(::route)
     }
 
 }

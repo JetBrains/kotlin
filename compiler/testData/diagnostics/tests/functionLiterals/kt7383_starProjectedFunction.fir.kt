@@ -3,5 +3,5 @@
 
 fun foo() {
     val f : Function1<*, *> = { x -> x.toString() }
-    <!INAPPLICABLE_CANDIDATE!>f<!>(1)
+    f(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }

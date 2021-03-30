@@ -10,7 +10,7 @@ fun test() {
     v1()
     v1({})
     v1({}, {})
-    <!INAPPLICABLE_CANDIDATE!>v1<!>({}, 1, {})
+    v1({}, <!ARGUMENT_TYPE_MISMATCH!>1<!>, {})
     v1({}, {}, {it})
     v1({}) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
     v1 <!VARARG_OUTSIDE_PARENTHESES!>{}<!>

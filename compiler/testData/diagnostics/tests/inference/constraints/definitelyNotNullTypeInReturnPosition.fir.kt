@@ -140,8 +140,8 @@ class Main<L>(x: L?, y: L) {
     val x120 = foo12(x!!)
     val x121 = foo12(y!!)
 
-    val x122 = <!INAPPLICABLE_CANDIDATE!>foo12<!>(x)
-    val x123 = <!INAPPLICABLE_CANDIDATE!>foo12<!>(y)
+    val x122 = foo12(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    val x123 = foo12(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
 
     val x133 = Foo13(x).foo1(y)
     val x135 = Foo13(y).foo1(y)

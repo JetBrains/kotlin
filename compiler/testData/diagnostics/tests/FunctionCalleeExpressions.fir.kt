@@ -33,8 +33,8 @@ fun main(args : Array<String>) {
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     args.foo1()(1)
-    args.<!INAPPLICABLE_CANDIDATE!>foo1<!>()("1")
-    <!UNRESOLVED_REFERENCE!>a<!>.<!INAPPLICABLE_CANDIDATE!>foo1<!>()("1")
+    args.foo1()(<!ARGUMENT_TYPE_MISMATCH!>"1"<!>)
+    <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!ARGUMENT_TYPE_MISMATCH!>"1"<!>)
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     foo2()({})

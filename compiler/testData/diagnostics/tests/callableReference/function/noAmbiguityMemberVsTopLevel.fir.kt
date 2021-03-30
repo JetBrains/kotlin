@@ -12,16 +12,16 @@ fun foo(): String = ""
 
 class A {
     fun foo() {}
-    
+
     fun main() {
         val x = ::foo
 
         checkSubtype<KFunction0<Unit>>(x)
 
         expectFunction0Unit(x)
-        <!INAPPLICABLE_CANDIDATE!>expectFunction0String<!>(x)
-        <!INAPPLICABLE_CANDIDATE!>expectFunction1Unit<!>(x)
-        <!INAPPLICABLE_CANDIDATE!>expectFunction1String<!>(x)
+        expectFunction0String(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+        expectFunction1Unit(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+        expectFunction1String(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
         expectFunction0Unit(::foo)
         expectFunction0String(::foo)

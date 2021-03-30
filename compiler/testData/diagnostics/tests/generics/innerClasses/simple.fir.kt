@@ -25,8 +25,8 @@ fun main() {
     checkSubtype<Outer<*>.Inner>(outer.bar())
     checkSubtype<Outer<*>.Inner>(outer.Inner())
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Outer<CharSequence>.Inner>(outer.bar())
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Outer<CharSequence>.Inner>(outer.Inner())
+    checkSubtype<Outer<CharSequence>.Inner>(<!ARGUMENT_TYPE_MISMATCH!>outer.bar()<!>)
+    checkSubtype<Outer<CharSequence>.Inner>(<!ARGUMENT_TYPE_MISMATCH!>outer.Inner()<!>)
 
     outer.set(outer.bar())
     outer.set(outer.Inner())

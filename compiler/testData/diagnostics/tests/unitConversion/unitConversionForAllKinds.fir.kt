@@ -10,7 +10,7 @@ fun createCall(): () -> Int = TODO()
 fun test(g: () -> String, h: (Float) -> String) {
     foo(::bar)
     foo { "something" }
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(g)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>fooGeneric<!>(h)
+    fooGeneric(<!ARGUMENT_TYPE_MISMATCH!>h<!>)
 }

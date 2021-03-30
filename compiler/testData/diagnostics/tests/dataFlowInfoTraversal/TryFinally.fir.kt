@@ -14,7 +14,7 @@ fun tryCatchFinally(x: Int?) {
     } catch (e: Exception) {
         x!!
     } finally {
-        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(x)
+        checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         x!!
     }
     checkSubtype<Int>(x)

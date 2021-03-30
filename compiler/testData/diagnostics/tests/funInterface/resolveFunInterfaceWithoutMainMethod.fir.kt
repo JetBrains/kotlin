@@ -8,5 +8,5 @@ fun referIsolatedFunFace(iff: IsolatedFunFace) {}
 fun callIsolatedFunFace() {
     referIsolatedFunFace(<!UNRESOLVED_REFERENCE!>IsolatedFunFace<!> {})
     referIsolatedFunFace(<!UNRESOLVED_REFERENCE!>FunAlias<!> {})
-    <!INAPPLICABLE_CANDIDATE!>referIsolatedFunFace<!>({})
+    referIsolatedFunFace(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }

@@ -7,7 +7,7 @@ fun useFn(fn: () -> Unit) = fn
 fun ambiguous(sfn: suspend () -> Unit) = sfn
 fun ambiguous(fn: () -> Unit) = fn
 
-fun test1(sfn: suspend () -> Unit) = <!INAPPLICABLE_CANDIDATE!>useFn<!>(sfn)
+fun test1(sfn: suspend () -> Unit) = useFn(<!ARGUMENT_TYPE_MISMATCH!>sfn<!>)
 fun test2(fn: () -> Unit) = useSuspendFn(fn)
 
 fun test3(sfn: suspend () -> Unit) = useSuspendFn(sfn)

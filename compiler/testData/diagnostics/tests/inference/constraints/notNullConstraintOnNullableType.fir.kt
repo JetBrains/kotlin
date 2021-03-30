@@ -18,8 +18,8 @@ fun test(out: Out<Int>, i: In<Int>, inv: A<Int>) {
     r checkType { _<Int>() }
 
     // T? <: Int => error
-    <!INAPPLICABLE_CANDIDATE!>doIn<!>(i)
+    doIn(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
 
     // T? >: Int => error
-    <!INAPPLICABLE_CANDIDATE!>doA<!>(inv)
+    doA(<!ARGUMENT_TYPE_MISMATCH!>inv<!>)
 }

@@ -22,7 +22,7 @@ fun test() {
     builder {
         noParams()
         yieldString("abc") checkType { _<Unit>() }
-        <!INAPPLICABLE_CANDIDATE!>yieldString<!>(1) checkType { _<Unit>() }
+        yieldString(<!ARGUMENT_TYPE_MISMATCH!>1<!>) checkType { _<Unit>() }
 
         await<String> { "123" } checkType { _<String>() }
 

@@ -7,7 +7,7 @@ abstract class Foo<T> {
 }
 
 fun <T> foo() {
-    bar<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Int><!>>()
+    <!INAPPLICABLE_CANDIDATE!>bar<!><<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Int><!>>()
     bar<List<List<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Boolean><!>>>>()
 }
 
@@ -27,7 +27,7 @@ fun <G> gest() {}
 
 fun <T> fest() {
     val b: List<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Double><!>>
-    gest<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Char><!>>()
+    <!INAPPLICABLE_CANDIDATE!>gest<!><<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Char><!>>()
     gest<T>()
     val c: List<List<List<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<String><!>>>>
     gest<List<List<<!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Boolean><!>>>>()

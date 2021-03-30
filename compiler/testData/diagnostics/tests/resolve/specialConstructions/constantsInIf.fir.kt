@@ -2,13 +2,13 @@
 // !DIAGNOSTICS: -USELESS_ELVIS
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(if (true) {
+    bar(<!ARGUMENT_TYPE_MISMATCH!>if (true) {
         1
     } else {
         2
-    })
+    }<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(1 ?: 2)
+    bar(<!ARGUMENT_TYPE_MISMATCH!>1 ?: 2<!>)
 }
 
 fun bar(s: String) = s

@@ -15,11 +15,11 @@ fun test() {
 
     <!INAPPLICABLE_CANDIDATE!>foo<!>("", 1, <!UNRESOLVED_REFERENCE!>xx<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(r = <!UNRESOLVED_REFERENCE!>xx<!>, i = "", s = "")
+    foo(r = <!UNRESOLVED_REFERENCE!>xx<!>, i = <!ARGUMENT_TYPE_MISMATCH!>""<!>, s = "")
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(i = 1, i = 1, s = 11)
+    foo(i = 1, i = 1, s = <!ARGUMENT_TYPE_MISMATCH!>11<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("", s = 2)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>, s = <!ARGUMENT_TYPE_MISMATCH!>2<!>)
 
     <!INAPPLICABLE_CANDIDATE!>foo<!>(i = "", s = 2, 33)
 

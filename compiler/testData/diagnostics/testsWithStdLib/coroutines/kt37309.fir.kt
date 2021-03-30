@@ -12,12 +12,12 @@ fun <E> myBuildList(@BuilderInference builderAction: MutableList<E>.() -> Unit) 
 fun main() {
     val newList1 = myBuildList {
         addAll(
-            listOf(1).map { <!INAPPLICABLE_CANDIDATE!>Foo<!>(null) }
+            listOf(1).map { Foo(<!ARGUMENT_TYPE_MISMATCH!>null<!>) }
         )
     }
 
     val newList2 = buildList {
-        addAll(listOf(1,2,3).map{ <!INAPPLICABLE_CANDIDATE!>Foo<!>(null) })
+        addAll(listOf(1,2,3).map{ Foo(<!ARGUMENT_TYPE_MISMATCH!>null<!>) })
     }
 }
 

@@ -1,7 +1,7 @@
 <!INAPPLICABLE_CANDIDATE!>@JvmName()<!>
 fun foo() {}
 
-<!INAPPLICABLE_CANDIDATE!>@JvmName(42)<!>
+@JvmName(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
 fun bar() {}
 
 <!INAPPLICABLE_CANDIDATE!>@JvmName("a", "b")<!>

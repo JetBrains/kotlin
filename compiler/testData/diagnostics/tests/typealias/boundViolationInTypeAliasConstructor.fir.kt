@@ -4,7 +4,7 @@ class Num<T: Number>(val x: T)
 typealias N<T> = Num<T>
 typealias N2<T> = N<T>
 
-val x1 = <!INAPPLICABLE_CANDIDATE!>Num<!><String>("")
+val x1 = Num<String>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 val x2 = N<String>("")
 val x3 = N2<String>("")
 

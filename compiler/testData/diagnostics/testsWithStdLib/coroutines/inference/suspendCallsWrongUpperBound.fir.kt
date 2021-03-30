@@ -9,5 +9,5 @@ class Controller<T : Number> {
 fun <S : Number> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
 val test = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>("foo")
+    yield(<!ARGUMENT_TYPE_MISMATCH!>"foo"<!>)
 }

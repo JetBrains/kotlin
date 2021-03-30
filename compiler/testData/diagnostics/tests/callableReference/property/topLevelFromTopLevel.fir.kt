@@ -20,9 +20,9 @@ fun testX() {
 
 fun testY() {
     val yy = ::y
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KMutableProperty0<String>>(yy)
+    checkSubtype<KMutableProperty0<String>>(<!ARGUMENT_TYPE_MISMATCH!>yy<!>)
     checkSubtype<KProperty0<String>>(yy)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KMutableProperty<String>>(yy)
+    checkSubtype<KMutableProperty<String>>(<!ARGUMENT_TYPE_MISMATCH!>yy<!>)
     checkSubtype<KProperty<String>>(yy)
     checkSubtype<KCallable<String>>(yy)
 

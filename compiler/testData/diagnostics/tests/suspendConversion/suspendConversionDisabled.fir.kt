@@ -22,6 +22,6 @@ fun test(
 
     foo1(::bar)
 
-    <!INAPPLICABLE_CANDIDATE!>foo1<!>(f2)
-    <!INAPPLICABLE_CANDIDATE!>foo1<!>(f3)
+    foo1(<!ARGUMENT_TYPE_MISMATCH!>f2<!>)
+    foo1(<!ARGUMENT_TYPE_MISMATCH!>f3<!>)
 }

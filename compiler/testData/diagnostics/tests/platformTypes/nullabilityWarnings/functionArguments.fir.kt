@@ -15,7 +15,7 @@ public class J {
 
 fun test() {
     foo(J.staticNN)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(J.staticN)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>J.staticN<!>)
     foo(J.staticJ)
 
     bar(J.staticNN)

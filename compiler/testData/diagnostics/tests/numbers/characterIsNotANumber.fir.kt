@@ -2,11 +2,11 @@
 fun foo(n: Number) = n
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>('a')
-    
+    foo(<!ARGUMENT_TYPE_MISMATCH!>'a'<!>)
+
     val c = 'c'
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(c)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
 
     val d: Char? = 'd'
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(d!!)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>d!!<!>)
 }

@@ -9,7 +9,7 @@ object A {
 }
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>takeString<!>(A % 123)
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>A % 123<!>)
 }
 
 fun takeString(s: String) {}

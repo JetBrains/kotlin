@@ -25,5 +25,5 @@ public fun foo(a: A) {
 import p.*
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(M1().a)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>M1().a<!>)
 }

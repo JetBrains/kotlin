@@ -56,7 +56,7 @@ fun bar() {
         b checkType { _<String>() }
     }
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!> { (_, b): B ->
+    foo { (_, b): B ->
         <!UNRESOLVED_REFERENCE!>_<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
         b checkType { _<Short>() }
     }

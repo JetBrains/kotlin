@@ -7,19 +7,19 @@ class TestWithEquals {
 }
 
 fun bar(i: Test?) {
-    if (i == null) <!INAPPLICABLE_CANDIDATE!>foo<!>(i)
+    if (i == null) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
 }
 
 fun bar(i: TestWithEquals?) {
-    if (i == null) <!INAPPLICABLE_CANDIDATE!>foo<!>(i)
-    if (null == i) <!INAPPLICABLE_CANDIDATE!>foo<!>(i)
+    if (i == null) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
+    if (null == i) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
     when (i) {
-        null -> <!INAPPLICABLE_CANDIDATE!>foo<!>(i)
+        null -> foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
     }
 }
 
 fun gav(i: TestWithEquals?, j: TestWithEquals?) {
     if (j == null) {
-        if (i == j) <!INAPPLICABLE_CANDIDATE!>foo<!>(i)
+        if (i == j) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
     }
 }

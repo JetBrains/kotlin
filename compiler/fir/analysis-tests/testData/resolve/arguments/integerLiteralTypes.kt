@@ -17,9 +17,9 @@ fun test_1() {
 }
 
 fun test_2() {
-    <!INAPPLICABLE_CANDIDATE!>takeInt<!>(10000000000)
+    takeInt(<!ARGUMENT_TYPE_MISMATCH!>10000000000<!>)
     takeLong(10000000000)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1000)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1000<!>)
 }
 
 fun test_3() {
@@ -35,14 +35,14 @@ fun test_4() {
 }
 
 fun test_5() {
-    <!INAPPLICABLE_CANDIDATE!>takeString<!>(1)
-    <!INAPPLICABLE_CANDIDATE!>takeString<!>(run { 1 })
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>run { 1 }<!>)
 }
 
 annotation class Ann(val x: Byte)
 
 @Ann(10)
 fun test_6() {
-    <!INAPPLICABLE_CANDIDATE!>@Ann(300)<!>
+    @Ann(<!ARGUMENT_TYPE_MISMATCH!>300<!>)
     val x = ""
 }

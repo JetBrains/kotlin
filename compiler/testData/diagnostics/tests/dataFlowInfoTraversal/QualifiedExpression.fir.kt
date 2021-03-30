@@ -7,7 +7,7 @@ class A {
 fun foo() {
     val x: Int? = null
 
-    A().<!INAPPLICABLE_CANDIDATE!>bar<!>(x)
+    A().bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
     if (x == null) return
     A().bar(x)
 }

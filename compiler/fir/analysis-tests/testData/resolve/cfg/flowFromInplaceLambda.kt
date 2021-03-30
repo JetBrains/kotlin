@@ -72,7 +72,7 @@ fun test_4(x: Any, y: Any) {
         }
 
     )
-    <!INAPPLICABLE_CANDIDATE!>takeInt<!>(x) // Bad
+    takeInt(<!ARGUMENT_TYPE_MISMATCH!>x<!>) // Bad
     takeInt(y) // OK
     takeInt(a) // Bad
 }

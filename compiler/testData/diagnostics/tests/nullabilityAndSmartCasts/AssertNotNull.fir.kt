@@ -35,5 +35,5 @@ fun main() {
     }
 
     val f : String = a!!
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><String>(a!!)
+    checkSubtype<String>(<!ARGUMENT_TYPE_MISMATCH!>a!!<!>)
 }

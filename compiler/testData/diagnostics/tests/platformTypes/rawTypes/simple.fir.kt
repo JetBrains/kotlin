@@ -29,11 +29,11 @@ fun main() {
     val rawA = Test.rawAField
     rawA.x = strList
     rawA.y = strMap
-    rawA.<!INAPPLICABLE_CANDIDATE!>foo<!>("", strList, strList)
+    rawA.foo("", strList, <!ARGUMENT_TYPE_MISMATCH!>strList<!>)
 
     val barResult = rawA.bar()
 
     barResult.x = strList
     barResult.y = strMap
-    barResult.<!INAPPLICABLE_CANDIDATE!>foo<!>("", strList, null)
+    barResult.foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>, <!ARGUMENT_TYPE_MISMATCH!>strList<!>, null)
 }

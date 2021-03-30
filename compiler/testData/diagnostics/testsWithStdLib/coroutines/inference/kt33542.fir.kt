@@ -20,8 +20,8 @@ suspend fun yield() {}
 
 fun test() {
     builder {
-        <!INAPPLICABLE_CANDIDATE!>send<!>(run {
+        send(<!ARGUMENT_TYPE_MISMATCH!>run {
             yield() // No error but `yield` is not inside "suspension" context actually
-        })
+        }<!>)
     }
 }

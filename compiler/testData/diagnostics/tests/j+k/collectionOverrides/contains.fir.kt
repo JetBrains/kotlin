@@ -35,32 +35,32 @@ fun foo(
         al: java.util.ArrayList<String>
 ) {
     a.contains("")
-    a.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
+    a.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in a
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> a
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in a
 
     b.contains("")
-    b.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
+    b.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in b
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> b
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in b
 
     ic.contains("")
-    ic.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
+    ic.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in ic
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> ic
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ic
 
     ka.contains("")
-    ka.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
+    ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in ka
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> ka
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ka
 
     kb.contains("")
-    kb.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
+    kb.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in kb
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> kb
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in kb
 
     al.contains("")
-    al.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
+    al.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in al
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> al
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in al
 }

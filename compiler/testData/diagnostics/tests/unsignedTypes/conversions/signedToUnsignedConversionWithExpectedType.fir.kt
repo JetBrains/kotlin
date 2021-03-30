@@ -11,47 +11,47 @@ fun takeUBytes(vararg u: UByte) {}
 fun takeNullableUInt(u: UInt?) {}
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(1 + 2)
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(1.plus(2))
-    <!INAPPLICABLE_CANDIDATE!>takeNullableUInt<!>(4)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>1 + 2<!>)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>1.plus(2)<!>)
+    takeNullableUInt(<!ARGUMENT_TYPE_MISMATCH!>4<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(Int.MAX_VALUE * 2L)
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(-1)
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(Int.MAX_VALUE * 2L + 2)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>Int.MAX_VALUE * 2L<!>)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>-1<!>)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>Int.MAX_VALUE * 2L + 2<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(1)
-    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(255)
-    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(1.toByte())
+    takeUByte(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    takeUByte(<!ARGUMENT_TYPE_MISMATCH!>255<!>)
+    takeUByte(<!ARGUMENT_TYPE_MISMATCH!>1.toByte()<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUShort<!>(1)
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(1)
-    <!INAPPLICABLE_CANDIDATE!>takeULong<!>(1)
+    takeUShort(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    takeULong(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 
     takeULong(<!ILLEGAL_CONST_EXPRESSION!>18446744073709551615<!>)
-    <!INAPPLICABLE_CANDIDATE!>takeULong<!>(1844674407370955161)
+    takeULong(<!ARGUMENT_TYPE_MISMATCH!>1844674407370955161<!>)
     takeULong(18446744073709551615u)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(Int.MAX_VALUE * 2)
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(4294967294)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>Int.MAX_VALUE * 2<!>)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>4294967294<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUBytes<!>(1, 2, 255, 256, 0, -1, 40 + 2)
+    takeUBytes(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>255<!>, <!ARGUMENT_TYPE_MISMATCH!>256<!>, <!ARGUMENT_TYPE_MISMATCH!>0<!>, <!ARGUMENT_TYPE_MISMATCH!>-1<!>, <!ARGUMENT_TYPE_MISMATCH!>40 + 2<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(1.myPlus(2))
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>1.myPlus(2)<!>)
 
     val localVariable = 42
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(localVariable)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>localVariable<!>)
 
     var localMutableVariable = 42
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(localMutableVariable)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>localMutableVariable<!>)
 
     val localNegativeVariable = -1
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(localNegativeVariable)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>localNegativeVariable<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(globalVariable)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>globalVariable<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(constVal)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>constVal<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(globalVariableWithGetter)
+    takeUInt(<!ARGUMENT_TYPE_MISMATCH!>globalVariableWithGetter<!>)
 }
 
 val globalVariable = 10

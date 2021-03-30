@@ -1,6 +1,6 @@
 fun foo(x: String) {}
 
-@Suppress("INAPPLICABLE_CANDIDATE")
+@Suppress("ARGUMENT_TYPE_MISMATCH")
 fun bar() {
     foo(10)
 }

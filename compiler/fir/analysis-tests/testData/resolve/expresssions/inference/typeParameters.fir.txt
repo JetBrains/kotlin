@@ -18,5 +18,5 @@ FILE: typeParameters.kt
     }
     public final fun main(fooImpl: R|FooImpl|, bar: R|Bar|): R|kotlin/Unit| {
         lval a: R|FooImpl| = R|/foo|<R|FooImpl|>(R|<local>/fooImpl|)
-        lval b: R|Bar| = <Inapplicable(INAPPLICABLE): /foo>#<R|Bar|>(R|<local>/bar|)
+        lval b: R|Foo| = <Inapplicable(INAPPLICABLE): /foo>#<R|Foo|>(R|<local>/bar|)
     }

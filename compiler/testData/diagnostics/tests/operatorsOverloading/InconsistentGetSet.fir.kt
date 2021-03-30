@@ -18,8 +18,8 @@ object MismatchingTypes {
 }
 
 fun testMismatchingTypes() {
-    ++<!INAPPLICABLE_CANDIDATE!>MismatchingTypes[0]<!>
-    <!INAPPLICABLE_CANDIDATE!>MismatchingTypes[0]<!>++
+    ++<!ARGUMENT_TYPE_MISMATCH!>MismatchingTypes[0]<!>
+    <!ARGUMENT_TYPE_MISMATCH!>MismatchingTypes[0]++<!>
     <!UNRESOLVED_REFERENCE!>MismatchingTypes[0] += 1<!>
 }
 

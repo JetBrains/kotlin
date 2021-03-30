@@ -4,8 +4,8 @@ fun <K> id(arg: K): K = arg
 fun <M> materialize(): M = TODO()
 
 fun test(b: Boolean) {
-    <!INAPPLICABLE_CANDIDATE!>id<!>(if (b) {
-        <!INAPPLICABLE_CANDIDATE!>id<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)
+    id(if (b) {
+        id(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>unresolved<!>)
     } else {
         id(
             materialize()

@@ -20,8 +20,8 @@ fun main() {
     val a8: () -> Int = fun(): String = "1"
     val a9: () -> () -> () -> Int = fun(): () -> () -> String = fun(): () -> String = fun(): String = "1"
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(fun(): String = "1")
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(((fun(): String = "1")))
+    foo(fun(): String = <!ARGUMENT_TYPE_MISMATCH!>"1"<!>)
+    foo(((fun(): String = <!ARGUMENT_TYPE_MISMATCH!>"1"<!>)))
 
     val a10: Int.(String) -> Int = fun (x: String) = 10
     val a11: () -> () -> () -> Int = fun() = fun() = fun(): String = "1"

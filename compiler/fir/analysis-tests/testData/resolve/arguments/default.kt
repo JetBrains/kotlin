@@ -21,6 +21,6 @@ fun test() {
     baz(1, "my", "yours")
     baz(1, z = true)
 
-    <!INAPPLICABLE_CANDIDATE!>baz<!>(0, "", false)
+    baz(0, "", <!ARGUMENT_TYPE_MISMATCH!>false<!>)
 }
 

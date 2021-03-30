@@ -23,7 +23,7 @@ fun f(): Unit {
     x !== 1
 
     x<!NONE_APPLICABLE!>..<!>2
-    x <!INAPPLICABLE_CANDIDATE!>in<!> 1..2
+    <!ARGUMENT_TYPE_MISMATCH!>x<!> in 1..2
 
     val y : Boolean? = true
     false || y

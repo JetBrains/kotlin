@@ -30,5 +30,5 @@ val strList: List<String> = null!!
 fun main() {
     val rawB = Test.rawAField.b;
     // Raw(A).b is not erased because it have no type parameters
-    var rawInner = rawB.<!INAPPLICABLE_CANDIDATE!>bar<!>(strList)
+    var rawInner = rawB.bar(<!ARGUMENT_TYPE_MISMATCH!>strList<!>)
 }

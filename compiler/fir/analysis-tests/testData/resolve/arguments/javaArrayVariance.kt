@@ -13,6 +13,6 @@ fun takeOutA(array: Array<out A>) {}
 
 fun test(array: Array<B>) {
     A.take(array)
-    <!INAPPLICABLE_CANDIDATE!>takeA<!>(array)
+    takeA(<!ARGUMENT_TYPE_MISMATCH!>array<!>)
     takeOutA(array)
 }

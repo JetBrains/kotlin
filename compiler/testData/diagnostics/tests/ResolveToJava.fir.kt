@@ -28,7 +28,7 @@ fun test(l : java.util.List<Int>) {
   Collections.emptyList()
 
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
-  Collections.<!INAPPLICABLE_CANDIDATE!>singleton<!><Int>(1.0)
+  Collections.singleton<Int>(<!ARGUMENT_TYPE_MISMATCH!>1.0<!>)
 
   List<Int>
 

@@ -14,5 +14,5 @@ class C<T> {
 class Out<out F>
 
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
-    a <!INAPPLICABLE_CANDIDATE!>+<!> y
+    a + <!ARGUMENT_TYPE_MISMATCH!>y<!>
 }

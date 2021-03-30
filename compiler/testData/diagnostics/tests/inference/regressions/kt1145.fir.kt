@@ -8,7 +8,7 @@ import checkSubtype
 
 fun test(numbers: Iterable<Int>) {
     val s = numbers.map{it.toString()}.fold(""){it, it2 -> it + it2}
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(s)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }
 
 //from library

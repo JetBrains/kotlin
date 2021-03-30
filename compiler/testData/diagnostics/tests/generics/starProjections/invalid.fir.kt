@@ -17,7 +17,7 @@ fun main(a: A<*>, j: JavaClass<*>, i2: Inv2<*>) {
     j.foo() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
     i2.x checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
 
-    j.<!INAPPLICABLE_CANDIDATE!>bar<!>(1, 2, Any())
+    j.bar(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>Any()<!>)
     j.bar(null)
 }
 

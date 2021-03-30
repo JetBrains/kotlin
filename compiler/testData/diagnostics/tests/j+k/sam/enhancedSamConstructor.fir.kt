@@ -16,12 +16,12 @@ public interface J2 extends J {
 
 // FILE: main.kt
 fun main() {
-    <!INAPPLICABLE_CANDIDATE!>J<!> { s: String -> s} // should be prohibited, because SAM value parameter has nullable type
+    J { s: String -> <!ARGUMENT_TYPE_MISMATCH!>s<!>} // should be prohibited, because SAM value parameter has nullable type
     J { "" + it<!UNSAFE_CALL!>.<!>length }
     J { null }
     J { it?.length?.toString() }
 
-    <!INAPPLICABLE_CANDIDATE!>J2<!> { s: String -> s}
+    J2 { s: String -> <!ARGUMENT_TYPE_MISMATCH!>s<!>}
     J2 { "" + it<!UNSAFE_CALL!>.<!>length }
     J2 { null }
     J2 { it?.length?.toString() }

@@ -6,5 +6,5 @@ class A<T> {
 }
 
 fun test(a: A<out CharSequence>) {
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>("", "")
+    a.foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }

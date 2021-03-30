@@ -33,9 +33,9 @@ fun <T> copy3(from : Array<out T>, to : Array<in T>) {}
 fun copy4(from : Array<out Number>, to : Array<in Int>) {}
 
 fun f(ints: Array<Int>, any: Array<Any>, numbers: Array<Number>) {
-    <!INAPPLICABLE_CANDIDATE!>copy1<!>(ints, any)
+    copy1(<!ARGUMENT_TYPE_MISMATCH!>ints<!>, any)
     copy2(ints, any) //ok
-    <!INAPPLICABLE_CANDIDATE!>copy2<!>(ints, numbers)
+    copy2(ints, <!ARGUMENT_TYPE_MISMATCH!>numbers<!>)
     copy3<Int>(ints, numbers)
     copy4(ints, numbers) //ok
 }

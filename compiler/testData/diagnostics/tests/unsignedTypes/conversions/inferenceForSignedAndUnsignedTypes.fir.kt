@@ -11,10 +11,10 @@ fun takeUByte(u: UByte) {}
 
 fun foo() {
     select(1, 1u) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Comparable<*>>() }
-    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(id(1))
+    takeUByte(<!ARGUMENT_TYPE_MISMATCH!>id(1)<!>)
 
     1 <!NONE_APPLICABLE!>+<!> 1u
     (1u <!NONE_APPLICABLE!>+<!> 1) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><UInt>() }
 
-    <!INAPPLICABLE_CANDIDATE!>id<!><UInt>(1)
+    id<UInt>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }

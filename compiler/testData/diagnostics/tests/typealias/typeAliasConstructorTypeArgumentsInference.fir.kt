@@ -12,8 +12,8 @@ class Cons<T>(val head: T, val tail: Cons<T>?)
 typealias C<T> = Cons<T>
 typealias CC<T> = C<C<T>>
 
-val test2 = <!INAPPLICABLE_CANDIDATE!>C<!>(1, 2)
-val test3 = <!INAPPLICABLE_CANDIDATE!>CC<!>(1, 2)
+val test2 = C(1, <!ARGUMENT_TYPE_MISMATCH!>2<!>)
+val test3 = CC(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>)
 val test4 = CC(C(1, null), null)
 
 
@@ -21,13 +21,13 @@ class Pair<X, Y>(val x: X, val y: Y)
 typealias PL<T> = Pair<T, List<T>>
 typealias PN<T> = Pair<T, Num<T>>
 
-val test5 = <!INAPPLICABLE_CANDIDATE!>PL<!>(1, null)
+val test5 = PL(1, <!ARGUMENT_TYPE_MISMATCH!>null<!>)
 
 
 class Foo<T>(val p: Pair<T, T>)
 typealias F<T> = Foo<T>
 
-fun testProjections1(x: Pair<in Int, out String>) = <!INAPPLICABLE_CANDIDATE!>F<!>(x)
-fun testProjections2(x: Pair<in Int, out Number>) = <!INAPPLICABLE_CANDIDATE!>F<!>(x)
-fun testProjections3(x: Pair<in Number, out Int>) = <!INAPPLICABLE_CANDIDATE!>F<!>(x)
-fun testProjections4(x: Pair<in Int, in Int>) = <!INAPPLICABLE_CANDIDATE!>F<!>(x)
+fun testProjections1(x: Pair<in Int, out String>) = F(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+fun testProjections2(x: Pair<in Int, out Number>) = F(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+fun testProjections3(x: Pair<in Number, out Int>) = F(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+fun testProjections4(x: Pair<in Int, in Int>) = F(<!ARGUMENT_TYPE_MISMATCH!>x<!>)

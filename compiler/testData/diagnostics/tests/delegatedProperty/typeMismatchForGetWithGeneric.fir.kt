@@ -5,10 +5,10 @@ import kotlin.reflect.KProperty
 class A
 
 class B {
-  val b: Int by <!INAPPLICABLE_CANDIDATE!>Delegate<!><A>()
+  val b: Int by <!ARGUMENT_TYPE_MISMATCH!>Delegate<A>()<!>
 }
 
-val bTopLevel: Int by <!INAPPLICABLE_CANDIDATE!>Delegate<!><A>()
+val bTopLevel: Int by <!ARGUMENT_TYPE_MISMATCH!>Delegate<A>()<!>
 
 class C {
   val c: Int by Delegate<C>()

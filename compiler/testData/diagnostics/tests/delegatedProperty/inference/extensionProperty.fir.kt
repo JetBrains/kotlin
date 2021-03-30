@@ -4,10 +4,10 @@ package foo
 import kotlin.reflect.KProperty
 
 open class A {
-    val B.w: Int by <!INAPPLICABLE_CANDIDATE!>MyProperty<!>()
+    val B.w: Int by <!ARGUMENT_TYPE_MISMATCH!>MyProperty()<!>
 }
 
-val B.r: Int by <!INAPPLICABLE_CANDIDATE!>MyProperty<!>()
+val B.r: Int by <!ARGUMENT_TYPE_MISMATCH!>MyProperty()<!>
 
 val A.e: Int by MyProperty()
 

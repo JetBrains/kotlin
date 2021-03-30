@@ -28,16 +28,16 @@ fun test() {
     var a = Example()
     val b = Example()
 
-    <!INAPPLICABLE_CANDIDATE!>consumeString<!>(a())
-    <!INAPPLICABLE_CANDIDATE!>consumeString<!>(a[1])
+    consumeString(<!ARGUMENT_TYPE_MISMATCH!>a()<!>)
+    consumeString(<!ARGUMENT_TYPE_MISMATCH!>a[1]<!>)
 
     val (x, y) = Example()
-    <!INAPPLICABLE_CANDIDATE!>consumeString<!>(x)
-    <!INAPPLICABLE_CANDIDATE!>consumeString<!>(y)
+    consumeString(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    consumeString(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>consumeExample2<!>(++a)
+    consumeExample2(<!ARGUMENT_TYPE_MISMATCH!>++a<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>consumeString<!>(a plus b)
+    consumeString(<!ARGUMENT_TYPE_MISMATCH!>a plus b<!>)
 }
 
 fun consumeInt(i: Int) {}

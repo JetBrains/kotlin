@@ -6,5 +6,5 @@ class Pair<A>(a: A)
 
 fun test() {
     val v = foo(Pair(1))
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(v) // check that it is not error type
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>v<!>) // check that it is not error type
 }

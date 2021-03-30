@@ -9,7 +9,7 @@ public @interface Ann {
 // FILE: main.kt
 
 @Ann(x = 10, s = "")
-<!INAPPLICABLE_CANDIDATE!>@Ann(10, "")<!>
+@Ann(<!ARGUMENT_TYPE_MISMATCH!>10<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 @Ann(x = 10, s = "", y = 10)
 class A
 

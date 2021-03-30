@@ -23,7 +23,7 @@ fun foo(k: KotlinClass) {
 
     k.setSomething4("")
     k.something4 += ""
-    k.<!INAPPLICABLE_CANDIDATE!>setSomething4<!>(null)
+    k.setSomething4(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
     k.something4 = null
 
     useString(k.getSomething5())

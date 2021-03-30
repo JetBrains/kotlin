@@ -4,6 +4,6 @@
 
 class Base<T : T> : HashSet<T>() {
     fun foo() {
-        super.<!INAPPLICABLE_CANDIDATE!>remove<!>("")
+        super.remove(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     }
 }

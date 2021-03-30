@@ -12,5 +12,5 @@ import p.*
 
 fun test() {
     J()._int(1)
-    J().<!INAPPLICABLE_CANDIDATE!>_int<!>(null)
+    J()._int(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
 }

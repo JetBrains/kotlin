@@ -12,7 +12,7 @@ fun nullableStringArg(number: String?) {}
  */
 fun case_1(x: Int?) {
     if (x == null) {
-        <!INAPPLICABLE_CANDIDATE!>nullableStringArg<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
+        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
     }
 }
 
@@ -23,7 +23,7 @@ fun case_1(x: Int?) {
  */
 fun case_2(x: Int?, y: Nothing?) {
     if (x == y) {
-        <!INAPPLICABLE_CANDIDATE!>nullableStringArg<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
+        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
     }
 }
 
@@ -34,7 +34,7 @@ fun case_2(x: Int?, y: Nothing?) {
  */
 fun case_3(x: Int?) {
     if (x == null) {
-        <!INAPPLICABLE_CANDIDATE!>nullableStringArg<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
+        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
     }
 }
 
@@ -45,7 +45,7 @@ fun case_3(x: Int?) {
  */
 fun case_4(x: Int?) {
     if (x == null) {
-        <!INAPPLICABLE_CANDIDATE!>nullableStringArg<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
+        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
     }
 }
 
@@ -57,6 +57,6 @@ fun case_4(x: Int?) {
 fun case_5(x: Int?) {
     if (x == null) {
         var y = x
-        <!INAPPLICABLE_CANDIDATE!>nullableStringArg<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>y<!>)
+        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>y<!>)
     }
 }

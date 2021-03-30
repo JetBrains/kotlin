@@ -3,6 +3,6 @@
 import java.lang.Comparable as Comparable
 
 fun f(c: Comparable<*>) {
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><kotlin.Comparable<*>>(c)
+    checkSubtype<kotlin.Comparable<*>>(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
     checkSubtype<java.lang.Comparable<*>>(c)
 }
