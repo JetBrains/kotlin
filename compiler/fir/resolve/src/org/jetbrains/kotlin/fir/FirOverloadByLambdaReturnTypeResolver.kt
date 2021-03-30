@@ -38,10 +38,7 @@ class FirOverloadByLambdaReturnTypeResolver(
         allCandidates: Collection<Candidate>,
         bestCandidates: Set<Candidate>
     ): Set<Candidate> where T : FirStatement, T : FirResolvable {
-        if (
-            bestCandidates.size <= 1 ||
-            !session.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType)
-        ) return bestCandidates
+        if (bestCandidates.size <= 1) return bestCandidates
 
         /*
          * Inference session may look into candidate of call, and for that it uses callee reference.
