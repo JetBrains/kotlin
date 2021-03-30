@@ -13,7 +13,13 @@ Features support:
  - [x] Basic support
  - [x] Class-level 
  - [x] @Accessors config support: chain and fluent
- - [ ] Config support (_lombok.getter.noIsPrefix_ only supported atm)
+ - [~] Config support
+   - [x] lombok.getter.noIsPrefix
+   - [x] lombok.accessors.fluent
+   - [x] lombok.accessors.chain
+   - [ ] lombok.accessors.prefix
+   - [ ] lombok.noArgsConstructor.extraPrivate
+   - [ ] lombok.copyableAnnotations
  - [ ] Copy annotations
  - [ ] Strip defined prefixes - in config and @Accessors
  - [ ] Skip generation with AccessLevel.NONE
