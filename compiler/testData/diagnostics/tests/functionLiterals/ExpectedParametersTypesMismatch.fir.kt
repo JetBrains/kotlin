@@ -13,7 +13,7 @@ fun test1() {
         s: String-> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
     foo0 {
-        x, y -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
+        <!CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
 
     foo1 {
@@ -23,7 +23,7 @@ fun test1() {
         s: String -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
     foo1 {
-        x, y -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
+        x, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
     foo1 {
         -> 42

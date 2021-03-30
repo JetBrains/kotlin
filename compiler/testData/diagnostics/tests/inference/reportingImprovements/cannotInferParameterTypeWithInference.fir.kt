@@ -13,5 +13,5 @@ fun test1() {
 fun bar(f: (<!UNRESOLVED_REFERENCE!>A<!>)->Unit) {}
 
 fun test2() {
-    bar { a -> } // here we don't have 'cannot infer parameter type' error
+    bar { <!UNRESOLVED_REFERENCE!>a<!> -> } // here we don't have 'cannot infer parameter type' error
 }

@@ -46,9 +46,9 @@ fun test1() { // to extension lambda 0
 
     val w11 = W1 { i: Int -> <!ARGUMENT_TYPE_MISMATCH!>i<!> } // oi- ni-
     val i11: E0 = id { i: Int -> i } // o1+ ni+
-    val w12 = W1 { i -> <!ARGUMENT_TYPE_MISMATCH!>i<!> } // oi- ni-
-    val i12: E0 = id { i -> i } // oi- ni-
-    val j12 = id<E0> { i -> i } // oi- ni-
+    val w12 = W1 { <!CANNOT_INFER_PARAMETER_TYPE!>i<!> -> <!ARGUMENT_TYPE_MISMATCH!>i<!> } // oi- ni-
+    val i12: E0 = id { <!CANNOT_INFER_PARAMETER_TYPE!>i<!> -> i } // oi- ni-
+    val j12 = id<E0> { <!CANNOT_INFER_PARAMETER_TYPE!>i<!> -> i } // oi- ni-
 
     // yet unsupported cases - considering lambdas as extension ones unconditionally
 //    val w13 = W1 { it } // this or it: oi- ni-
@@ -83,8 +83,8 @@ fun test2() { // to extension lambda 1
     val i27: E1 = <!INITIALIZER_TYPE_MISMATCH!>when (e) { E.VALUE ->  { s: String -> <!NO_THIS!>this<!> + s.length } }<!> // oi+ ni+
     val i27a: E1 = <!INITIALIZER_TYPE_MISMATCH!>when (e) { E.VALUE ->  { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> } }<!> // oi+ ni+
 
-    val w28 = W2 { i: Int, s -> <!ARGUMENT_TYPE_MISMATCH!>i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!><!> } // oi- ni-
-    val i28: E1 = id { i: Int, s -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
+    val w28 = W2 { i: Int, <!CANNOT_INFER_PARAMETER_TYPE!>s<!> -> <!ARGUMENT_TYPE_MISMATCH!>i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!><!> } // oi- ni-
+    val i28: E1 = id { i: Int, <!CANNOT_INFER_PARAMETER_TYPE!>s<!> -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
     val w29 = W2 { i: Int, s: String -> <!ARGUMENT_TYPE_MISMATCH!>i + s.length<!> } // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 

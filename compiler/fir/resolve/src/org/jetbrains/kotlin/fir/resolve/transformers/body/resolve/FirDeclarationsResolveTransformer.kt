@@ -669,12 +669,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                     if (param.returnTypeRef is FirResolvedTypeRef) {
                                         param
                                     } else {
-                                        param.transformReturnTypeRef(
-                                            StoreType,
-                                            param.returnTypeRef.resolvedTypeFromPrototype(
-                                                resolvedLambdaAtom.parameters[index]
-                                            )
-                                        )
+                                        val resolvedType = buildResolvedTypeRef {
+                                            source = param.source
+                                            type = resolvedLambdaAtom.parameters[index]
+                                        }
+                                        param.replaceReturnTypeRef(resolvedType)
                                         param
                                     }
                                 }
