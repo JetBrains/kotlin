@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.BooleanValue
-import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.constants.*
 
 fun getVisibility(annotation: AnnotationDescriptor, field: String = "value"): DescriptorVisibility {
     val value = annotation.getStringArgument(field) ?: "PUBLIC"
@@ -32,11 +30,19 @@ fun AnnotationDescriptor.getStringArgument(argumentName: String): String? {
     val argument = allValueArguments[Name.identifier(argumentName)]
         ?: return null
 
-    return when (argument) {
-        is EnumValue -> argument.enumEntryName.identifier
-        is StringValue -> argument.value
-        else -> throw RuntimeException("Argument $argument is not supported")
-    }
+    return extractString(argument)
+}
+
+fun AnnotationDescriptor.getStringArrayArgument(argumentName: String): List<String>? {
+    val argument = allValueArguments[Name.identifier(argumentName)] ?: return emptyList()
+    if (argument !is ArrayValue) throw RuntimeException("Argument should be ArrayValue, got $argument")
+    return argument.value.map(::extractString)
+}
+
+private fun extractString(argument: ConstantValue<*>) = when (argument) {
+    is EnumValue -> argument.enumEntryName.identifier
+    is StringValue -> argument.value
+    else -> throw RuntimeException("Argument $argument is not supported")
 }
 
 fun AnnotationDescriptor.getNonBlankStringArgument(argumentName: String): String? =

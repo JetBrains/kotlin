@@ -23,7 +23,7 @@ Features support:
  - [ ] Copy annotations
  - [ ] Strip defined prefixes - in config and @Accessors
  - [ ] Skip generation with AccessLevel.NONE
- - [ ] Strip 'is' prefix for boolean fields
+ - [x] Strip 'is' prefix for boolean fields
 
 [~] [@With](https://projectlombok.org/features/With)
   

@@ -38,13 +38,11 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
         globalAccessors: Accessors
     ): SimpleFunctionDescriptor? {
         val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
+        val propertyName = field.toPropertyName(accessors)
 
         val functionName =
-            if (accessors.fluent) {
-                field.name.identifier
-            } else {
-                "set" + toPreparedBase(field.name.identifier)
-            }
+            if (accessors.fluent) propertyName
+            else AccessorNames.SET + propertyName.capitalize()
 
         val returnType = if (accessors.chain) classDescriptor.defaultType else classDescriptor.builtIns.unitType
 
