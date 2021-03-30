@@ -70,7 +70,9 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
-sealed class ExpressionInfo
+sealed class ExpressionInfo {
+    var blockInfo: BlockInfo? = null
+}
 
 class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label) : ExpressionInfo()
 
@@ -89,11 +91,12 @@ class BlockInfo(val parent: BlockInfo? = null) {
     fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryWithFinallyInfo>() != null
 
     internal inline fun <T : ExpressionInfo, R> withBlock(info: T, f: (T) -> R): R {
+        info.blockInfo = this
         infos.add(info)
         try {
             return f(info)
         } finally {
-            infos.pop()
+            infos.pop().blockInfo = null
         }
     }
 
@@ -110,7 +113,11 @@ class BlockInfo(val parent: BlockInfo? = null) {
     }
 }
 
-class VariableInfo(val declaration: IrVariable, val index: Int, val type: Type, val startLabel: Label)
+class Gap(val start: Label, val end: Label)
+
+class VariableInfo(val declaration: IrVariable, val index: Int, val type: Type, val startLabel: Label) {
+    val gaps = mutableListOf<Gap>()
+}
 
 class ExpressionCodegen(
     val irFunction: IrFunction,
@@ -384,12 +391,34 @@ class ExpressionCodegen(
     private fun writeLocalVariablesInTable(info: BlockInfo, endLabel: Label) {
         info.variables.forEach {
             if (it.declaration.isVisibleInLVT) {
-                mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
+                var start = it.startLabel
+                for (gap in it.gaps) {
+                    mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, gap.start, it.index)
+                    start = gap.end
+                }
+                mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, endLabel, it.index)
             }
         }
 
         info.variables.reversed().forEach {
             frameMap.leave(it.declaration.symbol)
+        }
+    }
+
+    private fun addLocalVariableGapsForFinallyBlocks(
+        info: BlockInfo,
+        tryWithFinallyInfo: TryWithFinallyInfo,
+        gapStart: Label,
+        restartLabel: Label
+    ) {
+        var current: BlockInfo? = info
+        while (current != null && current != tryWithFinallyInfo.blockInfo) {
+            for (variable in current.variables) {
+                if (variable.declaration.isVisibleInLVT) {
+                    variable.gaps.add(Gap(gapStart, restartLabel))
+                }
+            }
+            current = current.parent
         }
     }
 
@@ -1210,6 +1239,7 @@ class ExpressionCodegen(
         nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf()
     ) {
         val gapStart = markNewLinkedLabel()
+
         finallyDepth++
         if (isFinallyMarkerRequired()) {
             generateFinallyMarker(mv, finallyDepth, true)
@@ -1223,7 +1253,13 @@ class ExpressionCodegen(
             tryWithFinallyInfo.onExit.markLineNumber(startOffset = false)
             mv.goTo(tryCatchBlockEnd)
         }
-        val gapEnd = afterJumpLabel ?: markNewLabel()
+
+        // Split the local variables for the blocks on the way to the finally. Variables introduced in these blocks do not
+        // cover the finally block code.
+        val endOfFinallyCode = markNewLinkedLabel()
+        addLocalVariableGapsForFinallyBlocks(data, tryWithFinallyInfo, gapStart, endOfFinallyCode)
+
+        val gapEnd = afterJumpLabel ?: endOfFinallyCode
         tryWithFinallyInfo.gaps.add(gapStart to gapEnd)
         if (state.languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)) {
             for (it in nestedTryWithoutFinally) {
