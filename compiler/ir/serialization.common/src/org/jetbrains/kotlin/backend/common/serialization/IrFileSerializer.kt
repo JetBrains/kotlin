@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
+import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
@@ -1324,7 +1325,7 @@ open class IrFileSerializer(
             file.path,
             IrMemoryArrayWriter(protoTypeArray.map { it.toByteArray() }).writeIntoMemory(),
             IrMemoryArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
-            IrMemoryArrayWriter(protoStringArray.map { it.toByteArray() }).writeIntoMemory(),
+            IrMemoryStringWriter(protoStringArray).writeIntoMemory(),
             IrMemoryArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
             IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory()
         )

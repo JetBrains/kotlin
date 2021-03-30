@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -146,7 +149,7 @@ class IrLibraryFileFromKlib(private val klib: IrLibrary, private val fileIndex: 
     override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
 }
 
-internal fun IrLibraryFile.deserializeString(index: Int): String = String(string(index))
+internal fun IrLibraryFile.deserializeString(index: Int): String = WobblyTF8.decode(string(index))
 
 internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::deserializeString)
