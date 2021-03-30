@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.commonizer.cir.CirPackageName
 class MergeCirTreePackageTest : AbstractMergeCirTreeTest() {
 
     fun `test simple package`() {
-        val aTree = deserializeSourceFile("package test.pkg")
-        val bTree = deserializeSourceFile("package test.pkg")
+        val aTree = createCirTreeFromSourceCode("package test.pkg")
+        val bTree = createCirTreeFromSourceCode("package test.pkg")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val module = merged.assertSingleModule()
         kotlin.test.assertEquals(3, module.packages.size, "Expected 3 packages (root, test, test.pkg)")
@@ -28,8 +28,8 @@ class MergeCirTreePackageTest : AbstractMergeCirTreeTest() {
     }
 
     fun `test missing target declarations`() {
-        val aTree = deserializeSourceFile("package a")
-        val bTree = deserializeSourceFile("package b")
+        val aTree = createCirTreeFromSourceCode("package a")
+        val bTree = createCirTreeFromSourceCode("package b")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val module = merged.assertSingleModule()
         kotlin.test.assertEquals(3, module.packages.size, "Expected 3 packages (root, a, b)")

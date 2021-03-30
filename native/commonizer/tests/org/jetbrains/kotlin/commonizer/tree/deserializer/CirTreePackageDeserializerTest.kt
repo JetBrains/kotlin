@@ -5,37 +5,39 @@
 
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
+import org.jetbrains.kotlin.commonizer.utils.createCirTree
+
 class CirTreePackageDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test package with multiple classes properties and functions`() {
-        val module = deserializeModule {
+        val module = createCirTree {
             source(
-                "root.kt", """
+                """
                     typealias rootTypeAlias = Int
                     val rootProperty: String = "hello,"
                     fun rootFunction(): String = "it is me"
                     class RootClass
-            """.trimIndent()
+            """.trimIndent(), "root.kt"
             )
 
             source(
-                "pkg1.kt", """
+                """
                     package test.pkg1
                     typealias pkg1TypeAlias = Int
                     val pkg1Property: Int = 42
                     fun pkg1Function(): String = "answer"
                     class Pkg1
-            """.trimIndent()
+            """.trimIndent(), "pkg1.kt"
             )
 
             source(
-                "pkg2.kt", """
+                """
                     package test.pkg2
                     typealias pkg2TypeAlias = Int
                     val pkg2Property: Int = 42
                     fun pkg2Function(): String = "answer"
                     class Pkg2
-                """.trimIndent()
+                """.trimIndent(), "pkg2.kt"
             )
         }
 

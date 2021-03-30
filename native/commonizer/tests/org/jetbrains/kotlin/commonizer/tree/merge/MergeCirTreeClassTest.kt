@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.commonizer.mergedtree.PropertyApproximationKey
 
 class MergeCirTreeClassTest : AbstractMergeCirTreeTest() {
     fun `test simple class`() {
-        val aTree = deserializeSourceFile("class X")
-        val bTree = deserializeSourceFile("class X")
+        val aTree = createCirTreeFromSourceCode("class X")
+        val bTree = createCirTreeFromSourceCode("class X")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val clazz = merged.assertSingleModule().assertSinglePackage().assertSingleClass()
         clazz.assertNoMissingTargetDeclaration()
     }
 
     fun `test missing target declarations`() {
-        val aTree = deserializeSourceFile("class A")
-        val bTree = deserializeSourceFile("class B")
+        val aTree = createCirTreeFromSourceCode("class A")
+        val bTree = createCirTreeFromSourceCode("class B")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val pkg = merged.assertSingleModule().assertSinglePackage()
         kotlin.test.assertEquals(2, pkg.classes.size, "Expected two classes (A, B)")
@@ -31,7 +31,7 @@ class MergeCirTreeClassTest : AbstractMergeCirTreeTest() {
     }
 
     fun `test with children`() {
-        val aTree = deserializeSourceFile(
+        val aTree = createCirTreeFromSourceCode(
             """
                 class X {
                     val x: Int = 42
@@ -40,7 +40,7 @@ class MergeCirTreeClassTest : AbstractMergeCirTreeTest() {
             """.trimIndent()
         )
 
-        val bTree = deserializeSourceFile(
+        val bTree = createCirTreeFromSourceCode(
             """
                 class X {
                     val x: Int = 42

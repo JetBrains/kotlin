@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.commonizer.utils
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
-import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.commonizer.tree.defaultCirTreeModuleDeserializer
-import org.jetbrains.kotlin.commonizer.utils.InlineSourceTest.Module
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -37,66 +35,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
-interface InlineSourceTest {
-    annotation class ModuleBuilderDsl
-
-    data class SourceFile(val name: String, @Language("kotlin") val content: String)
-
-    data class Module(
-        val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>
-    )
-
-    @ModuleBuilderDsl
-    class ModuleBuilder {
-        var name: String = "test-module"
-        private var sourceFiles: List<SourceFile> = emptyList()
-        private var dependencies: List<Module> = emptyList()
-
-        @ModuleBuilderDsl
-        fun source(name: String = "test.kt", @Language("kotlin") content: String) {
-            sourceFiles = sourceFiles + SourceFile(name, content)
-        }
-
-        @ModuleBuilderDsl
-        fun dependency(builder: ModuleBuilder.() -> Unit) {
-            val dependency = ModuleBuilder().also(builder).build().run {
-                copy(name = "$name-dependency-${dependencies.size}")
-            }
-
-            dependencies = dependencies + dependency
-        }
-
-        fun build(): Module = Module(name, sourceFiles.toList(), dependencies.toList())
-    }
-
-    @ModuleBuilderDsl
-    fun module(builder: ModuleBuilder.() -> Unit): Module {
-        return ModuleBuilder().also(builder).build()
-    }
-
-    fun deserializeSourceFile(@Language("kotlin") sourceFileContent: String): CirTreeModule {
-        return deserializeModule {
-            source("test.kt", content = sourceFileContent)
-        }
-    }
-
-    fun deserializeModule(builder: ModuleBuilder.() -> Unit): CirTreeModule {
-        return deserializeModule(module(builder))
-    }
-
-    fun deserializeModule(module: Module): CirTreeModule
-}
-
-internal interface InlineSourceTestDelegate : InlineSourceTest {
-    val inlineSourceTest: InlineSourceTest
-    override fun deserializeModule(module: Module): CirTreeModule {
-        return inlineSourceTest.deserializeModule(module)
-    }
-}
-
-class InlineSourceTestImpl(private val disposable: Disposable) : InlineSourceTest {
-
-    override fun deserializeModule(module: Module): CirTreeModule {
+class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSourceBuilder {
+    override fun createCirTree(module: InlineSourceBuilder.Module): CirTreeModule {
         val moduleDescriptor = createModuleDescriptor(module)
         val metadata = MockModulesProvider.SERIALIZER.serializeModule(moduleDescriptor)
 
@@ -113,7 +53,7 @@ class InlineSourceTestImpl(private val disposable: Disposable) : InlineSourceTes
         return defaultCirTreeModuleDeserializer(metadata, typeResolver)
     }
 
-    private fun createModuleDescriptor(module: Module): ModuleDescriptor {
+    override fun createModuleDescriptor(module: InlineSourceBuilder.Module): ModuleDescriptor {
         val moduleRoot = FileUtil.createTempDirectory(module.name, null)
         module.sourceFiles.forEach { sourceFile ->
             moduleRoot.resolve(sourceFile.name).writeText(sourceFile.content)
@@ -121,7 +61,7 @@ class InlineSourceTestImpl(private val disposable: Disposable) : InlineSourceTes
         return createModuleDescriptor(moduleRoot, module)
     }
 
-    private fun createModuleDescriptor(moduleRoot: File, module: Module): ModuleDescriptor {
+    private fun createModuleDescriptor(moduleRoot: File, module: InlineSourceBuilder.Module): ModuleDescriptor {
         check(Name.isValidIdentifier(module.name))
         val configuration = KotlinTestUtils.newConfiguration()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
@@ -153,14 +93,14 @@ class InlineSourceTestImpl(private val disposable: Disposable) : InlineSourceTes
     }
 
     private inner class DependenciesContainerImpl(
-        dependencies: List<Module>
+        dependencies: List<InlineSourceBuilder.Module>
     ) : CommonDependenciesContainer {
 
         private val dependenciesByModuleInfos = dependencies.associate { module ->
             ModuleInfoImpl(module) to createModuleDescriptor(module)
         }
 
-        private inner class ModuleInfoImpl(module: Module) : ModuleInfo {
+        private inner class ModuleInfoImpl(module: InlineSourceBuilder.Module) : ModuleInfo {
             private val dependencyModules = module.dependencies.associateBy(::ModuleInfoImpl)
             override val name: Name = Name.special("<${module.name}>")
             override fun dependencies(): List<ModuleInfo> = listOf(this) + dependencyModules.keys

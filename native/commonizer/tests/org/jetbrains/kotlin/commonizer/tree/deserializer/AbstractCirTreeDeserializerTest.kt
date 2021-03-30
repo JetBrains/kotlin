@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import org.jetbrains.kotlin.commonizer.tree.*
-import org.jetbrains.kotlin.commonizer.utils.InlineSourceTest
-import org.jetbrains.kotlin.commonizer.utils.InlineSourceTestImpl
 import org.jetbrains.kotlin.commonizer.utils.KtInlineSourceCommonizerTestCase
 
 abstract class AbstractCirTreeDeserializerTest : KtInlineSourceCommonizerTestCase() {

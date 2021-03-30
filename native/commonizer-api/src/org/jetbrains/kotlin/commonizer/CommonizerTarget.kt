@@ -122,6 +122,10 @@ public infix fun CommonizerTarget.isAncestorOf(other: CommonizerTarget): Boolean
     return false
 }
 
+public infix fun CommonizerTarget.isEqualOrAncestorOf(other: CommonizerTarget): Boolean {
+    return this == other || this.isAncestorOf(other)
+}
+
 public infix fun CommonizerTarget.isDescendentOf(other: CommonizerTarget): Boolean {
     return other.isAncestorOf(this)
 }

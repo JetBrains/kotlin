@@ -18,7 +18,7 @@ import kotlin.test.assertIs
 class CirTreeTypeAliasDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test simple type alias`() {
-        val module = deserializeSourceFile("typealias x = Int")
+        val module = createCirTreeFromSourceCode("typealias x = Int")
         val typeAlias = module.assertSingleTypeAlias().typeAlias
         assertEquals(CirName.create("x"), typeAlias.name, "Expected correct type alias name")
         assertEquals("kotlin/Int", typeAlias.expandedType.toString())
@@ -26,7 +26,7 @@ class CirTreeTypeAliasDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test transitive type alias`() {
-        val module = deserializeSourceFile(
+        val module = createCirTreeFromSourceCode(
             """
                 interface Map<K, V>
                 typealias IntMap<V> = Map<Int, V>

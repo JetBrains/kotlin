@@ -22,7 +22,7 @@ fun assertIsDirectory(file: File) {
         fail("Not a directory: $file")
 }
 
-@ExperimentalContracts
+@OptIn(ExperimentalContracts::class)
 fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMetadata, target: CommonizerTarget) {
     val referenceModule = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(reference))
     val generatedModule = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(generated))
@@ -39,7 +39,10 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
             val digitCount = mismatches.size.toString().length
 
             val failureMessage = buildString {
-                appendLine("${mismatches.size} mismatches found while comparing reference module ${referenceModule.name} (A) and generated module ${generatedModule.name} (B) for target ${target.identityString}:")
+                appendLine(
+                    "${mismatches.size} mismatches found while comparing reference module ${referenceModule.name} (A) " +
+                            "and generated module ${generatedModule.name} (B) for target ${target.identityString}:"
+                )
                 mismatches.forEachIndexed { index, mismatch ->
                     appendLine((index + 1).toString().padStart(digitCount, ' ') + ". " + mismatch)
                 }

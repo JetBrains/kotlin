@@ -129,6 +129,8 @@ internal class MockModulesProvider private constructor(
     }
 }
 
+fun ModuleDescriptor.toMetadata(): SerializedMetadata = MockModulesProvider.SERIALIZER.serializeModule(this)
+
 private typealias ModuleName = String
 private typealias ModuleResults = HashMap<ModuleName, ModuleResult>
 
@@ -146,7 +148,7 @@ internal class MockResultsConsumer : ResultsConsumer {
 
     override fun consume(target: CommonizerTarget, moduleResult: ModuleResult) {
         check(!this::status.isInitialized)
-        check(target !in finishedTargets)
+        check(target !in finishedTargets) { "$target already finished"}
         val moduleResults: ModuleResults = _modulesByTargets.getOrPut(target) { ModuleResults() }
         val oldResult = moduleResults.put(moduleResult.libraryName, moduleResult)
         check(oldResult == null) // to avoid accidental overwriting

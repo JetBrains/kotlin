@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.commonizer.utils
 
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 
-abstract class KtInlineSourceCommonizerTestCase : KtUsefulTestCase(), InlineSourceTestDelegate {
-    override val inlineSourceTest: InlineSourceTest = InlineSourceTestImpl(testRootDisposable)
+abstract class KtInlineSourceCommonizerTestCase : KtUsefulTestCase(), InlineSourceBuilderDelegate {
+    override val inlineSourceBuilder: InlineSourceBuilder = InlineSourceBuilderImpl(testRootDisposable)
 }

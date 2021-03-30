@@ -16,7 +16,7 @@ import kotlin.test.*
 class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test simple val property`() {
-        val module = deserializeSourceFile("val x: Int = 42")
+        val module = createCirTreeFromSourceCode("val x: Int = 42")
 
         val (key, property) = module.assertSingleProperty()
         assertEquals(PropertyApproximationKey(CirName.Companion.create("x"), null), key)
@@ -32,7 +32,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test simple var property`() {
-        val module = deserializeSourceFile("var x: Int = 42")
+        val module = createCirTreeFromSourceCode("var x: Int = 42")
         val (_, property) = module.assertSingleProperty()
         assertNotNull(property.getter, "Expected property has getter")
         assertNotNull(property.setter, "Expected property has setter")
@@ -41,7 +41,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test lateinit var property`() {
-        val module = deserializeSourceFile("lateinit var x: Int")
+        val module = createCirTreeFromSourceCode("lateinit var x: Int")
         val (_, property) = module.assertSingleProperty()
 
         assertNotNull(property.getter, "Expected property has getter")
@@ -51,7 +51,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test generic var property`() {
-        val module = deserializeSourceFile("var <T> T.x: T get() = this")
+        val module = createCirTreeFromSourceCode("var <T> T.x: T get() = this")
         val (_, property) = module.assertSingleProperty()
 
         assertNotNull(property.extensionReceiver, "Expected property has extension receiver")
@@ -62,7 +62,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test multiple properties`() {
-        val module = deserializeSourceFile(
+        val module = createCirTreeFromSourceCode(
             """
             val x: Int = 42
             val y: Float = 42f

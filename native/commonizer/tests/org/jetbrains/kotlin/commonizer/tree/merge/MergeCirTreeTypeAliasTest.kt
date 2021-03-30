@@ -11,16 +11,16 @@ import kotlin.test.assertEquals
 class MergeCirTreeTypeAliasTest : AbstractMergeCirTreeTest() {
 
     fun `test simple type alias`() {
-        val aTree = deserializeSourceFile("typealias a = Int")
-        val bTree = deserializeSourceFile("typealias a = Int")
+        val aTree = createCirTreeFromSourceCode("typealias a = Int")
+        val bTree = createCirTreeFromSourceCode("typealias a = Int")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val typeAlias = merged.assertSingleModule().assertSinglePackage().assertSingleTypeAlias()
         typeAlias.assertNoMissingTargetDeclaration()
     }
 
     fun `test missing target declarations`() {
-        val aTree = deserializeSourceFile("typealias a = Int")
-        val bTree = deserializeSourceFile("typealias b = Int")
+        val aTree = createCirTreeFromSourceCode("typealias a = Int")
+        val bTree = createCirTreeFromSourceCode("typealias b = Int")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val pkg = merged.assertSingleModule().assertSinglePackage()
 

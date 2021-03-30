@@ -14,7 +14,7 @@ import kotlin.test.*
 class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test simple class`() {
-        val module = deserializeSourceFile("class X")
+        val module = createCirTreeFromSourceCode("class X")
         val clazz = module.assertSingleClass().clazz
         assertEquals(Visibilities.Public, clazz.visibility, "Expected class to be public")
         assertNull(clazz.companion, "Expected class *not* having a companion")
@@ -29,7 +29,7 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test nested class`() {
-        val module = deserializeSourceFile(
+        val module = createCirTreeFromSourceCode(
             """
             class Outer {
                 class Inner
@@ -46,7 +46,7 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test inner class`() {
-        val module = deserializeSourceFile(
+        val module = createCirTreeFromSourceCode(
             """
             class Outer {
                 inner class Inner
@@ -64,7 +64,7 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
 
 
     fun `test data class`() {
-        val module = deserializeSourceFile("data class X(val x: String)")
+        val module = createCirTreeFromSourceCode("data class X(val x: String)")
         val clazz = module.assertSingleClass()
         assertTrue(clazz.clazz.isData, "Expected is data class")
         assertEquals(1, clazz.constructors.size, "Expected single constructor")
@@ -72,7 +72,7 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test companion`() {
-        val module = deserializeSourceFile(
+        val module = createCirTreeFromSourceCode(
             """
             class Outer {
                 companion object {
@@ -88,19 +88,19 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test object`() {
-        val module = deserializeSourceFile("object X")
+        val module = createCirTreeFromSourceCode("object X")
         val clazz = module.assertSingleClass()
         assertEquals(ClassKind.OBJECT, clazz.clazz.kind, "Expected object class kind")
     }
 
     fun `test interface`() {
-        val module = deserializeSourceFile("interface X")
+        val module = createCirTreeFromSourceCode("interface X")
         val clazz = module.assertSingleClass()
         assertEquals(ClassKind.INTERFACE, clazz.clazz.kind)
     }
 
     fun `test supertypes`() {
-        val module = deserializeSourceFile(
+        val module = createCirTreeFromSourceCode(
             """
             interface A
             interface B: A 
@@ -118,19 +118,19 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test abstract class`() {
-        val module = deserializeSourceFile("abstract class X")
+        val module = createCirTreeFromSourceCode("abstract class X")
         val clazz = module.assertSingleClass()
         assertEquals(Modality.ABSTRACT, clazz.clazz.modality)
     }
 
     fun `test open class`() {
-        val module = deserializeSourceFile("open class X")
+        val module = createCirTreeFromSourceCode("open class X")
         val clazz = module.assertSingleClass()
         assertEquals(Modality.OPEN, clazz.clazz.modality)
     }
 
     fun `test class with properties functions and nested classes`() {
-        val module = deserializeSourceFile(
+        val module = createCirTreeFromSourceCode(
             """
                 class X {
                     val myInt: Int = 42

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.commonizer.tree.merge
 class MergeCirTreeFunctionTest : AbstractMergeCirTreeTest() {
 
     fun `test simple function`() {
-        val aTree = deserializeSourceFile("fun x(): Int = 42")
-        val bTree = deserializeSourceFile("fun x(): Int = 42")
+        val aTree = createCirTreeFromSourceCode("fun x(): Int = 42")
+        val bTree = createCirTreeFromSourceCode("fun x(): Int = 42")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val function = merged.assertSingleModule().assertSinglePackage().assertSingleFunction()
 
@@ -22,8 +22,8 @@ class MergeCirTreeFunctionTest : AbstractMergeCirTreeTest() {
     }
 
     fun `test missing target declarations`() {
-        val aTree = deserializeSourceFile("fun a(): Int = 42")
-        val bTree = deserializeSourceFile("fun b(): Int = 42")
+        val aTree = createCirTreeFromSourceCode("fun a(): Int = 42")
+        val bTree = createCirTreeFromSourceCode("fun b(): Int = 42")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val pkg = merged.assertSingleModule().assertSinglePackage()
 

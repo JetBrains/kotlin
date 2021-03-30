@@ -14,8 +14,8 @@ import kotlin.test.assertNotNull
 class MergeCirTreePropertyTest : AbstractMergeCirTreeTest() {
 
     fun `test simple property`() {
-        val aTree = deserializeSourceFile("""val a: Int = 42""")
-        val bTree = deserializeSourceFile("""val a: Int = 42""")
+        val aTree = createCirTreeFromSourceCode("""val a: Int = 42""")
+        val bTree = createCirTreeFromSourceCode("""val a: Int = 42""")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
 
         val property = merged.assertSingleModule().assertSinglePackage().assertSingleProperty()
@@ -27,7 +27,7 @@ class MergeCirTreePropertyTest : AbstractMergeCirTreeTest() {
     }
 
     fun `test multiple properties`() {
-        val aTree = deserializeSourceFile(
+        val aTree = createCirTreeFromSourceCode(
             """
                 val a: Int = 42
                 val b: Int = 42
@@ -35,7 +35,7 @@ class MergeCirTreePropertyTest : AbstractMergeCirTreeTest() {
             """.trimIndent()
         )
 
-        val bTree = deserializeSourceFile(
+        val bTree = createCirTreeFromSourceCode(
             """
                 val a: Int = 42
                 val b: Int = 42
@@ -57,8 +57,8 @@ class MergeCirTreePropertyTest : AbstractMergeCirTreeTest() {
     }
 
     fun `test missing target declarations`() {
-        val aTree = deserializeSourceFile("val a: Int = 42")
-        val bTree = deserializeSourceFile("val b: Int = 42")
+        val aTree = createCirTreeFromSourceCode("val a: Int = 42")
+        val bTree = createCirTreeFromSourceCode("val b: Int = 42")
         val merged = mergeCirTree("a" to aTree, "b" to bTree)
         val pkg = merged.assertSingleModule().assertSinglePackage()
 

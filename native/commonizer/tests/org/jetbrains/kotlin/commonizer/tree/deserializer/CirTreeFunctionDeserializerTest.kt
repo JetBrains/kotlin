@@ -16,7 +16,7 @@ import kotlin.test.*
 class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
 
     fun `test simple function`() {
-        val module = deserializeSourceFile("fun x() = Unit")
+        val module = createCirTreeFromSourceCode("fun x() = Unit")
         val (_, function) = module.assertSingleFunction()
 
         assertNull(function.containingClass, "Expected function to *not* have containing class")
@@ -29,7 +29,7 @@ class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test generic function`() {
-        val module = deserializeSourceFile("""fun <T: Any> T.isHappy(): Boolean = true""")
+        val module = createCirTreeFromSourceCode("""fun <T: Any> T.isHappy(): Boolean = true""")
         val (_, function) = module.assertSingleFunction()
 
         val extensionReceiver = assertNotNull(function.extensionReceiver, "Expected function being extension receiver")
@@ -50,7 +50,7 @@ class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
     }
 
     fun `test function with outer object`() {
-        val module = deserializeSourceFile(
+        val module = createCirTreeFromSourceCode(
             """
             object Parent {
                 fun x(): String = "Hello, you're reading a test"
