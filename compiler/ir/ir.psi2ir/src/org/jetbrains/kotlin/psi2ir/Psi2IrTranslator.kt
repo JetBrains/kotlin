@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -35,7 +34,9 @@ import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
-typealias Psi2IrPostprocessingStep = (IrModuleFragment) -> Unit
+fun interface Psi2IrPostprocessingStep {
+    fun invoke(irModuleFragment: IrModuleFragment)
+}
 
 class Psi2IrTranslator(
     val languageVersionSettings: LanguageVersionSettings,

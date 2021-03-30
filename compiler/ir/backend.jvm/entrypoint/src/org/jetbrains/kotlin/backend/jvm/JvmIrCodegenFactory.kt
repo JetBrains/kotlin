@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
+import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 open class JvmIrCodegenFactory(
@@ -114,6 +115,8 @@ open class JvmIrCodegenFactory(
                 )
             }
         }
+
+        SourceDeclarationsPreprocessor(psi2irContext).run(files)
 
         for (extension in pluginExtensions) {
             psi2ir.addPostprocessingStep { module ->

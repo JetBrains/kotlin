@@ -25044,6 +25044,59 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/sameFileInSourceAndDependencies")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SameFileInSourceAndDependencies extends AbstractIrJsCodegenBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSameFileInSourceAndDependencies() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sameFileInSourceAndDependencies"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("classDeclaration.kt")
+        public void testClassDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/classDeclaration.kt");
+        }
+
+        @TestMetadata("functionDeclaration.kt")
+        public void testFunctionDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/functionDeclaration.kt");
+        }
+
+        @TestMetadata("lateinitMemberPropertyDeclaration.kt")
+        public void testLateinitMemberPropertyDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/lateinitMemberPropertyDeclaration.kt");
+        }
+
+        @TestMetadata("memberFunctionDeclaration.kt")
+        public void testMemberFunctionDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/memberFunctionDeclaration.kt");
+        }
+
+        @TestMetadata("memberFunctionWithDefaultArgumentsDeclaration.kt")
+        public void testMemberFunctionWithDefaultArgumentsDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/memberFunctionWithDefaultArgumentsDeclaration.kt");
+        }
+
+        @TestMetadata("memberPropertyDeclaration.kt")
+        public void testMemberPropertyDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/memberPropertyDeclaration.kt");
+        }
+
+        @TestMetadata("nestedClassDeclaration.kt")
+        public void testNestedClassDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/nestedClassDeclaration.kt");
+        }
+
+        @TestMetadata("propertyDeclaration.kt")
+        public void testPropertyDeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/sealed")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
