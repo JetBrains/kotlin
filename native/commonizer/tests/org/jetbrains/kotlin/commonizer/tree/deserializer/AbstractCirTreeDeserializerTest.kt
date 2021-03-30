@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -39,18 +41,31 @@ abstract class AbstractCirTreeDeserializerTest : KtUsefulTestCase() {
 
     data class SourceFile(val name: String, @Language("kotlin") val content: String)
 
-    data class Module(val name: String, val sourceFiles: List<SourceFile>)
+    data class Module(
+        val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>
+    )
 
     @ModuleBuilderDsl
     class ModuleBuilder {
         var name: String = "test-module"
         var sourceFiles: List<SourceFile> = emptyList()
+        var dependencies: List<Module> = emptyList()
 
+        @ModuleBuilderDsl
         fun source(name: String = "test.kt", @Language("kotlin") content: String) {
             sourceFiles = sourceFiles + SourceFile(name, content)
         }
 
-        fun build() = Module(name, sourceFiles.toList())
+        @ModuleBuilderDsl
+        fun dependency(builder: ModuleBuilder.() -> Unit) {
+            val dependency = ModuleBuilder().also(builder).build().run {
+                copy(name = "$name-dependency-${dependencies.size}")
+            }
+
+            dependencies = dependencies + dependency
+        }
+
+        fun build() = Module(name, sourceFiles.toList(), dependencies.toList())
     }
 
     @ModuleBuilderDsl
@@ -60,20 +75,19 @@ abstract class AbstractCirTreeDeserializerTest : KtUsefulTestCase() {
 
     fun deserializeModule(builder: ModuleBuilder.() -> Unit): CirTreeModule {
         val module = module(builder)
-        val moduleFolder = FileUtil.createTempDirectory(module.name, null)
-        module.sourceFiles.forEach { sourceFile ->
-            moduleFolder.resolve(sourceFile.name).writeText(sourceFile.content)
-        }
-
-        val moduleDescriptor = createModuleDescriptor(moduleFolder, module)
+        val moduleDescriptor = createModuleDescriptor(module)
         val metadata = MockModulesProvider.SERIALIZER.serializeModule(moduleDescriptor)
+
+        val classifiers = listOf(
+            CirFictitiousFunctionClassifiers,
+            CirProvidedClassifiers.by(MockModulesProvider.create(moduleDescriptor)),
+            CirProvidedClassifiers.by(MockModulesProvider.create(DefaultBuiltIns.Instance.builtInsModule))
+        ) + module.dependencies.map { CirProvidedClassifiers.by(MockModulesProvider.create(createModuleDescriptor(it))) }
+
         val typeResolver = CirTypeResolver.create(
-            CirProvidedClassifiers.of(
-                CirFictitiousFunctionClassifiers,
-                CirProvidedClassifiers.by(MockModulesProvider.create(moduleDescriptor)),
-                CirProvidedClassifiers.by(MockModulesProvider.create(DefaultBuiltIns.Instance.builtInsModule))
-            )
+            CirProvidedClassifiers.of(*classifiers.toTypedArray())
         )
+
         return defaultCirTreeModuleDeserializer(metadata, typeResolver)
     }
 
@@ -83,6 +97,13 @@ abstract class AbstractCirTreeDeserializerTest : KtUsefulTestCase() {
         }
     }
 
+    private fun createModuleDescriptor(module: Module): ModuleDescriptor {
+        val moduleRoot = FileUtil.createTempDirectory(module.name, null)
+        module.sourceFiles.forEach { sourceFile ->
+            moduleRoot.resolve(sourceFile.name).writeText(sourceFile.content)
+        }
+        return createModuleDescriptor(moduleRoot, module)
+    }
 
     private fun createModuleDescriptor(moduleRoot: File, module: Module): ModuleDescriptor {
         check(Name.isValidIdentifier(module.name))
@@ -109,31 +130,47 @@ abstract class AbstractCirTreeDeserializerTest : KtUsefulTestCase() {
             languageVersionSettings = environment.configuration.languageVersionSettings,
             targetPlatform = CommonPlatforms.defaultCommonPlatform,
             targetEnvironment = CompilerEnvironment,
-            dependenciesContainer = DependenciesContainerImpl(),
+            dependenciesContainer = DependenciesContainerImpl(module.dependencies),
         ) { content ->
             environment.createPackagePartProvider(content.moduleContentScope)
         }.moduleDescriptor
     }
 
-    private class DependenciesContainerImpl : CommonDependenciesContainer {
-        private object DefaultBuiltInsModuleInfo : ModuleInfo {
-            override val name get() = DefaultBuiltIns.Instance.builtInsModule.name
-            override fun dependencies() = listOf(this)
-            override fun dependencyOnBuiltIns() = ModuleInfo.DependencyOnBuiltIns.LAST
-            override val platform get() = CommonPlatforms.defaultCommonPlatform
-            override val analyzerServices get() = CommonPlatformAnalyzerServices
+    private inner class DependenciesContainerImpl(
+        dependencies: List<Module>
+    ) : CommonDependenciesContainer {
+
+        private val dependenciesByModuleInfos = dependencies.associate { module ->
+            ModuleInfoImpl(module) to createModuleDescriptor(module)
         }
 
-        override val moduleInfos: List<ModuleInfo> get() = listOf(DefaultBuiltInsModuleInfo)
+        private inner class ModuleInfoImpl(module: Module) : ModuleInfo {
+            private val dependencyModules = module.dependencies.associateBy(::ModuleInfoImpl)
+            override val name: Name = Name.special("<${module.name}>")
+            override fun dependencies(): List<ModuleInfo> = listOf(this) + dependencyModules.keys
+            override val platform: TargetPlatform get() = CommonPlatforms.defaultCommonPlatform
+            override val analyzerServices: PlatformDependentAnalyzerServices get() = CommonPlatformAnalyzerServices
+        }
+
+        override val moduleInfos: List<ModuleInfo> get() = listOf(DefaultBuiltInsModuleInfo) + dependenciesByModuleInfos.keys
         override val friendModuleInfos: List<ModuleInfo> get() = emptyList()
         override val refinesModuleInfos: List<ModuleInfo> get() = emptyList()
         override fun registerDependencyForAllModules(moduleInfo: ModuleInfo, descriptorForModule: ModuleDescriptorImpl) = Unit
         override fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider? = null
 
         override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor {
+            dependenciesByModuleInfos[moduleInfo]?.let { return it }
             check(moduleInfo == DefaultBuiltInsModuleInfo) { "Unknown module info $moduleInfo" }
             return DefaultBuiltIns.Instance.builtInsModule
         }
+    }
+
+    private object DefaultBuiltInsModuleInfo : ModuleInfo {
+        override val name get() = DefaultBuiltIns.Instance.builtInsModule.name
+        override fun dependencies() = listOf(this)
+        override fun dependencyOnBuiltIns() = ModuleInfo.DependencyOnBuiltIns.LAST
+        override val platform get() = CommonPlatforms.defaultCommonPlatform
+        override val analyzerServices get() = CommonPlatformAnalyzerServices
     }
 
     protected fun CirTreeModule.assertSinglePackage(): CirTreePackage {
