@@ -9,12 +9,16 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.lombok.config.Data
 import org.jetbrains.kotlin.lombok.config.RequiredArgsConstructor
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.lombok.utils.getJavaFields
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-class RequiredArgsConstructorProcessor : AbstractConstructorProcessor<RequiredArgsConstructor>(RequiredArgsConstructor) {
+class RequiredArgsConstructorProcessor : AbstractConstructorProcessor<RequiredArgsConstructor>() {
+
+    override fun getAnnotation(classDescriptor: ClassDescriptor): RequiredArgsConstructor? =
+        RequiredArgsConstructor.getOrNull(classDescriptor) ?: Data.getOrNull(classDescriptor)?.asRequiredArgsConstructor()    
 
     override fun getPropertiesForParameters(classDescriptor: ClassDescriptor): List<PropertyDescriptor> =
         classDescriptor.getJavaFields().filter(this::isFieldRequired)

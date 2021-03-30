@@ -15,16 +15,14 @@ import org.jetbrains.kotlin.lombok.utils.createJavaConstructor
 import org.jetbrains.kotlin.lombok.utils.createFunction
 import org.jetbrains.kotlin.name.Name
 
-abstract class AbstractConstructorProcessor<A : ConstructorAnnotation>(
-    private val annotationCompanion: AnnotationCompanion<A>
-) : Processor {
+abstract class AbstractConstructorProcessor<A : ConstructorAnnotation> : Processor {
 
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
         val valueParameters = getPropertiesForParameters(classDescriptor).map { property ->
             ValueParameter(property.name, property.type)
         }
 
-        val result = annotationCompanion.getOrNull(classDescriptor)?.let { annotation ->
+        val result = getAnnotation(classDescriptor)?.let { annotation ->
             if (annotation.staticName == null) {
                 val constructor = classDescriptor.createJavaConstructor(
                     valueParameters = valueParameters,
@@ -45,6 +43,8 @@ abstract class AbstractConstructorProcessor<A : ConstructorAnnotation>(
         }
         return result ?: Parts.Empty
     }
+
+    protected abstract fun getAnnotation(classDescriptor: ClassDescriptor): A?
 
     protected abstract fun getPropertiesForParameters(classDescriptor: ClassDescriptor): List<PropertyDescriptor>
 

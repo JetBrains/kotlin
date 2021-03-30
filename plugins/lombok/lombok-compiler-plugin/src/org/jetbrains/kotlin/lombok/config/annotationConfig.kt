@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.config
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -41,7 +42,7 @@ data class Accessors(val fluent: Boolean = false, val chain: Boolean = false) {
     }
 }
 
-data class Getter(val visibility: DescriptorVisibility) {
+data class Getter(val visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC) {
     companion object : AnnotationCompanion<Getter>() {
         override val name: FqName = LombokNames.GETTER
 
@@ -52,7 +53,7 @@ data class Getter(val visibility: DescriptorVisibility) {
     }
 }
 
-data class Setter(val visibility: DescriptorVisibility) {
+data class Setter(val visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC) {
     companion object : AnnotationCompanion<Setter>() {
         override val name: FqName = LombokNames.SETTER
 
@@ -110,8 +111,8 @@ data class AllArgsConstructor(
 }
 
 data class RequiredArgsConstructor(
-    override val visibility: DescriptorVisibility,
-    override val staticName: String?
+    override val visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
+    override val staticName: String? = null
 ) : ConstructorAnnotation {
     companion object : AnnotationCompanion<RequiredArgsConstructor>() {
         override val name: FqName = LombokNames.REQUIRED_ARGS_CONSTRUCTOR
@@ -121,5 +122,26 @@ data class RequiredArgsConstructor(
                 visibility = getVisibility(annotation, "access"),
                 staticName = annotation.getNonBlankStringArgument("staticName")
             )
+    }
+}
+
+data class Data(val staticConstructor: String?) {
+
+    fun asSetter(): Setter = Setter()
+
+    fun asGetter(): Getter = Getter()
+
+    fun asRequiredArgsConstructor(): RequiredArgsConstructor = RequiredArgsConstructor(
+        staticName = staticConstructor
+    )
+
+    companion object : AnnotationCompanion<Data>() {
+        override val name: FqName = LombokNames.DATA
+
+        override fun extract(annotation: AnnotationDescriptor): Data =
+            Data(
+                staticConstructor = annotation.getNonBlankStringArgument("staticConstructor")
+            )
+
     }
 }

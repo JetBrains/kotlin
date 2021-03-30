@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -24,7 +25,7 @@ fun getVisibility(annotation: AnnotationDescriptor, field: String = "value"): De
         "PACKAGE" -> JavaVisibilities.PackageVisibility
         else -> Visibilities.Public
     }
-    return DescriptorVisibilities.toDescriptorVisibility(visibility)
+    return JavaDescriptorVisibilities.toDescriptorVisibility(visibility)
 }
 
 fun AnnotationDescriptor.getStringArgument(argumentName: String): String? {

@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.lombok.config.NoArgsConstructor
 
-class NoArgsConstructorProcessor : AbstractConstructorProcessor<NoArgsConstructor>(NoArgsConstructor) {
+class NoArgsConstructorProcessor : AbstractConstructorProcessor<NoArgsConstructor>() {
+
+    override fun getAnnotation(classDescriptor: ClassDescriptor): NoArgsConstructor? = NoArgsConstructor.getOrNull(classDescriptor)
 
     override fun getPropertiesForParameters(classDescriptor: ClassDescriptor): List<PropertyDescriptor> = emptyList()
 }

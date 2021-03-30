@@ -24,12 +24,12 @@ Features support:
   - [x] Basic support
   - [ ] Copy annotations
   
-[~] [@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor](https://projectlombok.org/features/constructor)
+[x] [@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor](https://projectlombok.org/features/constructor)
  - [x] @NoArgsConstructor
  - [x] @AllArgsConstructor
  - [x] @RequiredArgsConstructor
 
-[ ] [@Data](https://projectlombok.org/features/Data)
+[x] [@Data](https://projectlombok.org/features/Data)
 
 [ ] [@Value](https://projectlombok.org/features/Value)
 

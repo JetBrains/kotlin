@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.lombok.config.AllArgsConstructor
 import org.jetbrains.kotlin.lombok.utils.getJavaFields
 
-class AllArgsConstructorProcessor : AbstractConstructorProcessor<AllArgsConstructor>(AllArgsConstructor) {
+class AllArgsConstructorProcessor : AbstractConstructorProcessor<AllArgsConstructor>() {
 
-    override fun getPropertiesForParameters(classDescriptor: ClassDescriptor): List<PropertyDescriptor> = classDescriptor.getJavaFields()
+    override fun getAnnotation(classDescriptor: ClassDescriptor): AllArgsConstructor? =
+        AllArgsConstructor.getOrNull(classDescriptor)
+
+    override fun getPropertiesForParameters(classDescriptor: ClassDescriptor): List<PropertyDescriptor> =
+        classDescriptor.getJavaFields()
 
 }

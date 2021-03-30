@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.Accessors
+import org.jetbrains.kotlin.lombok.config.Data
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.config.Setter
 import org.jetbrains.kotlin.lombok.utils.*
@@ -21,7 +22,7 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
         if (classDescriptor.kind == ClassKind.ENUM_CLASS) return Parts.Empty
 
         val clAccessors = Accessors.getOrNull(classDescriptor)
-        val clSetter = Setter.getOrNull(classDescriptor)
+        val clSetter = Setter.getOrNull(classDescriptor) ?: Data.getOrNull(classDescriptor)?.asSetter()
 
         val functions = classDescriptor
             .getJavaFields()
