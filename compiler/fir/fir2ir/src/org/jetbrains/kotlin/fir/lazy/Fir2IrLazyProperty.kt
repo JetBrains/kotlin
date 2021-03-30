@@ -86,7 +86,7 @@ class Fir2IrLazyProperty(
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override var backingField: IrField? by lazyVar {
+    override var backingField: IrField? by lazyVar(lock) {
         // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
         val parent = parent
         when {
@@ -126,7 +126,7 @@ class Fir2IrLazyProperty(
         }
     }
 
-    override var getter: IrSimpleFunction? by lazyVar {
+    override var getter: IrSimpleFunction? by lazyVar(lock) {
         if (fir.isConst) return@lazyVar null
         Fir2IrLazyPropertyAccessor(
             components, startOffset, endOffset,
@@ -155,7 +155,7 @@ class Fir2IrLazyProperty(
         }
     }
 
-    override var setter: IrSimpleFunction? by lazyVar {
+    override var setter: IrSimpleFunction? by lazyVar(lock) {
         if (!fir.isVar) null else Fir2IrLazyPropertyAccessor(
             components, startOffset, endOffset,
             when {

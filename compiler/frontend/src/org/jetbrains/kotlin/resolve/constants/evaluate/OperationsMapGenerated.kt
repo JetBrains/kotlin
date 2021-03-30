@@ -1,19 +1,7 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 @file:Suppress("DEPRECATION", "DEPRECATION_ERROR", "NON_EXHAUSTIVE_WHEN")
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
@@ -143,6 +131,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Byte).plus(right as Byte)
                 "rem" -> return (left as Byte).rem(right as Byte)
                 "times" -> return (left as Byte).times(right as Byte)
+                "mod" -> return (left as Byte).mod(right as Byte)
+                "floorDiv" -> return (left as Byte).floorDiv(right as Byte)
             }
             DOUBLE -> when (name) {
                 "compareTo" -> return (left as Byte).compareTo(right as Double)
@@ -167,6 +157,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Byte).plus(right as Int)
                 "rem" -> return (left as Byte).rem(right as Int)
                 "times" -> return (left as Byte).times(right as Int)
+                "mod" -> return (left as Byte).mod(right as Int)
+                "floorDiv" -> return (left as Byte).floorDiv(right as Int)
             }
             LONG -> when (name) {
                 "compareTo" -> return (left as Byte).compareTo(right as Long)
@@ -175,6 +167,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Byte).plus(right as Long)
                 "rem" -> return (left as Byte).rem(right as Long)
                 "times" -> return (left as Byte).times(right as Long)
+                "mod" -> return (left as Byte).mod(right as Long)
+                "floorDiv" -> return (left as Byte).floorDiv(right as Long)
             }
             SHORT -> when (name) {
                 "compareTo" -> return (left as Byte).compareTo(right as Short)
@@ -183,6 +177,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Byte).plus(right as Short)
                 "rem" -> return (left as Byte).rem(right as Short)
                 "times" -> return (left as Byte).times(right as Short)
+                "mod" -> return (left as Byte).mod(right as Short)
+                "floorDiv" -> return (left as Byte).floorDiv(right as Short)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Byte).equals(right)
@@ -217,6 +213,7 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Double).plus(right as Double)
                 "rem" -> return (left as Double).rem(right as Double)
                 "times" -> return (left as Double).times(right as Double)
+                "mod" -> return (left as Double).mod(right as Double)
             }
             FLOAT -> when (name) {
                 "compareTo" -> return (left as Double).compareTo(right as Float)
@@ -225,6 +222,7 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Double).plus(right as Float)
                 "rem" -> return (left as Double).rem(right as Float)
                 "times" -> return (left as Double).times(right as Float)
+                "mod" -> return (left as Double).mod(right as Float)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Double).compareTo(right as Int)
@@ -270,6 +268,7 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Float).plus(right as Double)
                 "rem" -> return (left as Float).rem(right as Double)
                 "times" -> return (left as Float).times(right as Double)
+                "mod" -> return (left as Float).mod(right as Double)
             }
             FLOAT -> when (name) {
                 "compareTo" -> return (left as Float).compareTo(right as Float)
@@ -278,6 +277,7 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Float).plus(right as Float)
                 "rem" -> return (left as Float).rem(right as Float)
                 "times" -> return (left as Float).times(right as Float)
+                "mod" -> return (left as Float).mod(right as Float)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Float).compareTo(right as Int)
@@ -321,6 +321,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "times" -> return (left as Int).times(right as Int)
                 "ushr" -> return (left as Int).ushr(right as Int)
                 "xor" -> return (left as Int).xor(right as Int)
+                "mod" -> return (left as Int).mod(right as Int)
+                "floorDiv" -> return (left as Int).floorDiv(right as Int)
             }
             BYTE -> when (name) {
                 "compareTo" -> return (left as Int).compareTo(right as Byte)
@@ -329,6 +331,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Int).plus(right as Byte)
                 "rem" -> return (left as Int).rem(right as Byte)
                 "times" -> return (left as Int).times(right as Byte)
+                "mod" -> return (left as Int).mod(right as Byte)
+                "floorDiv" -> return (left as Int).floorDiv(right as Byte)
             }
             DOUBLE -> when (name) {
                 "compareTo" -> return (left as Int).compareTo(right as Double)
@@ -353,6 +357,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Int).plus(right as Long)
                 "rem" -> return (left as Int).rem(right as Long)
                 "times" -> return (left as Int).times(right as Long)
+                "mod" -> return (left as Int).mod(right as Long)
+                "floorDiv" -> return (left as Int).floorDiv(right as Long)
             }
             SHORT -> when (name) {
                 "compareTo" -> return (left as Int).compareTo(right as Short)
@@ -361,6 +367,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Int).plus(right as Short)
                 "rem" -> return (left as Int).rem(right as Short)
                 "times" -> return (left as Int).times(right as Short)
+                "mod" -> return (left as Int).mod(right as Short)
+                "floorDiv" -> return (left as Int).floorDiv(right as Short)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Int).equals(right)
@@ -377,6 +385,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "rem" -> return (left as Long).rem(right as Long)
                 "times" -> return (left as Long).times(right as Long)
                 "xor" -> return (left as Long).xor(right as Long)
+                "mod" -> return (left as Long).mod(right as Long)
+                "floorDiv" -> return (left as Long).floorDiv(right as Long)
             }
             BYTE -> when (name) {
                 "compareTo" -> return (left as Long).compareTo(right as Byte)
@@ -385,6 +395,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Long).plus(right as Byte)
                 "rem" -> return (left as Long).rem(right as Byte)
                 "times" -> return (left as Long).times(right as Byte)
+                "mod" -> return (left as Long).mod(right as Byte)
+                "floorDiv" -> return (left as Long).floorDiv(right as Byte)
             }
             DOUBLE -> when (name) {
                 "compareTo" -> return (left as Long).compareTo(right as Double)
@@ -412,6 +424,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "shr" -> return (left as Long).shr(right as Int)
                 "times" -> return (left as Long).times(right as Int)
                 "ushr" -> return (left as Long).ushr(right as Int)
+                "mod" -> return (left as Long).mod(right as Int)
+                "floorDiv" -> return (left as Long).floorDiv(right as Int)
             }
             SHORT -> when (name) {
                 "compareTo" -> return (left as Long).compareTo(right as Short)
@@ -420,6 +434,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Long).plus(right as Short)
                 "rem" -> return (left as Long).rem(right as Short)
                 "times" -> return (left as Long).times(right as Short)
+                "mod" -> return (left as Long).mod(right as Short)
+                "floorDiv" -> return (left as Long).floorDiv(right as Short)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Long).equals(right)
@@ -433,6 +449,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Short).plus(right as Byte)
                 "rem" -> return (left as Short).rem(right as Byte)
                 "times" -> return (left as Short).times(right as Byte)
+                "mod" -> return (left as Short).mod(right as Byte)
+                "floorDiv" -> return (left as Short).floorDiv(right as Byte)
             }
             DOUBLE -> when (name) {
                 "compareTo" -> return (left as Short).compareTo(right as Double)
@@ -457,6 +475,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Short).plus(right as Int)
                 "rem" -> return (left as Short).rem(right as Int)
                 "times" -> return (left as Short).times(right as Int)
+                "mod" -> return (left as Short).mod(right as Int)
+                "floorDiv" -> return (left as Short).floorDiv(right as Int)
             }
             LONG -> when (name) {
                 "compareTo" -> return (left as Short).compareTo(right as Long)
@@ -465,6 +485,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Short).plus(right as Long)
                 "rem" -> return (left as Short).rem(right as Long)
                 "times" -> return (left as Short).times(right as Long)
+                "mod" -> return (left as Short).mod(right as Long)
+                "floorDiv" -> return (left as Short).floorDiv(right as Long)
             }
             SHORT -> when (name) {
                 "compareTo" -> return (left as Short).compareTo(right as Short)
@@ -473,6 +495,8 @@ internal fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, ri
                 "plus" -> return (left as Short).plus(right as Short)
                 "rem" -> return (left as Short).rem(right as Short)
                 "times" -> return (left as Short).times(right as Short)
+                "mod" -> return (left as Short).mod(right as Short)
+                "floorDiv" -> return (left as Short).floorDiv(right as Short)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Short).equals(right)

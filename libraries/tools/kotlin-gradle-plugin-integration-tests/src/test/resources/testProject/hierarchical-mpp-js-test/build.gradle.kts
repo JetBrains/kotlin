@@ -9,7 +9,7 @@ repositories {
 	val thirdPartyRepo: String by project
 	maven(thirdPartyRepo)
 	mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {

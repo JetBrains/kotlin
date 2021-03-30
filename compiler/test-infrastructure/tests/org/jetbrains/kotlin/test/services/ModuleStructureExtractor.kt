@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 
-abstract class ModuleStructureExtractor(
+abstract class ModuleStructureExtractor @OptIn(TestInfrastructureInternals::class) constructor(
     protected val testServices: TestServices,
-    protected val additionalSourceProviders: List<AdditionalSourceProvider>
+    protected val additionalSourceProviders: List<AdditionalSourceProvider>,
+    protected val moduleStructureTransformers: List<ModuleStructureTransformer>
 ) {
     abstract fun splitTestDataByModules(
         testDataFileName: String,

@@ -42,7 +42,7 @@ noDefaultJar()
 
 // dummy is used for rewriting dependencies to the shaded packages in the embeddable compiler
 compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
-    classifier = "dummy"
+    archiveClassifier.set("dummy")
 })
 
 class CoreXmlShadingTransformer : Transformer {
@@ -50,25 +50,34 @@ class CoreXmlShadingTransformer : Transformer {
         private const val XML_NAME = "META-INF/extensions/core.xml"
     }
 
-    private val content = StringBuilder()
+    @kotlin.jvm.Transient
+    private var content: StringBuilder? = StringBuilder()
+
+    private fun ensureStringBuilderExist() {
+        if (content == null) {
+            content = StringBuilder()
+        }
+    }
 
     override fun canTransformResource(element: FileTreeElement): Boolean {
         return (element.name == XML_NAME)
     }
 
     override fun transform(context: TransformerContext) {
+        ensureStringBuilderExist()
         val text = context.`is`.bufferedReader().lines()
             .map { it.replace("com.intellij.psi", "org.jetbrains.kotlin.com.intellij.psi") }
             .collect(Collectors.joining("\n"))
-        content.appendln(text)
+        content!!.appendln(text)
         context.`is`.close()
     }
 
     override fun hasTransformedResource(): Boolean {
-        return content.isNotEmpty()
+        return content?.isNotEmpty() ?: false
     }
 
     override fun modifyOutputStream(outputStream: ZipOutputStream, preserveFileTimestamps: Boolean) {
+        if (content == null) return
         val entry = ZipEntry(XML_NAME)
         outputStream.putNextEntry(entry)
         outputStream.write(content.toString().toByteArray())
@@ -88,9 +97,12 @@ javadocJar()
 
 projectTest {
     dependsOn(runtimeJar)
+    val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
+    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
+    val runtimeJarPathProvider = project.provider { runtimeJar.get().outputs.files.asPath }
     doFirst {
-        systemProperty("compilerClasspath", "${runtimeJar.get().outputs.files.asPath}${File.pathSeparator}${testCompilerClasspath.asPath}")
-        systemProperty("compilationClasspath", testCompilationClasspath.asPath)
+        systemProperty("compilerClasspath", "${runtimeJarPathProvider.get()}${File.pathSeparator}${testCompilerClasspathProvider.get()}")
+        systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
     }
 }
 

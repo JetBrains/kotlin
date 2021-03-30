@@ -32,6 +32,8 @@ build/
 .idea/modules
 .idea/runConfigurations/JPS_*.xml
 .idea/runConfigurations/PILL_*.xml
+.idea/runConfigurations/_FP_*.xml
+.idea/runConfigurations/_MT_*.xml
 .idea/libraries
 .idea/modules.xml
 .idea/gradle.xml
@@ -54,6 +56,7 @@ build/
 .idea/artifacts/kotlin_test_js_ir_*
 .idea/artifacts/kotlin_stdlib_wasm_*
 .idea/jarRepositories.xml
+.idea/csv-plugin.xml
 kotlin-ultimate/
 node_modules/
 .rpt2_cache/
@@ -62,3 +65,5 @@ local.properties
 buildSrcTmp/
 distTmp/
 outTmp/
+/test.output
+/kotlin-native/dist

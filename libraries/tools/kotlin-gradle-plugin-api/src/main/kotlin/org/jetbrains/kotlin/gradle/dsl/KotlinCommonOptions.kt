@@ -17,4 +17,10 @@ interface KotlinCommonOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToo
      * Default value: null
      */
      var languageVersion: kotlin.String?
+
+    /**
+     * Compile using Front-end IR. Warning: this feature is far from being production-ready
+     * Default value: false
+     */
+     var useFir: kotlin.Boolean
 }

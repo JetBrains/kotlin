@@ -71,7 +71,7 @@ class A(val y: Int)
 
 fun kt7491_1() {
     val x: A? = A(42)
-    val <!UNUSED_VARIABLE!>z<!> = x?.y ?: return
+    val z = x?.y ?: return
     <!DEBUG_INFO_SMARTCAST!>x<!>.y
 }
 

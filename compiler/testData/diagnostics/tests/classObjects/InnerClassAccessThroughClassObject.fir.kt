@@ -43,7 +43,7 @@ fun f() {
     A.Obj
     A.Companion.Obj2
     A.<!UNRESOLVED_REFERENCE!>Obj2<!>
-    A.<!UNRESOLVED_REFERENCE!>Obj2<!>.<!UNRESOLVED_REFERENCE!>c<!>
+    A.<!UNRESOLVED_REFERENCE!>Obj2<!>.c
     A.<!UNRESOLVED_REFERENCE!>Nested2<!>
 
     O.O

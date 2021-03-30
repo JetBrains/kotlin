@@ -727,6 +727,8 @@ public final class kotlin/collections/ArrayDeque : kotlin/collections/AbstractMu
 	public final fun removeLastOrNull ()Ljava/lang/Object;
 	public fun retainAll (Ljava/util/Collection;)Z
 	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public final class kotlin/collections/ArraysKt {
@@ -3519,6 +3521,7 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 	public fun isInstance (Ljava/lang/Object;)Z
 	public fun isOpen ()Z
 	public fun isSealed ()Z
+	public fun isValue ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -3531,6 +3534,9 @@ public final class kotlin/jvm/internal/ClassReference$Companion {
 public final class kotlin/jvm/internal/CollectionToArray {
 	public static final fun toArray (Ljava/util/Collection;)[Ljava/lang/Object;
 	public static final fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
+}
+
+public final class kotlin/jvm/internal/DefaultConstructorMarker {
 }
 
 public final class kotlin/jvm/internal/DoubleCompanionObject {
@@ -4661,6 +4667,7 @@ public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotate
 	public abstract fun isInstance (Ljava/lang/Object;)Z
 	public abstract fun isOpen ()Z
 	public abstract fun isSealed ()Z
+	public abstract fun isValue ()Z
 }
 
 public final class kotlin/reflect/KClasses {
@@ -5261,6 +5268,8 @@ public final class kotlin/text/StringsKt {
 	public static final fun contains (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Z
 	public static synthetic fun contains$default (Ljava/lang/CharSequence;CZILjava/lang/Object;)Z
 	public static synthetic fun contains$default (Ljava/lang/CharSequence;Ljava/lang/CharSequence;ZILjava/lang/Object;)Z
+	public static final fun contentEquals (Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Z
+	public static final fun contentEquals (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Z
 	public static final fun count (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun decapitalize (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun decapitalize (Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
@@ -5507,6 +5516,8 @@ public final class kotlin/text/StringsKt {
 	public static final fun toBigDecimalOrNull (Ljava/lang/String;Ljava/math/MathContext;)Ljava/math/BigDecimal;
 	public static final fun toBigIntegerOrNull (Ljava/lang/String;)Ljava/math/BigInteger;
 	public static final fun toBigIntegerOrNull (Ljava/lang/String;I)Ljava/math/BigInteger;
+	public static final fun toBooleanStrict (Ljava/lang/String;)Z
+	public static final fun toBooleanStrictOrNull (Ljava/lang/String;)Ljava/lang/Boolean;
 	public static final fun toByteOrNull (Ljava/lang/String;)Ljava/lang/Byte;
 	public static final fun toByteOrNull (Ljava/lang/String;I)Ljava/lang/Byte;
 	public static final fun toCharArray (Ljava/lang/String;II)[C
@@ -5688,8 +5699,29 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 
 public final class kotlin/time/Duration$Companion {
 	public final fun convert (DLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/TimeUnit;)D
+	public final fun days-UwyO8pc (D)D
+	public final fun days-UwyO8pc (I)D
+	public final fun days-UwyO8pc (J)D
 	public final fun getINFINITE-UwyO8pc ()D
 	public final fun getZERO-UwyO8pc ()D
+	public final fun hours-UwyO8pc (D)D
+	public final fun hours-UwyO8pc (I)D
+	public final fun hours-UwyO8pc (J)D
+	public final fun microseconds-UwyO8pc (D)D
+	public final fun microseconds-UwyO8pc (I)D
+	public final fun microseconds-UwyO8pc (J)D
+	public final fun milliseconds-UwyO8pc (D)D
+	public final fun milliseconds-UwyO8pc (I)D
+	public final fun milliseconds-UwyO8pc (J)D
+	public final fun minutes-UwyO8pc (D)D
+	public final fun minutes-UwyO8pc (I)D
+	public final fun minutes-UwyO8pc (J)D
+	public final fun nanoseconds-UwyO8pc (D)D
+	public final fun nanoseconds-UwyO8pc (I)D
+	public final fun nanoseconds-UwyO8pc (J)D
+	public final fun seconds-UwyO8pc (D)D
+	public final fun seconds-UwyO8pc (I)D
+	public final fun seconds-UwyO8pc (J)D
 }
 
 public final class kotlin/time/DurationKt {

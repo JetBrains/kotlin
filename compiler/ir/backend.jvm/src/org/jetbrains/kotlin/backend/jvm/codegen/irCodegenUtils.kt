@@ -9,8 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -89,13 +89,12 @@ internal val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val sourceManager = this.psiSourceManager
-    val fileEntry = sourceManager.getFileEntry(declaration.fileParent)
+    val fileEntry = declaration.fileParent.fileEntry
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     val endLineNumber = when (fileEntry) {
         is MultifileFacadeFileEntry -> 0
-        else -> fileEntry?.getSourceRangeInfo(0, fileEntry.maxOffset)?.endLineNumber ?: 0
+        else -> fileEntry.getSourceRangeInfo(0, fileEntry.maxOffset).endLineNumber
     }
     val sourceFileName = when (fileEntry) {
         is MultifileFacadeFileEntry -> fileEntry.partFiles.singleOrNull()?.name
@@ -206,10 +205,6 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
 
     if (!DescriptorVisibilities.isPrivate(visibility)) {
         return null
-    }
-
-    if (this is IrSimpleFunction && isSuspend) {
-        return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
     }
 
     if (this is IrConstructor && parentAsClass.kind === ClassKind.ENUM_ENTRY) {
@@ -380,15 +375,16 @@ val IrMemberAccessExpression<*>.psiElement: PsiElement?
     get() = (symbol.descriptor.original as? DeclarationDescriptorWithSource)?.psiElement
 
 fun IrSimpleType.isRawType(): Boolean =
-    hasAnnotation(JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME)
+    hasAnnotation(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME)
 
 internal fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {
-    val originalDescriptor = context.methodSignatureMapper.mapSignatureWithGeneric(function).asmMethod.descriptor
+    val originalSignature = context.methodSignatureMapper.mapSignatureWithGeneric(function).asmMethod
+    val originalDescriptor = originalSignature.descriptor
     val descriptor = if (function.isSuspend)
         listOf(*Type.getArgumentTypes(originalDescriptor), Type.getObjectType("kotlin/coroutines/Continuation"))
             .joinToString(prefix = "(", postfix = ")", separator = "") + AsmTypes.OBJECT_TYPE
     else originalDescriptor
-    return classFileContainsMethod(classId, context.state, Method(function.name.asString(), descriptor))
+    return classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
 }
 
 val IrMemberWithContainerSource.parentClassId: ClassId?

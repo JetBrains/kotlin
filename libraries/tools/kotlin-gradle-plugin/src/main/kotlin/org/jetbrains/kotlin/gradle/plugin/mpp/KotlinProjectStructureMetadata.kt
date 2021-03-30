@@ -15,7 +15,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 import org.w3c.dom.Document
@@ -116,7 +116,7 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
              */
             val isNativeSharedSourceSet = sourceSetsWithMetadataCompilations[sourceSet] is KotlinSharedNativeCompilation
             val sourceSetExportedDependencies = when {
-                isNativeSharedSourceSet -> sourceSet.getSourceSetHierarchy().flatMap { hierarchySourceSet ->
+                isNativeSharedSourceSet -> sourceSet.withAllDependsOnSourceSets().flatMap { hierarchySourceSet ->
                     listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE).flatMap { scope ->
                         project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
                     }

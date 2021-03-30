@@ -8,42 +8,49 @@ package org.jetbrains.kotlin.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 
-fun createSession(
+fun createSessionForTests(
     environment: KotlinCoreEnvironment,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope),
-    moduleName: String = "TestModule"
-): FirSession = createSession(environment.project, sourceScope, librariesScope, moduleName, environment::createPackagePartProvider)
+    moduleName: String = "TestModule",
+    friendPaths: List<String> = emptyList(),
+    lookupTracker: LookupTracker? = null
+): FirSession = createSessionForTests(
+    environment.project,
+    sourceScope,
+    librariesScope,
+    moduleName,
+    friendPaths,
+    lookupTracker,
+    environment::createPackagePartProvider
+)
 
-fun createSession(
+fun createSessionForTests(
     project: Project,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
     moduleName: String = "TestModule",
-    packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+    friendPaths: List<String> = emptyList(),
+    lookupTracker: LookupTracker? = null,
+    getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+    getAdditionalModulePackagePartProvider: (GlobalSearchScope) -> PackagePartProvider? = { null }
 ): FirSession {
-    val moduleInfo = FirTestModuleInfo(name = Name.identifier(moduleName))
-    val provider = FirProjectSessionProvider()
-    return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, sourceScope, project).also {
-        createSessionForDependencies(project, provider, moduleInfo, librariesScope, packagePartProvider)
-    }
-}
-
-private fun createSessionForDependencies(
-    project: Project,
-    provider: FirProjectSessionProvider,
-    moduleInfo: FirTestModuleInfo,
-    librariesScope: GlobalSearchScope,
-    packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
-) {
-    val dependenciesInfo = FirTestModuleInfo(name = Name.identifier(moduleInfo.name.identifier + ".dependencies"))
-    moduleInfo.dependencies.add(dependenciesInfo)
-    FirSessionFactory.createLibrarySession(
-        dependenciesInfo, provider, librariesScope, project, packagePartProvider(librariesScope)
+    return createSessionWithDependencies(
+        Name.identifier(moduleName),
+        friendPaths,
+        outputDirectory = null,
+        project,
+        languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        sourceScope,
+        librariesScope,
+        lookupTracker,
+        getPackagePartProvider,
+        getAdditionalModulePackagePartProvider
     )
 }
+

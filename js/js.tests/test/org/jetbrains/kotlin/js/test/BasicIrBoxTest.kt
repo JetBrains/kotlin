@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -65,10 +65,10 @@ abstract class BasicIrBoxTest(
 
     private val cachedDependencies = mutableMapOf<String, Collection<String>>()
 
-    override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
+    override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters) {
         compilationCache.clear()
         cachedDependencies.clear()
-        super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
+        super.doTest(filePath, expectedResult, mainCallParameters)
     }
 
     override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
@@ -110,12 +110,14 @@ abstract class BasicIrBoxTest(
         }
 
         if (isMainModule) {
+            logger.logFile("Output JS", outputFile)
+
             val debugMode = getBoolean("kotlin.js.debugMode")
 
             val phaseConfig = if (debugMode) {
                 val allPhasesSet = jsPhases.toPhaseMap().values.toSet()
                 val dumpOutputDir = File(outputFile.parent, outputFile.nameWithoutExtension + "-irdump")
-                println("\n ------ Dumping phases to file://$dumpOutputDir")
+                logger.logFile("Dumping phasesTo", dumpOutputDir)
                 PhaseConfig(
                     jsPhases,
                     dumpToDirectory = dumpOutputDir.path,
@@ -150,8 +152,9 @@ abstract class BasicIrBoxTest(
                 compiledModule.dceJsCode?.writeTo(dceOutputFile, config)
 
                 if (generateDts) {
-                    val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
-                    dtsFile?.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
+                    val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")!!
+                    logger.logFile("Output d.ts", dtsFile)
+                    dtsFile.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
                 }
             }
 
@@ -180,10 +183,12 @@ abstract class BasicIrBoxTest(
                 configuration = config.configuration,
                 allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
-                irFactory = PersistentIrFactory,
+                irFactory = IrFactoryImpl,
                 outputKlibPath = actualOutputFile,
                 nopack = true
             )
+
+            logger.logFile("Output klib", File(actualOutputFile))
 
             compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
         }

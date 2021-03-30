@@ -4,7 +4,7 @@ package k
 import JavaClass
 
 fun foo(javaClass: JavaClass) {
-    val <!UNUSED_VARIABLE!>v<!> = javaClass.<!INVISIBLE_MEMBER!>something<!>
+    val v = javaClass.<!INVISIBLE_MEMBER!>something<!>
     javaClass.<!INVISIBLE_MEMBER!>something<!> = 1
     javaClass.<!INVISIBLE_MEMBER!>something<!>++
 }

@@ -32,11 +32,11 @@ class MySet : Set<String> {
 }
 
 fun test() {
-  f(s = s() /*!! String */)
-  f(s = #STRING /*!! String */)
+  f(s = s() /*!! @FlexibleNullability String */)
+  f(s = #STRING /*!! @FlexibleNullability String */)
 }
 
 fun testContains(m: MySet) {
-  m.contains(element = #STRING /*!! String */) /*~> Unit */
+  m.contains(element = #STRING /*!! @FlexibleNullability String */) /*~> Unit */
   m.contains(element = "abc") /*~> Unit */
 }

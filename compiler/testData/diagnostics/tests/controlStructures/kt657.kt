@@ -1,7 +1,7 @@
 //KT-657 Semantic checks for when without condition
 package kt657
 
-class Pair<A, B>(<!UNUSED_PARAMETER!>a<!>: A, <!UNUSED_PARAMETER!>b<!>: B)
+class Pair<A, B>(a: A, b: B)
 
 fun foo() =
     when {

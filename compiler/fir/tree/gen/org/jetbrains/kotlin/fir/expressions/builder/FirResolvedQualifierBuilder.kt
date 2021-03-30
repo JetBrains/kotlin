@@ -55,7 +55,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     @Deprecated("Modification of 'classId' has no impact for FirResolvedQualifierBuilder", level = DeprecationLevel.HIDDEN)
     override var classId: ClassId?
         get() = throw IllegalStateException()
-        set(value) {
+        set(_) {
             throw IllegalStateException()
         }
 }

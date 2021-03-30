@@ -1,12 +1,12 @@
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
-@DefaultNonNull
+@NullMarked
 class A<T> {
     public void foo(@NullnessUnspecified T t) {}
     public <E> void bar(E e) {}
 }
 
-@DefaultNonNull
+@NullMarked
 class B<T> {
     public void foo(T t) {}
     public <E> void bar(E e) {}
@@ -14,7 +14,7 @@ class B<T> {
 
 class Test {}
 
-@DefaultNonNull
+@NullMarked
 public class TypeParameterBounds {
     <T extends Test> void main(A<@Nullable Object> a1, A<Test> a2, B<@Nullable Object> b1, B<Test> b2, T x) {
         // jspecify_nullness_mismatch

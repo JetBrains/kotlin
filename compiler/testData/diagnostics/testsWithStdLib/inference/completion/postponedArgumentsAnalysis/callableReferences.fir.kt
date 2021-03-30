@@ -49,7 +49,7 @@ fun main() {
     select(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<A, kotlin.Unit>")!>::foo4<!>), id { x: A -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("A")!>it<!> })
     select(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<B, kotlin.Unit>")!>::foo4<!>), id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> })
     // Expected ambiguity
-    select(id(<!UNRESOLVED_REFERENCE!>::foo4<!>), id { x: A -> }, id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("A & B")!>it<!> })
+    select(id(::<!UNRESOLVED_REFERENCE!>foo4<!>), id { x: A -> }, id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("A & B")!>it<!> })
 
     select(id(::foo5), id { x: A -> }, id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> })
 

@@ -32,8 +32,8 @@ FILE fqName:<root> fileName:/JCTreeUser.kt
                 TYPE_OP type=T of <root>.Owner origin=IMPLICIT_CAST typeOperand=T of <root>.Owner
                   GET_VAR 'var tree: <root>.JCTree [var] declared in <root>.Owner.<get-foo>' type=<root>.JCTree origin=null
               then: RETURN type=kotlin.Nothing from='public final fun <get-foo> (): kotlin.String declared in <root>.Owner'
-                TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-                  GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:clazz type:kotlin.String? visibility:public' type=kotlin.String? origin=GET_PROPERTY
+                TYPE_OP type=@[FlexibleNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleNullability] kotlin.String
+                  GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:clazz type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
                     receiver: TYPE_OP type=<root>.JCTree.JCTypeApply origin=IMPLICIT_CAST typeOperand=<root>.JCTree.JCTypeApply
                       TYPE_OP type=T of <root>.Owner origin=IMPLICIT_CAST typeOperand=T of <root>.Owner
                         GET_VAR 'var tree: <root>.JCTree [var] declared in <root>.Owner.<get-foo>' type=<root>.JCTree origin=null

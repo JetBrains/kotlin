@@ -7,10 +7,12 @@
 
 package kotlin
 
+import kotlin.jvm.*
+
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public inline class UIntArray
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@JvmInline
+public value class UIntArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: IntArray) : Collection<UInt> {
 

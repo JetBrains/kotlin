@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
+
 /*
  * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
@@ -8,13 +10,17 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    mavenLocal()
+}
+
 dependencies {
     Platform[193].orLower {
         testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
     }
 
     testCompileOnly(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", rootProject = rootProject)
+        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", "jna", rootProject = rootProject)
     }
 
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
@@ -48,7 +54,8 @@ sourceSets {
 projectTest {
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
-    jvmArgs!!.removeIf { it.contains("-Xmx") }
+    jvmArgs!!.removeIf { it.contains("-Xmx") || it.contains("-Xms") || it.contains("ReservedCodeCacheSize") }
+    minHeapSize = "8g"
     maxHeapSize = "8g"
     dependsOn(":dist")
 
@@ -59,6 +66,7 @@ projectTest {
             jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
         }
     }
+    jvmArgs("-XX:ReservedCodeCacheSize=512m")
 }
 
 testsJar()

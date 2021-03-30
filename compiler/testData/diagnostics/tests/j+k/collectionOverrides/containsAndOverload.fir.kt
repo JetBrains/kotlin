@@ -12,13 +12,13 @@ abstract class KA : A() {
 }
 
 fun foo(a: A, ka: KA) {
-    a.contains("")
-    a.contains(1)
-    "" in a
-    1 in a
+    a.<!AMBIGUITY!>contains<!>("")
+    a.<!NONE_APPLICABLE!>contains<!>(1)
+    "" <!AMBIGUITY!>in<!> a
+    1 <!NONE_APPLICABLE!>in<!> a
 
     ka.contains("")
-    ka.contains(1)
+    ka.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
     "" in ka
-    1 in ka
+    1 <!INAPPLICABLE_CANDIDATE!>in<!> ka
 }

@@ -1,18 +1,8 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 
 package org.jetbrains.kotlin.ir.declarations.persistent
 
@@ -27,15 +17,20 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElementBase<T>, IrDeclaration, DeclarationCarrier {
     var removedOn: Int
 
-    override val factory: IrFactory
-        get() = PersistentIrFactory
+
+    override var parentField: IrDeclarationParent?
+
+    override var originField: IrDeclarationOrigin
+
+    override var annotationsField: List<IrConstructorCall>
 
     // TODO reduce boilerplate
     override var parent: IrDeclarationParent
         get() = getCarrier().parentField ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
         set(p) {
             if (getCarrier().parentField !== p) {
-                setCarrier().parentField = p
+                setCarrier()
+                parentField = p
             }
         }
 
@@ -43,7 +38,8 @@ interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElem
         get() = getCarrier().originField
         set(p) {
             if (getCarrier().originField !== p) {
-                setCarrier().originField = p
+                setCarrier()
+                originField = p
             }
         }
 
@@ -51,18 +47,22 @@ interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElem
         get() = getCarrier().annotationsField
         set(v) {
             if (getCarrier().annotationsField !== v) {
-                setCarrier().annotationsField = v
+                setCarrier()
+                annotationsField = v
             }
         }
 
     override fun ensureLowered() {
-        if (stageController.currentStage > loweredUpTo) {
-            stageController.lazyLower(this)
+        if (factory.stageController.currentStage > loweredUpTo) {
+            factory.stageController.lazyLower(this)
         }
     }
 }
 
 interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
+
+    val factory: PersistentIrFactory
+
     override var lastModified: Int
 
     var loweredUpTo: Int
@@ -76,7 +76,7 @@ interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
 
     @Suppress("UNCHECKED_CAST")
     fun getCarrier(): T {
-        stageController.currentStage.let { stage ->
+        factory.stageController.currentStage.let { stage ->
             ensureLowered()
 
             if (stage >= lastModified) return this as T
@@ -106,12 +106,12 @@ interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
 
     // TODO naming? e.g. `mutableCarrier`
     @Suppress("UNCHECKED_CAST")
-    fun setCarrier(): T {
-        val stage = stageController.currentStage
+    fun setCarrier() {
+        val stage = factory.stageController.currentStage
 
         ensureLowered()
 
-        if (!stageController.canModify(this)) {
+        if (!factory.stageController.canModify(this)) {
             error("Cannot modify this element!")
         }
 
@@ -121,14 +121,12 @@ interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
 
         // TODO move up? i.e. fast path
         if (stage == lastModified) {
-            return this as T
+            return
         } else {
             values = (values ?: emptyArray()) + this.clone() as T
         }
 
         this.lastModified = stage
-
-        return this as T
     }
 }
 
@@ -141,12 +139,13 @@ interface PersistentIrBodyBase<B : PersistentIrBodyBase<B>> : PersistentIrElemen
         get() = getCarrier().containerField!!
         set(p) {
             if (getCarrier().containerField !== p) {
-                setCarrier().containerField = p
+                setCarrier()
+                containerField = p
             }
         }
 
     fun <T> checkEnabled(fn: () -> T): T {
-        if (!stageController.bodiesEnabled) error("Bodies disabled!")
+        if (!factory.stageController.bodiesEnabled) error("Bodies disabled!")
         ensureLowered()
         return fn()
     }
@@ -155,14 +154,14 @@ interface PersistentIrBodyBase<B : PersistentIrBodyBase<B>> : PersistentIrElemen
     override fun ensureLowered() {
         initializer?.let { initFn ->
             initializer = null
-            stageController.withStage(createdOn) {
-                stageController.bodyLowering {
+            factory.stageController.withStage(createdOn) {
+                factory.stageController.bodyLowering {
                     initFn.invoke(this as B)
                 }
             }
         }
-        if (loweredUpTo + 1 < stageController.currentStage) {
-            stageController.lazyLower(this as IrBody)
+        if (loweredUpTo + 1 < factory.stageController.currentStage) {
+            factory.stageController.lazyLower(this as IrBody)
         }
     }
 }

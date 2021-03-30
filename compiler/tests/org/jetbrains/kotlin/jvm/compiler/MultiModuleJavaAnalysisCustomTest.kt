@@ -41,8 +41,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -56,7 +57,6 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.junit.Assert
 import java.io.File
-import java.util.*
 
 class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
 
@@ -114,7 +114,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                     projectContext.withModule(descriptor),
                     modulesContent(moduleInfo),
                     this,
-                    LanguageVersionSettingsImpl.DEFAULT
+                    LanguageVersionSettingsImpl.DEFAULT,
+                    CliSealedClassInheritorsProvider,
                 )
         }
 

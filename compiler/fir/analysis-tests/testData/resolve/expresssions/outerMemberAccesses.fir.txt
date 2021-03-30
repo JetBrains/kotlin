@@ -37,7 +37,7 @@ FILE: O.kt
                         }
 
                         public final fun local(): R|kotlin/Unit| {
-                            lval y: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = this@R|/O.Derived|.R|/Base.foo|()
+                            lval y: R|ft<kotlin/String, kotlin/String?>| = this@R|/O.Derived|.R|/Base.foo|()
                         }
 
                         public final val oo: R|<anonymous>| = object : R|kotlin/Any| {
@@ -66,7 +66,7 @@ FILE: O.kt
                     }
 
                     public final fun local(): R|kotlin/Unit| {
-                        lval y: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = this@R|/O.Derived|.R|/Base.foo|()
+                        lval y: R|ft<kotlin/String, kotlin/String?>| = this@R|/O.Derived|.R|/Base.foo|()
                     }
 
                 }

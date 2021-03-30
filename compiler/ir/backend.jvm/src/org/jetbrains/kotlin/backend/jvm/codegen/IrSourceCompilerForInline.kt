@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.*
@@ -24,19 +25,19 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.io.File
 
 class IrSourceCompilerForInline(
     override val state: GenerationState,
@@ -50,7 +51,7 @@ class IrSourceCompilerForInline(
         get() = object : LookupLocation {
             override val location: LocationInfo?
                 get() {
-                    val ktFile = codegen.classCodegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
+                    val ktFile = codegen.irFunction.fileParent.getKtFile()
                         ?.takeUnless { it.doNotAnalyze != null } ?: return null
 
                     return object : LocationInfo {
@@ -69,7 +70,7 @@ class IrSourceCompilerForInline(
         get() = ir2string(callElement)
 
     override val callsiteFile: PsiFile?
-        get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
+        get() = codegen.irFunction.fileParent.getKtFile()
 
     override val contextKind: OwnerKind
         get() = when (val parent = callElement.symbol.owner.parent) {
@@ -107,9 +108,9 @@ class IrSourceCompilerForInline(
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 
-    override fun generateFinallyBlocksIfNeeded(finallyCodegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label) {
-        require(finallyCodegen is ExpressionCodegen)
-        finallyCodegen.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
+    override fun generateFinallyBlocksIfNeeded(codegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label, target: Label?) {
+        require(codegen is ExpressionCodegen)
+        codegen.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
     }
 
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
@@ -139,9 +140,15 @@ class IrSourceCompilerForInline(
     override val compilationContextFunctionDescriptor: FunctionDescriptor
         get() = generateSequence(codegen) { it.inlinedInto }.last().irFunction.toIrBasedDescriptor()
 
-    override fun getContextLabels(): Set<String> {
-        val name = codegen.irFunction.name.asString()
-        return setOf(name)
+    override fun getContextLabels(): Map<String, Label?> {
+        val result = mutableMapOf<String, Label?>(codegen.irFunction.name.asString() to null)
+        for (info in data.infos) {
+            if (info !is LoopInfo)
+                continue
+            result[info.loop.nonLocalReturnLabel(false)] = info.continueLabel
+            result[info.loop.nonLocalReturnLabel(true)] = info.breakLabel
+        }
+        return result
     }
 
     // TODO: Find a way to avoid using PSI here
@@ -161,3 +168,5 @@ private tailrec fun IrDeclaration.isInlineOrInsideInline(): Boolean {
     if (parent !is IrDeclaration) return false
     return parent.isInlineOrInsideInline()
 }
+
+internal fun IrLoop.nonLocalReturnLabel(forBreak: Boolean): String = "${label!!}\$${if (forBreak) "break" else "continue"}"

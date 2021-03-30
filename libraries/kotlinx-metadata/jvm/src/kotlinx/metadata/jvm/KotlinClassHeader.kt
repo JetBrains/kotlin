@@ -7,7 +7,6 @@
 
 package kotlinx.metadata.jvm
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
 /**
@@ -23,7 +22,13 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
  * @param packageName see [packageName]
  * @param extraInt see [extraInt]
  */
-class KotlinClassHeader(
+class KotlinClassHeader
+@Deprecated(
+    "Use another constructor, which doesn't take bytecodeVersion as a parameter.",
+    ReplaceWith("KotlinClassHeader(kind, metadataVersion, data1, data2, extraString, packageName, extraInt)"),
+    DeprecationLevel.ERROR
+)
+constructor(
     kind: Int?,
     metadataVersion: IntArray?,
     bytecodeVersion: IntArray?,
@@ -33,6 +38,17 @@ class KotlinClassHeader(
     packageName: String?,
     extraInt: Int?
 ) {
+    @Suppress("DEPRECATION_ERROR")
+    constructor(
+        kind: Int?,
+        metadataVersion: IntArray?,
+        data1: Array<String>?,
+        data2: Array<String>?,
+        extraString: String?,
+        packageName: String?,
+        extraInt: Int?
+    ) : this(kind, metadataVersion, null, data1, data2, extraString, packageName, extraInt)
+
     /**
      * A kind of the metadata this header encodes.
      *
@@ -59,6 +75,10 @@ class KotlinClassHeader(
      * @see Metadata.bytecodeVersion
      * @see COMPATIBLE_BYTECODE_VERSION
      */
+    @Deprecated(
+        "Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version.",
+        level = DeprecationLevel.ERROR
+    )
     val bytecodeVersion: IntArray = bytecodeVersion ?: intArrayOf()
 
     /**
@@ -149,7 +169,11 @@ class KotlinClassHeader(
          *
          * @see bytecodeVersion
          */
+        @Deprecated(
+            "Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version.",
+            level = DeprecationLevel.ERROR
+        )
         @JvmField
-        val COMPATIBLE_BYTECODE_VERSION = JvmBytecodeBinaryVersion.INSTANCE.toArray().copyOf()
+        val COMPATIBLE_BYTECODE_VERSION = intArrayOf(1, 0, 3)
     }
 }

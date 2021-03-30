@@ -38,7 +38,7 @@ class JvmPackagePartProvider(
     languageVersionSettings: LanguageVersionSettings,
     private val scope: GlobalSearchScope
 ) : JvmPackagePartProviderBase<VirtualFile>() {
-    private val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
+    override val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
     override val loadedModules: MutableList<ModuleMappingInfo<VirtualFile>> = SmartList()
 

@@ -123,7 +123,10 @@ class MultiplatformGradleIT : BaseGradleIT() {
                 File(projectDir, "$subDirectory/build.gradle").modify {
                     """
                     buildscript {
-                        repositories { mavenLocal(); jcenter() }
+                        repositories { 
+                             mavenLocal();
+                             maven { url = uri("https://jcenter.bintray.com/") }
+                        }
                         dependencies {
                             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
                         }
@@ -287,10 +290,6 @@ class MultiplatformGradleIT : BaseGradleIT() {
         listOf("lib", "libJvm", "libJs").forEach { module ->
             gradleBuildScript(module).appendText(sourceSetDeclaration)
         }
-
-        gradleBuildScript("libJvm").appendText(
-            "\ndependencies { ${sourceSetName}Compile \"org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version\" }"
-        )
 
         listOf(
             "expect fun foo(): String" to "lib/src/$sourceSetName/kotlin",

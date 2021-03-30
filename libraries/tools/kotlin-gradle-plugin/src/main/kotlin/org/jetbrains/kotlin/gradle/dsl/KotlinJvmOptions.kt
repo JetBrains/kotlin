@@ -8,6 +8,7 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Include Kotlin runtime into the resulting JAR
      * Default value: false
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var includeRuntime: kotlin.Boolean
 
     /**
@@ -23,9 +24,9 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var jdkHome: kotlin.String?
 
     /**
-     * Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11, 12, 13, 14 or 15), default is 1.6
-     * Possible values: "1.6", "1.8", "9", "10", "11", "12", "13", "14", "15"
-     * Default value: "1.6"
+     * Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, 11, 12, 13, 14, 15 or 16), default is 1.8
+     * Possible values: "1.6", "1.8", "9", "10", "11", "12", "13", "14", "15", "16"
+     * Default value: "1.8"
      */
      var jvmTarget: kotlin.String
 
@@ -45,18 +46,21 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Don't automatically include Kotlin reflection into the classpath
      * Default value: true
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var noReflect: kotlin.Boolean
 
     /**
      * Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
      * Default value: true
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var noStdlib: kotlin.Boolean
 
     /**
-     * Use the IR backend
+     * Use the IR backend. This option has no effect unless the language version less than 1.5 is used
      * Default value: false
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.WARNING)
      var useIR: kotlin.Boolean
 
     /**

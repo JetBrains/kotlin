@@ -25,7 +25,7 @@ package foobar.a
 
 // FILE: d.kt
 package foobar
-val x1 = <!UNRESOLVED_REFERENCE!>a<!>.<!UNRESOLVED_REFERENCE!>a<!>
+val x1 = <!UNRESOLVED_REFERENCE!>a<!>.a
 val x2 = foobar.a.a
 
 val y1 = foobar.a.b

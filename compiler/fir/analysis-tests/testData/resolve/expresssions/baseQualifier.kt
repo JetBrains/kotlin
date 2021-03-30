@@ -20,6 +20,6 @@ fun test() {
     JavaClass.bar()
 
     val errC = BB.<!UNRESOLVED_REFERENCE!>C<!>
-    val errBarViaBB = BB.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
-    val errBarViaAA = AA.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
+    val errBarViaBB = BB.<!UNRESOLVED_REFERENCE!>bar<!>()
+    val errBarViaAA = AA.<!UNRESOLVED_REFERENCE!>bar<!>()
 }

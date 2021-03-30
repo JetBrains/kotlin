@@ -13,6 +13,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     // User environment
     GRADLE_VERSION(OVERRIDE, COMPONENT_VERSION),
+    PROJECT_PATH(OVERRIDE, ANONYMIZE_IN_IDE),
 
     OS_TYPE(OVERRIDE, SAFE),
 

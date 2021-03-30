@@ -9,7 +9,7 @@
 fun case_1(x: Any) {
     if (x is String) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x!!<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>x<!>
     }
 }
 
@@ -20,7 +20,7 @@ fun case_1(x: Any) {
 fun case_2(x: Any?) {
     if (x is String?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x!!<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String")!>x<!>
     }
 }
 
@@ -31,7 +31,7 @@ fun case_2(x: Any?) {
 fun case_3(x: Any) {
     if (x is Map.Entry<*, *>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map.Entry<*, *>")!>x!!<!>.key
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map.Entry<*, *> & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.collections.Map.Entry<*, *>")!>x<!>
     }
 }
 
@@ -42,6 +42,6 @@ fun case_3(x: Any) {
 fun case_4(x: Any?) {
     if (x is Map.Entry<*, *>?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map.Entry<*, *>")!>x!!<!>.value
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map.Entry<*, *> & kotlin.Any?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.collections.Map.Entry<*, *>")!>x<!>
     }
 }

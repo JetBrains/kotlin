@@ -9,8 +9,8 @@ fun list(start: SomeObject): SomeObject {
     var e: SomeObject? = start
     for (i in 0..42) {
         // Unsafe calls because of nullable e at the beginning
-        e.doSomething()
-        e = e.next()
+        e<!UNSAFE_CALL!>.<!>doSomething()
+        e = e<!UNSAFE_CALL!>.<!>next()
     }
     // Smart cast is not possible here due to next()
     return e

@@ -1,0 +1,6 @@
+depends = CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.Accessibility
+modules = Accessibility
+compilerOpts = -framework Accessibility
+linkerOpts = -framework Accessibility

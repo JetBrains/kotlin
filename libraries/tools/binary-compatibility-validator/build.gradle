@@ -6,6 +6,11 @@ configurations {
 }
 
 dependencies {
+    // Override dependency of binary-compatibility-validator:0.2.3 on kotlinx-metadata-jvm:0.1.0,
+    // until the new version of the binary compatibility validator is released.
+    // kotlinx-metadata-jvm 0.1.0 can't read metadata of version 1.5 and greater.
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.2.0")
+
     compile("org.jetbrains.kotlinx:binary-compatibility-validator:0.2.3")
 
     testCompile project(':kotlin-test:kotlin-test-junit')

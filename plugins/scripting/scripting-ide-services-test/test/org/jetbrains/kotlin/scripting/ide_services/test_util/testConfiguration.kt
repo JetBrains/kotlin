@@ -283,7 +283,7 @@ private suspend fun checkEvaluateInRepl(
 
                 checkLists(index, "completions", expectedCompletions.list, completionsRes, expectedCompletions)
                 val expectedErrorsWithPath = expectedErrors.list.map {
-                    it.copy(sourcePath = errorsRes.firstOrNull()?.sourcePath)
+                    if (it.location != null) it.copy(sourcePath = errorsRes.firstOrNull()?.sourcePath) else it
                 }
                 checkLists(index, "errors", expectedErrorsWithPath, errorsRes, expectedErrors)
                 TestCase.assertEquals("Analysis result types are different", expectedResultType, resultType)

@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.System
+modules = System
+compilerOpts = -framework System
+linkerOpts = -framework System
+#Disabled: Swift-only framework

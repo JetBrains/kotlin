@@ -103,7 +103,7 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
 
     override fun getPath(): String = _path ?: if (parent != null) parent.path + "/" + name else name
 
-    override fun getCanonicalPath(): String? = path
+    override fun getCanonicalPath() = path
 }
 
 abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
@@ -187,8 +187,8 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
         override val configuration: ScriptCompilationConfiguration?
             get() {
                 val legacy = legacyDependencies ?: return null
-                return definition?.compilationConfiguration?.let {
-                    ScriptCompilationConfiguration(it) {
+                return definition?.compilationConfiguration?.let { config ->
+                    ScriptCompilationConfiguration(config) {
                         updateClasspath(legacy.classpath)
                         defaultImports.append(legacy.imports)
                         importScripts.append(legacy.scripts.map { FileScriptSource(it) })
@@ -221,13 +221,14 @@ typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCom
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
     definition: ScriptDefinition,
-    project: Project
+    project: Project,
+    providedConfiguration: ScriptCompilationConfiguration? = null // if null - take from definition
 ): ScriptCompilationConfigurationResult {
     // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
     val legacyDefinition = definition.asLegacyOrNull<KotlinScriptDefinition>()
     if (legacyDefinition == null) {
-        val compilationConfiguration = definition.compilationConfiguration
+        val compilationConfiguration = providedConfiguration ?: definition.compilationConfiguration
         val collectedData =
             runReadAction {
                 getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, project, definition.contextClassLoader)

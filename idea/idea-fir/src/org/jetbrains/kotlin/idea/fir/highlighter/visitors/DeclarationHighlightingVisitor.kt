@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors as Colors
 
-internal class DeclarationHighlightingVisitor(holder: AnnotationHolder) : HighlightingVisitor(holder) {
+internal class DeclarationHighlightingVisitor(holder: AnnotationHolder) : AbstractAnnotationHolderHighlightingVisitor(holder) {
     override fun visitTypeAlias(typeAlias: KtTypeAlias) {
         highlightNamedDeclaration(typeAlias, Colors.TYPE_ALIAS)
         super.visitTypeAlias(typeAlias)
@@ -56,6 +56,6 @@ internal class DeclarationHighlightingVisitor(holder: AnnotationHolder) : Highli
 }
 
 class DeclarationHighlightingExtension : BeforeResolveHighlightingExtension {
-    override fun createVisitor(holder: AnnotationHolder): HighlightingVisitor =
+    override fun createVisitor(holder: AnnotationHolder): AbstractHighlightingVisitor =
         DeclarationHighlightingVisitor(holder)
 }

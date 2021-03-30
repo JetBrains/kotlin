@@ -16,7 +16,7 @@ class A(outer: Outer) {
     var f: String by  <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>foo<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>getMyProperty<!>()) <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{OI}, DEBUG_INFO_MISSING_UNRESOLVED{NI}!>-<!> 1
 }
 
-fun <A, B> foo(<!UNUSED_PARAMETER!>a<!>: Any?) = MyProperty<A, B>()
+fun <A, B> foo(a: Any?) = MyProperty<A, B>()
 
 fun <A, B> getMyProperty() = MyProperty<A, B>()
 
@@ -35,7 +35,7 @@ class MyProperty<R, T> {
 }
 
 operator fun <R, T> MyProperty<R, T>.unaryPlus() = MyProperty<R, T>()
-operator fun <R, T> MyProperty<R, T>.minus(<!UNUSED_PARAMETER!>i<!>: Int) = MyProperty<R, T>()
+operator fun <R, T> MyProperty<R, T>.minus(i: Int) = MyProperty<R, T>()
 
 object O {
     fun <A, B> getMyProperty() = MyProperty<A, B>()

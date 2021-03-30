@@ -27,7 +27,7 @@ class Class2 {
 <!WRONG_ANNOTATION_TARGET!>@A<!> fun foo() {}
 <!WRONG_ANNOTATION_TARGET!>@A<!> class D
 fun foo(i: <!WRONG_ANNOTATION_TARGET!>@A<!> Int) {
-    <!WRONG_ANNOTATION_TARGET!>@A<!> val <!NAME_SHADOWING, UNUSED_VARIABLE!>i<!> = 1
+    <!WRONG_ANNOTATION_TARGET!>@A<!> val <!NAME_SHADOWING!>i<!> = 1
 }
 fun <T> test(t: <!WRONG_ANNOTATION_TARGET!>@A<!> T): T = t
 

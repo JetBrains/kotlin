@@ -72,7 +72,7 @@ internal actual annotation class JvmPackageName(actual val name: String)
  * This annotation is intended for *rare cases* when API designer needs to hide Kotlin-specific target from Java API
  * while keeping it a part of Kotlin API so the resulting API is idiomatic for both languages.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FILE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 public actual annotation class JvmSynthetic
 

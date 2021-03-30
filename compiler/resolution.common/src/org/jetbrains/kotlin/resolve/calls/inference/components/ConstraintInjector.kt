@@ -122,17 +122,6 @@ class ConstraintInjector(
                     constraintIncorporator.incorporate(typeCheckerContext, typeVariable, constraintToIncorporate)
                 }
             }
-
-            val contextOps = c as? ConstraintSystemOperation
-            if (!typeCheckerContext.hasConstraintsToProcess() ||
-                (contextOps != null && c.notFixedTypeVariables.all { typeVariable ->
-                    typeVariable.value.constraints.any { constraint ->
-                        constraint.kind == EQUALITY && contextOps.isProperType(constraint.type)
-                    }
-                })
-            ) {
-                break
-            }
         }
     }
 
@@ -165,7 +154,7 @@ class ConstraintInjector(
         type.typeDepth() <= maxTypeDepthFromInitialConstraints + ALLOWED_DEPTH_DELTA_FOR_INCORPORATION
 
     private inner class TypeCheckerContext(val c: Context, val position: IncorporationConstraintPosition) :
-        AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
+        AbstractTypeCheckerContextForConstraintSystem(c), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
         // We use `var` intentionally to avoid extra allocations as this property is quite "hot"
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
 
@@ -196,14 +185,6 @@ class ConstraintInjector(
 
         override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
             return baseContext.substitutionSupertypePolicy(type)
-        }
-
-        override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
-            return baseContext.areEqualTypeConstructors(c1, c2)
-        }
-
-        override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-            return baseContext.prepareType(type)
         }
 
         override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import java.util.*
-
 /**
  * Name of a preset used in the 'kotlin-multiplatform' Gradle plugin to represent this target.
  */
@@ -21,5 +19,5 @@ val KonanTarget.presetName: String
 
 private fun evaluatePresetName(targetName: String): String {
     val nameParts = targetName.split('_').mapNotNull { it.takeIf(String::isNotEmpty) }
-    return nameParts.asSequence().drop(1).joinToString("", nameParts.firstOrNull().orEmpty()) { it.capitalize(Locale.US) }
+    return nameParts.asSequence().drop(1).joinToString("", nameParts.firstOrNull().orEmpty()) { it.capitalize() }
 }

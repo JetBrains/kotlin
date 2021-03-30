@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirPrimaryConstructorBuilder
@@ -18,24 +18,18 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
-import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
-import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -60,7 +54,13 @@ class FirSignatureEnhancement(
         function: FirFunctionSymbol<*>,
         name: Name?
     ): FirFunctionSymbol<*> {
-        return enhancements.getOrPut(function) { enhance(function, name) } as FirFunctionSymbol<*>
+        return enhancements.getOrPut(function) {
+            enhance(function, name).also { enhancedVersion ->
+                (enhancedVersion.fir.initialSignatureAttr as? FirSimpleFunction)?.let {
+                    enhancedVersion.fir.initialSignatureAttr = enhancedFunction(it.symbol, it.name).fir
+                }
+            }
+        } as FirFunctionSymbol<*>
     }
 
     fun enhancedProperty(property: FirVariableSymbol<*>, name: Name): FirVariableSymbol<*> {
@@ -82,7 +82,10 @@ class FirSignatureEnhancement(
                     )
 
                 val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), memberContext, predefinedInfo)
-                return firElement.symbol.apply { this.fir.replaceReturnTypeRef(newReturnTypeRef) }
+                return firElement.symbol.apply {
+                    this.fir.replaceReturnTypeRef(newReturnTypeRef)
+                    session.lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, this.fir.source, null)
+                }
             }
             is FirField -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
@@ -115,7 +118,7 @@ class FirSignatureEnhancement(
                 val getterDelegate = firElement.getter.delegate
                 val enhancedGetterSymbol = if (getterDelegate is FirJavaMethod) {
                     enhanceMethod(
-                        getterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
+                        getterDelegate, getterDelegate.symbol.callableId, getterDelegate.name,
                     )
                 } else {
                     getterDelegate.symbol
@@ -123,7 +126,7 @@ class FirSignatureEnhancement(
                 val setterDelegate = firElement.setter?.delegate
                 val enhancedSetterSymbol = if (setterDelegate is FirJavaMethod) {
                     enhanceMethod(
-                        setterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
+                        setterDelegate, setterDelegate.symbol.callableId, setterDelegate.name,
                     )
                 } else {
                     setterDelegate?.symbol
@@ -163,7 +166,10 @@ class FirSignatureEnhancement(
         val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firMethod.annotations)
 
         val predefinedEnhancementInfo =
-            SignatureBuildingComponents.signature(owner.symbol.classId, firMethod.computeJvmDescriptor()).let { signature ->
+            SignatureBuildingComponents.signature(
+                owner.symbol.classId,
+                firMethod.computeJvmDescriptor { it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack) }
+            ).let { signature ->
                 PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature]
             }
 
@@ -185,27 +191,28 @@ class FirSignatureEnhancement(
             enhanceReturnType(firMethod, overriddenMembers, memberContext, predefinedEnhancementInfo)
         }
 
-        val newValueParameterInfo = mutableListOf<EnhanceValueParameterResult>()
+        val enhancedValueParameterTypes = mutableListOf<FirResolvedTypeRef>()
 
         for ((index, valueParameter) in firMethod.valueParameters.withIndex()) {
             if (hasReceiver && index == 0) continue
-            newValueParameterInfo += enhanceValueParameter(
+            enhancedValueParameterTypes += enhanceValueParameterType(
                 firMethod, overriddenMembers, hasReceiver,
                 memberContext, predefinedEnhancementInfo, valueParameter as FirJavaValueParameter,
                 if (hasReceiver) index - 1 else index
             )
         }
 
-        val newValueParameters = firMethod.valueParameters.zip(newValueParameterInfo) { valueParameter, newInfo ->
-            val (newTypeRef, newDefaultValue) = newInfo
+        val newValueParameters = firMethod.valueParameters.zip(enhancedValueParameterTypes) { valueParameter, enhancedReturnType ->
+            valueParameter.defaultValue?.replaceTypeRef(enhancedReturnType)
+
             buildValueParameter {
                 source = valueParameter.source
                 session = this@FirSignatureEnhancement.session
                 origin = FirDeclarationOrigin.Enhancement
-                returnTypeRef = newTypeRef
+                returnTypeRef = enhancedReturnType
                 this.name = valueParameter.name
                 symbol = FirVariableSymbol(this.name)
-                defaultValue = valueParameter.defaultValue ?: newDefaultValue
+                defaultValue = valueParameter.defaultValue
                 isCrossinline = valueParameter.isCrossinline
                 isNoinline = valueParameter.isNoinline
                 isVararg = valueParameter.isVararg
@@ -298,9 +305,7 @@ class FirSignatureEnhancement(
         return signatureParts.type
     }
 
-    private data class EnhanceValueParameterResult(val typeRef: FirResolvedTypeRef, val defaultValue: FirExpression?)
-
-    private fun enhanceValueParameter(
+    private fun enhanceValueParameterType(
         ownerFunction: FirFunction<*>,
         overriddenMembers: List<FirCallableMemberDeclaration<*>>,
         hasReceiver: Boolean,
@@ -308,7 +313,10 @@ class FirSignatureEnhancement(
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
         ownerParameter: FirJavaValueParameter,
         index: Int
-    ): EnhanceValueParameterResult {
+    ): FirResolvedTypeRef {
+        if (ownerParameter.returnTypeRef is FirResolvedTypeRef) {
+            return ownerParameter.returnTypeRef as FirResolvedTypeRef
+        }
         val signatureParts = ownerFunction.partsForValueParameter(
             typeQualifierResolver,
             overriddenMembers,
@@ -319,15 +327,9 @@ class FirSignatureEnhancement(
             session,
             jsr305State,
             predefinedEnhancementInfo?.parametersInfo?.getOrNull(index),
-            forAnnotationValueParameter = owner.classKind == ClassKind.ANNOTATION_CLASS
+            forAnnotationMember = owner.classKind == ClassKind.ANNOTATION_CLASS
         )
-        val firResolvedTypeRef = signatureParts.type
-        val defaultValueExpression = when (val defaultValue = ownerParameter.getDefaultValueFromAnnotation()) {
-            NullDefaultValue -> buildConstExpression(null, ConstantValueKind.Null, null)
-            is StringDefaultValue -> firResolvedTypeRef.type.lexicalCastFrom(session, defaultValue.value)
-            null -> null
-        }
-        return EnhanceValueParameterResult(firResolvedTypeRef, defaultValueExpression)
+        return signatureParts.type
     }
 
     private fun enhanceReturnType(
@@ -345,7 +347,10 @@ class FirSignatureEnhancement(
             if (owner is FirJavaField) AnnotationQualifierApplicabilityType.FIELD
             else AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
             typeInSignature = TypeInSignature.Return
-        ).enhance(session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
+        ).enhance(
+            session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo,
+            forAnnotationMember = this.owner.classKind == ClassKind.ANNOTATION_CLASS
+        )
         return signatureParts.type
     }
 

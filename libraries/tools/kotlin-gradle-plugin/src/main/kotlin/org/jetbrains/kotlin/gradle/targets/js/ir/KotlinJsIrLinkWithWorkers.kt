@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers
@@ -15,7 +16,12 @@ import javax.inject.Inject
 internal open class KotlinJsIrLinkWithWorkers
 @Inject
 constructor(
+    objectFactory: ObjectFactory,
     private val workerExecutor: WorkerExecutor
-) : KotlinJsIrLink() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
+) : KotlinJsIrLink(objectFactory) {
+    override fun compilerRunner() =
+        GradleCompilerRunnerWithWorkers(
+            GradleCompileTaskProvider(this),
+            workerExecutor
+        )
 }

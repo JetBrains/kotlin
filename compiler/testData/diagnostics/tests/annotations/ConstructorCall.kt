@@ -14,7 +14,7 @@ annotation class Ann4(val value: String)
 
 fun foo() {
     <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>Ann()<!>
-    val <!UNUSED_VARIABLE!>a<!> = <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>Ann()<!>
+    val a = <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>Ann()<!>
 
     <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>Ann1(<!NO_VALUE_FOR_PARAMETER!>)<!><!>
     <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>Ann1(1)<!>

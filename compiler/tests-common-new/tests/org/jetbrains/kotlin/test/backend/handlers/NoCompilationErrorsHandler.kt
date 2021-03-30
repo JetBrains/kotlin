@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicFrontendAnalys
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-class NoCompilationErrorsHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(testServices) {
+class NoCompilationErrorsHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(
+    testServices,
+    failureDisablesNextSteps = true
+) {
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 

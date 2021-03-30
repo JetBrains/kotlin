@@ -19,5 +19,15 @@ fun Class<*>.getDeclaredMethodOrNull(name: String, vararg parameterTypes: Class<
         null
     }
 
+fun ClassLoader.loadClassOrNull(name: String): Class<*>? {
+    return try {
+        loadClass(name)
+    } catch (e: LinkageError) {
+        return null
+    } catch (e: ClassNotFoundException) {
+        return null
+    }
+}
+
 fun compilationFullName(simpleName: String, classifier: String?) =
     if (classifier != null) classifier + simpleName.capitalize() else simpleName

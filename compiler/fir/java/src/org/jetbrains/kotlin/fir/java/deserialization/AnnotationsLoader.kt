@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.java.createConstantOrError
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -55,7 +55,7 @@ internal class AnnotationsLoader(private val session: FirSession) {
             private fun ClassId.toEnumEntryReferenceExpression(name: Name): FirExpression {
                 return buildFunctionCall {
                     val entryPropertySymbol =
-                        session.firSymbolProvider.getClassDeclaredPropertySymbols(
+                        session.symbolProvider.getClassDeclaredPropertySymbols(
                             this@toEnumEntryReferenceExpression, name,
                         ).firstOrNull()
 

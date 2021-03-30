@@ -7,10 +7,6 @@ plugins {
 
 val kotlinVersion: String by rootProject.extra
 
-repositories {
-    maven("https://jetbrains.bintray.com/markdown")
-}
-
 sourceSets {
     "main" {
         projectDefault()
@@ -86,6 +82,7 @@ dependencies {
     compile(project(":kotlin-script-util")) { isTransitive = false }
     compile(project(":kotlin-scripting-intellij"))
     compile(project(":compiler:backend.jvm")) // Do not delete, for Pill
+    compile(project(":compiler:backend.jvm:backend.jvm.entrypoint"))
 
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
@@ -115,6 +112,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
+    testImplementation(projectTests(":idea:idea-frontend-independent")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle")) { isTransitive = false }
     testCompile(project(":idea:idea-maven")) { isTransitive = false }

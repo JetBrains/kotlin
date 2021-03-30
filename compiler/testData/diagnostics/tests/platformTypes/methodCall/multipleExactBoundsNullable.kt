@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
 // FILE: MyMap.java
 
@@ -18,8 +19,8 @@ interface ResolverForProject<M1> {
 }
 
 class ResolverForProjectImpl<M>(
-        <!UNUSED_PARAMETER!>descriptorByModule<!>: Map<M, String>,
-        <!UNUSED_PARAMETER!>delegateResolver<!>: ResolverForProject<M>
+        descriptorByModule: Map<M, String>,
+        delegateResolver: ResolverForProject<M>
 ) : ResolverForProject<M>
 
 interface WithFoo {

@@ -21,7 +21,7 @@ expect class Foo {
     <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
     var customAccessorVar: String
     <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
-    <!EXPECTED_DECLARATION_WITH_BODY!>set(<!UNUSED_PARAMETER!>value<!>)<!> {}
+    <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
     <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 

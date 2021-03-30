@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 fun Any.<warning descr="[EXTENSION_SHADOWED_BY_MEMBER] Extension is shadowed by a member: public open operator fun equals(other: Any?): Boolean">equals</warning>(<warning descr="[UNUSED_PARAMETER] Parameter 'other' is never used">other</warning> : Any?) : Boolean = true
 

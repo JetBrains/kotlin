@@ -313,23 +313,12 @@ fun IrCall.isSuperToAny() = superQualifierSymbol?.let { this.symbol.owner.isFake
 fun IrDeclaration.hasInterfaceParent() =
     parent.safeAs<IrClass>()?.isInterface == true
 
-fun IrDeclaration.isEffectivelyExternal(): Boolean {
 
-    fun IrFunction.effectiveParentDeclaration(): IrDeclaration? =
-        when (this) {
-            is IrSimpleFunction -> correspondingPropertySymbol?.owner ?: parent as? IrDeclaration
-            else -> parent as? IrDeclaration
-        }
+fun IrPossiblyExternalDeclaration.isEffectivelyExternal(): Boolean =
+    this.isExternal
 
-    val parent = parent
-    return when (this) {
-        is IrFunction -> isExternal || (effectiveParentDeclaration()?.isEffectivelyExternal() ?: false)
-        is IrField -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
-        is IrProperty -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
-        is IrClass -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
-        else -> false
-    }
-}
+fun IrDeclaration.isEffectivelyExternal(): Boolean =
+    this is IrPossiblyExternalDeclaration && this.isExternal
 
 fun IrFunction.isExternalOrInheritedFromExternal(): Boolean {
     fun isExternalOrInheritedFromExternalImpl(f: IrSimpleFunction): Boolean =
@@ -570,38 +559,3 @@ val IrFunction.originalFunction: IrFunction
 
 val IrProperty.originalProperty: IrProperty
     get() = attributeOwnerId as? IrProperty ?: this
-
-// TODO: support more cases like built-in operator call and so on
-
-fun IrExpression?.isPure(anyVariable: Boolean, checkFields: Boolean = true): Boolean {
-    if (this == null) return true
-
-    fun IrExpression.isPureImpl(): Boolean {
-        return when (this) {
-            is IrConst<*> -> true
-            is IrGetValue -> {
-                if (anyVariable) return true
-                val valueDeclaration = symbol.owner
-                if (valueDeclaration is IrVariable) !valueDeclaration.isVar
-                else true
-            }
-            is IrGetObjectValue -> type.isUnit()
-            else -> false
-        }
-    }
-
-    if (isPureImpl()) return true
-
-    if (!checkFields) return false
-
-    if (this is IrGetField) {
-        if (!symbol.owner.isFinal) {
-            if (!anyVariable) {
-                return false
-            }
-        }
-        return receiver.isPure(anyVariable)
-    }
-
-    return false
-}

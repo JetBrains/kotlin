@@ -28,33 +28,37 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.util.getNonPrivateTraitMembersForDelegation
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : DeclarationChecker {
+class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: Project) : DeclarationChecker {
 
     private val ideService = LanguageVersionSettingsProvider.getInstance(project)
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
 
-        descriptor.annotations.findAnnotation(JVM_DEFAULT_FQ_NAME)?.let { annotationDescriptor ->
+        val jvmDefaultAnnotation = descriptor.annotations.findAnnotation(JVM_DEFAULT_FQ_NAME)
+        jvmDefaultAnnotation?.let { annotationDescriptor ->
             val reportOn = DescriptorToSourceUtils.getSourceFromAnnotation(annotationDescriptor) ?: declaration
             if (!isInterface(descriptor.containingDeclaration)) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_NOT_IN_INTERFACE.on(reportOn))
+                return@check
             } else if (jvmTarget == JvmTarget.JVM_1_6) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_JVM6_TARGET.on(reportOn, "JvmDefault"))
+                return@check
             } else if (!jvmDefaultMode.isEnabled) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_DECLARATION.on(declaration, "JvmDefault"))
+                return@check
             }
-            return@check
         }
 
         descriptor.annotations.findAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)?.let { annotationDescriptor ->
             val reportOn = DescriptorToSourceUtils.getSourceFromAnnotation(annotationDescriptor) ?: declaration
             if (jvmTarget == JvmTarget.JVM_1_6) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_JVM6_TARGET.on(reportOn, "JvmDefaultWithoutCompatibility"))
+                return@check
             } else if (!jvmDefaultMode.isEnabled) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_DECLARATION.on(reportOn, "JvmDefaultWithoutCompatibility"))
+                return@check
             }
-            return@check
         }
 
         if (descriptor is ClassDescriptor) {
@@ -68,7 +72,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
         }
 
 
-        if (!jvmDefaultMode.forAllMethodsWithBody && isInterface(descriptor.containingDeclaration)) {
+        if (jvmDefaultAnnotation == null && !jvmDefaultMode.forAllMethodsWithBody && isInterface(descriptor.containingDeclaration)) {
             val memberDescriptor = descriptor as? CallableMemberDescriptor ?: return
             if (descriptor is PropertyAccessorDescriptor) return
 
@@ -87,7 +91,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
 
         if (!jvmDefaultMode.isEnabled || descriptor !is ClassDescriptor || isInterface(descriptor) || isAnnotationClass(descriptor)) return
         // JvmDefaults members checks across class hierarchy:
-        // 1. If in old scheme class have implicit override with different signature than overriden method (e.g. generic specialization)
+        // 1. If in old scheme class have implicit override with different signature than overridden method (e.g. generic specialization)
         // report error because absent of it's can affect library ABI
         // 2. If it's mixed hierarchy with implicit override in base class and override one in inherited derived interface report error.
         // Otherwise the implicit class override would be used for dispatching method calls (but not more specialized)
@@ -113,7 +117,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
                             performSpecializationCheck
                         )
                     ) {
-                        checkPossibleClashMember(inheritedMember, jvmDefaultMode, context, declaration)
+                        checkPossibleClashMember(inheritedMember, actualImplementation, jvmDefaultMode, context, declaration)
                     }
                 } else if (actualImplementation is PropertyDescriptor && inheritedMember is PropertyDescriptor) {
                     val getterImpl = actualImplementation.getter
@@ -142,7 +146,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
                             }
                         }
 
-                        checkPossibleClashMember(inheritedMember, jvmDefaultMode, context, declaration)
+                        checkPossibleClashMember(inheritedMember, actualImplementation, jvmDefaultMode, context, declaration)
                     }
                 }
             }
@@ -175,6 +179,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
 
     private fun checkPossibleClashMember(
         inheritedFun: CallableMemberDescriptor,
+        actualImplementation: CallableMemberDescriptor,
         jvmDefaultMode: JvmDefaultMode,
         context: DeclarationCheckerContext,
         declaration: KtDeclaration
@@ -184,7 +189,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
             context.trace.report(
                 ErrorsJvm.EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE.on(
                     declaration,
-                    getDirectMember(inheritedFun),
+                    getDirectMember(actualImplementation),
                     getDirectMember(clashMember),
                     jvmDefaultMode.description
                 )
@@ -225,7 +230,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget, project: Project) : Declaratio
 
     private fun CallableMemberDescriptor.isCompiledToJvmDefaultWithProperMode(compilationDefaultMode: JvmDefaultMode): Boolean {
         val jvmDefault =
-            if (this is DeserializedDescriptor) compilationDefaultMode else ideService?.getModuleLanguageVersionSettings(module)
+            if (this is DeserializedDescriptor) compilationDefaultMode/*doesn't matter*/ else ideService?.getModuleLanguageVersionSettings(module)
                 ?.getFlag(JvmAnalysisFlags.jvmDefaultMode) ?: compilationDefaultMode
         return isCompiledToJvmDefault(jvmDefault)
     }

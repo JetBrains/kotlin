@@ -1,15 +1,15 @@
 // !WITH_NEW_INFERENCE
 package a
 
-class MyList<T>(<!UNUSED_PARAMETER!>t<!>: T) {}
+class MyList<T>(t: T) {}
 
 fun <T> getMyList(t: T)           : MyList<    T> = MyList(t)
 fun <T> getMyListToWriteTo(t: T)  : MyList< in T> = MyList(t)
 fun <T> getMyListToReadFrom(t: T) : MyList<out T> = MyList(t)
 
-fun <T> useMyList     (<!UNUSED_PARAMETER!>l<!>: MyList<    T>, <!UNUSED_PARAMETER!>t<!>: T) {}
-fun <T> writeToMyList (<!UNUSED_PARAMETER!>l<!>: MyList< in T>, <!UNUSED_PARAMETER!>t<!>: T) {}
-fun <T> readFromMyList(<!UNUSED_PARAMETER!>l<!>: MyList<out T>, <!UNUSED_PARAMETER!>t<!>: T) {}
+fun <T> useMyList     (l: MyList<    T>, t: T) {}
+fun <T> writeToMyList (l: MyList< in T>, t: T) {}
+fun <T> readFromMyList(l: MyList<out T>, t: T) {}
 
 fun test1(int: Int, any: Any) {
     val a0 : MyList<Any> = getMyList(int)
@@ -25,16 +25,16 @@ fun test1(int: Int, any: Any) {
     val a5 : MyList<in Int> = getMyListToWriteTo(any)
 
 
-    val a6 : MyList<in Any> = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>getMyList<Int>(int)<!>
+    val a6 : MyList<in Any> = <!TYPE_MISMATCH, TYPE_MISMATCH!>getMyList<Int>(int)<!>
     val a7 : MyList<in Any> = getMyList(int)
 
-    val a8 : MyList<in Any> = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>getMyListToReadFrom<Int>(int)<!>
+    val a8 : MyList<in Any> = <!TYPE_MISMATCH, TYPE_MISMATCH!>getMyListToReadFrom<Int>(int)<!>
     val a9 : MyList<in Any> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>getMyListToReadFrom(int)<!>
 
-    val a10 : MyList<out Int> = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>getMyList<Any>(any)<!>
+    val a10 : MyList<out Int> = <!TYPE_MISMATCH, TYPE_MISMATCH!>getMyList<Any>(any)<!>
     val a11 : MyList<out Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>getMyList(any)<!>
 
-    val a12 : MyList<out Int> = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>getMyListToWriteTo<Any>(any)<!>
+    val a12 : MyList<out Int> = <!TYPE_MISMATCH, TYPE_MISMATCH!>getMyListToWriteTo<Any>(any)<!>
     val a13 : MyList<out Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>getMyListToWriteTo(any)<!>
 
     useMyList(getMyList(int), int)

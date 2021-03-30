@@ -17,7 +17,7 @@ class D : A.C() {
         val a = A()
         val ac = A.C()
 
-        val c = <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>C<!>()<!> // shouldn't resolve
+        val c = <!UNRESOLVED_REFERENCE!>C<!>() // shouldn't resolve
     }
 }
 

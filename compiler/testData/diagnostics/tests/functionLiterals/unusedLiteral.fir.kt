@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: +UNUSED_LAMBDA_EXPRESSION, +UNUSED_VARIABLE
+
 fun unusedLiteral(){
     { ->
         val i = 1

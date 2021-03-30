@@ -6,8 +6,8 @@ interface A
 interface B
 interface C: A, B
 
-fun <T> foo(<!UNUSED_PARAMETER!>a<!>: A, f: () -> T): T = f()
-fun <T> foo(<!UNUSED_PARAMETER!>b<!>: B, f: () -> T): T = f()
+fun <T> foo(a: A, f: () -> T): T = f()
+fun <T> foo(b: B, f: () -> T): T = f()
 
 fun test(c: C) {
     <!CANNOT_COMPLETE_RESOLVE{OI}, OVERLOAD_RESOLUTION_AMBIGUITY{NI}!>foo<!>(c) f@ {

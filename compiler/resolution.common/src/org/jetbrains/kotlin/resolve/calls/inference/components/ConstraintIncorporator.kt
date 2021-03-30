@@ -94,7 +94,7 @@ class ConstraintIncorporator(
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (typeVariableWithConstraint in this@insideOtherConstraint.allTypeVariablesWithConstraints) {
             val constraintsWhichConstraintMyVariable = typeVariableWithConstraint.constraints.filter {
-                it.type.contains { it.typeConstructor() == freshTypeConstructor }
+                containsTypeVariable(it.type, freshTypeConstructor)
             }
             constraintsWhichConstraintMyVariable.forEach {
                 generateNewConstraint(typeVariableWithConstraint.typeVariable, it, typeVariable, constraint)
@@ -130,7 +130,7 @@ class ConstraintIncorporator(
         otherConstraint: Constraint
     ) {
         val isBaseGenericType = baseConstraint.type.argumentsCount() != 0
-        val isOtherCapturedType = otherConstraint.type.isCapturedType()
+        val isBaseOrOtherCapturedType = baseConstraint.type.isCapturedType() || otherConstraint.type.isCapturedType()
         val (type, needApproximation) = when (otherConstraint.kind) {
             ConstraintKind.EQUALITY -> {
                 otherConstraint.type to false
@@ -145,9 +145,9 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = Approx(CapturedType(out Number)) <: TypeVariable(A) => Nothing <: TypeVariable(A)
                  * TODO: implement this for generics and captured types
                  */
-                if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isOtherCapturedType) {
+                if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     nothingType() to false
-                } else if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isOtherCapturedType) {
+                } else if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     otherConstraint.type to false
                 } else {
                     createCapturedType(
@@ -168,9 +168,9 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = TypeVariable(A) <: Approx(CapturedType(in Number)) => TypeVariable(A) <: Any?
                  * TODO: implement this for generics and captured types
                  */
-                if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isOtherCapturedType) {
+                if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     nullableAnyType() to false
-                } else if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isOtherCapturedType) {
+                } else if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     otherConstraint.type to false
                 } else {
                     createCapturedType(
@@ -219,7 +219,8 @@ class ConstraintIncorporator(
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
 
-        val inputTypePosition = baseConstraint.position.from as? OnlyInputTypeConstraintPosition
+        val inputTypePosition =
+            baseConstraint.position.from as? OnlyInputTypeConstraintPosition ?: baseConstraint.inputTypePositionBeforeIncorporation
 
         val isNewConstraintUsefulForNullability = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
         val isOtherConstraintUsefulForNullability = otherConstraint.isNullabilityConstraint && otherConstraint.type.isNullableNothing()

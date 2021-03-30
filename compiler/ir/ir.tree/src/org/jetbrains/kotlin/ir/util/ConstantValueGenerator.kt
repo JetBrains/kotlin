@@ -14,23 +14,19 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class ConstantValueGenerator(
+abstract class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
-    private val symbolTable: ReferenceSymbolTable
+    private val symbolTable: ReferenceSymbolTable,
+    private val typeTranslator: TypeTranslator,
 ) {
-
-    lateinit var typeTranslator: TypeTranslator
+    protected abstract fun extractAnnotationOffsets(annotationDescriptor: AnnotationDescriptor): Pair<Int, Int>
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
@@ -41,7 +37,7 @@ class ConstantValueGenerator(
         varargElementType: KotlinType? = null
     ): IrExpression =
         // Assertion is safe here because annotation calls and class literals are not allowed in constant initializers
-        generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, constantValue, varargElementType)!!
+        generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, constantValue, null, varargElementType)!!
 
     /**
      * @return null if the constant value is an unresolved annotation or an unresolved class literal
@@ -50,9 +46,11 @@ class ConstantValueGenerator(
         startOffset: Int,
         endOffset: Int,
         constantValue: ConstantValue<*>,
+        realType: KotlinType?,
         varargElementType: KotlinType? = null
     ): IrExpression? {
-        val constantKtType = constantValue.getType(moduleDescriptor)
+        val constantValueType = constantValue.getType(moduleDescriptor)
+        val constantKtType = realType ?: constantValueType
         val constantType = constantKtType.toIrType()
 
         return when (constantValue) {
@@ -72,20 +70,20 @@ class ConstantValueGenerator(
             is UShortValue -> IrConstImpl.short(startOffset, endOffset, constantType, constantValue.value)
 
             is ArrayValue -> {
-                val arrayElementType = varargElementType ?: constantKtType.getArrayElementType()
+                val arrayElementType = varargElementType ?: constantValueType.getArrayElementType()
                 IrVarargImpl(
                     startOffset, endOffset,
                     constantType,
                     arrayElementType.toIrType(),
                     constantValue.value.mapNotNull {
-                        generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, it, null)
+                        generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, it, arrayElementType)
                     }
                 )
             }
 
             is EnumValue -> {
                 val enumEntryDescriptor =
-                    constantKtType.memberScope.getContributedClassifier(constantValue.enumEntryName, NoLookupLocation.FROM_BACKEND)
+                    constantValueType.memberScope.getContributedClassifier(constantValue.enumEntryName, NoLookupLocation.FROM_BACKEND)
                         ?: throw AssertionError("No such enum entry ${constantValue.enumEntryName} in $constantType")
                 if (enumEntryDescriptor !is ClassDescriptor) {
                     throw AssertionError("Enum entry $enumEntryDescriptor should be a ClassDescriptor")
@@ -105,7 +103,7 @@ class ConstantValueGenerator(
                 )
             }
 
-            is AnnotationValue -> generateAnnotationConstructorCall(constantValue.value)
+            is AnnotationValue -> generateAnnotationConstructorCall(constantValue.value, constantKtType)
 
             is KClassValue -> {
                 val classifierKtType = constantValue.getArgumentType(moduleDescriptor)
@@ -129,8 +127,8 @@ class ConstantValueGenerator(
         }
     }
 
-    fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor): IrConstructorCall? {
-        val annotationType = annotationDescriptor.type
+    fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor, realType: KotlinType? = null): IrConstructorCall? {
+        val annotationType = realType ?: annotationDescriptor.type
         val annotationClassDescriptor = annotationType.constructor.declarationDescriptor
         if (annotationClassDescriptor !is ClassDescriptor) return null
         if (annotationClassDescriptor is NotFoundClasses.MockClassDescriptor) return null
@@ -144,26 +142,36 @@ class ConstantValueGenerator(
             ?: throw AssertionError("No constructor for annotation class $annotationClassDescriptor")
         val primaryConstructorSymbol = symbolTable.referenceConstructor(primaryConstructorDescriptor)
 
-        val psi = annotationDescriptor.source.safeAs<PsiSourceElement>()?.psi
-        val startOffset = psi?.takeUnless { it.containingFile.fileType.isBinary }?.startOffset ?: UNDEFINED_OFFSET
-        val endOffset = psi?.takeUnless { it.containingFile.fileType.isBinary }?.endOffset ?: UNDEFINED_OFFSET
+        val (startOffset, endOffset) = extractAnnotationOffsets(annotationDescriptor)
 
         val irCall = IrConstructorCallImpl(
             startOffset, endOffset,
             annotationType.toIrType(),
             primaryConstructorSymbol,
             valueArgumentsCount = primaryConstructorDescriptor.valueParameters.size,
-            typeArgumentsCount = 0,
+            typeArgumentsCount = annotationClassDescriptor.declaredTypeParameters.size,
             constructorTypeArgumentsCount = 0
         )
 
-        for (valueParameter in primaryConstructorDescriptor.valueParameters) {
+        val substitutor = TypeConstructorSubstitution.create(annotationType).buildSubstitutor()
+        val substitutedConstructor = primaryConstructorDescriptor.substitute(substitutor) ?: error("Cannot substitute constructor")
+
+        val typeArguments = annotationType.arguments
+        assert(typeArguments.size == annotationClassDescriptor.declaredTypeParameters.size)
+
+        for (i in typeArguments.indices) {
+            val typeArgument = typeArguments[i]
+            irCall.putTypeArgument(i, typeArgument.type.toIrType())
+        }
+
+        for (valueParameter in substitutedConstructor.valueParameters) {
             val argumentIndex = valueParameter.index
             val argumentValue = annotationDescriptor.allValueArguments[valueParameter.name] ?: continue
             val irArgument = generateConstantOrAnnotationValueAsExpression(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 argumentValue,
+                valueParameter.type,
                 valueParameter.varargElementType
             )
             if (irArgument != null) {

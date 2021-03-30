@@ -132,7 +132,9 @@ public final class MyActivity {
     public final int propA = app.B.id.textView;
     private final int propB = app.B.id.textView;
     private int propC = app.B.id.textView;
+    @kotlin.jvm.JvmField()
     public final int propD = app.B.id.textView;
+    @kotlin.jvm.JvmField()
     public int propE = app.B.id.textView;
     private final int propF = 0;
 

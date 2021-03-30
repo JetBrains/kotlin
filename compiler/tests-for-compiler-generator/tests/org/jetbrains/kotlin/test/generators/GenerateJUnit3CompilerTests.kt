@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
 import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
-import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinAgainstJavaTest
@@ -58,8 +57,6 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
-import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
-import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 
 fun generateJUnit3CompilerTests(args: Array<String>) {
     generateTestGroupSuite(args) {
@@ -97,7 +94,12 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             testClass<AbstractLightAnalysisModeTest> {
                 // "ranges/stepped" is excluded because it contains hundreds of generated tests and only have a box() method.
                 // There isn't much to be gained from running light analysis tests on them.
-                model("codegen/box", targetBackend = TargetBackend.JVM, skipIgnored = true, excludeDirs = listOf("ranges/stepped"))
+                model(
+                    "codegen/box",
+                    targetBackend = TargetBackend.JVM,
+                    skipIgnored = true,
+                    excludeDirs = listOf("ranges/stepped", "compileKotlinAgainstKotlin")
+                )
             }
 
             testClass<AbstractKapt3BuilderModeBytecodeShapeTest> {
@@ -106,14 +108,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractAsmLikeInstructionListingTest> {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractBlackBoxAgainstJavaCodegenTest> {
-                model("codegen/boxAgainstJava")
             }
 
             testClass<AbstractJdk15BlackBoxCodegenTest> {
@@ -263,10 +257,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractCompileKotlinAgainstKotlinTest> {
-                model("compileKotlinAgainstKotlin")
-            }
-
             testClass<AbstractCompileKotlinAgainstKotlinJdk15Test> {
                 model("compileKotlinAgainstKotlinJdk15")
             }
@@ -369,10 +359,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/composeLikeBytecodeText", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
-                model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
             testClass<AbstractIrCompileJavaAgainstKotlinTest> {
                 model(
                     "compileJavaAgainstKotlin",
@@ -400,19 +386,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                     testClassName = "WithoutAPT",
                     testMethod = "doTestWithoutAPT",
                     targetBackend = TargetBackend.JVM_IR
-                )
-            }
-
-            testClass<AbstractIrCompileKotlinAgainstKotlinTest> {
-                model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
-            }
-            testClass<AbstractJvmIrAgainstOldBoxTest> {
-                model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD)
-            }
-            testClass<AbstractJvmOldAgainstIrBoxTest> {
-                model(
-                    "compileKotlinAgainstKotlin",
-                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR
                 )
             }
 
@@ -476,56 +449,12 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("debug/localVariables", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
-            }
-
             testClass<AbstractIrAsmLikeInstructionListingTest> {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractIrScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
-        testGroup(
-            "compiler/fir/fir2ir/tests-gen", "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
-        ) {
-            testClass<AbstractFirBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
-            testClass<AbstractFirBlackBoxAgainstJavaCodegenTest> {
-                model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
-            testClass<AbstractFirCompileKotlinAgainstKotlinTest> {
-                model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
-        testGroup(
-            "compiler/tests-gen", "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE: \"")
-        ) {
-            testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM)
-            }
-            testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
-            }
-            testClass<AbstractJvmIrAgainstOldBoxInlineTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD)
-            }
-            testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
-                model(
-                    "codegen/boxInline",
-                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR
-                )
             }
         }
 
@@ -582,26 +511,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
         testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirOldFrontendLightClassesTest> {
                 model("lightClasses")
-            }
-        }
-
-        testGroup("compiler/visualizer/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
-            testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
-                model("rawBuilder", testMethod = "doFirBuilderDataTest")
-            }
-
-            testClass<AbstractFirVisualizer>("FirVisualizerForRawFirDataGenerated") {
-                model("rawBuilder", testMethod = "doFirBuilderDataTest")
-            }
-        }
-
-        testGroup("compiler/visualizer/tests-gen", "compiler/visualizer/testData") {
-            testClass<AbstractPsiVisualizer>("PsiVisualizerForUncommonCasesGenerated") {
-                model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
-            }
-
-            testClass<AbstractFirVisualizer>("FirVisualizerForUncommonCasesGenerated") {
-                model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
             }
         }
     }

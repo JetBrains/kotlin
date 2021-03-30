@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // WITH_RUNTIME
 fun foo(limit: Int) {
 //      Int Int
@@ -18,7 +17,7 @@ fun foo(limit: Int) {
 //      │       │
         println(k)
 //             var foo.k: Int
-//             │ fun (Any).equals(Any?): Boolean
+//             │ EQ operator call
 //             │ │  Int
 //             │ │  │
         while (k == 13) {

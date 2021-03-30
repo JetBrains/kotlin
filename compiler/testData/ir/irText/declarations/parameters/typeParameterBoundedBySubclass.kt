@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class Base1<T : Derived1>
 class Derived1 : Base1<Derived1>()
 

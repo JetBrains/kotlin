@@ -29,5 +29,11 @@ fun box(): String {
     assertToString("var kotlin.ranges.IntRange?.ext2: kotlin.Int", IntRange::ext2)
     assertToString("val test.A.mem: kotlin.String", A::mem)
     assertToString("var test.B.mem: kotlin.String", B::mem)
+    assertToString("getter of val top: kotlin.Int", ::top.getter)
+    assertToString("getter of var top2: kotlin.Int", ::top2.getter)
+    assertToString("setter of var top2: kotlin.Int", ::top2.setter)
+    assertToString("getter of val test.A.mem: kotlin.String", A::mem.getter)
+    assertToString("getter of var test.B.mem: kotlin.String", B::mem.getter)
+    assertToString("setter of var test.B.mem: kotlin.String", B::mem.setter)
     return "OK"
 }

@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 
 interface PlatformConfigurator {
     val platformSpecificContainer: StorageComponentContainer
-    fun configureModuleComponents(container: StorageComponentContainer)
+    fun configureModuleComponents(container: StorageComponentContainer, languageVersionSettings: LanguageVersionSettings)
     fun configureModuleDependentCheckers(container: StorageComponentContainer)
 }

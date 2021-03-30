@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.util.PersistentSetMultimap
 import org.jetbrains.kotlin.name.Name
 
 class PersistentImplicitReceiverStack private constructor(
@@ -37,7 +38,7 @@ class PersistentImplicitReceiverStack private constructor(
 
     fun add(name: Name?, value: ImplicitReceiverValue<*>): PersistentImplicitReceiverStack {
         val stack = stack.add(value)
-        val originalTypes = originalTypes.add(value.type)
+        val originalTypes = originalTypes.add(value.originalType)
         val index = stack.size - 1
         val indexesPerLabel = name?.let { indexesPerLabel.put(it, index) } ?: indexesPerLabel
         val indexesPerSymbol = indexesPerSymbol.put(value.boundSymbol, index)

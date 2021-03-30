@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.baseForIntersectionOverride
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.isIntersectionOverride
-import org.jetbrains.kotlin.fir.isSubstitutionOverride
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.scopes.impl.unwrapDelegateTarget
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -51,7 +45,7 @@ internal class DelegatedMemberGenerator(
                 declarationStorage.getIrFunctionSymbol(unwrapped.symbol).owner as? IrSimpleFunction
                     ?: return@processAllFunctions
 
-            if (isJavaDefault(unwrapped)) {
+            if (unwrapped.isJavaDefault) {
                 return@processAllFunctions
             }
 
@@ -83,42 +77,6 @@ internal class DelegatedMemberGenerator(
         }
     }
 
-    private inline fun <reified S : FirCallableSymbol<D>, reified D : FirCallableMemberDeclaration<D>> S.unwrapDelegateTarget(
-        subClassLookupTag: ConeClassLikeLookupTag,
-        noinline directOverridden: S.() -> List<S>,
-        firField: FirField,
-        firSubClass: FirClass<*>,
-    ): D? {
-        val unwrappedIntersectionSymbol =
-            this.unwrapIntersectionOverride(directOverridden) ?: return null
-
-        val callable = unwrappedIntersectionSymbol.fir as? D ?: return null
-
-        val delegatedWrapperData = callable.delegatedWrapperData ?: return null
-        if (delegatedWrapperData.containingClass != subClassLookupTag) return null
-        if (delegatedWrapperData.delegateField != firField) return null
-
-        val wrapped = delegatedWrapperData.wrapped as? D ?: return null
-        val wrappedSymbol = wrapped.symbol as? S ?: return null
-
-        return when {
-            wrappedSymbol.fir.isSubstitutionOverride &&
-                    (wrappedSymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag == firSubClass.symbol.toLookupTag() ->
-                wrapped.originalForSubstitutionOverride
-            else -> wrapped
-        }
-    }
-
-    private fun isJavaDefault(function: FirSimpleFunction): Boolean {
-        if (function.isIntersectionOverride) return isJavaDefault(function.baseForIntersectionOverride!!)
-        return function.origin == FirDeclarationOrigin.Enhancement && function.modality == Modality.OPEN
-    }
-
-    private fun <S : FirCallableSymbol<*>> S.unwrapIntersectionOverride(directOverridden: S.() -> List<S>): S? {
-        if (this.fir.isIntersectionOverride) return directOverridden().firstOrNull { it.fir.delegatedWrapperData != null }
-        return this
-    }
-
     private fun generateDelegatedFunction(
         subClass: IrClass,
         firSubClass: FirClass<*>,
@@ -132,7 +90,13 @@ internal class DelegatedMemberGenerator(
                 containingClass = firSubClass.symbol.toLookupTag()
             )
         delegateFunction.overriddenSymbols =
-            delegateOverride.generateOverriddenFunctionSymbols(firSubClass, session, scopeSession, declarationStorage)
+            delegateOverride.generateOverriddenFunctionSymbols(
+                firSubClass,
+                session,
+                scopeSession,
+                declarationStorage,
+                fakeOverrideGenerator
+            )
                 .filter { it.owner != delegateFunction }
         annotationGenerator.generate(delegateFunction, delegateOverride)
 
@@ -201,13 +165,20 @@ internal class DelegatedMemberGenerator(
 
         delegateProperty.getter!!.body = createDelegateBody(irField, delegateProperty.getter!!, superProperty.getter!!)
         delegateProperty.getter!!.overriddenSymbols =
-            firDelegateProperty.generateOverriddenAccessorSymbols(firSubClass, isGetter = true, session, scopeSession, declarationStorage)
+            firDelegateProperty.generateOverriddenAccessorSymbols(
+                firSubClass,
+                isGetter = true,
+                session,
+                scopeSession,
+                declarationStorage,
+                fakeOverrideGenerator
+            )
         annotationGenerator.generate(delegateProperty.getter!!, firDelegateProperty)
         if (delegateProperty.isVar) {
             delegateProperty.setter!!.body = createDelegateBody(irField, delegateProperty.setter!!, superProperty.setter!!)
             delegateProperty.setter!!.overriddenSymbols =
                 firDelegateProperty.generateOverriddenAccessorSymbols(
-                    firSubClass, isGetter = false, session, scopeSession, declarationStorage
+                    firSubClass, isGetter = false, session, scopeSession, declarationStorage, fakeOverrideGenerator
                 )
             annotationGenerator.generate(delegateProperty.setter!!, firDelegateProperty)
         }

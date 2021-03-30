@@ -3,5 +3,5 @@
 data class Foo(val name: String)
 
 fun nullable2(foo: Foo?) {
-    <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>s<!>: String = foo?.name.toString()<!>
+    val <!UNUSED_VARIABLE!>s<!>: String = foo?.name.toString()
 }

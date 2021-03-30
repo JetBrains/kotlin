@@ -33,7 +33,7 @@ fun foo(y: IntArray) {
 
     @Ann1 y[0]
 
-    @Ann1 <!UNUSED_LAMBDA_EXPRESSION!>{ <!NAME_SHADOWING!>x<!>: Int -> x }<!>
+    @Ann1 { <!NAME_SHADOWING!>x<!>: Int -> x }
     @Ann1 { <!NAME_SHADOWING!>x<!>: Int -> x }(1)
     @Ann1 object { fun foo() = 1 }
     @Ann1 object { fun foo() = 1 }.foo()

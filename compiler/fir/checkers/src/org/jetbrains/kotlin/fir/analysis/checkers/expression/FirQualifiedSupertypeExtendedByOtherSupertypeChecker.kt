@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.analysis.checkers.followAllAlias
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccessChecker() {
@@ -26,8 +25,8 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
             ?.takeIf { it.hadExplicitTypeInSource() }
             ?: return
 
-        val explicitType = superReference.superTypeRef.safeAs<FirResolvedTypeRef>()
-            ?.firClassLike(context.session)
+        val explicitType = superReference.superTypeRef
+            .firClassLike(context.session)
             ?.followAllAlias(context.session).safeAs<FirClass<*>>()
             ?: return
 
@@ -61,13 +60,12 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
         }
 
         if (count >= 2 && candidate != null) {
-            reporter.report(superReference.superTypeRef.source, candidate)
-        }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?, candidate: FirClass<*>) {
-        source?.let {
-            report(FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE.on(it, candidate))
+            reporter.reportOn(
+                superReference.superTypeRef.source,
+                FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE,
+                candidate,
+                context
+            )
         }
     }
 }

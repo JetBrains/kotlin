@@ -1,9 +1,9 @@
 // FILE: a.kt
-val a : Int = 1
-fun f() {
+<!REDECLARATION!>val a : Int = 1<!>
+<!CONFLICTING_OVERLOADS!>fun f()<!> {
 }
 
 // FILE: b.kt
-val a : Int = 1
-fun f() {
+<!REDECLARATION!>val a : Int = 1<!>
+<!CONFLICTING_OVERLOADS!>fun f()<!> {
 }

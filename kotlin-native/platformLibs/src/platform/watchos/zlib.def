@@ -1,0 +1,34 @@
+depends = posix
+package = platform.zlib
+headers = zconf.h zlib.h
+headerFilter = zconf.h zlib.h
+compilerOpts = -DByte=uByte -DBytef=uBytef
+linkerOpts = -lz
+
+---
+#undef deflateInit
+static inline int deflateInit(z_streamp strm, int level) {
+	return deflateInit_(strm, level, ZLIB_VERSION, (int)sizeof(z_stream));
+}
+
+#undef deflateInit2
+static inline int deflateInit2(z_streamp strm, int level, int method,
+                               int windowBits, int memLevel, int strategy) {
+	return deflateInit2_(strm, level, method, windowBits, memLevel,
+                         strategy, ZLIB_VERSION, (int)sizeof(z_stream));
+}
+
+#undef inflateInit
+static inline int inflateInit(z_streamp strm) {
+	return inflateInit_(strm, ZLIB_VERSION, (int)sizeof(z_stream));
+}
+
+#undef inflateInit2
+static inline int inflateInit2(z_streamp strm, int windowBits) {
+    return inflateInit2_(strm, windowBits, ZLIB_VERSION, (int)sizeof(z_stream));
+}
+
+#undef inflateBackInit
+static inline int inflateBackInit(z_streamp strm, int windowBits, unsigned char *window) {
+    return inflateBackInit_(strm, windowBits, window, ZLIB_VERSION, (int)sizeof(z_stream));
+}

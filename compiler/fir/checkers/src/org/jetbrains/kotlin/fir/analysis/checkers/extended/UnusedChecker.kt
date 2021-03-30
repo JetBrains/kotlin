@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
@@ -30,21 +31,22 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 
 object UnusedChecker : FirControlFlowChecker() {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, checkerContext: CheckerContext) {
-        if ((graph.declaration as? FirSymbolOwner<*>)?.getContainingClass(checkerContext)?.takeIf {
+    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
+        if ((graph.declaration as? FirSymbolOwner<*>)?.getContainingClass(context)?.takeIf {
                 !it.symbol.classId.isLocal
             } != null
         ) return
         val properties = LocalPropertyCollector.collect(graph)
         if (properties.isEmpty()) return
 
-        val data = ValueWritesWithoutReading(checkerContext.session, properties).getData(graph)
-        graph.traverse(TraverseDirection.Backward, CfaVisitor(data, reporter))
+        val data = ValueWritesWithoutReading(context.session, properties).getData(graph)
+        graph.traverse(TraverseDirection.Backward, CfaVisitor(data, reporter, context))
     }
 
     class CfaVisitor(
         val data: Map<CFGNode<*>, PathAwareVariableStatusInfo>,
-        val reporter: DiagnosticReporter
+        val reporter: DiagnosticReporter,
+        val context: CheckerContext
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
@@ -56,7 +58,7 @@ object UnusedChecker : FirControlFlowChecker() {
                 if (data == VariableStatus.ONLY_WRITTEN_NEVER_READ) {
                     // todo: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
                     val source = node.fir.lValue.source
-                    reporter.report(source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ)
+                    reporter.reportOn(source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
                     // To avoid duplicate reports, stop investigating remaining paths once reported.
                     break
                 }
@@ -74,17 +76,17 @@ object UnusedChecker : FirControlFlowChecker() {
                 when {
                     data == VariableStatus.UNUSED -> {
                         if ((node.fir.initializer as? FirFunctionCall)?.isIterator != true) {
-                            reporter.report(variableSource, FirErrors.UNUSED_VARIABLE)
+                            reporter.reportOn(variableSource, FirErrors.UNUSED_VARIABLE, context)
                             break
                         }
                     }
                     data.isRedundantInit -> {
                         val source = variableSymbol.fir.initializer?.source
-                        reporter.report(source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT)
+                        reporter.reportOn(source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
                         break
                     }
                     data == VariableStatus.ONLY_WRITTEN_NEVER_READ -> {
-                        reporter.report(variableSource, FirErrors.VARIABLE_NEVER_READ)
+                        reporter.reportOn(variableSource, FirErrors.VARIABLE_NEVER_READ, context)
                         break
                     }
                     else -> {

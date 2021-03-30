@@ -21,6 +21,7 @@ import java.io.File
 
 fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArguments) {
     put(JVMConfigurationKeys.INCLUDE_RUNTIME, arguments.includeRuntime)
+    put(JVMConfigurationKeys.NO_REFLECT, arguments.noReflect)
 
     putIfNotNull(JVMConfigurationKeys.FRIEND_PATHS, arguments.friendPaths?.asList())
 
@@ -28,6 +29,12 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val jvmTarget = JvmTarget.fromString(arguments.jvmTarget!!)
         if (jvmTarget != null) {
             put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+            if (jvmTarget == JvmTarget.JVM_1_6 && !arguments.suppressDeprecatedJvmTargetWarning) {
+                messageCollector.report(
+                    STRONG_WARNING,
+                    "JVM target 1.6 is deprecated and will be removed in a future release. Please migrate to JVM target 1.8 or above"
+                )
+            }
         } else {
             messageCollector.report(
                 ERROR, "Unknown JVM target version: ${arguments.jvmTarget}\n" +
@@ -65,27 +72,37 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    if (arguments.samConversions != null) {
-        val samConversions = JvmSamConversions.fromString(arguments.samConversions)
-        if (samConversions != null) {
-            put(JVMConfigurationKeys.SAM_CONVERSIONS, samConversions)
-            if (jvmTarget < samConversions.minJvmTarget) {
+    handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS, jvmTarget)
+    handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS, jvmTarget)
+
+    addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
+}
+
+private fun CompilerConfiguration.handleClosureGenerationSchemeArgument(
+    flag: String,
+    value: String?,
+    key: CompilerConfigurationKey<JvmClosureGenerationScheme>,
+    jvmTarget: JvmTarget
+) {
+    if (value != null) {
+        val parsedValue = JvmClosureGenerationScheme.fromString(value)
+        if (parsedValue != null) {
+            put(key, parsedValue)
+            if (jvmTarget < parsedValue.minJvmTarget) {
                 messageCollector.report(
                     WARNING,
-                    "`-Xsam-conversions=${arguments.samConversions}` requires JVM target at least " +
-                            "${samConversions.minJvmTarget.description} and is ignored."
+                    "`$flag=$value` requires JVM target at least " +
+                            "${parsedValue.minJvmTarget.description} and is ignored."
                 )
             }
         } else {
             messageCollector.report(
                 ERROR,
-                "Unknown `-Xsam-conversions` argument: ${arguments.samConversions}\n" +
-                        "Supported arguments: ${JvmSamConversions.values().joinToString { it.description }}"
+                "Unknown `$flag` argument: ${value}\n." +
+                        "Supported arguments: ${JvmClosureGenerationScheme.values().joinToString { it.description }}"
             )
         }
     }
-
-    addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 }
 
 fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): Boolean {
@@ -185,11 +202,13 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
+    // TODO: ignore previous configuration value when we do not need old backend in scripting by default
+    val useOldBackend = arguments.useOldBackend || (!arguments.useIR && get(JVMConfigurationKeys.IR) == false)
     val useIR = arguments.useFir ||
             if (languageVersionSettings.supportsFeature(LanguageFeature.JvmIrEnabledByDefault)) {
-                !arguments.useOldBackend
+                !useOldBackend
             } else {
-                arguments.useIR && !arguments.useOldBackend
+                arguments.useIR && !useOldBackend
             }
 
     if (arguments.useIR && arguments.useOldBackend) {
@@ -274,6 +293,10 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     }
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
+
+    val nThreadsRaw = arguments.parallelBackendThreads.toIntOrNull() ?: 1
+    val nThreads = if (nThreadsRaw == 0) Runtime.getRuntime().availableProcessors() else nThreadsRaw
+    put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, nThreads)
 }
 
 fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {

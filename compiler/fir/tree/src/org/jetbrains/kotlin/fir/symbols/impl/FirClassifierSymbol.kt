@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 
-abstract class FirClassifierSymbol<E> : AbstractFirBasedSymbol<E>()
+sealed class FirClassifierSymbol<E> : AbstractFirBasedSymbol<E>()
         where E : FirSymbolOwner<E>, E : FirDeclaration {
     abstract fun toLookupTag(): ConeClassifierLookupTag
 }

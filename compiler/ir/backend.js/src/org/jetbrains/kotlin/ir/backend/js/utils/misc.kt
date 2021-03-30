@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.Name
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
@@ -90,3 +90,25 @@ val IrValueDeclaration.isDispatchReceiver: Boolean
             return true
         return false
     }
+
+fun IrBody.prependFunctionCall(
+    call: IrCall
+) {
+    when (this) {
+        is IrExpressionBody -> {
+            expression = JsIrBuilder.buildComposite(
+                type = expression.type,
+                statements = listOf(
+                    call,
+                    expression
+                )
+            )
+        }
+        is IrBlockBody -> {
+            statements.add(
+                0,
+                call
+            )
+        }
+    }
+}

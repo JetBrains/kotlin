@@ -536,6 +536,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jsr305Warn.args");
         }
 
+        @TestMetadata("jvm6Target.args")
+        public void testJvm6Target() throws Exception {
+            runTest("compiler/testData/cli/jvm/jvm6Target.args");
+        }
+
         @TestMetadata("jvm8Target.args")
         public void testJvm8Target() throws Exception {
             runTest("compiler/testData/cli/jvm/jvm8Target.args");
@@ -701,6 +706,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/progressiveModeOn.args");
         }
 
+        @TestMetadata("resultInReturnTypeSupportedByDefault15.args")
+        public void testResultInReturnTypeSupportedByDefault15() throws Exception {
+            runTest("compiler/testData/cli/jvm/resultInReturnTypeSupportedByDefault15.args");
+        }
+
         @TestMetadata("resultInReturnTypeUnsupportedByDefault14.args")
         public void testResultInReturnTypeUnsupportedByDefault14() throws Exception {
             runTest("compiler/testData/cli/jvm/resultInReturnTypeUnsupportedByDefault14.args");
@@ -759,6 +769,16 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("suppressAllWarningsJvm.args")
         public void testSuppressAllWarningsJvm() throws Exception {
             runTest("compiler/testData/cli/jvm/suppressAllWarningsJvm.args");
+        }
+
+        @TestMetadata("suspendInFunInterfaceIrDisabled.args")
+        public void testSuspendInFunInterfaceIrDisabled() throws Exception {
+            runTest("compiler/testData/cli/jvm/suspendInFunInterfaceIrDisabled.args");
+        }
+
+        @TestMetadata("suspendInFunInterfaceIrEnabled.args")
+        public void testSuspendInFunInterfaceIrEnabled() throws Exception {
+            runTest("compiler/testData/cli/jvm/suspendInFunInterfaceIrEnabled.args");
         }
 
         @TestMetadata("suspensionPointInMonitor.args")

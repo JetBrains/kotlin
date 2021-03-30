@@ -12,7 +12,6 @@ class Test<TT : Any?> : IBase<TT> {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = impl
   }
 
   override fun foo(x: Int) {
@@ -28,7 +27,6 @@ class Test<TT : Any?> : IBase<TT> {
       return <this>.#<$$delegate_0>.<get-bar>()
     }
 
-  local /* final field */ val <$$delegate_0>: IBase<TT>
+  local /* final field */ val <$$delegate_0>: IBase<TT> = impl
 
 }
-

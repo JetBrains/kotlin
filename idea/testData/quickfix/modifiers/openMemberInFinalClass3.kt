@@ -2,3 +2,4 @@
 public class A() {
     <caret>open fun foo() {}
 }
+/* FIR_COMPARISON */

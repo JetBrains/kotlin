@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PARAMETER_MO
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PLATFORM_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PROPERTY_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VISIBILITY_MODIFIER
+import org.jetbrains.kotlin.lexer.KtTokens
 
 class Modifier(
     private val classModifiers: MutableList<ClassModifier> = mutableListOf(),
@@ -34,23 +35,30 @@ class Modifier(
 
     fun addModifier(modifier: LighterASTNode, isInClass: Boolean = false) {
         val tokenType = modifier.tokenType
+        if (tokenType == KtTokens.CONST_KEYWORD) {
+            // Specific case because CONST may exist both on parameter and property
+            propertyModifier = PropertyModifier.CONST
+            parameterModifiers += ParameterModifier.CONST
+            return
+        }
+        val upperCasedModifier = modifier.toString().toUpperCase()
         when {
             INLINE_MODIFIER.contains(tokenType) -> {
                 if (isInClass)
-                    this.classModifiers += ClassModifier.valueOf(modifier.toString().toUpperCase())
+                    this.classModifiers += ClassModifier.valueOf(upperCasedModifier)
                 else
-                    this.functionModifiers += FunctionModifier.valueOf(modifier.toString().toUpperCase())
+                    this.functionModifiers += FunctionModifier.valueOf(upperCasedModifier)
             }
-            CLASS_MODIFIER.contains(tokenType) -> this.classModifiers += ClassModifier.valueOf(modifier.toString().toUpperCase())
-            MEMBER_MODIFIER.contains(tokenType) -> this.memberModifiers += MemberModifier.valueOf(modifier.toString().toUpperCase())
+            CLASS_MODIFIER.contains(tokenType) -> this.classModifiers += ClassModifier.valueOf(upperCasedModifier)
+            MEMBER_MODIFIER.contains(tokenType) -> this.memberModifiers += MemberModifier.valueOf(upperCasedModifier)
             VISIBILITY_MODIFIER.contains(tokenType) -> this.visibilityModifiers +=
-                VisibilityModifier.valueOf(modifier.toString().toUpperCase())
-            FUNCTION_MODIFIER.contains(tokenType) -> this.functionModifiers += FunctionModifier.valueOf(modifier.toString().toUpperCase())
-            PROPERTY_MODIFIER.contains(tokenType) -> this.propertyModifier = PropertyModifier.valueOf(modifier.toString().toUpperCase())
+                VisibilityModifier.valueOf(upperCasedModifier)
+            FUNCTION_MODIFIER.contains(tokenType) -> this.functionModifiers += FunctionModifier.valueOf(upperCasedModifier)
+            PROPERTY_MODIFIER.contains(tokenType) -> this.propertyModifier = PropertyModifier.valueOf(upperCasedModifier)
             INHERITANCE_MODIFIER.contains(tokenType) -> this.inheritanceModifiers +=
-                InheritanceModifier.valueOf(modifier.toString().toUpperCase())
-            PARAMETER_MODIFIER.contains(tokenType) -> this.parameterModifiers += ParameterModifier.valueOf(modifier.toString().toUpperCase())
-            PLATFORM_MODIFIER.contains(tokenType) -> this.platformModifiers += PlatformModifier.valueOf(modifier.toString().toUpperCase())
+                InheritanceModifier.valueOf(upperCasedModifier)
+            PARAMETER_MODIFIER.contains(tokenType) -> this.parameterModifiers += ParameterModifier.valueOf(upperCasedModifier)
+            PLATFORM_MODIFIER.contains(tokenType) -> this.platformModifiers += PlatformModifier.valueOf(upperCasedModifier)
         }
     }
 
@@ -166,5 +174,9 @@ class Modifier(
 
     fun hasActual(): Boolean {
         return platformModifiers.contains(PlatformModifier.ACTUAL) || platformModifiers.contains(PlatformModifier.IMPL)
+    }
+
+    fun hasConst(): Boolean {
+        return parameterModifiers.contains(ParameterModifier.CONST)
     }
 }

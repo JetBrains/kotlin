@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1252
 // IGNORE_BACKEND: JS
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
@@ -16,10 +17,14 @@ class B {
         override fun foo(k: String): String {
             return "O" + k
         }
+
+        fun bar(k: String): String {
+            return foo(k)
+        }
     }
 }
 
 // FILE: test.js
 function box() {
-    return new this["export-nested-class"].B.Foo().foo("K");
+    return new this["export-nested-class"].B.Foo().bar("K");
 }

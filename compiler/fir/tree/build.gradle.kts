@@ -50,15 +50,15 @@ val compileKotlin by tasks
 
 compileKotlin.dependsOn(generateTree)
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xinline-classes"
+    }
+}
+
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")
     idea {
         this.module.generatedSourceDirs.add(generationRoot)
-    }
-}
-
-kotlin {
-    sourceSets.all {
-        languageSettings.enableLanguageFeature("InlineClasses")
     }
 }

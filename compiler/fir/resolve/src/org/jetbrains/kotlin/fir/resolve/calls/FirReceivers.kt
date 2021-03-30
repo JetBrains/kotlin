@@ -132,16 +132,9 @@ class ImplicitExtensionReceiverValue(
 ) : ImplicitReceiverValue<FirCallableSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession)
 
 
-class InaccessibleImplicitReceiverValue internal constructor(
+class InaccessibleImplicitReceiverValue(
     boundSymbol: FirClassSymbol<*>,
     type: ConeKotlinType,
     useSiteSession: FirSession,
     scopeSession: ScopeSession
-) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession) {
-    internal constructor(
-        boundSymbol: FirClassSymbol<*>, useSiteSession: FirSession, scopeSession: ScopeSession
-    ) : this(
-        boundSymbol, boundSymbol.constructType(typeArguments = emptyArray(), isNullable = false),
-        useSiteSession, scopeSession
-    )
-}
+) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession)

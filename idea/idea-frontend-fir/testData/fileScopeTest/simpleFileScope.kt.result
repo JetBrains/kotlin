@@ -12,7 +12,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: test
+  callableIdIfNonLocal: /test
   dispatchType: null
   isExtension: false
   isExternal: false
@@ -27,13 +27,13 @@ KtFirFunctionSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: testVal
+  callableIdIfNonLocal: /testVal
   dispatchType: null
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
@@ -51,13 +51,13 @@ KtFirKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
-  visibility: PUBLIC
+  visibility: Public
 
 CLASSIFIER NAMES:
 [C, I]
 
 CLASSIFIER SYMBOLS:
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: C
@@ -74,9 +74,9 @@ KtFirClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: I
@@ -93,4 +93,4 @@ KtFirClassOrObjectSymbol:
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: PUBLIC
+  visibility: Public

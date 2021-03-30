@@ -29,7 +29,7 @@ public final class UIntArray {
     public synthetic final static method box-impl(p0: int[]): UIntArray
     public method clear(): void
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: int[]): int[]
-    public synthetic bridge method contains(p0: java.lang.Object): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
     public method contains-fLmw4x8(p0: int): boolean
     public static method contains-fLmw4x8(p0: int[], p1: int): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean

@@ -1,0 +1,27 @@
+package
+
+public fun </*0*/ T : kotlin.Number?, /*1*/ S : T> Expression<T>.rem(/*0*/ t: S): ModOp<T, S>
+public fun </*0*/ T, /*1*/ S : T?> Expression<in S>.wrap(/*0*/ value: T): QueryParameter<T>
+
+public open class Expression</*0*/ K> {
+    public constructor Expression</*0*/ K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ModOp</*0*/ T : kotlin.Number?, /*1*/ S : kotlin.Number?> {
+    public constructor ModOp</*0*/ T : kotlin.Number?, /*1*/ S : kotlin.Number?>(/*0*/ expr1: Expression<T>, /*1*/ expr2: Expression<S>)
+    public final val expr1: Expression<T>
+    public final val expr2: Expression<S>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class QueryParameter</*0*/ A> : Expression<A> {
+    public constructor QueryParameter</*0*/ A>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

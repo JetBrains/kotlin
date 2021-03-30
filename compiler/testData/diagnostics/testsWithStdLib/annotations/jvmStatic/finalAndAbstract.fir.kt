@@ -16,7 +16,7 @@ object B: A() {
 
     @JvmStatic final override fun c() {}
 
-    @JvmStatic open fun d() {}
+    @JvmStatic <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> fun d() {}
 }
 
 class C {
@@ -28,6 +28,6 @@ class C {
 
         @JvmStatic final override fun c() {}
 
-        @JvmStatic open fun d() {}
+        @JvmStatic <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> fun d() {}
     }
 }

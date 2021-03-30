@@ -6,10 +6,6 @@ plugins {
     java
 }
 
-repositories {
-    maven("https://jetbrains.bintray.com/markdown")
-}
-
 // PILL: used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
@@ -19,6 +15,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:backend.common.jvm",
         ":compiler:backend-common",
         ":compiler:backend.jvm",
+        ":compiler:backend.jvm:backend.jvm.entrypoint",
         ":compiler:ir.backend.common",
         ":compiler:ir.serialization.jvm",
         ":compiler:ir.serialization.common",
@@ -62,6 +59,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:frontend",
         ":compiler:frontend.common",
         ":compiler:frontend.java",
+        ":compiler:frontend:cfg",
         ":idea",
         ":idea:idea-native",
         ":idea:idea-core",

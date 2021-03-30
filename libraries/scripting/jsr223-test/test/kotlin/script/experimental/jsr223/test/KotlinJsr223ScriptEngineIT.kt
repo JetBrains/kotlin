@@ -321,10 +321,10 @@ obj
 
         scriptEngine.put("aValue", 3)
 
-//        val res1 = scriptEngine.eval(script1)
-//        Assert.assertEquals(1, res1)
-//        val res2 = scriptEngine.eval(script2)
-//        Assert.assertEquals(2, res2)
+        val res1 = scriptEngine.eval(script1)
+        Assert.assertEquals(1, res1)
+        val res2 = scriptEngine.eval(script2)
+        Assert.assertEquals(2, res2)
     }
 
     @Test

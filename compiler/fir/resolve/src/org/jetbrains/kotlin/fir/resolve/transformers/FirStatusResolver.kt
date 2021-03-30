@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 class FirStatusResolver(
     val session: FirSession,
@@ -36,11 +35,16 @@ class FirStatusResolver(
             FirDeclarationStatusImpl.Modifier.values().toList() - NOT_INHERITED_MODIFIERS
     }
 
-    fun resolveStatus(declaration: FirDeclaration, containingClass: FirClass<*>?, isLocal: Boolean): FirResolvedDeclarationStatus {
+    fun resolveStatus(
+        declaration: FirDeclaration,
+        containingClass: FirClass<*>?,
+        containingProperty: FirProperty?,
+        isLocal: Boolean
+    ): FirResolvedDeclarationStatus {
         return when (declaration) {
             is FirProperty -> resolveStatus(declaration, containingClass, isLocal)
             is FirSimpleFunction -> resolveStatus(declaration, containingClass, isLocal)
-            is FirPropertyAccessor -> resolveStatus(declaration, containingClass, isLocal)
+            is FirPropertyAccessor -> resolveStatus(declaration, containingClass, containingProperty, isLocal)
             is FirRegularClass -> resolveStatus(declaration, containingClass, isLocal)
             is FirTypeAlias -> resolveStatus(declaration, containingClass, isLocal)
             is FirConstructor -> resolveStatus(declaration, containingClass, isLocal)
@@ -51,7 +55,7 @@ class FirStatusResolver(
 
     @OptIn(ExperimentalStdlibApi::class)
     fun resolveStatus(property: FirProperty, containingClass: FirClass<*>?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(property, property.status, containingClass, isLocal) l@{
+        return resolveStatus(property, property.status, containingClass, null, isLocal) l@{
             if (containingClass == null) return@l emptyList()
             @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
             buildList<FirProperty> {
@@ -69,7 +73,7 @@ class FirStatusResolver(
 
     @OptIn(ExperimentalStdlibApi::class)
     fun resolveStatus(function: FirSimpleFunction, containingClass: FirClass<*>?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(function, function.status, containingClass, isLocal) l@{
+        return resolveStatus(function, function.status, containingClass, null, isLocal) l@{
             if (containingClass == null) return@l emptyList()
             @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
             buildList<FirCallableMemberDeclaration<*>> {
@@ -91,7 +95,7 @@ class FirStatusResolver(
         containingClass: FirClass<*>?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(regularClass, regularClass.status, containingClass, isLocal) { emptyList() }
+        return resolveStatus(regularClass, regularClass.status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(
@@ -99,33 +103,35 @@ class FirStatusResolver(
         containingClass: FirClass<*>?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(typeAlias, typeAlias.status, containingClass, isLocal) { emptyList() }
+        return resolveStatus(typeAlias, typeAlias.status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(
         propertyAccessor: FirPropertyAccessor,
         containingClass: FirClass<*>?,
+        containingProperty: FirProperty?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        return resolveStatus(propertyAccessor, propertyAccessor.status, containingClass, isLocal) { emptyList() }
+        return resolveStatus(propertyAccessor, propertyAccessor.status, containingClass, containingProperty, isLocal) { emptyList() }
     }
 
     fun resolveStatus(constructor: FirConstructor, containingClass: FirClass<*>?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(constructor, constructor.status, containingClass, isLocal) { emptyList() }
+        return resolveStatus(constructor, constructor.status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(field: FirField, containingClass: FirClass<*>?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(field, field.status, containingClass, isLocal) { emptyList() }
+        return resolveStatus(field, field.status, containingClass, null, isLocal) { emptyList() }
     }
 
     fun resolveStatus(enumEntry: FirEnumEntry, containingClass: FirClass<*>?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(enumEntry, enumEntry.status, containingClass, isLocal) { emptyList() }
+        return resolveStatus(enumEntry, enumEntry.status, containingClass, null, isLocal) { emptyList() }
     }
 
     private inline fun resolveStatus(
         declaration: FirDeclaration,
         status: FirDeclarationStatus,
         containingClass: FirClass<*>?,
+        containingProperty: FirProperty?,
         isLocal: Boolean,
         overriddenExtractor: () -> List<FirResolvedDeclarationStatus>
     ): FirResolvedDeclarationStatus {
@@ -137,8 +143,7 @@ class FirStatusResolver(
         val visibility = when (status.visibility) {
             Visibilities.Unknown -> when {
                 isLocal -> Visibilities.Local
-                declaration is FirConstructor && containingClass is FirAnonymousObject -> Visibilities.Private
-                else -> resolveVisibility(declaration, containingClass, overriddenStatuses)
+                else -> resolveVisibility(declaration, containingClass, containingProperty, overriddenStatuses)
             }
             else -> status.visibility
         }
@@ -163,18 +168,25 @@ class FirStatusResolver(
     private fun resolveVisibility(
         declaration: FirDeclaration,
         containingClass: FirClass<*>?,
+        containingProperty: FirProperty?,
         overriddenStatuses: List<FirResolvedDeclarationStatusImpl>
     ): Visibility {
-        if (declaration is FirConstructor && containingClass != null) {
-            val classKind = containingClass.classKind
-            if ((classKind == ClassKind.ENUM_CLASS || classKind == ClassKind.ENUM_ENTRY || containingClass.modality == Modality.SEALED)) {
-                return Visibilities.Private
-            }
+        if (declaration is FirConstructor && containingClass?.hasPrivateConstructor() == true) return Visibilities.Private
+
+        val fallbackVisibility = when {
+            declaration is FirPropertyAccessor && containingProperty != null -> containingProperty.visibility
+            else -> Visibilities.Public
         }
+
         return overriddenStatuses.map { it.visibility }
             .maxWithOrNull { v1, v2 -> Visibilities.compare(v1, v2) ?: -1 }
             ?.normalize()
-            ?: Visibilities.Public
+            ?: fallbackVisibility
+    }
+
+    private fun FirClass<*>.hasPrivateConstructor(): Boolean {
+        val classKind = classKind
+        return classKind == ClassKind.ENUM_CLASS || classKind == ClassKind.ENUM_ENTRY || modality == Modality.SEALED || this is FirAnonymousObject
     }
 
     private fun resolveModality(

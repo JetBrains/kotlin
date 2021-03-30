@@ -5,7 +5,7 @@ fun <T> materialize(): T = TODO()
 fun a(): Unit = run {
     run {
         // Ok, block is coerced, because it has (indirectly) Unit-expected type
-        <!UNUSED_EXPRESSION{NI}!>"hello"<!>
+        "hello"
     }
 }
 

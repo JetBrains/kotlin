@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -19,9 +18,9 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
@@ -47,14 +46,13 @@ fun compile(
     generateFullJs: Boolean = true,
     generateDceJs: Boolean = false,
     dceDriven: Boolean = false,
+    dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
     es6mode: Boolean = false,
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
 ): CompilerResult {
-    stageController = StageController()
-
-    val irFactory = if (dceDriven) PersistentIrFactory else IrFactoryImpl
+    val irFactory = if (dceDriven) PersistentIrFactory() else IrFactoryImpl
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
@@ -74,13 +72,14 @@ fun compile(
         exportedDeclarations,
         configuration,
         es6mode = es6mode,
+        dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,
         irFactory = irFactory
     )
 
     // Load declarations referenced during `context` initialization
     val irProviders = listOf(deserializer)
-    ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
@@ -94,14 +93,15 @@ fun compile(
 
     if (dceDriven) {
         val controller = MutableController(context, pirLowerings)
-        stageController = controller
+
+        check(irFactory is PersistentIrFactory)
+        irFactory.stageController = controller
 
         controller.currentStage = controller.lowerings.size + 1
 
         eliminateDeadDeclarations(allModules, context)
 
-        // TODO investigate whether this is needed anymore
-        stageController = StageController(controller.currentStage)
+        irFactory.stageController = StageController(controller.currentStage)
 
         val transformer = IrModuleToJsTransformer(
             context,

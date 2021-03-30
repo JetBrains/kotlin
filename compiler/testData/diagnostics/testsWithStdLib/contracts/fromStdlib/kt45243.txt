@@ -1,0 +1,8 @@
+package
+
+@kotlin.contracts.ExperimentalContracts public fun </*0*/ T> assertNotNull(/*0*/ actual: T): kotlin.Unit
+    Returns(WILDCARD) -> actual != null
+
+@kotlin.contracts.ExperimentalContracts public fun test_1(): kotlin.Unit
+@kotlin.contracts.ExperimentalContracts public fun test_2(): kotlin.Unit
+

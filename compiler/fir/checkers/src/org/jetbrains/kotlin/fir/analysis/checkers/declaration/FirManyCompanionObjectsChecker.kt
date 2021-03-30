@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isCompanion
 
@@ -19,14 +19,10 @@ object FirManyCompanionObjectsChecker : FirRegularClassChecker() {
         for (it in declaration.declarations) {
             if (it is FirRegularClass && it.isCompanion) {
                 if (hasCompanion) {
-                    reporter.report(it.source)
+                    reporter.reportOn(it.source, FirErrors.MANY_COMPANION_OBJECTS, context)
                 }
                 hasCompanion = true
             }
         }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(FirErrors.MANY_COMPANION_OBJECTS.on(it)) }
     }
 }

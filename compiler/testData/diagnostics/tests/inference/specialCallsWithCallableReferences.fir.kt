@@ -129,7 +129,7 @@ fun poll36(flag: Boolean) {
 }
 
 fun poll4() {
-    val inv = try { ::bar } finally { <!UNRESOLVED_REFERENCE!>::foo<!> }
+    val inv = try { ::bar } finally { ::<!UNRESOLVED_REFERENCE!>foo<!> }
     <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
@@ -139,7 +139,7 @@ fun poll41() {
 }
 
 fun poll42() {
-    val inv = try { ::bar3 } finally { <!UNRESOLVED_REFERENCE!>::foo3<!> }
+    val inv = try { ::bar3 } finally { ::<!UNRESOLVED_REFERENCE!>foo3<!> }
     <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
@@ -149,7 +149,7 @@ fun poll43() {
 }
 
 fun poll44() {
-    val inv = try { ::bar5 } finally { <!UNRESOLVED_REFERENCE!>::foo5<!> }
+    val inv = try { ::bar5 } finally { ::<!UNRESOLVED_REFERENCE!>foo5<!> }
     <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
@@ -164,7 +164,7 @@ fun poll46() {
 }
 
 fun poll5() {
-    val inv = try { ::bar } catch (e: Exception) { ::foo } finally { <!UNRESOLVED_REFERENCE!>::foo<!> }
+    val inv = try { ::bar } catch (e: Exception) { ::foo } finally { ::<!UNRESOLVED_REFERENCE!>foo<!> }
     <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
@@ -174,7 +174,7 @@ fun poll51() {
 }
 
 fun poll52() {
-    val inv = try { ::bar3 } catch (e: Exception) { ::foo3 } finally { <!UNRESOLVED_REFERENCE!>::foo3<!> }
+    val inv = try { ::bar3 } catch (e: Exception) { ::foo3 } finally { ::<!UNRESOLVED_REFERENCE!>foo3<!> }
     <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
@@ -184,7 +184,7 @@ fun poll53() {
 }
 
 fun poll54() {
-    val inv = try { ::bar5 } catch (e: Exception) { ::foo5 } finally { <!UNRESOLVED_REFERENCE!>::foo5<!> }
+    val inv = try { ::bar5 } catch (e: Exception) { ::foo5 } finally { ::<!UNRESOLVED_REFERENCE!>foo5<!> }
     <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
@@ -199,7 +199,7 @@ fun poll56() {
 }
 
 fun poll6() {
-    val inv = <!UNRESOLVED_REFERENCE!>::bar<!>
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar<!>
     inv
 }
 
@@ -209,7 +209,7 @@ fun poll61() {
 }
 
 fun poll62() {
-    val inv = <!UNRESOLVED_REFERENCE!>::bar3<!>
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar3<!>
     inv
 }
 
@@ -219,7 +219,7 @@ fun poll63() {
 }
 
 fun poll64() {
-    val inv = <!UNRESOLVED_REFERENCE!>::bar5<!>
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar5<!>
     inv
 }
 
@@ -269,7 +269,7 @@ fun poll76() {
 }
 
 fun poll8() {
-    val inv = <!UNRESOLVED_REFERENCE!>::bar<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(<!UNRESOLVED_REFERENCE!>::foo<!>)
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo<!>)
     <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
@@ -279,7 +279,7 @@ fun poll81() {
 }
 
 fun poll82() {
-    val inv = <!UNRESOLVED_REFERENCE!>::bar3<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(<!UNRESOLVED_REFERENCE!>::foo3<!>)
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar3<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo3<!>)
     <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
@@ -289,7 +289,7 @@ fun poll83() {
 }
 
 fun poll84() {
-    val inv = <!UNRESOLVED_REFERENCE!>::bar5<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(<!UNRESOLVED_REFERENCE!>::foo5<!>)
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar5<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo5<!>)
     inv
 }
 

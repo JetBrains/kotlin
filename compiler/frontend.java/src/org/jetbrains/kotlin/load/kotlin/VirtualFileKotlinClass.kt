@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.util.PerformanceCounter
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.FileNotFoundException
 import java.io.IOException
 
@@ -43,8 +42,7 @@ class VirtualFileKotlinClass private constructor(
         try {
             return file.contentsToByteArray()
         } catch (e: IOException) {
-            LOG.error(renderFileReadingErrorMessage(file), e)
-            throw rethrow(e)
+            throw logFileReadingErrorMessage(e, file)
         }
     }
 
@@ -56,14 +54,13 @@ class VirtualFileKotlinClass private constructor(
         private val LOG = Logger.getInstance(VirtualFileKotlinClass::class.java)
         private val perfCounter = PerformanceCounter.create("Binary class from Kotlin file")
 
-        @Deprecated("Use KotlinBinaryClassCache")
-        fun create(file: VirtualFile, fileContent: ByteArray?): KotlinClassFinder.Result? {
+        internal fun create(file: VirtualFile, fileContent: ByteArray?): KotlinClassFinder.Result? {
             return perfCounter.time {
                 assert(file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
                 try {
                     val byteContent = fileContent ?: file.contentsToByteArray(false)
-                    if (!byteContent.isEmpty()) {
+                    if (byteContent.isNotEmpty()) {
                         val kotlinJvmBinaryClass = FileBasedKotlinClass.create(byteContent) { name, classVersion, header, innerClasses ->
                             VirtualFileKotlinClass(file, name, classVersion, header, innerClasses)
                         }
@@ -73,13 +70,17 @@ class VirtualFileKotlinClass private constructor(
                     }
                 } catch (e: FileNotFoundException) {
                     // Valid situation. User can delete jar file.
-                } catch (e: ProcessCanceledException) {
-                    // Valid situation.
                 } catch (e: Throwable) {
-                    LOG.warn(renderFileReadingErrorMessage(file), e)
+                    if (e is ControlFlowException) throw e
+                    throw logFileReadingErrorMessage(e, file)
                 }
                 null
             }
+        }
+
+        private fun logFileReadingErrorMessage(e: Throwable, file: VirtualFile): Throwable {
+            LOG.warn(renderFileReadingErrorMessage(file), e)
+            return e
         }
 
         private fun renderFileReadingErrorMessage(file: VirtualFile): String =

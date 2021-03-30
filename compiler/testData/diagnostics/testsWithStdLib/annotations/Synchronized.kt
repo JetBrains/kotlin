@@ -11,7 +11,7 @@ interface My {
 
     var v: String
         <!SYNCHRONIZED_IN_INTERFACE!>@Synchronized<!> get() = ""
-        <!SYNCHRONIZED_IN_INTERFACE!>@Synchronized<!> set(<!UNUSED_PARAMETER!>value<!>) {}
+        <!SYNCHRONIZED_IN_INTERFACE!>@Synchronized<!> set(value) {}
 }
 
 abstract class Your {
@@ -25,7 +25,7 @@ abstract class Your {
 
     var v: String
         @Synchronized get() = ""
-        @Synchronized set(<!UNUSED_PARAMETER!>value<!>) {}
+        @Synchronized set(value) {}
 }
 
 @Synchronized fun gav() = 1

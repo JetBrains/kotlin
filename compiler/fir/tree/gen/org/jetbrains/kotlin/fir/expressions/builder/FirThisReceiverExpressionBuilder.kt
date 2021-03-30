@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -50,21 +51,21 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
     @Deprecated("Modification of 'explicitReceiver' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var explicitReceiver: FirExpression?
         get() = throw IllegalStateException()
-        set(value) {
+        set(_) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'dispatchReceiver' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var dispatchReceiver: FirExpression
         get() = throw IllegalStateException()
-        set(value) {
+        set(_) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'extensionReceiver' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var extensionReceiver: FirExpression
         get() = throw IllegalStateException()
-        set(value) {
+        set(_) {
             throw IllegalStateException()
         }
 }

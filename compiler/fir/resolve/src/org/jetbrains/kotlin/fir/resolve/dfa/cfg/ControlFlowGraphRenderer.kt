@@ -18,6 +18,7 @@ import java.util.*
 
 class FirControlFlowGraphRenderVisitor(
     builder: StringBuilder,
+    private val renderLevels: Boolean = false
 ) : FirVisitorVoid() {
     companion object {
         private const val EDGE = " -> "
@@ -81,7 +82,13 @@ class FirControlFlowGraphRenderVisitor(
                 color = BLUE
             }
             val attributes = mutableListOf<String>()
-            attributes += "label=\"${node.render().replace("\"", "")}\""
+            val label = buildString {
+                append(node.render().replace("\"", ""))
+                if (renderLevels) {
+                    append(" [${node.level}]")
+                }
+            }
+            attributes += "label=\"$label\""
 
             fun fillColor(color: String) {
                 attributes += "style=\"filled\""

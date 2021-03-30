@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: AImpl.java
 
 abstract public class AImpl {

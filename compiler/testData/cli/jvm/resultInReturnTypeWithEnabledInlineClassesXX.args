@@ -2,3 +2,5 @@ $TESTDATA_DIR$/resultInReturnType.kt
 -d
 $TEMP_DIR$
 -XXLanguage\:+InlineClasses
+-language-version
+1.4

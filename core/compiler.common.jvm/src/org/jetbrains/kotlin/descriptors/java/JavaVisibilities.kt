@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.descriptors.java
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.name.FqName
 
 object JavaVisibilities {
     object PackageVisibility : Visibility("package", isPublicAPI = false) {
@@ -31,6 +32,10 @@ object JavaVisibilities {
 
         override fun customEffectiveVisibility(): EffectiveVisibility? {
             return EffectiveVisibility.PackagePrivate
+        }
+
+        override fun visibleFromPackage(fromPackage: FqName, myPackage: FqName): Boolean {
+            return fromPackage == myPackage
         }
     }
 

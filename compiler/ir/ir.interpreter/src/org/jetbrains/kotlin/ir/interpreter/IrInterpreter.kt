@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodHandle
-import kotlin.concurrent.thread
 
 private const val MAX_COMMANDS = 500_000
 
@@ -75,23 +75,19 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
     fun interpret(expression: IrExpression): IrExpression {
         stack.clean()
-        lateinit var result: IrExpression
-        thread(start = true) {
-            result = try {
-                when (val returnLabel = expression.interpret().returnLabel) {
-                    ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
-                    ReturnLabel.EXCEPTION -> {
-                        val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
-                        IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
-                    }
-                    else -> TODO("$returnLabel not supported as result of interpretation")
+        return try {
+            when (val returnLabel = expression.interpret().returnLabel) {
+                ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
+                ReturnLabel.EXCEPTION -> {
+                    val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
+                    IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
                 }
-            } catch (e: InterpreterException) {
-                // TODO don't handle, throw to lowering
-                IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
+                else -> TODO("$returnLabel not supported as result of interpretation")
             }
-        }.join()
-        return result
+        } catch (e: InterpreterException) {
+            // TODO don't handle, throw to lowering
+            IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
+        }
     }
 
     private fun IrElement.interpret(): ExecutionResult {
@@ -422,21 +418,20 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun interpretConst(expression: IrConst<*>): ExecutionResult {
-        fun getSignedType(unsignedType: IrType): IrType {
-            return when {
-                unsignedType.isUByte() -> irBuiltIns.byteType
-                unsignedType.isUShort() -> irBuiltIns.shortType
-                unsignedType.isUInt() -> irBuiltIns.intType
-                unsignedType.isULong() -> irBuiltIns.longType
-                else -> throw InterpreterException("Unsupported unsigned class ${unsignedType.render()}")
-            }
+        fun getSignedType(unsignedType: IrType): IrType? = when (unsignedType.getUnsignedType()) {
+            UnsignedType.UBYTE -> irBuiltIns.byteType
+            UnsignedType.USHORT -> irBuiltIns.shortType
+            UnsignedType.UINT -> irBuiltIns.intType
+            UnsignedType.ULONG -> irBuiltIns.longType
+            else -> null
         }
 
-        return if (expression.type.isUnsigned()) {
+        val signedType = getSignedType(expression.type)
+        return if (signedType != null) {
             val unsignedClass = expression.type.classOrNull!!
             val constructor = unsignedClass.constructors.single().owner
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            constructorCall.putValueArgument(0, expression.value.toIrConst(getSignedType(expression.type)))
+            constructorCall.putValueArgument(0, expression.value.toIrConst(signedType))
 
             constructorCall.interpret()
         } else {

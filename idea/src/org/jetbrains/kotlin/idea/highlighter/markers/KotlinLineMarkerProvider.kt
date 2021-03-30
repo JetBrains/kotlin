@@ -28,8 +28,9 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
-import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
+import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
+import org.jetbrains.kotlin.asJava.classes.KtFakeLightMethod
+import org.jetbrains.kotlin.asJava.toFakeLightClass
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.editor.fixers.startLine
@@ -292,7 +293,7 @@ private fun collectInheritedClassMarker(element: KtClass, result: LineMarkerInfo
         return
     }
 
-    val lightClass = element.toLightClass() ?: KtFakeLightClass(element)
+    val lightClass = element.toLightClass() ?: element.toFakeLightClass()
 
     if (ClassInheritorsSearch.search(lightClass, false).findFirst() == null) return
 

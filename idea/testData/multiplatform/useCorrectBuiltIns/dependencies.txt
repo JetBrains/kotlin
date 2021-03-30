@@ -5,9 +5,11 @@ MODULE jvmWithSdk { platform=[JVM] }
 MODULE native { platform=[Native] }
 
 common -> STDLIB_COMMON { kind=DEPENDENCY }
+common -> KOTLIN_SDK { kind=DEPENDENCY }
 
 js -> common { kind=DEPENDS_ON }
 js -> STDLIB_JS { kind=DEPENDENCY }
+js -> KOTLIN_SDK { kind=DEPENDENCY }
 
 jvmNoSdk -> common { kind=DEPENDS_ON }
 jvmNoSdk -> STDLIB_JVM { kind=DEPENDENCY }

@@ -14,15 +14,19 @@ fun testForBreak2(ss: List<String>) {
     OUTER@ while (<iterator>.hasNext()) { // BLOCK
       val s1: String = <iterator>.next()
       { // BLOCK
-        val <iterator>: Iterator<String> = ss.iterator()
-        INNER@ while (<iterator>.hasNext()) { // BLOCK
-          val s2: String = <iterator>.next()
-          break@OUTER
-          break@INNER
-          break@INNER
+        { // BLOCK
+          val <iterator>: Iterator<String> = ss.iterator()
+          INNER@ while (<iterator>.hasNext()) { // BLOCK
+            val s2: String = <iterator>.next()
+            { // BLOCK
+              break@OUTER
+              break@INNER
+              break@INNER
+            }
+          }
         }
+        break@OUTER
       }
-      break@OUTER
     }
   }
 }
@@ -43,15 +47,20 @@ fun testForContinue2(ss: List<String>) {
     OUTER@ while (<iterator>.hasNext()) { // BLOCK
       val s1: String = <iterator>.next()
       { // BLOCK
-        val <iterator>: Iterator<String> = ss.iterator()
-        INNER@ while (<iterator>.hasNext()) { // BLOCK
-          val s2: String = <iterator>.next()
-          continue@OUTER
-          continue@INNER
-          continue@INNER
+        { // BLOCK
+          val <iterator>: Iterator<String> = ss.iterator()
+          INNER@ while (<iterator>.hasNext()) { // BLOCK
+            val s2: String = <iterator>.next()
+            { // BLOCK
+              continue@OUTER
+              continue@INNER
+              continue@INNER
+            }
+          }
         }
+        continue@OUTER
       }
-      continue@OUTER
     }
   }
 }
+

@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 class KotlinProjectIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions {
         return super.defaultBuildOptions().copy(
-            androidGradlePluginVersion = AGPVersion.v3_1_0,
+            androidGradlePluginVersion = AGPVersion.v3_4_1,
             androidHome = KtTestUtil.findAndroidSdk()
         )
     }

@@ -51,8 +51,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         }
 
         candidate.resultingTypeForCallableReference = resultingType
-        candidate.usesSuspendConversion =
-            callableReferenceAdaptation?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
+        candidate.callableReferenceAdaptation = callableReferenceAdaptation
         candidate.outerConstraintBuilderEffect = fun ConstraintSystemOperation.() {
             addOtherSystem(candidate.system.asReadOnlyStorage())
 
@@ -98,8 +97,12 @@ private fun buildReflectionType(
         is FirFunction -> {
             val unboundReferenceTarget = if (receiverType != null) 1 else 0
             val callableReferenceAdaptation =
-                context.bodyResolveComponents
-                    .getCallableReferenceAdaptation(context.session, fir, candidate.callInfo.expectedType, unboundReferenceTarget)
+                context.bodyResolveComponents.getCallableReferenceAdaptation(
+                    context.session,
+                    fir,
+                    candidate.callInfo.expectedType?.lowerBoundIfFlexible(),
+                    unboundReferenceTarget
+                )
 
             val parameters = mutableListOf<ConeKotlinType>()
 
@@ -133,7 +136,7 @@ internal class CallableReferenceAdaptation(
     val argumentTypes: Array<ConeKotlinType>,
     val coercionStrategy: CoercionStrategy,
     val defaults: Int,
-    val mappedArguments: Map<FirValueParameter, ResolvedCallArgument>,
+    val mappedArguments: CallableReferenceMappedArguments,
     val suspendConversionStrategy: SuspendConversionStrategy
 )
 
@@ -226,7 +229,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         }
     }
 
-    val coercionStrategy = if (returnExpectedType.isUnit && !function.returnTypeRef.isUnit)
+    val coercionStrategy = if (returnExpectedType.isUnitOrFlexibleUnit && !function.returnTypeRef.isUnit)
         CoercionStrategy.COERCION_TO_UNIT
     else
         CoercionStrategy.NO_COERCION
@@ -288,7 +291,7 @@ private enum class VarargMappingState {
 
 private fun FirFunction<*>.indexOf(valueParameter: FirValueParameter): Int = valueParameters.indexOf(valueParameter)
 
-val ConeKotlinType.isUnit: Boolean
+val ConeKotlinType.isUnitOrFlexibleUnit: Boolean
     get() {
         val type = this.lowerBoundIfFlexible()
         if (type.isNullable) return false
@@ -351,7 +354,7 @@ private fun createFakeArgumentsForReference(
     }
 }
 
-private class FirFakeArgumentForCallableReference(
+class FirFakeArgumentForCallableReference(
     val index: Int
 ) : FirExpression() {
     override val source: FirSourceElement?

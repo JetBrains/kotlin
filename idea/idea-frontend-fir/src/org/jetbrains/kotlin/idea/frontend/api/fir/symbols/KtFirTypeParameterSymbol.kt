@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
@@ -24,15 +25,16 @@ internal class KtFirTypeParameterSymbol(
     fir: FirTypeParameter,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    private val builder: KtSymbolByFirBuilder
+    _builder: KtSymbolByFirBuilder
 ) : KtTypeParameterSymbol(), KtFirSymbol<FirTypeParameter> {
+    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
 
     override val name: Name get() = firRef.withFir { it.name }
 
     override val upperBounds: List<KtType> by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
-        fir.bounds.map { type -> builder.buildKtType(type) }
+        fir.bounds.map { type -> builder.typeBuilder.buildKtType(type) }
     }
 
     override val variance: Variance get() = firRef.withFir { it.variance }

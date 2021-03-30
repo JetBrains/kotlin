@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.idea.defaultSubstitutors
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.platform.*
-import org.jetbrains.kotlin.platform.compat.toNewPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
@@ -298,6 +298,9 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
 private fun Module.hasNonOverriddenExternalSdkConfiguration(compilerArguments: CommonCompilerArguments): Boolean =
     hasExternalSdkConfiguration && (compilerArguments !is K2JVMCompilerArguments || compilerArguments.jdkHome == null)
 
+private fun substituteDefaults(args: List<String>, compilerArguments: CommonCompilerArguments): List<String> =
+    args + defaultSubstitutors[compilerArguments::class]?.filter { it.isSubstitutable(args) }?.flatMap { it.oldSubstitution }.orEmpty()
+
 fun parseCompilerArgumentsToFacet(
     arguments: List<String>,
     defaultArguments: List<String>,
@@ -307,8 +310,10 @@ fun parseCompilerArgumentsToFacet(
     val compilerArgumentsClass = kotlinFacet.configuration.settings.compilerArguments?.javaClass ?: return
     val currentArgumentsBean = compilerArgumentsClass.newInstance()
     val defaultArgumentsBean = compilerArgumentsClass.newInstance()
-    parseCommandLineArguments(defaultArguments, defaultArgumentsBean)
-    parseCommandLineArguments(arguments, currentArgumentsBean)
+    val defaultArgumentWithDefaults = substituteDefaults(defaultArguments, defaultArgumentsBean)
+    val currentArgumentWithDefaults = substituteDefaults(arguments, currentArgumentsBean)
+    parseCommandLineArguments(defaultArgumentWithDefaults, defaultArgumentsBean)
+    parseCommandLineArguments(currentArgumentWithDefaults, currentArgumentsBean)
     applyCompilerArgumentsToFacet(currentArgumentsBean, defaultArgumentsBean, kotlinFacet, modelsProvider)
 }
 
@@ -352,7 +357,7 @@ fun applyCompilerArgumentsToFacet(
 
         val additionalArgumentsString = with(compilerArguments::class.java.newInstance()) {
             copyFieldsSatisfying(compilerArguments, this) { exposeAsAdditionalArgument(it) && it.name !in ignoredFields }
-            ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ") {
+            ArgumentUtils.convertArgumentsToStringListNoDefaults(this).joinToString(separator = " ") {
                 if (StringUtil.containsWhitespaces(it) || it.startsWith('"')) {
                     StringUtil.wrapWithDoubleQuote(StringUtil.escapeQuotes(it))
                 } else it

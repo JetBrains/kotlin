@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve.util
 
-import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
+import org.jetbrains.kotlin.cfg.ControlFlowInformationProviderImpl
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -16,7 +16,7 @@ fun analyzeControlFlow(resolveSession: ResolveSession, resolveElement: KtElement
     val controlFlowTrace = DelegatingBindingTrace(
         trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true
     )
-    ControlFlowInformationProvider(
+    ControlFlowInformationProviderImpl(
         resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
     ).checkDeclaration()
     controlFlowTrace.addOwnDataTo(trace, null, false)

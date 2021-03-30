@@ -37,7 +37,7 @@ fun test() {
 val Int.abs : Int
   get() = if (this > 0) this else -this;
 
-val <T> T.foo : T
+<!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>val <T> T.foo : T<!>
 
 fun Int.foo() = this
 
@@ -64,7 +64,7 @@ import outer.*
 
             command.foo
 
-            command.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            command<!UNSAFE_CALL!>.<!>equals(null)
             command?.equals(null)
             command.equals1(null)
             command?.equals1(null)

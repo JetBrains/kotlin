@@ -2,3 +2,4 @@
 class A {
     <caret>var i = 0
 }
+/* FIR_COMPARISON */

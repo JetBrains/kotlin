@@ -8,7 +8,7 @@ package testsCase1
 import libPackageCase1.*
 import libPackageCase1Explicit.emptyArray
 
-fun <T> Case1.emptyArray(): Array<T> = TODO()
+<!CONFLICTING_OVERLOADS!>fun <T> Case1.emptyArray(): Array<T><!> = TODO()
 
 class Case1(){
 
@@ -33,7 +33,7 @@ public fun <T> emptyArray(): Array<T> = TODO()
 // FILE: LibtestsPack1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
-fun <T> Case1.emptyArray(): Array<T> = TODO()
+<!CONFLICTING_OVERLOADS!>fun <T> Case1.emptyArray(): Array<T><!> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
 
@@ -46,7 +46,7 @@ package testsCase2
 import libPackageCase2.*
 import libPackageCase2Explicit.emptyArray
 
-fun <T> Case2.emptyArray(): Array<T> = TODO()
+<!CONFLICTING_OVERLOADS!>fun <T> Case2.emptyArray(): Array<T><!> = TODO()
 
 class Case2(){
 
@@ -77,6 +77,6 @@ public fun <T> emptyArray(): Array<T> = TODO()
 // FILE: LibtestsPack2.kt
 // TESTCASE NUMBER: 2
 package testsCase2
-fun <T> Case2.emptyArray(): Array<T> = TODO()
+<!CONFLICTING_OVERLOADS!>fun <T> Case2.emptyArray(): Array<T><!> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()

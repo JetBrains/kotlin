@@ -1,7 +1,7 @@
+// FIR_COMPARISON
 package some
 
 import jettesting.data.somefun
-import java.util.SortedSet
 
 fun other() {
     somefun(<caret>)

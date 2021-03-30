@@ -1,9 +1,9 @@
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
   return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
-    val collector: FlowCollector<ErrorType> = <this>
+    val collector: FlowCollector<Nothing> = <this>
     flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
-      block.invoke(p1 = <this>, p2 = collector /*as FlowCollector<ErrorType> */)
+      block.invoke(p1 = <this>, p2 = collector)
     }
 )
   }
@@ -12,7 +12,7 @@ fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType Suspen
 
 fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>): Flow<T> {
   return unsafeFlow<T>(block = local suspend fun FlowCollector<T>.<anonymous>() {
-    val safeCollector: SafeCollector<ErrorType> = SafeCollector<T>(collector = <this>)
+    val safeCollector: SafeCollector<Any?> = SafeCollector<T>(collector = <this>)
     safeCollector.invokeSafely<T>(action = action)
   }
 )
@@ -141,3 +141,4 @@ interface SendChannel<in E : Any?> {
   abstract suspend fun send(e: E)
 
 }
+

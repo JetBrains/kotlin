@@ -2,9 +2,9 @@
 // !CHECK_TYPE
 
 class In<in T>() {
-    fun f(<!UNUSED_PARAMETER!>t<!> : T) : Unit {}
-    fun f(<!UNUSED_PARAMETER!>t<!> : Int) : Int = 1
-    fun f1(<!UNUSED_PARAMETER!>t<!> : T) : Unit {}
+    fun f(t : T) : Unit {}
+    fun f(t : Int) : Int = 1
+    fun f1(t : T) : Unit {}
 }
 
 class Out<out T>() {
@@ -14,7 +14,7 @@ class Out<out T>() {
 
 class Inv<T>() {
     fun f(t : T) : T = t
-    fun inf(<!UNUSED_PARAMETER!>t<!> : T) : Unit {}
+    fun inf(t : T) : Unit {}
     fun outf() : T {throw IllegalStateException()}
 }
 

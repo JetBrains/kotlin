@@ -25,4 +25,4 @@ fun test(result: MutableList<in Any>, collection: MutableCollection<String>, pre
 }
 
 //from library
-fun String.startsWith(<!UNUSED_PARAMETER!>prefix<!>: String) : Boolean {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun String.startsWith(prefix: String) : Boolean {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

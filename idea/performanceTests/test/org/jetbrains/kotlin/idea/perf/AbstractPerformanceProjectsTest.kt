@@ -238,15 +238,26 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         fileName: String,
         marker: String,
         insertString: String,
+        highlightFileBeforeStartTyping: Boolean = false,
         surroundItems: String = "\n",
         lookupElements: List<String>,
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
-        note: String = ""
+        note: String = "",
+        stopAtException: Boolean = false,
     ) = perfTypeAndAutocomplete(
-        project(), stats, fileName, marker, insertString, surroundItems,
-        lookupElements = lookupElements, typeAfterMarker = typeAfterMarker,
-        revertChangesAtTheEnd = revertChangesAtTheEnd, note = note
+        project = project(),
+        stats = stats,
+        fileName = fileName,
+        marker = marker,
+        insertString = insertString,
+        highlightFileBeforeStartTyping = highlightFileBeforeStartTyping,
+        surroundItems = surroundItems,
+        lookupElements = lookupElements,
+        typeAfterMarker = typeAfterMarker,
+        revertChangesAtTheEnd = revertChangesAtTheEnd,
+        note = note,
+        stopAtException = stopAtException,
     )
 
     fun perfTypeAndAutocomplete(
@@ -255,11 +266,13 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         fileName: String,
         marker: String,
         insertString: String,
+        highlightFileBeforeStartTyping: Boolean = false,
         surroundItems: String = "\n",
         lookupElements: List<String>,
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
-        note: String = ""
+        note: String = "",
+        stopAtException: Boolean = false,
     ) {
         assertTrue("lookupElements has to be not empty", lookupElements.isNotEmpty())
         perfTypeAndDo(
@@ -272,7 +285,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             typeAfterMarker,
             surroundItems,
             insertString,
-            setupBlock = {},
+            setupBeforeTypingBlock = { fixture ->
+                if (highlightFileBeforeStartTyping) {
+                    fixture.doHighlighting()
+                }
+            },
+            setupAfterTypingBlock = {},
             testBlock = { fixture: Fixture ->
                 fixture.complete()
             },
@@ -282,7 +300,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     assertTrue("'$lookupElement' has to be present in items $items", items.contains(lookupElement))
                 }
             },
-            revertChangesAtTheEnd = revertChangesAtTheEnd
+            revertChangesAtTheEnd = revertChangesAtTheEnd,
+            stopAtException = stopAtException,
         )
     }
 
@@ -308,7 +327,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             typeAfterMarker,
             surroundItems,
             insertString,
-            setupBlock = { fixture: Fixture ->
+            setupBeforeTypingBlock = {},
+            setupAfterTypingBlock = { fixture: Fixture ->
                 fileText = fixture.document.text
             },
             testBlock = { fixture: Fixture ->
@@ -333,10 +353,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         typeAfterMarker: Boolean,
         surroundItems: String,
         insertString: String,
-        setupBlock: (Fixture) -> Unit,
+        setupBeforeTypingBlock: (Fixture) -> Unit,
+        setupAfterTypingBlock: (Fixture) -> Unit,
         testBlock: (Fixture) -> V,
         tearDownCheck: (Fixture, V?) -> Unit,
-        revertChangesAtTheEnd: Boolean
+        revertChangesAtTheEnd: Boolean,
+        stopAtException: Boolean = false,
     ) {
         openFixture(project, fileName).use { fixture ->
             val editor = fixture.editor
@@ -371,9 +393,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                         }
                         editor.caretModel.moveToOffset(editor.caretModel.offset - 2)
                     }
-
+                    setupBeforeTypingBlock(fixture)
                     fixture.type(insertString)
-                    setupBlock(fixture)
+                    setupAfterTypingBlock(fixture)
                 }
                 test {
                     it.value = testBlock(fixture)
@@ -386,6 +408,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                         commitAllDocuments()
                     }
                 }
+                stopAtException(stopAtException)
             }
         }
     }
@@ -566,8 +589,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String = ""
     ): List<HighlightInfo> = perfHighlightFile(project(), name, stats, tools = tools, note = note)
 
-    protected fun perfHighlightFileEmptyProfile(name: String, stats: Stats): List<HighlightInfo> =
-        perfHighlightFile(project(), name, stats, tools = emptyArray(), note = "empty profile")
+    protected fun perfHighlightFileEmptyProfile(name: String, stats: Stats, stopAtException: Boolean = false): List<HighlightInfo> =
+        perfHighlightFile(project(), name, stats, tools = emptyArray(), note = "empty profile", stopAtException = stopAtException)
 
     protected fun perfHighlightFile(
         project: Project,
@@ -578,6 +601,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         warmUpIterations: Int = 3,
         iterations: Int = 10,
         checkStability: Boolean = true,
+        stopAtException: Boolean = false,
         filenameSimplifier: (String) -> String = ::simpleFilename
     ): List<HighlightInfo> {
         val profileManager = ProjectInspectionProfileManager.getInstance(project)
@@ -612,6 +636,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                         PsiManager.getInstance(project).dropPsiCaches()
                     }
                     profilerConfig.enabled = true
+                    stopAtException(stopAtException)
                 }
                 highlightInfos
             }

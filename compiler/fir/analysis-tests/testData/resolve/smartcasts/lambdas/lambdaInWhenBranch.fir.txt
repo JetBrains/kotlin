@@ -1,6 +1,6 @@
 FILE: lambdaInWhenBranch.kt
     private sealed class Sealed : R|kotlin/Any| {
-        private constructor(): R|Sealed| {
+        protected constructor(): R|Sealed| {
             super<R|kotlin/Any|>()
         }
 

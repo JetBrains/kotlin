@@ -11,12 +11,15 @@ dependencies {
 
     testCompileOnly(project(":compiler:fir:raw-fir:psi2fir"))
 
-    testCompileOnly(project(":compiler:visualizer:render-psi"))
-    testCompileOnly(project(":compiler:visualizer:render-fir"))
+    testImplementation(project(":compiler:visualizer:render-psi"))
+    testImplementation(project(":compiler:visualizer:render-fir"))
 
-    testCompile(commonDep("junit:junit"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testApiJUnit5()
+
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -36,8 +39,10 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest {
+projectTest(parallel = true, jUnit5Enabled = true) {
     workingDir = rootDir
+
+    useJUnitPlatform()
 }
 
 testsJar()

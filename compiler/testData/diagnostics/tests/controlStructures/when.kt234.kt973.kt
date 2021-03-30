@@ -3,7 +3,7 @@
 
 package kt234_kt973
 
-class Pair<A, B>(<!UNUSED_PARAMETER!>a<!>: A, <!UNUSED_PARAMETER!>b<!>: B)
+class Pair<A, B>(a: A, b: B)
 
 fun test(t : Pair<Int, Int>) : Int {
     when (t) {
@@ -21,7 +21,7 @@ fun test1(t : Pair<Int, Int>) : Int {
 }
 
 //more tests
-fun t1(x: Int) = when(<!UNUSED_EXPRESSION!>x<!>) {
+fun t1(x: Int) = when(x) {
     else -> 1
 }
 

@@ -58,7 +58,7 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
             sync.gradleHome = ServiceManager
                 .getService(GradleInstallationManager::class.java)
                 .getGradleHome(project, sync.workingDir)
-                ?.canonicalPath
+                ?.path
         }
 
         if (sync.javaHome == null) {

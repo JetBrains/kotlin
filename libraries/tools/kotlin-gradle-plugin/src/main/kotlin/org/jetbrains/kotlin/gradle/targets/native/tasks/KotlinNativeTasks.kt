@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.library.*
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import javax.inject.Inject
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.util.Logger as KLogger
 
@@ -578,8 +579,8 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     }
 
     @get:Input
-    val embedBitcode: Framework.BitcodeEmbeddingMode by project.provider {
-        (binary as? Framework)?.embedBitcode ?: Framework.BitcodeEmbeddingMode.DISABLE
+    val embedBitcode: BitcodeEmbeddingMode by project.provider {
+        (binary as? Framework)?.embedBitcode ?: BitcodeEmbeddingMode.DISABLE
     }
 
     override fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
@@ -921,10 +922,7 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
     }
 }
 
-open class CInteropProcess : DefaultTask() {
-
-    @Internal
-    lateinit var settings: DefaultCInteropSettings
+open class CInteropProcess @Inject constructor(@get:Internal val settings: DefaultCInteropSettings) : DefaultTask() {
 
     @Internal // Taken into account in the outputFileProvider property
     lateinit var destinationDir: Provider<File>

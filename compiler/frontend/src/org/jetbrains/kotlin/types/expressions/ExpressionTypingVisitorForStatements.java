@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.tree.IElementType;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
-import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession;
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
@@ -243,22 +244,23 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         TemporaryTraceAndCache temporaryForBinaryOperation = TemporaryTraceAndCache.create(
                 context, "trace to check binary operation like '+' for", expression);
         TemporaryBindingTrace ignoreReportsTrace = TemporaryBindingTrace.create(context.trace, "Trace for checking assignability");
+        ExpressionTypingContext contextForBinaryOperation = null;
+
         boolean lhsAssignable = basic.checkLValue(ignoreReportsTrace, context, left, right, expression, false);
+
         if (assignmentOperationType == null || lhsAssignable) {
+            contextForBinaryOperation = context.replaceTraceAndCache(temporaryForBinaryOperation).replaceScope(scope);
             // Check for '+'
             // We should clear calls info for coroutine inference within right side as here we analyze it a second time in another context
-            if (context.inferenceSession instanceof CoroutineInferenceSession) {
-                ((CoroutineInferenceSession) context.inferenceSession).clearCallsInfoByContainingElement(right);
+            if (context.inferenceSession instanceof BuilderInferenceSession) {
+                ((BuilderInferenceSession) context.inferenceSession).clearCallsInfoByContainingElement(right);
             }
             Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
-            binaryOperationDescriptors = components.callResolver.resolveBinaryCall(
-                    context.replaceTraceAndCache(temporaryForBinaryOperation).replaceScope(scope),
-                    receiver, expression, counterpartName
-            );
+            binaryOperationDescriptors =
+                    components.callResolver.resolveBinaryCall(contextForBinaryOperation, receiver, expression, counterpartName);
 
             binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context);
-        }
-        else {
+        } else {
             binaryOperationDescriptors = OverloadResolutionResultsImpl.nameNotFound();
             binaryOperationType = null;
         }
@@ -270,7 +272,22 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         boolean hasRemBinaryOperation = atLeastOneOperation(binaryOperationDescriptors.getResultingCalls(), OperatorNameConventions.REM);
 
         boolean oneTypeOfModRemOperations = hasRemAssignOperation == hasRemBinaryOperation;
-        if (assignmentOperationDescriptors.isSuccess() && binaryOperationDescriptors.isSuccess() && oneTypeOfModRemOperations) {
+
+        boolean maybeAmbiguity = assignmentOperationDescriptors.isSuccess() && binaryOperationDescriptors.isSuccess() && oneTypeOfModRemOperations;
+        boolean isResolvedToPlusAssign = assignmentOperationType != null &&
+                                       (assignmentOperationDescriptors.isSuccess() || !binaryOperationDescriptors.isSuccess()) &&
+                                       (!hasRemBinaryOperation || !binaryOperationDescriptors.isSuccess());
+
+        KotlinTypeInfo rhsResolutionResult;
+        // We complete resolution for 'plus' only if there may be ambiguity (in this case we can disambiguate it),
+        // or it definitely won't be resolved to plus assign (in this case we would analyse right side twice)
+        if (maybeAmbiguity || !isResolvedToPlusAssign) {
+            rhsResolutionResult = completePlusResolution(contextForBinaryOperation, expression, binaryOperationType, left, leftInfo);
+        } else {
+            rhsResolutionResult = null;
+        }
+
+        if (maybeAmbiguity && rhsResolutionResult != null) {
             // Both 'plus()' and 'plusAssign()' available => ambiguity
             OverloadResolutionResults<FunctionDescriptor> ambiguityResolutionResults = OverloadResolutionResultsUtil.ambiguity(assignmentOperationDescriptors, binaryOperationDescriptors);
             context.trace.report(ASSIGN_OPERATOR_AMBIGUITY.on(operationSign, ambiguityResolutionResults.getResultingCalls()));
@@ -278,37 +295,60 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             for (ResolvedCall<?> resolvedCall : ambiguityResolutionResults.getResultingCalls()) {
                 descriptors.add(resolvedCall.getResultingDescriptor());
             }
-            rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(leftInfo.getDataFlowInfo()));
+            rightInfo = rhsResolutionResult;
             context.trace.record(AMBIGUOUS_REFERENCE_TARGET, operationSign, descriptors);
-        }
-        else if (assignmentOperationType != null &&
-                 (assignmentOperationDescriptors.isSuccess() || !binaryOperationDescriptors.isSuccess()) &&
-                 (!hasRemBinaryOperation || !binaryOperationDescriptors.isSuccess())) {
+        } else if (isResolvedToPlusAssign) {
             // There's 'plusAssign()', so we do a.plusAssign(b)
             temporaryForAssignmentOperation.commit();
             if (!KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.getUnitType(), assignmentOperationType)) {
                 context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
             }
-        }
-        else {
+        } else {
+            if (rhsResolutionResult != null) {
+                rightInfo = rhsResolutionResult;
+            }
             // There's only 'plus()', so we try 'a = a + b'
             temporaryForBinaryOperation.commit();
             context.trace.record(VARIABLE_REASSIGNMENT, expression);
-            if (left instanceof KtArrayAccessExpression) {
-                ExpressionTypingContext contextForResolve = context.replaceScope(scope).replaceBindingTrace(TemporaryBindingTrace.create(
-                        context.trace, "trace to resolve array set method for assignment", expression));
-                basic.resolveImplicitArrayAccessSetMethod((KtArrayAccessExpression) left, right, contextForResolve, context.trace);
-            }
-            rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(leftInfo.getDataFlowInfo()));
-
-            KotlinType expectedType = refineTypeFromPropertySetterIfPossible(context.trace.getBindingContext(), leftOperand, leftType);
-
-            components.dataFlowAnalyzer.checkType(binaryOperationType, expression, context.replaceExpectedType(expectedType)
-                    .replaceDataFlowInfo(rightInfo.getDataFlowInfo()).replaceCallPosition(new CallPosition.PropertyAssignment(left, false)));
-            basic.checkLValue(context.trace, context, leftOperand, right, expression, false);
         }
         temporary.commit();
         return rightInfo.replaceType(checkAssignmentType(type, expression, contextWithExpectedType));
+    }
+
+    private KotlinTypeInfo completePlusResolution(
+            ExpressionTypingContext context,
+            KtBinaryExpression expression,
+            KotlinType binaryOperationType,
+            KtExpression leftDeparentized,
+            KotlinTypeInfo leftInfo
+    ) {
+        KtExpression leftOperand = expression.getLeft();
+        KtExpression rightOperand = expression.getRight();
+
+        if (leftOperand == null || rightOperand == null) return null;
+
+        if (leftDeparentized instanceof KtArrayAccessExpression) {
+            ExpressionTypingContext contextForResolve = context.replaceScope(scope).replaceBindingTrace(TemporaryBindingTrace.create(
+                    context.trace, "trace to resolve array set method for assignment", expression));
+            basic.resolveImplicitArrayAccessSetMethod((KtArrayAccessExpression) leftDeparentized, rightOperand, contextForResolve, context.trace);
+        }
+        KotlinTypeInfo rightInfo = facade.getTypeInfo(rightOperand, context.replaceDataFlowInfo(leftInfo.getDataFlowInfo()));
+
+        KotlinType expectedType = refineTypeFromPropertySetterIfPossible(context.trace.getBindingContext(), leftOperand, leftInfo.getType());
+
+        Ref<Boolean> hasErrorsOnTypeChecking = Ref.create(false);
+        components.dataFlowAnalyzer.checkType(
+                binaryOperationType,
+                expression,
+                context.replaceExpectedType(expectedType)
+                        .replaceDataFlowInfo(rightInfo.getDataFlowInfo())
+                        .replaceCallPosition(new CallPosition.PropertyAssignment(leftDeparentized, false)),
+                hasErrorsOnTypeChecking,
+                true
+        );
+        basic.checkLValue(context.trace, context, leftOperand, rightOperand, expression, false);
+
+        return !hasErrorsOnTypeChecking.get() ? rightInfo : null;
     }
 
     private static boolean atLeastOneOperation(Collection<? extends ResolvedCall<FunctionDescriptor>> calls, Name operationName) {

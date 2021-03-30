@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: +UNUSED_EXPRESSION
+
 val flag = true
 
 // type of lambda was checked by txt

@@ -1,0 +1,10 @@
+// FIR_COMPARISON
+package test
+
+class T {
+    class TT
+}
+
+class Generic<T, TT>
+
+fun foo(t: Generic<T, T.TT>) {}

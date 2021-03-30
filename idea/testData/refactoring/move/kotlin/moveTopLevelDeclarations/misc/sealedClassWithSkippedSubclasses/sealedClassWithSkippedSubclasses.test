@@ -1,4 +1,5 @@
 {
+  "customCompilerOpts": "COMPILER_ARGUMENTS: -XXLanguage:-AllowSealedInheritorsInDifferentFilesOfSamePackage",
   "mainFile": "source/Foo.kt",
   "type": "MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS",
   "targetPackage": "target"

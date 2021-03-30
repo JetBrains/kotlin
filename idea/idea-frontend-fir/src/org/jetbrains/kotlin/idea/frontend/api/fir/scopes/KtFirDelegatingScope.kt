@@ -64,14 +64,14 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
     callableNames.forEach { name ->
         val callables = mutableListOf<KtCallableSymbol>()
         processFunctionsByName(name) { firSymbol ->
-            callables.add(builder.buildFunctionSymbol(firSymbol.fir))
+            callables.add(builder.functionLikeBuilder.buildFunctionSymbol(firSymbol.fir))
         }
         processPropertiesByName(name) { firSymbol ->
             val symbol = when {
                 firSymbol is FirPropertySymbol && firSymbol.fir.isSubstitutionOverride -> {
-                    builder.buildVariableSymbol(firSymbol.fir)
+                    builder.variableLikeBuilder.buildVariableSymbol(firSymbol.fir)
                 }
-                else -> builder.buildCallableSymbol(firSymbol.fir)
+                else -> builder.callableBuilder.buildCallableSymbol(firSymbol.fir)
             }
             callables.add(symbol)
         }
@@ -84,7 +84,7 @@ internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, bui
         classLikeNames.forEach { name ->
             val classifierSymbols = mutableListOf<KtClassifierSymbol>()
             processClassifiersByName(name) { firSymbol ->
-                classifierSymbols.add(builder.buildClassifierSymbol(firSymbol))
+                classifierSymbols.add(builder.classifierBuilder.buildClassifierSymbol(firSymbol))
             }
             yieldAll(classifierSymbols)
         }
@@ -94,7 +94,7 @@ internal fun FirScope.getConstructors(builder: KtSymbolByFirBuilder): Sequence<K
     sequence {
         val constructorSymbols = mutableListOf<KtConstructorSymbol>()
         processDeclaredConstructors { firSymbol ->
-            constructorSymbols.add(builder.buildConstructorSymbol(firSymbol.fir))
+            constructorSymbols.add(builder.functionLikeBuilder.buildConstructorSymbol(firSymbol.fir))
         }
         yieldAll(constructorSymbols)
     }

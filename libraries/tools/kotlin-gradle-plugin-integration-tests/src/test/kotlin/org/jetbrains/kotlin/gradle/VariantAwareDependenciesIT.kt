@@ -165,9 +165,9 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 "\n" + """
                 dependencies {
                     jvm6Implementation project(':${innerJvmProject.projectName}')
-                    jvm6TestRuntime project(':${innerJvmProject.projectName}')
+                    jvm6TestRuntimeOnly project(':${innerJvmProject.projectName}')
                     nodeJsImplementation project(':${innerJsProject.projectName}')
-                    nodeJsTestRuntime project(':${innerJsProject.projectName}')
+                    nodeJsTestRuntimeOnly project(':${innerJsProject.projectName}')
                 }
             """.trimIndent()
             )
@@ -184,12 +184,8 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         with(outerProject) {
             embedProject(innerProject)
 
-            gradleBuildScript().appendText(
-                "\nconfigurations['jvm6TestRuntime'].canBeConsumed = true"
-            )
-
             gradleBuildScript(innerProject.projectName).appendText(
-                "\ndependencies { testImplementation project(path: ':', configuration: 'jvm6TestRuntime') }"
+                "\ndependencies { testImplementation project(path: ':', configuration: 'jvm6RuntimeElements') }"
             )
 
             testResolveAllConfigurations(innerProject.projectName) {
@@ -337,17 +333,16 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         gradleBuildScript().appendText(
             "\n" + """
             configurations.create("custom")
-            repositories.maven { setUrl("https://dl.bintray.com/kotlin/kotlin-dev") }
-            dependencies { custom("org.jetbrains.kotlinx:kotlinx-cli:0.2.0-dev-7") }
+            dependencies { custom("org.jetbrains.kotlinx:atomicfu:0.15.2") }
             tasks.register("resolveCustom") { doLast { println("###" + configurations.custom.toList()) } }
             """.trimIndent()
         )
 
         build("resolveCustom") {
             assertSuccessful()
-            val printedLine = output.lines().single { "###" in it }.substringAfter("###")
+            val printedLine = output.lines().single { "###[" in it }.substringAfter("###")
             val items = printedLine.removeSurrounding("[", "]").split(", ")
-            assertTrue(items.toString()) { items.any { "kotlinx-cli-jvm" in it } }
+            assertTrue(items.toString()) { items.any { "atomicfu-jvm" in it } }
         }
     }
 

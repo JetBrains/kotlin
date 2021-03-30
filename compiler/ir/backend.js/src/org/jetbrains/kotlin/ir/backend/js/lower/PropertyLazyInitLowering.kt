@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.util.isPure
+import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -74,7 +75,7 @@ class PropertyLazyInitLowering(
 
         when (container) {
             is IrSimpleFunction ->
-                irBody.addInitialization(initializationCall, container)
+                irBody.prependFunctionCall(initializationCall)
             is IrField -> {
                 container
                     .correspondingProperty
@@ -83,7 +84,7 @@ class PropertyLazyInitLowering(
                     ?.let { listOf(it.getter, it.setter) }
                     ?.filterNotNull()
                     ?.forEach {
-                        irBody.addInitialization(initializationCall, it)
+                        irBody.prependFunctionCall(initializationCall)
                     }
             }
         }
@@ -169,29 +170,6 @@ class PropertyLazyInitLowering(
                 statements = mutableListOf(upGuard).apply { addAll(statements) }
             )
         ).let { listOf(it) }
-    }
-}
-
-private fun IrBody.addInitialization(
-    initCall: IrCall,
-    container: IrSimpleFunction
-) {
-    when (this) {
-        is IrExpressionBody -> {
-            expression = JsIrBuilder.buildComposite(
-                type = container.returnType,
-                statements = listOf(
-                    initCall,
-                    expression
-                )
-            )
-        }
-        is IrBlockBody -> {
-            statements.add(
-                0,
-                initCall
-            )
-        }
     }
 }
 
@@ -296,7 +274,7 @@ private val IrDeclaration.correspondingProperty: IrProperty?
     }
 
 private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.() -> IrProperty?): IrProperty? =
-    if (((this as? PersistentIrElementBase<*>)?.createdOn ?: 0) <= stageController.currentStage) {
+    if (this !is PersistentIrElementBase<*> || this.createdOn <= this.factory.stageController.currentStage) {
         transform()
     } else null
 
@@ -304,7 +282,7 @@ private fun IrDeclaration.isCompatibleDeclaration() =
     origin in compatibleOrigins
 
 private fun IrDeclaration.assertCompatibleDeclaration() {
-    assert((this as? PersistentIrElementBase<*>)?.createdOn?.let { it == 0 } != false)
+    assert(this !is PersistentIrElementBase<*> || createdOn == 0)
 }
 
 private val compatibleOrigins = listOf(

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.components.KtAnalysisSessionComponent
+import org.jetbrains.kotlin.idea.frontend.api.components.KtAnalysisSessionMixIn
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.psi.*
 abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     open fun getSymbol(psi: KtDeclaration): KtSymbol = when (psi) {
         is KtParameter -> getParameterSymbol(psi)
-        is KtNamedFunction -> getFunctionSymbol(psi)
+        is KtNamedFunction -> getFunctionLikeSymbol(psi)
         is KtConstructor<*> -> getConstructorSymbol(psi)
         is KtTypeParameter -> getTypeParameterSymbol(psi)
         is KtTypeAlias -> getTypeAliasSymbol(psi)
@@ -29,9 +30,9 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
-    abstract fun getParameterSymbol(psi: KtParameter): KtParameterSymbol
+    abstract fun getParameterSymbol(psi: KtParameter): KtValueParameterSymbol
     abstract fun getFileSymbol(psi: KtFile): KtFileSymbol
-    abstract fun getFunctionSymbol(psi: KtNamedFunction): KtFunctionSymbol
+    abstract fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol
     abstract fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol
     abstract fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol
     abstract fun getTypeAliasSymbol(psi: KtTypeAlias): KtTypeAliasSymbol
@@ -41,12 +42,73 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     abstract fun getVariableSymbol(psi: KtProperty): KtVariableSymbol
     abstract fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol
     abstract fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol
+    abstract fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol
     abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
 
-    /**
-     * @return symbol with specified [classId] or `null` in case such symbol is not found
-     */
     abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
 
     abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol>
+}
+
+interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
+    fun KtDeclaration.getSymbol(): KtSymbol =
+        analysisSession.symbolProvider.getSymbol(this)
+
+    fun KtParameter.getParameterSymbol(): KtValueParameterSymbol =
+        analysisSession.symbolProvider.getParameterSymbol(this)
+
+    /**
+     * Creates [KtFunctionLikeSymbol] by [KtNamedFunction]
+     *
+     * If [KtNamedFunction.getName] is `null` then returns [KtAnonymousFunctionSymbol]
+     * Otherwise, returns [KtFunctionSymbol]
+     */
+    fun KtNamedFunction.getFunctionLikeSymbol(): KtFunctionLikeSymbol =
+        analysisSession.symbolProvider.getFunctionLikeSymbol(this)
+
+    fun KtConstructor<*>.getConstructorSymbol(): KtConstructorSymbol =
+        analysisSession.symbolProvider.getConstructorSymbol(this)
+
+    fun KtTypeParameter.getTypeParameterSymbol(): KtTypeParameterSymbol =
+        analysisSession.symbolProvider.getTypeParameterSymbol(this)
+
+    fun KtTypeAlias.getTypeAliasSymbol(): KtTypeAliasSymbol =
+        analysisSession.symbolProvider.getTypeAliasSymbol(this)
+
+    fun KtEnumEntry.getEnumEntrySymbol(): KtEnumEntrySymbol =
+        analysisSession.symbolProvider.getEnumEntrySymbol(this)
+
+    fun KtNamedFunction.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol =
+        analysisSession.symbolProvider.getAnonymousFunctionSymbol(this)
+
+    fun KtLambdaExpression.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol =
+        analysisSession.symbolProvider.getAnonymousFunctionSymbol(this)
+
+    fun KtProperty.getVariableSymbol(): KtVariableSymbol =
+        analysisSession.symbolProvider.getVariableSymbol(this)
+
+    fun KtObjectLiteralExpression.getAnonymousObjectSymbol(): KtAnonymousObjectSymbol =
+        analysisSession.symbolProvider.getAnonymousObjectSymbol(this)
+
+    fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol =
+        analysisSession.symbolProvider.getClassOrObjectSymbol(this)
+
+    fun KtClassOrObject.getNamedClassOrObjectSymbol(): KtNamedClassOrObjectSymbol =
+        analysisSession.symbolProvider.getNamedClassOrObjectSymbol(this)
+
+    fun KtPropertyAccessor.getPropertyAccessorSymbol(): KtPropertyAccessorSymbol =
+        analysisSession.symbolProvider.getPropertyAccessorSymbol(this)
+
+    fun KtFile.getFileSymbol(): KtFileSymbol =
+        analysisSession.symbolProvider.getFileSymbol(this)
+
+    /**
+     * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
+     */
+    fun ClassId.getCorrespondingToplevelClassOrObjectSymbol(): KtClassOrObjectSymbol? =
+        analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(this)
+
+    fun FqName.getContainingCallableSymbolsWithName(name: Name): Sequence<KtSymbol> =
+        analysisSession.symbolProvider.getTopLevelCallableSymbols(this, name)
+
 }

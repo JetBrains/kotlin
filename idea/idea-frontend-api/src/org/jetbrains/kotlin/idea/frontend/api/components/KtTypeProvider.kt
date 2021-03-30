@@ -6,15 +6,35 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
 abstract class KtTypeProvider : KtAnalysisSessionComponent() {
-    //TODO get rid of it
-    abstract fun isBuiltinFunctionalType(type: KtType): Boolean
-
     abstract val builtinTypes: KtBuiltinTypes
+
+    abstract fun approximateToSuperPublicDenotableType(type: KtType): KtType?
+
+    abstract fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType
 }
 
+interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
+    val builtinTypes: KtBuiltinTypes
+        get() = analysisSession.typeProvider.builtinTypes
+
+    /**
+     * Approximates [KtType] with the a supertype which can be rendered in a source code
+     *
+     * Return `null` if the type do not need approximation and can be rendered as is
+     * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every it type argument is [org.jetbrains.kotlin.idea.frontend.api.types.KtDenotableType]`
+     */
+    fun KtType.approximateToSuperPublicDenotable(): KtType? =
+        analysisSession.typeProvider.approximateToSuperPublicDenotableType(this)
+
+    fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
+        analysisSession.typeProvider.buildSelfClassType(this)
+
+}
 
 @Suppress("PropertyName")
 abstract class KtBuiltinTypes : ValidityTokenOwner {

@@ -28,28 +28,32 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
 
     private data class CumulativeTime(
         val gcInfo: Map<String, GCInfo>,
+        val init: Long,
         val analysis: Long,
         val translation: Long,
+        val lowering: Long,
         val generation: Long,
         val files: Int,
         val lines: Int
     ) {
-        constructor() : this(emptyMap(), 0, 0, 0, 0, 0)
+        constructor() : this(emptyMap(), 0, 0, 0, 0, 0, 0, 0)
 
         operator fun plus(other: CumulativeTime): CumulativeTime {
             return CumulativeTime(
                 (gcInfo.values + other.gcInfo.values).groupingBy { it.name }.reduce { key, accumulator, element ->
                     GCInfo(key, accumulator.gcTime + element.gcTime, accumulator.collections + element.collections)
                 },
+                init + other.init,
                 analysis + other.analysis,
                 translation + other.translation,
+                lowering + other.lowering,
                 generation + other.generation,
                 files + other.files,
                 lines + other.lines
             )
         }
 
-        fun totalTime() = analysis + translation + generation
+        fun totalTime() = init + analysis + translation + lowering + generation
     }
 
     private lateinit var totalPassResult: CumulativeTime
@@ -124,8 +128,10 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
                     linePerSecondCell(lines, timeMs, timeUnit = MS)
                 }
             }
+            phase("Init", total.init, total.files, total.lines)
             phase("Analysis", total.analysis, total.files, total.lines)
             phase("Translation", total.translation, total.files, total.lines)
+            phase("Lowering", total.lowering, total.files, total.lines)
             phase("Generation", total.generation, total.files, total.lines)
 
             separator()
@@ -205,6 +211,7 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
         args.freeArgs = moduleData.sources.map { it.absolutePath }
         val tmp = Files.createTempDirectory("compile-output")
         args.destination = tmp.toAbsolutePath().toFile().toString()
+        args.friendPaths = moduleData.friendDirs.map { it.canonicalPath }.toTypedArray()
         val manager = CompilerPerformanceManager()
         val services = Services.Builder().register(CommonCompilerPerformanceManager::class.java, manager).build()
         val collector = TestMessageCollector()
@@ -258,12 +265,15 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
                 .associate { it.garbageCollectionKind to GCInfo(it.garbageCollectionKind, it.milliseconds, it.count) }
 
             val analysisMeasurement = measurements.filterIsInstance<CodeAnalysisMeasurement>().firstOrNull()
+            val initMeasurement = measurements.filterIsInstance<CompilerInitializationMeasurement>().firstOrNull()
             val irMeasurements = measurements.filterIsInstance<IRMeasurement>()
 
             return CumulativeTime(
                 gcInfo,
+                initMeasurement?.milliseconds ?: 0,
                 analysisMeasurement?.milliseconds ?: 0,
                 irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.TRANSLATION }?.milliseconds ?: 0,
+                irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.LOWERING }?.milliseconds ?: 0,
                 irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.GENERATION }?.milliseconds ?: 0,
                 files ?: 0,
                 lines ?: 0

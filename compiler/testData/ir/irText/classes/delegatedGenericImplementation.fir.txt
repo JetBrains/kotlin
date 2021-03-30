@@ -46,9 +46,6 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.IBase<E of <root>.Test1>]'
-        SET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]' type=kotlin.Unit origin=EQ
-          receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1' type=<root>.Test1<E of <root>.Test1> origin=null
-          value: GET_VAR 'i: <root>.IBase<E of <root>.Test1> declared in <root>.Test1.<init>' type=<root>.IBase<E of <root>.Test1> origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test1<E of <root>.Test1>, a:E of <root>.Test1, b:B of <root>.Test1.foo) returnType:kotlin.Unit
       overridden:
         public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
@@ -109,18 +106,20 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
             $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test1.<get-x>> declared in <root>.Test1.<set-x>' type=kotlin.collections.List<D of <root>.Test1.<get-x>> origin=null
             <set-?>: GET_VAR '<set-?>: D of <root>.Test1.<set-x>? declared in <root>.Test1.<set-x>' type=D of <root>.Test1.<set-x>? origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<E of <root>.Test1> visibility:local [final]
+      EXPRESSION_BODY
+        GET_VAR 'i: <root>.IBase<E of <root>.Test1> declared in <root>.Test1.<init>' type=<root>.IBase<E of <root>.Test1> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.IBase<kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
@@ -129,28 +128,6 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.IBase<kotlin.String>]'
-        SET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]' type=kotlin.Unit origin=EQ
-          receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
-          value: GET_VAR 'j: <root>.IBase<kotlin.String> declared in <root>.Test2.<init>' type=<root>.IBase<kotlin.String> origin=null
-    PROPERTY name:j visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private
-        EXPRESSION_BODY
-          GET_VAR 'j: <root>.IBase<kotlin.String> declared in <root>.Test2.<init>' type=<root>.IBase<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:<root>.IBase<kotlin.String>
-        correspondingProperty: PROPERTY name:j visibility:public modality:FINAL [var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-j> (): <root>.IBase<kotlin.String> declared in <root>.Test2'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=<root>.IBase<kotlin.String> origin=null
-              receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-j>' type=<root>.Test2 origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-j> visibility:public modality:FINAL <> ($this:<root>.Test2, <set-?>:<root>.IBase<kotlin.String>) returnType:kotlin.Unit
-        correspondingProperty: PROPERTY name:j visibility:public modality:FINAL [var]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
-        VALUE_PARAMETER name:<set-?> index:0 type:<root>.IBase<kotlin.String>
-        BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-j>' type=<root>.Test2 origin=null
-            value: GET_VAR '<set-?>: <root>.IBase<kotlin.String> declared in <root>.Test2.<set-j>' type=<root>.IBase<kotlin.String> origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test2, a:kotlin.String, b:B of <root>.Test2.foo) returnType:kotlin.Unit
       overridden:
         public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
@@ -211,16 +188,37 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
             $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test2.<get-x>> declared in <root>.Test2.<set-x>' type=kotlin.collections.List<D of <root>.Test2.<get-x>> origin=null
             <set-?>: GET_VAR '<set-?>: D of <root>.Test2.<set-x>? declared in <root>.Test2.<set-x>' type=D of <root>.Test2.<set-x>? origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase<kotlin.String> visibility:local [final]
+      EXPRESSION_BODY
+        GET_VAR 'j: <root>.IBase<kotlin.String> declared in <root>.Test2.<init>' type=<root>.IBase<kotlin.String> origin=null
+    PROPERTY name:j visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private
+        EXPRESSION_BODY
+          GET_VAR 'j: <root>.IBase<kotlin.String> declared in <root>.Test2.<init>' type=<root>.IBase<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:<root>.IBase<kotlin.String>
+        correspondingProperty: PROPERTY name:j visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-j> (): <root>.IBase<kotlin.String> declared in <root>.Test2'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=<root>.IBase<kotlin.String> origin=null
+              receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-j>' type=<root>.Test2 origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-j> visibility:public modality:FINAL <> ($this:<root>.Test2, <set-?>:<root>.IBase<kotlin.String>) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:j visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        VALUE_PARAMETER name:<set-?> index:0 type:<root>.IBase<kotlin.String>
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-j>' type=<root>.Test2 origin=null
+            value: GET_VAR '<set-?>: <root>.IBase<kotlin.String> declared in <root>.Test2.<set-j>' type=<root>.IBase<kotlin.String> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

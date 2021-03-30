@@ -1,4 +1,6 @@
+// FULL_JDK
 // FILE: JavaClass.java
+import java.util.ArrayList;
 
 public class JavaClass {
     public static void foo(ArrayList list) {}

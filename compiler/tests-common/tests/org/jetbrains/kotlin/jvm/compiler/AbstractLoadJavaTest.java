@@ -183,10 +183,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);
 
-        if (InTextDirectivesUtils.isDirectiveDefined(content, "ANDROID_ANNOTATIONS")) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.androidAnnotationsForTests());
-        }
-
         if (InTextDirectivesUtils.isDirectiveDefined(content, "JVM_ANNOTATIONS")) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.jvmAnnotationsForTests());
         }

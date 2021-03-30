@@ -8451,6 +8451,33 @@ public final class ProtoBuf {
     int getSealedSubclassFqName(int index);
 
     /**
+     * <code>optional int32 inline_class_underlying_property_name = 17;</code>
+     */
+    boolean hasInlineClassUnderlyingPropertyName();
+    /**
+     * <code>optional int32 inline_class_underlying_property_name = 17;</code>
+     */
+    int getInlineClassUnderlyingPropertyName();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+     */
+    boolean hasInlineClassUnderlyingType();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Type getInlineClassUnderlyingType();
+
+    /**
+     * <code>optional int32 inline_class_underlying_type_id = 19;</code>
+     */
+    boolean hasInlineClassUnderlyingTypeId();
+    /**
+     * <code>optional int32 inline_class_underlying_type_id = 19;</code>
+     */
+    int getInlineClassUnderlyingTypeId();
+
+    /**
      * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
      */
     boolean hasTypeTable();
@@ -8678,9 +8705,32 @@ public final class ProtoBuf {
               input.popLimit(limit);
               break;
             }
+            case 136: {
+              bitField0_ |= 0x00000008;
+              inlineClassUnderlyingPropertyName_ = input.readInt32();
+              break;
+            }
+            case 146: {
+              org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                subBuilder = inlineClassUnderlyingType_.toBuilder();
+              }
+              inlineClassUnderlyingType_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Type.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(inlineClassUnderlyingType_);
+                inlineClassUnderlyingType_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000010;
+              break;
+            }
+            case 152: {
+              bitField0_ |= 0x00000020;
+              inlineClassUnderlyingTypeId_ = input.readInt32();
+              break;
+            }
             case 242: {
               org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000008) == 0x00000008)) {
+              if (((bitField0_ & 0x00000040) == 0x00000040)) {
                 subBuilder = typeTable_.toBuilder();
               }
               typeTable_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.PARSER, extensionRegistry);
@@ -8688,13 +8738,13 @@ public final class ProtoBuf {
                 subBuilder.mergeFrom(typeTable_);
                 typeTable_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000008;
+              bitField0_ |= 0x00000040;
               break;
             }
             case 248: {
-              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+              if (!((mutable_bitField0_ & 0x00020000) == 0x00020000)) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00004000;
+                mutable_bitField0_ |= 0x00020000;
               }
               versionRequirement_.add(input.readInt32());
               break;
@@ -8702,9 +8752,9 @@ public final class ProtoBuf {
             case 250: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00020000) == 0x00020000) && input.getBytesUntilLimit() > 0) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00004000;
+                mutable_bitField0_ |= 0x00020000;
               }
               while (input.getBytesUntilLimit() > 0) {
                 versionRequirement_.add(input.readInt32());
@@ -8714,7 +8764,7 @@ public final class ProtoBuf {
             }
             case 258: {
               org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000010) == 0x00000010)) {
+              if (((bitField0_ & 0x00000080) == 0x00000080)) {
                 subBuilder = versionRequirementTable_.toBuilder();
               }
               versionRequirementTable_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.PARSER, extensionRegistry);
@@ -8722,7 +8772,7 @@ public final class ProtoBuf {
                 subBuilder.mergeFrom(versionRequirementTable_);
                 versionRequirementTable_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000010;
+              bitField0_ |= 0x00000080;
               break;
             }
           }
@@ -8763,7 +8813,7 @@ public final class ProtoBuf {
         if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
           sealedSubclassFqName_ = java.util.Collections.unmodifiableList(sealedSubclassFqName_);
         }
-        if (((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+        if (((mutable_bitField0_ & 0x00020000) == 0x00020000)) {
           versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
         try {
@@ -9286,13 +9336,58 @@ public final class ProtoBuf {
     }
     private int sealedSubclassFqNameMemoizedSerializedSize = -1;
 
+    public static final int INLINE_CLASS_UNDERLYING_PROPERTY_NAME_FIELD_NUMBER = 17;
+    private int inlineClassUnderlyingPropertyName_;
+    /**
+     * <code>optional int32 inline_class_underlying_property_name = 17;</code>
+     */
+    public boolean hasInlineClassUnderlyingPropertyName() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional int32 inline_class_underlying_property_name = 17;</code>
+     */
+    public int getInlineClassUnderlyingPropertyName() {
+      return inlineClassUnderlyingPropertyName_;
+    }
+
+    public static final int INLINE_CLASS_UNDERLYING_TYPE_FIELD_NUMBER = 18;
+    private org.jetbrains.kotlin.metadata.ProtoBuf.Type inlineClassUnderlyingType_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+     */
+    public boolean hasInlineClassUnderlyingType() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Type getInlineClassUnderlyingType() {
+      return inlineClassUnderlyingType_;
+    }
+
+    public static final int INLINE_CLASS_UNDERLYING_TYPE_ID_FIELD_NUMBER = 19;
+    private int inlineClassUnderlyingTypeId_;
+    /**
+     * <code>optional int32 inline_class_underlying_type_id = 19;</code>
+     */
+    public boolean hasInlineClassUnderlyingTypeId() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional int32 inline_class_underlying_type_id = 19;</code>
+     */
+    public int getInlineClassUnderlyingTypeId() {
+      return inlineClassUnderlyingTypeId_;
+    }
+
     public static final int TYPE_TABLE_FIELD_NUMBER = 30;
     private org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable typeTable_;
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
      */
     public boolean hasTypeTable() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+      return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
@@ -9341,7 +9436,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
      */
     public boolean hasVersionRequirementTable() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
@@ -9364,6 +9459,9 @@ public final class ProtoBuf {
       typeAlias_ = java.util.Collections.emptyList();
       enumEntry_ = java.util.Collections.emptyList();
       sealedSubclassFqName_ = java.util.Collections.emptyList();
+      inlineClassUnderlyingPropertyName_ = 0;
+      inlineClassUnderlyingType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+      inlineClassUnderlyingTypeId_ = 0;
       typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
       versionRequirement_ = java.util.Collections.emptyList();
       versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
@@ -9416,6 +9514,12 @@ public final class ProtoBuf {
       }
       for (int i = 0; i < getEnumEntryCount(); i++) {
         if (!getEnumEntry(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasInlineClassUnderlyingType()) {
+        if (!getInlineClassUnderlyingType().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -9492,12 +9596,21 @@ public final class ProtoBuf {
         output.writeInt32NoTag(sealedSubclassFqName_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeInt32(17, inlineClassUnderlyingPropertyName_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(18, inlineClassUnderlyingType_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeInt32(19, inlineClassUnderlyingTypeId_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeMessage(30, typeTable_);
       }
       for (int i = 0; i < versionRequirement_.size(); i++) {
         output.writeInt32(31, versionRequirement_.get(i));
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
         output.writeMessage(32, versionRequirementTable_);
       }
       extensionWriter.writeUntil(19000, output);
@@ -9594,6 +9707,18 @@ public final class ProtoBuf {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(17, inlineClassUnderlyingPropertyName_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(18, inlineClassUnderlyingType_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(19, inlineClassUnderlyingTypeId_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, typeTable_);
       }
       {
@@ -9605,7 +9730,7 @@ public final class ProtoBuf {
         size += dataSize;
         size += 2 * getVersionRequirementList().size();
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(32, versionRequirementTable_);
       }
@@ -9729,12 +9854,18 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000800);
         sealedSubclassFqName_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00001000);
-        typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
+        inlineClassUnderlyingPropertyName_ = 0;
         bitField0_ = (bitField0_ & ~0x00002000);
-        versionRequirement_ = java.util.Collections.emptyList();
+        inlineClassUnderlyingType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00004000);
-        versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
+        inlineClassUnderlyingTypeId_ = 0;
         bitField0_ = (bitField0_ & ~0x00008000);
+        typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00010000);
+        versionRequirement_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00020000);
+        versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00040000);
         return this;
       }
 
@@ -9823,14 +9954,26 @@ public final class ProtoBuf {
         if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
           to_bitField0_ |= 0x00000008;
         }
+        result.inlineClassUnderlyingPropertyName_ = inlineClassUnderlyingPropertyName_;
+        if (((from_bitField0_ & 0x00004000) == 0x00004000)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.inlineClassUnderlyingType_ = inlineClassUnderlyingType_;
+        if (((from_bitField0_ & 0x00008000) == 0x00008000)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.inlineClassUnderlyingTypeId_ = inlineClassUnderlyingTypeId_;
+        if (((from_bitField0_ & 0x00010000) == 0x00010000)) {
+          to_bitField0_ |= 0x00000040;
+        }
         result.typeTable_ = typeTable_;
-        if (((bitField0_ & 0x00004000) == 0x00004000)) {
+        if (((bitField0_ & 0x00020000) == 0x00020000)) {
           versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
-          bitField0_ = (bitField0_ & ~0x00004000);
+          bitField0_ = (bitField0_ & ~0x00020000);
         }
         result.versionRequirement_ = versionRequirement_;
-        if (((from_bitField0_ & 0x00008000) == 0x00008000)) {
-          to_bitField0_ |= 0x00000010;
+        if (((from_bitField0_ & 0x00040000) == 0x00040000)) {
+          to_bitField0_ |= 0x00000080;
         }
         result.versionRequirementTable_ = versionRequirementTable_;
         result.bitField0_ = to_bitField0_;
@@ -9948,13 +10091,22 @@ public final class ProtoBuf {
           }
           
         }
+        if (other.hasInlineClassUnderlyingPropertyName()) {
+          setInlineClassUnderlyingPropertyName(other.getInlineClassUnderlyingPropertyName());
+        }
+        if (other.hasInlineClassUnderlyingType()) {
+          mergeInlineClassUnderlyingType(other.getInlineClassUnderlyingType());
+        }
+        if (other.hasInlineClassUnderlyingTypeId()) {
+          setInlineClassUnderlyingTypeId(other.getInlineClassUnderlyingTypeId());
+        }
         if (other.hasTypeTable()) {
           mergeTypeTable(other.getTypeTable());
         }
         if (!other.versionRequirement_.isEmpty()) {
           if (versionRequirement_.isEmpty()) {
             versionRequirement_ = other.versionRequirement_;
-            bitField0_ = (bitField0_ & ~0x00004000);
+            bitField0_ = (bitField0_ & ~0x00020000);
           } else {
             ensureVersionRequirementIsMutable();
             versionRequirement_.addAll(other.versionRequirement_);
@@ -10013,6 +10165,12 @@ public final class ProtoBuf {
         }
         for (int i = 0; i < getEnumEntryCount(); i++) {
           if (!getEnumEntry(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasInlineClassUnderlyingType()) {
+          if (!getInlineClassUnderlyingType().isInitialized()) {
             
             return false;
           }
@@ -11270,12 +11428,136 @@ public final class ProtoBuf {
         return this;
       }
 
+      private int inlineClassUnderlyingPropertyName_ ;
+      /**
+       * <code>optional int32 inline_class_underlying_property_name = 17;</code>
+       */
+      public boolean hasInlineClassUnderlyingPropertyName() {
+        return ((bitField0_ & 0x00002000) == 0x00002000);
+      }
+      /**
+       * <code>optional int32 inline_class_underlying_property_name = 17;</code>
+       */
+      public int getInlineClassUnderlyingPropertyName() {
+        return inlineClassUnderlyingPropertyName_;
+      }
+      /**
+       * <code>optional int32 inline_class_underlying_property_name = 17;</code>
+       */
+      public Builder setInlineClassUnderlyingPropertyName(int value) {
+        bitField0_ |= 0x00002000;
+        inlineClassUnderlyingPropertyName_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 inline_class_underlying_property_name = 17;</code>
+       */
+      public Builder clearInlineClassUnderlyingPropertyName() {
+        bitField0_ = (bitField0_ & ~0x00002000);
+        inlineClassUnderlyingPropertyName_ = 0;
+        
+        return this;
+      }
+
+      private org.jetbrains.kotlin.metadata.ProtoBuf.Type inlineClassUnderlyingType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+       */
+      public boolean hasInlineClassUnderlyingType() {
+        return ((bitField0_ & 0x00004000) == 0x00004000);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Type getInlineClassUnderlyingType() {
+        return inlineClassUnderlyingType_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+       */
+      public Builder setInlineClassUnderlyingType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        inlineClassUnderlyingType_ = value;
+
+        bitField0_ |= 0x00004000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+       */
+      public Builder setInlineClassUnderlyingType(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder builderForValue) {
+        inlineClassUnderlyingType_ = builderForValue.build();
+
+        bitField0_ |= 0x00004000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+       */
+      public Builder mergeInlineClassUnderlyingType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
+        if (((bitField0_ & 0x00004000) == 0x00004000) &&
+            inlineClassUnderlyingType_ != org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance()) {
+          inlineClassUnderlyingType_ =
+            org.jetbrains.kotlin.metadata.ProtoBuf.Type.newBuilder(inlineClassUnderlyingType_).mergeFrom(value).buildPartial();
+        } else {
+          inlineClassUnderlyingType_ = value;
+        }
+
+        bitField0_ |= 0x00004000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type inline_class_underlying_type = 18;</code>
+       */
+      public Builder clearInlineClassUnderlyingType() {
+        inlineClassUnderlyingType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00004000);
+        return this;
+      }
+
+      private int inlineClassUnderlyingTypeId_ ;
+      /**
+       * <code>optional int32 inline_class_underlying_type_id = 19;</code>
+       */
+      public boolean hasInlineClassUnderlyingTypeId() {
+        return ((bitField0_ & 0x00008000) == 0x00008000);
+      }
+      /**
+       * <code>optional int32 inline_class_underlying_type_id = 19;</code>
+       */
+      public int getInlineClassUnderlyingTypeId() {
+        return inlineClassUnderlyingTypeId_;
+      }
+      /**
+       * <code>optional int32 inline_class_underlying_type_id = 19;</code>
+       */
+      public Builder setInlineClassUnderlyingTypeId(int value) {
+        bitField0_ |= 0x00008000;
+        inlineClassUnderlyingTypeId_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 inline_class_underlying_type_id = 19;</code>
+       */
+      public Builder clearInlineClassUnderlyingTypeId() {
+        bitField0_ = (bitField0_ & ~0x00008000);
+        inlineClassUnderlyingTypeId_ = 0;
+        
+        return this;
+      }
+
       private org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
        */
       public boolean hasTypeTable() {
-        return ((bitField0_ & 0x00002000) == 0x00002000);
+        return ((bitField0_ & 0x00010000) == 0x00010000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
@@ -11292,7 +11574,7 @@ public final class ProtoBuf {
         }
         typeTable_ = value;
 
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00010000;
         return this;
       }
       /**
@@ -11302,14 +11584,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.Builder builderForValue) {
         typeTable_ = builderForValue.build();
 
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00010000;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
        */
       public Builder mergeTypeTable(org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable value) {
-        if (((bitField0_ & 0x00002000) == 0x00002000) &&
+        if (((bitField0_ & 0x00010000) == 0x00010000) &&
             typeTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance()) {
           typeTable_ =
             org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.newBuilder(typeTable_).mergeFrom(value).buildPartial();
@@ -11317,7 +11599,7 @@ public final class ProtoBuf {
           typeTable_ = value;
         }
 
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00010000;
         return this;
       }
       /**
@@ -11326,15 +11608,15 @@ public final class ProtoBuf {
       public Builder clearTypeTable() {
         typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00010000);
         return this;
       }
 
       private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
       private void ensureVersionRequirementIsMutable() {
-        if (!((bitField0_ & 0x00004000) == 0x00004000)) {
+        if (!((bitField0_ & 0x00020000) == 0x00020000)) {
           versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
-          bitField0_ |= 0x00004000;
+          bitField0_ |= 0x00020000;
          }
       }
       /**
@@ -11419,7 +11701,7 @@ public final class ProtoBuf {
        */
       public Builder clearVersionRequirement() {
         versionRequirement_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00004000);
+        bitField0_ = (bitField0_ & ~0x00020000);
         
         return this;
       }
@@ -11429,7 +11711,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
        */
       public boolean hasVersionRequirementTable() {
-        return ((bitField0_ & 0x00008000) == 0x00008000);
+        return ((bitField0_ & 0x00040000) == 0x00040000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
@@ -11446,7 +11728,7 @@ public final class ProtoBuf {
         }
         versionRequirementTable_ = value;
 
-        bitField0_ |= 0x00008000;
+        bitField0_ |= 0x00040000;
         return this;
       }
       /**
@@ -11456,14 +11738,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.Builder builderForValue) {
         versionRequirementTable_ = builderForValue.build();
 
-        bitField0_ |= 0x00008000;
+        bitField0_ |= 0x00040000;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
        */
       public Builder mergeVersionRequirementTable(org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable value) {
-        if (((bitField0_ & 0x00008000) == 0x00008000) &&
+        if (((bitField0_ & 0x00040000) == 0x00040000) &&
             versionRequirementTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance()) {
           versionRequirementTable_ =
             org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.newBuilder(versionRequirementTable_).mergeFrom(value).buildPartial();
@@ -11471,7 +11753,7 @@ public final class ProtoBuf {
           versionRequirementTable_ = value;
         }
 
-        bitField0_ |= 0x00008000;
+        bitField0_ |= 0x00040000;
         return this;
       }
       /**
@@ -11480,7 +11762,7 @@ public final class ProtoBuf {
       public Builder clearVersionRequirementTable() {
         versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00008000);
+        bitField0_ = (bitField0_ & ~0x00040000);
         return this;
       }
 

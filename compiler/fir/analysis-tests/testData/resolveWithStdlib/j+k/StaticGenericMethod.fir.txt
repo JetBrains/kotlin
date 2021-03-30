@@ -13,7 +13,7 @@ FILE: User.kt
         protected abstract fun createSettings(): R|T|
 
         public final fun foo(): R|kotlin/Unit| {
-            this@R|/User|.R|/User.settings| = Q|StaticOwner|.R|/StaticOwner.newInstance|<R|ft<T, T?>!|>(this@R|/User|.R|/User.settings|.R|kotlin/jvm/javaClass|<R|ft<T, T?>!|>)
+            this@R|/User|.R|/User.settings| = Q|StaticOwner|.R|/StaticOwner.newInstance|<R|ft<T, T?>|>(this@R|/User|.R|/User.settings|.R|kotlin/jvm/javaClass|<R|ft<T, T?>|>)
         }
 
     }

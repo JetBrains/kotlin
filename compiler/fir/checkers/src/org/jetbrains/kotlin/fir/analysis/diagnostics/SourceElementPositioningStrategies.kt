@@ -18,9 +18,19 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.VAL_OR_VAR_NODE
     )
 
+    val COMPANION_OBJECT = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.COMPANION_OBJECT,
+        PositioningStrategies.COMPANION_OBJECT
+    )
+
     val SECONDARY_CONSTRUCTOR_DELEGATION_CALL = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL,
         PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL
+    )
+
+    val DECLARATION_RETURN_TYPE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DECLARATION_RETURN_TYPE,
+        PositioningStrategies.DECLARATION_RETURN_TYPE
     )
 
     val DECLARATION_NAME = SourceElementPositioningStrategy(
@@ -48,6 +58,51 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.MODALITY_MODIFIER
     )
 
+    val ABSTRACT_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ABSTRACT_MODIFIER,
+        PositioningStrategies.ABSTRACT_MODIFIER
+    )
+
+    val OPEN_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OPEN_MODIFIER,
+        PositioningStrategies.OPEN_MODIFIER
+    )
+
+    val OVERRIDE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OVERRIDE_MODIFIER,
+        PositioningStrategies.OVERRIDE_MODIFIER
+    )
+
+    val PRIVATE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PRIVATE_MODIFIER,
+        PositioningStrategies.PRIVATE_MODIFIER
+    )
+
+    val LATEINIT_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.LATEINIT_MODIFIER,
+        PositioningStrategies.LATEINIT_MODIFIER
+    )
+
+    val VARIANCE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.VARIANCE_MODIFIER,
+        PositioningStrategies.VARIANCE_MODIFIER
+    )
+
+    val CONST_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CONST_MODIFIER,
+        PositioningStrategies.CONST_MODIFIER
+    )
+
+    val INLINE_OR_VALUE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.INLINE_OR_VALUE_MODIFIER,
+        PositioningStrategies.INLINE_OR_VALUE_MODIFIER
+    )
+
+    val INNER_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.INNER_MODIFIER,
+        PositioningStrategies.INNER_MODIFIER
+    )
+
     val OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR
@@ -61,5 +116,40 @@ object SourceElementPositioningStrategies {
     val PARAMETER_VARARG_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PARAMETER_VARARG_MODIFIER,
         PositioningStrategies.PARAMETER_VARARG_MODIFIER
+    )
+
+    val DOT_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DOT_BY_QUALIFIED,
+        PositioningStrategies.DOT_BY_QUALIFIED
+    )
+
+    val SELECTOR_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.SELECTOR_BY_QUALIFIED,
+        PositioningStrategies.SELECTOR_BY_QUALIFIED
+    )
+
+    val REFERENCE_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.REFERENCE_BY_QUALIFIED,
+        PositioningStrategies.REFERENCE_BY_QUALIFIED
+    )
+
+    val REFERENCED_NAME_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
+        PositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
+    )
+
+    val WHEN_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.WHEN_EXPRESSION,
+        PositioningStrategies.WHEN_EXPRESSION
+    )
+
+    val IF_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.IF_EXPRESSION,
+        PositioningStrategies.IF_EXPRESSION
+    )
+
+    val ARRAY_ACCESS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ARRAY_ACCESS,
+        PositioningStrategies.ARRAY_ACCESS
     )
 }

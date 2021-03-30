@@ -17,8 +17,8 @@ class GenericTest {
     }
 
     fun test_2() {
-        val extensionValRef = <!UNRESOLVED_REFERENCE!>B<*>::extensionVal<!>
-        val extensionFunRef = <!UNRESOLVED_REFERENCE!>B<*>::extensionFun<!>
+        val extensionValRef = B<*>::<!UNRESOLVED_REFERENCE!>extensionVal<!>
+        val extensionFunRef = B<*>::<!UNRESOLVED_REFERENCE!>extensionFun<!>
     }
 }
 
@@ -36,8 +36,8 @@ class NoGenericTest {
     fun B.extensionFun(): A = A()
 
     fun test_1() {
-        val extensionValRef = B::extensionVal
-        val extensionFunRef = B::extensionFun
+        val extensionValRef = B::<!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>extensionVal<!>
+        val extensionFunRef = B::<!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>extensionFun<!>
     }
 
     fun test_2() {

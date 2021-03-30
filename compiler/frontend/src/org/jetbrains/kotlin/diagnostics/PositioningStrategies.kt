@@ -354,6 +354,9 @@ object PositioningStrategies {
     val VARIANCE_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.IN_KEYWORD, KtTokens.OUT_KEYWORD)
 
     @JvmField
+    val CONST_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.CONST_KEYWORD)
+
+    @JvmField
     val FOR_REDECLARATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val nameIdentifier = when (element) {
@@ -438,6 +441,14 @@ object PositioningStrategies {
     val MODALITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(MODALITY_MODIFIERS)
 
     @JvmField
+    val INLINE_OR_VALUE_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD))
+
+    @JvmField
+    val INNER_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.INNER_KEYWORD))
+
+    @JvmField
     val VARIANCE_IN_PROJECTION: PositioningStrategy<KtTypeProjection> = object : PositioningStrategy<KtTypeProjection>() {
         override fun mark(element: KtTypeProjection): List<TextRange> {
             return markElement(element.projectionToken!!)
@@ -504,6 +515,13 @@ object PositioningStrategies {
     val WHEN_EXPRESSION: PositioningStrategy<KtWhenExpression> = object : PositioningStrategy<KtWhenExpression>() {
         override fun mark(element: KtWhenExpression): List<TextRange> {
             return markElement(element.whenKeyword)
+        }
+    }
+
+    @JvmField
+    val IF_EXPRESSION: PositioningStrategy<KtIfExpression> = object : PositioningStrategy<KtIfExpression>() {
+        override fun mark(element: KtIfExpression): List<TextRange> {
+            return markElement(element.ifKeyword)
         }
     }
 
@@ -618,10 +636,10 @@ object PositioningStrategies {
     val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<PsiElement> =
         object : PositioningStrategy<PsiElement>() {
             override fun mark(element: PsiElement): List<TextRange> {
-                when (element) {
+                return when (element) {
                     is KtSecondaryConstructor -> {
                         val valueParameterList = element.valueParameterList ?: return markElement(element)
-                        return markRange(element.getConstructorKeyword(), valueParameterList.lastChild)
+                        markRange(element.getConstructorKeyword(), valueParameterList.lastChild)
                     }
                     is KtConstructorDelegationCall -> {
                         if (element.isImplicit) {
@@ -631,9 +649,9 @@ object PositioningStrategies {
                             val valueParameterList = constructor.valueParameterList ?: return markElement(constructor)
                             return markRange(constructor.getConstructorKeyword(), valueParameterList.lastChild)
                         }
-                        return markElement(element.calleeExpression ?: element)
+                        markElement(element.calleeExpression ?: element)
                     }
-                    else -> error("unexpected element $element")
+                    else -> markElement(element)
                 }
             }
         }
@@ -701,6 +719,71 @@ object PositioningStrategies {
                 is KtUnaryExpression -> mark(element.operationReference)
                 else -> super.mark(element)
             }
+        }
+    }
+
+    val DOT_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            when (element) {
+                is KtDotQualifiedExpression -> {
+                    return mark(element.operationTokenNode.psi)
+                }
+            }
+            // Fallback to mark the callee reference.
+            return REFERENCE_BY_QUALIFIED.mark(element)
+        }
+    }
+
+    val SELECTOR_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtQualifiedExpression) {
+                when (val selectorExpression = element.selectorExpression) {
+                    is KtElement -> return mark(selectorExpression)
+                }
+            }
+            return super.mark(element)
+        }
+    }
+
+    val REFERENCE_BY_QUALIFIED: PositioningStrategy<PsiElement> = FindReferencePositioningStrategy(false)
+    val REFERENCED_NAME_BY_QUALIFIED: PositioningStrategy<PsiElement> = FindReferencePositioningStrategy(true)
+
+    /**
+     * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for
+     * diagnostics on super and unresolved references. For example, with the following, only the part inside the parentheses should be
+     * highlighted.
+     *
+     * ```
+     * fun foo() {
+     *   (super)()
+     *    ^^^^^
+     *   (random123)()
+     *    ^^^^^^^^^
+     * }
+     * ```
+     */
+    class FindReferencePositioningStrategy(val locateReferencedName: Boolean) : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            var result: PsiElement = when (element) {
+                is KtQualifiedExpression -> {
+                    when (val selectorExpression = element.selectorExpression) {
+                        is KtCallExpression -> selectorExpression.calleeExpression ?: selectorExpression
+                        is KtReferenceExpression -> selectorExpression
+                        else -> element
+                    }
+                }
+                is KtCallableReferenceExpression -> element.callableReference
+                is KtCallExpression -> element.calleeExpression ?: element
+                is KtConstructorDelegationCall -> element.calleeExpression ?: element
+                is KtSuperTypeCallEntry -> element.calleeExpression
+                is KtOperationExpression -> element.operationReference
+                is KtWhenConditionInRange -> element.operationReference
+                else -> element
+            }
+            while (locateReferencedName && result is KtParenthesizedExpression) {
+                result = result.expression ?: break
+            }
+            return super.mark(result)
         }
     }
 }

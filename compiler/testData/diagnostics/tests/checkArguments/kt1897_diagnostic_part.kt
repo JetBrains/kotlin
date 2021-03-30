@@ -5,7 +5,7 @@ package a
 
 fun bar() {}
 
-fun foo(<!UNUSED_PARAMETER!>i<!>: Int, <!UNUSED_PARAMETER!>s<!>: String) {}
+fun foo(i: Int, s: String) {}
 
 fun test() {
 

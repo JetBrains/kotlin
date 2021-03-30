@@ -41,7 +41,12 @@ public open class CharProgression
 
     override fun iterator(): CharIterator = CharProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /**
+     * Checks if the progression is empty.
+     
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
@@ -98,7 +103,12 @@ public open class IntProgression
 
     override fun iterator(): IntIterator = IntProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /**
+     * Checks if the progression is empty.
+     
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
@@ -155,7 +165,12 @@ public open class LongProgression
 
     override fun iterator(): LongIterator = LongProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /**
+     * Checks if the progression is empty.
+     
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =

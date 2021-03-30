@@ -12,6 +12,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExplicitReceiverConsistency,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
         CheckLowPriorityInOverloadResolution,
@@ -22,6 +23,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         MapArguments,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckArguments,
         EagerResolveOfCallableReferences
     )
@@ -33,6 +35,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExplicitReceiverConsistency,
         MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
         CheckArguments,
@@ -47,6 +50,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExplicitReceiverConsistency,
         MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
         CheckArguments,
@@ -58,6 +62,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         DiscriminateSynthetics,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
         CheckCallableReferenceExpectedType,
@@ -68,6 +73,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         MapArguments,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
+        CollectTypeVariableUsagesInfo,
         CheckArguments,
         EagerResolveOfCallableReferences
     )

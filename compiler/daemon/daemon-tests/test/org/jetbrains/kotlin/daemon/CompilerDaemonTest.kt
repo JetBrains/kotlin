@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -109,7 +110,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     fun makeTestDaemonJvmOptions(logFile: File? = null, xmx: Int = 384, args: Iterable<String> = listOf()): DaemonJVMOptions {
         val additionalArgs = arrayListOf<String>()
         if (logFile != null) {
-            additionalArgs.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"")
+            additionalArgs.add("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${logFile.loggerCompatiblePath}\"")
         }
         args.forEach { additionalArgs.add(it) }
         val baseOpts = if (xmx > 0) DaemonJVMOptions(maxMemory = "${xmx}m") else DaemonJVMOptions()
@@ -160,16 +161,16 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     fun testDaemonJvmOptionsParsing() {
-        val backupJvmOptions = System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
+        val backupJvmOptions = System.getProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property)
         try {
-            System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxMetaspaceSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
+            System.setProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxMetaspaceSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
             val opts = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("200m", opts.maxMemory)
             assertEquals("10k", opts.maxMetaspaceSize)
             assertEquals("100", opts.reservedCodeCacheSize)
             assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy", "ea"), opts.jvmParams)
 
-            System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-Xmx300m,-XX:MaxMetaspaceSize=10k,-XX:ReservedCodeCacheSize=100")
+            System.setProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property, "-Xmx300m,-XX:MaxMetaspaceSize=10k,-XX:ReservedCodeCacheSize=100")
             val opts2 = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("300m", opts2.maxMemory)
             assertEquals( -1, DaemonJVMOptionsMemoryComparator().compare(opts, opts2))
@@ -178,14 +179,14 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val myXmxParam = ManagementFactory.getRuntimeMXBean().inputArguments.first { it.startsWith("-Xmx") }
             TestCase.assertNotNull(myXmxParam)
             val myXmxVal = myXmxParam.substring(4)
-            System.clearProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
+            System.clearProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property)
             val opts3 = configureDaemonJVMOptions(inheritMemoryLimits = true,
                                                   inheritOtherJvmOptions = true,
                                                   inheritAdditionalProperties = false)
             assertEquals(myXmxVal, opts3.maxMemory)
         }
         finally {
-            restoreSystemProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, backupJvmOptions)
+            restoreSystemProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property, backupJvmOptions)
         }
     }
 
@@ -215,12 +216,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     private fun withDaemonJvmOptionsSetTo(newValue: String?, fn: () -> Unit) {
-        val backup = getAndSetSystemProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, newValue)
+        val backup = getAndSetSystemProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property, newValue)
 
         try {
             fn()
         } finally {
-            getAndSetSystemProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, backup)
+            getAndSetSystemProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property, backup)
         }
     }
 
@@ -237,15 +238,15 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     fun testDaemonOptionsParsing() {
-        val backupOptions = System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)
+        val backupOptions = System.getProperty(CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property)
         try {
-            System.setProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, "runFilesPath=abcd,autoshutdownIdleSeconds=1111")
+            System.setProperty(CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property, "runFilesPath=abcd,autoshutdownIdleSeconds=1111")
             val opts = configureDaemonOptions(DaemonOptions(shutdownDelayMilliseconds = 1))
             assertEquals("abcd", opts.runFilesPath)
             assertEquals(1111, opts.autoshutdownIdleSeconds)
         }
         finally {
-            restoreSystemProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, backupOptions)
+            restoreSystemProperty(CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property, backupOptions)
         }
     }
 
@@ -518,12 +519,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val daemonOptions = makeTestDaemonOptions(getTestName(true))
         val jar = testTempDir.absolutePath + File.separator + "hello.jar"
         val args = listOf(
-                File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
-                "-Xmx256m",
-                "-D$COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY",
-                "-cp",
-                daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
-                KotlinCompilerClient::class.qualifiedName!!) +
+            File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
+            "-Xmx256m",
+            "-D${CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.property}",
+            "-cp",
+            daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
+            KotlinCompilerClient::class.qualifiedName!!) +
                    daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    File(getHelloAppBaseDir(), "hello.kt").absolutePath +
@@ -651,16 +652,16 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             }
         }
 
-        System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "true")
-        System.setProperty(COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY, "100000")
+        CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value = "true"
+        CompilerSystemProperties.COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY.value = "100000"
 
         val succeeded = try {
             (1..ParallelStartParams.threads).forEach { connectThread(it - 1) }
             doneLatch.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
         }
         finally {
-            System.clearProperty(COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY)
-            System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
+            CompilerSystemProperties.COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY.clear()
+            CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.clear()
         }
 
         Thread.sleep(100) // Wait for processes to finish and close log files

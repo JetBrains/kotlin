@@ -1,9 +1,12 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_RUNTIME
 // FULL_JDK
+
+// no stream api on Android
+// IGNORE_BACKEND: ANDROID
+
 import java.util.stream.*
 
 fun box(): String {

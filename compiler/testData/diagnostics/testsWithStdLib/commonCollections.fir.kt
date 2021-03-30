@@ -1,5 +1,4 @@
 // !WITH_NEW_INFERENCE
-// !LANGUAGE: -NonStrictOnlyInputTypesChecks
 
 import java.util.*
 fun foo() {

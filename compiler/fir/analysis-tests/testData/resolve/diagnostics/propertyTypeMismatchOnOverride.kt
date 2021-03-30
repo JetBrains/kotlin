@@ -2,8 +2,8 @@ open class A {
     open var test: Number = 10
 }
 
-open class B : A {
-    override var test: Double = 20.0
+open class B : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
+    override var test: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>Double<!> = 20.0
 }
 
 class C() : A() {
@@ -15,7 +15,7 @@ open class D() : B() {
 }
 
 class E<T : Double>(val value: T) : B() {
-    override var test: T = value
+    override var test: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>T<!> = value
 }
 
 open class F<T : Number>(val value: T) {
@@ -26,7 +26,7 @@ class G<E : Double>(val balue: E) : F<E>(balue) {
     override var rest: E = balue
 }
 
-class H<E : String>(val balue: E) : <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>F<E><!>(balue)<!> {
+class H<E : String>(val balue: E) : <!INAPPLICABLE_CANDIDATE!>F<E><!>(balue) {
     override var rest: E = balue // no report because of INAPPLICABLE_CANDIDATE
 }
 

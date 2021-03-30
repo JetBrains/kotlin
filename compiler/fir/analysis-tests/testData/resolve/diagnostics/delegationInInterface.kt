@@ -1,6 +1,6 @@
 class A
 
-interface B : <!DELEGATION_IN_INTERFACE, INTERFACE_WITH_SUPERCLASS!>A<!> by a {
+interface B : <!DELEGATION_IN_INTERFACE, INTERFACE_WITH_SUPERCLASS!>A<!> by <!UNRESOLVED_REFERENCE!>a<!> {
     val a: A
 }
 

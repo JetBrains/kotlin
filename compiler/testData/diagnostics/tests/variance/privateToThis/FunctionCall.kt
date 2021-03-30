@@ -3,7 +3,7 @@ fun <T> getT(): T = null!!
 class Test<in I> {
     private fun foo() : I = getT()
 
-    fun apply(<!UNUSED_PARAMETER!>i<!>: I) {}
+    fun apply(i: I) {}
 
     init {
         foo()

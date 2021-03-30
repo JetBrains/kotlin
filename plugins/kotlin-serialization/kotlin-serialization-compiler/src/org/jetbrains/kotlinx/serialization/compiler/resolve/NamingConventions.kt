@@ -44,7 +44,8 @@ object SerialEntityNames {
     const val LOAD = "deserialize"
     const val SERIALIZER_CLASS = "\$serializer"
 
-    const val initializedDescriptorFieldName = "\$initializedDescriptor"
+    const val INITIALIZED_DESCRIPTOR_FIELD_NAME = "\$initializedDescriptor"
+    const val SERIALIZER_LAZY_DELEGATE_FIELD_NAME = "\$serializer\$delegate"
 
     // classes
     val KSERIALIZER_NAME = Name.identifier(KSERIALIZER_CLASS)

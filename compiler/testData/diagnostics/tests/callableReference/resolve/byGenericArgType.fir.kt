@@ -8,4 +8,4 @@ fun foo(s: String) {}
 
 val x1 = ofType<() -> Unit>(::foo)
 val x2 = ofType<(String) -> Unit>(::foo)
-val x3 = <!INAPPLICABLE_CANDIDATE!>ofType<!><(Int) -> Unit>(<!UNRESOLVED_REFERENCE!>::foo<!>)
+val x3 = <!INAPPLICABLE_CANDIDATE!>ofType<!><(Int) -> Unit>(::<!UNRESOLVED_REFERENCE!>foo<!>)

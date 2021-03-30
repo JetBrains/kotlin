@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Tr
 interface G<T>
 

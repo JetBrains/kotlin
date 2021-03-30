@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
+import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
@@ -17,16 +20,23 @@ interface NpmApi {
 
     fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution)
 
-    fun preparedFiles(project: Project): Collection<File>
+    fun preparedFiles(nodeJs: NodeJsRootExtension): Collection<File>
 
     fun prepareRootProject(
-        rootProject: Project,
+        rootProject: Project?,
+        nodeJs: NodeJsRootExtension,
+        rootProjectName: String,
+        rootProjectVersion: String,
+        logger: Logger,
         subProjects: Collection<KotlinCompilationNpmResolution>,
         resolutions: Map<String, String>
     )
 
     fun resolveRootProject(
-        rootProject: Project,
+        services: ServiceRegistry,
+        logger: Logger,
+        nodeJs: NodeJsRootExtension,
+        yarnHome: File,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         skipExecution: Boolean,
         cliArgs: List<String>

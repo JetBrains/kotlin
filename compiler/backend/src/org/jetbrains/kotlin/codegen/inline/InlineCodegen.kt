@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
-import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -42,8 +40,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
-import java.util.*
-import kotlin.collections.HashSet
 import kotlin.math.max
 
 abstract class InlineCodegen<out T : BaseExpressionCodegen>(
@@ -111,11 +107,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         )
     }
 
-    protected fun generateStub(resolvedCall: ResolvedCall<*>?, codegen: BaseExpressionCodegen) {
+    protected fun generateStub(text: String, codegen: BaseExpressionCodegen) {
         leaveTemps()
-        assert(resolvedCall != null)
-        val message = "Call is part of inline cycle: " + resolvedCall!!.call.callElement.text
-        AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", message)
+        AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
     protected fun endCall(result: InlineResult, registerLineNumberAfterwards: Boolean) {
@@ -243,12 +237,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         //hack to keep linenumber info, otherwise jdi will skip begin of linenumber chain
         adapter.visitInsn(Opcodes.NOP)
 
-        val result = inliner.doInline(adapter, remapper, true, ReturnLabelOwner.SKIP_ALL)
+        val result = inliner.doInline(adapter, remapper, true, mapOf())
         result.reifiedTypeParametersUsages.mergeAll(reificationResult)
 
-        val labels = sourceCompiler.getContextLabels()
-
-        val infos = MethodInliner.processReturns(adapter, ReturnLabelOwner { labels.contains(it) }, true, null)
+        val infos = MethodInliner.processReturns(adapter, sourceCompiler.getContextLabels(), null)
         generateAndInsertFinallyBlocks(
             adapter, infos, (remapper.remap(parameters.argsSizeOnStack + 1).value as StackValue.Local).index
         )
@@ -319,7 +311,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     frameMap.enterTemp(Type.INT_TYPE)
                 }
 
-                sourceCompiler.generateFinallyBlocksIfNeeded(finallyCodegen, extension.returnType, extension.finallyIntervalEnd.label)
+                sourceCompiler.generateFinallyBlocksIfNeeded(
+                    finallyCodegen, extension.returnType, extension.finallyIntervalEnd.label, extension.jumpTarget
+                )
 
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
                 insertNodeBefore(finallyNode, intoNode, curInstr)
@@ -604,14 +598,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             return (directMember as? ImportedFromObjectCallableDescriptor<*>)?.callableFromObject ?: directMember
         }
 
-        private fun cloneMethodNode(methodNode: MethodNode): MethodNode {
-            methodNode.instructions.resetLabels()
-            return MethodNode(
-                Opcodes.API_VERSION, methodNode.access, methodNode.name, methodNode.desc, methodNode.signature,
-                ArrayUtil.toStringArray(methodNode.exceptions)
-            ).also(methodNode::accept)
-        }
-
         private fun doCreateMethodNodeFromCompiled(
             callableDescriptor: CallableMemberDescriptor,
             state: GenerationState,
@@ -639,35 +625,17 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
             }
 
-            val methodNode = getMethodNodeInner(containerId, bytes, asmMethod, callableDescriptor) ?: return null
-
-            // KLUDGE: Inline suspend function built with compiler version less than 1.1.4/1.2-M1 did not contain proper
-            // before/after suspension point marks, so we detect those functions here and insert the corresponding marks
-            if (isLegacySuspendInlineFunction(callableDescriptor)) {
-                insertLegacySuspendInlineMarks(methodNode.node)
-            }
-
-            return methodNode
-        }
-
-        private fun getMethodNodeInner(
-            containerId: ClassId,
-            bytes: ByteArray,
-            asmMethod: Method,
-            callableDescriptor: CallableMemberDescriptor
-        ): SMAPAndMethodNode? {
             val classType = AsmUtil.asmTypeByClassId(containerId)
-            var methodNode = getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, classType)
+            val methodNode = getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, classType)
             if (methodNode == null && requiresFunctionNameManglingForReturnType(callableDescriptor)) {
                 val nameWithoutManglingSuffix = asmMethod.name.stripManglingSuffixOrNull()
                 if (nameWithoutManglingSuffix != null) {
-                    methodNode = getMethodNode(bytes, nameWithoutManglingSuffix, asmMethod.descriptor, classType)
+                    val methodWithoutMangling = getMethodNode(bytes, nameWithoutManglingSuffix, asmMethod.descriptor, classType)
+                    if (methodWithoutMangling != null) return methodWithoutMangling
                 }
-                if (methodNode == null) {
-                    val nameWithImplSuffix = "$nameWithoutManglingSuffix-impl"
-                    methodNode = getMethodNode(bytes, nameWithImplSuffix, asmMethod.descriptor, classType)
-                }
+                return getMethodNode(bytes, "$nameWithoutManglingSuffix-impl", asmMethod.descriptor, classType)
             }
+
             return methodNode
         }
 

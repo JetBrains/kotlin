@@ -33,7 +33,8 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedStdout: String = "",
         expectedStderr: String = "",
         expectedExitCode: Int = 0,
-        workDirectory: File? = null
+        workDirectory: File? = null,
+        environment: Map<String, String> = emptyMap(),
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
@@ -43,9 +44,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         // So, use ProcessBuilder instead.
         val pb = ProcessBuilder(
             launcherFile.absolutePath,
-            // In cmd, `=` is delimeter, so we need to surround parameter with quotes.
+            // In cmd, `=` is delimiter, so we need to surround parameter with quotes.
             *quoteIfNeeded(args)
         )
+        pb.environment().putAll(environment)
         pb.directory(workDirectory)
         val process = pb.start()
         val stdout =
@@ -237,16 +239,13 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testScriptWithXArguments() {
-//        runProcess(
-//            "kotlin", "$testDataDirectory/funWithResultReturn.kts",
-//            expectedExitCode = 1,
-//            expectedStderr = """error: 'kotlin.Result' cannot be used as a return type (funWithResultReturn.kts:2:11)
-//compiler/testData/launcher/funWithResultReturn.kts:2:11: error: 'kotlin.Result' cannot be used as a return type
-//fun f() : Result<Int> = Result.success(42)
-//          ^
-//"""
-//        )
-//        runProcess("kotlin", "-Xallow-result-return-type", "$testDataDirectory/funWithResultReturn.kts", expectedStdout = "42\n")
+        runProcess(
+            "kotlin", "-Xno-inline", "$testDataDirectory/noInline.kts",
+            expectedExitCode = 3,
+            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
+	at NoInline.<init>(noInline.kts:1)
+""")
+        runProcess("kotlin", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
     }
 
     fun testNoStdLib() {
@@ -299,29 +298,27 @@ println(42)
 
     fun testHowToRunCustomScript() {
         runProcess(
-            "kotlin", "$testDataDirectory/funWithResultReturn.myscript",
-            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/funWithResultReturn.myscript\n"
+            "kotlin", "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/noInline.myscript\n"
         )
         runProcess(
-            "kotlin", "-howtorun", "script", "$testDataDirectory/funWithResultReturn.myscript",
-            expectedExitCode = 1, expectedStderr = "error: unrecognized script type: funWithResultReturn.myscript; Specify path to the script file as the first argument\n"
+            "kotlin", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 1, expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
         )
         runProcess(
-            "kotlin", "-howtorun", ".kts", "$testDataDirectory/funWithResultReturn.myscript",
-            expectedExitCode = 1, expectedStderr = """error: unresolved reference: CompilerOptions (funWithResultReturn.myscript:1:7)
-error: 'kotlin.Result' cannot be used as a return type (funWithResultReturn.myscript:3:11)
-compiler/testData/launcher/funWithResultReturn.myscript:1:7: error: unresolved reference: CompilerOptions
-@file:CompilerOptions("-Xallow-result-return-type")
+            "kotlin", "-howtorun", ".kts", "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 1, expectedStderr = """error: unresolved reference: CompilerOptions (noInline.myscript:1:7)
+compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: CompilerOptions
+@file:CompilerOptions("-Xno-inline")
       ^
-compiler/testData/launcher/funWithResultReturn.myscript:3:11: error: 'kotlin.Result' cannot be used as a return type
-fun f() : Result<Int> = Result.success(42)
-          ^
 """
         )
         runProcess(
-            "kotlin", "-howtorun", ".main.kts", "$testDataDirectory/funWithResultReturn.myscript",
-            expectedStdout = "42\n"
-        )
+            "kotlin", "-howtorun", ".main.kts", "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 3,
+            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline_main
+	at NoInline_main.<init>(noInline.myscript:3)
+""")
     }
 
     fun testHowToRunClassFile() {
@@ -333,5 +330,28 @@ fun f() : Result<Int> = Result.success(42)
             expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt (No such file or directory)\n"
         )
         runProcess("kotlin", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+    }
+
+    fun testKotlincJdk15() {
+        val jdk15 = mapOf("JAVA_HOME" to KtTestUtil.getJdk15Home().absolutePath)
+        runProcess(
+            "kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path,
+            environment = jdk15,
+        )
+
+        runProcess(
+            "kotlin", "-e", "listOf('O'.toString() + 'K')",
+            expectedStdout = "[OK]\n", environment = jdk15,
+        )
+    }
+
+    fun testEmptyJArgument() {
+        runProcess(
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            "-d", tmpdir.path,
+            "-J", expectedStdout = "error: empty -J argument\n",
+            expectedExitCode = 1
+        )
     }
 }

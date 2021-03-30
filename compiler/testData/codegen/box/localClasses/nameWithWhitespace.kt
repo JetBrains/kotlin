@@ -6,11 +6,9 @@
 
 // Names with spaces are not valid according to the dex specification
 // before DEX version 040. Therefore, do not attempt to dex the resulting
-// class file. When D8 is updated to the most recent version, we can increase
-// the min android api level during dexing to allow these spaces.
+// class file with a min api below 30.
 //
 // See: https://source.android.com/devices/tech/dalvik/dex-format#simplename
-// IGNORE_DEXING
 // IGNORE_BACKEND: ANDROID
 
 fun `method with spaces`(): String {

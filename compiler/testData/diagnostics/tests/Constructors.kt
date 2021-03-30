@@ -10,7 +10,7 @@ class WithC2() : <!SUPERTYPE_NOT_INITIALIZED!>WithC1<!>
 class WithPC0() {
 }
 
-class WithPC1(<!UNUSED_PARAMETER!>a<!> : Int) {
+class WithPC1(a : Int) {
 }
 
 
@@ -18,7 +18,7 @@ class Foo() : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>WithPC0<!>, <!SYNTAX
 
 }
 
-class WithCPI_Dup(<!UNUSED_PARAMETER!>x<!> : Int) {
+class WithCPI_Dup(x : Int) {
   <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var x : Int<!>
 }
 
@@ -31,5 +31,5 @@ class NoCPI {
   val a = 1
   var ab = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
     get() = 1
-    set(<!UNUSED_PARAMETER!>v<!>) {}
+    set(v) {}
 }

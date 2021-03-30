@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtStubbedPsiUtil
-import org.jetbrains.kotlin.psi.doNotAnalyze
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -111,7 +108,12 @@ abstract class KotlinSuppressCache {
 
        This way we need no more lookups than the number of suppress() annotations from here to the root.
      */
-    private fun isSuppressedByAnnotated(suppressionKey: String, severity: Severity, annotated: KtAnnotated, debugDepth: Int): Boolean {
+    private fun isSuppressedByAnnotated(
+        suppressionKey: String,
+        severity: Severity,
+        annotated: KtAnnotated,
+        debugDepth: Int
+    ): Boolean {
         val suppressor = getOrCreateSuppressor(annotated)
         if (suppressor.isSuppressed(suppressionKey, severity)) return true
 
@@ -140,6 +142,7 @@ abstract class KotlinSuppressCache {
 
     private fun getSuppressingStrings(annotated: KtAnnotated): Set<String> {
         val builder = ImmutableSet.builder<String>()
+
         for (annotationDescriptor in getSuppressionAnnotations(annotated)) {
             processAnnotation(builder, annotationDescriptor)
         }

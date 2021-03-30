@@ -37,8 +37,9 @@ sourceSets {
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
+    val useFirIdeaPlugin = kotlinBuildProperties.useFirIdeaPlugin
     doFirst {
-        if (!kotlinBuildProperties.useFirIdeaPlugin) {
+        if (!useFirIdeaPlugin) {
             error("Test task in the module should be executed with -Pidea.fir.plugin=true")
         }
     }

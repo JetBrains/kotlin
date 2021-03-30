@@ -168,7 +168,8 @@ fun IrClass.addFunction(
         this.origin = origin
     }.apply {
         if (!isStatic) {
-            dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
+            val thisReceiver = parentAsClass.thisReceiver!!
+            dispatchReceiverParameter = thisReceiver.copyTo(this, type = thisReceiver.type)
         }
     }
 

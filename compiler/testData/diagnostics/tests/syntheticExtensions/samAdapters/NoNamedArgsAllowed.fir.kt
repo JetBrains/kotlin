@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
-    javaClass.doSomething(p = 1) {
+    javaClass.doSomething(<!NAMED_ARGUMENTS_NOT_ALLOWED!>p = 1<!>) {
         bar()
     }
 }

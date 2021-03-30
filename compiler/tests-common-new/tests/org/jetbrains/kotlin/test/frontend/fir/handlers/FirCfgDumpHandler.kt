@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirControlFlowGraphRenderVisitor
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDERER_CFG_LEVELS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -24,7 +25,8 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         if (alreadyDumped || FirDiagnosticsDirectives.DUMP_CFG !in module.directives) return
         val file = info.firFiles.values.first()
-        file.accept(FirControlFlowGraphRenderVisitor(builder))
+        val renderLevels = RENDERER_CFG_LEVELS in module.directives
+        file.accept(FirControlFlowGraphRenderVisitor(builder, renderLevels))
         alreadyDumped = true
     }
 

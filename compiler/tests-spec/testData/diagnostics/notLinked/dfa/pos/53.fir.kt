@@ -8,7 +8,7 @@ fun case_1(x: Int?) = 10
 fun case_1() {
     var x: Int? = 10
     if (x != null) {
-        val z = case_1(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>)
+        val z = case_1(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>z<!>
     }
 }
@@ -20,7 +20,7 @@ fun case_2() {
     var x: Int? = 10
     var y = { x = null }
     if (x != null) {
-        val z = case_2(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>)
+        val z = case_2(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>z<!>
     }
 }

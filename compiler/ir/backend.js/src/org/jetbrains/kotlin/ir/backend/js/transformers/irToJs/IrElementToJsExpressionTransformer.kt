@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -111,13 +114,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
 
-        // External interfaces cannot normally have companion objects.
-        // However, stdlib uses them to simulate string literal unions
-        // TODO: Stop abusing this tech
-        if (obj.isCompanion && obj.parentAsClass.isInterface) {
-            return JsNullLiteral()
-        }
-
         return context.getRefForExternalClass(obj)
     }
 
@@ -174,6 +170,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                     JsNew(refForExternalClass, arguments)
                 } else {
                     val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
+                        expression,
+                        context,
                         JsNullLiteral(),
                         arguments,
                         varargParameterIndex
@@ -197,7 +195,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
         if (context.checkIfJsCode(expression.symbol)) {
-            val statements = translateJsCodeIntoStatementList(expression.getValueArgument(0) ?: error("JsCode is expected"))
+            val statements = translateJsCodeIntoStatementList(expression.getValueArgument(0) ?: error("JsCode is expected"))!!
             if (statements.isEmpty()) return JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)) // TODO: report warning or even error
 
             val lastStatement = statements.last()

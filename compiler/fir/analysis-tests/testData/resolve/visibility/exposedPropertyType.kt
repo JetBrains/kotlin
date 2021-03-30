@@ -14,10 +14,10 @@ class A {
 }
 
 class Property {
-    var var1: String
-    var var2: String
-    var var3: Int
-    <!EXPOSED_PROPERTY_TYPE{LT}!>var <!EXPOSED_PROPERTY_TYPE{PSI}!>var4<!>: A.AInnerPrivate<!>
-    var var5: A.AInnerPublic
-    <!EXPOSED_PROPERTY_TYPE{LT}!>var <!EXPOSED_PROPERTY_TYPE{PSI}!>var6<!>: A.AInnerProtectedEnum<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var var1: String<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var var2: String<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var var3: Int<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var <!EXPOSED_PROPERTY_TYPE!>var4<!>: A.AInnerPrivate<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var var5: A.AInnerPublic<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var <!EXPOSED_PROPERTY_TYPE!>var6<!>: A.AInnerProtectedEnum<!>
 }

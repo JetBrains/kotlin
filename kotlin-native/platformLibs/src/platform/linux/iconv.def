@@ -1,0 +1,3 @@
+depends = posix
+package = platform.iconv
+headers = iconv.h

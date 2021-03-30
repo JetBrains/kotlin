@@ -45,14 +45,14 @@ FILE fqName:<root> fileName:/recursiveCapturedTypeInPropertyReference.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.AbstractSymbol<E of <root>.AbstractSymbol>
       VALUE_PARAMETER name:list index:0 type:kotlin.collections.List<kotlin.Any>
       BLOCK_BODY
-        VAR name:result type:kotlin.collections.List<<root>.AbstractSymbol<out <root>.Recursive<*>>> [val]
-          CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.AbstractSymbol<out <root>.Recursive<*>>> origin=null
+        VAR name:result type:kotlin.collections.List<<root>.AbstractSymbol<*>> [val]
+          CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.AbstractSymbol<*>> origin=null
             <T>: <root>.Recursive<*>
-            <R>: <root>.AbstractSymbol<out <root>.Recursive<*>>
+            <R>: <root>.AbstractSymbol<*>
             $receiver: CALL 'public final fun filterIsInstance <R> (): kotlin.collections.List<R of kotlin.collections.CollectionsKt.filterIsInstance> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<<root>.Recursive<*>> origin=null
               <R>: <root>.Recursive<*>
               $receiver: GET_VAR 'list: kotlin.collections.List<kotlin.Any> declared in <root>.AbstractSymbol.foo' type=kotlin.collections.List<kotlin.Any> origin=null
-            transform: PROPERTY_REFERENCE 'public abstract symbol: <root>.AbstractSymbol<R of <root>.Recursive> [val]' field=null getter='public abstract fun <get-symbol> (): <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' setter=null type=kotlin.reflect.KProperty1<<root>.Recursive<*>, <root>.AbstractSymbol<<root>.Recursive<*>>> origin=null
+            transform: PROPERTY_REFERENCE 'public abstract symbol: <root>.AbstractSymbol<R of <root>.Recursive> [val]' field=null getter='public abstract fun <get-symbol> (): <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' setter=null type=kotlin.reflect.KProperty1<<root>.Recursive<*>, <root>.AbstractSymbol<out kotlin.Any>> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

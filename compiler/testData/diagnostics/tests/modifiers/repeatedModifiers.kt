@@ -39,3 +39,5 @@ fun test() {
     }
 }
 
+<!WRONG_MODIFIER_TARGET!>external<!> <!REPEATED_MODIFIER!>external<!> val i = 0
+<!WRONG_MODIFIER_TARGET!>const<!> <!REPEATED_MODIFIER!>const<!> var x = 0

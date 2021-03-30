@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,8 @@ import kotlin.internal.*
 import kotlin.jvm.JvmName
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 /**
  * Current adapter providing assertion implementations
@@ -29,7 +31,9 @@ val asserter: Asserter
 internal var _asserter: Asserter? = null
 
 /** Asserts that the given [block] returns `true`. */
-fun assertTrue(message: String? = null, block: () -> Boolean) {
+@JvmName("assertTrueInline")
+@InlineOnly
+inline fun assertTrue(message: String? = null, block: () -> Boolean) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertTrue(block(), message)
 }
@@ -41,7 +45,9 @@ fun assertTrue(actual: Boolean, message: String? = null) {
 }
 
 /** Asserts that the given [block] returns `false`. */
-fun assertFalse(message: String? = null, block: () -> Boolean) {
+@JvmName("assertFalseInline")
+@InlineOnly
+inline fun assertFalse(message: String? = null, block: () -> Boolean) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertFalse(block(), message)
 }
@@ -72,6 +78,44 @@ fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: String? = 
     asserter.assertNotSame(message, illegal, actual)
 }
 
+/**
+ * Asserts that [value] is of type [T], with an optional [message].
+ *
+ * Note that due to type erasure the type check may be partial (e.g. `assertIs<List<String>>(value)`
+ * only checks for the class being [List] and not the type of its elements because it's erased).
+ */
+@SinceKotlin("1.5")
+@InlineOnly
+@OptIn(ExperimentalStdlibApi::class)
+inline fun <reified T> assertIs(value: Any?, message: String? = null): T {
+    contract { returns() implies (value is T) }
+    assertIsOfType(value, typeOf<T>(), value is T, message)
+    return value as T
+}
+
+@PublishedApi
+internal fun assertIsOfType(value: Any?, type: KType, result: Boolean, message: String?) {
+    asserter.assertTrue({ messagePrefix(message) + "Expected value to be of type <$type>, actual <${value?.let { it::class }}>." }, result)
+}
+
+/**
+ * Asserts that [value] is not of type [T], with an optional [message].
+ *
+ * Note that due to type erasure the type check may be partial (e.g. `assertIsNot<List<String>>(value)`
+ * only checks for the class being [List] and not the type of its elements because it's erased).
+ */
+@SinceKotlin("1.5")
+@InlineOnly
+@OptIn(ExperimentalStdlibApi::class)
+inline fun <reified T> assertIsNot(value: Any?, message: String? = null) {
+    assertIsNotOfType(value, typeOf<T>(), value !is T, message)
+}
+
+@PublishedApi
+internal fun assertIsNotOfType(@Suppress("UNUSED_PARAMETER") value: Any?, type: KType, result: Boolean, message: String?) {
+    asserter.assertTrue({ messagePrefix(message) + "Expected value to not be of type <$type>." }, result)
+}
+
 /** Asserts that the [actual] value is not `null`, with an optional [message]. */
 fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
     contract { returns() implies (actual != null) }
@@ -80,17 +124,170 @@ fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
 }
 
 /** Asserts that the [actual] value is not `null`, with an optional [message] and a function [block] to process the not-null value. */
-fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
+@JvmName("assertNotNullInline")
+@InlineOnly
+inline fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
     contract { returns() implies (actual != null) }
-    asserter.assertNotNull(message, actual)
-    if (actual != null) {
-        block(actual)
-    }
+    block(assertNotNull(actual, message))
 }
 
 /** Asserts that the [actual] value is `null`, with an optional [message]. */
 fun assertNull(actual: Any?, message: String? = null) {
     asserter.assertNull(message, actual)
+}
+
+/**
+ * Asserts that the [expected] iterable is *structurally* equal to the [actual] iterable,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContentEquals(expected: Iterable<T>?, actual: Iterable<T>?, message: String? = null) {
+    assertIterableContentEquals("Iterable", message, expected, actual, Iterable<*>::iterator)
+}
+
+/**
+ * Asserts that the [expected] sequence is *structurally* equal to the [actual] sequence,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContentEquals(expected: Sequence<T>?, actual: Sequence<T>?, message: String? = null) {
+    assertIterableContentEquals("Sequence", message, expected, actual, Sequence<*>::iterator)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContentEquals(expected: Array<T>?, actual: Array<T>?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, Array<*>::get, Array<*>?::contentToString, Array<*>?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: ByteArray?, actual: ByteArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, ByteArray::get, ByteArray?::contentToString, ByteArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: ShortArray?, actual: ShortArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, ShortArray::get, ShortArray?::contentToString, ShortArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: IntArray?, actual: IntArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, IntArray::get, IntArray?::contentToString, IntArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: LongArray?, actual: LongArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, LongArray::get, LongArray?::contentToString, LongArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: FloatArray?, actual: FloatArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, FloatArray::get, FloatArray?::contentToString, FloatArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: DoubleArray?, actual: DoubleArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, DoubleArray::get, DoubleArray?::contentToString, DoubleArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: BooleanArray?, actual: BooleanArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, BooleanArray::get, BooleanArray?::contentToString, BooleanArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: CharArray?, actual: CharArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, CharArray::get, CharArray?::contentToString, CharArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContentEquals(expected: UByteArray?, actual: UByteArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, UByteArray::get, UByteArray?::contentToString, UByteArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContentEquals(expected: UShortArray?, actual: UShortArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, UShortArray::get, UShortArray?::contentToString, UShortArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContentEquals(expected: UIntArray?, actual: UIntArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, UIntArray::get, UIntArray?::contentToString, UIntArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContentEquals(expected: ULongArray?, actual: ULongArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, ULongArray::get, ULongArray?::contentToString, ULongArray?::contentEquals)
 }
 
 /** Marks a test as having failed if this point in the execution path is reached, with an optional [message]. */
@@ -110,13 +307,17 @@ fun fail(message: String? = null, cause: Throwable? = null): Nothing {
 }
 
 /** Asserts that given function [block] returns the given [expected] value. */
-fun <@OnlyInputTypes T> expect(expected: T, block: () -> T) {
+@JvmName("expectInline")
+@InlineOnly
+inline fun <@OnlyInputTypes T> expect(expected: T, block: () -> T) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block())
 }
 
 /** Asserts that given function [block] returns the given [expected] value and use the given [message] if it fails. */
-fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
+@JvmName("expectInline")
+@InlineOnly
+inline fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block(), message)
 }

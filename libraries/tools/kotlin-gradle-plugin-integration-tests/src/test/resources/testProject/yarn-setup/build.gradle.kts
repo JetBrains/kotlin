@@ -10,7 +10,7 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 yarn

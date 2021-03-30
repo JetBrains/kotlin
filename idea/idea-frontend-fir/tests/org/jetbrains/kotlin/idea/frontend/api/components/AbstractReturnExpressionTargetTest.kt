@@ -10,10 +10,8 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.util.parentOfType
 import junit.framework.Assert
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.util.application.executeOnPooledThread
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -34,8 +32,8 @@ abstract class AbstractReturnExpressionTargetTest : KotlinLightCodeInsightFixtur
         val expectedReturnTarget = ktFile.getExpectedReturnTarget()
 
         val actualReturnTargetPsi: KtDeclaration? = executeOnPooledThreadInReadAction {
-            analyze(ktFile) {
-                val actualReturnTargetSymbol = ktReturnExpressionAtCaret.getReturnTargetSymbol() ?: return@analyze null
+            analyse(ktFile) {
+                val actualReturnTargetSymbol = ktReturnExpressionAtCaret.getReturnTargetSymbol() ?: return@analyse null
                 actualReturnTargetSymbol.psi as KtDeclaration
             }
         }

@@ -29,7 +29,7 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
         run<Nothing?> { null }
     }
     launch {
-        run { <!UNUSED_EXPRESSION!>null<!> }
+        run { null }
     }
     launch {
         run(i) { TODO() }
@@ -38,16 +38,16 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
         run(A.flexible(i)) { TODO() }
     }
     launch {
-        run(A.flexible(iUnit)) { <!UNUSED_EXPRESSION!>42<!> }
+        run(A.flexible(iUnit)) { 42 }
     }
     launch {
         @Suppress("UNSUPPORTED")
-        run<dynamic> { <!UNUSED_EXPRESSION!>""<!> }
+        run<dynamic> { "" }
     }
 
     if (iUnit is <!INCOMPATIBLE_TYPES!>String<!>) {
         launch {
-            run(A.flexible(iUnit)) { <!UNUSED_EXPRESSION!>42<!> }
+            run(A.flexible(iUnit)) { 42 }
         }
     }
 }

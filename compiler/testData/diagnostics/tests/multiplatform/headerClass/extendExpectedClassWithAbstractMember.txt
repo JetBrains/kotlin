@@ -70,7 +70,7 @@ public expect interface BaseE {
 }
 
 public sealed class BaseEImpl : BaseE {
-    internal constructor BaseEImpl()
+    protected constructor BaseEImpl()
     public final fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract expect override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit

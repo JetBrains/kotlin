@@ -1,1 +1,2 @@
 // INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.RedundantUnitReturnTypeInspection
+// FIR_INSPECTION_CLASS: org.jetbrains.kotlin.idea.fir.inspections.declarations.HLRedundantUnitReturnTypeInspection

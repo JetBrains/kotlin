@@ -35,14 +35,14 @@ abstract class AbstractIrSourceRangesTestCase : AbstractIrGeneratorTestCase() {
         }
     }
 
-    private fun IrElement.dumpWithSourceLocations(fileEntry: SourceManager.FileEntry): String =
+    private fun IrElement.dumpWithSourceLocations(fileEntry: IrFileEntry): String =
         StringBuilder().also {
             acceptVoid(DumpSourceLocations(it, fileEntry))
         }.toString()
 
     private class DumpSourceLocations(
         out: Appendable,
-        val fileEntry: SourceManager.FileEntry
+        val fileEntry: IrFileEntry
     ) : IrElementVisitorVoid {
         val printer = Printer(out, "  ")
         val elementRenderer = RenderIrElementVisitor()

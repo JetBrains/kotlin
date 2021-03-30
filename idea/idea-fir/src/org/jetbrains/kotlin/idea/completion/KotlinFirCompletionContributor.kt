@@ -10,18 +10,23 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
+import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isExtension
+import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -39,7 +44,12 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
 
         val resultSet = createResultSet(parameters, result)
-        KotlinAvailableScopesCompletionProvider(resultSet.prefixMatcher).addCompletions(parameters, resultSet)
+        val indexHelper = IndexHelper(
+            parameters.position.project,
+            parameters.position.getModuleInfo().contentScope()
+        )
+
+        KotlinCommonCompletionProvider(resultSet.prefixMatcher, indexHelper).addCompletions(parameters, resultSet)
     }
 
     private fun createResultSet(parameters: CompletionParameters, result: CompletionResultSet): CompletionResultSet =
@@ -72,11 +82,23 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
     }
 }
 
-private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatcher) {
+/**
+ * Currently, this class is responsible for collecting all possible completion variants.
+ *
+ * TODO refactor it, try to split into several classes, or decompose it into several classes.
+ */
+private class KotlinCommonCompletionProvider(
+    private val prefixMatcher: PrefixMatcher,
+    private val indexHelper: IndexHelper
+) {
     private val lookupElementFactory = KotlinFirLookupElementFactory()
+    private val typeNamesProvider = TypeNamesProvider(indexHelper)
 
     private val scopeNameFilter: KtScopeNameFilter =
         { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }
+
+    private val shouldCompleteTopLevelCallablesFromIndex: Boolean
+        get() = prefixMatcher.prefix.isNotEmpty()
 
     private fun KtAnalysisSession.addSymbolToCompletion(completionResultSet: CompletionResultSet, expectedType: KtType?, symbol: KtSymbol) {
         if (symbol !is KtNamedSymbol) return
@@ -114,21 +136,21 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
         with(getAnalysisSessionFor(originalFile).createContextDependentCopy(originalFile, nameExpression)) {
             val expectedType = nameExpression.getExpectedType()
 
-            val (implicitScopes, _) = originalFile.getScopeContextForPosition(nameExpression)
+            val scopesContext = originalFile.getScopeContextForPosition(nameExpression)
 
             fun KtCallableSymbol.hasSuitableExtensionReceiver(): Boolean =
                 checkExtensionIsSuitable(originalFile, nameExpression, explicitReceiver)
 
             when {
-                nameExpression.parent is KtUserType -> collectTypesCompletion(result, implicitScopes, expectedType)
+                nameExpression.parent is KtUserType -> collectTypesCompletion(result, scopesContext.scopes, expectedType)
                 explicitReceiver != null -> collectDotCompletion(
                     result,
-                    implicitScopes,
+                    scopesContext.scopes,
                     explicitReceiver,
                     expectedType,
                     KtCallableSymbol::hasSuitableExtensionReceiver
                 )
-                else -> collectDefaultCompletion(result, implicitScopes, expectedType, KtCallableSymbol::hasSuitableExtensionReceiver)
+                else -> collectDefaultCompletion(result, scopesContext, expectedType, KtCallableSymbol::hasSuitableExtensionReceiver)
             }
         }
     }
@@ -138,8 +160,11 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
         implicitScopes: KtScope,
         expectedType: KtType?,
     ) {
-        val availableClasses = implicitScopes.getClassifierSymbols(scopeNameFilter)
-        availableClasses.forEach { addSymbolToCompletion(result, expectedType, it) }
+        val classesFromScopes = implicitScopes.getClassifierSymbols(scopeNameFilter)
+        classesFromScopes.forEach { addSymbolToCompletion(result, expectedType, it) }
+
+        val kotlinClassesFromIndices = indexHelper.getKotlinClasses(scopeNameFilter, psiFilter = { it !is KtEnumEntry })
+        kotlinClassesFromIndices.forEach { addSymbolToCompletion(result, expectedType, it.getSymbol()) }
     }
 
     private fun KtAnalysisSession.collectDotCompletion(
@@ -162,14 +187,20 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
 
         nonExtensionMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionNonMembers.forEach { addSymbolToCompletion(result, expectedType, it) }
+
+        collectTopLevelExtensionsFromIndices(listOf(typeOfPossibleReceiver), hasSuitableExtensionReceiver)
+            .forEach { addSymbolToCompletion(result, expectedType, it) }
+
     }
 
     private fun KtAnalysisSession.collectDefaultCompletion(
         result: CompletionResultSet,
-        implicitScopes: KtCompositeScope,
+        implicitScopesContext: KtScopeContext,
         expectedType: KtType?,
         hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean,
     ) {
+        val (implicitScopes, implicitReceiversTypes) = implicitScopesContext
+
         val availableNonExtensions = implicitScopes
             .getCallableSymbols(scopeNameFilter)
             .filterNot { it.isExtension }
@@ -181,6 +212,50 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
         availableNonExtensions.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(result, expectedType, it) }
 
+        if (shouldCompleteTopLevelCallablesFromIndex) {
+            val topLevelCallables = indexHelper.getTopLevelCallables(scopeNameFilter)
+            topLevelCallables.asSequence()
+                .map { it.getSymbol() }
+                .forEach { addSymbolToCompletion(result, expectedType, it) }
+        }
+
+        collectTopLevelExtensionsFromIndices(implicitReceiversTypes, hasSuitableExtensionReceiver)
+            .forEach { addSymbolToCompletion(result, expectedType, it) }
+
         collectTypesCompletion(result, implicitScopes, expectedType)
+    }
+
+    private fun KtAnalysisSession.collectTopLevelExtensionsFromIndices(
+        receiverTypes: List<KtType>,
+        hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean
+    ): Sequence<KtCallableSymbol> {
+        val implicitReceiverNames = findAllNamesOfTypes(receiverTypes)
+        val topLevelExtensions = indexHelper.getTopLevelExtensions(scopeNameFilter, implicitReceiverNames)
+
+        return topLevelExtensions.asSequence()
+            .map { it.getSymbol() as KtCallableSymbol }
+            .filter(hasSuitableExtensionReceiver)
+    }
+
+    private fun KtAnalysisSession.findAllNamesOfTypes(implicitReceiversTypes: List<KtType>) =
+        implicitReceiversTypes.flatMapTo(hashSetOf()) { with(typeNamesProvider) { findAllNames(it) } }
+}
+
+private class TypeNamesProvider(private val indexHelper: IndexHelper) {
+    fun KtAnalysisSession.findAllNames(type: KtType): Set<String> {
+        if (type !is KtClassType) return emptySet()
+
+        val result = hashSetOf<String>()
+        val typeName = type.classId.shortClassName.identifier
+
+        result += typeName
+        result += indexHelper.getPossibleTypeAliasExpansionNames(typeName)
+
+        val superTypes = (type.classSymbol as? KtClassOrObjectSymbol)?.superTypes
+        superTypes?.forEach { superType ->
+            result += findAllNames(superType.type)
+        }
+
+        return result
     }
 }

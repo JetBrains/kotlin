@@ -5,7 +5,7 @@ class D : C {
             {
                 val s = ""
                 <!UNRESOLVED_REFERENCE!>s<!>()
-                <!UNRESOLVED_REFERENCE!>""()<!>
+                <!UNRESOLVED_REFERENCE!>""<!>()
                 42
             }())
 

@@ -12,13 +12,13 @@ import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtErrorCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -45,7 +45,7 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsig
         }
 
         val actualText = executeOnPooledThreadInReadAction {
-            val callInfos = analyze(file as KtFile) {
+            val callInfos = analyse(file as KtFile) {
                 elements.map { resolveCall(it) }
             }
 
@@ -108,9 +108,9 @@ private fun KtCall.stringRepresentation(): String {
             append(")")
             append(": ${annotatedType.type.render()}")
         }
-        is KtParameterSymbol -> "$name: ${annotatedType.type.render()}"
+        is KtValueParameterSymbol -> "$name: ${annotatedType.type.render()}"
         is KtSuccessCallTarget -> symbol.stringValue()
-        is KtErrorCallTarget -> "ERR<${this.diagnostic.message}, [${candidates.joinToString { it.stringValue() }}]>"
+        is KtErrorCallTarget -> "ERR<${this.diagnostic.defaultMessage}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()
         else -> error("unexpected parameter type ${this::class}")
     }

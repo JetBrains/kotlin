@@ -10,6 +10,8 @@ plugins {
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
+val tasksWithWarnings: List<String> by rootProject.extra
+
 val effectSystemEnabled: Boolean by rootProject.extra
 val newInferenceEnabled: Boolean by rootProject.extra
 
@@ -47,7 +49,6 @@ dependencies {
     testCompile(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
     testCompile(projectTests(":compiler:fir:fir2ir"))
     testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testCompile(projectTests(":compiler:visualizer"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
@@ -63,7 +64,6 @@ dependencies {
     testRuntimeOnly(intellijPluginDep("java"))
 
     testRuntime(project(":kotlin-reflect"))
-    testRuntime(androidDxJar())
     testRuntime(toolsJar())
 
     antLauncherJar(commonDep("org.apache.ant", "ant"))
@@ -85,6 +85,16 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     idea {
         this.module.generatedSourceDirs.add(generationRoot)
     }
+} else if (!kotlinBuildProperties.useFir && !kotlinBuildProperties.disableWerror) {
+    allprojects {
+        tasks.withType<KotlinCompile<*>> {
+            if (path !in tasksWithWarnings) {
+                kotlinOptions {
+                    allWarningsAsErrors = true
+                }
+            }
+        }
+    }
 }
 
 projectTest(parallel = true) {
@@ -92,8 +102,11 @@ projectTest(parallel = true) {
 
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    val antLauncherJarPathProvider = project.provider {
+        antLauncherJar.asPath
+    }
     doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 }

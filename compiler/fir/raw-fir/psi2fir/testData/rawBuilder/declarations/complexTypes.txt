@@ -1,11 +1,11 @@
 FILE: complexTypes.kt
     public? final? class C<T, out S> : R|kotlin/Any| {
-        public? constructor<T, out S>(): R|a/b/C<T, S>| {
+        public? [ContainingClassKey=C] constructor<T, out S>(): R|a/b/C<T, S>| {
             super<R|kotlin/Any|>()
         }
 
         public? final? inner class D<R, in P, T, out S> : R|kotlin/Any| {
-            public? constructor<R, in P>(): R|a/b/C.D<R, P, T, S>| {
+            public? [ContainingClassKey=D] constructor<R, in P>(): R|a/b/C.D<R, P, T, S>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -14,6 +14,6 @@ FILE: complexTypes.kt
     }
     public? final? interface Test : R|kotlin/Any| {
         public? final? val x: a.b.C<out CharSequence, *>.D<in List<*>, *>
-            public? get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
+            [ContainingClassKey=Test] public? get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
 
     }

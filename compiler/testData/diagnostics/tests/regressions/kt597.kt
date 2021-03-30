@@ -15,5 +15,5 @@ operator fun Int?.inc() : Int {
 
 fun test() {
    var i : Int? = 10
-   var <!UNUSED_VARIABLE!>i_inc<!> = <!UNUSED_CHANGED_VALUE!>i++<!> // <- expected Int?, but returns Any?
+   var i_inc = i++ // <- expected Int?, but returns Any?
 }

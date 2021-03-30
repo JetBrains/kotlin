@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization.transformer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.*;
 
@@ -31,7 +32,7 @@ public abstract class MethodTransformer {
             return analyzer.analyze(internalClassName, node);
         }
         catch (AnalyzerException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

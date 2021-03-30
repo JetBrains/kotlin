@@ -50,17 +50,17 @@ fun <T : Any?> test(value: T, value2: T) {
     }
   }
   val x5: Any = { // BLOCK
-    val <elvis>: Any = magic<Any>()
+    val <elvis>: Any? = magic<Any?>()
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> 42
       else -> <elvis>
     }
   }
   val x6: Any = { // BLOCK
-    val <elvis>: Any = { // BLOCK
+    val <elvis>: Any? = { // BLOCK
       val <elvis>: T = value
       when {
-        EQEQ(arg0 = <elvis>, arg1 = null) -> magic<Any>()
+        EQEQ(arg0 = <elvis>, arg1 = null) -> magic<Any?>()
         else -> <elvis>
       }
     }
@@ -70,8 +70,8 @@ fun <T : Any?> test(value: T, value2: T) {
     }
   }
   val x7: Any = { // BLOCK
-    val <elvis>: Any = { // BLOCK
-      val <elvis>: Any = magic<Any>()
+    val <elvis>: Any? = { // BLOCK
+      val <elvis>: Any? = magic<Any?>()
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> value
         else -> <elvis>
@@ -83,3 +83,4 @@ fun <T : Any?> test(value: T, value2: T) {
     }
   }
 }
+

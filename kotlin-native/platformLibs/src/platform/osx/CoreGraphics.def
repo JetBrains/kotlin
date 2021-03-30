@@ -1,0 +1,7 @@
+depends = CoreFoundation IOKit darwin libkern posix
+language = Objective-C
+package = platform.CoreGraphics
+modules = CoreGraphics
+
+compilerOpts = -framework CoreGraphics
+linkerOpts = -framework CoreGraphics

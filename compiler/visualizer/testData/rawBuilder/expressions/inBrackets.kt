@@ -2,12 +2,12 @@
 fun test(e: Int.() -> String) {
 //      String
 //      │   Int
-//      │   │ fun Int.invoke(): String
+//      │   │ fun P1.invoke(): R
 //      │   │ │
     val s = 3.e()
 //      String
 //      │    Int
-//      │    │ fun Int.invoke(): String
+//      │    │ fun P1.invoke(): R
 //      │    │ │test.e: Int.() -> String
 //      │    │ ││
     val ss = 3.(e)()

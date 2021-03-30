@@ -45,7 +45,7 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
 abstract class ExecutionStrategyIT : BaseGradleIT() {
     @Test
     fun testDaemon() {
-        doTestExecutionStrategy("daemon")
+        doTestExecutionStrategy("daemon", addHeapDumpOptions = false)
     }
 
     @Test
@@ -58,8 +58,8 @@ abstract class ExecutionStrategyIT : BaseGradleIT() {
         doTestExecutionStrategy("out-of-process")
     }
 
-    private fun doTestExecutionStrategy(executionStrategy: String) {
-        val project = Project("kotlinBuiltins")
+    private fun doTestExecutionStrategy(executionStrategy: String, addHeapDumpOptions: Boolean = true) {
+        val project = Project("kotlinBuiltins", addHeapDumpOptions = addHeapDumpOptions)
         setupProject(project)
 
         val strategyCLIArg = "-Dkotlin.compiler.execution.strategy=$executionStrategy"

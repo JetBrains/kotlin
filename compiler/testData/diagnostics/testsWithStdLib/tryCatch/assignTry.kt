@@ -39,13 +39,13 @@ fun test4() {
         null
     }
     finally {
-        <!UNUSED_EXPRESSION!>""<!>
+        ""
     }
     s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test5() {
-    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>s<!>: String? =<!> try {
+    <!UNREACHABLE_CODE!>val s: String? =<!> try {
         ""
     }
     catch (e: ExcA) {
@@ -105,7 +105,7 @@ fun test10() {
     val x = try {
         ""
     } finally {
-        <!UNUSED_EXPRESSION!>42<!>
+        42
     }
     x.length
 }

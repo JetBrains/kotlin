@@ -27,8 +27,8 @@ fun foo() {
             z = 34
         }
     }
-    val <!UNUSED_VARIABLE!>f<!>: ()-> Int = <!TYPE_MISMATCH!>r<!>
-    val <!UNUSED_VARIABLE!>g<!>: ()-> Any = r
+    val f: ()-> Int = <!TYPE_MISMATCH!>r<!>
+    val g: ()-> Any = r
 }
 
 //KT-735 Statements without braces are prohibited on the right side of when entries.
@@ -48,27 +48,27 @@ fun test1() { while(true) {} }
 fun test2(): Unit { while(true) {} }
 
 fun testCoercionToUnit() {
-    val <!UNUSED_VARIABLE!>simple<!>: ()-> Unit = {
-        <!UNUSED_EXPRESSION!>41<!>
+    val simple: ()-> Unit = {
+        41
     }
-    val <!UNUSED_VARIABLE!>withIf<!>: ()-> Unit = {
+    val withIf: ()-> Unit = {
         if (true) {
-            <!UNUSED_EXPRESSION!>3<!>
+            3
         } else {
-            <!UNUSED_EXPRESSION!>45<!>
+            45
         }
     }
     val i = 34
-    val <!UNUSED_VARIABLE!>withWhen<!> : () -> Unit = {
+    val withWhen : () -> Unit = {
         when(i) {
             1 -> {
                 val d = 34
-                <!UNUSED_EXPRESSION!>"1"<!>
+                "1"
                 doSmth(d)
 
             }
-            2 -> <!UNUSED_EXPRESSION!>'4'<!>
-            else -> <!UNUSED_EXPRESSION!>true<!>
+            2 -> '4'
+            else -> true
         }
     }
 
@@ -80,54 +80,54 @@ fun testCoercionToUnit() {
             45
         }
     }
-    val <!UNUSED_VARIABLE!>f<!> : () -> String = <!TYPE_MISMATCH!>checkType<!>
+    val f : () -> String = <!TYPE_MISMATCH!>checkType<!>
 }
 
-fun doSmth(<!UNUSED_PARAMETER!>i<!>: Int) {}
+fun doSmth(i: Int) {}
 
 fun testImplicitCoercion() {
     val d = 21
     var z = 0
-    var <!UNUSED_VARIABLE!>i<!> = when(d) {
+    var i = when(d) {
         3 -> null
-        4 -> { val <!NAME_SHADOWING, UNUSED_VARIABLE!>z<!> = 23 }
+        4 -> { val <!NAME_SHADOWING!>z<!> = 23 }
         else -> z = 20
     }
 
-    var <!UNUSED_VARIABLE!>u<!> = when(d) {
-        3 -> { <!IMPLICIT_CAST_TO_ANY!><!UNUSED_VALUE!>z =<!> 34<!> }
-        else -> <!IMPLICIT_CAST_TO_ANY, UNUSED_CHANGED_VALUE!>z--<!>
+    var u = when(d) {
+        3 -> { <!IMPLICIT_CAST_TO_ANY!>z = 34<!> }
+        else -> <!IMPLICIT_CAST_TO_ANY!>z--<!>
     }
 
-    var <!UNUSED_VARIABLE!>iff<!> = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) {
-        <!UNUSED_VALUE!>z =<!> 34
+    var iff = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) {
+        z = 34
     }
-    val <!UNUSED_VARIABLE!>g<!> = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 4
-    val <!UNUSED_VARIABLE!>h<!> = if (false) <!IMPLICIT_CAST_TO_ANY!>4<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
+    val g = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 4
+    val h = if (false) <!IMPLICIT_CAST_TO_ANY!>4<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
 
     bar(<!TYPE_MISMATCH{NI}!>if (true) {
         <!CONSTANT_EXPECTED_TYPE_MISMATCH{OI}!>4<!>
     } else {
-        <!UNUSED_VALUE!>z =<!> 342
+        z = 342
     }<!>)
 }
 
-fun fooWithAnyArg(<!UNUSED_PARAMETER!>arg<!>: Any) {}
-fun fooWithAnyNullableArg(<!UNUSED_PARAMETER!>arg<!>: Any?) {}
+fun fooWithAnyArg(arg: Any) {}
+fun fooWithAnyNullableArg(arg: Any?) {}
 
 fun testCoercionToAny() {
     val d = 21
-    val <!UNUSED_VARIABLE!>x1<!>: Any = if (1>2) 1 else 2.0
-    val <!UNUSED_VARIABLE!>x2<!>: Any? = if (1>2) 1 else 2.0
-    val <!UNUSED_VARIABLE!>x3<!>: Any? = if (1>2) 1 else (if (1>2) null else 2.0)
+    val x1: Any = if (1>2) 1 else 2.0
+    val x2: Any? = if (1>2) 1 else 2.0
+    val x3: Any? = if (1>2) 1 else (if (1>2) null else 2.0)
 
     fooWithAnyArg(if (1>2) 1 else 2.0)
     fooWithAnyNullableArg(if (1>2) 1 else 2.0)
     fooWithAnyNullableArg(if (1>2) 1 else (if (1>2) null else 2.0))
 
-    val <!UNUSED_VARIABLE!>y1<!>: Any = when(d) { 1 -> 1.0 else -> 2.0 }
-    val <!UNUSED_VARIABLE!>y2<!>: Any? = when(d) { 1 -> 1.0 else -> 2.0 }
-    val <!UNUSED_VARIABLE!>y3<!>: Any? = when(d) { 1 -> 1.0; 2 -> null; else -> 2.0 }
+    val y1: Any = when(d) { 1 -> 1.0 else -> 2.0 }
+    val y2: Any? = when(d) { 1 -> 1.0 else -> 2.0 }
+    val y3: Any? = when(d) { 1 -> 1.0; 2 -> null; else -> 2.0 }
 
     fooWithAnyArg(when(d) { 1 -> 1.0 else -> 2.0 })
     fooWithAnyNullableArg(when(d) { 1 -> 1.0 else -> 2.0 })
@@ -145,16 +145,16 @@ fun fooWithAnuNullableResult(s: String?, name: String, optional: Boolean): Any? 
     }
 }
 
-fun bar(<!UNUSED_PARAMETER!>a<!>: Unit) {}
+fun bar(a: Unit) {}
 
 fun testStatementInExpressionContext() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>z<!> = 34
-    val <!UNUSED_VARIABLE!>a1<!>: Unit = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!><!UNUSED_VALUE!>z =<!> 334<!>
-    val <!UNUSED_VARIABLE!>f<!> = <!EXPRESSION_EXPECTED!>for (i in 1..10) {}<!>
-    if (true) return <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!><!UNUSED_VALUE!>z =<!> 34<!>
+    val a1: Unit = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = 334<!>
+    val f = <!EXPRESSION_EXPECTED!>for (i in 1..10) {}<!>
+    if (true) return <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = 34<!>
     return <!EXPRESSION_EXPECTED!>while (true) {}<!>
 }
 
 fun testStatementInExpressionContext2() {
-    val <!UNUSED_VARIABLE!>a2<!>: Unit = <!EXPRESSION_EXPECTED!>while(true) {}<!>
+    val a2: Unit = <!EXPRESSION_EXPECTED!>while(true) {}<!>
 }

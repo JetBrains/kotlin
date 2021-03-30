@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 public enum A {
     ENTRY,
@@ -10,6 +11,6 @@ public enum A {
 
 fun main() {
     val c: A = A.ENTRY
-    val <!UNUSED_VARIABLE!>c2<!>: String? = c.ENTRY
-    val <!UNUSED_VARIABLE!>c3<!>: String? = A.ANOTHER.ENTRY
+    val c2: String? = c.ENTRY
+    val c3: String? = A.ANOTHER.ENTRY
 }

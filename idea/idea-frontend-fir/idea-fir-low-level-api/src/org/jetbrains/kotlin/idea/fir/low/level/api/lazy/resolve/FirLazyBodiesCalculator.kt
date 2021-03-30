@@ -6,54 +6,66 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirFragmentForLazyBodiesBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.*
 
 internal object FirLazyBodiesCalculator {
-    fun calculateLazyBodiesInside(element: FirElement) {
-        element.transform<FirElement, Nothing?>(FirLazyBodiesCalculatorTransformer, null)
+    fun calculateLazyBodiesInside(element: FirElement, designation: List<FirDeclaration>) {
+        element.transform<FirElement, MutableList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, designation.toMutableList())
     }
 
     fun calculateLazyBodiesIfPhaseRequires(firFile: FirFile, phase: FirResolvePhase) {
         if (phase == FIRST_PHASE_WHICH_NEEDS_BODIES) {
-            calculateLazyBodiesInside(firFile)
+            firFile.transform<FirElement, MutableList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, mutableListOf())
         }
     }
 
-    fun calculateLazyBodiesForFunction(simpleFunction: FirSimpleFunction) {
+    fun calculateLazyBodiesForFunction(simpleFunction: FirSimpleFunction, designation: List<FirDeclaration>) {
         if (simpleFunction.body !is FirLazyBlock) return
-        val rawFirBuilder = createRawFirBuilder(simpleFunction)
-        val newFunction = rawFirBuilder.buildFunctionWithBody(simpleFunction.psi as KtNamedFunction, simpleFunction) as FirSimpleFunction
+        val newFunction = RawFirFragmentForLazyBodiesBuilder.build(
+            session = simpleFunction.session,
+            baseScopeProvider = simpleFunction.session.firIdeProvider.kotlinScopeProvider,
+            designation = designation,
+            declaration = simpleFunction.psi as KtNamedFunction
+        ) as FirSimpleFunction
         simpleFunction.apply {
             replaceBody(newFunction.body)
             replaceContractDescription(newFunction.contractDescription)
         }
     }
 
-    fun calculateLazyBodyForSecondaryConstructor(secondaryConstructor: FirConstructor) {
+    fun calculateLazyBodyForSecondaryConstructor(secondaryConstructor: FirConstructor, designation: List<FirDeclaration>) {
         require(!secondaryConstructor.isPrimary)
         if (secondaryConstructor.body !is FirLazyBlock) return
-        val rawFirBuilder = createRawFirBuilder(secondaryConstructor)
-        val newFunction = rawFirBuilder.buildSecondaryConstructor(secondaryConstructor.psi as KtSecondaryConstructor, secondaryConstructor)
+
+        val newFunction = RawFirFragmentForLazyBodiesBuilder.build(
+            session = secondaryConstructor.session,
+            baseScopeProvider = secondaryConstructor.session.firIdeProvider.kotlinScopeProvider,
+            designation = designation,
+            declaration = secondaryConstructor.psi as KtSecondaryConstructor
+        ) as FirSimpleFunction
+
         secondaryConstructor.apply {
             replaceBody(newFunction.body)
         }
     }
 
-    fun calculateLazyBodyForProperty(firProperty: FirProperty) {
+    fun calculateLazyBodyForProperty(firProperty: FirProperty, designation: List<FirDeclaration>) {
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
-        val rawFirBuilder = createRawFirBuilder(firProperty)
-        val newProperty = rawFirBuilder.buildPropertyWithBody(firProperty.psi as KtProperty, firProperty)
+        val newProperty = RawFirFragmentForLazyBodiesBuilder.build(
+            session = firProperty.session,
+            baseScopeProvider = firProperty.session.firIdeProvider.kotlinScopeProvider,
+            designation = designation,
+            declaration = firProperty.psi as KtProperty
+        ) as FirProperty
 
         firProperty.getter?.takeIf { it.body is FirLazyBlock }?.let { getter ->
             val newGetter = newProperty.getter!!
@@ -84,42 +96,54 @@ internal object FirLazyBodiesCalculator {
                 || firProperty.initializer is FirLazyExpression
                 || (firProperty.delegate as? FirWrappedDelegateExpression)?.expression is FirLazyExpression
 
-
-    private fun createRawFirBuilder(firDeclaration: FirDeclaration): RawFirBuilder {
-        val scopeProvider = firDeclaration.session.firIdeProvider.kotlinScopeProvider
-        return RawFirBuilder(firDeclaration.session, scopeProvider)
-    }
-
     private val FIRST_PHASE_WHICH_NEEDS_BODIES = FirResolvePhase.CONTRACTS
 }
 
-private object FirLazyBodiesCalculatorTransformer : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        @Suppress("UNCHECKED_CAST")
-        return (element.transformChildren(this, data) as E).compose()
+private object FirLazyBodiesCalculatorTransformer : FirTransformer<MutableList<FirDeclaration>>() {
+
+    override fun transformFile(file: FirFile, data: MutableList<FirDeclaration>): CompositeTransformResult<FirDeclaration> {
+        file.declarations.forEach {
+            it.transformSingle(this, data)
+        }
+        return file.compose()
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun <E : FirElement> transformElement(element: E, data: MutableList<FirDeclaration>): CompositeTransformResult<E> {
+        if (element is FirRegularClass) {
+            data.add(element)
+            element.declarations.forEach {
+                it.transformSingle(this, data)
+            }
+            element.transformChildren(this, data)
+            data.removeLast()
+        }
+        return element.compose()
+    }
+
+    override fun transformSimpleFunction(
+        simpleFunction: FirSimpleFunction,
+        data: MutableList<FirDeclaration>
+    ): CompositeTransformResult<FirDeclaration> {
         if (simpleFunction.body is FirLazyBlock) {
-            FirLazyBodiesCalculator.calculateLazyBodiesForFunction(simpleFunction)
-            return simpleFunction.compose()
+            FirLazyBodiesCalculator.calculateLazyBodiesForFunction(simpleFunction, data)
         }
-        return (simpleFunction.transformChildren(this, data) as FirDeclaration).compose()
+        return simpleFunction.compose()
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformConstructor(
+        constructor: FirConstructor,
+        data: MutableList<FirDeclaration>
+    ): CompositeTransformResult<FirDeclaration> {
         if (constructor.body is FirLazyBlock) {
-            FirLazyBodiesCalculator.calculateLazyBodyForSecondaryConstructor(constructor)
-            return constructor.compose()
+            FirLazyBodiesCalculator.calculateLazyBodyForSecondaryConstructor(constructor, data)
         }
-        return (constructor.transformChildren(this, data) as FirDeclaration).compose()
+        return constructor.compose()
     }
 
-    override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformProperty(property: FirProperty, data: MutableList<FirDeclaration>): CompositeTransformResult<FirDeclaration> {
         if (FirLazyBodiesCalculator.needCalculatingLazyBodyForProperty(property)) {
-            FirLazyBodiesCalculator.calculateLazyBodyForProperty(property)
-            return property.compose()
+            FirLazyBodiesCalculator.calculateLazyBodyForProperty(property, data)
         }
-        return super.transformProperty(property, data)
+        return property.compose()
     }
 }

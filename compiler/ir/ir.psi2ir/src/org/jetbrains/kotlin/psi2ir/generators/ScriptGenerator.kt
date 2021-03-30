@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.assertCast
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -17,10 +19,13 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.toArrayOrPrimitiveArrayType
 import org.jetbrains.kotlin.ir.util.indexOrMinusOne
 import org.jetbrains.kotlin.ir.util.isCrossinline
 import org.jetbrains.kotlin.ir.util.isNoinline
 import org.jetbrains.kotlin.ir.util.varargElementType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.KtScriptInitializer
@@ -38,24 +43,11 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
     fun generateScriptDeclaration(ktScript: KtScript): IrDeclaration? {
         val descriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktScript) as ScriptDescriptor
 
-        val existedScripts = context.symbolTable.listExistedScripts()
-
         return context.symbolTable.declareScript(descriptor).buildWithScope { irScript ->
 
-            // A workaround for the JS/REPL backend:
-            // JS backend doesn't save previously executed snippets anywhere, they should be taken for now from the context.symbolTable.listExistedScripts()
-            // on the other hand imported scripts are also stored there so to avoid clashes the imported scripts should be filtered out
-            // NOTE: that JVM IR is not properly tested with REPL, so it might have the same problem
-            // TODO: design and implement other schema for handling previous snippets
-            val importedScripts = descriptor.implicitReceivers.filterIsInstanceTo(HashSet<ScriptDescriptor>())
+            irScript.metadata = DescriptorMetadataSource.Script(descriptor)
 
-            // TODO: since script could reference instances of previous one their receivers have to be enlisted in its scope
-            // Remove this code once script is no longer represented by Class
-            existedScripts.forEach {
-                if (it.owner != irScript && it.descriptor !in importedScripts) {
-                    context.symbolTable.introduceValueParameter(it.owner.thisReceiver)
-                }
-            }
+            val importedScripts = descriptor.implicitReceivers.filterIsInstanceTo(HashSet<ScriptDescriptor>())
 
             val startOffset = ktScript.pureStartOffset
             val endOffset = ktScript.pureEndOffset
@@ -87,12 +79,35 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
             // This is part of a hack for implicit receivers that converted to value parameters below
             // The proper schema would be to get properly indexed parameters from frontend (descriptor.implicitReceiversParameters),
             // but it seems would require a proper remapping for the script body
-            // TODO: implement implicit receiver parameters handlin properly
+            // TODO: implement implicit receiver parameters handling properly
             var parametersIndex = 0
 
+            irScript.earlierScripts = context.extensions.getPreviousScripts()?.filter {
+                // TODO: probably unnecessary filtering
+                it.owner != irScript && it.descriptor !in importedScripts
+            }
+            irScript.earlierScripts?.forEach {
+                context.symbolTable.introduceValueParameter(it.owner.thisReceiver)
+            }
+            irScript.earlierScriptsParameter = irScript.earlierScripts?.takeIf { it.isNotEmpty() }?.let {
+                val baseType = context.irBuiltIns.anyType
+                val arrayType = baseType.toArrayOrPrimitiveArrayType(context.irBuiltIns)
+                context.irFactory.createValueParameter(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.SCRIPT_EARLIER_SCRIPTS, IrValueParameterSymbolImpl(),
+                    Name.special("<earlierScripts>"), parametersIndex++,
+                    arrayType, null,
+                    false, false, false, false
+                ).also { it.parent = irScript }
+            }
+
             irScript.explicitCallParameters = descriptor.explicitConstructorParameters.map { valueParameterDescriptor ->
-                parametersIndex++
-                valueParameterDescriptor.toIrValueParameter(startOffset, endOffset, IrDeclarationOrigin.SCRIPT_CALL_PARAMETER).also { it.parent = irScript }
+                context.irFactory.createValueParameter(
+                    startOffset, endOffset, IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrValueParameterSymbolImpl(),
+                    valueParameterDescriptor.name, parametersIndex++,
+                    valueParameterDescriptor.type.toIrType(), valueParameterDescriptor.varargElementType?.toIrType(),
+                    valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
+                    false, false
+                ).also { it.parent = irScript }
             }
 
             irScript.implicitReceiversParameters = descriptor.implicitReceivers.map {
@@ -106,15 +121,24 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     val type = providedProperty.type.toIrType()
                     val valueParameter = context.symbolTable.declareValueParameter(
                         startOffset, endOffset, IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
-                    )
+                    ) { symbol ->
+                        context.irFactory.createValueParameter(
+                            startOffset, endOffset, IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, symbol, descriptor.name,
+                            parametersIndex, type, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                        ).also { it.parent = irScript }
+                    }
+                    parametersIndex++
                     val irProperty =
-                        PropertyGenerator(declarationGenerator).generateSyntheticProperty(ktScript, providedProperty, valueParameter)
+                        PropertyGenerator(declarationGenerator).generateSyntheticProperty(
+                            ktScript,
+                            providedProperty,
+                            valueParameter,
+                            generateSyntheticAccessors = true
+                        )
                     irProperty.origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY
                     irScript.statements += irProperty
                     valueParameter to irProperty.symbol
                 }
-
-            irScript.earlierScripts = existedScripts
 
             for (d in ktScript.declarations) {
                 when (d) {
@@ -126,7 +150,11 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                         if (d == ktScript.declarations.last() && descriptor.resultValue != null) {
                             descriptor.resultValue!!.let { resultDescriptor ->
                                 PropertyGenerator(declarationGenerator)
-                                    .generateSyntheticPropertyWithInitializer(ktScript, resultDescriptor, generateSyntheticAccessors = true) {
+                                    .generateSyntheticPropertyWithInitializer(
+                                        ktScript,
+                                        resultDescriptor,
+                                        generateSyntheticAccessors = true
+                                    ) {
                                         // TODO: check if this is a correct place to do it
                                         it.visibility = DescriptorVisibilities.PUBLIC
                                         irExpressionBody

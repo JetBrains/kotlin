@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
+import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.chooseWrapperVersionOrFinishTest
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
@@ -164,7 +166,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
         val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
         val klibSuffix = CompilerOutputKind.LIBRARY.suffix(HostManager.host)
-        val klibPath = "${targetClassesDir("host")}${klibPrefix}native-library$klibSuffix"
+        val klibPath = "${targetClassesDir("host")}${klibPrefix}/klib/native-library$klibSuffix"
 
         val linkTasks = listOf(
             ":linkDebugSharedHost",
@@ -202,6 +204,89 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksUpToDate(linkTasks.drop(1))
             assertTasksUpToDate(klibTask)
             assertTasksExecuted(linkTasks[0])
+        }
+    }
+
+    @Test
+    fun testCanProvideNativeFrameworkArtifact() = with(
+        transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
+    ) {
+        Assume.assumeTrue(HostManager.hostIsMac)
+
+        gradleBuildScript().appendText(
+            """
+            val frameworkTargets = Attribute.of(
+                "org.jetbrains.kotlin.native.framework.targets",
+                Set::class.java
+            )
+            val kotlinNativeBuildTypeAttribute = Attribute.of(
+                "org.jetbrains.kotlin.native.build.type",
+                String::class.java
+            )
+                 
+            fun validateConfiguration(conf: Configuration, targets: Set<String>, expectedBuildType: String) {
+                if (conf.artifacts.files.count() != 1 || conf.artifacts.files.singleFile.name != "main.framework") {
+                    throw IllegalStateException("No single artifact with proper name \"main.framework\"")
+                }
+                val confTargets = conf.attributes.getAttribute(frameworkTargets)!!
+                val buildType = conf.attributes.getAttribute(kotlinNativeBuildTypeAttribute)!!
+                if (confTargets.size != targets.size || !confTargets.containsAll(targets)) {
+                    throw IllegalStateException("Framework has incorrect attributes. Expected targets: \"${'$'}targets\", actual: \"${'$'}confTargets\"")
+                }
+                if (buildType != expectedBuildType) {
+                   throw IllegalStateException("Framework has incorrect attributes. Expected build type: \"${'$'}expectedBuildType\", actual: \"${'$'}buildType\"")
+                }
+            }
+            
+            tasks.register("validateThinArtifacts") {
+                doLast {
+                    val targets = listOf("ios" to "ios_arm64", "iosSim" to "ios_x64")
+                    val buildTypes = listOf("release", "debug")
+                    targets.forEach { (name, target) ->
+                        buildTypes.forEach { buildType ->
+                            val conf = project.configurations.getByName("main${'$'}{buildType.capitalize()}Framework${'$'}{name.capitalize()}")
+                            validateConfiguration(conf, setOf(target), buildType.toUpperCase())
+                        }
+                    }
+                }
+            }
+            
+            tasks.register("validateFatArtifacts") {
+                doLast {
+                    val buildTypes = listOf("release", "debug")
+                    buildTypes.forEach { buildType ->
+                        val conf = project.configurations.getByName("main${'$'}{buildType.capitalize()}FrameworkIosFat")
+                        validateConfiguration(conf, setOf("ios_x64", "ios_arm64"), buildType.toUpperCase())
+                    }
+                }
+            }
+            
+            tasks.register("validateCustomAttributesSetting") {
+                doLast {
+                    val conf = project.configurations.getByName("customReleaseFrameworkIos")
+                    val attr1Value = conf.attributes.getAttribute(disambiguation1Attribute)
+                    if (attr1Value != "someValue") {
+                        throw IllegalStateException("myDisambiguation1Attribute has incorrect value. Expected: \"someValue\", actual: \"${'$'}attr1Value\"")
+                    }
+                    val attr2Value = conf.attributes.getAttribute(disambiguation2Attribute)
+                    if (attr2Value != "someValue2") {
+                       throw IllegalStateException("myDisambiguation2Attribute has incorrect value. Expected: \"someValue2\", actual: \"${'$'}attr2Value\"")
+                    }
+                }
+            }
+        """.trimIndent()
+        )
+
+        build(":validateThinArtifacts") {
+            assertSuccessful()
+        }
+
+        build(":validateFatArtifacts") {
+            assertSuccessful()
+        }
+
+        build(":validateCustomAttributesSetting") {
+            assertSuccessful()
         }
     }
 
@@ -538,11 +623,47 @@ class GeneralNativeIT : BaseGradleIT() {
             assertFileExists(defaultOutputFile)
         }
 
+        checkTestsUpToDate(testsToExecute, testsToSkip)
+
         // Check simulator process leaking.
         val bootedSimulatorsAfter = getBootedSimulators(projectDir)
         assertEquals(bootedSimulatorsBefore, bootedSimulatorsAfter)
 
         // Check the case with failed tests.
+        checkFailedTests(hostTestTask, testsToExecute, testsToSkip)
+
+        build("linkAnotherDebugTestHost") {
+            assertSuccessful()
+            assertFileExists(anotherOutputFile)
+        }
+    }
+
+    private fun Project.checkTestsUpToDate(testsToExecute: List<String>, testsToSkip: List<String>) {
+        // Check that test tasks are up-to-date on second run
+        build("check") {
+            assertSuccessful()
+
+            assertTasksUpToDate(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+
+        // Check that setting new value to tracked environment variable triggers tests rerun
+        build("check", options = defaultBuildOptions().copy(androidHome = projectDir)) {
+            assertSuccessful()
+
+            assertTasksExecuted(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+
+        build("check", options = defaultBuildOptions().copy(androidHome = projectDir)) {
+            assertSuccessful()
+
+            assertTasksUpToDate(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+    }
+
+    private fun Project.checkFailedTests(hostTestTask: String, testsToExecute: List<String>, testsToSkip: List<String>) {
         projectDir.resolve("src/commonTest/kotlin/test.kt").appendText(
             """
                 @Test
@@ -573,11 +694,11 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksSkipped(*testsToSkip.toTypedArray())
 
 
-            fun assertStacktrace(taskName: String) {
+            fun assertStacktrace(taskName: String, targetName: String) {
                 val testReport = projectDir.resolve("build/test-results/$taskName/TEST-org.foo.test.TestKt.xml")
                 val stacktrace = SAXBuilder().build(testReport).rootElement
                     .getChildren("testcase")
-                    .single { it.getAttribute("name").value == "fail" }
+                    .single { it.getAttribute("name").value == "fail" || it.getAttribute("name").value == "fail[$targetName]" }
                     .getChild("failure")
                     .text
                 assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:24\)""".toRegex()))
@@ -595,23 +716,33 @@ class GeneralNativeIT : BaseGradleIT() {
                 }
             }
 
-            assertTestResults("testProject/native-tests/TEST-TestKt.xml", hostTestTask)
+            // Gradle 6.6+ slightly changed format of xml test results
+            // If, in the test project, preset name was updated,
+            // update accordingly test result output for Gradle6.6+
+            val testGradleVersion = project.chooseWrapperVersionOrFinishTest()
+            val expectedTestResults = if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
+                listOf(
+                    "testProject/native-tests/TEST-TestKt_pre6.6.xml",
+                    "testProject/native-tests/TEST-TestKt-iOSsim_pre6.6.xml",
+                )
+            } else {
+                listOf(
+                    "testProject/native-tests/TEST-TestKt.xml",
+                    "testProject/native-tests/TEST-TestKt-iOSsim.xml",
+                )
+            }
+            assertTestResults(expectedTestResults.first(), hostTestTask)
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).
             // TODO: Uncomment when this is fixed.
-            //assertStacktrace(hostTestTask)
-            if (hostIsMac) {
+            //assertStacktrace(hostTestTask, "host")
+            if (HostManager.hostIsMac) {
                 assertTestResultsAnyOf(
-                    "testProject/native-tests/TEST-TestKt.xml",
-                    "testProject/native-tests/TEST-TestKt-IOSsim.xml",
+                    expectedTestResults[0],
+                    expectedTestResults[1],
                     "iosTest"
                 )
-                assertStacktrace("iosTest")
+                assertStacktrace("iosTest", "ios")
             }
-        }
-
-        build("linkAnotherDebugTestHost") {
-            assertSuccessful()
-            assertFileExists(anotherOutputFile)
         }
     }
 
@@ -672,9 +803,9 @@ class GeneralNativeIT : BaseGradleIT() {
     @Test
     fun testCinterop() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
         fun libraryFiles(projectName: String, cinteropName: String) = listOf(
-            "$projectName/build/classes/kotlin/host/main/${projectName}-cinterop-$cinteropName.klib",
-            "$projectName/build/classes/kotlin/host/main/${projectName}.klib",
-            "$projectName/build/classes/kotlin/host/test/${projectName}_test.klib",
+            "$projectName/build/classes/kotlin/host/main/cinterop/${projectName}-cinterop-$cinteropName.klib",
+            "$projectName/build/classes/kotlin/host/main/klib/${projectName}.klib",
+            "$projectName/build/classes/kotlin/host/test/klib/${projectName}_test.klib",
         )
 
         // Enable info log to see cinterop environment variables.

@@ -1,4 +1,3 @@
-// FIR_IGNORE
 fun withLocals(p: Int): Int {
     class Local(val pp: Int) {
 //                 Int
@@ -17,12 +16,11 @@ fun withLocals(p: Int): Int {
     fun sum(y: Int, z: Int, f: (Int, Int) -> Int): Int {
 //             val withLocals.x: Int
 //             │ fun (Int).plus(Int): Int
-//             │ │ fun ((Int, Int) -> Int).invoke(Int, Int): Int
+//             │ │ fun ((P1, P2) -> R).invoke(P1, P2): R
 //             │ │ │ withLocals.sum.y: Int
-//             │ │ │ │ fun (Int).plus(Int): Int
-//             │ │ │ │ │ withLocals.sum.z: Int
-//             │ │ │ │ │ │
-        return x + f(y + z)
+//             │ │ │ │  withLocals.sum.z: Int
+//             │ │ │ │  │
+        return x + f(y, z)
     }
 
 //      Int              constructor Any()
@@ -32,7 +30,7 @@ fun withLocals(p: Int): Int {
 //                │ fun (Any).hashCode(): Int
 //                │ │
         fun foo() = hashCode()
-//     fun (withLocals.<no name provided>).foo(): Int
+//     fun (<anonymous>).foo(): Int
 //     │
     }).foo()
 
@@ -42,9 +40,9 @@ fun withLocals(p: Int): Int {
 //         │   │     │     Int
 //         │   │     │     │  fun (withLocals.Local).diff(): Int
 //         │   │     │     │  │                           Int
-//         │   │     │     │  │                           │ withLocals.<no name provided>.x: Int
+//         │   │     │     │  │                           │ withLocals.<anonymous>.x: Int
 //         │   │     │     │  │                           │ │ fun (Int).plus(Int): Int
-//         │   │     │     │  │                           │ │ │ withLocals.<no name provided>.y: Int
+//         │   │     │     │  │                           │ │ │ withLocals.<anonymous>.y: Int
 //         │   │     │     │  │                           │ │ │ │
     return sum(code, Local(1).diff(), fun(x: Int, y: Int) = x + y)
 }

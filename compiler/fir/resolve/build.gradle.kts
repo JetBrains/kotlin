@@ -3,10 +3,6 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    maven(url = "https://dl.bintray.com/kotlin/kotlinx")
-}
-
 dependencies {
     api(project(":core:compiler.common"))
     api(project(":compiler:resolution.common"))

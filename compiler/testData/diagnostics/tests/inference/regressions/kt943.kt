@@ -20,4 +20,4 @@ fun foo(lines: List<String>) {
 //standard library
 fun <T : Any> T?.sure() : T = this!!
 
-public inline fun <T> comparator(<!UNUSED_PARAMETER!>fn<!>: (T,T) -> Int): Comparator<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

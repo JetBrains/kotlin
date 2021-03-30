@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -42,9 +41,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        val context = ResolutionMode.ContextIndependent
         // Do-while has a specific scope structure (its block and condition effectively share the scope)
-        return withNewLocalScope {
+        return context.forBlock {
+            val context = ResolutionMode.ContextIndependent
             doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
                 .also {
                     transformer.expressionsTransformer.transformBlockInCurrentScope(it.block, context)
@@ -63,10 +62,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         }
         whenExpression.annotations.forEach { it.accept(this, data) }
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
-        return withLocalScopeCleanup with@{
-            if (whenExpression.subjectVariable != null) {
-                addNewLocalScope()
-            }
+        return context.withWhenExpression(whenExpression) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
 
@@ -145,7 +141,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         tryExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterTryExpression(tryExpression)
         tryExpression.transformTryBlock(transformer, ResolutionMode.ContextDependent)
-        dataFlowAnalyzer.exitTryMainBlock(tryExpression)
+        dataFlowAnalyzer.exitTryMainBlock()
         tryExpression.transformCatches(this, ResolutionMode.ContextDependent)
 
         var callCompleted = false
@@ -178,7 +174,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     override fun transformCatch(catch: FirCatch, data: ResolutionMode): CompositeTransformResult<FirCatch> {
         dataFlowAnalyzer.enterCatchClause(catch)
         catch.parameter.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-        return withNewLocalScope {
+        return context.forBlock {
             catch.transformParameter(transformer, ResolutionMode.ContextIndependent)
             catch.transformBlock(transformer, ResolutionMode.ContextDependent)
         }.also { dataFlowAnalyzer.exitCatchClause(it) }.compose()
@@ -228,12 +224,14 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     ): CompositeTransformResult<FirStatement> {
         if (elvisExpression.calleeReference is FirResolvedNamedReference) return elvisExpression.compose()
         elvisExpression.transformAnnotations(transformer, data)
-        val expectedArgumentType =
-            if (data is ResolutionMode.WithExpectedType && data.expectedType !is FirImplicitTypeRef) data
-            else ResolutionMode.ContextDependent
-        elvisExpression.transformLhs(transformer, expectedArgumentType)
+
+        val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
+        val resolutionModeForLhs = withExpectedType(expectedType?.withNullability(ConeNullability.NULLABLE))
+        elvisExpression.transformLhs(transformer, resolutionModeForLhs)
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
-        elvisExpression.transformRhs(transformer, expectedArgumentType)
+
+        val resolutionModeForRhs = withExpectedType(expectedType)
+        elvisExpression.transformRhs(transformer, resolutionModeForRhs)
 
         val result = syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext)?.let {
             callCompleter.completeCall(it, data.expectedType).result
@@ -243,7 +241,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             }
         }
 
-        dataFlowAnalyzer.exitElvis()
+        dataFlowAnalyzer.exitElvis(elvisExpression)
         return result.compose()
     }
 }

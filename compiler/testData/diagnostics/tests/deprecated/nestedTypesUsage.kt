@@ -12,7 +12,7 @@ class TopLevel {
 }
 
 fun useNested() {
-    val <!UNUSED_VARIABLE!>d<!> = TopLevel.<!DEPRECATION!>Nested<!>.use()
+    val d = TopLevel.<!DEPRECATION!>Nested<!>.use()
     TopLevel.<!DEPRECATION!>Nested<!>.Nested2()
     TopLevel.<!DEPRECATION!>Nested<!>.<!UNRESOLVED_REFERENCE!>CompanionNested2<!>()
 }

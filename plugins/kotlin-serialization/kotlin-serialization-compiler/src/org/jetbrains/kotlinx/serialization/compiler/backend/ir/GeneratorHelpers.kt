@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -42,8 +45,18 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 interface IrBuilderExtension {
     val compilerContext: SerializationPluginContext
 
+    private val throwMissedFieldExceptionFunc
+        get() = compilerContext.referenceFunctions(SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_FQ).singleOrNull()
+
+    private val throwMissedFieldExceptionArrayFunc
+        get() = compilerContext.referenceFunctions(SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_FQ).singleOrNull()
+
     private inline fun <reified T : IrDeclaration> IrClass.searchForDeclaration(descriptor: DeclarationDescriptor): T? {
         return declarations.singleOrNull { it.descriptor == descriptor } as? T
+    }
+
+    fun useFieldMissingOptimization(): Boolean {
+        return throwMissedFieldExceptionFunc != null && throwMissedFieldExceptionArrayFunc != null
     }
 
     fun IrClass.contributeFunction(descriptor: FunctionDescriptor, bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit) {
@@ -92,6 +105,26 @@ interface IrBuilderExtension {
         return function
     }
 
+    fun IrClass.createSingletonLambda(
+        returnType: IrType,
+        startOffset: Int,
+        endOffset: Int,
+        bodyGen: IrBlockBodyBuilder.() -> Unit
+    ): IrSimpleFunction {
+        val function = compilerContext.irFactory.buildFun {
+            this.startOffset = startOffset
+            this.endOffset = endOffset
+            this.returnType = returnType
+            name = Name.identifier("<anonymous>")
+            visibility = DescriptorVisibilities.LOCAL
+            origin = SERIALIZABLE_PLUGIN_ORIGIN
+        }
+        function.body =
+            DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset, bodyGen)
+
+        return function
+    }
+
     fun IrBuilderWithScope.irInvoke(
         dispatchReceiver: IrExpression? = null,
         callee: IrFunctionSymbol,
@@ -132,6 +165,16 @@ interface IrBuilderExtension {
         return irCall(compilerContext.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)
         }
+    }
+
+    fun ClassDescriptor.referenceFunctionSymbol(
+        functionName: String,
+        predicate: (IrSimpleFunction) -> Boolean = { true }
+    ): IrFunctionSymbol {
+        val irClass = compilerContext.referenceClass(fqNameSafe)?.owner ?: error("Couldn't load class $this")
+        val simpleFunctions = irClass.declarations.filterIsInstance<IrSimpleFunction>()
+
+        return simpleFunctions.filter { it.name.asString() == functionName }.single { predicate(it) }.symbol
     }
 
     fun IrBuilderWithScope.createPrimitiveArrayOfExpression(
@@ -214,14 +257,62 @@ interface IrBuilderExtension {
     // note: this method should be used only for properties from current module. Fields from other modules are private and inaccessible.
     val SerializableProperty.irField: IrField get() = compilerContext.symbolTable.referenceField(this.descriptor).owner
 
-    fun SerializableProperty.getIrPropertyFrom(thisClass: IrClass): IrProperty {
-        val desc = this.descriptor
+    fun IrClass.searchForProperty(descriptor: PropertyDescriptor): IrProperty {
         // this API is used to reference both current module descriptors and external ones (because serializable class can be in any of them),
         // so we use descriptor api for current module because it is not possible to obtain FQname for e.g. local classes.
-        return thisClass.searchForDeclaration(desc) ?: if (desc.module == compilerContext.moduleDescriptor) {
-            compilerContext.symbolTable.referenceProperty(desc).owner
+        return searchForDeclaration(descriptor) ?: if (descriptor.module == compilerContext.moduleDescriptor) {
+            compilerContext.symbolTable.referenceProperty(descriptor).owner
         } else {
-            compilerContext.referenceProperties(desc.fqNameSafe).single().owner
+            compilerContext.referenceProperties(descriptor.fqNameSafe).single().owner
+        }
+    }
+
+    fun SerializableProperty.getIrPropertyFrom(thisClass: IrClass): IrProperty {
+        return thisClass.searchForProperty(descriptor)
+    }
+
+
+    /*
+      Create a function that creates `get property value expressions` for given corresponded constructor's param
+        (constructor_params) -> get_property_value_expression
+     */
+    fun IrBuilderWithScope.createPropertyByParamReplacer(
+        irClass: IrClass,
+        serialProperties: List<SerializableProperty>,
+        instance: IrValueParameter,
+        bindingContext: BindingContext
+    ): (ValueParameterDescriptor) -> IrExpression? {
+        fun SerializableProperty.irGet(): IrExpression {
+            val ownerType = instance.symbol.owner.type
+            return getProperty(
+                irGet(
+                    type = ownerType,
+                    variable = instance.symbol
+                ), getIrPropertyFrom(irClass)
+            )
+        }
+
+        val serialPropertiesMap = serialProperties.associateBy { it.descriptor }
+
+        val transientPropertiesMap =
+            irClass.declarations.asSequence()
+                .filterIsInstance<IrProperty>()
+                .filter { it.backingField != null }.filter { !serialPropertiesMap.containsKey(it.descriptor) }
+                .associateBy { it.symbol.descriptor }
+
+        return {
+            val propertyDescriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, it]
+            if (propertyDescriptor != null) {
+                val value = serialPropertiesMap[propertyDescriptor]
+                value?.irGet() ?: transientPropertiesMap[propertyDescriptor]?.let { prop ->
+                    getProperty(
+                        irGet(instance),
+                        prop
+                    )
+                }
+            } else {
+                null
+            }
         }
     }
 
@@ -255,6 +346,78 @@ interface IrBuilderExtension {
                 anyConstructor.symbol
             )
         }
+    }
+
+    fun IrBlockBodyBuilder.generateGoldenMaskCheck(
+        seenVars: List<IrValueDeclaration>,
+        properties: SerializableProperties,
+        serialDescriptor: IrExpression
+    ) {
+        val fieldsMissedTest: IrExpression
+        val throwErrorExpr: IrExpression
+
+        val maskSlotCount = seenVars.size
+        if (maskSlotCount == 1) {
+            val goldenMask = properties.goldenMask
+
+
+            throwErrorExpr = irInvoke(
+                null,
+                throwMissedFieldExceptionFunc!!,
+                irGet(seenVars[0]),
+                irInt(goldenMask),
+                serialDescriptor,
+                typeHint = compilerContext.irBuiltIns.unitType
+            )
+
+            fieldsMissedTest = irNotEquals(
+                irInt(goldenMask),
+                irBinOp(
+                    OperatorNameConventions.AND,
+                    irInt(goldenMask),
+                    irGet(seenVars[0])
+                )
+            )
+        } else {
+            val goldenMaskList = properties.goldenMaskList
+
+            var compositeExpression: IrExpression? = null
+            for (i in goldenMaskList.indices) {
+                val singleCheckExpr = irNotEquals(
+                    irInt(goldenMaskList[i]),
+                    irBinOp(
+                        OperatorNameConventions.AND,
+                        irInt(goldenMaskList[i]),
+                        irGet(seenVars[i])
+                    )
+                )
+
+                compositeExpression = if (compositeExpression == null) {
+                    singleCheckExpr
+                } else {
+                    irBinOp(
+                        OperatorNameConventions.OR,
+                        compositeExpression,
+                        singleCheckExpr
+                    )
+                }
+            }
+
+            fieldsMissedTest = compositeExpression!!
+
+            throwErrorExpr = irBlock {
+                +irInvoke(
+                    null,
+                    throwMissedFieldExceptionArrayFunc!!,
+                    createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.indices.map { irGet(seenVars[it]) }),
+                    createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.map { irInt(it) }),
+                    serialDescriptor,
+                    typeHint = compilerContext.irBuiltIns.unitType
+                )
+            }
+        }
+
+        +irIfThen(compilerContext.irBuiltIns.unitType, fieldsMissedTest, throwErrorExpr)
     }
 
     fun generateSimplePropertyWithBackingField(
@@ -322,7 +485,7 @@ interface IrBuilderExtension {
                 property.factory.createFunction(
                     fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrSimpleFunctionSymbolImpl(descriptor),
                     name, visibility, modality, returnType!!.toIrType(),
-                    isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
+                    isInline, isEffectivelyExternal(), isTailrec, isSuspend, isOperator, isInfix, isExpect
                 )
             }.also { f ->
                 generateOverriddenFunctionSymbols(f, compilerContext.symbolTable)
@@ -485,26 +648,54 @@ interface IrBuilderExtension {
         return defaultsMap + extractDefaultValuesFromConstructor(irClass.getSuperClassNotAny())
     }
 
-    fun buildInitializersRemapping(irClass: IrClass): (IrField) -> IrExpression? {
-        val defaultsMap = extractDefaultValuesFromConstructor(irClass)
-        return fun(f: IrField): IrExpression? {
-            val i = f.initializer?.expression ?: return null
-            val irExpression =
-                if (i is IrGetValueImpl && i.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
-                    // this is a primary constructor property, use corresponding default of value parameter
-                    defaultsMap.getValue(i.symbol.descriptor as ParameterDescriptor)
-                } else {
-                    i
+    /*
+    Creates an initializer adapter function that can replace IR expressions of getting constructor parameter value by some other expression.
+    Also adapter may replace IR expression of getting `this` value by another expression.
+     */
+    fun createInitializerAdapter(
+        irClass: IrClass,
+        paramGetReplacer: (ValueParameterDescriptor) -> IrExpression?,
+        thisGetReplacer: Pair<IrValueSymbol, () -> IrExpression>? = null
+    ): (IrExpressionBody) -> IrExpression {
+        val initializerTransformer = object : IrElementTransformerVoid() {
+            // try to replace `get some value` expression
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                val symbol = expression.symbol
+                if (thisGetReplacer != null && thisGetReplacer.first == symbol) {
+                    // replace `get this value` expression
+                    return thisGetReplacer.second()
                 }
-            return irExpression?.deepCopyWithVariables()
+
+                val descriptor = symbol.descriptor
+                if (descriptor is ValueParameterDescriptor) {
+                    // replace `get parameter value` expression
+                    paramGetReplacer(descriptor)?.let { return it }
+                }
+
+                // otherwise leave expression as it is
+                return super.visitGetValue(expression)
+            }
+        }
+        val defaultsMap = extractDefaultValuesFromConstructor(irClass)
+        return fun(initializer: IrExpressionBody): IrExpression {
+            val rawExpression = initializer.expression
+            val expression =
+                if (rawExpression is IrGetValueImpl && rawExpression.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
+                    // this is a primary constructor property, use corresponding default of value parameter
+                    defaultsMap.getValue(rawExpression.symbol.descriptor as ParameterDescriptor)!!
+                } else {
+                    rawExpression
+                }
+            return expression.deepCopyWithVariables().transform(initializerTransformer, null)
         }
     }
 
     fun findEnumValuesMethod(enumClass: ClassDescriptor): IrFunction {
         assert(enumClass.kind == ClassKind.ENUM_CLASS)
         return compilerContext.referenceClass(enumClass.fqNameSafe)?.let {
-            it.owner.functions.find { it.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER && it.name == Name.identifier("values") }
-                ?: throw AssertionError("Enum class does not have .values() function")
+            it.owner.functions.singleOrNull { f ->
+                f.name == Name.identifier("values") && f.valueParameters.isEmpty() && f.extensionReceiverParameter == null
+            } ?: throw AssertionError("Enum class does not have single .values() function")
         } ?: error("Couldn't load class $enumClass")
     }
 

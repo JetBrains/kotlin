@@ -5,30 +5,26 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.trasformers
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.compose
 
 internal class FirDesignatedContractsResolveTransformerForIDE(
-    private val designation: Iterator<FirDeclaration>,
-    targetDeclaration: FirDeclaration,
+    designation: FirDesignation,
     session: FirSession,
     scopeSession: ScopeSession,
 ) : FirContractResolveTransformer(session, scopeSession) {
-    private val phaseReplaceOracle = PhaseReplaceOracle(targetDeclaration)
+    private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
-    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        if (designation.hasNext()) phaseReplaceOracle.transformDeclarationInside(designation.next()) {
-            it.visitNoTransform(this, data)
-            return declaration.compose()
+    @Suppress("NAME_SHADOWING")
+    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> =
+        ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) { declaration, data ->
+            super.transformDeclarationContent(declaration, data)
         }
-        return super.transformDeclarationContent(declaration, data)
-    }
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = phaseReplaceOracle.needReplacePhase(firDeclaration)
+
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = ideDeclarationTransformer.needReplacePhase(firDeclaration)
 }

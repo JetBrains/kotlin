@@ -11,3 +11,14 @@ abstract class KtSubtypingComponent : KtAnalysisSessionComponent() {
     abstract fun isEqualTo(first: KtType, second: KtType): Boolean
     abstract fun isSubTypeOf(subType: KtType, superType: KtType): Boolean
 }
+
+interface KtSubtypingComponentMixIn : KtAnalysisSessionMixIn {
+    infix fun KtType.isEqualTo(other: KtType): Boolean =
+        analysisSession.subtypingComponent.isEqualTo(this, other)
+
+    infix fun KtType.isSubTypeOf(superType: KtType): Boolean =
+        analysisSession.subtypingComponent.isSubTypeOf(this, superType)
+
+    infix fun KtType.isNotSubTypeOf(superType: KtType): Boolean =
+        !analysisSession.subtypingComponent.isSubTypeOf(this, superType)
+}

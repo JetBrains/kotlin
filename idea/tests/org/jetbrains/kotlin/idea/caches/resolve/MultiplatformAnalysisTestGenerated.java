@@ -164,9 +164,19 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/jvmDefaultNonMpp/");
     }
 
+    @TestMetadata("jvmInlineValueClass")
+    public void testJvmInlineValueClass() throws Exception {
+        runTest("idea/testData/multiplatform/jvmInlineValueClass/");
+    }
+
     @TestMetadata("kt41218")
     public void testKt41218() throws Exception {
         runTest("idea/testData/multiplatform/kt41218/");
+    }
+
+    @TestMetadata("kt44898")
+    public void testKt44898() throws Exception {
+        runTest("idea/testData/multiplatform/kt44898/");
     }
 
     @TestMetadata("lambdas")
@@ -197,6 +207,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
     @TestMetadata("overrideExpectWithCompositeType")
     public void testOverrideExpectWithCompositeType() throws Exception {
         runTest("idea/testData/multiplatform/overrideExpectWithCompositeType/");
+    }
+
+    @TestMetadata("platformDependencyInCommon")
+    public void testPlatformDependencyInCommon() throws Exception {
+        runTest("idea/testData/multiplatform/platformDependencyInCommon/");
     }
 
     @TestMetadata("platformSpecificChecksInCommon")
@@ -262,5 +277,10 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
     @TestMetadata("weaklyIncompatibleActualInIntermediateModule")
     public void testWeaklyIncompatibleActualInIntermediateModule() throws Exception {
         runTest("idea/testData/multiplatform/weaklyIncompatibleActualInIntermediateModule/");
+    }
+
+    @TestMetadata("whenExhaustivenessForSealed")
+    public void testWhenExhaustivenessForSealed() throws Exception {
+        runTest("idea/testData/multiplatform/whenExhaustivenessForSealed/");
     }
 }

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
+import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginInMultipleProjectsHolder
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
 internal class MultiplePluginDeclarationDetector
 private constructor() {
@@ -40,9 +42,8 @@ private constructor() {
 
             val detector = MultiplePluginDeclarationDetector()
             instance = detector
-            gradle.buildFinished {
-                instance = null
-            }
+
+            BuildFinishedListenerService.getInstance(gradle).onClose { instance = null }
 
             return detector
         }

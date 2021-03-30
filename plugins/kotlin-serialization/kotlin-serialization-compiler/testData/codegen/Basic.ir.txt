@@ -165,10 +165,6 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
 
     public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
 
-    public ListOfUsers patch(kotlinx.serialization.encoding.Decoder decoder, ListOfUsers old)
-
-    public java.lang.Object patch(kotlinx.serialization.encoding.Decoder decoder, java.lang.Object old)
-
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, ListOfUsers value) {
         LABEL (L0)
           ALOAD (1)
@@ -276,18 +272,19 @@ public final class ListOfUsers : java/lang/Object {
     public void <init>(int seen1, java.util.List list, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
         LABEL (L0)
         LINENUMBER (12)
-          ALOAD (0)
-          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          ICONST_1
+          ICONST_1
+          ILOAD (1)
+          IAND
+          IF_ICMPEQ (L1)
           ILOAD (1)
           ICONST_1
-          IAND
-          IFNE (L1)
-          NEW
-          DUP
-          LDC (list)
-          INVOKESPECIAL (kotlinx/serialization/MissingFieldException, <init>, (Ljava/lang/String;)V)
-          ATHROW
+          GETSTATIC (INSTANCE, LListOfUsers$$serializer;)
+          INVOKEVIRTUAL (ListOfUsers$$serializer, getDescriptor, ()Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          INVOKESTATIC (kotlinx/serialization/internal/PluginExceptionsKt, throwMissingFieldException, (IILkotlinx/serialization/descriptors/SerialDescriptor;)V)
         LABEL (L1)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
           ALOAD (0)
           ALOAD (2)
           PUTFIELD (list, Ljava/util/List;)
@@ -453,10 +450,6 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
 
     public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
 
-    public OptionalUser patch(kotlinx.serialization.encoding.Decoder decoder, OptionalUser old)
-
-    public java.lang.Object patch(kotlinx.serialization.encoding.Decoder decoder, java.lang.Object old)
-
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, OptionalUser value) {
         LABEL (L0)
           ALOAD (1)
@@ -474,9 +467,17 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/encoding/Encoder, beginStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lkotlinx/serialization/encoding/CompositeEncoder;)
           ASTORE (4)
+          ALOAD (4)
+          ALOAD (3)
+          ICONST_0
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, shouldEncodeElementDefault, (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z)
+          IFEQ (L2)
+          ICONST_1
+          GOTO (L3)
+        LABEL (L2)
           ALOAD (2)
           INVOKEVIRTUAL (OptionalUser, getUser, ()LUser;)
-        LABEL (L2)
+        LABEL (L4)
         LINENUMBER (10)
           NEW
           DUP
@@ -484,18 +485,15 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           LDC ()
           INVOKESPECIAL (User, <init>, (Ljava/lang/String;Ljava/lang/String;)V)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, areEqual, (Ljava/lang/Object;Ljava/lang/Object;)Z)
-          IFNE (L3)
-        LABEL (L4)
-        LINENUMBER (9)
+          IFNE (L5)
           ICONST_1
-          GOTO (L5)
-        LABEL (L3)
-          ALOAD (4)
-          ALOAD (3)
-          ICONST_0
-          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, shouldEncodeElementDefault, (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z)
+          GOTO (L3)
         LABEL (L5)
+          ICONST_0
+        LABEL (L3)
           IFEQ (L6)
+        LABEL (L7)
+        LINENUMBER (9)
           ALOAD (4)
           ALOAD (3)
           ICONST_0
@@ -509,7 +507,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
           RETURN
-        LABEL (L7)
+        LABEL (L8)
     }
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value) {
@@ -603,31 +601,41 @@ public final class OptionalUser : java/lang/Object {
     public void <init>(int seen1, User user, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
         LABEL (L0)
         LINENUMBER (9)
+          ICONST_0
+          ILOAD (1)
+          IAND
+          IFEQ (L1)
+          ILOAD (1)
+          ICONST_0
+          GETSTATIC (INSTANCE, LOptionalUser$$serializer;)
+          INVOKEVIRTUAL (OptionalUser$$serializer, getDescriptor, ()Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          INVOKESTATIC (kotlinx/serialization/internal/PluginExceptionsKt, throwMissingFieldException, (IILkotlinx/serialization/descriptors/SerialDescriptor;)V)
+        LABEL (L1)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           ILOAD (1)
           ICONST_1
           IAND
-          IFNE (L1)
+          IFNE (L2)
           ALOAD (0)
-        LABEL (L2)
+        LABEL (L3)
         LINENUMBER (10)
           NEW
           DUP
           LDC ()
           LDC ()
           INVOKESPECIAL (User, <init>, (Ljava/lang/String;Ljava/lang/String;)V)
-        LABEL (L3)
+        LABEL (L4)
         LINENUMBER (9)
           PUTFIELD (user, LUser;)
-          GOTO (L4)
-        LABEL (L1)
+          GOTO (L5)
+        LABEL (L2)
           ALOAD (0)
           ALOAD (2)
           PUTFIELD (user, LUser;)
-        LABEL (L4)
-          RETURN
         LABEL (L5)
+          RETURN
+        LABEL (L6)
     }
 
     public void <init>() {
@@ -824,10 +832,6 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
 
     public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
 
-    public User patch(kotlinx.serialization.encoding.Decoder decoder, User old)
-
-    public java.lang.Object patch(kotlinx.serialization.encoding.Decoder decoder, java.lang.Object old)
-
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, User value) {
         LABEL (L0)
           ALOAD (1)
@@ -943,36 +947,27 @@ public final class User : java/lang/Object {
     public void <init>(int seen1, java.lang.String firstName, java.lang.String lastName, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
         LABEL (L0)
         LINENUMBER (6)
+          ICONST_3
+          ICONST_3
+          ILOAD (1)
+          IAND
+          IF_ICMPEQ (L1)
+          ILOAD (1)
+          ICONST_3
+          GETSTATIC (INSTANCE, LUser$$serializer;)
+          INVOKEVIRTUAL (User$$serializer, getDescriptor, ()Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          INVOKESTATIC (kotlinx/serialization/internal/PluginExceptionsKt, throwMissingFieldException, (IILkotlinx/serialization/descriptors/SerialDescriptor;)V)
+        LABEL (L1)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
-          ILOAD (1)
-          ICONST_1
-          IAND
-          IFNE (L1)
-          NEW
-          DUP
-          LDC (firstName)
-          INVOKESPECIAL (kotlinx/serialization/MissingFieldException, <init>, (Ljava/lang/String;)V)
-          ATHROW
-        LABEL (L1)
           ALOAD (0)
           ALOAD (2)
           PUTFIELD (firstName, Ljava/lang/String;)
-          ILOAD (1)
-          ICONST_2
-          IAND
-          IFNE (L2)
-          NEW
-          DUP
-          LDC (lastName)
-          INVOKESPECIAL (kotlinx/serialization/MissingFieldException, <init>, (Ljava/lang/String;)V)
-          ATHROW
-        LABEL (L2)
           ALOAD (0)
           ALOAD (3)
           PUTFIELD (lastName, Ljava/lang/String;)
           RETURN
-        LABEL (L3)
+        LABEL (L2)
     }
 
     public final java.lang.String getFirstName()

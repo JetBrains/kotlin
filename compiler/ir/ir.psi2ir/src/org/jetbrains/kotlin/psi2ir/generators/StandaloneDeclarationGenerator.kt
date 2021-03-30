@@ -189,7 +189,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         val irFunction = with(descriptor) {
             irFactory.createFunction(
                 startOffset, endOffset, origin, symbol, name, visibility, modality, IrUninitializedType,
-                isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
+                isInline, isEffectivelyExternal(), isTailrec, isSuspend, isOperator, isInfix, isExpect
             )
         }
         irFunction.metadata = DescriptorMetadataSource.Function(descriptor)

@@ -79,18 +79,13 @@ org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.Facades.test
 org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testActualTypeAliasCustomJvmPackageName, Invalid behavior of old lightclasses in common tests,,
 org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testJvmPackageName, Invalid behavior of old lightclasses in common tests,,
 org.jetbrains.uast.test.kotlin.SimpleKotlinRenderLogTest.testReceiverFun, Analysing of facade annotation with receiver site is broken (connected with KT-40403),,
-org.jetbrains.kotlin.checkers.FirPsiCheckerTestGenerated.Regression.testJet53,,, FLAKY
+org.jetbrains.kotlin.checkers.FirKotlinHighlightingPassTestGenerated.Regression.testJet53,,, FLAKY
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLanguageVersionsViaFacets,,, FLAKY
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Jvm.testCircular, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Jvm.testCircularDependencyClasses, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Jvm.testCircularDependencySamePackageUnchanged, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Jvm.testCircularDependencyTopLevelFunctions, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Jvm.testCircularDependencyWithAccessToInternal, Temporary muted due to problems with IC and JVM IR backend,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.Other.testMultifileClassAddTopLevelFunWithDefault, Temporary muted due to problems with IC and JVM IR backend,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.Other.testMultifileClassFileAdded, Temporary muted due to problems with IC and JVM IR backend,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.Other.testMultifileClassFileChanged, Temporary muted due to problems with IC and JVM IR backend,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.Other.testMultifilePackagePartMethodAdded, Temporary muted due to problems with IC and JVM IR backend,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.Other.testMultifilePartsWithProperties, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.testCircularDependenciesDifferentPackages, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.testCircularDependenciesSamePackage, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.testCircularDependenciesSamePackageWithTests, Temporary muted due to problems with IC and JVM IR backend,,
@@ -108,3 +103,7 @@ org.jetbrains.kotlin.idea.caches.resolve.IdeCompiledLightClassTestGenerated.Scri
 org.jetbrains.kotlin.idea.caches.resolve.IdeCompiledLightClassTestGenerated.Script.testInnerClasses, KT-44472,,
 org.jetbrains.kotlin.idea.caches.resolve.IdeCompiledLightClassTestGenerated.testDelegatedNested, KT-44472,,
 org.jetbrains.kotlin.idea.caches.resolve.IdeCompiledLightClassTestGenerated.testDelegation, KT-44472,,
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAdded, KT-44844 fixed in IDEA 212,,
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAddedSamAdapter, KT-44844 fixed in IDEA 212,,
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodSignatureChanged, KT-44844 fixed in IDEA 212,,
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodSignatureChangedSamAdapter, KT-44844 fixed in IDEA 212,,

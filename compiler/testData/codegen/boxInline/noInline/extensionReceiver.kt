@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 inline fun (() -> String).test(): (() -> String) = { invoke() + this.invoke() + this() }
@@ -7,7 +8,6 @@ inline fun (() -> String).extensionNoInline(): String = this() + (this.hashCode(
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 
 fun box(): String {
     val res = { "OK" }.test()()

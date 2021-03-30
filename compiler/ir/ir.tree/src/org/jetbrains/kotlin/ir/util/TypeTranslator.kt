@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -23,22 +22,26 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.utils.threadLocal
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class TypeTranslator(
+abstract class TypeTranslator(
     private val symbolTable: ReferenceSymbolTable,
     val languageVersionSettings: LanguageVersionSettings,
-    builtIns: KotlinBuiltIns,
-    private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver(),
+    typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver() },
     private val enterTableScope: Boolean = false,
     private val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
+    abstract val constantValueGenerator: ConstantValueGenerator
+
+    protected abstract fun approximateType(type: KotlinType): KotlinType
+
+    protected abstract fun commonSupertype(types: Collection<KotlinType>): KotlinType
+
+    private val typeParametersResolver by threadLocal { typeParametersResolverBuilder() }
 
     private val erasureStack = Stack<PropertyDescriptor>()
-
-    private val typeApproximatorForNI = TypeApproximator(builtIns)
-    lateinit var constantValueGenerator: ConstantValueGenerator
 
     fun enterScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.enterTypeParameterScope(irElement)
@@ -153,7 +156,7 @@ class TypeTranslator(
     }
 
     private fun approximateUpperBounds(upperBounds: Collection<KotlinType>, variance: Variance): IrTypeProjection {
-        val commonSupertype = CommonSupertypes.commonSupertype(upperBounds)
+        val commonSupertype = commonSupertype(upperBounds)
         return translateType(approximate(commonSupertype.replaceArgumentsWithStarProjections()), variance)
     }
 
@@ -177,7 +180,7 @@ class TypeTranslator(
         // That's what old back-end effectively does.
         val typeConstructor = properlyApproximatedType.constructor
         if (typeConstructor is IntersectionTypeConstructor) {
-            val commonSupertype = CommonSupertypes.commonSupertype(typeConstructor.supertypes)
+            val commonSupertype = commonSupertype(typeConstructor.supertypes)
             return approximate(commonSupertype.replaceArgumentsWithStarProjections())
         }
 
@@ -192,11 +195,7 @@ class TypeTranslator(
             if (ktType.constructor.isDenotable && ktType.arguments.isEmpty())
                 ktType
             else
-                typeApproximatorForNI.approximateDeclarationType(
-                    ktType,
-                    local = false,
-                    languageVersionSettings = languageVersionSettings
-                )
+                approximateType(ktType)
         } else {
             // Hack to preserve *-projections in arguments in OI.
             // Expected to be removed as soon as OI is deprecated.

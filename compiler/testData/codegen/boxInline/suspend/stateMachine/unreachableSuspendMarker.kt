@@ -1,9 +1,10 @@
-// FILE: inline.kt
-// WITH_RUNTIME
-// WITH_COROUTINES
-// FULL_JDK
-// NO_CHECK_LAMBDA_INLINING
 // CHECK_STATE_MACHINE
+// WITH_COROUTINES
+// WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FULL_JDK
+// WITH_RUNTIME
+// FILE: inline.kt
 
 import helpers.*
 import kotlin.coroutines.intrinsics.*
@@ -17,7 +18,6 @@ inline suspend fun inlineMe(): Unit {
 }
 
 // FILE: box.kt
-// WITH_COROUTINES
 
 import kotlin.coroutines.*
 import helpers.*

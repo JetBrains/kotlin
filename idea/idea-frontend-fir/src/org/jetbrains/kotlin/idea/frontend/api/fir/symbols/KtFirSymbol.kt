@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -15,9 +14,8 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.name.ClassId
 
-internal interface KtFirSymbol<F : FirDeclaration> : KtSymbol, ValidityTokenOwner {
+internal interface KtFirSymbol<out F : FirDeclaration> : KtSymbol, ValidityTokenOwner {
     val firRef: FirRefWithValidityCheck<F>
 
     override val origin: KtSymbolOrigin get() = firRef.withFir { it.ktSymbolOrigin() }
@@ -32,7 +30,7 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
             KtSymbolOrigin.SOURCE_MEMBER_GENERATED
         } else KtSymbolOrigin.SOURCE
     }
-    FirDeclarationOrigin.Library -> KtSymbolOrigin.LIBRARY
+    FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> KtSymbolOrigin.LIBRARY
     FirDeclarationOrigin.Java -> KtSymbolOrigin.JAVA
     FirDeclarationOrigin.SamConstructor -> KtSymbolOrigin.SAM_CONSTRUCTOR
     FirDeclarationOrigin.Enhancement -> KtSymbolOrigin.JAVA
@@ -40,7 +38,6 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
     FirDeclarationOrigin.Delegated -> KtSymbolOrigin.DELEGATED
     FirDeclarationOrigin.Synthetic -> {
         when {
-            isSyntheticFunctionalInterface() -> KtSymbolOrigin.LIBRARY
             this is FirSyntheticProperty -> KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
             else -> throw InvalidFirDeclarationOriginForSymbol(this)
         }
@@ -53,14 +50,6 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
     }
 }
 
-private fun FirDeclaration.isSyntheticFunctionalInterface(): Boolean {
-    if (this !is FirRegularClass) return false
-    return classId.isSyntheticFunctionalInterface()
-}
-
-private fun ClassId.isSyntheticFunctionalInterface(): Boolean {
-    return FunctionClassKind.byClassNamePrefix(packageFqName, relativeClassName.asString()) != null
-}
 
 class InvalidFirDeclarationOriginForSymbol(declaration: FirDeclaration) :
     IllegalStateException("Invalid FirDeclarationOrigin ${declaration.origin::class.simpleName} for ${declaration.render()}")

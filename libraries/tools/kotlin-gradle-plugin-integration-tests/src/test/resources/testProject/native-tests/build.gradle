@@ -4,7 +4,7 @@ version '1.0'
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -15,7 +15,7 @@ apply plugin: 'kotlin-multiplatform'
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {
@@ -42,6 +42,8 @@ kotlin {
 
 // Check that test events are correctly reported in CLI.
 configure([hostTest, iosTest]){
+    trackEnvironment("ANDROID_HOME")
+
     testLogging {
         events "passed", "skipped", "failed"
     }

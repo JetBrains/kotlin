@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.scopes.jvm
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -12,68 +15,44 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-fun FirFunction<*>.computeJvmDescriptorReplacingKotlinToJava(): String =
-    computeJvmDescriptor()
-        .replace("kotlin/Any", "java/lang/Object")
-        .replace("kotlin/String", "java/lang/String")
-        .replace("kotlin/Throwable", "java/lang/Throwable")
+fun FirFunction<*>.computeJvmSignature(typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String? {
+    if (this !is FirCallableMemberDeclaration<*>) return null
+    val containingClass = containingClass() ?: return null
 
-fun FirFunction<*>.computeJvmDescriptor(): String = buildString {
-    if (this@computeJvmDescriptor is FirSimpleFunction) {
-        append(name.asString())
+    return SignatureBuildingComponents.signature(containingClass.classId, computeJvmDescriptor(typeConversion = typeConversion))
+}
+
+fun FirFunction<*>.computeJvmDescriptor(
+    customName: String? = null,
+    includeReturnType: Boolean = true,
+    typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe
+): String = buildString {
+    if (customName != null) {
+        append(customName)
     } else {
-        append("<init>")
+        if (this@computeJvmDescriptor is FirSimpleFunction) {
+            append(name.asString())
+        } else {
+            append("<init>")
+        }
     }
 
     append("(")
     for (parameter in valueParameters) {
-        appendErasedType(parameter.returnTypeRef)
+        typeConversion(parameter.returnTypeRef)?.let(this::appendConeType)
     }
     append(")")
 
-    if (this@computeJvmDescriptor !is FirSimpleFunction || returnTypeRef.isVoid()) {
-        append("V")
-    } else {
-        appendErasedType(returnTypeRef)
-    }
-}
-
-// TODO: primitive types, arrays, etc.
-private fun StringBuilder.appendErasedType(typeRef: FirTypeRef) {
-    fun appendClass(klass: JavaClass) {
-        klass.fqName?.let {
-            append("L")
-            append(it.asString().replace(".", "/"))
-            append(";")
-        }
-    }
-
-    when (typeRef) {
-        is FirResolvedTypeRef -> appendConeType(typeRef.type)
-        is FirJavaTypeRef -> {
-            when (val javaType = typeRef.type) {
-                is JavaClassifierType -> {
-                    when (val classifier = javaType.classifier) {
-                        is JavaClass -> appendClass(classifier)
-                        is JavaTypeParameter -> {
-                            val representative = classifier.upperBounds.firstOrNull { it.classifier is JavaClass }
-                            if (representative == null) {
-                                append("Ljava/lang/Object;")
-                            } else {
-                                appendClass(representative.classifier as JavaClass)
-                            }
-                        }
-                        else -> return
-                    }
-                }
-            }
+    if (includeReturnType) {
+        if (this@computeJvmDescriptor !is FirSimpleFunction || returnTypeRef.isVoid()) {
+            append("V")
+        } else {
+            typeConversion(returnTypeRef)?.let(this::appendConeType)
         }
     }
 }
@@ -101,7 +80,8 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
     }
 
     fun appendClassLikeType(type: ConeClassLikeType) {
-        val classId = type.lookupTag.classId
+        val baseClassId = type.lookupTag.classId
+        val classId = JavaToKotlinClassMap.mapKotlinToJava(baseClassId.asSingleFqName().toUnsafe()) ?: baseClassId
         if (classId == StandardClassIds.Array) {
             append("[")
             type.typeArguments.forEach { typeArg ->

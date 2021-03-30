@@ -61,7 +61,7 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableMemberDeclaration<*>) {
             if (declaration.visibility == Visibilities.Local) return null
-            if (declaration.symbol.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
+            if (declaration.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
         val builder = SignatureBuilder()
         try {

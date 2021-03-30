@@ -24,7 +24,7 @@ fun branchingIndetermineFlow(a: Any?) {
     if (a is String) {
         myRepeat(a.length) {
             // Val reassignment because we know that repeat's lambda called in-place
-            myRun { x = 42 }
+            myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
         }
     }
     else {
@@ -45,7 +45,7 @@ fun multipleAssignments() {
     val x: Int
     myRepeat(42) {
         // Val reassignment because we know that repeat's lambda called in-place
-        myRun { x = 42 }
+        myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
     }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
@@ -60,7 +60,7 @@ fun nestedIndefiniteAssignment() {
 }
 
 class InitializationForbiddenInNonInitSection {
-    val x: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
 
     fun setup() {
         myRun { x = 42 }

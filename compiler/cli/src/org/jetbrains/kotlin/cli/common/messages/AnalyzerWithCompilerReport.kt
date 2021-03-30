@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.common.messages
 
-import com.intellij.openapi.util.io.FileUtil.toSystemDependentName
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiFormatUtil
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -32,21 +31,18 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 class AnalyzerWithCompilerReport(
     private val messageCollector: MessageCollector,
     private val languageVersionSettings: LanguageVersionSettings
 ) : AbstractAnalyzerWithCompilerReport {
+    override val targetEnvironment: TargetEnvironment
+        get() = CompilerEnvironment
+
     override lateinit var analysisResult: AnalysisResult
 
     constructor(configuration: CompilerConfiguration) : this(
@@ -71,6 +67,9 @@ class AnalyzerWithCompilerReport(
                 message.append("    class ").append(fqName)
                     .append(", unresolved supertypes: ").append(unresolved!!.joinToString())
                     .append("\n")
+            }
+            if (!languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)) {
+                message.append("Adding -Xextended-compiler-checks argument might provide additional information.\n")
             }
             messageCollector.report(ERROR, message.toString())
         }
@@ -241,34 +240,6 @@ class AnalyzerWithCompilerReport(
 
         fun reportSyntaxErrors(file: PsiElement, messageCollector: MessageCollector): SyntaxErrorReport {
             return reportSyntaxErrors(file, DefaultDiagnosticReporter(messageCollector))
-        }
-
-        fun reportBytecodeVersionErrors(bindingContext: BindingContext, messageCollector: MessageCollector) {
-            val severity =
-                if (System.getProperty("kotlin.jvm.disable.bytecode.version.error") == "true") STRONG_WARNING
-                else ERROR
-
-            val locations = bindingContext.getKeys(IncompatibleClassTrackerImpl.BYTECODE_VERSION_ERRORS)
-            if (locations.isEmpty()) return
-
-            for (location in locations) {
-                val data = bindingContext.get(IncompatibleClassTrackerImpl.BYTECODE_VERSION_ERRORS, location)
-                    ?: error("Value is missing for key in binding context: $location")
-                reportIncompatibleBinaryVersion(messageCollector, data, severity)
-            }
-        }
-
-        private fun reportIncompatibleBinaryVersion(
-            messageCollector: MessageCollector,
-            data: IncompatibleVersionErrorData<JvmBytecodeBinaryVersion>,
-            severity: CompilerMessageSeverity
-        ) {
-            messageCollector.report(
-                severity,
-                "Class '" + JvmClassName.byClassId(data.classId) + "' was compiled with an incompatible version of Kotlin. " +
-                        "The binary version of its bytecode is " + data.actualVersion + ", expected version is " + data.expectedVersion,
-                CompilerMessageLocation.create(toSystemDependentName(data.filePath))
-            )
         }
     }
 }

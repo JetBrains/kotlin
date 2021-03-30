@@ -2,7 +2,7 @@
 
 inline fun <T> foo(t1: T, t2: T) = t1 ?: t2
 
-inline fun <T> bar(<!UNUSED_PARAMETER!>l<!>: (T) -> Unit): T = null!!
+inline fun <T> bar(l: (T) -> Unit): T = null!!
 
 fun use() {
     var x: Int?

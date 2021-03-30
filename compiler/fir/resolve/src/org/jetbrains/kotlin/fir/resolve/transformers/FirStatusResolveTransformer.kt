@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -78,7 +77,13 @@ class FirStatusResolveTransformer(
     statusComputationSession: StatusComputationSession,
     designationMapForLocalClasses: Map<FirClass<*>, FirClass<*>?> = mapOf(),
     scopeForLocalClass: FirScope? = null,
-) : AbstractFirStatusResolveTransformer(session, scopeSession, statusComputationSession, designationMapForLocalClasses, scopeForLocalClass) {
+) : AbstractFirStatusResolveTransformer(
+    session,
+    scopeSession,
+    statusComputationSession,
+    designationMapForLocalClasses,
+    scopeForLocalClass
+) {
     override fun FirDeclaration.needResolveMembers(): Boolean {
         if (this is FirRegularClass) {
             return statusComputationSession[this] != StatusComputationSession.StatusComputationStatus.Computed
@@ -116,7 +121,13 @@ private class FirDesignatedStatusResolveTransformer(
     statusComputationSession: StatusComputationSession,
     designationMapForLocalClasses: Map<FirClass<*>, FirClass<*>?>,
     scopeForLocalClass: FirScope?,
-) : AbstractFirStatusResolveTransformer(session, scopeSession, statusComputationSession, designationMapForLocalClasses, scopeForLocalClass) {
+) : AbstractFirStatusResolveTransformer(
+    session,
+    scopeSession,
+    statusComputationSession,
+    designationMapForLocalClasses,
+    scopeForLocalClass
+) {
     private var currentElement: FirDeclaration? = null
     private var classLocated = false
 
@@ -223,8 +234,7 @@ abstract class AbstractFirStatusResolveTransformer(
 
     protected val containingClass: FirClass<*>? get() = classes.lastOrNull()
 
-    private val firProvider = session.firProvider
-    private val symbolProvider = session.firSymbolProvider
+    private val symbolProvider = session.symbolProvider
 
     protected abstract fun FirDeclaration.needResolveMembers(): Boolean
     protected abstract fun FirDeclaration.needResolveNestedClassifiers(): Boolean
@@ -273,19 +283,12 @@ abstract class AbstractFirStatusResolveTransformer(
         return when (declaration) {
             is FirCallableDeclaration<*> -> {
                 when (declaration) {
-                    is FirProperty -> {
-                        declaration.getter?.let { transformPropertyAccessor(it, data) }
-                        declaration.setter?.let { transformPropertyAccessor(it, data) }
-                    }
                     is FirFunction<*> -> {
                         for (valueParameter in declaration.valueParameters) {
                             transformValueParameter(valueParameter, data)
                         }
                     }
                 }
-                declaration.compose()
-            }
-            is FirPropertyAccessor -> {
                 declaration.compose()
             }
             else -> {
@@ -379,6 +382,7 @@ abstract class AbstractFirStatusResolveTransformer(
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun forceResolveStatusesOfClass(regularClass: FirRegularClass) {
+        val firProvider = regularClass.session.firProvider
         if (statusComputationSession[regularClass] == StatusComputationSession.StatusComputationStatus.Computed) return
         val file = firProvider.getFirClassifierContainerFileIfAny(regularClass.symbol)
         if (regularClass.status is FirResolvedDeclarationStatus) {
@@ -422,13 +426,16 @@ abstract class AbstractFirStatusResolveTransformer(
         statusComputationSession.endComputing(regularClass)
     }
 
-    override fun transformPropertyAccessor(
+    private fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
-        data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
-        propertyAccessor.transformStatus(this, statusResolver.resolveStatus(propertyAccessor, containingClass, isLocal = false))
-        @Suppress("UNCHECKED_CAST")
-        return transformDeclaration(propertyAccessor, data)
+        containingProperty: FirProperty,
+    ) {
+        propertyAccessor.transformStatus(
+            this,
+            statusResolver.resolveStatus(propertyAccessor, containingClass, containingProperty, isLocal = false)
+        )
+
+        propertyAccessor.replaceResolvePhase(transformerPhase)
     }
 
     override fun transformConstructor(
@@ -454,7 +461,11 @@ abstract class AbstractFirStatusResolveTransformer(
     ): CompositeTransformResult<FirDeclaration> {
         property.replaceResolvePhase(transformerPhase)
         property.transformStatus(this, statusResolver.resolveStatus(property, containingClass, isLocal = false))
-        return transformDeclaration(property, data)
+
+        property.getter?.let { transformPropertyAccessor(it, property) }
+        property.setter?.let { transformPropertyAccessor(it, property) }
+
+        return property.compose()
     }
 
     override fun transformField(

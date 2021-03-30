@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.getOwnerId
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
 @NoMutableState
@@ -23,7 +23,7 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
         symbol: AbstractFirBasedSymbol<*>,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
-        candidate: Candidate,
+        dispatchReceiver: ReceiverValue?,
         session: FirSession
     ): Boolean {
         return when (declarationVisibility) {
@@ -32,7 +32,7 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                     true
                 } else {
                     val ownerId = symbol.getOwnerId()
-                    ownerId != null && canSeeProtectedMemberOf(containingDeclarations, candidate.dispatchReceiverValue, ownerId, session)
+                    ownerId != null && canSeeProtectedMemberOf(containingDeclarations, dispatchReceiver, ownerId, session)
                 }
             }
 

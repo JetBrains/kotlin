@@ -155,7 +155,7 @@ package illegal_modifiers {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public sealed inner class Inner {
-            internal constructor Inner()
+            protected constructor Inner()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

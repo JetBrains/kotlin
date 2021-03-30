@@ -2520,6 +2520,30 @@ public inline fun <T> kotlin.collections.Iterable<T>.first(predicate: (T) -> kot
 
 public fun <T> kotlin.collections.List<T>.first(): T
 
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : kotlin.Any> kotlin.Array<out T>.firstNotNullOf(transform: (T) -> R?): R
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : kotlin.Any> kotlin.collections.Iterable<T>.firstNotNullOf(transform: (T) -> R?): R
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : kotlin.Any> kotlin.collections.Map<out K, V>.firstNotNullOf(transform: (kotlin.collections.Map.Entry<K, V>) -> R?): R
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : kotlin.Any> kotlin.Array<out T>.firstNotNullOfOrNull(transform: (T) -> R?): R?
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : kotlin.Any> kotlin.collections.Iterable<T>.firstNotNullOfOrNull(transform: (T) -> R?): R?
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : kotlin.Any> kotlin.collections.Map<out K, V>.firstNotNullOfOrNull(transform: (kotlin.collections.Map.Entry<K, V>) -> R?): R?
+
 public fun <T> kotlin.Array<out T>.firstOrNull(): T?
 
 public inline fun <T> kotlin.Array<out T>.firstOrNull(predicate: (T) -> kotlin.Boolean): T?
@@ -10483,6 +10507,10 @@ public final class ArrayDeque<E> : kotlin.collections.AbstractMutableList<E> {
     public open override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public open override operator fun set(index: kotlin.Int, element: E): E
+
+    protected open override fun toArray(): kotlin.Array<kotlin.Any?>
+
+    protected open override fun <T> toArray(array: kotlin.Array<T>): kotlin.Array<T>
 }
 
 public open class ArrayList<E> : kotlin.collections.AbstractMutableList<E>, kotlin.collections.MutableList<E>, kotlin.collections.RandomAccess {
@@ -10521,6 +10549,8 @@ public open class ArrayList<E> : kotlin.collections.AbstractMutableList<E>, kotl
     public open override operator fun set(index: kotlin.Int, element: E): E
 
     protected open override fun toArray(): kotlin.Array<kotlin.Any?>
+
+    protected open override fun <T> toArray(array: kotlin.Array<T>): kotlin.Array<T>
 
     public open override fun toString(): kotlin.String
 

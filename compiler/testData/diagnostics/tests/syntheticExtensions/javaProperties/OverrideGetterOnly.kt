@@ -8,7 +8,7 @@ fun foo(o: JavaClass2) {
     o.something += "1"
 }
 
-fun useString(<!UNUSED_PARAMETER!>i<!>: String) {}
+fun useString(i: String) {}
 
 // FILE: JavaClass1.java
 public class JavaClass1 {

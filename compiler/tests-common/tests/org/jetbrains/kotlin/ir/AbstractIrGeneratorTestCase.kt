@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -34,20 +34,20 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.NameProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
 import java.io.File
-import java.util.*
 
 abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
@@ -126,7 +126,8 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
                 TopDownAnalyzerFacadeForJS.analyzeFiles(
                     ktFilesToAnalyze, environment.project, environment.configuration,
                     moduleDescriptors = emptyList(),
-                    friendModuleDescriptors = emptyList()
+                    friendModuleDescriptors = emptyList(),
+                    CompilerEnvironment,
                 ),
                 psi2ir, ktFilesToAnalyze, GeneratorExtensions(),
                 createIdSignatureComposer = { IdSignatureDescriptor(JsManglerDesc) }
@@ -140,7 +141,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         ): IrModuleFragment {
             return generateIrModule(
                 JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze,
-                JvmGeneratorExtensions(generateFacades = false),
+                JvmGeneratorExtensionsImpl(generateFacades = false),
                 createIdSignatureComposer = { bindingContext ->
                     JvmIdSignatureDescriptor(JvmManglerDesc(MainFunctionDetector(bindingContext, languageVersionSettings)))
                 }

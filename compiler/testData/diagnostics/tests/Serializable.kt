@@ -1,8 +1,8 @@
-fun use(<!UNUSED_PARAMETER!>s<!>: java.io.Serializable) {
+fun use(s: java.io.Serializable) {
 
 }
 
-fun useList(<!UNUSED_PARAMETER!>s<!>: List<java.io.Serializable>) {
+fun useList(s: List<java.io.Serializable>) {
 
 }
 

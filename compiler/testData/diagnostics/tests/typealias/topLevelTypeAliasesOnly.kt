@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 typealias TopLevel = Any
 
 interface A {

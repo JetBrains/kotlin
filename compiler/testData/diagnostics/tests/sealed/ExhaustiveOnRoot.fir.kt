@@ -13,7 +13,7 @@ fun test(x: Stmt): String =
         }
 
 fun test2(x: Stmt): String =
-        when (x) {
+        <!NO_ELSE_IN_WHEN!>when<!> (x) {
             is Expr -> "expr"
         }
 

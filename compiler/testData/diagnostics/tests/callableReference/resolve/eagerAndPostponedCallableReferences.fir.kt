@@ -31,5 +31,5 @@ fun test() {
     val a6 = foo(::singleA, ::singleB)
     a6
 
-    foo(<!UNRESOLVED_REFERENCE!>::multiple<!>, <!UNRESOLVED_REFERENCE!>::multiple<!>)
+    foo(::<!UNRESOLVED_REFERENCE!>multiple<!>, ::<!UNRESOLVED_REFERENCE!>multiple<!>)
 }

@@ -1,0 +1,8 @@
+// FIR_COMPARISON
+fun usage() {
+    fun myLocalFun() {}
+
+    myLocalFun()
+}
+
+// ELEMENT: myLocalFun

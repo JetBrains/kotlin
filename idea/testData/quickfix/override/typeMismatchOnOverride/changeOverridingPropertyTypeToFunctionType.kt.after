@@ -5,3 +5,4 @@ interface A {
 interface B : A {
     override var x: (String) -> Int
 }
+/* FIR_COMPARISON */

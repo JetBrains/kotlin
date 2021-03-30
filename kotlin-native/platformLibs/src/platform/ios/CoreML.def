@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreVideo Foundation IOSurface ImageIO Security darwin posix
+language = Objective-C
+package = platform.CoreML
+modules = CoreML
+
+compilerOpts = -framework CoreML
+linkerOpts = -framework CoreML

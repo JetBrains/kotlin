@@ -59,7 +59,7 @@ import libModule.*
 // TESTCASE NUMBER: 2
 class KotlinClassWithAbstractJavaClass() {
     fun foo() {
-        val baseJava1 = object : BaseJava1() {}
-        val baseKotlin = object : BaseKotlin1() {}
+        val baseJava1 = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>object<!> : BaseJava1() {}
+        val baseKotlin = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>object<!> : BaseKotlin1() {}
     }
 }

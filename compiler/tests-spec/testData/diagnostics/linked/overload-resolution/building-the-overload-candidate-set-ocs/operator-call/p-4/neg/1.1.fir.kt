@@ -17,7 +17,7 @@ fun case1() {
 }
 
 class B() {
-    val p: String by <!INAPPLICABLE_CANDIDATE!>Delegate()<!> // DELEGATE_SPECIAL_FUNCTION_MISSING expected
+    val p: String by <!INAPPLICABLE_CANDIDATE!>Delegate<!>() // DELEGATE_SPECIAL_FUNCTION_MISSING expected
 }
 
 class Delegate {
@@ -42,7 +42,7 @@ fun case2() {
 }
 
 class B() {
-    var p: String by <!INAPPLICABLE_CANDIDATE!>Delegate()<!> // DELEGATE_SPECIAL_FUNCTION_MISSING expected
+    var p: String by <!INAPPLICABLE_CANDIDATE!>Delegate<!>() // DELEGATE_SPECIAL_FUNCTION_MISSING expected
 }
 
 class Delegate {

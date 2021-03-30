@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.name.Name
 class FirDefaultStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
+    filter: FirImportingScopeFilter,
     priority: DefaultImportPriority
-) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir = false) {
+) : FirAbstractStarImportingScope(session, scopeSession, filter, lookupInFir = false) {
 
     // TODO: put languageVersionSettings into FirSession?
     override val starImports = run {
@@ -38,6 +39,7 @@ class FirDefaultStarImportingScope(
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        if (filter == FirImportingScopeFilter.INVISIBLE_CLASSES) return
         if (name.isSpecial || name.identifier.isNotEmpty()) {
             for (import in starImports) {
                 for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, name)) {
@@ -48,6 +50,7 @@ class FirDefaultStarImportingScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        if (filter == FirImportingScopeFilter.INVISIBLE_CLASSES) return
         if (name.isSpecial || name.identifier.isNotEmpty()) {
             for (import in starImports) {
                 for (symbol in provider.getTopLevelPropertySymbols(import.packageFqName, name)) {

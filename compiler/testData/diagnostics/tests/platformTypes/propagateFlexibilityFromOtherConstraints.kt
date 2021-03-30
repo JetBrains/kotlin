@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FULL_JDK
 // FILE: test.kt
 
@@ -18,7 +19,7 @@ class GraphProperty<B>
 
 fun test() {
     val presentationName: (DataView) -> String = { it.presentationName }
-    val parentComboBoxModel/*: SortedComboBoxModel<DataView>*/ = SortedComboBoxModel(Comparator.<!INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>comparing<!>(presentationName))
+    val parentComboBoxModel/*: SortedComboBoxModel<DataView>*/ = SortedComboBoxModel(Comparator.comparing(presentationName))
     comboBox(parentComboBoxModel, GraphProperty<DataView>())
 }
 

@@ -43,7 +43,7 @@ fun test5(x: Inv<out Any?>) {
 }
 
 fun test6(x: Inv<out String?>) {
-    when (val <!UNUSED_VARIABLE!>y<!> = x.data) {
+    when (val y = x.data) {
         is String -> <!DEBUG_INFO_SMARTCAST!>x.data<!>.length // should be ok
     }
 }

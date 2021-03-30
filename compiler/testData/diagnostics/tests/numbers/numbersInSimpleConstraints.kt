@@ -8,11 +8,11 @@ import checkSubtype
 
 fun <T> id(t: T): T = t
 
-fun <T> either(t1: T, <!UNUSED_PARAMETER!>t2<!>: T): T = t1
+fun <T> either(t1: T, t2: T): T = t1
 
-fun other(<!UNUSED_PARAMETER!>s<!>: String) {}
+fun other(s: String) {}
 
-fun <T> otherGeneric(<!UNUSED_PARAMETER!>l<!>: List<T>) {}
+fun <T> otherGeneric(l: List<T>) {}
 
 fun test() {
     val a: Byte = id(1)

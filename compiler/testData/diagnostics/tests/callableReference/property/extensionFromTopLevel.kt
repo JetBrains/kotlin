@@ -7,11 +7,11 @@ val String.countCharacters: Int
 
 var Int.meaning: Long
     get() = 42L
-    set(<!UNUSED_PARAMETER!>value<!>) {}
+    set(value) {}
 
 fun test() {
     val f = String::countCharacters
-    
+
     checkSubtype<KProperty1<String, Int>>(f)
     checkSubtype<KMutableProperty1<String, Int>>(<!TYPE_MISMATCH!>f<!>)
     checkSubtype<Int>(f.get("abc"))

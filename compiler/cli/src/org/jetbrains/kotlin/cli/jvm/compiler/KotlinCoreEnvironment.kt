@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
-import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -283,7 +283,7 @@ class KotlinCoreEnvironment private constructor(
 
     fun addKotlinSourceRoots(rootDirs: List<File>) {
         val roots = rootDirs.map { KotlinSourceRoot(it.absolutePath, isCommon = false) }
-        sourceFiles += createSourceFilesFromSourceRoots(configuration, project, roots)
+        sourceFiles += createSourceFilesFromSourceRoots(configuration, project, roots).toSet() - sourceFiles
     }
 
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
@@ -498,16 +498,13 @@ class KotlinCoreEnvironment private constructor(
                 }
                 // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
                 // breaks a lot of tests, therefore it is disabled for production and enabled for tests
-                if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY).toBooleanLenient() != true) {
+                if (CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true) {
                     // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
                     // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
-                    @Suppress("ObjectLiteralToLambda") // Disposer tree depends on identity of disposables.
-                    Disposer.register(parentDisposable, object : Disposable {
-                        override fun dispose() {
-                            synchronized(APPLICATION_LOCK) {
-                                if (--ourProjectCount <= 0) {
-                                    disposeApplicationEnvironment()
-                                }
+                    Disposer.register(parentDisposable, Disposable {
+                        synchronized(APPLICATION_LOCK) {
+                            if (--ourProjectCount <= 0) {
+                                disposeApplicationEnvironment()
                             }
                         }
                     })
@@ -692,7 +689,7 @@ class KotlinCoreEnvironment private constructor(
                 // For example, see the `unregisterExtension` call in `GenerationUtils.compileFilesUsingFrontendIR`.
                 // TODO: refactor this to avoid registering unneeded extensions in the first place, and avoid using deprecated API.
                 @Suppress("DEPRECATION")
-                PsiElementFinder.EP.getPoint(project).registerExtension(JavaElementFinder(this, kotlinAsJavaSupport))
+                PsiElementFinder.EP.getPoint(project).registerExtension(JavaElementFinder(this))
                 @Suppress("DEPRECATION")
                 PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(this))
             }

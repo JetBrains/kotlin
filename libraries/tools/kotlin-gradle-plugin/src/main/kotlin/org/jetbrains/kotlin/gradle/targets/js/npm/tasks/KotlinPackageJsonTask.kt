@@ -33,8 +33,15 @@ open class KotlinPackageJsonTask : DefaultTask() {
     @Transient
     private lateinit var compilation: KotlinJsCompilation
 
+    private val compilationDisambiguatedName by lazy {
+        compilation.disambiguatedName
+    }
+
+    @Input
+    val projectPath = project.path
+
     private val compilationResolver
-        get() = nodeJs.npmResolutionManager.resolver[project][compilation]
+        get() = nodeJs.npmResolutionManager.resolver[projectPath][compilationDisambiguatedName]
 
     private val producer: KotlinCompilationNpmResolver.PackageJsonProducer
         get() = compilationResolver.packageJsonProducer
@@ -57,8 +64,8 @@ open class KotlinPackageJsonTask : DefaultTask() {
     @get:Input
     internal val toolsNpmDependencies: List<String> by lazy {
         nodeJs.taskRequirements
-            .getCompilationNpmRequirements(compilation)
-            .map { it.uniqueRepresentation() }
+            .getCompilationNpmRequirements(compilationDisambiguatedName)
+            .map { it.toString() }
     }
 
     @get:Nested
@@ -100,9 +107,9 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.inputs.file(packageJsonTask.map { it.packageJson })
             }
 
-            nodeJs.rootPackageJsonTaskProvider.configure { it.mustRunAfter(packageJsonTask) }
+            nodeJs.rootPackageJsonTaskProvider!!.configure { it.mustRunAfter(packageJsonTask) }
 
-            compilation.compileKotlinTaskProvider.dependsOn(npmInstallTask)
+            compilation.compileKotlinTaskProvider.dependsOn(npmInstallTask!!)
             compilation.compileKotlinTaskProvider.dependsOn(packageJsonTask)
 
             return packageJsonTask

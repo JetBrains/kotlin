@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 
 abstract class KtAnalysisSessionComponent : ValidityTokenOwner {
     protected abstract val analysisSession: KtAnalysisSession
 }
+

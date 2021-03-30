@@ -10,12 +10,12 @@ import net.rubygrapefruit.platform.WindowsRegistry.Key.HKEY_LOCAL_MACHINE
 import org.gradle.internal.os.OperatingSystem
 
 enum class JdkMajorVersion(private val mandatory: Boolean = true) {
-    JDK_16, JDK_17, JDK_18, JDK_9, JDK_10(false), JDK_11(false);
+    JDK_16, JDK_17, JDK_18, JDK_9, JDK_10(false), JDK_11(false), /*15.0*/JDK_15(false);
 
     fun isMandatory(): Boolean = mandatory
 }
 
-val jdkAlternativeVarNames = mapOf(JdkMajorVersion.JDK_9 to listOf("JDK_19"))
+val jdkAlternativeVarNames = mapOf(JdkMajorVersion.JDK_9 to listOf("JDK_19"), JdkMajorVersion.JDK_15 to listOf("JDK_15_0"))
 
 data class JdkId(val explicit: Boolean, val majorVersion: JdkMajorVersion, var version: String, var homeDir: File)
 
@@ -105,8 +105,8 @@ private val macOsJavaHomeOutRegexes =
     listOf(
         Regex("""\s+(\S+),\s+(\S+):\s+".*?"\s+(.+)"""),
         Regex("""\s+(\S+)\s+\((.*?)\):\s+(.+)"""),
-        Regex("""\s+(\S+)\s+\((.*?)\)\s+"[^"]*"\s+-\s+"[^"]*"\s(.+)""")
-)
+        Regex("""\s+(\S+)\s+\((.*?)\)\s+"[^"]*"\s+-\s+"[^"]*"\s(.+)"""),
+        Regex("""\s+(\S+)\s+\((.+)\)\s+".+"\s+-\s+".+"\s+(.+)"""))
 
 fun MutableCollection<JdkId>.discoverJdksOnMacOS(project: Project) {
     val procBuilder = ProcessBuilder("/usr/libexec/java_home", "-V").redirectErrorStream(true)

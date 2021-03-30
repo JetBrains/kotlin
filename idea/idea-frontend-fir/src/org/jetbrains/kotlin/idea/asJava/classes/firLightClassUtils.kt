@@ -10,17 +10,15 @@ import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
-import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -60,7 +58,7 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = 
 
     val anonymousObject = classOrObject.parent as? KtObjectLiteralExpression
     if (anonymousObject != null) {
-        return analyze(anonymousObject) {
+        return analyse(anonymousObject) {
             FirLightAnonymousClassForSymbol(anonymousObject.getAnonymousObjectSymbol(), anonymousObject.manager)
         }
     }
@@ -70,12 +68,14 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = 
         classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> return null //TODO
 
         else -> {
-            analyze(classOrObject) {
-                val symbol = classOrObject.getClassOrObjectSymbol()
-                when (symbol.classKind) {
-                    KtClassKind.INTERFACE -> FirLightInterfaceClassSymbol(symbol, classOrObject.manager)
-                    KtClassKind.ANNOTATION_CLASS -> FirLightAnnotationClassSymbol(symbol, classOrObject.manager)
-                    else -> FirLightClassForSymbol(symbol, classOrObject.manager)
+            analyse(classOrObject) {
+                when (val symbol = classOrObject.getClassOrObjectSymbol()) {
+                    is KtAnonymousObjectSymbol -> FirLightAnonymousClassForSymbol(symbol, classOrObject.manager)
+                    is KtNamedClassOrObjectSymbol -> when (symbol.classKind) {
+                        KtClassKind.INTERFACE -> FirLightInterfaceClassSymbol(symbol, classOrObject.manager)
+                        KtClassKind.ANNOTATION_CLASS -> FirLightAnnotationClassSymbol(symbol, classOrObject.manager)
+                        else -> FirLightClassForSymbol(symbol, classOrObject.manager)
+                    }
                 }
             }
         }
@@ -252,7 +252,7 @@ internal fun FirLightClassBase.createField(
     fun hasBackingField(property: KtPropertySymbol): Boolean = when (property) {
         is KtSyntheticJavaPropertySymbol -> true
         is KtKotlinPropertySymbol -> when {
-            property.modality == KtCommonSymbolModality.ABSTRACT -> false
+            property.modality == Modality.ABSTRACT -> false
             property.isHiddenOrSynthetic() -> false
             property.isLateInit -> true
             //TODO Fix it when KtFirConstructorValueParameterSymbol be ready
@@ -320,7 +320,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
     // we can't prohibit creating light classes with null names either since they can contain members
 
     analyzeWithSymbolAsContext(this) {
-        getDeclaredMemberScope().getAllSymbols().filterIsInstance<KtClassOrObjectSymbol>().mapTo(result) {
+        getDeclaredMemberScope().getAllSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
             FirLightClassForSymbol(it, manager)
         }
     }
@@ -330,4 +330,22 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
     //    result.add(KtLightClassForInterfaceDefaultImpls(classOrObject))
     //}
     return result
+}
+
+@OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
+    return analyse(this) {
+        val thisSymbol = this@checkIsInheritor.getNamedClassOrObjectSymbol()
+        val baseSymbol = baseClassOrigin.getNamedClassOrObjectSymbol()
+
+        if (thisSymbol == baseSymbol) return@analyse false
+
+        val baseType = baseSymbol.buildSelfClassType()
+
+        if (checkDeep) {
+            thisSymbol.buildSelfClassType().isSubTypeOf(baseType)
+        } else {
+            thisSymbol.superTypes.any { baseType.isEqualTo(it.type) }
+        }
+    }
 }

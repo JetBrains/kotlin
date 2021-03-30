@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
-import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink.DiagnosticsCallback
 import org.jetbrains.kotlin.diagnostics.GenericDiagnostics
 
 interface Diagnostics : GenericDiagnostics<Diagnostic> {
@@ -36,6 +37,9 @@ interface Diagnostics : GenericDiagnostics<Diagnostic> {
     fun forElement(psiElement: PsiElement): Collection<Diagnostic>
 
     fun noSuppression(): Diagnostics
+
+    fun setCallback(callback: DiagnosticsCallback) {}
+    fun resetCallback() {}
 
     companion object {
         val EMPTY: Diagnostics = object : Diagnostics {

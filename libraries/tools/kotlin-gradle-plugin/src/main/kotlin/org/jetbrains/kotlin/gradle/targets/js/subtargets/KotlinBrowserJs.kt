@@ -10,7 +10,9 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
@@ -24,6 +26,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -39,6 +43,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     private val runTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
     private val distribution: Distribution = DefaultDistribution(project)
+    private val propertiesProvider = PropertiesProvider(project)
+    private val webpackMajorVersion
+        get() = propertiesProvider.webpackMajorVersion
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -127,7 +134,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
-                    task.bin = "webpack-dev-server/bin/webpack-dev-server.js"
+                    webpackMajorVersion.choose(
+                        { task.args.add(0, "serve") },
+                        { task.bin = "webpack-dev-server/bin/webpack-dev-server.js" }
+                    )()
+
                     task.description = "start ${type.name.toLowerCase()} webpack dev server"
 
                     task.devServer = KotlinWebpackConfig.DevServer(
@@ -287,6 +298,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             it.classpath = project.configurations.getByName(compilation.runtimeDependencyConfigurationName)
             it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) }
                 ?: compilation.npmProject.dir.resolve(if (dev) DCE_DEV_DIR else DCE_DIR)
+            it.defaultCompilerClasspath.setFrom(project.configurations.named(COMPILER_CLASSPATH_CONFIGURATION_NAME))
 
             it.source(kotlinTask.map { it.outputFile })
         }

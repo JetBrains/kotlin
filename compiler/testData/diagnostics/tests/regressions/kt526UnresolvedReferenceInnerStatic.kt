@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-526
 // KT-526 Unresolved reference for inner static class
 
@@ -10,6 +11,6 @@ class Foo {
 }
 class User {
     fun main() : Unit {
-        var <!UNUSED_VARIABLE!>boo<!> : Foo.Companion.Bar? /* <-- this reference is red */ = Foo.Companion.Bar()
+        var boo : Foo.Companion.Bar? /* <-- this reference is red */ = Foo.Companion.Bar()
     }
 }

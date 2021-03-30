@@ -2,7 +2,7 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url 'https://maven.google.com' }
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$android_tools_version"
@@ -32,6 +32,11 @@ android {
         release {
             minifyEnabled false
         }
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 
     dexOptions {

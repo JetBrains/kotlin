@@ -94,6 +94,33 @@ class MainKtsIT {
         }
     }
 
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun testCacheInProcess() {
+        val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
+        val cache = createTempDirectory("main.kts.test")
+
+        try {
+            Assert.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
+            runWithK2JVMCompilerAndMainKts(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
+            val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
+            Assert.assertTrue(cacheFile != null && cacheFile.exists())
+
+            // run generated jar with java
+            val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+            val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.toString())
+            runAndCheckResults(
+                args, OUT_FROM_IMPORT_TEST,
+                additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.toAbsolutePath().toString())
+            )
+
+            // this run should use the cached script
+            runWithK2JVMCompilerAndMainKts(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
+        } finally {
+            cache.toFile().deleteRecursively()
+        }
+    }
+
     @Test
     fun testHelloSerialization() {
         val paths = PathUtil.kotlinPathsForDistDirectory

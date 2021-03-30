@@ -30,7 +30,7 @@ data class DefaultRepository(val type: Type) : Repository {
 
 interface CustomMavenRepository : Repository
 
-data class BintrayRepository(val repository: String, val base: String = "https://dl.bintray.com") : CustomMavenRepository {
+data class CustomMavenRepositoryImpl(val repository: String, val base: String) : CustomMavenRepository {
     override val url: String = "$base/$repository"
 
     override val idForMaven: String
@@ -46,8 +46,8 @@ data class JetBrainsSpace(val repository: String) : CustomMavenRepository {
 
 object Repositories {
     val KTOR = DefaultRepository.MAVEN_CENTRAL
-    val KOTLINX = BintrayRepository("kotlin/kotlinx")
-    val KOTLIN_JS_WRAPPERS_BINTRAY = BintrayRepository("kotlin/kotlin-js-wrappers")
+    val KOTLINX_HTML = JetBrainsSpace("public/p/kotlinx-html/maven")
+    val KOTLIN_JS_WRAPPERS_BINTRAY = JetBrainsSpace("kotlin/p/kotlin/kotlin-js-wrappers")
     val KOTLIN_EAP_MAVEN_CENTRAL = DefaultRepository.MAVEN_CENTRAL
     val JETBRAINS_COMPOSE_DEV = JetBrainsSpace("public/p/compose/dev")
     val JETBRAINS_KOTLIN_DEV = JetBrainsSpace("kotlin/p/kotlin/dev")

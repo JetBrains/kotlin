@@ -14,10 +14,16 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 
 object SealedInterfaceAllowedChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInterfaces)) return
         if (descriptor !is ClassDescriptor) return
         if (descriptor.kind != ClassKind.INTERFACE) return
         val keyword = declaration.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: return
-        context.trace.report(Errors.WRONG_MODIFIER_TARGET.on(keyword, KtTokens.SEALED_KEYWORD, KotlinTarget.INTERFACE.description))
+        val diagnostic = if (context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInterfaces)) {
+            if (descriptor.isFun) {
+                Errors.UNSUPPORTED.on(keyword, "sealed fun interfaces")
+            } else return
+        } else {
+            Errors.UNSUPPORTED_FEATURE.on(keyword, LanguageFeature.SealedInterfaces to context.languageVersionSettings)
+        }
+        context.trace.report(diagnostic)
     }
 }

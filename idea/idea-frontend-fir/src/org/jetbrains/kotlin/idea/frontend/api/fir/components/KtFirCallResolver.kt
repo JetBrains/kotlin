@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.calls.*
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCallResolver
-import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtSimpleDiagnostic
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -85,7 +86,7 @@ internal class KtFirCallResolver(
             }
             is FirErrorNamedReference -> KtVariableWithInvokeFunctionCall(
                 variableLikeSymbol,
-                callReference.createErrorCallTarget()
+                callReference.createErrorCallTarget(source)
             )
             else -> error("Unexpected call reference ${callReference::class.simpleName}")
         }
@@ -93,8 +94,8 @@ internal class KtFirCallResolver(
     private fun FirFunctionCall.asSimpleFunctionCall(): KtFunctionCall? {
         val target = when (val calleeReference = calleeReference) {
             is FirResolvedNamedReference -> calleeReference.getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it) }
-            is FirErrorNamedReference -> calleeReference.createErrorCallTarget()
-            is FirErrorReferenceWithCandidate -> calleeReference.createErrorCallTarget()
+            is FirErrorNamedReference -> calleeReference.createErrorCallTarget(source)
+            is FirErrorReferenceWithCandidate -> calleeReference.createErrorCallTarget(source)
             is FirSimpleNamedReference ->
                 error(
                     """
@@ -109,16 +110,16 @@ internal class KtFirCallResolver(
         return KtFunctionCall(target)
     }
 
-    private fun FirErrorNamedReference.createErrorCallTarget(): KtErrorCallTarget =
+    private fun FirErrorNamedReference.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            KtSimpleDiagnostic(diagnostic.reason)
+            source?.let { diagnostic.asKtDiagnostic(it, qualifiedAccessSource) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
-    private fun FirErrorReferenceWithCandidate.createErrorCallTarget(): KtErrorCallTarget =
+    private fun FirErrorReferenceWithCandidate.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            KtSimpleDiagnostic(diagnostic.reason)
+            source?.let { diagnostic.asKtDiagnostic(it,qualifiedAccessSource) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
     private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =

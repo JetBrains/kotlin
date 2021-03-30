@@ -1,0 +1,8 @@
+// FIR_COMPARISON
+package test
+
+class Foo
+
+fun foo(p: dependency.Foo) {}
+
+fun bar(): Foo {}

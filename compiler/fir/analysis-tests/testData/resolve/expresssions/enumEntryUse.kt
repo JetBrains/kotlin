@@ -18,5 +18,5 @@ fun test() {
     useEnum(TestEnum.THIRD)
 
     useVararg(TestEnum.FIRST, TestEnum.SECOND)
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>useVararg<!>(1, 2, 3, 4, 5)<!>
+    <!INAPPLICABLE_CANDIDATE!>useVararg<!>(1, 2, 3, 4, 5)
 }

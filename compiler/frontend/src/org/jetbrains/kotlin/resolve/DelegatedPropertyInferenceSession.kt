@@ -32,7 +32,8 @@ class DelegatedPropertyInferenceSession(
     postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     callComponents: KotlinCallComponents,
-    builtIns: KotlinBuiltIns
+    builtIns: KotlinBuiltIns,
+    override val parentSession: InferenceSession?
 ) : ManyCandidatesResolver<FunctionDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
@@ -92,7 +93,10 @@ class DelegatedPropertyInferenceSession(
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
 }
 
-class InferenceSessionForExistingCandidates(private val resolveReceiverIndependently: Boolean) : InferenceSession {
+class InferenceSessionForExistingCandidates(
+    private val resolveReceiverIndependently: Boolean,
+    override val parentSession: InferenceSession?
+) : InferenceSession {
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
         return !ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor)
     }

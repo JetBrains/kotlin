@@ -3,4 +3,4 @@ FILE: propertyWithInitializer.kt
         <Unresolved name: receive>#(R|/property|)
     }
     public final [STATUS] val property: R|kotlin/Int| = LAZY_EXPRESSION
-        public get(): R|kotlin/Int|
+        [STATUS] public get(): R|kotlin/Int|

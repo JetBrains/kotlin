@@ -3,58 +3,64 @@ fun use(s: P) {
 
 fun testForInListUnused() {
   { // BLOCK
-    val <iterator>: MutableIterator<P?> = listOfNotNull().iterator()
+    val <iterator>: MutableIterator<@FlexibleNullability P?> = listOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
-      val x: P? = <iterator>.next()
+      val x: @FlexibleNullability P? = <iterator>.next()
     }
   }
 }
 
 fun testForInListDestructured() {
   { // BLOCK
-    val <iterator>: MutableIterator<P?> = listOfNotNull().iterator()
+    val <iterator>: MutableIterator<@FlexibleNullability P?> = listOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
-      val <destruct>: P? = <iterator>.next()
-      val x: Int = <destruct>.component1()
-      val y: Int = <destruct>.component2()
+      val <destruct>: @FlexibleNullability P? = <iterator>.next()
+      { // BLOCK
+        val x: Int = <destruct>.component1()
+        val y: Int = <destruct>.component2()
+      }
     }
   }
 }
 
 fun testDesugaredForInList() {
-  val iterator: MutableIterator<P?> = listOfNotNull().iterator()
+  val iterator: MutableIterator<@FlexibleNullability P?> = listOfNotNull().iterator()
   while (iterator.hasNext()) { // BLOCK
-    val x: P? = iterator.next()
+    val x: @FlexibleNullability P? = iterator.next()
   }
 }
 
 fun testForInArrayUnused(j: J) {
   { // BLOCK
-    val <iterator>: Iterator<P?> = j.arrayOfNotNull().iterator()
+    val <iterator>: Iterator<@FlexibleNullability P?> = j.arrayOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
-      val x: P? = <iterator>.next()
+      val x: @FlexibleNullability P? = <iterator>.next()
     }
   }
 }
 
 fun testForInListUse() {
   { // BLOCK
-    val <iterator>: MutableIterator<P?> = listOfNotNull().iterator()
+    val <iterator>: MutableIterator<@FlexibleNullability P?> = listOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
-      val x: P? = <iterator>.next()
-      use(s = x /*!! P */)
-      use(s = x)
+      val x: @FlexibleNullability P? = <iterator>.next()
+      { // BLOCK
+        use(s = x /*!! @FlexibleNullability P */)
+        use(s = x)
+      }
     }
   }
 }
 
 fun testForInArrayUse(j: J) {
   { // BLOCK
-    val <iterator>: Iterator<P?> = j.arrayOfNotNull().iterator()
+    val <iterator>: Iterator<@FlexibleNullability P?> = j.arrayOfNotNull().iterator()
     while (<iterator>.hasNext()) { // BLOCK
-      val x: P? = <iterator>.next()
-      use(s = x /*!! P */)
-      use(s = x)
+      val x: @FlexibleNullability P? = <iterator>.next()
+      { // BLOCK
+        use(s = x /*!! @FlexibleNullability P */)
+        use(s = x)
+      }
     }
   }
 }
@@ -119,3 +125,4 @@ data class P {
   }
 
 }
+

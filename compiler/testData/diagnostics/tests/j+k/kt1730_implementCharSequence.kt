@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // KT-1730 Method which has been implemented by Java is recognized to be abstract.
 
 // FILE: C.java

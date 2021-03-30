@@ -1,6 +1,6 @@
 FILE: test.kt
     public sealed class Test : R|kotlin/Any| {
-        private constructor(): R|test/Test| {
+        protected constructor(): R|test/Test| {
             super<R|kotlin/Any|>()
         }
 
@@ -28,7 +28,7 @@ FILE: main.kt
             super<R|kotlin/Any|>()
         }
 
-        public abstract fun createTest(): <ERROR TYPE REF: Symbol not found, for `Test`>
+        public abstract fun createTest(): <ERROR TYPE REF: Symbol not found for Test>
 
         public abstract fun createObj(): R|test/Test.O|
 

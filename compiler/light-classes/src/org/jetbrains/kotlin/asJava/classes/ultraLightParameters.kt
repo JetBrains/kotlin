@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil.LABELED_THIS_PARAMETER
 import org.jetbrains.kotlin.codegen.AsmUtil.RECEIVER_PARAMETER_NAME
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
 internal class KtUltraLightSuspendContinuationParameter(
     private val ktFunction: KtFunction,
@@ -35,7 +36,7 @@ internal class KtUltraLightSuspendContinuationParameter(
     KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter> {
 
     override val qualifiedNameForNullabilityAnnotation: String?
-        get() = computeQualifiedNameForNullabilityAnnotation(ktType)
+        get() = if (!ktFunction.isPrivate()) computeQualifiedNameForNullabilityAnnotation(ktType) else null
 
     override val psiTypeForNullabilityAnnotation: PsiType? get() = psiType
     override val kotlinOrigin: KtParameter? = null
@@ -179,8 +180,13 @@ internal class KtUltraLightParameterForSource(
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>?
         get() {
-            val site = if (kotlinOrigin.hasValOrVar()) AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER else null
-            return kotlinOrigin.annotationEntries.toLightAnnotations(this, site)
+            return if (kotlinOrigin.hasValOrVar()) {
+                val entriesWithoutJvmField = kotlinOrigin.annotationEntries.filter { it.shortName?.identifier != "JvmField" }
+                entriesWithoutJvmField.toLightAnnotations(this, null) +
+                        entriesWithoutJvmField.toLightAnnotations(this, AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER)
+            } else {
+                kotlinOrigin.annotationEntries.toLightAnnotations(this, null)
+            }
         }
 
     override fun getText(): String? = kotlinOrigin.text

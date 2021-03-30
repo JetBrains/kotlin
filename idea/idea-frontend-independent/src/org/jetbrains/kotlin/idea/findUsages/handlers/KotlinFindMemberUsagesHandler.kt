@@ -30,8 +30,8 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.*
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedToLightMethods
-import org.jetbrains.kotlin.idea.KotlinBundleIndependent
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.*
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupport.Companion.getTopMostOverriddenElementsToHighlight
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupport.Companion.isDataClassComponentFunction
@@ -71,7 +71,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
             mustOpenInNewTab: Boolean
         ): AbstractFindUsagesDialog {
             val options = factory.findFunctionOptions
-            val lightMethod = getElement().providedToLightMethods().firstOrNull()
+            val lightMethod = getElement().toLightMethods().firstOrNull()
             if (lightMethod != null) {
                 return KotlinFindFunctionUsagesDialog(lightMethod, project, options, toShowInNewTab, mustOpenInNewTab, isSingleFile, this)
             }
@@ -236,7 +236,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
                         else -> options.searchScope
                     }
 
-                    for (psiMethod in element.providedToLightMethods().filterDataClassComponentsIfDisabled(kotlinSearchOptions)) {
+                    for (psiMethod in element.toLightMethods().filterDataClassComponentsIfDisabled(kotlinSearchOptions)) {
                         addTask {
                             applyQueryFilters(
                                 element,
@@ -299,7 +299,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
 
         private const val DISABLE_ONCE = "DISABLE_ONCE"
         private const val DISABLE = "DISABLE"
-        private val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT = KotlinBundleIndependent.message(
+        private val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT = KotlinBundle.message(
             "find.usages.text.find.usages.for.data.class.components.and.destruction.declarations",
             DISABLE_ONCE,
             DISABLE

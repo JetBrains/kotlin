@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 interface Bar {
     fun <T> T.bar() {}

@@ -14,17 +14,19 @@ public class A {
 // FILE: Anno.kt
 
 import java.lang.reflect.AnnotatedParameterizedType
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @Target(AnnotationTarget.TYPE)
 annotation class Anno(val value: Int = 0)
 
 fun box(): String {
     val method = A::class.java.declaredMethods.single()
-    assertEquals("[@Anno(value=1)]", method.annotatedReturnType.annotations.toList().toString())
-
+    val methodToString = method.annotatedReturnType.annotations.toList().toString()
+    assertTrue("\\[@Anno\\((value=)?1\\)\\]".toRegex().matches(methodToString), methodToString)
+    
     val parameterType = method.parameters.single().annotatedType as AnnotatedParameterizedType
-    assertEquals("[@Anno(value=2)]", parameterType.annotatedActualTypeArguments.single().annotations.toList().toString())
+    val parameterToString = parameterType.annotatedActualTypeArguments.single().annotations.toList().toString()
+    assertTrue("\\[@Anno\\((value=)?2\\)\\]".toRegex().matches(parameterToString), parameterToString)
 
     return "OK"
 }

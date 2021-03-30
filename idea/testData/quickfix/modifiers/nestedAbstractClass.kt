@@ -4,3 +4,4 @@ class A() {
         abstract class <caret>C
     }
 }
+/* FIR_COMPARISON */

@@ -52,6 +52,7 @@ interface TypeResolutionInterceptorExtension {
 
 @InternalNonStableExtensionPoints
 interface CallResolutionInterceptorExtension {
+    @Suppress("DEPRECATION")
     @JvmDefault
     fun interceptCandidates(
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
@@ -63,6 +64,7 @@ interface CallResolutionInterceptorExtension {
         tracing: TracingStrategy
     ): Collection<NewResolutionOldInference.MyCandidate> = candidates
 
+    @Suppress("DEPRECATION")
     @JvmDefault
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
@@ -74,6 +76,7 @@ interface CallResolutionInterceptorExtension {
         location: LookupLocation
     ): Collection<FunctionDescriptor> = candidates
 
+    @Suppress("DEPRECATION")
     @JvmDefault
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
@@ -87,6 +90,7 @@ interface CallResolutionInterceptorExtension {
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<FunctionDescriptor> = candidates
 
+    @Suppress("DEPRECATION")
     @JvmDefault
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
@@ -98,6 +102,7 @@ interface CallResolutionInterceptorExtension {
         location: LookupLocation
     ): Collection<VariableDescriptor> = candidates
 
+    @Suppress("DEPRECATION")
     @JvmDefault
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
@@ -111,7 +116,7 @@ interface CallResolutionInterceptorExtension {
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<VariableDescriptor> = candidates
 
-    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Suppress("DeprecatedCallableAddReplaceWith", "DEPRECATION")
     @Deprecated("Please use dedicated interceptVariableCandidates and interceptFunctionCandidates instead")
     @JvmDefault
     fun interceptCandidates(

@@ -76,17 +76,23 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
             messageCollector.report(severity, message)
         }
 
-        val dceResult = DeadCodeElimination.run(files, includedDeclarations, logConsumer)
+        val dceResult = DeadCodeElimination.run(
+            files,
+            includedDeclarations,
+            arguments.printReachabilityInfo,
+            logConsumer
+        )
         if (dceResult.status == DeadCodeEliminationStatus.FAILED) return ExitCode.COMPILATION_ERROR
-        val nodes = dceResult.reachableNodes.filterTo(mutableSetOf()) { it.reachable }
 
-        val reachabilitySeverity = if (arguments.printReachabilityInfo) CompilerMessageSeverity.INFO else CompilerMessageSeverity.LOGGING
-        messageCollector.report(reachabilitySeverity, "")
-        for (node in nodes.extractRoots()) {
-            printTree(
-                node, { messageCollector.report(reachabilitySeverity, it) },
-                printNestedMembers = false, showLocations = true
-            )
+        if (arguments.printReachabilityInfo) {
+            val reachabilitySeverity = CompilerMessageSeverity.INFO
+            messageCollector.report(reachabilitySeverity, "")
+            for (node in dceResult.reachableNodes.extractReachableRoots(dceResult.context!!)) {
+                printTree(
+                    node, { messageCollector.report(reachabilitySeverity, it) },
+                    printNestedMembers = false, showLocations = true
+                )
+            }
         }
 
         return ExitCode.OK

@@ -100,7 +100,7 @@ fun case_8(x: ClassWithCustomEquals, y: Nothing?) {
  */
 fun case_9(x: ClassWithCustomEquals?, y: Interface1) {
     if (x == y) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & ClassWithCustomEquals?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & ClassWithCustomEquals?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest1<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals? & ClassWithCustomEquals")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals? & ClassWithCustomEquals")!>x<!>.<!UNRESOLVED_REFERENCE!>itest1<!>()
     }
 }

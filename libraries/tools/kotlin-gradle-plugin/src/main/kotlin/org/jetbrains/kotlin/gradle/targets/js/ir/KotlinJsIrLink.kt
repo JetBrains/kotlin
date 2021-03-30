@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -19,9 +20,12 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
+import javax.inject.Inject
 
 @CacheableTask
-open class KotlinJsIrLink : Kotlin2JsCompile() {
+open class KotlinJsIrLink @Inject constructor(
+    objectFactory: ObjectFactory
+): Kotlin2JsCompile(objectFactory) {
     // Link tasks are not affected by compiler plugin
     override val pluginClasspath: FileCollection = project.objects.fileCollection()
 
@@ -37,13 +41,14 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
     @get:SkipWhenEmpty
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal val entryModule: File
-        get() = File(
+    internal val entryModule: File by lazy {
+        File(
             (taskData.compilation as KotlinJsIrCompilation)
                 .output
                 .classesDirs
                 .asPath
         )
+    }
 
     override fun skipCondition(inputs: IncrementalTaskInputs): Boolean {
         return !inputs.isIncremental && !entryModule.exists()

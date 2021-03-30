@@ -14,23 +14,23 @@ fun Any?.test_1() {
         this.foo()
         foo()
     } else {
-        this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+        this.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
     }
-    this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-    <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+    this.<!UNRESOLVED_REFERENCE!>foo<!>()
+    <!UNRESOLVED_REFERENCE!>foo<!>()
 }
 
 fun Any?.test_2() {
     if (this !is A) {
-        this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+        this.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
     } else {
         this.foo()
         foo()
     }
-    this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-    <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+    this.<!UNRESOLVED_REFERENCE!>foo<!>()
+    <!UNRESOLVED_REFERENCE!>foo<!>()
 }
 
 fun test_3(a: Any, b: Any, c: Any) {
@@ -49,13 +49,13 @@ fun test_3(a: Any, b: Any, c: Any) {
 
 fun Any?.test_4() {
     if (this !is A) {
-        this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-        this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
+        this.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
+        this.<!UNRESOLVED_REFERENCE!>bar<!>()
+        <!UNRESOLVED_REFERENCE!>bar<!>()
     } else if (this !is B) {
-        this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
+        this.<!UNRESOLVED_REFERENCE!>bar<!>()
+        <!UNRESOLVED_REFERENCE!>bar<!>()
         this.foo()
         foo()
     } else {
@@ -64,10 +64,10 @@ fun Any?.test_4() {
         this.bar()
         bar()
     }
-    this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-    <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-    this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
-    <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
+    this.<!UNRESOLVED_REFERENCE!>foo<!>()
+    <!UNRESOLVED_REFERENCE!>foo<!>()
+    this.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun Any.test_5(): Int = when {

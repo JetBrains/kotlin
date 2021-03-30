@@ -27,17 +27,17 @@ val wxx5 = idUnit(<!TYPE_MISMATCH{NI}!><!NO_ELSE_IN_WHEN!>when<!> { true -> <!CO
 val wxx6 = null ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 val wxx7 = "" + <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 
-val fn1 = { if (true) <!UNUSED_EXPRESSION!>42<!> }
+val fn1 = { if (true) 42 }
 val fn2 = { if (true) mlist.add() }
 val fn3 = { if (true) work() }
 val fn4 = { <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 } }
 val fn5 = { <!NO_ELSE_IN_WHEN!>when<!> { true -> mlist.add() } }
 val fn6 = { when { true -> work() } }
 
-val ufn1: () -> Unit = { if (true) <!UNUSED_EXPRESSION!>42<!> }
+val ufn1: () -> Unit = { if (true) 42 }
 val ufn2: () -> Unit = { if (true) mlist.add() }
 val ufn3: () -> Unit = { if (true) work() }
-val ufn4: () -> Unit = { when { true -> <!UNUSED_EXPRESSION!>42<!> } }
+val ufn4: () -> Unit = { when { true -> 42 } }
 val ufn5: () -> Unit = { when { true -> mlist.add() } }
 val ufn6: () -> Unit = { when { true -> work() } }
 
@@ -83,4 +83,3 @@ fun foo2() {
         }
     }
 }
-

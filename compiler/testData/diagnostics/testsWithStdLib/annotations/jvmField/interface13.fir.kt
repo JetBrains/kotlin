@@ -54,6 +54,6 @@ interface E {
 interface F {
     companion object {
         @JvmField
-        open val a = 3
+        <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> val a = 3
     }
 }

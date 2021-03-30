@@ -625,3 +625,13 @@ fun MethodNode.preprocessSuspendMarkers(forInline: Boolean, keepFakeContinuation
         }
     }
 }
+
+fun cloneMethodNode(methodNode: MethodNode): MethodNode {
+    synchronized(methodNode) {
+        methodNode.instructions.resetLabels()
+        return MethodNode(
+            Opcodes.API_VERSION, methodNode.access, methodNode.name, methodNode.desc, methodNode.signature,
+            methodNode.exceptions.toTypedArray()
+        ).also(methodNode::accept)
+    }
+}

@@ -8,8 +8,8 @@
  */
 fun case_1(x: Any) {
     if (x is Int || x is Float) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & kotlin.Any")!>x<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.toByte()
     }
 }
 
@@ -19,8 +19,8 @@ fun case_1(x: Any) {
  */
 fun case_2(x: Any?) {
     if (x is Int || x is Float?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     }
 }
 
@@ -30,8 +30,8 @@ fun case_2(x: Any?) {
  */
 fun case_3(x: Any?) {
     if (x is Int? || x is Float) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     }
 }
 
@@ -41,8 +41,8 @@ fun case_3(x: Any?) {
  */
 fun case_4(x: Any?) {
     if (x is Int? || x is Float?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>?.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>?.toByte()
     }
 }
 
@@ -52,8 +52,8 @@ fun case_4(x: Any?) {
  */
 fun case_5(x: Any?) {
     if (x is Int || x is Float) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & kotlin.Any?")!>x<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.toByte()
     }
 }
 
@@ -63,8 +63,8 @@ fun case_5(x: Any?) {
  */
 fun <T> case_6(x: T) {
     if (x is Int || x is Float) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T!! & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T!! & T")!>x<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T!!")!>x<!>.toByte()
     }
 }
 
@@ -74,8 +74,8 @@ fun <T> case_6(x: T) {
  */
 fun <T> case_7(x: T) {
     if (x is Int? || x is Float?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     }
 }
 
@@ -85,8 +85,8 @@ fun <T> case_7(x: T) {
  */
 inline fun <reified T> case_8(x: T) {
     if (x is Int? || x is Float?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     }
 }
 
@@ -96,8 +96,8 @@ inline fun <reified T> case_8(x: T) {
  */
 inline fun <reified T : Any> case_9(x: T) {
     if (x is Int? || x is Float?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T & T")!>x<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T")!>x<!>.toByte()
     }
 }
 
@@ -107,8 +107,8 @@ inline fun <reified T : Any> case_9(x: T) {
  */
 inline fun <reified T : Any> case_10(x: T) {
     if (x is ClassLevel2 || x is ClassLevel21 || x is ClassLevel22 || x is ClassLevel23) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & T & T")!>x<!>.test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & ClassLevel1 & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & ClassLevel1 & T")!>x<!>.test1()
     }
 }
 
@@ -118,8 +118,8 @@ inline fun <reified T : Any> case_10(x: T) {
  */
 inline fun <reified T : Any> case_11(x: T) {
     if (x !is ClassLevel2 && x !is ClassLevel21 && x !is ClassLevel22 && x !is ClassLevel23) return
-    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & T & T")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & T & T")!>x<!>.test1()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & ClassLevel1 & T")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & ClassLevel1 & T")!>x<!>.test1()
 }
 
 /*
@@ -128,8 +128,8 @@ inline fun <reified T : Any> case_11(x: T) {
  */
 fun case_12(x: Any) {
     if (x !is Int && x !is Float) return
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & kotlin.Any")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & kotlin.Any")!>x<!>.toByte()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.toByte()
 }
 
 /*
@@ -138,8 +138,8 @@ fun case_12(x: Any) {
  */
 fun <T> case_13(x: T) {
     if (x !is Int && x !is Float) throw Exception()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T!! & T")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T!! & T")!>x<!>.toByte()
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T!!")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & T!!")!>x<!>.toByte()
 }
 
 /*
@@ -149,11 +149,11 @@ fun <T> case_13(x: T) {
 fun case_14(x: Any) {
     if (x is Int || x is Float) {
         if (x is Float) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>NaN<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Float")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Float")!>x<!>.<!UNRESOLVED_REFERENCE!>NaN<!>
         } else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float> & kotlin.Any")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         }
     }
 }

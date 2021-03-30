@@ -20,6 +20,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -103,8 +104,9 @@ fun ContextForNewModule(
     projectContext: ProjectContext,
     moduleName: Name,
     builtIns: KotlinBuiltIns,
-    platform: TargetPlatform?
+    platform: TargetPlatform?,
+    capabilities: Map<ModuleCapability<*>, Any?> = emptyMap(),
 ): MutableModuleContext {
-    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, platform)
+    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, builtIns, platform, capabilities)
     return MutableModuleContextImpl(module, projectContext)
 }

@@ -18,9 +18,9 @@ internal sealed class RangesWritingStrategy {
     abstract fun rangeRef(name: String): String
 
     companion object {
-        fun of(target: KotlinTarget, wrapperName: String): RangesWritingStrategy {
+        fun of(target: KotlinTarget, wrapperName: String? = null): RangesWritingStrategy {
             return when (target.platform) {
-                Platform.JS -> JsRangesWritingStrategy(wrapperName)
+                Platform.JS -> JsRangesWritingStrategy(wrapperName!!)
                 else -> NativeRangesWritingStrategy
             }
         }

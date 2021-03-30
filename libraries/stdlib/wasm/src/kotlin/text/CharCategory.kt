@@ -8,6 +8,7 @@ package kotlin.text
 /**
  * Represents the character general category in the Unicode specification.
  */
+@SinceKotlin("1.5")
 public actual enum class CharCategory {
     /**
      * General category "Cn" in the Unicode specification.

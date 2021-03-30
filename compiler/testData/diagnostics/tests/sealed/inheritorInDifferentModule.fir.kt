@@ -14,4 +14,4 @@ class A : Base()
 
 package a
 
-class B : <!HIDDEN!>Base<!>()
+class B : Base()

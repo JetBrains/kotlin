@@ -1,0 +1,100 @@
+FILE: inlineClassMembers.kt
+    public final class BackingFields : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|BackingFields| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int|
+
+        public final var z: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+            public set(value: R|kotlin/String|): R|kotlin/Unit| {
+            }
+
+    }
+    public final class Val : R|kotlin/Any| {
+        public constructor(): R|Val| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, kProp: R|kotlin/Any?|): R|kotlin/Int| {
+            ^getValue Int(1)
+        }
+
+    }
+    public final inline class DelegatedProp : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|DelegatedProp| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val testVal: R|kotlin/Int|by R|/Val.Val|()
+            public get(): R|kotlin/Int| {
+                ^ this@R|/DelegatedProp|.D|/DelegatedProp.testVal|.R|/Val.getValue|(this@R|/DelegatedProp|, ::R|/DelegatedProp.testVal|)
+            }
+
+    }
+    public final inline class ReversedMembers : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|ReversedMembers| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final fun box(): R|kotlin/Unit| {
+        }
+
+        public final fun unbox(): R|kotlin/Unit| {
+        }
+
+        public final override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+        public final override fun hashCode(): R|kotlin/Int| {
+            ^hashCode Int(1)
+        }
+
+    }
+    public final inline class SecondaryConstructors : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|SecondaryConstructors| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public constructor(y: R|kotlin/String|): R|SecondaryConstructors| {
+            this<R|SecondaryConstructors|>(Int(5))
+        }
+
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/String|): R|SecondaryConstructors| {
+            this<R|SecondaryConstructors|>(R|<local>/x|)
+        }
+
+    }
+    public final class WithInner : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|): R|WithInner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public final inner class Inner : R|kotlin/Any| {
+            public constructor(): R|WithInner.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

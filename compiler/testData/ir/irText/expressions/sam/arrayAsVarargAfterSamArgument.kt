@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +NewInference +SamConversionPerArgument +SamConversionForKotlinFunctions -ProhibitVarargAsArrayAfterSamArgument
 // WITH_JDK
 

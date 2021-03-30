@@ -37,11 +37,15 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         try {
             super.setUp()
             EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
-            runWriteAction { FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle") }
+            registerGradlPlugin()
         } catch (e: Throwable) {
             TestLoggerFactory.onTestFinished(false)
             throw e
         }
+    }
+
+    protected open fun registerGradlPlugin() {
+        runWriteAction { FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle") }
     }
 
     override fun tearDown() {
@@ -55,11 +59,13 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
 
     protected open val forceUsePackageFolder: Boolean = false //workaround for IDEA-176033
 
-    protected fun doTest(path: String) {
+    protected open fun inspectionClassDirective(): String = "// INSPECTION_CLASS: "
+
+    protected open fun doTest(path: String) {
         val optionsFile = File(path)
         val options = FileUtil.loadFile(optionsFile, true)
 
-        val inspectionClass = Class.forName(InTextDirectivesUtils.findStringWithPrefixes(options, "// INSPECTION_CLASS: ")!!)
+        val inspectionClass = Class.forName(InTextDirectivesUtils.findStringWithPrefixes(options, inspectionClassDirective())!!)
 
         val fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(options, "// FIXTURE_CLASS: ")
 

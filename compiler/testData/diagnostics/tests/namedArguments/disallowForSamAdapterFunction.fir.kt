@@ -13,5 +13,5 @@ public class J {
 package test
 
 fun test() {
-    J.foo("", r = { }, z = false)
+    J.foo("", <!NAMED_ARGUMENTS_NOT_ALLOWED!>r = { }<!>, <!NAMED_ARGUMENTS_NOT_ALLOWED!>z = false<!>)
 }

@@ -4,7 +4,7 @@ abstract class My(val v: Int) {
 
     open var y: Int
 
-    open var z: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>open var z: Int<!>
 
     // Ok: initializer available
     open var w: Int = v

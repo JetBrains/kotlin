@@ -428,6 +428,11 @@ public class ResolveTestGenerated extends AbstractResolveTest {
             runTest("compiler/testData/resolve/regressions/kt300.resolve");
         }
 
+        @TestMetadata("kt45676.resolve")
+        public void testKt45676() throws Exception {
+            runTest("compiler/testData/resolve/regressions/kt45676.resolve");
+        }
+
         @TestMetadata("objectInsideFun.resolve")
         public void testObjectInsideFun() throws Exception {
             runTest("compiler/testData/resolve/regressions/objectInsideFun.resolve");

@@ -1,5 +1,4 @@
-import com.moowork.gradle.node.NodeExtension
-import com.moowork.gradle.node.npm.NpmTask
+import com.github.gradle.node.npm.task.NpmTask
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -9,14 +8,23 @@ import org.jetbrains.kotlin.ideaExt.idea
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("com.github.node-gradle.node") version "2.2.0"
+    id("com.github.node-gradle.node") version "3.0.1"
     id("de.undercouch.download")
-    id("com.gradle.enterprise.test-distribution")
+    id("com.gradle.enterprise.test-distribution") apply false
+}
+
+val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+val testDistributionEnabled = project.findProperty("kotlin.build.test.distribution.enabled")?.toString()?.toBoolean()
+    ?: isTeamcityBuild
+
+if (testDistributionEnabled) {
+    apply<com.gradle.enterprise.gradleplugin.testdistribution.TestDistributionPlugin>()
 }
 
 node {
-    download = true
-    version = "10.16.2"
+    download.set(true)
+    version.set("10.16.2")
+    nodeProjectDir.set(buildDir)
 }
 
 val antLauncherJar by configurations.creating
@@ -104,7 +112,7 @@ val currentOsType = run {
         else -> OsName.UNKNOWN
     }
 
-    val osArch = when (System.getProperty("sun.arch.data.model")) {
+    val osArch = when (providers.systemProperty("sun.arch.data.model").forUseAtConfigurationTime().get()) {
         "32" -> OsArch.X86_32
         "64" -> OsArch.X86_64
         else -> OsArch.UNKNOWN
@@ -219,13 +227,15 @@ fun Test.setUpBoxTests() {
     workingDir = rootDir
     dependsOn(antLauncherJar)
     inputs.files(antLauncherJar)
+    val antLauncherJarPath = antLauncherJar.asPath
     doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.classpath", antLauncherJarPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 
     systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
-    systemProperty("overwrite.output", findProperty("overwrite.output") ?: "false")
+    systemProperty("overwrite.output", project.providers.gradleProperty("overwrite.output")
+        .forUseAtConfigurationTime().orNull ?: "false")
 
     val prefixForPpropertiesToForward = "fd."
     for ((key, value) in properties) {
@@ -302,8 +312,6 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJs
     dependsOn(":compiler:generateTestData")
 }
 
-extensions.getByType(NodeExtension::class.java).nodeModulesDir = buildDir
-
 val prepareMochaTestData by tasks.registering(Copy::class) {
     from(testDataDir) {
         include("package.json")
@@ -314,30 +322,26 @@ val prepareMochaTestData by tasks.registering(Copy::class) {
 
 val npmInstall by tasks.getting(NpmTask::class) {
     dependsOn(prepareMochaTestData)
-    setWorkingDir(buildDir)
+    workingDir.set(buildDir)
 }
 
 val runMocha by task<NpmTask> {
-    setWorkingDir(buildDir)
+    workingDir.set(buildDir)
 
     val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
-    setArgs(listOf("run", target))
+    args.set(listOf("run", target))
 
-    setIgnoreExitValue(kotlinBuildProperties.ignoreTestFailures)
+    ignoreExitValue.set(kotlinBuildProperties.ignoreTestFailures)
 
     dependsOn(npmInstall, "test")
 
     val check by tasks
     check.dependsOn(this)
 
-    doFirst {
-        setEnvironment(
-            mapOf(
-                "KOTLIN_JS_LOCATION" to rootDir.resolve("dist/js/kotlin.js"),
-                "KOTLIN_JS_TEST_LOCATION" to rootDir.resolve("dist/js/kotlin-test.js")
-            )
-        )
-    }
+    environment.set(mapOf(
+        "KOTLIN_JS_LOCATION" to rootDir.resolve("dist/js/kotlin.js").toString(),
+        "KOTLIN_JS_TEST_LOCATION" to rootDir.resolve("dist/js/kotlin-test.js").toString()
+    ))
 }
 
 projectTest("wasmTest", true) {

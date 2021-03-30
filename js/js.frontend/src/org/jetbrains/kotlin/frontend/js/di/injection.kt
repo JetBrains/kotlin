@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.frontend.js.di
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -31,19 +31,23 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
+import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.resolve.createContainer
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
-fun createTopDownAnalyzerForJs(
-        moduleContext: ModuleContext,
-        bindingTrace: BindingTrace,
-        declarationProviderFactory: DeclarationProviderFactory,
-        languageVersionSettings: LanguageVersionSettings,
-        lookupTracker: LookupTracker,
-        expectActualTracker: ExpectActualTracker,
-        additionalPackages: List<PackageFragmentProvider>
-): LazyTopDownAnalyzer {
+fun createContainerForJS(
+    moduleContext: ModuleContext,
+    bindingTrace: BindingTrace,
+    declarationProviderFactory: DeclarationProviderFactory,
+    languageVersionSettings: LanguageVersionSettings,
+    lookupTracker: LookupTracker,
+    expectActualTracker: ExpectActualTracker,
+    additionalPackages: List<PackageFragmentProvider>,
+    targetEnvironment: TargetEnvironment,
+): StorageComponentContainer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatformAnalyzerServices) {
         configureModule(
             moduleContext,
@@ -57,13 +61,28 @@ fun createTopDownAnalyzerForJs(
         configureStandardResolveComponents()
 
         useInstance(declarationProviderFactory)
-        CompilerEnvironment.configure(this)
-
+        targetEnvironment.configure(this)
     }.apply {
         val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)
         val moduleDescriptor = get<ModuleDescriptorImpl>()
         packagePartProviders += additionalPackages
         moduleDescriptor.initialize(CompositePackageFragmentProvider(packagePartProviders))
     }
-    return storageComponentContainer.get<LazyTopDownAnalyzer>()
+    return storageComponentContainer
+}
+
+fun createTopDownAnalyzerForJs(
+    moduleContext: ModuleContext,
+    bindingTrace: BindingTrace,
+    declarationProviderFactory: DeclarationProviderFactory,
+    languageVersionSettings: LanguageVersionSettings,
+    lookupTracker: LookupTracker,
+    expectActualTracker: ExpectActualTracker,
+    additionalPackages: List<PackageFragmentProvider>,
+    targetEnvironment: TargetEnvironment,
+): LazyTopDownAnalyzer {
+    return createContainerForJS(
+        moduleContext, bindingTrace, declarationProviderFactory, languageVersionSettings,
+        lookupTracker, expectActualTracker, additionalPackages, targetEnvironment
+    ).get<LazyTopDownAnalyzer>()
 }

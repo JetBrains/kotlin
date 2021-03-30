@@ -12,6 +12,7 @@ import com.intellij.util.ArrayUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.CollectionsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.BufferedReader;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class InTextDirectivesUtils {
 
@@ -226,6 +228,7 @@ public final class InTextDirectivesUtils {
         if (targetBackend == TargetBackend.ANY) return true;
 
         List<String> doNotTarget = findLinesWithPrefixesRemoved(textWithDirectives(file), "// DONT_TARGET_EXACT_BACKEND: ");
+        doNotTarget = doNotTarget.stream().flatMap((s) -> Arrays.stream(s.split(" "))).collect(Collectors.toList());
         if (doNotTarget.contains(targetBackend.name()))
             return false;
 

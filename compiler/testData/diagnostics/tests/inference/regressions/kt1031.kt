@@ -6,10 +6,10 @@ package i
 import java.util.ArrayList
 import checkSubtype
 
-public infix fun<TItem> Iterable<TItem>.where(<!UNUSED_PARAMETER!>predicate<!> : (TItem)->Boolean) : ()->Iterable<TItem> {
+public infix fun<TItem> Iterable<TItem>.where(predicate : (TItem)->Boolean) : ()->Iterable<TItem> {
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-public fun<TItem, TResult> select(<!UNUSED_PARAMETER!>yielder<!>: ()->Iterable<TItem>, <!UNUSED_PARAMETER!>selector<!> : (TItem)->TResult) : ()->Iterable<TResult> {
+public fun<TItem, TResult> select(yielder: ()->Iterable<TItem>, selector : (TItem)->TResult) : ()->Iterable<TResult> {
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun a() {

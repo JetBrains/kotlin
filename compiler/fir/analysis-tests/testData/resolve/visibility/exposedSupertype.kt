@@ -28,7 +28,7 @@ private class C {
     }
 }
 
-class D : A {
+class D : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
     class Test1 : A.AProtectedI {
 
     }
@@ -38,11 +38,11 @@ interface E {
 
 }
 
-class Test2 : A.APublicI, <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>B.BInner<!>()<!> {
+class Test2 : A.APublicI, <!UNRESOLVED_REFERENCE!>B.BInner<!>() {
 
 }
 
-class Test3 : C.CPublicI, <!EXPOSED_SUPER_CLASS!>C<!> {
+class Test3 : C.CPublicI, <!EXPOSED_SUPER_CLASS, SUPERTYPE_NOT_INITIALIZED!>C<!> {
 
 }
 
@@ -50,11 +50,11 @@ class Test4 : E, A.AProtectedI {
 
 }
 
-class Test5 : C.CPublicI, <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>B.BInner<!>()<!> {
+class Test5 : C.CPublicI, <!UNRESOLVED_REFERENCE!>B.BInner<!>() {
 
 }
 
-class Test6 : E, <!EXPOSED_SUPER_CLASS!>C.CPublic<!> {
+class Test6 : E, <!EXPOSED_SUPER_CLASS, SUPERTYPE_NOT_INITIALIZED!>C.CPublic<!> {
 
 }
 

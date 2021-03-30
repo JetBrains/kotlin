@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclaration>(
@@ -41,6 +42,11 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclara
     @ObsoleteDescriptorBasedAPI
     override val hasDescriptor: Boolean
         get() = false
+
+    override fun toString(): String {
+        if (isBound) return owner.render()
+        return "Unbound public symbol for $signature"
+    }
 
     companion object {
         private const val GETTER_PREFIX = "<get"

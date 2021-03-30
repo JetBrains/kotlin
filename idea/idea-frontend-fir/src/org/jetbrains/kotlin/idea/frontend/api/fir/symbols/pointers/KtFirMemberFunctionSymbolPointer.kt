@@ -6,23 +6,27 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 internal class KtFirMemberFunctionSymbolPointer(
     ownerClassId: ClassId,
+    private val name: Name,
     private val signature: IdSignature
 ) : KtFirMemberSymbolPointer<KtFunctionSymbol>(ownerClassId) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
-        candidates: Collection<FirDeclaration>,
+        candidates: FirScope,
         firSession: FirSession
     ): KtFunctionSymbol? {
-        val firFunction = candidates.findDeclarationWithSignature<FirSimpleFunction>(signature, firSession) ?: return null
-        return firSymbolBuilder.buildFunctionSymbol(firFunction)
+        val firFunction = candidates.findDeclarationWithSignature<FirSimpleFunction>(signature, firSession) {
+            processFunctionsByName(name, it)
+        } ?: return null
+        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction)
     }
 }
 

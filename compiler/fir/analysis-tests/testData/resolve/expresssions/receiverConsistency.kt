@@ -6,7 +6,7 @@ class C {
 
     class Nested {
         fun test() {
-            <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>err<!>()<!>
+            <!UNRESOLVED_REFERENCE!>err<!>()
         }
     }
 }
@@ -17,5 +17,5 @@ fun test() {
     c.bar()
 
     val err = C()
-    err.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+    err.<!UNRESOLVED_REFERENCE!>foo<!>()
 }

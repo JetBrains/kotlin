@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil.readModuleAsProto
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -75,7 +76,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         try {
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
             val files = environment.getSourceFiles()
-            val config = JsConfig(environment.project, environment.configuration)
+            val config = JsConfig(environment.project, environment.configuration, CompilerEnvironment)
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
             val description = JsModuleDescriptor(
                     name = KotlinTestUtils.TEST_MODULE_NAME,

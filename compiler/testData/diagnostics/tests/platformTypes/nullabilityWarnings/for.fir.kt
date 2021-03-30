@@ -22,7 +22,7 @@ fun test() {
     val platformJ = J.staticJ
 
     for (x in platformNN) {}
-    <!INAPPLICABLE_CANDIDATE!>for (x in platformN) {}<!>
+    <!UNSAFE_CALL!>for (x in platformN) {}<!>
     for (x in platformJ) {}
 }
 

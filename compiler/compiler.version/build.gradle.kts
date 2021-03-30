@@ -25,8 +25,9 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.named<ProcessResources>("processResources") {
-    inputs.property("compilerVersion", kotlinVersion)
+    val kotlinVersionLocal = kotlinVersion
+    inputs.property("compilerVersion", kotlinVersionLocal)
     filesMatching("META-INF/compiler.version") {
-        filter<ReplaceTokens>("tokens" to mapOf("snapshot" to kotlinVersion))
+        filter<ReplaceTokens>("tokens" to mapOf("snapshot" to kotlinVersionLocal))
     }
 }

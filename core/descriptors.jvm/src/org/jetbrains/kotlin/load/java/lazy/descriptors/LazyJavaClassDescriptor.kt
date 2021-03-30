@@ -208,8 +208,8 @@ class LazyJavaClassDescriptor(
 
             for (javaType in javaTypes) {
                 val kotlinType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
-                val areImprovementsEnabled = c.components.settings.typeEnhancementImprovements
-                val enhancedKotlinType = if (areImprovementsEnabled) {
+                val areImprovementsInStrictMode = c.components.settings.typeEnhancementImprovementsInStrictMode
+                val enhancedKotlinType = if (areImprovementsInStrictMode) {
                     c.components.signatureEnhancement.enhanceSuperType(kotlinType, c)
                 } else kotlinType
 

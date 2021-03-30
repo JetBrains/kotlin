@@ -83,6 +83,7 @@ public class KotlinJavaPsiFacade implements Disposable {
     }
 
     private volatile PackageCache packageCache;
+    private volatile NotFoundPackagesCachingStrategy notFoundPackagesCachingStrategy = NotFoundPackagesCachingStrategy.Default.INSTANCE;
 
     private final Project project;
     private final LightModifierList emptyModifierList;
@@ -155,6 +156,10 @@ public class KotlinJavaPsiFacade implements Disposable {
         } else {
             obtainPackageCache().clear();
         }
+    }
+
+    public void setNotFoundPackagesCachingStrategy(NotFoundPackagesCachingStrategy notFoundPackagesCachingStrategy) {
+        this.notFoundPackagesCachingStrategy = notFoundPackagesCachingStrategy;
     }
 
     public LightModifierList getEmptyModifierList() {
@@ -314,6 +319,8 @@ public class KotlinJavaPsiFacade implements Disposable {
         }
 
         boolean isALibrarySearchScope = isALibrarySearchScope(searchScope);
+        NotFoundPackagesCachingStrategy.CacheType notFoundCacheType =
+                notFoundPackagesCachingStrategy.chooseStrategy(isALibrarySearchScope, qualifiedName);
 
         {
             // store found package in a long term cache if package is found in library search scope
@@ -353,24 +360,24 @@ public class KotlinJavaPsiFacade implements Disposable {
                     }
                 }
 
-                cache.hasPackageInAllScopeCache.put(qualifiedName, found);
+                if (found || notFoundCacheType != NotFoundPackagesCachingStrategy.CacheType.NO_CACHING)
+                    cache.hasPackageInAllScopeCache.put(qualifiedName, found);
             }
         }
 
-        // qualifiedName could be like a proper package name, e.g `org.jetbrains.kotlin`
-        // but it could be as well part of typed text like `fooba`
-        //
-        // all those temporary names and those don't even look like a package name should be stored in a short term cache
-        // while names those are potentially proper package name could be stored for a long time
-        // (till PROJECT_ROOTS or specific VFS changes)
-        boolean packageLikeQName = qualifiedName.indexOf('.') > 0;
-
-        ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> notFoundPackageInScopeCache =
-                // store NULL_PACKAGE (attribute that package not found) in a long term cache if:
-                // - library search scope
-                // - qualifiedName looks like package (has `.` in its name)
-                isALibrarySearchScope && packageLikeQName ?
-                cache.packageInLibScopeCache : cache.packageInScopeCache;
+        ConcurrentMap<Pair<String, GlobalSearchScope>, PsiPackage> notFoundPackageInScopeCache;
+        switch (notFoundCacheType) {
+            case LIB_SCOPE:
+                notFoundPackageInScopeCache = cache.packageInLibScopeCache;
+                break;
+            case SCOPE:
+                notFoundPackageInScopeCache = cache.packageInScopeCache;
+                break;
+            case NO_CACHING:
+                return null;
+            default:
+                throw new IllegalStateException("Impossible enum value: " + notFoundCacheType.toString());
+        }
 
         return unwrap(ConcurrencyUtil.cacheOrGet(notFoundPackageInScopeCache, key, NULL_PACKAGE));
     }

@@ -9,14 +9,16 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
+import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.util.withIndent
 
 import java.io.File
 
-fun Element.generateCode(generationPath: File) {
+fun Element.generateCode(generationPath: File): GeneratedFile {
     val dir = generationPath.resolve(packageName.replace(".", "/"))
-    dir.mkdirs()
     val file = File(dir, "$type.kt")
-    file.useSmartPrinter {
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $packageName")
         println()
@@ -28,6 +30,7 @@ fun Element.generateCode(generationPath: File) {
         printGeneratedMessage()
         printElement(this@generateCode)
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }
 
 fun SmartPrinter.printElement(element: Element) {
@@ -86,13 +89,17 @@ fun SmartPrinter.printElement(element: Element) {
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null, forceNullable: Boolean = false) {
                 println()
+                if (name == "source") {
+                    println("@FirImplementationDetail")
+                }
                 abstract()
                 if (override) print("override ")
                 println(replaceFunctionDeclaration(overridenType, forceNullable))
             }
 
             allFields.filter { it.withReplace }.forEach {
-                it.replaceDeclaration(overridenFields[it, it], forceNullable = it.useNullableForReplace)
+                val override = overridenFields[it, it] && !(it.name == "source" && fullQualifiedName.endsWith("FirQualifiedAccess"))
+                it.replaceDeclaration(override, forceNullable = it.useNullableForReplace)
                 for (overridenType in it.overridenTypes) {
                     it.replaceDeclaration(true, overridenType)
                 }

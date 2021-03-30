@@ -1,0 +1,95 @@
+package = platform.posix
+headers = assert.h complex.h ctype.h dirent.h errno.h fcntl.h \
+    fenv.h float.h ftw.h getopt.h inttypes.h libgen.h limits.h \
+    locale.h math.h memory.h pthread.h sched.h search.h semaphore.h \
+    setjmp.h signal.h stdint.h stdio.h stdlib.h string.h \
+    time.h uchar.h unistd.h utime.h wchar.h wctype.h
+noStringConversion = send sendto recv
+compilerOpts = -DUNICODE -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DWINAPI_FAMILY=3 -DOEMRESOURCE -D_POSIX_C_SOURCE=1
+linkerOpts = -lWs2_32
+
+---
+// Wrapper to access errno variable.
+static int posix_errno() {
+    return errno;
+}
+
+static void set_posix_errno(int value) {
+        errno = value;
+}
+
+static short posix_htons(short x) {
+    return htons(x);
+}
+
+// Hacks to make MinGW Windows headers look more modular than they are.
+#ifdef _WIN64
+#define UINT_PTR    unsigned __int64
+#define ULONG_PTR   unsigned __int64
+#else
+#define UINT_PTR    unsigned int
+#define ULONG_PTR   unsigned long
+#endif
+#define DWORD_PTR   ULONG_PTR
+#define BYTE        unsigned char
+#define WORD        unsigned short
+#define DWORD       unsigned __LONG32
+#define ULONG       DWORD
+#define INT         int
+#define UINT        unsigned int
+#define CHAR        char
+#define WCHAR       WORD
+#define LPBYTE      BYTE*
+#define LPINT       INT*
+#define LPWORD      WORD*
+#define LPLONG      __LONG32*
+#define LPDWORD     DWORD*
+#define LPTSTR      WCHAR*
+#define VOID        void
+#define PVOID       void*
+#define LPVOID      void*
+#define LPSTR       CHAR*
+#define LPWSTR      WCHAR*
+#define WINBOOL     int
+#define WPARAM      UINT_PTR
+#define HANDLE      LPVOID
+#define LPHANDLE    HANDLE*
+#define HWND        HANDLE
+#define FARPROC     void*
+#define WINAPI      __stdcall
+#define CALLBACK    __stdcall
+#define PASCAL      __pascal
+
+#define _INC_WINDOWS
+#define RPC_NO_WINDOWS_H
+#define COM_NO_WINDOWS_H
+#define __INSIDE_CYGWIN__
+#include <winsock2.h>
+
+// Wrapper to access h_errno variable.
+static int posix_h_errno() {
+    return h_errno;
+}
+
+static int init_sockets() {
+    WORD wVersionRequested = 0x202;
+    WSADATA wsaData;
+    return WSAStartup(wVersionRequested, &wsaData);
+}
+
+static void deinit_sockets() {
+    WSACleanup();
+    return;
+}
+
+static void posix_FD_ZERO(fd_set *set) {
+    FD_ZERO(set);
+}
+
+static void posix_FD_SET(int bit, fd_set *set) {
+    FD_SET(bit, set);
+}
+
+static int posix_FD_ISSET(int bit, fd_set *set) {
+    return FD_ISSET(bit, set);
+}

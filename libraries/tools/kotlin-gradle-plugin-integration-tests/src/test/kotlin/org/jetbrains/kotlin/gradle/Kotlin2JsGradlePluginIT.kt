@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import com.google.gson.Gson
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -87,13 +88,11 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         val appProject = transformProjectWithPluginsDsl(
             projectName = "app",
             directoryPrefix = rootProjectName,
-            wrapperVersion = GradleVersionRequired.AtLeast("5.4")
         )
 
         val libProject = transformProjectWithPluginsDsl(
             projectName = "lib",
             directoryPrefix = rootProjectName,
-            wrapperVersion = GradleVersionRequired.AtLeast("5.4")
         )
 
         libProject.gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
@@ -299,6 +298,8 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
 }
 
 abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGradleIT() {
+    override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.1")
+
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             jsIrBackend = irBackend,
@@ -541,7 +542,13 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
             assertFileExists("build/js/node_modules/kotlin-js-plugin-test/kotlin/kotlin-js-plugin-test.js")
             assertFileExists("build/js/node_modules/kotlin-js-plugin-test/kotlin/kotlin-js-plugin-test.js.map")
 
-            assertTestResults("testProject/kotlin-js-plugin-project/tests.xml", "nodeTest")
+            // Gradle 6.6+ slightly changed format of xml test results
+            val testGradleVersion = GradleVersion.version(project.chooseWrapperVersionOrFinishTest())
+            if (testGradleVersion < GradleVersion.version("6.6")) {
+                assertTestResults("testProject/kotlin-js-plugin-project/tests_pre6.6.xml", "nodeTest")
+            } else {
+                assertTestResults("testProject/kotlin-js-plugin-project/tests.xml", "nodeTest")
+            }
         }
     }
 

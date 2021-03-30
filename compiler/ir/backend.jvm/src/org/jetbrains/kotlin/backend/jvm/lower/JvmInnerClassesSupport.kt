@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
+import java.util.concurrent.ConcurrentHashMap
 
 class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
-    private val outerThisDeclarations = HashMap<IrClass, IrField>()
-    private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
-    private val originalInnerClassPrimaryConstructorByClass = HashMap<IrClass, IrConstructor>()
+    private val outerThisDeclarations = ConcurrentHashMap<IrClass, IrField>()
+    private val innerClassConstructors = ConcurrentHashMap<IrConstructor, IrConstructor>()
+    private val originalInnerClassPrimaryConstructorByClass = ConcurrentHashMap<IrClass, IrConstructor>()
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
         outerThisDeclarations.getOrPut(innerClass) {

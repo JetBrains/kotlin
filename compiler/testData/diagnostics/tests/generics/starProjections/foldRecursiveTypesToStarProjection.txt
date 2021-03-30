@@ -77,27 +77,27 @@ public object KT32183 {
     }
 
     public sealed class ProjectJob {
-        internal constructor ProjectJob()
+        protected constructor ProjectJob()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public sealed class Process</*0*/ E : KT32183.ProjectJob.ProcessExecutable<E>, /*1*/ R : KT32183.ProjectJob.ProcessResources<R>> : KT32183.ProjectJob {
-            internal constructor Process</*0*/ E : KT32183.ProjectJob.ProcessExecutable<E>, /*1*/ R : KT32183.ProjectJob.ProcessResources<R>>()
+            protected constructor Process</*0*/ E : KT32183.ProjectJob.ProcessExecutable<E>, /*1*/ R : KT32183.ProjectJob.ProcessResources<R>>()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
         public sealed class ProcessExecutable</*0*/ E : KT32183.ProjectJob.ProcessExecutable<E>> {
-            internal constructor ProcessExecutable</*0*/ E : KT32183.ProjectJob.ProcessExecutable<E>>()
+            protected constructor ProcessExecutable</*0*/ E : KT32183.ProjectJob.ProcessExecutable<E>>()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
         public sealed class ProcessResources</*0*/ R : KT32183.ProjectJob.ProcessResources<R>> {
-            internal constructor ProcessResources</*0*/ R : KT32183.ProjectJob.ProcessResources<R>>()
+            protected constructor ProcessResources</*0*/ R : KT32183.ProjectJob.ProcessResources<R>>()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

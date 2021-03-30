@@ -21,26 +21,51 @@ class VersionFetcher : AutoCloseable {
     suspend fun fetch(): List<PackageInformation> {
         return coroutineScope {
             npmPackages
-                .map { async { fetchPackageInformationAsync(it) } }
-                .map { fetched ->
-                    val (packageName, value) = fetched.await()
-                    val fetchedPackageInformation = Gson().fromJson(value, FetchedPackageInformation::class.java)
-                    PackageInformation(
-                        packageName,
-                        fetchedPackageInformation.versions.keys
+                .filter { it.version != null }
+                .map {
+                    HardcodedPackageInformation(
+                        it.name,
+                        it.version!!,
+                        it.displayName
                     )
-                }
+                } +
+                    npmPackages
+                        .filter { it.version == null }
+                        .map {
+                            async {
+                                val fetched = fetchPackageInformationAsync(it.name)
+                                object {
+                                    val name = it.name
+                                    val displayName = it.displayName
+                                    val fetched = fetched
+                                }
+                            }
+                        }
+                        .map { fetched ->
+                            val await = fetched.await()
+                            val name = await.name
+                            val displayName = await.displayName
+                            val awaitFetched = await.fetched
+                            val fetchedPackageInformation = Gson().fromJson(awaitFetched, FetchedPackageInformation::class.java)
+                            RealPackageInformation(
+                                name,
+                                fetchedPackageInformation.versions.keys,
+                                displayName
+                            )
+                        }
         }
     }
 
-    private suspend fun fetchPackageInformationAsync(packageName: String): Pair<String, String> {
+    private suspend fun fetchPackageInformationAsync(
+        packageName: String,
+    ): String {
         val packagePath =
             if (packageName.startsWith("@"))
                 "@" + encodeURIComponent(packageName)
             else
                 encodeURIComponent(packageName)
 
-        return (packageName to client.get<String>("http://registry.npmjs.org/$packagePath"))
+        return client.get("http://registry.npmjs.org/$packagePath")
     }
 
     override fun close() {

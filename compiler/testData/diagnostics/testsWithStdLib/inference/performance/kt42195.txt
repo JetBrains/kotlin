@@ -3,7 +3,7 @@ package
 public val tree: Tree.Inner<kotlin.Int, kotlin.String, kotlin.Unit, kotlin.Int>
 
 public sealed class Tree</*0*/ TIndex, /*1*/ out TCommon, /*2*/ out TInner, /*3*/ out TLeaf> {
-    internal constructor Tree</*0*/ TIndex, /*1*/ out TCommon, /*2*/ out TInner, /*3*/ out TLeaf>()
+    protected constructor Tree</*0*/ TIndex, /*1*/ out TCommon, /*2*/ out TInner, /*3*/ out TLeaf>()
     public abstract val children: kotlin.collections.Map<TIndex, Tree<TIndex, TCommon, TInner, TLeaf>>
     public abstract val value: TCommon
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

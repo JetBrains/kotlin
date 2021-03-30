@@ -1,9 +1,9 @@
 // WITH_RUNTIME
-infix fun distance(x: Int, y: Int) = x + y
+infix fun Int.distance(y: Int) = this + y
 
 fun test(): Int = 3 distance 4
 
-fun testRegular(): Int = distance(3, 4)
+fun testRegular(): Int = 3.distance(4)
 
 class My(var x: Int) {
     operator fun invoke() = x

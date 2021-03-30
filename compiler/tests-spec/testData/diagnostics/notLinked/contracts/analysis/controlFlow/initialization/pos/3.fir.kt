@@ -155,7 +155,7 @@ fun case_10() {
     val x: Int
     funWithExactlyOnceCallsInPlace outer@ {
         funWithAtLeastOnceCallsInPlace {
-            x = 42
+            <!VAL_REASSIGNMENT!>x<!> = 42
             return@outer
         }
     }

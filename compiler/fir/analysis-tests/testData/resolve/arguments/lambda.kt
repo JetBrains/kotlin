@@ -10,8 +10,8 @@ fun test() {
     foo({})
 
     // Bad
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>(1) {}<!>
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>(f = {}) {}<!>
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(1) {}
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(f = {}) {}
 
     // OK
     bar(1) {}
@@ -20,15 +20,15 @@ fun test() {
     bar(x = 1, f = {})
 
     // Bad
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>bar<!> {}<!>
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>bar<!>({})<!>
+    <!INAPPLICABLE_CANDIDATE!>bar<!> {}
+    <!INAPPLICABLE_CANDIDATE!>bar<!>({})
 
     // OK
     baz(other = false, f = {})
     baz({}, false)
 
     // Bad
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>baz<!> {}<!>
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>baz<!>() {}<!>
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>baz<!>(other = false) {}<!>
+    <!INAPPLICABLE_CANDIDATE!>baz<!> {}
+    <!INAPPLICABLE_CANDIDATE!>baz<!>() {}
+    <!INAPPLICABLE_CANDIDATE!>baz<!>(other = false) {}
 }

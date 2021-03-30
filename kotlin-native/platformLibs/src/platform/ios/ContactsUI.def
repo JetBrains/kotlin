@@ -1,0 +1,7 @@
+depends = CFNetwork Contacts CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.ContactsUI
+modules = ContactsUI
+
+compilerOpts = -framework ContactsUI
+linkerOpts = -framework ContactsUI

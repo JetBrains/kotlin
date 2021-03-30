@@ -75,7 +75,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral")
     @TestDataPath("$PROJECT_ROOT")
-    public class ClassLiteral extends AbstractDiagnosticsTestWithJsStdLib {
+    public class ClassLiteral {
         @Test
         public void testAllFilesPresentInClassLiteral() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -97,7 +97,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes")
     @TestDataPath("$PROJECT_ROOT")
-    public class DynamicTypes extends AbstractDiagnosticsTestWithJsStdLib {
+    public class DynamicTypes {
         @Test
         public void testAllFilesPresentInDynamicTypes() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -383,7 +383,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/export")
     @TestDataPath("$PROJECT_ROOT")
-    public class Export extends AbstractDiagnosticsTestWithJsStdLib {
+    public class Export {
         @Test
         public void testAllFilesPresentInExport() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/export"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -435,7 +435,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/inline")
     @TestDataPath("$PROJECT_ROOT")
-    public class Inline extends AbstractDiagnosticsTestWithJsStdLib {
+    public class Inline {
         @Test
         public void testAllFilesPresentInInline() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/inline"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -451,7 +451,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode")
     @TestDataPath("$PROJECT_ROOT")
-    public class JsCode extends AbstractDiagnosticsTestWithJsStdLib {
+    public class JsCode {
         @Test
         public void testAllFilesPresentInJsCode() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jsCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -497,7 +497,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations")
     @TestDataPath("$PROJECT_ROOT")
-    public class JvmDeclarations extends AbstractDiagnosticsTestWithJsStdLib {
+    public class JvmDeclarations {
         @Test
         public void testAllFilesPresentInJvmDeclarations() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -513,7 +513,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module")
     @TestDataPath("$PROJECT_ROOT")
-    public class Module extends AbstractDiagnosticsTestWithJsStdLib {
+    public class Module {
         @Test
         public void testAllFilesPresentInModule() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/module"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -577,7 +577,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name")
     @TestDataPath("$PROJECT_ROOT")
-    public class Name extends AbstractDiagnosticsTestWithJsStdLib {
+    public class Name {
         @Test
         public void testAllFilesPresentInName() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/name"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -773,7 +773,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native")
     @TestDataPath("$PROJECT_ROOT")
-    public class Native extends AbstractDiagnosticsTestWithJsStdLib {
+    public class Native {
         @Test
         public void testAllFilesPresentInNative() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -908,7 +908,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter")
         @TestDataPath("$PROJECT_ROOT")
-        public class NativeGetter extends AbstractDiagnosticsTestWithJsStdLib {
+        public class NativeGetter {
             @Test
             public void testAllFilesPresentInNativeGetter() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -972,7 +972,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke")
         @TestDataPath("$PROJECT_ROOT")
-        public class NativeInvoke extends AbstractDiagnosticsTestWithJsStdLib {
+        public class NativeInvoke {
             @Test
             public void testAllFilesPresentInNativeInvoke() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -1036,7 +1036,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter")
         @TestDataPath("$PROJECT_ROOT")
-        public class NativeSetter extends AbstractDiagnosticsTestWithJsStdLib {
+        public class NativeSetter {
             @Test
             public void testAllFilesPresentInNativeSetter() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -1100,7 +1100,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody")
         @TestDataPath("$PROJECT_ROOT")
-        public class OptionlBody extends AbstractDiagnosticsTestWithJsStdLib {
+        public class OptionlBody {
             @Test
             public void testAllFilesPresentInOptionlBody() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -1134,7 +1134,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti")
         @TestDataPath("$PROJECT_ROOT")
-        public class Rtti extends AbstractDiagnosticsTestWithJsStdLib {
+        public class Rtti {
             @Test
             public void testAllFilesPresentInRtti() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -1174,7 +1174,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam")
         @TestDataPath("$PROJECT_ROOT")
-        public class UnusedParam extends AbstractDiagnosticsTestWithJsStdLib {
+        public class UnusedParam {
             @Test
             public void testAllFilesPresentInUnusedParam() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -1209,7 +1209,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/qualifier")
     @TestDataPath("$PROJECT_ROOT")
-    public class Qualifier extends AbstractDiagnosticsTestWithJsStdLib {
+    public class Qualifier {
         @Test
         public void testAllFilesPresentInQualifier() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/qualifier"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -1231,7 +1231,7 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/reflection")
     @TestDataPath("$PROJECT_ROOT")
-    public class Reflection extends AbstractDiagnosticsTestWithJsStdLib {
+    public class Reflection {
         @Test
         public void testAllFilesPresentInReflection() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/reflection"), Pattern.compile("^(.+)\\.kt$"), null, true);

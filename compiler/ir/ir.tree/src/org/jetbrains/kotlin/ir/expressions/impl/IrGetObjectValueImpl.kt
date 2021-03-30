@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -29,4 +30,8 @@ class IrGetObjectValueImpl(
 ) : IrGetObjectValue() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetObjectValue(this, data)
+
+    override fun copy(): IrExpression {
+        return IrGetObjectValueImpl(startOffset, endOffset, type, symbol)
+    }
 }

@@ -1,5 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_FIR: JVM_IR
 
 // WITH_RUNTIME
 
@@ -13,14 +14,14 @@ annotation class Ann(
         val p6: Float
 )
 
-val prop1: Byte = 1 % 1
-val prop2: Short = 1 % 1
-val prop3: Int = 1 % 1
-val prop4: Long = 1 % 1
-val prop5: Double = 1.0 % 1.0
-val prop6: Float = 1.0.toFloat() % 1.0.toFloat()
+val prop1: Byte = 10.mod(2)
+val prop2: Short = 10.mod(-3)
+val prop3: Int = (-10).mod(4)
+val prop4: Long = (-10).mod(-5)
+val prop5: Double = 0.25.mod(-100.0)
+val prop6: Float = 100f.mod(0.33f)
 
-@Ann(1 % 1, 1 % 1, 1 % 1, 1 % 1, 1.0 % 1.0, 1.0.toFloat() % 1.0.toFloat()) class MyClass
+@Ann(10.mod(2), 10.mod(-3), (-10).mod(4), (-10).mod(5), 0.25.mod(-100.0), 100f.mod(0.33f)) class MyClass
 
 fun box(): String {
     val annotation = MyClass::class.java.getAnnotation(Ann::class.java)!!

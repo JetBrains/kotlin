@@ -55,6 +55,7 @@ internal expect fun convertDurationUnit(value: Double, sourceUnit: DurationUnit,
 
 @SinceKotlin("1.3")
 @ExperimentalTime
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal fun DurationUnit.shortName(): String = when (this) {
     DurationUnit.NANOSECONDS -> "ns"
     DurationUnit.MICROSECONDS -> "us"
@@ -63,4 +64,5 @@ internal fun DurationUnit.shortName(): String = when (this) {
     DurationUnit.MINUTES -> "m"
     DurationUnit.HOURS -> "h"
     DurationUnit.DAYS -> "d"
+    else -> error("Unknown unit: $this")
 }

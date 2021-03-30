@@ -28,9 +28,9 @@ fun test_2(a: A<C>) {
 }
 
 fun test_3(a: A<D>) {
-    <!AMBIGUITY!>a[0] += D()<!> // ambiguity
+    a[0] <!AMBIGUITY!>+=<!> D() // ambiguity
 }
 
 fun test_4(b: B) {
-    <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>b[0]<!> += B()<!> // unresolved
+    b<!NO_GET_METHOD!>[0]<!> <!UNRESOLVED_REFERENCE!>+=<!> B() // unresolved
 }

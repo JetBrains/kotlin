@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.inline.v
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -101,7 +102,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
 
     private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle {
         val irFun = irRawFunctionReference.symbol.owner
-        val irParentClass = irFun.parentAsClass
+        val irParentClass = irFun.parent as? IrClass
+            ?: throw AssertionError("Unexpected parent: ${irFun.parent.render()}")
         val owner = codegen.typeMapper.mapOwner(irParentClass)
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFun)
         val handleTag = when {
@@ -109,6 +111,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
                 Opcodes.H_NEWINVOKESPECIAL
             irFun.dispatchReceiverParameter == null ->
                 Opcodes.H_INVOKESTATIC
+            irParentClass.isJvmInterface ->
+                Opcodes.H_INVOKEINTERFACE
             else ->
                 Opcodes.H_INVOKEVIRTUAL
         }
@@ -134,9 +138,9 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             ?: fail("Argument in ${irCall.symbol.owner.name} call is expected to be a raw function reference")
         val irOriginalFun = irRawFunRef.symbol.owner as? IrSimpleFunction
             ?: fail("IrSimpleFunction expected: ${irRawFunRef.symbol.owner.render()}")
+
         val superType = irCall.getTypeArgument(0) as? IrSimpleType
             ?: fail("Type argument expected")
-
         val patchedSuperType = replaceTypeArgumentsWithNullable(superType)
 
         val fakeClass = codegen.context.irFactory.buildClass { name = Name.special("<fake>") }

@@ -286,7 +286,8 @@ digraph safeCalls_kt {
     92 -> {107} [style=dashed];
     93 -> {95} [style=dotted];
     94 -> {95} [style=dotted];
-    95 -> {106 96} [style=dotted];
+    95 -> {96} [style=dotted];
+    95 -> {106} [style=dotted]    [label=onUncaughtException];
     96 -> {97} [style=dotted];
     97 -> {98 102};
     98 -> {99};

@@ -39,7 +39,7 @@ public class LightMember<D> : Member<D>, Light() {
     override fun getName(): String = "Light"
 }
 
-public class LightClassWrapper : Light(), Klass {
+public <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class LightClassWrapper<!> : Light(), Klass {
     fun test() = typeParameters.single()
 }
 

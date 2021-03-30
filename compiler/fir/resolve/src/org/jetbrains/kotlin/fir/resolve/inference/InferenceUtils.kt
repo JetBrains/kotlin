@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -45,21 +45,24 @@ fun ConeKotlinType.isKMutableProperty(session: FirSession): Boolean {
 }
 
 private fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
-    val classId = classId(session) ?: return null
-    return FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString())
+    return classId(session)?.toFunctionClassKind()
+}
+
+private fun ClassId.toFunctionClassKind(): FunctionClassKind? {
+    return FunctionClassKind.byClassNamePrefix(packageFqName, relativeClassName.asString())
 }
 
 fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
-    val kind = functionClassKind(session) ?: return false
-    return kind == FunctionClassKind.Function ||
-            kind == FunctionClassKind.KFunction ||
-            kind == FunctionClassKind.SuspendFunction ||
-            kind == FunctionClassKind.KSuspendFunction
+    return functionClassKind(session) != null
 }
 
 fun ConeKotlinType.isFunctionalType(session: FirSession): Boolean {
     val kind = functionClassKind(session) ?: return false
     return kind == FunctionClassKind.Function
+}
+
+fun ConeClassLikeLookupTag.isBuiltinFunctionalType(): Boolean {
+    return classId.toFunctionClassKind() != null
 }
 
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
@@ -198,15 +201,8 @@ fun ConeKotlinType.isKClassType(): Boolean {
     return classId == StandardClassIds.KClass
 }
 
-fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef?, session: FirSession): ConeKotlinType? {
-    if (isBuiltinFunctionalType(session) && isExtensionFunctionType(session)) {
-        return (this.fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
-    }
-    return null
-}
-
 fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
-    if (isBuiltinFunctionalType(session)) {
+    if (isBuiltinFunctionalType(session) && isExtensionFunctionType(session)) {
         return (this.fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
     }
     return null
@@ -250,8 +246,16 @@ fun extractLambdaInfoFromFunctionalType(
     }
     if (!expectedType.isBuiltinFunctionalType(session)) return null
 
-    val receiverType = argument.receiverType ?: expectedType.receiverType(expectedTypeRef, session)
-    val returnType = argument.returnType ?: expectedType.returnType(session) ?: return null
+    val receiverType = argument.receiverType ?: expectedType.receiverType(session)
+    val lastStatement = argument.body?.statements?.singleOrNull()
+    val returnType =
+        // Simply { }, i.e., function literals without body. Raw FIR added an implicit return with an implicit unit type ref.
+        if (lastStatement?.source?.kind is FirFakeSourceElementKind.ImplicitReturn &&
+            (lastStatement as? FirReturnExpression)?.result?.source?.kind is FirFakeSourceElementKind.ImplicitUnit
+        ) {
+            session.builtinTypes.unitType.type
+        } else
+            argument.returnType ?: expectedType.returnType(session) ?: return null
     val parameters = extractLambdaParameters(expectedType, argument, expectedType.isExtensionFunctionType(session), session)
 
     return ResolvedLambdaAtom(

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.serialization.NonStableParameterNamesSerializationTest
 import org.jetbrains.kotlin.storage.StorageManager
@@ -61,15 +62,16 @@ class InteropFunctionsWithNonStableParameterNamesDiagnosticsTest : AbstractDiagn
         jvmTarget: JvmTarget
     ): AnalysisResult {
         return CommonResolverForModuleFactory.analyzeFiles(
-            files = files,
-            moduleName = moduleContext.module.name,
+            files,
+            moduleContext.module.name,
             dependOnBuiltIns = true,
-            languageVersionSettings = languageVersionSettings,
-            targetPlatform = CommonPlatforms.defaultCommonPlatform,
+            languageVersionSettings,
+            CommonPlatforms.defaultCommonPlatform,
+            CompilerEnvironment,
             capabilities = mapOf(
 //                MODULE_FILES to files
             ),
-            dependenciesContainer = CommonDependenciesContainerImpl(moduleContext.module.allDependencyModules)
+            CommonDependenciesContainerImpl(moduleContext.module.allDependencyModules)
         ) { content ->
             environment.createPackagePartProvider(content.moduleContentScope)
         }

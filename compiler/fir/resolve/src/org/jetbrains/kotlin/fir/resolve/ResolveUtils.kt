@@ -22,18 +22,23 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
@@ -48,7 +53,7 @@ fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirRe
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType(
             ConeSimpleDiagnostic(
                 "No type for parameter",
-                DiagnosticKind.NoTypeForTypeParameter
+                DiagnosticKind.ValueParameterWithNoTypeAnnotation
             )
         )
     }
@@ -243,11 +248,12 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
 
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): FirQualifiedAccessExpression {
     val typesFromSmartCast = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression) ?: return qualifiedAccessExpression
+    val originalType = qualifiedAccessExpression.resultType.coneType
     val allTypes = typesFromSmartCast.also {
-        it += qualifiedAccessExpression.resultType.coneType
+        it += originalType
     }
     val intersectedType = ConeTypeIntersector.intersectTypes(session.inferenceComponents.ctx, allTypes)
-    // TODO: add check that intersectedType is not equal to original type
+    if (intersectedType == originalType) return qualifiedAccessExpression
     val intersectedTypeRef = buildResolvedTypeRef {
         source = qualifiedAccessExpression.resultType.source?.fakeElement(FirFakeSourceElementKind.SmartCastedTypeRef)
         type = intersectedType
@@ -283,7 +289,7 @@ fun CallableId.isIterator(): Boolean =
     callableName.asString() == "iterator" && packageName.asString() in arrayOf("kotlin.collections", "kotlin.ranges")
 
 fun FirAnnotationCall.fqName(session: FirSession): FqName? {
-    val symbol = session.firSymbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
+    val symbol = session.symbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
     return symbol.classId.asSingleFqName()
 }
 
@@ -292,7 +298,9 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(nullableReceiver
 
     val expandedReceiverType = if (receiverType is ConeClassLikeType) receiverType.fullyExpandedType(session) else receiverType
 
-    replaceTypeRef(typeRef.resolvedTypeFromPrototype(expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull()))
+    val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull())
+    replaceTypeRef(resolvedTypeRef)
+    session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, null)
 }
 
 fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
@@ -309,7 +317,9 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
         else
             typeAfterNullCheck
 
-    replaceTypeRef(typeRef.resolvedTypeFromPrototype(resultingType))
+    val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(resultingType)
+    replaceTypeRef(resolvedTypeRef)
+    session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, null)
 }
 
 private fun FirQualifiedAccess.expressionTypeOrUnitForAssignment(): ConeKotlinType? {
@@ -327,7 +337,7 @@ fun FirAnnotationCall.getCorrespondingClassSymbolOrNull(session: FirSession): Fi
             // TODO: How to retrieve local annotaiton's constructor?
             null
         } else {
-            (session.firSymbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)
+            (session.symbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)
         }
     }
 }
@@ -347,3 +357,52 @@ fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotl
 private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTypeRef): ConeKotlinType {
     return candidate.substitutor.substituteOrSelf(typeRef.type)
 }
+
+inline val FirCallableDeclaration<*>.containingClass: FirRegularClass?
+    get() = this.containingClassAttr?.let { lookupTag ->
+        session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
+    }
+
+val FirFunction<*>.asForbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget?
+    get() {
+        if (this is FirConstructor && this.isPrimary) {
+            this.containingClass?.let { containingClass ->
+                if (containingClass.classKind == ClassKind.ANNOTATION_CLASS) {
+                    // Java annotation classes allow (actually require) named parameters.
+                    return null
+                }
+            }
+        }
+        if (this is FirMemberDeclaration && status.isExpect) {
+            return ForbiddenNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
+        }
+        return when (origin) {
+            FirDeclarationOrigin.Source, FirDeclarationOrigin.Library -> null
+            FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.asForbiddenNamedArgumentsTarget
+            FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.asForbiddenNamedArgumentsTarget
+            // For intersection overrides, the logic in
+            // org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope#selectMostSpecificMember picks the most specific one and store
+            // it in originalForIntersectionOverrideAttr. This follows from FE1.0 behavior which selects the most specific function
+            // (org.jetbrains.kotlin.resolve.OverridingUtil#selectMostSpecificMember), from which the `hasStableParameterNames` status is
+            // copied.
+            FirDeclarationOrigin.IntersectionOverride -> originalForIntersectionOverrideAttr?.asForbiddenNamedArgumentsTarget
+            FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
+            FirDeclarationOrigin.SamConstructor -> null
+            FirDeclarationOrigin.SubstitutionOverride -> originalForSubstitutionOverrideAttr?.asForbiddenNamedArgumentsTarget
+            // referenced function of a Kotlin function type
+            FirDeclarationOrigin.BuiltIns -> {
+                if (dispatchReceiverClassOrNull()?.isBuiltinFunctionalType() == true) {
+                    ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
+                } else {
+                    null
+                }
+            }
+            FirDeclarationOrigin.Synthetic -> null
+            is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
+        }
+    }
+
+// TODO: handle functions with non-stable parameter names, see also
+//  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
+//  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
+inline val FirFunction<*>.hasStableParameterNames: Boolean get() = asForbiddenNamedArgumentsTarget == null

@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.test.tests
 
+import kotlin.reflect.typeOf
 import kotlin.test.*
 
 class BasicAssertionsTest {
@@ -205,10 +206,45 @@ class BasicAssertionsTest {
     fun testExpectFails() {
         checkFailedAssertion { expect(1) { 2 } }
     }
+
+    @Test
+    fun testAssertIsOfType() {
+        val s: Any = "test"
+        val result = assertIs<String>(s)
+        assertEquals(4, s.length)
+        assertEquals(s, result)
+        assertEquals(4, result.length)
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    @Test
+    fun testAssertIsOfTypeFails() {
+        val error = checkFailedAssertion { assertIs<Int>("test") }
+        val message = assertNotNull(error.message)
+        val onFailure = "Actual message: $message"
+        assertTrue(message.startsWith("Expected value to be of type"), onFailure)
+        assertTrue(message.contains(typeOf<Int>().toString()), onFailure)
+        assertTrue(message.contains("String"), onFailure)
+    }
+
+    @Test
+    fun testAssertIsNotOfType() {
+        assertIsNot<Int>("test")
+    }
+
+    @Test
+    @OptIn(ExperimentalStdlibApi::class)
+    fun testAssertIsNotOfTypeFails() {
+        val error = checkFailedAssertion { assertIsNot<Int>(1) }
+        val message = assertNotNull(error.message)
+        val onFailure = "Actual message: $message"
+        assertTrue(message.startsWith("Expected value to not be of type"), onFailure)
+        assertTrue(message.contains(typeOf<Int>().toString()), onFailure)
+    }
 }
 
 
-private fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
+internal fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
     return assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }
 }
 

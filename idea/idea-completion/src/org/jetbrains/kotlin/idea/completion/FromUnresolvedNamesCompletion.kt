@@ -9,7 +9,7 @@ import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
+import org.jetbrains.kotlin.idea.highlighter.AbstractKotlinHighlightVisitor
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -28,7 +28,7 @@ class FromUnresolvedNamesCompletion(
         scope.forEachDescendantOfType<KtNameReferenceExpression> { refExpr ->
             ProgressManager.checkCanceled()
 
-            if (KotlinPsiChecker.wasUnresolved(refExpr)) {
+            if (AbstractKotlinHighlightVisitor.wasUnresolved(refExpr)) {
                 val callTypeAndReceiver = CallTypeAndReceiver.detect(refExpr)
                 if (callTypeAndReceiver.receiver != null) return@forEachDescendantOfType
                 if (sampleDescriptor != null) {

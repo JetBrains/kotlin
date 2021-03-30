@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.services
 
-import com.intellij.mock.MockProject
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -22,24 +22,25 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
     protected val moduleStructure: TestModuleStructure
         get() = testServices.moduleStructure
 
-    protected open fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {}
+    protected open fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {}
 
     fun configureCompileConfigurationWithAdditionalConfigurationKeys(
         configuration: CompilerConfiguration,
         module: TestModule,
-        project: MockProject
     ) {
-        configureCompilerConfiguration(configuration, module, project)
         val extractor = DirectiveToConfigurationKeyExtractor()
         extractor.provideConfigurationKeys()
         extractor.configure(configuration, module.directives)
+        configureCompilerConfiguration(configuration, module)
     }
 
-    protected open fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {}
+    open fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {}
 
     open fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives): Map<AnalysisFlag<*>, Any?> {
         return emptyMap()
     }
+
+    open fun registerCompilerExtensions(project: Project) {}
 }
 
 class DirectiveToConfigurationKeyExtractor {

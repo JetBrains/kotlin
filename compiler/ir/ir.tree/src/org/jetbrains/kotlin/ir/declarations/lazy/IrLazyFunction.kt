@@ -44,10 +44,6 @@ class IrLazyFunction(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrSimpleFunction(), IrLazyFunctionBase {
-    init {
-        @Suppress("UNUSED_VARIABLE") val x = 1
-    }
-
     override var parent: IrDeclarationParent by createLazyParent()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -68,7 +64,7 @@ class IrLazyFunction(
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
 
-    override var typeParameters: List<IrTypeParameter> by lazyVar {
+    override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
         typeTranslator.buildWithScope(this) {
             stubGenerator.symbolTable.withScope(this) {
                 val propertyIfAccessor = descriptor.propertyIfAccessor
@@ -85,7 +81,7 @@ class IrLazyFunction(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(stubGenerator.lock) {
         descriptor.overriddenDescriptors.mapTo(arrayListOf()) {
             stubGenerator.generateFunctionStub(it.original).symbol
         }

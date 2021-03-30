@@ -66,6 +66,9 @@ public final class kotlin/reflect/full/NoSuchPropertyException : java/lang/Excep
 	public synthetic fun <init> (Ljava/lang/Exception;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public abstract interface annotation class kotlin/reflect/jvm/ExperimentalReflectionOnLambdas : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/reflect/jvm/KCallablesJvm {
 	public static final fun isAccessible (Lkotlin/reflect/KCallable;)Z
 	public static final fun setAccessible (Lkotlin/reflect/KCallable;Z)V

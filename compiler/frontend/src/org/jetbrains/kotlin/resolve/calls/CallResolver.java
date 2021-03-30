@@ -297,12 +297,14 @@ public class CallResolver {
             @NotNull Call call,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            boolean isAnnotationContext
+            boolean isAnnotationContext,
+            @Nullable InferenceSession inferenceSession
     ) {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        isAnnotationContext, languageVersionSettings, dataFlowValueFactory, InferenceSession.Companion.getDefault()
+                        isAnnotationContext, languageVersionSettings, dataFlowValueFactory,
+                        inferenceSession != null ? inferenceSession : InferenceSession.Companion.getDefault()
                 )
         );
     }
@@ -423,7 +425,8 @@ public class CallResolver {
     public OverloadResolutionResults<ConstructorDescriptor> resolveConstructorDelegationCall(
             @NotNull BindingTrace trace, @NotNull LexicalScope scope, @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ClassConstructorDescriptor constructorDescriptor,
-            @NotNull KtConstructorDelegationCall call
+            @NotNull KtConstructorDelegationCall call,
+            @Nullable InferenceSession inferenceSession
     ) {
         // Method returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
         // when super call should be conventional enum constructor and super call should be empty
@@ -436,7 +439,7 @@ public class CallResolver {
                 false,
                 languageVersionSettings,
                 dataFlowValueFactory,
-                InferenceSession.Companion.getDefault());
+                inferenceSession != null ? inferenceSession : InferenceSession.Companion.getDefault());
 
         KtConstructorDelegationReferenceExpression calleeExpression = call.getCalleeExpression();
 
@@ -522,8 +525,7 @@ public class CallResolver {
     @Nullable
     private PsiElement calcReportOn(@NotNull KtConstructorDelegationReferenceExpression calleeExpression) {
         PsiElement delegationCall = calleeExpression.getParent();
-        return delegationCall instanceof KtConstructorDelegationCall
-               ? CallResolverUtilKt.reportOnElement((KtConstructorDelegationCall) delegationCall) : delegationCall;
+        return CallResolverUtilKt.reportOnElement(delegationCall);
     }
 
     @NotNull

@@ -1,0 +1,6 @@
+depends = CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.UniformTypeIdentifiers
+modules = UniformTypeIdentifiers
+compilerOpts = -framework UniformTypeIdentifiers
+linkerOpts = -framework UniformTypeIdentifiers

@@ -19,17 +19,16 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.isNotEmpty
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.reflect.KClass
 
 fun FirElement.renderWithType(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String = buildString {
     append(this@renderWithType)
@@ -52,27 +51,61 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         val renderLambdaBodies: Boolean,
         val renderCallArguments: Boolean,
         val renderCallableFqNames: Boolean,
-        val renderDeclarationResolvePhase: Boolean
+        val renderDeclarationResolvePhase: Boolean,
+        val renderAnnotation: Boolean,
+        val renderBodies: Boolean = true,
+        val renderPropertyAccessors: Boolean = true,
+        val renderDeclarationAttributes: Boolean = false,
     ) {
         object Normal : RenderMode(
             renderLambdaBodies = true,
             renderCallArguments = true,
             renderCallableFqNames = false,
-            renderDeclarationResolvePhase = false
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = true,
         )
 
         object WithFqNames : RenderMode(
             renderLambdaBodies = true,
             renderCallArguments = true,
             renderCallableFqNames = true,
-            renderDeclarationResolvePhase = false
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = true,
+        )
+
+        object WithFqNamesExceptAnnotation : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = true,
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = false,
         )
 
         object WithResolvePhases : RenderMode(
             renderLambdaBodies = true,
             renderCallArguments = true,
             renderCallableFqNames = false,
-            renderDeclarationResolvePhase = true
+            renderDeclarationResolvePhase = true,
+            renderAnnotation = true,
+        )
+
+        object NoBodies : RenderMode(
+            renderLambdaBodies = false,
+            renderCallArguments = false,
+            renderCallableFqNames = false,
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = false,
+            renderBodies = false,
+            renderPropertyAccessors = false,
+        )
+
+        object WithDeclarationAttributes : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = false,
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = true,
+            renderDeclarationAttributes = true,
         )
     }
 
@@ -154,6 +187,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     private fun List<FirAnnotationCall>.renderAnnotations() {
+        if (!mode.renderAnnotation) return
         for (annotation in this) {
             visitAnnotationCall(annotation)
         }
@@ -270,6 +304,9 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (memberDeclaration.isActual) {
             print("actual ")
         }
+        if (memberDeclaration.isExternal) {
+            print("external ")
+        }
         if (memberDeclaration is FirCallableMemberDeclaration<*>) {
             if (memberDeclaration.isOverride) {
                 print("override ")
@@ -303,9 +340,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             }
             if (memberDeclaration.isTailRec) {
                 print("tailrec ")
-            }
-            if (memberDeclaration.isExternal) {
-                print("external ")
             }
             if (memberDeclaration.isSuspend) {
                 print("suspend ")
@@ -341,6 +375,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitDeclaration(declaration: FirDeclaration) {
+        declaration.renderDeclarationAttributesIfNeeded()
         declaration.renderPhaseIfNeeded()
         print(
             when (declaration) {
@@ -363,6 +398,27 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print("[${resolvePhase}] ")
         }
     }
+
+    private fun FirDeclaration.renderDeclarationAttributesIfNeeded() {
+        if (mode.renderDeclarationAttributes && attributes.arrayMap.isNotEmpty()) {
+            val attributes = getAttributesWithValues().mapNotNull { (klass, value) ->
+                value?.let { klass.simpleName to value.renderAsDeclarationAttributeValue() }
+            }.joinToString { (name, value) -> "$name=$value" }
+            print("[$attributes] ")
+        }
+    }
+
+    private fun FirDeclaration.getAttributesWithValues(): List<Pair<KClass<out FirDeclarationDataKey>, Any?>> {
+        val attributesMap = FirDeclarationDataRegistry.allValuesThreadUnsafeForRendering()
+        return attributesMap.entries.sortedBy { it.key.simpleName }.map { (klass, index) -> klass to attributes.arrayMap[index] }
+    }
+
+    private fun Any.renderAsDeclarationAttributeValue() = when (this) {
+        is FirCallableSymbol<*> -> callableId.toString()
+        is FirClassLikeSymbol<*> -> classId.asString()
+        else -> toString()
+    }
+
 
     private fun List<FirDeclaration>.renderDeclarations() {
         renderInBraces {
@@ -429,6 +485,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitProperty(property: FirProperty) {
         visitVariable(property)
         if (property.isLocal) return
+        if (!mode.renderPropertyAccessors) return
         println()
         pushIndent()
         property.getter?.accept(this)
@@ -464,6 +521,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print("actual ")
         }
         constructor.renderPhaseIfNeeded()
+        constructor.renderDeclarationAttributesIfNeeded()
         print("constructor")
         constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()
@@ -485,8 +543,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+        propertyAccessor.renderPhaseIfNeeded()
+        propertyAccessor.renderDeclarationAttributesIfNeeded()
         propertyAccessor.annotations.renderAnnotations()
         print(propertyAccessor.visibility.asString() + " ")
+        print(if (propertyAccessor.isInline) "inline " else "")
+        print(if (propertyAccessor.isExternal) "external " else "")
         print(if (propertyAccessor.isGetter) "get" else "set")
         propertyAccessor.valueParameters.renderParameters()
         print(": ")
@@ -496,6 +558,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        anonymousFunction.renderPhaseIfNeeded()
+        anonymousFunction.renderDeclarationAttributesIfNeeded()
         anonymousFunction.annotations.renderAnnotations()
         val label = anonymousFunction.label
         if (label != null) {
@@ -530,14 +594,17 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         anonymousInitializer.body?.renderBody()
     }
 
-    private fun FirBlock.renderBody(additionalStatements: List<FirStatement> = emptyList()) = when (this) {
-        is FirLazyBlock -> {
-            println(" { LAZY_BLOCK }")
-        }
-        else -> renderInBraces {
-            for (statement in additionalStatements + statements) {
-                statement.accept(this@FirRenderer)
-                println()
+    private fun FirBlock.renderBody(additionalStatements: List<FirStatement> = emptyList()) {
+        if (!mode.renderBodies) return
+        when (this) {
+            is FirLazyBlock -> {
+                println(" { LAZY_BLOCK }")
+            }
+            else -> renderInBraces {
+                for (statement in additionalStatements + statements) {
+                    statement.accept(this@FirRenderer)
+                    println()
+                }
             }
         }
     }
@@ -591,6 +658,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitValueParameter(valueParameter: FirValueParameter) {
+        valueParameter.renderPhaseIfNeeded()
+        valueParameter.renderDeclarationAttributesIfNeeded()
         valueParameter.annotations.renderAnnotations()
         if (valueParameter.isCrossinline) {
             print("crossinline ")
@@ -908,16 +977,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print("|")
     }
 
-    private val FirResolvedTypeRef.functionTypeKind: FunctionClassKind?
-        get() {
-            val classId = (type as? ConeClassLikeType)?.lookupTag?.classId ?: return null
-            return FunctionClassKind.getFunctionalClassKind(
-                classId.shortClassName.asString(), classId.packageFqName
-            )
-        }
-
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
         userTypeRef.annotations.renderAnnotations()
+        if (userTypeRef.customRenderer) {
+            print(userTypeRef.toString())
+            return
+        }
         for ((index, qualifier) in userTypeRef.qualifier.withIndex()) {
             if (index != 0) {
                 print(".")
@@ -956,10 +1021,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitNamedReference(namedReference: FirNamedReference) {
         val symbol = namedReference.candidateSymbol
         when {
-            symbol != null -> {
-                print("R?C|${symbol.render()}|")
-            }
             namedReference is FirErrorNamedReference -> print("<${namedReference.diagnostic.reason}>#")
+            symbol != null -> print("R?C|${symbol.render()}|")
             else -> print("${namedReference.name}#")
         }
     }

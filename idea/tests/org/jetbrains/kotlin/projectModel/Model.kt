@@ -171,20 +171,28 @@ sealed class KotlinTest(
     )
 }
 
+interface ResolveSdk
 
 object FullJdk : ResolveLibrary(
     "full-jdk",
     File("fake file for full jdk"),
     JvmPlatforms.defaultJvmPlatform,
     null
-)
+), ResolveSdk
 
 object MockJdk : ResolveLibrary(
     "mock-jdk",
     File("fake file for mock jdk"),
     JvmPlatforms.defaultJvmPlatform,
     null
-)
+), ResolveSdk
+
+object KotlinSdk : ResolveLibrary(
+    "kotlin-sdk",
+    File("fake file for kotlin sdk"),
+    CommonPlatforms.defaultCommonPlatform,
+    null,
+), ResolveSdk
 
 open class ResolveDependency(val to: ResolveModule, val kind: Kind) {
     open class Builder {

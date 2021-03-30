@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import java.io.File
 
 internal val KotlinCoreEnvironment.destDir: File?
@@ -32,7 +34,16 @@ internal fun runCommonAnalysisForSerialization(
         return null
     }
 
-    return runCommonAnalysis(environment, dependOnBuiltins, dependencyContainer)
+    var analyzer: AnalyzerWithCompilerReport
+    do {
+        analyzer = runCommonAnalysis(environment, dependOnBuiltins, dependencyContainer)
+        val result = analyzer.analysisResult
+        if (result is AnalysisResult.RetryWithAdditionalRoots) {
+            environment.addKotlinSourceRoots(result.additionalKotlinRoots)
+        }
+    } while (result is AnalysisResult.RetryWithAdditionalRoots)
+
+    return if (analyzer.analysisResult.shouldGenerateCode) analyzer else null
 }
 
 private fun runCommonAnalysis(
@@ -50,7 +61,7 @@ private fun runCommonAnalysis(
     analyzer.analyzeAndReport(files) {
         CommonResolverForModuleFactory.analyzeFiles(
             files, moduleName, dependOnBuiltins, configuration.languageVersionSettings,
-            CommonPlatforms.defaultCommonPlatform,
+            CommonPlatforms.defaultCommonPlatform, CompilerEnvironment,
             dependenciesContainer = dependencyContainer
         ) { content ->
             environment.createPackagePartProvider(content.moduleContentScope)

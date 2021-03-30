@@ -5,40 +5,45 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+internal fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
+    this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
 
 /**
  * Returns true if this is a superclass of other.
@@ -122,15 +127,17 @@ fun ConeClassLikeType.toRegularClass(session: FirSession): FirRegularClass? {
  * or null of something goes wrong.
  */
 fun ConeKotlinType.toRegularClass(session: FirSession): FirRegularClass? {
-    return safeAs<ConeClassLikeType>()?.toRegularClass(session)
+    return safeAs<ConeClassLikeType>()?.fullyExpandedType(session)?.toRegularClass(session)
 }
+
+fun ConeKotlinType.isInline(session: FirSession): Boolean = toRegularClass(session)?.isInline == true
 
 /**
  * Returns the FirRegularClass associated with this
  * or null of something goes wrong.
  */
 fun FirTypeRef.toRegularClass(session: FirSession): FirRegularClass? {
-    return safeAs<FirResolvedTypeRef>()?.type?.toRegularClass(session)
+    return coneType.toRegularClass(session)
 }
 
 /**
@@ -139,7 +146,7 @@ fun FirTypeRef.toRegularClass(session: FirSession): FirRegularClass? {
 inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
     return this.calleeReference.safeAs<FirResolvedNamedReference>()
         ?.resolvedSymbol
-        ?.fir.safeAs<T>()
+        ?.fir.safeAs()
 }
 
 /**
@@ -148,17 +155,6 @@ inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
  */
 fun FirSymbolOwner<*>.getContainingClass(context: CheckerContext): FirClassLikeDeclaration<*>? =
     this.safeAs<FirCallableMemberDeclaration<*>>()?.containingClass()?.toSymbol(context.session)?.fir
-
-/**
- * Returns the FirClassLikeDeclaration the type alias is pointing
- * to provided `this` is a FirTypeAlias. Returns this otherwise.
- */
-fun FirClassLikeDeclaration<*>.followAlias(session: FirSession): FirClassLikeDeclaration<*> {
-    return this.safeAs<FirTypeAlias>()
-        ?.expandedTypeRef
-        ?.firClassLike(session)
-        ?: return this
-}
 
 /**
  * Returns the FirClassLikeDeclaration that the
@@ -287,18 +283,15 @@ private fun FirDeclaration.hasBody(): Boolean = when (this) {
  * or null if couldn't find any.
  */
 fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? {
-    for (it in superTypeRefs) {
-        val lookupTag = it.safeAs<FirResolvedTypeRef>()
-            ?.type.safeAs<ConeClassLikeType>()
-            ?.lookupTag
-            ?: continue
+    for (superTypeRef in superTypeRefs) {
+        val lookupTag = superTypeRef.coneType.safeAs<ConeClassLikeType>()?.lookupTag ?: continue
 
         val fir = lookupTag.toSymbol(context.session)
             ?.fir.safeAs<FirClass<*>>()
             ?: continue
 
         if (fir.classKind != ClassKind.INTERFACE) {
-            return it
+            return superTypeRef
         }
     }
 
@@ -317,3 +310,14 @@ fun Modality.toToken(): KtModifierKeywordToken = when (this) {
 
 val FirFunctionCall.isIterator
     get() = this.calleeReference.name.asString() == "<iterator>"
+
+internal fun throwableClassLikeType(session: FirSession) = session.builtinTypes.throwableType.type
+
+fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession) =
+    throwableClassLikeType(session).isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
+
+val FirValueParameter.hasValOrVar: Boolean
+    get() {
+        val source = this.source ?: return false
+        return source.getChild(VAL_VAR_TOKEN_SET) != null
+    }

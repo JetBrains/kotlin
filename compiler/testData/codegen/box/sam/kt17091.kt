@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
+// SAM_CONVERSIONS: CLASS
 // FILE: Foo.kt
 package foo
 

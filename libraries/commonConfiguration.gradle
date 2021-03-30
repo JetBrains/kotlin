@@ -9,6 +9,8 @@ ext.configureJavaOnlyJvm6Project = { Project project ->
     }
 }
 
+List<String> tasksWithWarnings = (List<String>) rootProject.ext.get("tasksWithWarnings")
+
 ext.configureJvm6Project = { Project project ->
     project.configure(project) {
         configurations {
@@ -34,6 +36,17 @@ ext.configureJvm6Project = { Project project ->
             executable = "$JDK_16/bin/java"
         }
     }
+
+    if (!BuildPropertiesExtKt.getDisableWerror(project.kotlinBuildProperties)) {
+        project.tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile.class) { task ->
+            if (!tasksWithWarnings.contains(task.path)) {
+                task.kotlinOptions {
+                    allWarningsAsErrors = true
+                    freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
+                }
+            }
+        }
+    }
 }
 
 ext.compileJava9Sources = { Project project, String moduleName, Collection<FileCollection> moduleOutputs = [project.sourceSets.main.output] ->
@@ -48,10 +61,12 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
         it.options.fork = true
         it.options.forkOptions.javaHome = file(JDK_9)
         it.options.sourcepath = files(java9SourceSet.srcDirs)
+        def compileClasspath = project.configurations.java9CompileClasspath
+        def objects = project.objects
 
         doFirst {
-            def moduleFiles = files(*moduleOutputs)
-            def modulePath = project.configurations.java9CompileClasspath.filter { !(it in moduleFiles.files) }
+            def moduleFiles = objects.fileCollection().from(*moduleOutputs)
+            def modulePath = compileClasspath.filter { !(it in moduleFiles.files) }
 
             options.compilerArgs = [
                     '--module-path', modulePath.asPath,
@@ -59,7 +74,7 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
                     '-Xlint:-requires-transitive-automatic' // suppress automatic module transitive dependencies in kotlin.test
             ]
 
-            classpath = files()
+            classpath = objects.fileCollection().from()
         }
     }
 }
@@ -99,8 +114,8 @@ task preparePublication {
     project.ext['signing.password'] = project.properties['kotlin.key.passphrase']
 
     String sonatypeSnapshotsUrl = (isSonatypePublish && !isRelease) ? "https://oss.sonatype.org/content/repositories/snapshots/" : null
-
-    ext.repoUrl = properties["deployRepoUrl"] ?: sonatypeSnapshotsUrl ?: properties["deploy-url"] ?: "file://${rootProject.buildDir}/repo".toString()
+    String repoFolder = properties["deployRepoFolder"] ?: "repo"
+    ext.repoUrl = properties["deployRepoUrl"] ?: sonatypeSnapshotsUrl ?: properties["deploy-url"] ?: "file://${rootProject.buildDir}/${repoFolder}".toString()
     ext.username = properties["deployRepoUsername"] ?: properties["kotlin.${repoProvider}.user"]
     ext.password = properties["deployRepoPassword"] ?: properties["kotlin.${repoProvider}.password"]
 
@@ -198,8 +213,10 @@ ext.configureLegacyPublishing = { Project project ->
 ext.configureJvmIrBackend = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {
-            useIR = project.kotlinBuildProperties.useIRForLibraries
-            freeCompilerArgs += "-Xuse-old-backend"
+            if (!project.kotlinBuildProperties.useIRForLibraries) {
+                useIR = false
+                freeCompilerArgs += "-Xuse-old-backend"
+            }
         }
     }
 }

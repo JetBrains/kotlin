@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -497,6 +498,9 @@ class ExpressionsConverter(
             }
 
             it.replaceExplicitReceiver(firReceiver)
+
+            @OptIn(FirImplementationDetail::class)
+            it.replaceSource(dotQualifiedExpression.toFirSourceElement())
         }
         return firSelector
     }
@@ -664,6 +668,7 @@ class ExpressionsConverter(
             source = whenExpression.toFirSourceElement()
             this.subject = subjectExpression
             this.subjectVariable = subjectVariable
+            usedAsExpression = whenExpression.usedAsExpression
             for (entry in whenEntries) {
                 val branch = entry.firBlock
                 branches += if (!entry.isElse) {
@@ -820,10 +825,11 @@ class ExpressionsConverter(
         }
         val getArgument = context.arraySetArgument.remove(arrayAccess)
         return buildFunctionCall {
-            source = arrayAccess.toFirSourceElement()
+            val isGet = getArgument == null
+            source = (if (isGet) arrayAccess else arrayAccess.getParent()!!).toFirSourceElement()
             calleeReference = buildSimpleNamedReference {
-                source = this@buildFunctionCall.source
-                name = if (getArgument == null) OperatorNameConventions.GET else OperatorNameConventions.SET
+                source = arrayAccess.toFirSourceElement().fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
+                name = if (isGet) OperatorNameConventions.GET else OperatorNameConventions.SET
             }
             explicitReceiver = firExpression
             argumentList = buildArgumentList {
@@ -1082,6 +1088,7 @@ class ExpressionsConverter(
         }
 
         return buildWhenExpression {
+            source = ifExpression.toFirSourceElement()
             val trueBranch = convertLoopBody(thenBlock)
             branches += buildWhenBranch {
                 source = thenBlock?.toFirSourceElement()
@@ -1095,10 +1102,26 @@ class ExpressionsConverter(
                     condition = buildElseIfTrueCondition()
                     result = elseBranch
                 }
-
             }
+            usedAsExpression = ifExpression.usedAsExpression
         }
     }
+
+    private val LighterASTNode.usedAsExpression: Boolean
+        get() {
+            var parent = getParent() ?: return true
+            if (parent.elementType == ANNOTATED_EXPRESSION) {
+                parent = parent.getParent() ?: return true
+            }
+            val parentTokenType = parent.tokenType
+            if (parentTokenType == BLOCK) return false
+            if (parentTokenType == THEN || parentTokenType == ELSE || parentTokenType == WHEN_ENTRY) {
+                return parent.getParent()?.usedAsExpression ?: true
+            }
+            if (parentTokenType != BODY) return true
+            val type = parent.getParent()?.tokenType ?: return true
+            return !(type == FOR || type == WHILE || type == DO_WHILE)
+        }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseJump

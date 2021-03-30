@@ -144,7 +144,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             KtNamedFunction function = (KtNamedFunction) declarations.get(0);
             SimpleFunctionDescriptor functionDescriptor =
                     functionDescriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function,
-                                                                         DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
+                                                                         DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY, null);
 
             assertEquals(expectedFunctionModality, functionDescriptor.getModality());
         }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Log
 
 data class CalculatedVariable(
@@ -16,7 +17,7 @@ object CalculatedVariables {
         "A",
         "B",
         "C",
-        fun(<!UNUSED_ANONYMOUS_PARAMETER!>log<!>: Log): ((TimeIndex) -> Double?)? {
+        fun(log: Log): ((TimeIndex) -> Double?)? {
             return { 0.0 }
         }
     )

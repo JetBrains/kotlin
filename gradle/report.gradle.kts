@@ -10,7 +10,9 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskState
 import java.util.HashMap
 
-BuildTimeReporter.configure(gradle)
+if ((gradle.startParameter as? org.gradle.api.internal.StartParameterInternal)?.isConfigurationCache != true) {
+    BuildTimeReporter.configure(gradle)
+}
 
 private class BuildTimeReporter(
     private val kotlinCompileClass: Class<*>,

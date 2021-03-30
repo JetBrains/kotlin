@@ -18,7 +18,10 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
@@ -29,6 +32,11 @@ class UnimplementedKotlinInterfaceMemberAnnotator : Annotator {
         if (element !is PsiClass || element.language == KotlinLanguage.INSTANCE) return
 
         if (element.isInterface || element.hasModifierProperty(PsiModifier.ABSTRACT)) return
+
+        val jvmDefaultMode = element.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+        if (jvmDefaultMode == JvmDefaultMode.ALL_COMPATIBILITY || jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE) {
+            return
+        }
 
         if (getAnyMethodToImplement(element) != null) return // reported by java default annotator
 

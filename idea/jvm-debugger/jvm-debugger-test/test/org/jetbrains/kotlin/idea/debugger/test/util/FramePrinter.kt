@@ -221,11 +221,7 @@ private class Printer(private val delegate: FramePrinterDelegate, private val co
 
             if (config.shouldRenderExpression() && descriptor is ValueDescriptorImpl) {
                 val expression = debugProcess.invokeInManagerThread { debuggerContextImpl ->
-                    descriptor.getTreeEvaluation((node as XValueNodeImpl).valueContainer as JavaValue, debuggerContextImpl).let {
-                        // FIX ME WHEN BUNCH 201 REMOVED: getTreeEvaluation in 202 returns CompletableFuture<PsiElement> but in older platforms it's PsiElement
-                        @Suppress("UNCHECKED_CAST")
-                        (it as? CompletableFuture<PsiElement>)?.get() ?: it
-                    } as? PsiExpression
+                    descriptor.getTreeEvaluation((node as XValueNodeImpl).valueContainer as JavaValue, debuggerContextImpl).get()
                 }
 
                 if (expression != null) {

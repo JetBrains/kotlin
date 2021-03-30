@@ -69,6 +69,14 @@ internal fun ClassDescriptor.getKSerializerConstructorMarker(): ClassDescriptor 
         )
     )!!
 
+internal fun ClassDescriptor.getKSerializer(): ClassDescriptor =
+    module.findClassAcrossModuleDependencies(
+        ClassId(
+            SerializationPackages.packageFqName,
+            SerialEntityNames.KSERIALIZER_NAME
+        )
+    )!!
+
 internal fun getInternalPackageFqn(classSimpleName: String): FqName =
     SerializationPackages.internalPackageFqName.child(Name.identifier(classSimpleName))
 

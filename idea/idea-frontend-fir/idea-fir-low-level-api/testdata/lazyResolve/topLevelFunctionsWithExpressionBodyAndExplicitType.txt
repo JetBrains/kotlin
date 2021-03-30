@@ -2,5 +2,5 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
-    public final [STATUS] fun receive(value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }

@@ -16,8 +16,8 @@ import org.junit.runners.Parameterized
 import java.io.File
 import java.util.*
 
-const val mppImportTestMinVersionForMaster = "6.0+"
-const val legacyMppImportTestMinVersionForMaster = "5.3+"
+const val mppImportTestMinVersionForMaster = "6.1+"
+const val legacyMppImportTestMinVersionForMaster = "6.1+"
 
 abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTestCase() {
     @Rule
@@ -81,16 +81,12 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
     }
 
     fun repositories(useKts: Boolean): String {
-        val customRepositories = arrayOf(
-            "https://dl.bintray.com/kotlin/kotlin-dev",
-        )
-        val customMavenRepositories = customRepositories.map { if (useKts) "maven(\"$it\")" else "maven { url '$it' } " }.joinToString("\n")
         return """
-            mavenCentral()
             mavenLocal()
+            mavenCentral()
+            gradlePluginPortal()
             google()
             jcenter()
-            $customMavenRepositories
         """.trimIndent()
     }
 

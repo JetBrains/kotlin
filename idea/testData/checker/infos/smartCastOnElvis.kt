@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 // COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 

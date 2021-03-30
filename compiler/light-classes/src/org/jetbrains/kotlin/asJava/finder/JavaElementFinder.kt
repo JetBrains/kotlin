@@ -39,9 +39,9 @@ import java.util.*
 
 class JavaElementFinder(
     private val project: Project,
-    private val kotlinAsJavaSupport: KotlinAsJavaSupport
 ) : PsiElementFinder(), KotlinFinderMarker {
     private val psiManager = PsiManager.getInstance(project)
+    private val kotlinAsJavaSupport = KotlinAsJavaSupport.getInstance(project)
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope) = findClasses(qualifiedName, scope).firstOrNull()
 

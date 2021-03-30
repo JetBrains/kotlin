@@ -5,7 +5,7 @@ package bar
 
 import java.io.File
 
-class Customer(<!UNUSED_PARAMETER!>name1<!>: String)
+class Customer(name1: String)
 
 fun foo(f: File, c: Customer) {
     f.name1

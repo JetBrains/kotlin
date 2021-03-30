@@ -4,7 +4,7 @@ version = "1.2.3"
 buildscript {
 	repositories {
 		mavenLocal()
-		jcenter()
+		mavenCentral()
 	}
 	dependencies {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -15,7 +15,7 @@ apply plugin: 'kotlin-multiplatform'
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {
@@ -65,7 +65,6 @@ kotlin {
         nodeJsMain {
         	dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-js'
-        		implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.6.11'
         	}
         }
     }

@@ -7,14 +7,29 @@ package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.SimpleDiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.BaseDiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.DiagnosticReporterWithSuppress
+import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.SimpleDiagnosticReporter
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
-class SimpleDiagnosticsCollector(session: FirSession) : AbstractDiagnosticCollector(session) {
-    override var reporter = SimpleDiagnosticReporter()
+class SimpleDiagnosticsCollector(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    private val disableSuppress: Boolean = false
+) : AbstractDiagnosticCollector(session, scopeSession) {
+    override var reporter = createDiagnosticReporter()
         private set
 
+    private fun createDiagnosticReporter(): BaseDiagnosticReporter {
+        return if (disableSuppress) {
+            SimpleDiagnosticReporter()
+        } else {
+            DiagnosticReporterWithSuppress()
+        }
+    }
+
     override fun initializeCollector() {
-        reporter = SimpleDiagnosticReporter()
+        reporter = createDiagnosticReporter()
     }
 
     override fun getCollectedDiagnostics(): List<FirDiagnostic<*>> {

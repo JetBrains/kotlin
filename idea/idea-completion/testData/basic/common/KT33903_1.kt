@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 import Obj.foo
 import Obj.foo
 

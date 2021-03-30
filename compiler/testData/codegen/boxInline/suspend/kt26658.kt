@@ -1,6 +1,6 @@
-// FILE: inlined.kt
-// WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
+// WITH_RUNTIME
+// FILE: inlined.kt
 import kotlin.coroutines.*
 
 class Controller(val s: String)

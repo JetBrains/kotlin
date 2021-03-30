@@ -174,7 +174,7 @@ public abstract inline class D2 {
 }
 
 public sealed inline class D3 {
-    internal constructor D3(/*0*/ x: kotlin.Int)
+    protected constructor D3(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int

@@ -43,11 +43,3 @@ fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>?
 )
 val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
 
-// This annotation is declared here in frontend (as opposed to frontend.java) because it's used in AllUnderImportScope
-// If you wish to add another JVM-related annotation and has/find utility methods, please proceed to jvmAnnotationUtil.kt
-@JvmField
-val JVM_THROWS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Throws")
-
-val KOTLIN_THROWS_ANNOTATION_FQ_NAME = FqName("kotlin.Throws")
-
-val KOTLIN_NATIVE_THROWS_ANNOTATION_FQ_NAME = FqName("kotlin.native.Throws")

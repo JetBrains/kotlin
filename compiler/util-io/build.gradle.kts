@@ -3,8 +3,6 @@ plugins {
     id("jps-compatible")
 }
 
-description = "Kotlin/Native utils"
-
 dependencies {
     compile(kotlinStdlib())
     testImplementation(commonDep("junit:junit"))
@@ -15,7 +13,16 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            languageVersion = "1.3"
+            apiVersion = "1.3"
+            freeCompilerArgs += "-Xsuppress-version-warnings"
+        }
+    }
+}
+
 publish()
 
 standardPublicJars()
-

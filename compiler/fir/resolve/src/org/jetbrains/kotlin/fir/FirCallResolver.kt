@@ -135,6 +135,7 @@ class FirCallResolver(
         val typeArguments = (qualifiedAccess as? FirFunctionCall)?.typeArguments.orEmpty()
 
         val info = CallInfo(
+            qualifiedAccess,
             if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
             name,
             explicitReceiver,
@@ -250,10 +251,7 @@ class FirCallResolver(
         // No reset here!
         val localCollector = CandidateCollector(components, components.resolutionStageRunner)
 
-        val towerDataContext =
-            transformer.context.towerDataContextForCallableReferences[callableReferenceAccess] ?: transformer.context.towerDataContext
-
-        val result = transformer.context.withTowerDataContext(towerDataContext) {
+        val result = transformer.context.withCallableReferenceTowerDataContext(callableReferenceAccess) {
             towerResolver.runResolver(
                 info,
                 transformer.resolutionContext,
@@ -307,6 +305,7 @@ class FirCallResolver(
                 }
 
         val callInfo = CallInfo(
+            delegatedConstructorCall,
             CallKind.DelegatingConstructorCall,
             name,
             explicitReceiver = null,
@@ -355,6 +354,7 @@ class FirCallResolver(
         annotationCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
 
         val callInfo = CallInfo(
+            annotationCall,
             CallKind.Function,
             name = reference.name,
             explicitReceiver = null,
@@ -465,6 +465,7 @@ class FirCallResolver(
         outerConstraintSystemBuilder: ConstraintSystemBuilder?,
     ): CallInfo {
         return CallInfo(
+            callableReferenceAccess,
             CallKind.CallableReference,
             callableReferenceAccess.calleeReference.name,
             callableReferenceAccess.explicitReceiver,

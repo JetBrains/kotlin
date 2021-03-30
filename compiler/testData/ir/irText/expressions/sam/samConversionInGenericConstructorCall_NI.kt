@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference +SamConversionPerArgument +SamConversionForKotlinFunctions +ProhibitVarargAsArrayAfterSamArgument
 // FILE: samConversionInGenericConstructorCall_NI.kt
 fun test3(

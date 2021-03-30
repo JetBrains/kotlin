@@ -65,28 +65,11 @@ repositories {
                 artifact()
             }
         }
-
-        ivy {
-            url = URI("https://dl.bintray.com/kotlin/as/")
-
-            patternLayout {
-                artifact("[artifact]-[revision]-$androidStudioOs.[ext]")
-            }
-
-            credentials {
-                username = System.getenv("AS_BINTRAY_USER_NAME") ?: findProperty("bintray.user") as String?
-                password = System.getenv("AS_BINTRAY_API_KEY") ?: findProperty("bintray.apikey") as String?
-            }
-
-            metadataSources {
-                artifact()
-            }
-        }
     }
 
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
     maven("https://plugins.jetbrains.com/maven")
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 }
 
 val intellij by configurations.creating

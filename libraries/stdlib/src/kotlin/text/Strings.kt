@@ -1378,3 +1378,88 @@ public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n
  * The lines returned do not include terminating line separators.
  */
 public fun CharSequence.lines(): List<String> = lineSequence().toList()
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other],
+ * i.e. both char sequences contain the same number of the same characters in the same order.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public expect infix fun CharSequence?.contentEquals(other: CharSequence?): Boolean
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other], optionally ignoring case difference.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing contents.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public expect fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: Boolean): Boolean
+
+internal fun CharSequence?.contentEqualsIgnoreCaseImpl(other: CharSequence?): Boolean {
+    if (this is String && other is String) {
+        return this.equals(other, ignoreCase = true)
+    }
+
+    if (this === other) return true
+    if (this == null || other == null || this.length != other.length) return false
+
+    for (i in 0 until length) {
+        if (!this[i].equals(other[i], ignoreCase = true)) {
+            return false
+        }
+    }
+
+    return true
+}
+
+internal fun CharSequence?.contentEqualsImpl(other: CharSequence?): Boolean {
+    if (this is String && other is String) {
+        return this == other
+    }
+
+    if (this === other) return true
+    if (this == null || other == null || this.length != other.length) return false
+
+    for (i in 0 until length) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+
+    return true
+}
+
+/**
+ * Returns `true` if the content of this string is equal to the word "true", `false` if it is equal to "false",
+ * and throws an exception otherwise.
+ *
+ * There is also a lenient version of the function available on nullable String, [String?.toBoolean].
+ * Note that this function is case-sensitive.
+ *
+ * @sample samples.text.Strings.toBooleanStrict
+ */
+@SinceKotlin("1.5")
+public fun String.toBooleanStrict(): Boolean = when (this) {
+    "true" -> true
+    "false" -> false
+    else -> throw IllegalArgumentException("The string doesn't represent a boolean value: $this")
+}
+
+/**
+ * Returns `true` if the content of this string is equal to the word "true", `false` if it is equal to "false",
+ * and `null` otherwise.
+ *
+ * There is also a lenient version of the function available on nullable String, [String?.toBoolean].
+ * Note that this function is case-sensitive.
+ *
+ * @sample samples.text.Strings.toBooleanStrictOrNull
+ */
+@SinceKotlin("1.5")
+public fun String.toBooleanStrictOrNull(): Boolean? = when (this) {
+    "true" -> true
+    "false" -> false
+    else -> null
+}

@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ResourceKotlinRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestResourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -350,6 +353,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
         val anyNative = NativePlatforms.unspecifiedNativePlatform
         val linux = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.LINUX_X64)
         val macos = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.MACOS_X64)
+        val js = JsPlatforms.defaultJsPlatform
 
         checkProjectStructure(exhaustiveModuleList = true, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
             module("my-app") {
@@ -391,8 +395,8 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 targetPlatform(jvm)
             }
 
-            module("my-app.commonMain") { targetPlatform(jvm, anyNative, js) } // :( should be (jvm, anyNative)
-            module("my-app.commonTest") { targetPlatform(jvm, anyNative, js) } // :( should be (jvm, anyNative)
+            module("my-app.commonMain") { targetPlatform(jvm, anyNative) }
+            module("my-app.commonTest") { targetPlatform(jvm, anyNative) }
 
             module("my-app.jvmAndLinuxMain") { targetPlatform(jvm, anyNative) }
             module("my-app.jvmAndLinuxTest") { targetPlatform(jvm, anyNative) }
@@ -410,8 +414,8 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             // submodule
             module("my-app.submodule") { targetPlatform(jvm) }
 
-            module("my-app.submodule.commonMain") { targetPlatform(js, jvm, anyNative) } // :( should be (js, jvm)
-            module("my-app.submodule.commonTest") { targetPlatform(js, jvm, anyNative) } // :( should be (js, jvm)
+            module("my-app.submodule.commonMain") { targetPlatform(js, jvm) }
+            module("my-app.submodule.commonTest") { targetPlatform(js, jvm) }
 
             module("my-app.submodule.jvmMain") { targetPlatform(jvm) }
             module("my-app.submodule.jvmTest") { targetPlatform(jvm) }
@@ -439,6 +443,9 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
             module("my-app.orphan") {
                 targetPlatform(jvm, js)
+            }
+            module("my-app") {
+                assertDiagnosticsCount<OrphanSourceSetsImportingDiagnostic>(1)
             }
         }
     }
@@ -529,6 +536,10 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
 
+            module("my-app") {
+                assertDiagnosticsCount<OrphanSourceSetsImportingDiagnostic>(3)
+            }
+
             // (jvm, js, native) is highly undesirable
             module("my-app.danglingOnJvm") {
                 targetPlatform(jvm, js)
@@ -564,6 +575,27 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("my-app.pseudoOrphan") {
                 targetPlatform(jvm) // !
             }
+        }
+    }
+
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testCommonMainIsSingleBackend() {
+        configureByFiles()
+        importProject()
+
+        val macosX64 = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.MACOS_X64)
+        val linuxX64 = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.LINUX_X64)
+
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            module("my-app.commonMain") { targetPlatform(macosX64, linuxX64) }
+            module("my-app.commonTest") { targetPlatform(macosX64, linuxX64) }
+
+            module("my-app.linuxX64Main") { targetPlatform(linuxX64) }
+            module("my-app.linuxX64Test") { targetPlatform(linuxX64) }
+
+            module("my-app.macosX64Test") { targetPlatform(macosX64) }
+            module("my-app.macosX64Main") { targetPlatform(macosX64) }
         }
     }
 

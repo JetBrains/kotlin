@@ -10,7 +10,7 @@ fun example() {
     val f = if (true) <!IMPLICIT_CAST_TO_ANY!>true<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
 
     {
-        if (true) <!UNUSED_EXPRESSION!>true<!>
+        if (true) true
     }();
 
     {

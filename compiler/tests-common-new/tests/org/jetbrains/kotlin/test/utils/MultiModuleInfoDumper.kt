@@ -14,7 +14,7 @@ abstract class MultiModuleInfoDumper {
 }
 
 // TODO: consider about tests with multiple testdata files
-class MultiModuleInfoDumperImpl(private val moduleHeaderTemplate: String = "Module: %s") : MultiModuleInfoDumper() {
+class MultiModuleInfoDumperImpl(private val moduleHeaderTemplate: String? = "Module: %s") : MultiModuleInfoDumper() {
     private val builderByModule = LinkedHashMap<TestModule, StringBuilder>()
 
     override fun builderForModule(module: TestModule): StringBuilder {
@@ -25,7 +25,7 @@ class MultiModuleInfoDumperImpl(private val moduleHeaderTemplate: String = "Modu
         builderByModule.values.singleOrNull()?.let { return it.toString() }
         return buildString {
             for ((module, builder) in builderByModule) {
-                appendLine(String.format(moduleHeaderTemplate, module.name))
+                moduleHeaderTemplate?.let { appendLine(String.format(it, module.name)) }
                 append(builder)
             }
         }

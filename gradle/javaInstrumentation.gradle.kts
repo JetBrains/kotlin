@@ -24,42 +24,8 @@ fun Project.configureJavaInstrumentation() {
                 includeJars("javac2", "jdom", "asm-all", rootProject = rootProject)
             }
         }
-
-        listOf(mainSourceSet, testSourceSet).forEach { sourceSet ->
-             tasks.named<JavaCompile>(sourceSet.compileJavaTaskName) javaCompile@ {
-                doLast {
-                    instrumentClasses(javaInstrumentator.asPath, this@javaCompile, sourceSet)
-                }
-            }
-        }
-    }
-}
-
-fun instrumentClasses(
-    instrumentatorClasspath: String,
-    javaCompile: JavaCompile,
-    sourceSet: SourceSet
-) {
-    javaCompile.ant.withGroovyBuilder {
-        "taskdef"(
-            "name" to "instrumentIdeaExtensions",
-            "classpath" to instrumentatorClasspath,
-            "loaderref" to "java2.loader",
-            "classname" to "com.intellij.ant.InstrumentIdeaExtensions"
-        )
-    }
-
-    val javaSourceDirectories = sourceSet.allJava.sourceDirectories.filter { it.exists() }
-
-    javaCompile.ant.withGroovyBuilder {
-        javaSourceDirectories.forEach { directory ->
-            "instrumentIdeaExtensions"(
-                "srcdir" to directory,
-                "destdir" to javaCompile.destinationDir,
-                "classpath" to javaCompile.classpath.asPath,
-                "includeantruntime" to false,
-                "instrumentNotNull" to true
-            )
+        for (sourceSet in listOf(mainSourceSet, testSourceSet)) {
+            tasks.named(sourceSet.compileJavaTaskName, InstrumentJava(javaInstrumentator, sourceSet))
         }
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -36,7 +37,7 @@ object CompilerConeAttributes {
     }
 
     object EnhancedNullability : ConeAttribute<EnhancedNullability>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.jvm.internal"), Name.identifier("EnhancedNullability"))
+        val ANNOTATION_CLASS_ID = StandardClassIds.EnhancedNullability
 
         override fun union(other: EnhancedNullability?): EnhancedNullability? = other
         override fun intersect(other: EnhancedNullability?): EnhancedNullability = this
@@ -59,18 +60,6 @@ object CompilerConeAttributes {
         override fun toString(): String = "@ExtensionFunctionType"
     }
 
-    object FlexibleNullability : ConeAttribute<FlexibleNullability>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal.ir"), Name.identifier("FlexibleNullability"))
-
-        override fun union(other: FlexibleNullability?): FlexibleNullability? = other
-        override fun intersect(other: FlexibleNullability?): FlexibleNullability = this
-        override fun isSubtypeOf(other: FlexibleNullability?): Boolean = true
-
-        override val key: KClass<out FlexibleNullability> = FlexibleNullability::class
-
-        override fun toString(): String = "@FlexibleNullability"
-    }
-
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
         val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
 
@@ -82,20 +71,33 @@ object CompilerConeAttributes {
 
         override fun toString(): String = "@UnsafeVariance"
     }
+
+    val compilerAttributeByClassId: Map<ClassId, ConeAttribute<*>> = mapOf(
+        Exact.ANNOTATION_CLASS_ID to Exact,
+        NoInfer.ANNOTATION_CLASS_ID to NoInfer,
+        EnhancedNullability.ANNOTATION_CLASS_ID to EnhancedNullability,
+        ExtensionFunctionType.ANNOTATION_CLASS_ID to ExtensionFunctionType,
+        UnsafeVariance.ANNOTATION_CLASS_ID to UnsafeVariance
+    )
+
+    val compilerAttributeByFqName: Map<FqName, ConeAttribute<*>> = compilerAttributeByClassId.mapKeys { it.key.asSingleFqName() }
 }
 
 val ConeAttributes.exact: CompilerConeAttributes.Exact? by ConeAttributes.attributeAccessor<CompilerConeAttributes.Exact>()
 val ConeAttributes.noInfer: CompilerConeAttributes.NoInfer? by ConeAttributes.attributeAccessor<CompilerConeAttributes.NoInfer>()
 val ConeAttributes.enhancedNullability: CompilerConeAttributes.EnhancedNullability? by ConeAttributes.attributeAccessor<CompilerConeAttributes.EnhancedNullability>()
 val ConeAttributes.extensionFunctionType: CompilerConeAttributes.ExtensionFunctionType? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ExtensionFunctionType>()
-val ConeAttributes.flexibleNullability: CompilerConeAttributes.FlexibleNullability? by ConeAttributes.attributeAccessor<CompilerConeAttributes.FlexibleNullability>()
 val ConeAttributes.unsafeVarianceType: CompilerConeAttributes.UnsafeVariance? by ConeAttributes.attributeAccessor<CompilerConeAttributes.UnsafeVariance>()
+
+// ------------------------------------------------------------------
+
+val ConeAttributes.hasEnhancedNullability: Boolean
+    get() = enhancedNullability != null
+
+// ------------------------------------------------------------------
 
 val ConeKotlinType.hasEnhancedNullability: Boolean
     get() = attributes.enhancedNullability != null
 
 val ConeKotlinType.isExtensionFunctionType: Boolean
     get() = attributes.extensionFunctionType != null
-
-val ConeKotlinType.hasFlexibleNullability: Boolean
-    get() = attributes.flexibleNullability != null

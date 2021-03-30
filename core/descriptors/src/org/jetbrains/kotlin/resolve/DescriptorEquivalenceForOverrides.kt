@@ -56,7 +56,8 @@ object DescriptorEquivalenceForOverrides {
         return a.typeConstructor == b.typeConstructor
     }
 
-    private fun areTypeParametersEquivalent(
+    @JvmOverloads
+    fun areTypeParametersEquivalent(
         a: TypeParameterDescriptor,
         b: TypeParameterDescriptor,
         allowCopiesFromTheSameDeclaration: Boolean,

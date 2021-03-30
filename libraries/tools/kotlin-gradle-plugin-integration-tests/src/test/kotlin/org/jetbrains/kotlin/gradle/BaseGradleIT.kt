@@ -53,24 +53,39 @@ abstract class BaseGradleIT {
 
     // https://developer.android.com/studio/intro/update.html#download-with-gradle
     fun acceptAndroidSdkLicenses() = defaultBuildOptions().androidHome?.let {
-        val sdkLicenses = File(it, "licenses")
-        sdkLicenses.mkdirs()
+        val sdkLicensesDir = it.resolve("licenses")
+        if(!sdkLicensesDir.exists()) sdkLicensesDir.mkdirs()
 
-        val sdkLicense = File(sdkLicenses, "android-sdk-license")
-        if (!sdkLicense.exists()) {
-            sdkLicense.createNewFile()
-            sdkLicense.writeText(
-                """
-                8933bad161af4178b1185d1a37fbf41ea5269c55
-                d56f5187479451eabf01fb78af6dfcb131a6481e
-                24333f8a63b6825ea9c5514f83c2829b004d1fee
-                """.trimIndent()
+        val sdkLicenses = listOf(
+            "8933bad161af4178b1185d1a37fbf41ea5269c55",
+            "d56f5187479451eabf01fb78af6dfcb131a6481e",
+            "24333f8a63b6825ea9c5514f83c2829b004d1fee",
+        )
+        val sdkPreviewLicense = "84831b9409646a918e30573bab4c9c91346d8abd"
+
+        val sdkLicenseFile = sdkLicensesDir.resolve("android-sdk-license")
+        if (!sdkLicenseFile.exists()) {
+            sdkLicenseFile.createNewFile()
+            sdkLicenseFile.writeText(
+                sdkLicenses.joinToString(separator = "\n")
             )
+        } else {
+            sdkLicenses
+                .subtract(
+                    sdkLicenseFile.readText().lines()
+                )
+                .forEach {
+                    sdkLicenseFile.appendText("$it\n")
+                }
         }
 
-        val sdkPreviewLicense = File(sdkLicenses, "android-sdk-preview-license")
-        if (!sdkPreviewLicense.exists()) {
-            sdkPreviewLicense.writeText("84831b9409646a918e30573bab4c9c91346d8abd")
+        val sdkPreviewLicenseFile = sdkLicensesDir.resolve("android-sdk-preview-license")
+        if (!sdkPreviewLicenseFile.exists()) {
+            sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
+        } else {
+            if (sdkPreviewLicense != sdkPreviewLicenseFile.readText().trim()) {
+                sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
+            }
         }
     }
 
@@ -157,7 +172,7 @@ abstract class BaseGradleIT {
             // enableFeaturePreview("GRADLE_METADATA") is no longer needed when building with Gradle 5.4 or above
             if (GradleVersion.version(wrapperVersion) >= GradleVersion.version("5.4")) {
                 settingsScript.apply {
-                    if(exists()) {
+                    if (exists()) {
                         modify {
                             it.replace("enableFeaturePreview('GRADLE_METADATA')", "//")
                         }
@@ -231,7 +246,8 @@ abstract class BaseGradleIT {
         val jsCompilerType: KotlinJsCompilerType? = null,
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
-        val warningMode: WarningMode = WarningMode.Fail
+        val warningMode: WarningMode = WarningMode.Fail,
+        val useFir: Boolean = false
     )
 
     enum class ConfigurationCacheProblems {
@@ -249,7 +265,8 @@ abstract class BaseGradleIT {
         val projectName: String,
         val gradleVersionRequirement: GradleVersionRequired = defaultGradleVersion,
         directoryPrefix: String? = null,
-        val minLogLevel: LogLevel = LogLevel.DEBUG
+        val minLogLevel: LogLevel = LogLevel.DEBUG,
+        val addHeapDumpOptions: Boolean = true
     ) {
         internal val testCase = this@BaseGradleIT
 
@@ -258,8 +275,59 @@ abstract class BaseGradleIT {
         val projectDir = File(workingDir.canonicalFile, projectName)
 
         open fun setupWorkingDir() {
-            if (!projectDir.isDirectory || projectDir.listFiles().isEmpty())
+            if (!projectDir.isDirectory || projectDir.listFiles().isEmpty()) {
                 copyRecursively(this.resourcesRoot, workingDir)
+                if (addHeapDumpOptions) {
+                    addHeapDumpOptionsToPropertiesFile()
+                }
+            }
+        }
+
+        private fun addHeapDumpOptionsToPropertiesFile() {
+            val propertiesFile = File(projectDir, "gradle.properties")
+            propertiesFile.createNewFile()
+
+            val heapDumpOutOfErrorStr = "-XX:+HeapDumpOnOutOfMemoryError"
+            val heapDumpPathStr = "-XX:HeapDumpPath=\"${System.getProperty("user.dir")}${File.separatorChar}build\""
+
+            val gradlePropertiesText = propertiesFile.readText()
+
+            val presentJvmArgsLine = gradlePropertiesText
+                .lines()
+                .singleOrNull { it.contains("org.gradle.jvmargs") } // Can't write back if there are several lines with jvmargs
+
+            val updated: Boolean
+            val updatedJvmArgsLine = if (presentJvmArgsLine == null) {
+                updated = true
+                "org.gradle.jvmargs=$heapDumpOutOfErrorStr $heapDumpPathStr"
+            } else {
+                val options = buildString {
+                    if (!presentJvmArgsLine.contains("HeapDumpOnOutOfMemoryError")) {
+                        append(" $heapDumpOutOfErrorStr")
+                    }
+                    if (!presentJvmArgsLine.contains("HeapDumpPath")) {
+                        append(" $heapDumpPathStr")
+                    }
+                }
+
+                if (options.isEmpty()) {
+                    // All options are already present
+                    updated = false
+                    presentJvmArgsLine
+                } else {
+                    updated = true
+                    "$presentJvmArgsLine$options"
+                }
+            }
+
+            if (!updated) {
+                return
+            }
+
+            val lines = listOf("# modified in addHeapDumpOptionsToPropertiesFile", updatedJvmArgsLine) +
+                    gradlePropertiesText.lines().filter { !it.contains("org.gradle.jvmargs") }
+
+            propertiesFile.writeText(lines.joinToString(separator = "\n"))
         }
 
         fun relativize(files: Iterable<File>): List<String> =
@@ -340,20 +408,21 @@ abstract class BaseGradleIT {
 
         val cmd = createBuildCommand(wrapperDir, params, options)
 
-        println("<=== Test build: ${this.projectName} $cmd ===>")
-
         if (!projectDir.exists()) {
             setupWorkingDir()
         }
 
         maybeUpdateSettingsScript(wrapperVersion, gradleSettingsScript())
 
-        val result = runProcess(cmd, projectDir, env, options)
+        var result: ProcessRunResult? = null
         try {
+            result = runProcess(cmd, projectDir, env, options)
             CompiledProject(this, result.output, result.exitCode).check()
         } catch (t: Throwable) {
+            println("<=== Test build: ${this.projectName} $cmd ===>")
+
             // to prevent duplication of output
-            if (!options.forceOutputToStdout) {
+            if (!options.forceOutputToStdout && result != null) {
                 println(result.output)
             }
             throw t
@@ -524,6 +593,12 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksNotExecuted(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertNotContains("(Executing actions for task|Executing task) '$task'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksExecutedByPrefix(taskPrefixes: Iterable<String>) {
         for (prefix in taskPrefixes) {
             assertContainsRegex("(Executing actions for task|Executing task) '$prefix\\w*'".toRegex())
@@ -532,6 +607,10 @@ abstract class BaseGradleIT {
 
     fun CompiledProject.assertTasksExecuted(vararg tasks: String) {
         assertTasksExecuted(tasks.toList())
+    }
+
+    fun CompiledProject.assertTasksNotExecuted(vararg tasks: String) {
+        assertTasksNotExecuted(tasks.toList())
     }
 
     fun CompiledProject.assertTasksRetrievedFromCache(tasks: Iterable<String>) {
@@ -842,6 +921,10 @@ Finished executing task ':$taskName'|
 
             options.jsCompilerType?.let {
                 add("-Pkotlin.js.compiler=$it")
+            }
+
+            if (options.useFir) {
+                add("-Pkotlin.useFir=true")
             }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")

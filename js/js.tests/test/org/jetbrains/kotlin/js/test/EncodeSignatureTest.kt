@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.naming.encodeSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.junit.Assert
@@ -212,7 +213,10 @@ class EncodeSignatureTest {
             configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
             configuration.put(CommonConfigurationKeys.MODULE_NAME, "sample")
 
-            val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(psiFile), JsConfig(project, configuration))
+            val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(
+                listOf(psiFile),
+                JsConfig(project, configuration, CompilerEnvironment),
+            )
             val module = analysisResult.moduleDescriptor
             val rootPackage = module.getPackage(FqName.ROOT)
 

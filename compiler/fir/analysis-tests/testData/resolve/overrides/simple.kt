@@ -14,7 +14,7 @@ class B : A() {
     fun test() {
         foo()
         bar()
-        <!NONE_APPLICABLE{LT}!><!NONE_APPLICABLE{PSI}!>buz<!>()<!>
+        <!NONE_APPLICABLE!>buz<!>()
     }
 }
 

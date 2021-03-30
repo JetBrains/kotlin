@@ -30,7 +30,7 @@ class Case1 {
 
     inner
 
-    class ImplBase2_1 : ImplBase2() {
+    <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class ImplBase2_1<!> : ImplBase2() {
         override var b: CharSequence = ""
         override fun boo(x: Int) {}
     }
@@ -44,7 +44,7 @@ class Case2() {
     abstract inner class Impl(override val a: CharSequence) : MainClass.Base3(a) {}
 
     fun boo() {
-        val impl = object : Impl("a") {
+        val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Impl("a") {
             override fun foo(): CharSequence = "foo"
         }
     }
@@ -80,7 +80,7 @@ abstract class BaseCase3{
 * NOTE: abstract class implements kotlin interface
 */
 
-class Case4(a: String) : BaseCase4(a) {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Case4<!>(a: String) : BaseCase4(a) {}
 
 interface InterfaceCase4 {
     fun foo(): String
@@ -97,7 +97,7 @@ abstract class BaseCase4(val a: String) : InterfaceCase4 {}
 * NOTE: abstract class implements java interface
 */
 
-class Case5(a: String) : BaseCase5(a) {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Case5<!>(a: String) : BaseCase5(a) {}
 
 abstract class BaseCase5(val a: String) : java.util.Deque<String> {}
 
@@ -106,6 +106,6 @@ abstract class BaseCase5(val a: String) : java.util.Deque<String> {}
 * NOTE: abstract class implements java abstract class
 */
 
-class Case6(a: String) : BaseCase6(a) {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Case6<!>(a: String) : BaseCase6(a) {}
 
 abstract class BaseCase6(val a: String) : java.util.AbstractCollection<String>() {}

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 
 object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
     val DUMP_CFG by directive(
@@ -14,6 +15,11 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Dumps control flow graphs of all declarations to `testName.dot` file
             This directive may be applied only to all modules
         """.trimIndent(),
+        applicability = Global
+    )
+
+    val RENDERER_CFG_LEVELS by directive(
+        description = "Render leves of nodes in CFG dump",
         applicability = Global
     )
 
@@ -43,5 +49,12 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
 
     val WITH_EXTENDED_CHECKERS by directive(
         description = "Enable extended checkers"
+    )
+
+    val SCOPE_DUMP by stringDirective(
+        description = """
+            Dump hierarchies of overrides of classes listed in arguments
+            Enables ${FirScopeDumpHandler::class}
+        """.trimIndent()
     )
 }

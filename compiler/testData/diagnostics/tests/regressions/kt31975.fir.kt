@@ -11,7 +11,7 @@ interface TypeConstructor
 
 class Refiner {
     val memoizedFunctionLambda = createMemoizedFunction { it.foo() } // error type infered, no diagnostic, BAD, backend fails
-    val memoizedFunctionReference = createMemoizedFunction(TypeConstructor::foo) // EXTENSION_IN_CLASS_REFERENCE_IS_NOT_ALLOWED, fine
+    val memoizedFunctionReference = createMemoizedFunction(TypeConstructor::<!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>foo<!>) // EXTENSION_IN_CLASS_REFERENCE_IS_NOT_ALLOWED, fine
     val memoizedFunctionTypes = createMemoizedFunction<TypeConstructor, Boolean> { it.foo() } // works fine
 
     private fun TypeConstructor.foo(): Boolean = true

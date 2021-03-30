@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.dce
 
+import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
@@ -24,6 +25,12 @@ import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.array
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.index
 
 class Context {
+    // Collections per Node consumes too much RAM
+    private val nodeDependencies = LinkedHashMultimap.create<Node, Node>()
+    private val nodeExpressions = LinkedHashMultimap.create<Node, JsExpression>()
+    private val nodeFunctions = LinkedHashMultimap.create<Node, JsFunction>()
+    private val nodeUsedByAstNodes = LinkedHashMultimap.create<Node, JsNode>()
+
     val globalScope = Node()
     val moduleExportsNode = globalScope.member("module").member("exports")
     var currentModule = globalScope
@@ -76,7 +83,7 @@ class Context {
 
     fun extractNode(expression: JsExpression): Node? {
         val node = extractNodeImpl(expression)?.original
-        return if (node != null && moduleExportsNode in generateSequence(node) { it.qualifier?.parent }) {
+        return if (node != null && moduleExportsNode in generateSequence(node) { it.parent }) {
             val path = node.pathFromRoot().drop(2)
             path.fold(currentModule.original) { n, memberName -> n.member(memberName) }
         }
@@ -126,22 +133,32 @@ class Context {
         }
     }
 
-    class Node private constructor(val localName: JsName?, qualifier: Qualifier?) {
-        private val dependenciesImpl = mutableSetOf<Node>()
-        private val expressionsImpl = mutableSetOf<JsExpression>()
-        private val functionsImpl = mutableSetOf<JsFunction>()
+    private var currentColor = 1.toByte()
+
+    fun clearVisited() {
+        currentColor++
+    }
+
+    fun visit(n: Node) = n.visit(currentColor)
+
+    inner class Node private constructor(val localName: JsName?, parent: Node?, val memberName: String?) {
+        private var _membersImpl: MutableMap<String, Node>? = null
+
+        private val membersImpl: MutableMap<String, Node>
+            get() = _membersImpl ?: mutableMapOf<String, Node>().also { _membersImpl = it }
+
+        private var rank = 0
         private var hasSideEffectsImpl = false
         private var reachableImpl = false
         private var declarationReachableImpl = false
-        private val membersImpl = mutableMapOf<String, Node>()
-        private val usedByAstNodesImpl = mutableSetOf<JsNode>()
-        private var rank = 0
 
-        val dependencies: MutableSet<Node> get() = original.dependenciesImpl
+        val dependencies: Set<Node> get() = nodeDependencies[original]
 
-        val expressions: MutableSet<JsExpression> get() = original.expressionsImpl
+        val expressions: Set<JsExpression> get() = nodeExpressions[original]
 
-        val functions: MutableSet<JsFunction> get() = original.functionsImpl
+        val functions: Set<JsFunction> get() = nodeFunctions[original]
+
+        val usedByAstNodes: Set<JsNode> get() = nodeUsedByAstNodes[original]
 
         var hasSideEffects: Boolean
             get() = original.hasSideEffectsImpl
@@ -161,15 +178,20 @@ class Context {
                 original.declarationReachableImpl = value
             }
 
-        var qualifier: Qualifier? = qualifier
-            get
+        var parent: Node? = parent
             private set
 
-        val usedByAstNodes: MutableSet<JsNode> get() = original.usedByAstNodesImpl
+        private var color: Byte = 0
 
-        val memberNames: MutableSet<String> get() = original.membersImpl.keys
+        fun visit(c: Byte): Boolean {
+            val result = color != c
+            color = c
+            return result
+        }
 
-        constructor(localName: JsName? = null) : this(localName, null)
+        val memberNames: Set<String> get() = original._membersImpl?.keys ?: emptySet()
+
+        constructor(localName: JsName? = null) : this(localName, null, null)
 
         var original: Node = this
             get() {
@@ -180,22 +202,38 @@ class Context {
             }
             private set
 
-        val members: Map<String, Node> get() = original.membersImpl
+        val members: Map<String, Node> get() = original._membersImpl ?: emptyMap()
 
-        fun member(name: String): Node = original.membersImpl.getOrPut(name) { Node(null, Qualifier(this, name)) }.original
+        fun addDependency(node: Node) {
+            nodeDependencies.put(original, node)
+        }
+
+        fun addFunction(function: JsFunction) {
+            nodeFunctions.put(original, function)
+        }
+
+        fun addExpression(expression: JsExpression) {
+            nodeExpressions.put(original, expression)
+        }
+
+        fun addUsedByAstNode(node: JsNode) {
+            nodeUsedByAstNodes.put(original, node)
+        }
+
+        fun member(name: String): Node = original.membersImpl.getOrPut(name) { Node(null, this, name) }.original
 
         fun alias(other: Node) {
             val a = original
             val b = other.original
             if (a == b) return
 
-            if (a.qualifier == null && b.qualifier == null) {
+            if (a.parent == null && b.parent == null) {
                 a.merge(b)
             }
-            else if (a.qualifier == null) {
+            else if (a.parent == null) {
                 if (b.root() == a) a.makeDependencies(b) else b.evacuateFrom(a)
             }
-            else if (b.qualifier == null) {
+            else if (b.parent == null) {
                 if (a.root() == b) a.makeDependencies(b) else a.evacuateFrom(b)
             }
             else {
@@ -204,8 +242,8 @@ class Context {
         }
 
         private fun makeDependencies(other: Node) {
-            dependenciesImpl += other
-            other.dependenciesImpl += this
+            nodeDependencies.put(this, other)
+            nodeDependencies.put(other, this)
         }
 
         private fun evacuateFrom(other: Node) {
@@ -214,25 +252,25 @@ class Context {
 
             for ((name, member) in newMembers) {
                 membersImpl[name] = member
-                member.original.qualifier = Qualifier(this, member.original.qualifier!!.memberName)
+                member.original.parent = this
             }
             for ((name, member) in existingMembers) {
                 membersImpl[name]!!.original.merge(member.original)
                 membersImpl[name] = member.original
-                member.original.qualifier = Qualifier(this, member.original.qualifier!!.memberName)
+                member.original.parent = this
             }
             other.membersImpl.clear()
 
             hasSideEffectsImpl = hasSideEffectsImpl || other.hasSideEffectsImpl
-            expressionsImpl += other.expressionsImpl
-            functionsImpl += other.functionsImpl
-            dependenciesImpl += other.dependenciesImpl
-            usedByAstNodesImpl += other.usedByAstNodesImpl
+            nodeExpressions.putAll(this, nodeExpressions[other])
+            nodeFunctions.putAll(this, nodeFunctions[other])
+            nodeDependencies.putAll(this, nodeDependencies[other])
+            nodeUsedByAstNodes.putAll(this, nodeUsedByAstNodes[other])
 
-            other.expressionsImpl.clear()
-            other.functionsImpl.clear()
-            other.dependenciesImpl.clear()
-            other.usedByAstNodesImpl.clear()
+            nodeExpressions.removeAll(other)
+            nodeFunctions.removeAll(other)
+            nodeDependencies.removeAll(other)
+            nodeUsedByAstNodes.removeAll(other)
         }
 
         private fun merge(other: Node) {
@@ -250,14 +288,12 @@ class Context {
             }
         }
 
-        fun root(): Node = generateSequence(original) { it.qualifier?.parent?.original }.last()
+        fun root(): Node = generateSequence(original) { it.parent?.original }.last()
 
         fun pathFromRoot(): List<String> =
-                generateSequence(original) { it.qualifier?.parent?.original }.mapNotNull { it.qualifier?.memberName }
+                generateSequence(original) { it.parent?.original }.mapNotNull { it.memberName }
                         .toList().asReversed()
 
         override fun toString(): String = (root().localName?.ident ?: "<unknown>") + pathFromRoot().joinToString("") { ".$it" }
     }
-
-    class Qualifier(val parent: Node, val memberName: String)
 }

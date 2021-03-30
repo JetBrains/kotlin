@@ -1637,6 +1637,21 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
         }
 
+        @TestMetadata("overriddenChainNonExportIntermediate.kt")
+        public void testOverriddenChainNonExportIntermediate() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenChainNonExportIntermediate.kt");
+        }
+
+        @TestMetadata("overriddenExternalMethodWithSameNameMethod.kt")
+        public void testOverriddenExternalMethodWithSameNameMethod() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameNameMethod.kt");
+        }
+
+        @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
+        public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameStableNameMethod.kt");
+        }
+
         @TestMetadata("overridenMethod.kt")
         public void testOverridenMethod() throws Exception {
             runTest("js/js.translator/testData/box/export/overridenMethod.kt");
@@ -5065,6 +5080,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/jsCode/codeFromVariable.kt");
         }
 
+        @TestMetadata("constantExpression.kt")
+        public void testConstantExpression() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/constantExpression.kt");
+        }
+
         @TestMetadata("continue.kt")
         public void testContinue() throws Exception {
             runTest("js/js.translator/testData/box/jsCode/continue.kt");
@@ -5349,6 +5369,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/jsName/classes.kt");
         }
 
+        @TestMetadata("defaultJsName.kt")
+        public void testDefaultJsName() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/defaultJsName.kt");
+        }
+
         @TestMetadata("inheritFromRenamedNativeClass.kt")
         public void testInheritFromRenamedNativeClass() throws Exception {
             runTest("js/js.translator/testData/box/jsName/inheritFromRenamedNativeClass.kt");
@@ -5367,6 +5392,16 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("jsNamePropertyAccessors.kt")
         public void testJsNamePropertyAccessors() throws Exception {
             runTest("js/js.translator/testData/box/jsName/jsNamePropertyAccessors.kt");
+        }
+
+        @TestMetadata("jsTopLevelClashes.kt")
+        public void testJsTopLevelClashes() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/jsTopLevelClashes.kt");
+        }
+
+        @TestMetadata("jsTopLevelRenameReserved.kt")
+        public void testJsTopLevelRenameReserved() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/jsTopLevelRenameReserved.kt");
         }
 
         @TestMetadata("overriddenMethod.kt")

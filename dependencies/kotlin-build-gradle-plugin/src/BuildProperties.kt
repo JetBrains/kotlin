@@ -120,6 +120,10 @@ class KotlinBuildProperties(
     val teamCityBootstrapUrl: String? = getOrNull("bootstrap.teamcity.url") as String?
 
     val rootProjectDir: File = propertiesProvider.rootProjectDir
+
+    val isKotlinNativeEnabled: Boolean = getBoolean("kotlin.native.enabled")
+
+    val pathToKotlinModularizedTestData: String? = getOrNull("kotlin.fir.modularized.testdata") as String?
 }
 
 private const val extensionName = "kotlinBuildProperties"

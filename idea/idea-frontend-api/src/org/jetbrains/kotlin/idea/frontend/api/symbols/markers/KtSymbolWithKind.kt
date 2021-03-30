@@ -15,6 +15,6 @@ interface KtSymbolWithKind : KtSymbol {
 }
 
 enum class KtSymbolKind {
-    TOP_LEVEL, MEMBER, LOCAL, NON_PROPERTY_PARAMETER
+    TOP_LEVEL, MEMBER, LOCAL
 }
 

@@ -121,7 +121,8 @@ class FirClassSubstitutionScope(
         }
 
         if (newReceiverType == null && newReturnType == null && newParameterTypes.all { it == null } &&
-            newTypeParameters === member.typeParameters && fakeOverrideSubstitution == null) {
+            newTypeParameters === member.typeParameters && fakeOverrideSubstitution == null
+        ) {
             return original
         }
 
@@ -157,6 +158,7 @@ class FirClassSubstitutionScope(
         if (newReturnType == null && newParameterTypes.all { it == null } && newTypeParameters === constructor.typeParameters) {
             return original
         }
+
         return FirFakeOverrideGenerator.createSubstitutionOverrideConstructor(
             FirConstructorSymbol(original.callableId),
             session, constructor, dispatchReceiverTypeForSubstitutedMembers,
@@ -170,8 +172,9 @@ class FirClassSubstitutionScope(
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
         val (newTypeParameters, newReceiverType, newReturnType, _, fakeOverrideSubstitution) = createSubstitutedData(member)
-        if (newReceiverType == null &&
-            newReturnType == null && newTypeParameters === member.typeParameters
+
+        if (newReceiverType == null && newReturnType == null &&
+            newTypeParameters === member.typeParameters && fakeOverrideSubstitution == null
         ) {
             return original
         }

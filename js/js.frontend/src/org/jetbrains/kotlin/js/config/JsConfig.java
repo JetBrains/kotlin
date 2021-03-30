@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
+import org.jetbrains.kotlin.resolve.TargetEnvironment;
 import org.jetbrains.kotlin.serialization.js.*;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.utils.JsMetadataVersion;
@@ -71,15 +72,22 @@ public class JsConfig {
     @Nullable
     private final Set<String> librariesToSkip;
 
-    public JsConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration) {
-        this(project, configuration, null, null);
+    public final TargetEnvironment targetEnvironment;
+
+    public JsConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration, @NotNull TargetEnvironment targetEnvironment) {
+        this(project, configuration, targetEnvironment, null, null);
     }
 
-    public JsConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration,
+    public JsConfig(
+            @NotNull Project project,
+            @NotNull CompilerConfiguration configuration,
+            @NotNull TargetEnvironment targetEnvironment,
             @Nullable List<JsModuleDescriptor<KotlinJavaScriptLibraryParts>> metadataCache,
-            @Nullable Set<String> librariesToSkip) {
+            @Nullable Set<String> librariesToSkip
+    ) {
         this.project = project;
         this.configuration = configuration.copy();
+        this.targetEnvironment = targetEnvironment;
         this.metadataCache = metadataCache;
         this.librariesToSkip = librariesToSkip;
     }

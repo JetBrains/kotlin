@@ -1,11 +1,11 @@
 @R|spr/NonNullApi|() public open class A : R|kotlin/Any| {
-    public open field field: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|
+    public open field field: R|ft<kotlin/String, kotlin/String?>|
 
-    public open fun foo(x: R|@FlexibleNullability kotlin/String|, @R|spr/Nullable|() y: R|@FlexibleNullability kotlin/CharSequence?|): R|@FlexibleNullability kotlin/String|
+    public open fun foo(x: R|@EnhancedNullability kotlin/String|, @R|spr/Nullable|() y: R|kotlin/CharSequence?|): R|@EnhancedNullability kotlin/String|
 
-    public open fun bar(): R|@FlexibleNullability kotlin/String|
+    public open fun bar(): R|@EnhancedNullability kotlin/String|
 
-    @R|spr/Nullable|() public open fun baz(): R|ft<@FlexibleNullability kotlin/collections/MutableList<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?, kotlin/collections/List<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?>?|
+    @R|spr/Nullable|() public open fun baz(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>?, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
 
     public constructor(): R|A|
 

@@ -96,11 +96,11 @@ class Fir2IrLazyClass(
     override val isFun: Boolean
         get() = fir.isFun
 
-    override var superTypes: List<IrType> by lazyVar {
+    override var superTypes: List<IrType> by lazyVar(lock) {
         fir.superTypeRefs.map { it.toIrType(typeConverter) }
     }
 
-    override var thisReceiver: IrValueParameter? by lazyVar {
+    override var thisReceiver: IrValueParameter? by lazyVar(lock) {
         symbolTable.enterScope(this)
         val typeArguments = fir.typeParameters.map {
             IrSimpleTypeImpl(
@@ -117,7 +117,14 @@ class Fir2IrLazyClass(
         receiver
     }
 
-    override val declarations: MutableList<IrDeclaration> by lazyVar {
+    private val fakeOverridesByName = mutableMapOf<Name, Collection<IrDeclaration>>()
+
+    fun getFakeOverridesByName(name: Name): Collection<IrDeclaration> = fakeOverridesByName.getOrPut(name) {
+        fakeOverrideGenerator.generateFakeOverridesForName(this@Fir2IrLazyClass, name, fir)
+            .also(fakeOverrideGenerator::bindOverriddenSymbols)
+    }
+
+    override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
         val result = mutableListOf<IrDeclaration>()
         val processedNames = mutableSetOf<Name>()
         // NB: it's necessary to take all callables from scope,
@@ -166,11 +173,11 @@ class Fir2IrLazyClass(
                 else -> continue
             }
         }
-        with(fakeOverrideGenerator) {
-            val fakeOverrides = getFakeOverrides(fir, fir.declarations)
-            bindOverriddenSymbols(fakeOverrides)
-            result += fakeOverrides
+
+        for (name in scope.getCallableNames()) {
+            result += getFakeOverridesByName(name)
         }
+
         // TODO: remove this check to save time
         for (declaration in result) {
             if (declaration.parent != this) {

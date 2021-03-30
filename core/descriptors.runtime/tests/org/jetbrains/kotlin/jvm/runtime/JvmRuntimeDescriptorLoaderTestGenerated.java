@@ -3766,24 +3766,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             }
         }
 
-        @TestMetadata("compiler/testData/loadJava/compiledJava/signatureAnnotations")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class SignatureAnnotations extends AbstractJvmRuntimeDescriptorLoaderTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInSignatureAnnotations() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signatureAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
-            }
-
-            @TestMetadata("StableName.java")
-            public void testStableName() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/signatureAnnotations/StableName.java");
-            }
-        }
-
         @TestMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

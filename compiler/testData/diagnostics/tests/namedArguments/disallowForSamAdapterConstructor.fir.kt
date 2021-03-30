@@ -13,5 +13,5 @@ public class J {
 package test
 
 fun test() {
-    J("", r = { }, z = false)
+    J("", <!NAMED_ARGUMENTS_NOT_ALLOWED!>r = { }<!>, <!NAMED_ARGUMENTS_NOT_ALLOWED!>z = false<!>)
 }

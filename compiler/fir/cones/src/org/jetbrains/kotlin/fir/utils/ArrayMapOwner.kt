@@ -70,6 +70,10 @@ abstract class TypeRegistry<K : Any, V : Any> {
         return idPerType.computeIfAbsent(kClass) { idCounter.getAndIncrement() }
     }
 
+    fun allValuesThreadUnsafeForRendering(): Map<KClass<out K>, Int> {
+        return idPerType
+    }
+
     protected val indices: Collection<Int>
         get() = idPerType.values
 }

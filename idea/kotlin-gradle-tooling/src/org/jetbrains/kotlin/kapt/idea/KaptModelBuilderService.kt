@@ -9,9 +9,7 @@ import org.gradle.api.Named
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder
-import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder
-import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import java.io.File
 import java.io.Serializable
@@ -90,15 +88,17 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
                         continue
                     }
 
-                    val compilations = KotlinMPPGradleModelBuilder.getCompilations(target) ?: continue
+                    val compilations = target.compilations ?: continue
                     for (compilation in compilations) {
-                        val compileTask = KotlinMPPGradleModelBuilder.getCompileKotlinTaskName(project, compilation) ?: continue
+                        val compileTask = compilation.getCompileKotlinTaskName(project) ?: continue
                         val moduleName = target.name + compilation.name.capitalize()
                         handleCompileTask(moduleName, compileTask)
                     }
                 }
             } else {
-                project.getAllTasks(false)[project]?.forEach { compileTask ->
+                val compileTasks = project.getTarget()?.compilations?.map { compilation -> compilation.getCompileKotlinTaskName(project) }
+                    ?: project.getAllTasks(false)[project]
+                compileTasks?.forEach{ compileTask ->
                     val sourceSetName = compileTask.getSourceSetName()
                     handleCompileTask(sourceSetName, compileTask)
                 }

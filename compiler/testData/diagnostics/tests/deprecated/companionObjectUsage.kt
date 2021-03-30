@@ -13,8 +13,8 @@ fun first() {
 }
 
 fun useCompanion() {
-    val <!UNUSED_VARIABLE!>d<!> = <!DEPRECATION!>Another<!>
-    val <!UNUSED_VARIABLE!>x<!> = Another.<!DEPRECATION!>Companion<!>
+    val d = <!DEPRECATION!>Another<!>
+    val x = Another.<!DEPRECATION!>Companion<!>
     Another.<!DEPRECATION!>Companion<!>.use()
     <!DEPRECATION!>Another<!>.use()
 }

@@ -1,16 +1,14 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.builtins.unsigned
 
 
-import org.jetbrains.kotlin.generators.builtins.PrimitiveType
-import org.jetbrains.kotlin.generators.builtins.UnsignedType
-import org.jetbrains.kotlin.generators.builtins.convert
+import org.jetbrains.kotlin.generators.builtins.*
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
-import org.jetbrains.kotlin.generators.builtins.ranges.GeneratePrimitives
+import org.jetbrains.kotlin.generators.builtins.numbers.GeneratePrimitives
 import java.io.File
 import java.io.PrintWriter
 
@@ -37,15 +35,42 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     val className = type.capitalized
     val storageType = type.asSigned.capitalized
 
+    internal fun binaryOperatorDoc(operator: String, operand1: UnsignedType, operand2: UnsignedType): String = when (operator) {
+        "floorDiv" ->
+            """
+            Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+            
+            For unsigned types, the results of flooring division and truncating division are the same.
+            """.trimIndent()
+        "rem" -> {
+            """
+                Calculates the remainder of truncating division of this value by the other value.
+                
+                The result is always less than the divisor.
+                """.trimIndent()
+        }
+        "mod" -> {
+            """
+                Calculates the remainder of flooring division of this value by the other value.
+
+                The result is always less than the divisor.
+                
+                For unsigned types, the remainders of flooring division and truncating division are the same.
+                """.trimIndent()
+        }
+        else -> GeneratePrimitives.binaryOperatorDoc(operator, operand1.asSigned, operand2.asSigned)
+    }
+
     override fun generateBody() {
 
         out.println("import kotlin.experimental.*")
+        out.println("import kotlin.jvm.*")
         out.println()
 
-        out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("@SinceKotlin(\"1.3\")")
         out.println("@ExperimentalUnsignedTypes")
-        out.println("public inline class $className @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
+        out.println("@JvmInline")
+        out.println("public value class $className @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
         out.println("""    companion object {
         /**
@@ -123,16 +148,18 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateBinaryOperators() {
-        for ((name, doc) in GeneratePrimitives.binaryOperators) {
-            generateOperator(name, doc)
+        for (name in GeneratePrimitives.binaryOperators) {
+            generateOperator(name)
         }
+        generateFloorDivMod("floorDiv")
+        generateFloorDivMod("mod")
     }
 
-    private fun generateOperator(name: String, doc: String) {
+    private fun generateOperator(name: String) {
         for (otherType in UnsignedType.values()) {
             val returnType = getOperatorReturnType(type, otherType)
 
-            out.println("    /** $doc */")
+            out.printDoc(binaryOperatorDoc(name, type, otherType), "    ")
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline operator fun $name(other: ${otherType.capitalized}): ${returnType.capitalized} = ")
             if (type == otherType && type == returnType) {
@@ -144,6 +171,32 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 }
             } else {
                 out.println("${convert("this", type, returnType)}.$name(${convert("other", otherType, returnType)})")
+            }
+        }
+        out.println()
+    }
+
+    private fun generateFloorDivMod(name: String) {
+        for (otherType in UnsignedType.values()) {
+            val operationType = getOperatorReturnType(type, otherType)
+            val returnType = if (name == "mod") otherType else operationType
+
+            out.printDoc(binaryOperatorDoc(name, type, otherType), "    ")
+            out.println("    @kotlin.internal.InlineOnly")
+            out.print("    public inline fun $name(other: ${otherType.capitalized}): ${returnType.capitalized} = ")
+            if (type == otherType && type == operationType) {
+                when (name) {
+                    "floorDiv" -> out.println("div(other)")
+                    "mod" -> out.println("rem(other)")
+                    else -> error(name)
+                }
+            } else {
+                out.println(
+                    convert(
+                        "${convert("this", type, operationType)}.$name(${convert("other", otherType, operationType)})",
+                        operationType, returnType
+                    )
+                )
             }
         }
         out.println()
@@ -420,10 +473,13 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     val storageElementType = type.asSigned.capitalized
     val storageArrayType = storageElementType + "Array"
     override fun generateBody() {
+        out.println("import kotlin.jvm.*")
+        out.println()
+
         out.println("@SinceKotlin(\"1.3\")")
         out.println("@ExperimentalUnsignedTypes")
-        out.println("public inline class $arrayType")
-        out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
+        out.println("@JvmInline")
+        out.println("public value class $arrayType")
         out.println("@PublishedApi")
         out.println("internal constructor(@PublishedApi internal val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
@@ -531,6 +587,11 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
 
     override fun contains(value: $elementType): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks if the range is empty.
+     
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
@@ -581,7 +642,12 @@ internal constructor(
 
     override fun iterator(): ${elementType}Iterator = ${elementType}ProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /** 
+     * Checks if the progression is empty.
+     
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =

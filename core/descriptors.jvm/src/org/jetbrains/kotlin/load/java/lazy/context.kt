@@ -81,7 +81,7 @@ class JavaResolverComponents(
 interface JavaResolverSettings {
     val isReleaseCoroutines: Boolean
     val correctNullabilityForNotNullTypeParameter: Boolean
-    val typeEnhancementImprovements: Boolean
+    val typeEnhancementImprovementsInStrictMode: Boolean
 
     object Default : JavaResolverSettings {
         override val isReleaseCoroutines: Boolean
@@ -90,7 +90,7 @@ interface JavaResolverSettings {
         override val correctNullabilityForNotNullTypeParameter: Boolean
             get() = false
 
-        override val typeEnhancementImprovements: Boolean
+        override val typeEnhancementImprovementsInStrictMode: Boolean
             get() = false
     }
 
@@ -98,12 +98,12 @@ interface JavaResolverSettings {
         fun create(
             isReleaseCoroutines: Boolean,
             correctNullabilityForNotNullTypeParameter: Boolean,
-            typeEnhancementImprovements: Boolean
+            typeEnhancementImprovementsInStrictMode: Boolean
         ): JavaResolverSettings =
             object : JavaResolverSettings {
                 override val isReleaseCoroutines get() = isReleaseCoroutines
                 override val correctNullabilityForNotNullTypeParameter get() = correctNullabilityForNotNullTypeParameter
-                override val typeEnhancementImprovements get() = typeEnhancementImprovements
+                override val typeEnhancementImprovementsInStrictMode get() = typeEnhancementImprovementsInStrictMode
             }
     }
 }
@@ -175,10 +175,10 @@ private fun LazyJavaResolverContext.extractDefaultNullabilityQualifier(
         return null
     }
 
-    val areImprovementsEnabled = components.settings.typeEnhancementImprovements
+    val areImprovementsInStrictMode = components.settings.typeEnhancementImprovementsInStrictMode
 
     val nullabilityQualifier =
-        components.signatureEnhancement.extractNullability(typeQualifier, areImprovementsEnabled, typeParameterBounds = false)
+        components.signatureEnhancement.extractNullability(typeQualifier, areImprovementsInStrictMode, typeParameterBounds = false)
             ?.copy(isForWarningOnly = jsr305State.isWarning) ?: return null
 
     return JavaDefaultQualifiers(nullabilityQualifier, applicability)

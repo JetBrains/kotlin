@@ -34,7 +34,10 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 object KotlinHighlightingUtil {
     fun shouldHighlight(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
+        return shouldHighlightFile(ktFile)
+    }
 
+    fun shouldHighlightFile(ktFile: KtFile): Boolean {
         if (ktFile is KtCodeFragment && ktFile.context != null) {
             return true
         }
@@ -52,8 +55,12 @@ object KotlinHighlightingUtil {
         return ProjectRootsUtil.isInProjectOrLibraryContent(ktFile) && ktFile.getModuleInfo() !is NotUnderContentRootModuleInfo
     }
 
-    fun shouldHighlightErrors(psiElement: PsiElement): Boolean {
-        val ktFile = psiElement.containingFile as? KtFile ?: return false
+    fun shouldHighlightErrors(psiElement: PsiElement): Boolean =
+        (psiElement.containingFile as? KtFile)?.let {
+            shouldHighlightErrors(it)
+        } ?: false
+
+    fun shouldHighlightErrors(ktFile: KtFile): Boolean {
         if (ktFile.isCompiled) {
             return false
         }

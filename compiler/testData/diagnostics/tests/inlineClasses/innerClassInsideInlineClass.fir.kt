@@ -1,8 +1,8 @@
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 inline class Foo(val x: Int) {
-    inner class InnerC
-    inner object InnerO
-    inner interface InnerI
+    <!INNER_CLASS_INSIDE_INLINE_CLASS!>inner<!> class InnerC
+    <!INNER_CLASS_INSIDE_INLINE_CLASS!>inner<!> object InnerO
+    <!INNER_CLASS_INSIDE_INLINE_CLASS!>inner<!> interface InnerI
 }

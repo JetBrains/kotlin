@@ -5,7 +5,7 @@ FILE: main.kt
         }
 
         public final [BODY_RESOLVE] val x: R|kotlin/Int|
-            public get(): R|kotlin/Int|
+            [BODY_RESOLVE] public get(): R|kotlin/Int|
 
         init {
             this@R|/Foo|.R|/Foo.x| = Int(42)

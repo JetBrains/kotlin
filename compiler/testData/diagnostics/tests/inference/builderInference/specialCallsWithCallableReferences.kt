@@ -444,8 +444,8 @@ fun poll8(): Flow<String> {
 
 fun poll81(): Flow<String> {
     return flow {
-        val inv = ::bar2 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING!>in<!> setOf(::foo2)
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        val inv = ::bar2 <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>in<!> setOf(::foo2)
+        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv()<!>
     }
 }
 
@@ -458,8 +458,8 @@ fun poll82(): Flow<String> {
 
 fun poll83(): Flow<String> {
     return flow {
-        val inv = ::bar4 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING!>in<!> setOf(::foo4)
-        inv
+        val inv = ::bar4 <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>in<!> setOf(::foo4)
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }
 
@@ -486,7 +486,7 @@ fun poll86(): Flow<String> {
 
 fun poll87(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!><!> <!TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING!>in<!> setOf(foo7())
+        val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!><!> <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>in<!> setOf(foo7())
         <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }

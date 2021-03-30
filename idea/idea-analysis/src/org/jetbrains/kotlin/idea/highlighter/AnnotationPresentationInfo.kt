@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfo
+import com.intellij.codeInsight.daemon.impl.HighlightInfoType
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder
+import com.intellij.codeInsight.daemon.impl.quickfix.QuickFixAction
 import com.intellij.codeInsight.intention.EmptyIntentionAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.lang.annotation.AnnotationBuilder
-import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.TextRange
 import com.intellij.util.containers.MultiMap
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
+import org.jetbrains.kotlin.idea.util.application.isApplicationInternalMode
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 
 class AnnotationPresentationInfo(
     val ranges: List<TextRange>,
@@ -28,52 +31,69 @@ class AnnotationPresentationInfo(
     val textAttributes: TextAttributesKey? = null
 ) {
 
-    fun processDiagnostics(holder: AnnotationHolder, diagnostics: List<Diagnostic>, fixesMap: MultiMap<Diagnostic, IntentionAction>) {
+    fun processDiagnostics(
+        holder: HighlightInfoHolder,
+        diagnostics: Collection<Diagnostic>,
+        highlightInfoBuilderByDiagnostic: MutableMap<Diagnostic, HighlightInfo>? = null,
+        highlightInfoByTextRange: MutableMap<TextRange, HighlightInfo>?,
+        fixesMap: MultiMap<Diagnostic, IntentionAction>?,
+        calculatingInProgress: Boolean
+    ) {
         for (range in ranges) {
             for (diagnostic in diagnostics) {
-                val fixes = fixesMap[diagnostic]
-                create(diagnostic, range, holder) { annotation ->
-                    fixes.forEach {
-                        when (it) {
-                            is KotlinUniversalQuickFix -> annotation.newFix(it).universal().registerFix()
-                            is IntentionAction -> annotation.newFix(it).registerFix()
-                        }
+                create(diagnostic, range) { info ->
+                    holder.add(info)
+                    highlightInfoBuilderByDiagnostic?.put(diagnostic, info)
+                    if (fixesMap != null) {
+                        applyFixes(fixesMap, diagnostic, info)
                     }
-
-                    if (diagnostic.severity == Severity.WARNING) {
-                        annotation.problemGroup(KotlinSuppressableWarningProblemGroup(diagnostic.factory))
-
-                        if (fixes.isEmpty()) {
-                            // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
-                            annotation.newFix(EmptyIntentionAction(diagnostic.factory.name!!)).registerFix()
-                        }
+                    if (calculatingInProgress && highlightInfoByTextRange?.containsKey(range) == false) {
+                        highlightInfoByTextRange[range] = info
+                        QuickFixAction.registerQuickFixAction(info, CalculatingIntentionAction())
                     }
                 }
             }
         }
     }
 
-    private fun create(diagnostic: Diagnostic, range: TextRange, holder: AnnotationHolder, consumer: (AnnotationBuilder) -> Unit) {
-        val severity = when (diagnostic.severity) {
-            Severity.ERROR -> HighlightSeverity.ERROR
-            Severity.WARNING -> if (highlightType == ProblemHighlightType.WEAK_WARNING) {
-                HighlightSeverity.WEAK_WARNING
-            } else HighlightSeverity.WARNING
-            Severity.INFO -> HighlightSeverity.WEAK_WARNING
+    internal fun applyFixes(
+        fixesMap: MultiMap<Diagnostic, IntentionAction>,
+        diagnostic: Diagnostic,
+        info: HighlightInfo
+    ) {
+        val fixes = fixesMap[diagnostic]
+        fixes.filter { it is IntentionAction || it is KotlinUniversalQuickFix }.forEach {
+            QuickFixAction.registerQuickFixAction(info, it)
         }
 
-        holder.newAnnotation(severity, nonDefaultMessage ?: getDefaultMessage(diagnostic))
+        if (diagnostic.severity == Severity.WARNING) {
+            if (fixes.isEmpty()) {
+                // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
+                QuickFixAction.registerQuickFixAction(info, EmptyIntentionAction(diagnostic.factory.name))
+            }
+        }
+    }
+
+    private fun create(diagnostic: Diagnostic, range: TextRange, consumer: (HighlightInfo) -> Unit) {
+        val message = nonDefaultMessage ?: getDefaultMessage(diagnostic)
+        HighlightInfo
+            .newHighlightInfo(toHighlightInfoType(highlightType, diagnostic.severity))
             .range(range)
-            .tooltip(getMessage(diagnostic))
-            .also { builder -> highlightType?.let { builder.highlightType(it) } }
-            .also { builder -> textAttributes?.let { builder.textAttributes(it) } }
-            .also { consumer(it) }
-            .create()
+            .description(message)
+            .escapedToolTip(getMessage(diagnostic))
+            .also { builder -> textAttributes?.let(builder::textAttributes) ?: convertSeverityTextAttributes(highlightType, diagnostic.severity)?.let(builder::textAttributes) }
+            .also {
+                if (diagnostic.severity == Severity.WARNING) {
+                    it.problemGroup(KotlinSuppressableWarningProblemGroup(diagnostic.factory))
+                }
+            }
+            .createUnconditionally()
+            .also(consumer)
     }
 
     private fun getMessage(diagnostic: Diagnostic): String {
         var message = IdeErrorMessages.render(diagnostic)
-        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode) {
+        if (isApplicationInternalMode() || isUnitTestMode()) {
             val factoryName = diagnostic.factory.name
             message = if (message.startsWith("<html>")) {
                 "<html>[$factoryName] ${message.substring("<html>".length)}"
@@ -89,10 +109,49 @@ class AnnotationPresentationInfo(
 
     private fun getDefaultMessage(diagnostic: Diagnostic): String {
         val message = DefaultErrorMessages.render(diagnostic)
-        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode) {
-            return "[${diagnostic.factory.name}] $message"
+        return if (isApplicationInternalMode() || isUnitTestMode()) {
+            "[${diagnostic.factory.name}] $message"
+        } else {
+            message
         }
-        return message
     }
+
+    private fun toHighlightInfoType(highlightType: ProblemHighlightType?, severity: Severity): HighlightInfoType =
+        when (highlightType) {
+            ProblemHighlightType.LIKE_UNUSED_SYMBOL -> HighlightInfoType.UNUSED_SYMBOL
+            ProblemHighlightType.LIKE_UNKNOWN_SYMBOL -> HighlightInfoType.WRONG_REF
+            ProblemHighlightType.LIKE_DEPRECATED -> HighlightInfoType.DEPRECATED
+            ProblemHighlightType.LIKE_MARKED_FOR_REMOVAL -> HighlightInfoType.MARKED_FOR_REMOVAL
+            else -> convertSeverity(highlightType, severity)
+        }
+
+    private fun convertSeverity(highlightType: ProblemHighlightType?, severity: Severity): HighlightInfoType =
+        when (severity) {
+            Severity.ERROR -> HighlightInfoType.ERROR
+            Severity.WARNING -> {
+                if (highlightType == ProblemHighlightType.WEAK_WARNING) {
+                    HighlightInfoType.WEAK_WARNING
+                } else HighlightInfoType.WARNING
+            }
+            Severity.INFO -> HighlightInfoType.WEAK_WARNING
+            else -> HighlightInfoType.INFORMATION
+        }
+
+    private fun convertSeverityTextAttributes(highlightType: ProblemHighlightType?, severity: Severity): TextAttributesKey? =
+        when (highlightType) {
+            null, ProblemHighlightType.GENERIC_ERROR_OR_WARNING ->
+                when (severity) {
+                    Severity.ERROR -> CodeInsightColors.ERRORS_ATTRIBUTES
+                    Severity.WARNING -> {
+                        if (highlightType == ProblemHighlightType.WEAK_WARNING) {
+                            CodeInsightColors.WEAK_WARNING_ATTRIBUTES
+                        } else CodeInsightColors.WARNINGS_ATTRIBUTES
+                    }
+                    Severity.INFO -> CodeInsightColors.WARNINGS_ATTRIBUTES
+                    else -> null
+                }
+            ProblemHighlightType.GENERIC_ERROR -> CodeInsightColors.ERRORS_ATTRIBUTES
+            else -> null
+        }
 
 }

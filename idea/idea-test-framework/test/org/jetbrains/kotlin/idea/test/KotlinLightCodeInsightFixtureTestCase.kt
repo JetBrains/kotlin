@@ -95,7 +95,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         }
 
 
-        runPostStartupActivitiesOnce(project)
         VfsRootAccess.allowRootAccess(project, KtTestUtil.getHomeDirectory())
 
         EditorTracker.getInstance(project)

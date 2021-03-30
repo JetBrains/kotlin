@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -15,12 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.asForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.LinkedHashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -109,6 +108,10 @@ private class FirCallArgumentsProcessor(
         private set
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
+    val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
+        function.asForbiddenNamedArgumentsTarget
+    }
+
     private enum class State {
         POSITION_ARGUMENTS,
         VARARG_POSITION,
@@ -166,8 +169,8 @@ private class FirCallArgumentsProcessor(
     }
 
     private fun processNamedArgument(argument: FirExpression, name: Name) {
-        if (!function.hasStableParameterNames) {
-            addDiagnostic(NamedArgumentNotAllowed(argument, function))
+        forbiddenNamedArgumentsTarget?.let {
+            addDiagnostic(NamedArgumentNotAllowed(argument, function, it))
         }
 
         val stateAllowsMixedNamedAndPositionArguments = state != State.NAMED_ONLY_ARGUMENTS
@@ -297,10 +300,4 @@ private class FirCallArgumentsProcessor(
 
     private val FirExpression.argumentName: Name?
         get() = (this as? FirNamedArgumentExpression)?.name
-
-    // TODO: handle functions with non-stable parameter names, see also
-    //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
-    //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
-    private val FirFunction<*>.hasStableParameterNames: Boolean
-        get() = true
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun f(
     f1: () -> String = { f2() },
     f2: () -> String = { "FAIL" }

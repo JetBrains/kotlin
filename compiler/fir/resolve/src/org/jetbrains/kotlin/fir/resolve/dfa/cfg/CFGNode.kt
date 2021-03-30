@@ -280,6 +280,27 @@ class PropertyInitializerExitNode(owner: ControlFlowGraph, override val fir: Fir
     }
 }
 
+// ----------------------------------- Field -----------------------------------
+
+class FieldInitializerEnterNode(owner: ControlFlowGraph, override val fir: FirField, level: Int, id: Int) : CFGNode<FirField>(owner, level, id), EnterNodeMarker {
+    init {
+        owner.enterNode = this
+    }
+
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitFieldInitializerEnterNode(this, data)
+    }
+}
+class FieldInitializerExitNode(owner: ControlFlowGraph, override val fir: FirField, level: Int, id: Int) : CFGNode<FirField>(owner, level, id), ExitNodeMarker {
+    init {
+        owner.exitNode = this
+    }
+
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitFieldInitializerExitNode(this, data)
+    }
+}
+
 // ----------------------------------- Init -----------------------------------
 
 class InitBlockEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousInitializer, level: Int, id: Int) : CFGNode<FirAnonymousInitializer>(owner, level, id), EnterNodeMarker {
@@ -373,7 +394,7 @@ class LoopBlockExitNode(owner: ControlFlowGraph, override val fir: FirLoop, leve
         return visitor.visitLoopBlockExitNode(this, data)
     }
 }
-class LoopConditionEnterNode(owner: ControlFlowGraph, override val fir: FirExpression, level: Int, id: Int) : CFGNode<FirExpression>(owner, level, id), EnterNodeMarker {
+class LoopConditionEnterNode(owner: ControlFlowGraph, override val fir: FirExpression, val loop: FirLoop, level: Int, id: Int) : CFGNode<FirExpression>(owner, level, id), EnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitLoopConditionEnterNode(this, data)
     }

@@ -29,22 +29,22 @@ fun foo() {
     i = genericBuilder { 1 }
     genericBuilder { 1 }
     genericBuilder<Int> { 1 }
-    genericBuilder<Int> { <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>""<!> }
+    genericBuilder<Int> { <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
 
     val y = { 1 }
     <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>genericBuilder<!>(<!TYPE_MISMATCH{OI}, UNSUPPORTED_FEATURE{NI}!>y<!>)
 
     unitBuilder {}
-    unitBuilder { <!UNUSED_EXPRESSION!>1<!> }
+    unitBuilder { 1 }
     unitBuilder({})
-    unitBuilder({ <!UNUSED_EXPRESSION!>1<!> })
+    unitBuilder({ 1 })
 
     manyArgumentsBuilder({}, { "" }) { 1 }
 
     val s: String = manyArgumentsBuilder({}, { "" }) { 1 }
 
     manyArgumentsBuilder<String>({}, { "" }, { 1 })
-    manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH{NI}!>1<!> }, { 2 })
+    manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })
 
     severalParamsInLambda { <!NAME_SHADOWING!>x<!>, <!NAME_SHADOWING!>y<!> ->
         x checkType { _<String>() }

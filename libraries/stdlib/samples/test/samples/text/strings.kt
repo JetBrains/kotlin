@@ -454,4 +454,43 @@ class Strings {
         assertPrints(inputString0.replace('s', 'z'), "Mizzizzippi")
         assertPrints(inputString1.replace("data", "information"), "Insufficient information for meaningful answer.")
     }
+
+    @Sample
+    fun contentEquals() {
+        val stringBuilder = StringBuilder()
+        stringBuilder.append("Kot").append("lin")
+        assertPrints(stringBuilder, "Kotlin")
+        assertTrue(stringBuilder contentEquals "Kotlin")
+
+        stringBuilder.setCharAt(0, 'k')
+        assertPrints(stringBuilder, "kotlin")
+        assertFalse("Kotlin".contentEquals(stringBuilder))
+        assertTrue("Kotlin".contentEquals(stringBuilder, ignoreCase = true))
+    }
+
+    @Sample
+    fun toBooleanStrict() {
+        assertPrints("true".toBooleanStrict(), "true")
+        assertFails { "True".toBooleanStrict() }
+        assertFails { "TRUE".toBooleanStrict() }
+
+        assertPrints("false".toBooleanStrict(), "false")
+        assertFails { "False".toBooleanStrict() }
+        assertFails { "FALSE".toBooleanStrict() }
+
+        assertFails { "abc".toBooleanStrict() }
+    }
+
+    @Sample
+    fun toBooleanStrictOrNull() {
+        assertPrints("true".toBooleanStrictOrNull(), "true")
+        assertPrints("True".toBooleanStrictOrNull(), "null")
+        assertPrints("TRUE".toBooleanStrictOrNull(), "null")
+
+        assertPrints("false".toBooleanStrictOrNull(), "false")
+        assertPrints("False".toBooleanStrictOrNull(), "null")
+        assertPrints("FALSE".toBooleanStrictOrNull(), "null")
+
+        assertPrints("abc".toBooleanStrictOrNull(), "null")
+    }
 }

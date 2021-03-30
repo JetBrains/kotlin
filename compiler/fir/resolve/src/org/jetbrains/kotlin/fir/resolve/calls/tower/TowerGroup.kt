@@ -70,7 +70,8 @@ class TowerGroup
 private constructor(
     private val code: Long,
     private val debugKinds: Array<TowerGroupKind>,
-    private val invokeResolvePriority: InvokeResolvePriority = InvokeResolvePriority.NONE
+    private val invokeResolvePriority: InvokeResolvePriority = InvokeResolvePriority.NONE,
+    private val receiverGroup: TowerGroup? = null
 ) : Comparable<TowerGroup> {
     companion object {
 
@@ -183,6 +184,8 @@ private constructor(
 
     fun TopPrioritized(depth: Int) = kindOf(TowerGroupKind.TopPrioritized(depth))
 
+    fun InvokeReceiver(receiverGroup: TowerGroup) = TowerGroup(code, debugKinds, invokeResolvePriority, receiverGroup)
+
     // Treating `a.foo()` common calls as more prioritized than `a.foo.invoke()`
     // It's not the same as TowerGroupKind because it's not about tower levels, but rather a different dimension semantically.
     // It could be implemented via another TowerGroupKind, but it's not clear what priority should be assigned to the new TowerGroupKind
@@ -203,13 +206,23 @@ private constructor(
         }
         if (index < other.debugKinds.size) return -1
 
-        return invokeResolvePriority.compareTo(other.invokeResolvePriority)
+        val actualResult = invokeResolvePriority.compareTo(other.invokeResolvePriority)
+        if (actualResult == 0) {
+            return if (receiverGroup == null || other.receiverGroup == null) 0
+            else receiverGroup.debugCompareTo(other.receiverGroup)
+        }
+        return actualResult
     }
 
     override fun compareTo(other: TowerGroup): Int = run {
         val result = java.lang.Long.compareUnsigned(code, other.code)
         if (result != 0) return@run result
-        return@run invokeResolvePriority.compareTo(other.invokeResolvePriority)
+        val actualResult = invokeResolvePriority.compareTo(other.invokeResolvePriority)
+        if (actualResult == 0) {
+            return@run if (receiverGroup == null || other.receiverGroup == null) 0
+            else receiverGroup.compareTo(other.receiverGroup)
+        }
+        return@run actualResult
     }.also {
         if (DEBUG) {
             val debugResult = debugCompareTo(other)
@@ -226,6 +239,9 @@ private constructor(
         if (code != other.code) return false
         if (DEBUG) require(this.debugKinds.contentEquals(other.debugKinds)) { "Equals inconsistent: $this vs $other" }
         if (invokeResolvePriority != other.invokeResolvePriority) return false
+        if (receiverGroup != null && other.receiverGroup != null) {
+            if (receiverGroup != other.receiverGroup) return false
+        }
 
         return true
     }

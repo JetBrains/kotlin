@@ -1,8 +1,8 @@
-// TARGET_BACKEND: JVM
-// FILE: inline.kt
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
-// WITH_RUNTIME
 // FULL_JDK
+// WITH_RUNTIME
+// TARGET_BACKEND: JVM
+// ASSERTIONS_MODE: jvm
+// FILE: inline.kt
 package test
 
 var result = "OK"

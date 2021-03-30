@@ -53,10 +53,8 @@ data class CompilerVersionImpl(
         append(major)
         append('.')
         append(minor)
-        if (maintenance != 0) {
-            append('.')
-            append(maintenance)
-        }
+        append('.')
+        append(maintenance)
         if (milestone != -1) {
             append("-M")
             append(milestone)

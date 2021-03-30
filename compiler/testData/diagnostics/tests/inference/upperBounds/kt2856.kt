@@ -17,4 +17,4 @@ fun main() {
 }
 
 //from standard library
-fun println(<!UNUSED_PARAMETER!>message<!> : Any?) {}
+fun println(message : Any?) {}

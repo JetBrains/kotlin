@@ -128,7 +128,8 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val qualifiedExpression = parentCall.getQualifiedExpressionForSelectorOrThis()
             val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, qualifiedExpression] ?: TypeUtils.NO_EXPECTED_TYPE
 
-            val resolutionResults = callResolver.resolveFunctionCall(BindingTraceContext(), scope, newCall, expectedType, dataFlow, false)
+            val resolutionResults =
+                callResolver.resolveFunctionCall(BindingTraceContext(), scope, newCall, expectedType, dataFlow, false, null)
 
             if (!resolutionResults.isSuccess) return false
 

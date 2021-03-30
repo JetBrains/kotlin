@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.pill
 
+import org.jetbrains.kotlin.pill.model.*
+import org.jetbrains.kotlin.pill.util.*
 import java.io.File
 
 class PFile(val path: File, private val text: String) {
@@ -86,7 +88,13 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
                             kotlinCompileOptions.apiVersion.option("apiVersion")
 
                             xml("option", "name" to "pluginOptions") { xml("array") }
-                            xml("option", "name" to "pluginClasspaths") { xml("array") }
+                            xml("option", "name" to "pluginClasspaths") {
+                                xml("array") {
+                                    for (path in kotlinCompileOptions.pluginClasspath) {
+                                        xml("option", "value" to path)
+                                    }
+                                }
+                            }
                         }
                     }
                 }

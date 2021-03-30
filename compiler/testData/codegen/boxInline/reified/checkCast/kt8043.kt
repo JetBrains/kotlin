@@ -1,8 +1,8 @@
+// WITH_RUNTIME
 // TODO: Reified generics required some design to unify behavior across all backends
 // IGNORE_BACKEND: JS, JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // FILE: 1.kt
-// WITH_RUNTIME
 package test
 
 inline fun <reified T, reified R>T.castTo(): R = this as R

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-abstract class JavaAnnotationArgumentImpl(
-        override val name: Name?
+sealed class JavaAnnotationArgumentImpl(
+    override val name: Name?
 ) : JavaAnnotationArgument {
     companion object Factory {
         fun create(argument: PsiAnnotationMemberValue, name: Name?): JavaAnnotationArgument {
@@ -44,27 +44,27 @@ abstract class JavaAnnotationArgumentImpl(
                 is PsiReferenceExpression -> JavaEnumValueAnnotationArgumentImpl(argument, name)
                 is PsiArrayInitializerMemberValue -> JavaArrayAnnotationArgumentImpl(argument, name)
                 is PsiAnnotation -> JavaAnnotationAsAnnotationArgumentImpl(argument, name)
-                else -> throw UnsupportedOperationException("Unsupported annotation argument type: " + argument)
+                else -> JavaUnknownAnnotationArgumentImpl(name)
             }
         }
     }
 }
 
 class JavaLiteralAnnotationArgumentImpl(
-        override val name: Name?,
-        override val value: Any?
+    override val name: Name?,
+    override val value: Any?
 ) : JavaLiteralAnnotationArgument
 
 class JavaArrayAnnotationArgumentImpl(
-        private val psiValue: PsiArrayInitializerMemberValue,
-        name: Name?
+    private val psiValue: PsiArrayInitializerMemberValue,
+    name: Name?
 ) : JavaAnnotationArgumentImpl(name), JavaArrayAnnotationArgument {
-    override fun getElements() = psiValue.initializers.map { JavaAnnotationArgumentImpl.create(it, null) }
+    override fun getElements() = psiValue.initializers.map { create(it, null) }
 }
 
 class JavaEnumValueAnnotationArgumentImpl(
-        private val psiReference: PsiReferenceExpression,
-        name: Name?
+    private val psiReference: PsiReferenceExpression,
+    name: Name?
 ) : JavaAnnotationArgumentImpl(name), JavaEnumValueAnnotationArgument {
     override val enumClassId: ClassId?
         get() {
@@ -83,15 +83,17 @@ class JavaEnumValueAnnotationArgumentImpl(
 }
 
 class JavaClassObjectAnnotationArgumentImpl(
-        private val psiExpression: PsiClassObjectAccessExpression,
-        name: Name?
+    private val psiExpression: PsiClassObjectAccessExpression,
+    name: Name?
 ) : JavaAnnotationArgumentImpl(name), JavaClassObjectAnnotationArgument {
     override fun getReferencedType() = JavaTypeImpl.create(psiExpression.operand.type)
 }
 
 class JavaAnnotationAsAnnotationArgumentImpl(
-        private val psiAnnotation: PsiAnnotation,
-        name: Name?
+    private val psiAnnotation: PsiAnnotation,
+    name: Name?
 ) : JavaAnnotationArgumentImpl(name), JavaAnnotationAsAnnotationArgument {
     override fun getAnnotation() = JavaAnnotationImpl(psiAnnotation)
 }
+
+class JavaUnknownAnnotationArgumentImpl(name: Name?) : JavaAnnotationArgumentImpl(name), JavaUnknownAnnotationArgument

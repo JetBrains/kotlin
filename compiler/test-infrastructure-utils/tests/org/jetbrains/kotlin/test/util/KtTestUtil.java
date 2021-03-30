@@ -105,38 +105,51 @@ public class KtTestUtil {
     }
 
     @NotNull
-    public static File getJdk9Home() {
-        String jdk9 = System.getenv("JDK_9");
-        if (jdk9 == null) {
-            jdk9 = System.getenv("JDK_19");
-            if (jdk9 == null) {
-                throw new AssertionError("Environment variable JDK_9 is not set!");
-            }
-        }
-        return new File(jdk9);
+    private static File getJdkHome(@NotNull String prop) {
+        return getJdkHome(prop, null, prop);
     }
 
-    @Nullable
-    public static File getJdk11Home() {
-        String jdk11 = System.getenv("JDK_11");
-        if (jdk11 == null) {
-            return null;
+    @NotNull
+    private static File getJdkHome(@NotNull String prop, @Nullable String otherProp) {
+        return getJdkHome(prop, otherProp, prop);
+    }
+
+    @NotNull
+    private static File getJdkHome(@NotNull String prop, @Nullable String otherProp, @NotNull String propToReport) {
+        String jdk = System.getenv(prop);
+        if (jdk == null) {
+            if (otherProp != null) {
+                return getJdkHome(otherProp, null, prop);
+            } else {
+                throw new AssertionError("Environment variable " + propToReport + " is not set!");
+            }
         }
-        return new File(jdk11);
+        return new File(jdk);
+    }
+
+    @NotNull
+    public static File getJdk6Home() {
+        return getJdkHome("JDK_6", "JDK_16");
+    }
+
+    @NotNull
+    public static File getJdk8Home() {
+        return getJdkHome("JDK_8", "JDK_18");
+    }
+
+    @NotNull
+    public static File getJdk9Home() {
+        return getJdkHome("JDK_9", "JDK_19");
+    }
+
+    @NotNull
+    public static File getJdk11Home() {
+        return getJdkHome("JDK_11");
     }
 
     @NotNull
     public static File getJdk15Home() {
-        String jdk15 = System.getenv("JDK_15");
-
-        if (jdk15 == null) {
-            jdk15 = System.getenv("JDK_15_0");
-        }
-
-        if (jdk15 == null) {
-            throw new AssertionError("Environment variable JDK_15 is not set!");
-        }
-        return new File(jdk15);
+        return getJdkHome("JDK_15", "JDK_15_0");
     }
 
     @NotNull

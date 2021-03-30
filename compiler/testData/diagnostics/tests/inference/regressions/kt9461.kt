@@ -1,11 +1,12 @@
+// FIR_IDENTICAL
 interface In<in I>
 
 interface B : In<B>
 
 interface C<I, T>
 
-fun <I, T> In<I>.foo(<!UNUSED_PARAMETER!>f<!>: () -> C<I, T>) {}
-fun <I, T, Self: In<I>> Self.foo2(<!UNUSED_PARAMETER!>f<!>: () -> C<I, T>) {}
+fun <I, T> In<I>.foo(f: () -> C<I, T>) {}
+fun <I, T, Self: In<I>> Self.foo2(f: () -> C<I, T>) {}
 
 class E : B // e <: In<B> <: In<E>
 

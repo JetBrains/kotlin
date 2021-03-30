@@ -13,25 +13,25 @@ import java.io.File
 import kotlin.test.assertTrue
 
 class RuntimeLibraryInClasspathTest {
-    private val runtimeLibraryPath = getSerializationLibraryRuntimeJar()
+    private val coreLibraryPath = getSerializationCoreLibraryJar()
 
     @Test
     fun testRuntimeLibraryExists() {
         TestCase.assertNotNull(
             "kotlinx-serialization runtime library is not found. Make sure it is present in test classpath",
-            runtimeLibraryPath
+            coreLibraryPath
         )
     }
 
     @Test
     fun testRuntimeHasSufficientVersion() {
-        val version = VersionReader.getVersionsFromManifest(runtimeLibraryPath!!)
+        val version = VersionReader.getVersionsFromManifest(coreLibraryPath!!)
         assertTrue(version.currentCompilerMatchRequired(), "Runtime version too high")
         assertTrue(version.implementationVersionMatchSupported(), "Runtime version too low")
     }
 }
 
-internal fun getSerializationLibraryRuntimeJar(): File? = try {
+internal fun getSerializationCoreLibraryJar(): File? = try {
     PathUtil.getResourcePathForClass(Class.forName("kotlinx.serialization.KSerializer"))
 } catch (e: ClassNotFoundException) {
     null

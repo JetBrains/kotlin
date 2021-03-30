@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
+import org.jetbrains.kotlin.load.java.structure.JavaArrayType
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class FirJavaTypeRef(
@@ -22,6 +25,9 @@ class FirJavaTypeRef(
     annotationBuilder: () -> List<FirAnnotationCall>,
     override val qualifier: MutableList<FirQualifierPart>
 ) : FirUserTypeRef(), FirAnnotationContainer {
+    override val customRenderer: Boolean
+        get() = true
+
     override val isMarkedNullable: Boolean
         get() = false
 
@@ -47,6 +53,10 @@ class FirJavaTypeRef(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef {
         return this
     }
+
+    override fun toString(): String {
+        return type.render()
+    }
 }
 
 @FirBuilderDsl
@@ -62,4 +72,17 @@ class FirJavaTypeRefBuilder {
 
 inline fun buildJavaTypeRef(init: FirJavaTypeRefBuilder.() -> Unit): FirJavaTypeRef {
     return FirJavaTypeRefBuilder().apply(init).build()
+}
+
+private fun JavaType?.render(): String {
+    return when (this) {
+        is JavaArrayType -> "${componentType.render()}[]"
+        is JavaClassifierType -> if (typeArguments.isEmpty()) {
+            classifierQualifiedName
+        } else {
+            classifierQualifiedName + typeArguments.joinToString(separator = ", ", prefix = "<", postfix = ">") { it.render() }
+        }
+        is JavaPrimitiveType -> type?.typeName?.identifier ?: "void"
+        else -> toString()
+    }
 }

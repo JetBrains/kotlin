@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.findFirstFunction
 
@@ -39,12 +40,12 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
 
         irClass.addMember(
             context.symbolTable.declareSimpleFunctionWithOverrides(
-                irClass.startOffset, irClass.endOffset,
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 valuesFunction
             ).also { irFunction ->
                 FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null)
-                irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUES)
+                irFunction.body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUES)
             }
         )
     }
@@ -58,12 +59,12 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
 
         irClass.addMember(
             context.symbolTable.declareSimpleFunctionWithOverrides(
-                irClass.startOffset, irClass.endOffset,
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 valueOfFunction
             ).also { irFunction ->
                 FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null)
-                irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUEOF)
+                irFunction.body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUEOF)
             }
         )
     }

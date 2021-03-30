@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -34,7 +34,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             symbol: AbstractFirBasedSymbol<*>,
             useSiteFile: FirFile,
             containingDeclarations: List<FirDeclaration>,
-            candidate: Candidate,
+            dispatchReceiver: ReceiverValue?,
             session: FirSession
         ): Boolean {
             return true
@@ -45,8 +45,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         declaration: T,
         candidate: Candidate
     ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
-        val symbol = declaration.symbol
-
         if (declaration is FirCallableDeclaration<*> && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
             @Suppress("UNCHECKED_CAST")
             return isVisible(declaration.originalIfFakeOverride() as T, candidate)
@@ -56,8 +54,19 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val useSiteFile = callInfo.containingFile
         val containingDeclarations = callInfo.containingDeclarations
         val session = callInfo.session
-        val provider = session.firProvider
 
+        return isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
+    }
+
+    fun <T> isVisible(
+        declaration: T,
+        session: FirSession,
+        useSiteFile: FirFile,
+        containingDeclarations: List<FirDeclaration>,
+        dispatchReceiver: ReceiverValue?
+    ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
+        val provider = session.firProvider
+        val symbol = declaration.symbol
         return when (declaration.visibility) {
             Visibilities.Internal -> {
                 declaration.session == session || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
@@ -65,17 +74,24 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerId = symbol.getOwnerId()
                 if (declaration.session == session) {
-                    if (ownerId == null || declaration is FirConstructor && declaration.isFromSealedClass) {
-                        val candidateFile = when (symbol) {
-                            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
-                            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
-                            else -> null
+                    when {
+                        ownerId == null -> {
+                            val candidateFile = when (symbol) {
+                                is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
+                                is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
+                                else -> null
+                            }
+                            // Top-level: visible in file
+                            candidateFile == useSiteFile
                         }
-                        // Top-level: visible in file
-                        candidateFile == useSiteFile
-                    } else {
-                        // Member: visible inside parent class, including all its member classes
-                        canSeePrivateMemberOf(containingDeclarations, ownerId, session)
+                        declaration is FirConstructor && declaration.isFromSealedClass -> {
+                            // Sealed class constructor: visible in same package
+                            declaration.symbol.callableId.packageName == useSiteFile.packageFqName
+                        }
+                        else -> {
+                            // Member: visible inside parent class, including all its member classes
+                            canSeePrivateMemberOf(containingDeclarations, ownerId, session)
+                        }
                     }
                 } else {
                     declaration is FirSimpleFunction && declaration.isAllowedToBeAccessedFromOutside()
@@ -84,7 +100,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
             Visibilities.Protected -> {
                 val ownerId = symbol.getOwnerId()
-                ownerId != null && canSeeProtectedMemberOf(containingDeclarations, candidate.dispatchReceiverValue, ownerId, session)
+                ownerId != null && canSeeProtectedMemberOf(containingDeclarations, dispatchReceiver, ownerId, session)
             }
 
             else -> platformVisibilityCheck(
@@ -92,7 +108,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 symbol,
                 useSiteFile,
                 containingDeclarations,
-                candidate,
+                dispatchReceiver,
                 session
             )
         }
@@ -103,7 +119,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         symbol: AbstractFirBasedSymbol<*>,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
-        candidate: Candidate,
+        dispatchReceiver: ReceiverValue?,
         session: FirSession
     ): Boolean
 
@@ -133,7 +149,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
     private fun ClassId.ownerIfCompanion(session: FirSession): ClassId? {
         if (outerClassId == null || isLocal) return null
-        val ownerSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
+        val ownerSymbol = session.symbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
 
         return outerClassId.takeIf { ownerSymbol?.fir?.isCompanion == true }
     }

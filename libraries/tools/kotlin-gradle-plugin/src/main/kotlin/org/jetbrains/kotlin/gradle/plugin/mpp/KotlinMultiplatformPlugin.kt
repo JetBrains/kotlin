@@ -10,15 +10,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.provider.Provider
-import org.gradle.api.publish.PublicationContainer
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPom
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -33,23 +28,23 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerBuild
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 class KotlinMultiplatformPlugin(
-    private val kotlinPluginVersion: String,
-    private val featurePreviews: FeaturePreviews // TODO get rid of this internal API usage once we don't need it
+    private val kotlinPluginVersion: String
 ) : Plugin<Project> {
 
     private class TargetFromPresetExtension(val targetsContainer: KotlinTargetsContainerWithPresets) {
@@ -113,8 +108,20 @@ class KotlinMultiplatformPlugin(
         exportProjectStructureMetadataForOtherBuilds(project)
 
         SingleActionPerBuild.run(project.rootProject, "cleanup-processed-metadata") {
-            project.gradle.buildFinished {
-                SourceSetMetadataStorageForIde.cleanupStaleEntries(project)
+            if (isConfigurationCacheAvailable(project.gradle)) {
+                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry!!.onTaskCompletion(
+                    project.gradle.sharedServices
+                        .registerIfAbsent(
+                            "cleanup-stale-sourceset-metadata",
+                            CleanupStaleSourceSetMetadataEntriesService::class.java
+                        ) {
+                            CleanupStaleSourceSetMetadataEntriesService.configure(it, project)
+                        }
+                )
+            } else {
+                project.gradle.buildFinished {
+                    SourceSetMetadataStorageForIde.cleanupStaleEntries(project)
+                }
             }
         }
     }
@@ -309,6 +316,10 @@ internal fun sourcesJarTask(
             sourceSets.value.forEach { sourceSet ->
                 it.from(sourceSet.kotlin) { copySpec ->
                     copySpec.into(sourceSet.name)
+                    // Duplicates are coming from `SourceSets` that `sourceSet` depends on.
+                    // Such dependency was added by Kotlin compilation.
+                    // TODO: rethink approach for adding dependent `SourceSets` to Kotlin compilation `SourceSet`
+                    copySpec.duplicatesStrategy = DuplicatesStrategy.WARN
                 }
             }
         }

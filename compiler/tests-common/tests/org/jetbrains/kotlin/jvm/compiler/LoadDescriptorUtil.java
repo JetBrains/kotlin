@@ -173,10 +173,6 @@ public class LoadDescriptorUtil {
 
             args.addAll(InTextDirectivesUtils.findListWithPrefixes(content, "JAVAC_OPTIONS:"));
 
-            if (InTextDirectivesUtils.isDirectiveDefined(content, "ANDROID_ANNOTATIONS")) {
-                classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
-            }
-
             if (InTextDirectivesUtils.isDirectiveDefined(content, "JVM_ANNOTATIONS")) {
                 classpath.add(ForTestCompileRuntime.jvmAnnotationsForTests());
             }

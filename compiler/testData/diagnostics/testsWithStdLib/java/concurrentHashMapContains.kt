@@ -1,9 +1,9 @@
-// !LANGUAGE: -ProhibitConcurrentHashMapContains -NonStrictOnlyInputTypesChecks
+// !LANGUAGE: -ProhibitConcurrentHashMapContains
 // !WITH_NEW_INFERENCE
 // FULL_JDK
 
 class A : java.util.concurrent.ConcurrentHashMap<String, Int>() {
-    operator fun contains(<!UNUSED_PARAMETER!>x<!>: Char): Boolean = true
+    operator fun contains(x: Char): Boolean = true
 }
 class B : java.util.concurrent.ConcurrentHashMap<String, Int>() {
     override fun contains(value: Any?): Boolean {
@@ -77,4 +77,3 @@ fun main() {
     1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}, TYPE_INFERENCE_ONLY_INPUT_TYPES{NI}!>in<!> (c as Map<String, Int>)
     1 <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}, TYPE_INFERENCE_ONLY_INPUT_TYPES{NI}!>!in<!> (c as Map<String, Int>)
 }
-

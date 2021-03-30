@@ -60,7 +60,7 @@ fun case_6(x: EmptyClass?) {
 
 // TESTCASE NUMBER: 7
 fun case_7() {
-    if (nullableStringProperty == null || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>nullableStringProperty<!> == null) {
+    if (nullableStringProperty == null || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>nullableStringProperty<!> == null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>nullableStringProperty<!>
     }
 }
@@ -259,7 +259,7 @@ fun case_23(a: ((Float) -> Int?)?, b: Float?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>
         if (a != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?> & kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>? & kotlin.Function1<kotlin.Float, kotlin.Int?>")!>a<!>
         }
     }
 }

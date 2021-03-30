@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 //package redeclarations {
   object <error>A</error> {
     val x : Int = 0

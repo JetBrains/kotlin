@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import java.io.File
 
 abstract class DukatTask(
@@ -22,9 +21,9 @@ abstract class DukatTask(
     @get:Internal
     protected val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-    init {
-        // TODO: temporary workaround for configuration cache enabled builds
-        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
+    @get:Internal
+    val compilationName by lazy {
+        compilation.disambiguatedName
     }
 
     @get:Internal
@@ -41,16 +40,24 @@ abstract class DukatTask(
     @Input
     var externalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
+    private val projectPath = project.path
+
+    private val compilationResolution
+        get() =
+            nodeJs.npmResolutionManager.requireInstalled(
+                services,
+                logger
+            )[projectPath][compilationName]
+
     @get:Internal
-    @delegate:Transient
-    val dts by lazy {
-        val resolvedCompilation = nodeJs.npmResolutionManager.requireInstalled()[project][compilation]
-        val dtsResolver = DtsResolver(resolvedCompilation.npmProject)
-        dtsResolver.getAllDts(
-            resolvedCompilation.externalNpmDependencies,
-            considerGeneratingFlag
-        )
-    }
+    val dts: List<DtsResolver.Dts>
+        get() {
+            val dtsResolver = DtsResolver(compilationResolution.npmProject)
+            return dtsResolver.getAllDts(
+                compilationResolution.externalNpmDependencies,
+                considerGeneratingFlag
+            )
+        }
 
     /**
      * Package name for the generated file (by default filename.d.ts renamed to filename.d.kt)
@@ -84,7 +91,7 @@ abstract class DukatTask(
 
     @TaskAction
     open fun run() {
-        nodeJs.npmResolutionManager.checkRequiredDependencies(this)
+        nodeJs.npmResolutionManager.checkRequiredDependencies(this, services, logger, projectPath)
 
         destinationDir.deleteRecursively()
 
@@ -100,7 +107,7 @@ abstract class DukatTask(
             qualifiedPackageName,
             null,
             operation
-        ).execute()
+        ).execute(services)
     }
 }
 

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
-import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
@@ -115,11 +114,6 @@ internal class UltraLightMembersCreator(
             || ktFunction.hasReifiedParameters()
             || ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
         ) return emptyList()
-
-
-        if (ktFunction.modifierList?.hasSuspendModifier() == true && ktFunction.isPrivate()) {
-            return emptyList()
-        }
 
         var methodIndex = METHOD_INDEX_BASE
         val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate, methodIndex = methodIndex)

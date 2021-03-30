@@ -38,12 +38,12 @@ interface Test6 : <!INTERFACE_WITH_SUPERCLASS!>C1<!> {}
 
 class CTest1() : OC1() {}
 
-class CTest2 : C2 {}
+class CTest2 : <!SUPERTYPE_NOT_INITIALIZED!>C2<!> {}
 
-class CTest3 : C2, C3 {}
+class CTest3 : <!SUPERTYPE_NOT_INITIALIZED!>C2<!>, C3 {}
 
 class CTest4 : T1 {}
 
 class CTest5 : T1, T1 {}
 
-class CTest6 : C1 {}
+class CTest6 : <!SUPERTYPE_NOT_INITIALIZED!>C1<!> {}

@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
@@ -36,13 +33,13 @@ class KtFirCollectionLiteralReference(
     }
 
     private fun KtFirAnalysisSession.arrayOfSymbol(identifier: Name): KtSymbol? {
-        val fir = firResolveState.rootModuleSession.firSymbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
+        val fir = firResolveState.rootModuleSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
             /* choose (for byte array)
              * public fun byteArrayOf(vararg elements: kotlin.Byte): kotlin.ByteArray
              */
             (it as? FirFunctionSymbol<*>)?.fir?.valueParameters?.singleOrNull()?.isVararg == true
         }?.fir as? FirSimpleFunction ?: return null
-        return firSymbolBuilder.buildFunctionSymbol(fir)
+        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(fir)
     }
 
     companion object {

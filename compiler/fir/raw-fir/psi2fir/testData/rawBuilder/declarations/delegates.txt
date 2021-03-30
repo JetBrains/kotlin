@@ -7,7 +7,7 @@ FILE: delegates.kt
             ^ D|/x|.getValue#(Null(null), ::R|/x|)
         }
     public? final? val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
-        private constructor(): R|<anonymous>| {
+        private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<<implicit>>()
         }
 

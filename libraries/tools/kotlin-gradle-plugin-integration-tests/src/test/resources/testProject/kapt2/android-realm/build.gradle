@@ -4,7 +4,8 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url 'https://maven.google.com' }
-        jcenter()
+        mavenCentral()
+        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$android_tools_version"
@@ -40,6 +41,11 @@ android {
 
     dexOptions {
         incremental false
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 
     packagingOptions {

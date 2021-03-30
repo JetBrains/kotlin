@@ -20,7 +20,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
     @Nested
     @TestMetadata("compiler/testData/foreignAnnotations/tests")
     @TestDataPath("$PROJECT_ROOT")
-    public class Tests extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+    public class Tests {
         @Test
         public void testAllFilesPresentInTests() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -95,7 +95,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
         @Nested
         @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305")
         @TestDataPath("$PROJECT_ROOT")
-        public class Jsr305 extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+        public class Jsr305 {
             @Test
             public void testAllFilesPresentInJsr305() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -128,7 +128,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
             @Nested
             @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/ignore")
             @TestDataPath("$PROJECT_ROOT")
-            public class Ignore extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+            public class Ignore {
                 @Test
                 public void testAllFilesPresentInIgnore() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/ignore"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -144,7 +144,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
             @Nested
             @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings")
             @TestDataPath("$PROJECT_ROOT")
-            public class NullabilityWarnings extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+            public class NullabilityWarnings {
                 @Test
                 public void testAllFilesPresentInNullabilityWarnings() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -195,7 +195,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
                 @Nested
                 @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes")
                 @TestDataPath("$PROJECT_ROOT")
-                public class FromPlatformTypes extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+                public class FromPlatformTypes {
                     @Test
                     public void testAllFilesPresentInFromPlatformTypes() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -325,7 +325,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
                 @Nested
                 @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault")
                 @TestDataPath("$PROJECT_ROOT")
-                public class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+                public class TypeQualifierDefault {
                     @Test
                     public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -384,7 +384,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
             @Nested
             @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault")
             @TestDataPath("$PROJECT_ROOT")
-            public class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+            public class TypeQualifierDefault {
                 @Test
                 public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -449,7 +449,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
         @Nested
         @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings")
         @TestDataPath("$PROJECT_ROOT")
-        public class Jsr305NullabilityWarnings extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+        public class Jsr305NullabilityWarnings {
             @Test
             public void testAllFilesPresentInJsr305NullabilityWarnings() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -458,7 +458,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
             @Nested
             @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration")
             @TestDataPath("$PROJECT_ROOT")
-            public class Migration extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+            public class Migration {
                 @Test
                 public void testAllFilesPresentInMigration() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -523,7 +523,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
         @Nested
         @TestMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault")
         @TestDataPath("$PROJECT_ROOT")
-        public class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+        public class TypeQualifierDefault {
             @Test
             public void testAllFilesPresentInTypeQualifierDefault() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/tests/typeQualifierDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -540,7 +540,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
     @Nested
     @TestMetadata("compiler/testData/foreignAnnotations/java8Tests")
     @TestDataPath("$PROJECT_ROOT")
-    public class Java8Tests extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+    public class Java8Tests {
         @Test
         public void testAllFilesPresentInJava8Tests() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/java8Tests"), Pattern.compile("^(.+)\\.kt$"), null, true, "jspecify", "typeEnhancementOnCompiledJava");
@@ -567,7 +567,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
         @Nested
         @TestMetadata("compiler/testData/foreignAnnotations/java8Tests/jsr305")
         @TestDataPath("$PROJECT_ROOT")
-        public class Jsr305 extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+        public class Jsr305 {
             @Test
             public void testAllFilesPresentInJsr305() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/java8Tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -607,7 +607,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGen
         @Nested
         @TestMetadata("compiler/testData/foreignAnnotations/java8Tests/typeEnhancement")
         @TestDataPath("$PROJECT_ROOT")
-        public class TypeEnhancement extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
+        public class TypeEnhancement {
             @Test
             public void testAllFilesPresentInTypeEnhancement() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotations/java8Tests/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), null, true);

@@ -31,7 +31,6 @@ private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): Annotation
     object : AnnotationVisitor(Opcodes.API_VERSION) {
         var kind: Int? = null
         var metadataVersion: IntArray? = null
-        var bytecodeVersion: IntArray? = null
         var data1: Array<String>? = null
         var data2: Array<String>? = null
         var extraString: String? = null
@@ -42,7 +41,6 @@ private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): Annotation
             when (name) {
                 "k" -> kind = value as? Int
                 "mv" -> metadataVersion = value as? IntArray
-                "bv" -> bytecodeVersion = value as? IntArray
                 "xs" -> extraString = value as? String
                 "xi" -> extraInt = value as? Int
                 "pn" -> packageName = value as? String
@@ -71,6 +69,6 @@ private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): Annotation
         }
 
         override fun visitEnd() {
-            output(KotlinClassHeader(kind, metadataVersion, bytecodeVersion, data1, data2, extraString, packageName, extraInt))
+            output(KotlinClassHeader(kind, metadataVersion, data1, data2, extraString, packageName, extraInt))
         }
     }

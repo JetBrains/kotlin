@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -27,7 +27,7 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
         val declarationNames = DescriptorUtils.getAllDescriptors(moduleDescriptor.getPackage(packageFqName).memberScope)
             .mapTo(sortedSetOf()) { it.name }
 
-        val provider = session.firSymbolProvider
+        val provider = session.symbolProvider
 
         val builder = StringBuilder()
         val firRenderer = FirRenderer(builder)

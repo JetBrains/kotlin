@@ -5,11 +5,11 @@ FILE: arrayAccess.kt
         ^foo IntegerLiteral(1)
     }
     public? final? class Wrapper : R|kotlin/Any| {
-        public? constructor(v: IntArray): R|Wrapper| {
+        public? [ContainingClassKey=Wrapper] constructor(v: IntArray): R|Wrapper| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val v: IntArray = R|<local>/v|
+        public? final? [IsFromPrimaryConstructor=true] val v: IntArray = R|<local>/v|
             public? get(): IntArray
 
     }

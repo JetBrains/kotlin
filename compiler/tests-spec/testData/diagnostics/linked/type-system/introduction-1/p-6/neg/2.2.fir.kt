@@ -70,7 +70,7 @@ open class Case13_1 {
 }
 
 class Case13: Case13_1() {
-    override val x = null
+    override val <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>x<!> = null
 }
 
 // TESTCASE NUMBER: 14
@@ -79,7 +79,7 @@ abstract class Case14_1 {
 }
 
 class Case14: Case14_1() {
-    override val x = null
+    override val <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>x<!> = null
 }
 
 // TESTCASE NUMBER: 15
@@ -88,5 +88,5 @@ interface Case15_1 {
 }
 
 class Case15(): Case15_1 {
-    override fun foo() = null
+    override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>foo<!>() = null
 }

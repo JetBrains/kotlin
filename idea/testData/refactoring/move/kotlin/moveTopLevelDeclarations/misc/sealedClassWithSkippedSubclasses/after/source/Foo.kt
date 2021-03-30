@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-AllowSealedInheritorsInDifferentFilesOfSamePackage
+
 package source
 
 import target.Expr

@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.checkers.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.*
+import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.util.withIndent
 import java.io.File
 
 private typealias Alias = String
@@ -20,20 +23,11 @@ class Generator(
     private val packageName: String,
     private val abstractCheckerName: String
 ) {
-    private val generationPath: File
-
-    init {
-        var path = generationPath
-        packageName.split(".").forEach {
-            path = path.resolve(it)
-        }
-        path.mkdirs()
-        this.generationPath = path
-    }
+    private val generationPath: File = getGenerationPath(generationPath, packageName)
 
     private fun generateAliases() {
         val filename = "${abstractCheckerName}Aliases.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printGeneratedMessage()
             configuration.aliases.keys
@@ -52,7 +46,7 @@ class Generator(
 
     private fun generateAbstractCheckersComponent() {
         val filename = "${checkersComponentName}.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printImports()
             printGeneratedMessage()
@@ -95,7 +89,7 @@ class Generator(
     private fun generateComposedComponent() {
         val composedComponentName = "Composed$checkersComponentName"
         val filename = "${composedComponentName}.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printImports()
             printGeneratedMessage()

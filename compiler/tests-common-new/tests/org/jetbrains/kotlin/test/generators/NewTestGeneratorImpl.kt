@@ -186,7 +186,9 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             p.generateTestDataPath(testClassModel)
             p.generateParameterAnnotations(testClassModel)
 
-            p.println("public class ${testClassModel.name} extends $baseTestClassName {")
+            val extendsClause = if (!isNested) " extends $baseTestClassName" else ""
+
+            p.println("public class ${testClassModel.name}$extendsClause {")
             p.pushIndent()
 
             val testMethods = testClassModel.methods

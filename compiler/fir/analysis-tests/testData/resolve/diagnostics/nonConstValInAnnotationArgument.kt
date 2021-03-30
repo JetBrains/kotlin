@@ -11,3 +11,11 @@ const val cnst = 2
     )<!>
 )
 fun test() {}
+
+const val A = "foo"
+const val B = 100
+
+annotation class S(val s: String)
+
+@S(A + B)
+fun foo() {}

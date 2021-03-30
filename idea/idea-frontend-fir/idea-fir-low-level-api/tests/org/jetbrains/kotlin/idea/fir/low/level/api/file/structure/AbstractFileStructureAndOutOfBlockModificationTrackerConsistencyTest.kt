@@ -9,7 +9,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parentOfType
-import junit.framework.Assert
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
@@ -33,24 +32,54 @@ abstract class AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyT
             ?: error("Please, specify should out of block change happen or not by `// OUT_OF_BLOCK:` directive")
 
         val elementAtCaret = ktFile.findElementAtCaret()
-        val (initialStructureElement, initialFileStructure, initialModuleResolveState) = getStructureElementForKtElement(elementAtCaret)
 
+        var fileStructureWithResolveState = getStructureElementForKtElement(elementAtCaret)
+        for (i in 0..REPETITIONS_COUNT) {
+            fileStructureWithResolveState = typeAndCheck(ktFile, fileStructureWithResolveState, textToType, outOfBlock)
+        }
+    }
+
+    private fun typeAndCheck(
+        ktFile: KtFile,
+        fileStructureWithResolveStateBeforeTyping: FileStructureWithResolveState,
+        textToType: String,
+        outOfBlock: Boolean,
+    ): FileStructureWithResolveState {
+        val newFileStructureWithResolveState = getStateAfterTyping(textToType, ktFile)
+        checkIsCorrect(newFileStructureWithResolveState, fileStructureWithResolveStateBeforeTyping, outOfBlock)
+        return newFileStructureWithResolveState
+    }
+
+    private fun getStateAfterTyping(
+        textToType: String,
+        ktFile: KtFile
+    ): FileStructureWithResolveState {
         myFixture.type(textToType)
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
         val newElementAtCaret = ktFile.findElementAtCaret()
-        val (newStructureElement, newFileStructure, newModuleResolveState) = getStructureElementForKtElement(newElementAtCaret)
-        Assert.assertTrue("Structure elements should be different after typing", newStructureElement !== initialStructureElement)
+        return getStructureElementForKtElement(newElementAtCaret)
+    }
 
-        Assert.assertEquals(
+    private fun checkIsCorrect(
+        newFileStructureWithResolveState: FileStructureWithResolveState,
+        fileStructureWithResolveStateBeforeTyping: FileStructureWithResolveState,
+        outOfBlock: Boolean
+    ) {
+        assertTrue(
+            "Structure elements should be different after typing",
+            newFileStructureWithResolveState.element !== fileStructureWithResolveStateBeforeTyping.element
+        )
+
+        assertEquals(
             "FirModuleResolveState should change only on out of block modification",
             outOfBlock,
-            newModuleResolveState !== initialModuleResolveState
+            newFileStructureWithResolveState.resolveState !== fileStructureWithResolveStateBeforeTyping.resolveState
         )
-        Assert.assertEquals(
+        assertEquals(
             "FileStructure state should change only on out of block modification",
             outOfBlock,
-            initialFileStructure !== newFileStructure
+            newFileStructureWithResolveState.fileStructure !== fileStructureWithResolveStateBeforeTyping.fileStructure
         )
     }
 
@@ -62,11 +91,21 @@ abstract class AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyT
         return element!!.parentOfType()!!
     }
 
-    private fun getStructureElementForKtElement(element: KtElement): Triple<FileStructureElement, FileStructure, FirModuleResolveState> {
+    private fun getStructureElementForKtElement(element: KtElement): FileStructureWithResolveState {
         val moduleResolveState = element.getResolveState() as FirModuleResolveStateImpl
         val fileStructure =
             moduleResolveState.fileStructureCache.getFileStructure(element.containingKtFile, moduleResolveState.rootModuleSession.cache)
         val fileStructureElement = fileStructure.getStructureElementFor(element)
-        return Triple(fileStructureElement, fileStructure, moduleResolveState)
+        return FileStructureWithResolveState(fileStructureElement, fileStructure, moduleResolveState)
+    }
+
+    private data class FileStructureWithResolveState(
+        val element: FileStructureElement,
+        val fileStructure: FileStructure,
+        val resolveState: FirModuleResolveState
+    )
+
+    companion object {
+        private const val REPETITIONS_COUNT = 3
     }
 }

@@ -153,6 +153,10 @@ class IrInlineCodegen(
         )
     }
 
+    override fun genCycleStub(text: String, codegen: ExpressionCodegen) {
+        generateStub(text, codegen)
+    }
+
     override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
         if (maskStartIndex == -1) return listOf()
         return expandMaskConditionsAndUpdateVariableNodes(
@@ -180,10 +184,6 @@ class IrExpressionLambdaImpl(
         get() = reference.extensionReceiver != null
 
     override val isSuspend: Boolean = function.isSuspend
-
-    override fun isReturnFromMe(labelName: String): Boolean {
-        return false //always false
-    }
 
     // This name doesn't actually matter: it is used internally to tell this lambda's captured
     // arguments apart from any other scope's. So long as it's unique, any value is fine.

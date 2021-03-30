@@ -57,6 +57,12 @@ abstract class AbstractIrTextTestBase(
             ::ClassicFrontendFacade,
             ::FirFrontendFacade
         )
+
+        useFrontendHandlers(
+            ::NoCompilationErrorsHandler,
+            ::NoFirCompilationErrorsHandler,
+        )
+
         useFrontend2BackendConverters(
             ::ClassicFrontend2IrConverter,
             ::Fir2IrResultsConverter

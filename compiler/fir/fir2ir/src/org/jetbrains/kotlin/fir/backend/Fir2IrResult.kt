@@ -7,6 +7,5 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
-data class Fir2IrResult(val irModuleFragment: IrModuleFragment, val symbolTable: SymbolTable, val sourceManager: PsiSourceManager, val components: Fir2IrComponents)
+data class Fir2IrResult(val irModuleFragment: IrModuleFragment, val symbolTable: SymbolTable, val components: Fir2IrComponents)

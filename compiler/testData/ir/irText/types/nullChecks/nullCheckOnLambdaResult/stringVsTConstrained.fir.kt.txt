@@ -4,7 +4,7 @@ fun <T : Any?> useTConstrained(xs: Array<T>, fn: Function0<T>): T {
 
 fun testWithNullCheck(xs: Array<String>) {
   useTConstrained<String>(xs = xs, fn = local fun <anonymous>(): String {
-    return string() /*!! String */
+    return string() /*!! @FlexibleNullability String */
   }
 ) /*~> Unit */
 }

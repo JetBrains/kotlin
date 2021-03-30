@@ -1,4 +1,3 @@
-// IGNORE_FIR_DIAGNOSTICS
 class MyObject private constructor(val delegate: Interface) : Interface by delegate {
     constructor() : this(Delegate())
 }

@@ -8,15 +8,19 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.createTmpVariable
+import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irIfNull
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 val ifNullExpressionsFusionPhase =
     makeIrFilePhase(
@@ -98,17 +102,17 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
                 (!outer.ifNullExpr.isTrivial() && innerKeepsNull != false && innerDiscardsNonNull != false)
             ) return this
             return inner.createIrBuilder().irBlock {
-                val ifNull = outer.substitute(inner.ifNullExpr, innerKeepsNull)
-                val ifNotNull = outer.substitute(inner.ifNotNullExpr, innerDiscardsNonNull)
+                val ifNull = outer.substitute(inner.ifNullExpr, innerKeepsNull, inner.type)
+                val ifNotNull = outer.substitute(inner.ifNotNullExpr, innerDiscardsNonNull, inner.type)
                 +inner.subjectVar
                 +irIfNull(outer.type, irGet(inner.subjectVar), ifNull, ifNotNull)
             }
         }
 
-        private fun IfNullExpr.substitute(subject: IrExpression, knownNullability: Boolean?): IrExpression =
+        private fun IfNullExpr.substitute(subject: IrExpression, knownNullability: Boolean?, temporaryVarType: IrType): IrExpression =
             when (knownNullability) {
                 null -> createIrBuilder().irBlock {
-                    val tmp = createTmpVariable(subject)
+                    val tmp = createTmpVariable(subject, irType = temporaryVarType)
                     val ifNull = ifNullExpr.remap(subjectVar, lazy { tmp })
                     val ifNotNull = ifNotNullExpr.remap(subjectVar, lazy { tmp })
                     +irIfNull(type, irGet(tmp), ifNull, ifNotNull)

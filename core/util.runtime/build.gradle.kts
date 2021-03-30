@@ -1,6 +1,4 @@
-
 plugins {
-    java
     kotlin("jvm")
     id("jps-compatible")
 }
@@ -20,4 +18,10 @@ sourceSets {
 tasks.withType<JavaCompile> {
     sourceCompatibility = "1.6"
     targetCompatibility = "1.6"
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
+    }
 }

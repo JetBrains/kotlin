@@ -48,6 +48,8 @@ class NumbersTest {
         // overflow behavior
         expect(Int.MIN_VALUE) { Int.MAX_VALUE + one }
         expect(Int.MAX_VALUE) { Int.MIN_VALUE - one }
+        expect(Int.MIN_VALUE) { Int.MIN_VALUE / -1 }
+        expect(0) { (Int.MIN_VALUE % -1) + 0 } // +0 is a workaround for KT-45620
     }
 
     @Test fun longMinMaxValues() {
@@ -60,6 +62,8 @@ class NumbersTest {
         // overflow behavior
         expect(Long.MIN_VALUE) { Long.MAX_VALUE + one }
         expect(Long.MAX_VALUE) { Long.MIN_VALUE - one }
+        expect(Long.MIN_VALUE) { Long.MIN_VALUE / -1L }
+        expect(0L) { Long.MIN_VALUE % -1L }
     }
 
     @Test fun shortMinMaxValues() {
@@ -72,6 +76,8 @@ class NumbersTest {
         // overflow behavior
         expect(Short.MIN_VALUE) { (Short.MAX_VALUE + oneS).toShort() }
         expect(Short.MAX_VALUE) { (Short.MIN_VALUE - oneS).toShort() }
+        expect(Short.MAX_VALUE + oneS) { Short.MIN_VALUE / (-1).toShort() }
+        expect(0) { (Short.MIN_VALUE % (-1).toShort()) + 0 } // +0 is a workaround for KT-45620
     }
 
     @Test fun byteMinMaxValues() {
@@ -84,6 +90,8 @@ class NumbersTest {
         // overflow behavior
         expect(Byte.MIN_VALUE) { (Byte.MAX_VALUE + oneB).toByte() }
         expect(Byte.MAX_VALUE) { (Byte.MIN_VALUE - oneB).toByte() }
+        expect(Byte.MAX_VALUE + oneB) { Byte.MIN_VALUE / (-1).toByte() }
+        expect(0) { (Byte.MIN_VALUE % (-1).toByte()) + 0 } // +0 is a workaround for KT-45620
     }
 
     @Test fun doubleMinMaxValues() {

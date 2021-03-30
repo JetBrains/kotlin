@@ -10,5 +10,5 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
 abstract class FirControlFlowChecker {
-    abstract fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, checkerContext: CheckerContext)
+    abstract fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext)
 }

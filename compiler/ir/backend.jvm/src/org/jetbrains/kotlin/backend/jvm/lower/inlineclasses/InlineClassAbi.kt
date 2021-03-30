@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.lower.STUB_FOR_INLINING
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
@@ -56,10 +58,8 @@ object InlineClassAbi {
      * Looking for a backing field does not work for unsigned types, which don't
      * contain a field.
      */
-    fun getUnderlyingType(irClass: IrClass): IrType {
-        require(irClass.isInline)
-        return irClass.primaryConstructor!!.valueParameters[0].type
-    }
+    fun getUnderlyingType(irClass: IrClass): IrType =
+        irClass.singlePrimaryConstructorParameter.type
 
     /**
      * Returns a mangled name for a function taking inline class arguments
@@ -132,7 +132,7 @@ object InlineClassAbi {
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
             erasedUpperBound.fqNameWhenAvailable!!.toUnsafe(),
-            isInline = erasedUpperBound.isInline,
+            isInline = isInlineClassType(),
             isNullable = isNullable()
         )
 
@@ -155,10 +155,18 @@ internal val IrFunction.hasMangledParameters: Boolean
             (this is IrConstructor && constructedClass.isInline)
 
 internal val IrFunction.hasMangledReturnType: Boolean
-    get() = returnType.erasedUpperBound.isInline && parentClassOrNull?.isFileClass != true
+    get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
+
+private val IrClass.singlePrimaryConstructorParameter: IrValueParameter
+    get() {
+        require(isInline) { "Not an inline class: ${render()} "}
+        val primaryConstructor = primaryConstructor ?: error("Inline class has no primary constructor: ${render()}")
+        return primaryConstructor.valueParameters.singleOrNull()
+            ?: error("Inline class primary constructor should have one parameter: ${primaryConstructor.render()}")
+    }
 
 internal val IrClass.inlineClassFieldName: Name
-    get() = primaryConstructor!!.valueParameters.single().name
+    get() = singlePrimaryConstructorParameter.name
 
 val IrFunction.isInlineClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isInline == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
@@ -166,3 +174,11 @@ val IrFunction.isInlineClassFieldGetter: Boolean
 
 val IrFunction.isPrimaryInlineClassConstructor: Boolean
     get() = this is IrConstructor && isPrimary && constructedClass.isInline
+
+val IrFunction.isInlineCallableReference: Boolean
+    get() = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA && name.asString().contains("\$$STUB_FOR_INLINING")
+
+val IrType.isMappedToPrimitive: Boolean
+    get() = isInlineClassType() &&
+            !(isNullable() && makeNotNull().unboxInlineClass().isNullable()) &&
+            makeNotNull().unboxInlineClass().isPrimitiveType()

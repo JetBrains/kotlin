@@ -42,7 +42,7 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     private val inputSnapshotsCacheDir = File(cachesRootDir, "inputs").apply { mkdirs() }
     private val lookupCacheDir = File(cachesRootDir, "lookups").apply { mkdirs() }
 
-    val inputsCache: InputsCache = InputsCache(inputSnapshotsCacheDir, reporter).apply { registerCache() }
+    val inputsCache: InputsCache = InputsCache(inputSnapshotsCacheDir, reporter, pathConverter).apply { registerCache() }
     val lookupCache: LookupStorage = LookupStorage(lookupCacheDir, pathConverter).apply { registerCache() }
     abstract val platformCache: PlatformCache
 

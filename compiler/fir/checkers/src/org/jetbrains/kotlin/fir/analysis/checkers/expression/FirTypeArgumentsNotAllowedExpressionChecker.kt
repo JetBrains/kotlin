@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 
@@ -20,15 +20,9 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessChecker()
 
         if (explicitReceiver is FirResolvedQualifier && explicitReceiver.symbol == null) {
             if (explicitReceiver.typeArguments.isNotEmpty()) {
-                reporter.report(explicitReceiver.source)
+                reporter.reportOn(explicitReceiver.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, context)
                 return
             }
-        }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let {
-            report(FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(it))
         }
     }
 }

@@ -2,6 +2,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // IGNORE_BACKEND: JVM, NATIVE
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_LIGHT_ANALYSIS
 
 // `lambda` should not be wrapped in yet another object (so no OnInlineArgumentKt$box$1$1).

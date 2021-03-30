@@ -35,7 +35,7 @@ class JvmInlineApplicabilityChecker : DeclarationChecker {
             context.trace.report(ErrorsJvm.JVM_INLINE_WITHOUT_VALUE_CLASS.on(annotationEntry))
         }
 
-        if (descriptor.isValue && annotation == null) {
+        if (descriptor.isValue && annotation == null && !descriptor.isExpect) {
             val valueKeyword = declaration.modifierList?.getModifier(KtTokens.VALUE_KEYWORD) ?: return
             context.trace.report(ErrorsJvm.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION.on(valueKeyword))
         }

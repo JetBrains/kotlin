@@ -21,3 +21,9 @@ val x6 = 0x1234 and 0x5678L
 
 // val x7: 4656.toLong()
 val x7 = 0x1234L and 0x5678
+
+// val x8: -123457
+val x8 = (-123_456_789_321).floorDiv(1_000_000)
+
+// val x9: 79
+val x9 = (-123_456_789_321).mod(100)

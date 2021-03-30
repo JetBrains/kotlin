@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -57,12 +57,11 @@ import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.createSessionWithDependencies
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
@@ -86,8 +85,9 @@ object KotlinToJVMBytecodeCompiler {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         if (jarPath != null) {
             val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
+            val noReflect = configuration.get(JVMConfigurationKeys.NO_REFLECT, false)
             val resetJarTimestamps = !configuration.get(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS, false)
-            CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, resetJarTimestamps, mainClassFqName, outputFiles)
+            CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, noReflect, resetJarTimestamps, mainClassFqName, outputFiles, messageCollector)
             if (reportOutputFiles) {
                 val message = OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
                 messageCollector.report(OUTPUT, message)
@@ -309,33 +309,49 @@ object KotlinToJVMBytecodeCompiler {
         val projectConfiguration = environment.configuration
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
         val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
+        val targetIds = environment.configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
+        val incrementalComponents = environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
         for (module in chunk) {
             performanceManager?.notifyAnalysisStarted()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
             val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
+
+            val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
+                AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, environment.messageCollector).isHasErrors or errorsFound
+            }
+
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
-            val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+            val sourceScope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-            val provider = FirProjectSessionProvider()
 
-            val librariesModuleInfo = FirJvmModuleInfo.createForLibraries()
             val librariesScope = ProjectScope.getLibrariesScope(project)
-            FirSessionFactory.createLibrarySession(
-                librariesModuleInfo, provider, librariesScope,
-                project, environment.createPackagePartProvider(librariesScope)
-            )
 
-            val moduleInfo = FirJvmModuleInfo(module, listOf(librariesModuleInfo))
-            val session = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope, project) {
+            val languageVersionSettings = moduleConfiguration.languageVersionSettings
+            val session = createSessionWithDependencies(
+                module,
+                project,
+                languageVersionSettings,
+                sourceScope,
+                librariesScope,
+                lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
+                getPackagePartProvider = { environment.createPackagePartProvider(it) },
+                getAdditionalModulePackagePartProvider = {
+                    if (targetIds == null || incrementalComponents == null) null
+                    else IncrementalPackagePartProvider(
+                        environment.createPackagePartProvider(it),
+                        targetIds.map(incrementalComponents::getIncrementalCache)
+                    )
+                }
+            ) {
                 if (extendedAnalysisMode) {
                     registerExtendedCommonCheckers()
                 }
             }
 
-            val firAnalyzerFacade = FirAnalyzerFacade(session, moduleConfiguration.languageVersionSettings, ktFiles)
+            val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles)
 
             firAnalyzerFacade.runResolution()
             val firDiagnostics = firAnalyzerFacade.runCheckers().values.flatten()
@@ -345,15 +361,15 @@ object KotlinToJVMBytecodeCompiler {
             )
             performanceManager?.notifyAnalysisFinished()
 
-            if (firDiagnostics.any { it.severity == Severity.ERROR }) {
+            if (syntaxErrors || firDiagnostics.any { it.severity == Severity.ERROR }) {
                 return false
             }
 
             performanceManager?.notifyGenerationStarted()
 
             performanceManager?.notifyIRTranslationStarted()
-            val extensions = JvmGeneratorExtensions()
-            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(extensions)
+            val extensions = JvmGeneratorExtensionsImpl()
+            val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
 
             performanceManager?.notifyIRTranslationFinished()
 
@@ -386,11 +402,14 @@ object KotlinToJVMBytecodeCompiler {
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-            performanceManager?.notifyIRGenerationStarted()
+            performanceManager?.notifyIRLoweringStarted()
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
-                generationState, moduleFragment, symbolTable, sourceManager, extensions, FirJvmBackendExtension(session, components)
-            )
+                generationState, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components)
+            ) {
+                performanceManager?.notifyIRLoweringFinished()
+                performanceManager?.notifyIRGenerationStarted()
+            }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
 
@@ -402,10 +421,6 @@ object KotlinToJVMBytecodeCompiler {
                     dummyBindingContext.diagnostics
                 ),
                 environment.messageCollector
-            )
-
-            AnalyzerWithCompilerReport.reportBytecodeVersionErrors(
-                generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
             )
 
             performanceManager?.notifyIRGenerationFinished()
@@ -604,10 +619,6 @@ object KotlinToJVMBytecodeCompiler {
                 result.bindingContext.diagnostics
             ),
             environment.messageCollector
-        )
-
-        AnalyzerWithCompilerReport.reportBytecodeVersionErrors(
-            generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
         )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

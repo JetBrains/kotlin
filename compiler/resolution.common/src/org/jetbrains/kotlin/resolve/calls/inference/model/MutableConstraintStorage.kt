@@ -32,12 +32,12 @@ class MutableVariableWithConstraints private constructor(
         }
 
     // see @OnlyInputTypes annotation
-    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<KotlinTypeMarker> {
+    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<Pair<KotlinTypeMarker, ConstraintKind>> {
         return with(utilContext) {
             mutableConstraints
                 .mapNotNullTo(SmartList()) {
                     if (it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null)
-                        it.type.unCapture()
+                        it.type.unCapture() to it.kind
                     else null
                 }
         }
@@ -123,6 +123,16 @@ class MutableVariableWithConstraints private constructor(
         // Constraints from declared upper bound are quite special -- they aren't considered as a proper ones
         // In other words, user-defined constraints have "higher" priority and here we're trying not to loose them
         if (old.position.from is DeclaredUpperBoundConstraintPosition<*> && new.position.from !is DeclaredUpperBoundConstraintPosition<*>)
+            return false
+
+        /*
+         * We discriminate upper expected type constraints during finding a result type to fix variable (see ResultTypeResolver.kt):
+         * namely, we don't intersect the expected type with other upper constraints' types to prevent cases like this:
+         *  fun <T : String> materialize(): T = null as T
+         *  val bar: Int = materialize() // T is inferred into String & Int without discriminating upper expected type constraints
+         * So here we shouldn't lose upper non-expected type constraints.
+         */
+        if (old.position.from is ExpectedTypeConstraintPosition<*> && new.position.from !is ExpectedTypeConstraintPosition<*> && old.kind.isUpper() && new.kind.isUpper())
             return false
 
         return when (old.kind) {

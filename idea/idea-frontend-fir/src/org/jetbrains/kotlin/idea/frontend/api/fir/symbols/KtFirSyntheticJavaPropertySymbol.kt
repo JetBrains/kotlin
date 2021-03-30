@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignatu
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -36,8 +40,9 @@ internal class KtFirSyntheticJavaPropertySymbol(
     fir: FirSyntheticProperty,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    private val builder: KtSymbolByFirBuilder
+    _builder: KtSymbolByFirBuilder
 ) : KtSyntheticJavaPropertySymbol(), KtFirSymbol<FirSyntheticProperty> {
+    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
 
@@ -56,24 +61,22 @@ internal class KtFirSyntheticJavaPropertySymbol(
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
     override val initializer: KtConstantValue? by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir -> fir.initializer?.convertConstantExpression() }
 
-    override val modality: KtCommonSymbolModality get() = getModality()
-    override val visibility: KtSymbolVisibility get() = getVisibility()
+    override val modality: Modality get() = getModality()
+    override val visibility: Visibility get() = getVisibility()
 
     override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 
-    override val callableIdIfNonLocal: FqName?
-        get() = firRef.withFir { fir ->
-            fir.symbol.callableId.takeUnless { fir.isLocal }?.asFqNameForDebugInfo()
-        }
+    override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()
+
 
     override val getter: KtPropertyGetterSymbol by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
-        property.getter.let { builder.buildPropertyAccessorSymbol(it) } as KtPropertyGetterSymbol
+        property.getter.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as KtPropertyGetterSymbol
     }
 
     override val setter: KtPropertySetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
-        property.setter?.let { builder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
+        property.setter?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
     }
 
     override val javaGetterName: Name get() = firRef.withFir { it.getter.delegate.name }
@@ -85,16 +88,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
 
     override val origin: KtSymbolOrigin get() = withValidityAssertion { KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
-    override fun createPointer(): KtSymbolPointer<KtPropertySymbol> {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        return when (symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level fun is not supported yet")
-            KtSymbolKind.NON_PROPERTY_PARAMETER -> TODO("Creating symbol for top level parameters is not supported yet")
-            KtSymbolKind.MEMBER -> KtFirMemberPropertySymbolPointer(
-                firRef.withFir { it.containingClass()?.classId ?: error("ClassId should not be null for member property") },
-                firRef.withFir { it.createSignature() }
-            )
-            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
-        }
+    override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol> {
+        TODO("pointers to KtSyntheticJavaPropertySymbol is not supported yet")
     }
 }

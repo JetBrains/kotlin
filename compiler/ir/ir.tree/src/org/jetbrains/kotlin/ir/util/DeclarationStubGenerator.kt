@@ -16,20 +16,18 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.*
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isInlineClass
@@ -40,13 +38,15 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class DeclarationStubGenerator(
+abstract class DeclarationStubGenerator(
     val moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
-    languageVersionSettings: LanguageVersionSettings,
     val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ) : IrProvider {
-    private val lazyTable = symbolTable.lazyWrapper
+    protected val lazyTable = symbolTable.lazyWrapper
+
+    val lock: IrLock
+        get() = symbolTable.lock
 
     var unboundSymbolGeneration: Boolean
         get() = lazyTable.stubGenerator != null
@@ -54,23 +54,9 @@ class DeclarationStubGenerator(
             lazyTable.stubGenerator = if (value) this else null
         }
 
-    val typeTranslator =
-        TypeTranslator(
-            lazyTable,
-            languageVersionSettings,
-            moduleDescriptor.builtIns,
-            LazyScopedTypeParametersResolver(lazyTable),
-            true,
-            extensions
-        )
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, lazyTable)
+    abstract val typeTranslator: TypeTranslator
 
     private val facadeClassMap = mutableMapOf<DeserializedContainerSource, IrClass?>()
-
-    init {
-        typeTranslator.constantValueGenerator = constantValueGenerator
-        constantValueGenerator.typeTranslator = typeTranslator
-    }
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         // Special case: generating field for an already generated property.
@@ -145,10 +131,7 @@ class DeclarationStubGenerator(
     private fun computeOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin =
         extensions.computeExternalDeclarationOrigin(descriptor) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
-    fun generatePropertyStub(
-        descriptor: PropertyDescriptor,
-        bindingContext: BindingContext? = null
-    ): IrProperty {
+    fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty {
         val referenced = symbolTable.referenceProperty(descriptor)
         if (referenced.isBound) {
             return referenced.owner
@@ -165,7 +148,7 @@ class DeclarationStubGenerator(
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
                 descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
-                stubGenerator = this, typeTranslator = typeTranslator, bindingContext = bindingContext
+                stubGenerator = this, typeTranslator,
             )
         }
     }

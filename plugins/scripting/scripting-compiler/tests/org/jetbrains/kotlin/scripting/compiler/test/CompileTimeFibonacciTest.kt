@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
@@ -94,6 +95,7 @@ class CompileTimeFibonacciTest : TestCase() {
         script: SourceCode
     ): ResultWithDiagnostics<CompiledScript> {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
+            updateWithBaseCompilerArguments()
             val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
             add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
@@ -157,7 +159,7 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
                             )
                     }
                     ?.valueOr { return@onAnnotations it }
-                    ?.max() ?: return@onAnnotations context.compilationConfiguration.asSuccess()
+                    ?.maxOrNull() ?: return@onAnnotations context.compilationConfiguration.asSuccess()
 
                 val sourceCode = fibUntil(maxFibonacciNumber)
                     .mapIndexed { index, number -> "val FIB_${index + 1} = $number" }

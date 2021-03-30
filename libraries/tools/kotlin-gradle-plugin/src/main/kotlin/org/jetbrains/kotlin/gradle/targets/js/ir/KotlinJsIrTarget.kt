@@ -111,6 +111,8 @@ constructor(
                     binary.linkTask.configure {
                         it.kotlinOptions.outputFile = project.buildDir
                             .resolve(COMPILE_SYNC)
+                            .resolve(compilation.name)
+                            .resolve(binary.name)
                             .resolve(npmProject.main)
                             .canonicalPath
 
@@ -220,7 +222,5 @@ constructor(
 
     private fun KotlinJsOptions.configureCommonJsOptions() {
         moduleKind = "commonjs"
-        sourceMap = true
-        sourceMapEmbedSources = null
     }
 }

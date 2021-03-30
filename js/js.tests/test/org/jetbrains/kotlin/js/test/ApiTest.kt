@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
@@ -62,7 +63,7 @@ class ApiTest : KotlinTestWithEnvironment() {
             configuration.put(CommonConfigurationKeys.MODULE_NAME, "test")
             configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
 
-            val config = JsConfig(project, configuration)
+            val config = JsConfig(project, configuration, CompilerEnvironment)
 
             return config.moduleDescriptors.single().packagesSerialized()
         }

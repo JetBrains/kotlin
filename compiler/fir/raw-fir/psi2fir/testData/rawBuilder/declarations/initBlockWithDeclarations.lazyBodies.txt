@@ -1,0 +1,45 @@
+FILE: initBlockWithDeclarations.kt
+    public? final? class X : R|kotlin/Any| {
+        public? constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+            local final? class classInInit : R|kotlin/Any| {
+                public? constructor(): R|X.classInInit| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun funInClassInInit(): R|kotlin/Unit| {
+                }
+
+            }
+
+            local final? fun funInInit(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public? final? object <no name provided> : R|kotlin/Any| {
+        private constructor(): R|<no name provided>| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+            local final? class classInInit : R|kotlin/Any| {
+                public? constructor(): R|<no name provided>.classInInit| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun funInClassInInit(): R|kotlin/Unit| {
+                }
+
+            }
+
+            local final? fun funInInit(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

@@ -88,8 +88,13 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
 
     internal fun toInfoString() = toString() + ": " + index().toString()
 
-    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration> =
-        index().allDeclarations
+    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration> {
+        val allDeclarations = index().allDeclarations
+        if (kindFilter == DescriptorKindFilter.CLASSIFIERS) {
+            return allDeclarations.filter { it is KtClassOrObject || it is KtTypeAlias }
+        }
+        return allDeclarations
+    }
 
     override fun getFunctionDeclarations(name: Name): List<KtNamedFunction> = index().functions[name.safeNameForLazyResolve()].toList()
 

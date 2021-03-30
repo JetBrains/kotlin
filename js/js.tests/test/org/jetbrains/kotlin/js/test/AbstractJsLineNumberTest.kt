@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.test.utils.LineCollector
 import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest
@@ -127,7 +128,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
         configuration.put(JSConfigurationKeys.META_INFO, true)
 
-        return JsConfig(project, configuration)
+        return JsConfig(project, configuration, CompilerEnvironment)
     }
 
     private fun createPsiFile(fileName: String): KtFile {

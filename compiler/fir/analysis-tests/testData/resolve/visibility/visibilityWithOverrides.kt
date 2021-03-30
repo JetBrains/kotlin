@@ -19,5 +19,5 @@ abstract class A {
 // FILE: main.kt
 
 fun test(b: B): String {
-    return <!HIDDEN{LT}!>b <!HIDDEN{PSI}!>foo<!> "hello"<!> // should be an error
+    return b <!HIDDEN!>foo<!> "hello" // should be an error
 }

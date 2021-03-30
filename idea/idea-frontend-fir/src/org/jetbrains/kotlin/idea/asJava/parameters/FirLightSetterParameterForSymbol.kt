@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.frontend.api.isValid
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 
 internal class FirLightSetterParameterForSymbol(
     private val containingPropertySymbol: KtPropertySymbol,
-    private val parameterSymbol: KtParameterSymbol,
+    private val parameterSymbol: KtValueParameterSymbol,
     containingMethod: FirLightMethod
 ) : FirLightParameterBaseForSymbol(parameterSymbol, containingMethod) {
 

@@ -190,7 +190,8 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return if (getMethodDescriptor == null) {
             call.callReceiver.call { dispatchReceiverValue, _ ->
                 val superQualifierSymbol = (call.superQualifier ?: descriptor.containingDeclaration as? ClassDescriptor)?.let {
-                    context.symbolTable.referenceClass(it)
+                    if (it is ScriptDescriptor) null // otherwise it creates a reference to script as class; TODO: check if correct
+                    else context.symbolTable.referenceClass(it)
                 }
                 val fieldSymbol = context.symbolTable.referenceField(descriptor.resolveFakeOverride().original)
                 IrGetFieldImpl(

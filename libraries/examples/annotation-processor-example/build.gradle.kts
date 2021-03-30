@@ -19,4 +19,3 @@ dependencies {
 sourceSets {
     "test" {}
 }
-

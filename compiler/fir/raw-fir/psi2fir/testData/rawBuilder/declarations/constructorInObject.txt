@@ -1,6 +1,6 @@
 FILE: constructorInObject.kt
     public? final? object A : R|kotlin/Any| {
-        public? constructor(): R|A| {
+        public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -9,35 +9,35 @@ FILE: constructorInObject.kt
 
     }
     public? final? enum class B : R|kotlin/Enum<B>| {
-        private constructor(): R|B| {
+        private [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Enum<B>|>()
         }
 
-        public final static enum entry X: R|B| = object : R|B| {
-            private constructor(): R|<anonymous>| {
+        public final static [ContainingClassKey=B] enum entry X: R|B| = object : R|B| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|B|>()
             }
 
-            public? constructor(): R|<anonymous>| {
+            public? [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|B|>()
             }
 
         }
 
-        public final static fun values(): R|kotlin/Array<B>| {
+        public final static [ContainingClassKey=B] fun values(): R|kotlin/Array<B>| {
         }
 
-        public final static fun valueOf(value: R|kotlin/String|): R|B| {
+        public final static [ContainingClassKey=B] fun valueOf(value: R|kotlin/String|): R|B| {
         }
 
     }
     public? final? class C : R|kotlin/Any| {
-        public? constructor(): R|C| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
         public? final? companion object Companion : R|kotlin/Any| {
-            public? constructor(): R|C.Companion| {
+            public? [ContainingClassKey=Companion] constructor(): R|C.Companion| {
                 super<R|kotlin/Any|>()
             }
 
@@ -45,7 +45,7 @@ FILE: constructorInObject.kt
 
     }
     public? final? val anonObject: <implicit> = object : R|kotlin/Any| {
-        public? constructor(): R|<anonymous>| {
+        public? [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 

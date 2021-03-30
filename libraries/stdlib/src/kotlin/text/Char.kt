@@ -194,6 +194,33 @@ public expect fun Char.uppercaseChar(): Char
 public expect fun Char.uppercase(): String
 
 /**
+ * Converts this character to title case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [titlecase] function.
+ * If this character has no mapping equivalent, the result of calling [uppercaseChar] is returned.
+ *
+ * @sample samples.text.Chars.titlecase
+ */
+@SinceKotlin("1.5")
+@ExperimentalStdlibApi
+public expect fun Char.titlecaseChar(): Char
+
+/**
+ * Converts this character to title case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\uFB00'.titlecase()` returns `"\u0046\u0066"`,
+ * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
+ * If this character has no title case mapping, the result of [uppercase] is returned instead.
+ *
+ * @sample samples.text.Chars.titlecase
+ */
+@SinceKotlin("1.5")
+@ExperimentalStdlibApi
+public fun Char.titlecase(): String = titlecaseImpl()
+
+/**
  * Concatenates this Char and a String.
  *
  * @sample samples.text.Chars.plus
@@ -231,6 +258,7 @@ public fun Char.isSurrogate(): Boolean = this in Char.MIN_SURROGATE..Char.MAX_SU
 /**
  * Returns the Unicode general category of this character.
  */
+@SinceKotlin("1.5")
 public expect val Char.category: CharCategory
 
 /**
@@ -238,6 +266,7 @@ public expect val Char.category: CharCategory
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
+@SinceKotlin("1.5")
 public expect fun Char.isDefined(): Boolean
 
 /**
@@ -248,6 +277,7 @@ public expect fun Char.isDefined(): Boolean
  *
  * @sample samples.text.Chars.isLetter
  */
+@SinceKotlin("1.5")
 public expect fun Char.isLetter(): Boolean
 
 /**
@@ -258,6 +288,7 @@ public expect fun Char.isLetter(): Boolean
  *
  * @sample samples.text.Chars.isLetterOrDigit
  */
+@SinceKotlin("1.5")
 public expect fun Char.isLetterOrDigit(): Boolean
 
 /**
@@ -267,6 +298,7 @@ public expect fun Char.isLetterOrDigit(): Boolean
  *
  * @sample samples.text.Chars.isDigit
  */
+@SinceKotlin("1.5")
 public expect fun Char.isDigit(): Boolean
 
 /**
@@ -276,6 +308,7 @@ public expect fun Char.isDigit(): Boolean
  *
  * @sample samples.text.Chars.isUpperCase
  */
+@SinceKotlin("1.5")
 public expect fun Char.isUpperCase(): Boolean
 
 /**
@@ -285,6 +318,7 @@ public expect fun Char.isUpperCase(): Boolean
  *
  * @sample samples.text.Chars.isLowerCase
  */
+@SinceKotlin("1.5")
 public expect fun Char.isLowerCase(): Boolean
 
 /**
@@ -294,6 +328,7 @@ public expect fun Char.isLowerCase(): Boolean
  *
  * @sample samples.text.Chars.isTitleCase
  */
+@SinceKotlin("1.5")
 public expect fun Char.isTitleCase(): Boolean
 
 /**
@@ -303,6 +338,7 @@ public expect fun Char.isTitleCase(): Boolean
  *
  * @sample samples.text.Chars.isISOControl
  */
+@SinceKotlin("1.5")
 public expect fun Char.isISOControl(): Boolean
 
 /**

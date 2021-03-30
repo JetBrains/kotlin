@@ -9,7 +9,8 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
+    maven { url = uri("https://jcenter.bintray.com/") }
 }
 
 kotlin.sourceSets {

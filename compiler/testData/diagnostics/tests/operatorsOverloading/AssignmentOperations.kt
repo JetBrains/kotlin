@@ -1,9 +1,10 @@
+// FIR_IDENTICAL
 class A {
-  operator fun plusAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
-  operator fun minusAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
-  operator fun timesAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
-  operator fun divAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
-  operator fun remAssign(<!UNUSED_PARAMETER!>x<!>: Int) {}
+  operator fun plusAssign(x: Int) {}
+  operator fun minusAssign(x: Int) {}
+  operator fun timesAssign(x: Int) {}
+  operator fun divAssign(x: Int) {}
+  operator fun remAssign(x: Int) {}
 }
 
 fun testVal() {
@@ -24,11 +25,11 @@ fun testExpr() {
 }
 
 class B {
-  operator fun plus(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
-  operator fun minus(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
-  operator fun times(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
-  operator fun div(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
-  operator fun rem(<!UNUSED_PARAMETER!>x<!>: Int): B = B()
+  operator fun plus(x: Int): B = B()
+  operator fun minus(x: Int): B = B()
+  operator fun times(x: Int): B = B()
+  operator fun div(x: Int): B = B()
+  operator fun rem(x: Int): B = B()
 }
 
 fun testWrong() {

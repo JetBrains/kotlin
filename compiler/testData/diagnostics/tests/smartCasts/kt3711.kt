@@ -4,6 +4,6 @@ infix fun String.to(second: String) = StringPair(this, second)
 
 fun f(a: String?) {
     if (a != null) {
-        val <!UNUSED_VARIABLE!>b<!>: StringPair = <!DEBUG_INFO_SMARTCAST!>a<!> to <!DEBUG_INFO_SMARTCAST!>a<!>
+        val b: StringPair = <!DEBUG_INFO_SMARTCAST!>a<!> to <!DEBUG_INFO_SMARTCAST!>a<!>
     }
 }

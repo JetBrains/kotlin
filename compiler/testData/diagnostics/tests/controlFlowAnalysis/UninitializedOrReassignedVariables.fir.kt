@@ -63,7 +63,7 @@ fun t4(a: A) {
 
 fun t1() {
     val a : Int = 1
-    a = 2
+    <!VAL_REASSIGNMENT!>a<!> = 2
 
     var b : Int = 1
     b = 3
@@ -83,8 +83,8 @@ enum class ProtocolState {
 
 fun t3() {
    val x: ProtocolState = ProtocolState.WAITING
-   x = x.signal()
-   x = x.signal() //repeat for x
+   <!VAL_REASSIGNMENT!>x<!> = x.signal()
+   <!VAL_REASSIGNMENT!>x<!> = x.signal() //repeat for x
 }
 
 fun t4() {
@@ -159,7 +159,7 @@ class AnonymousInitializers(var a: String, val b: String) {
         }
     }
 
-    val o: String
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val o: String<!>
     init {
         if (1 < 3) {
             o = "a"
@@ -196,7 +196,7 @@ open class Open(a: Int, w: Int) {}
 
 class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     val x : Int
-    val y : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     init {
         x = 1
         val b = x
@@ -279,7 +279,7 @@ fun foo() {
 }
 
 class TestObjectExpression() {
-    val a : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val a : Int<!>
     fun foo() {
         val a = object {
             val x : Int
@@ -306,7 +306,7 @@ class TestObjectExpression() {
 
 object TestObjectDeclaration {
     val x : Int
-    val y : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     init {
         x = 1
     }
@@ -326,7 +326,7 @@ fun func() {
     val a = object {
         val x = b
         init {
-            b = 4
+            <!VAL_REASSIGNMENT!>b<!> = 4
         }
     }
 }

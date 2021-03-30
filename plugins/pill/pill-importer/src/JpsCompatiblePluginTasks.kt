@@ -7,7 +7,15 @@ package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
+import org.jetbrains.kotlin.pill.artifact.ArtifactDependencyMapper
+import org.jetbrains.kotlin.pill.artifact.ArtifactGenerator
+import org.jetbrains.kotlin.pill.model.PDependency
+import org.jetbrains.kotlin.pill.model.PLibrary
+import org.jetbrains.kotlin.pill.model.POrderRoot
+import org.jetbrains.kotlin.pill.model.PProject
 import shadow.org.jdom2.input.SAXBuilder
 import shadow.org.jdom2.*
 import shadow.org.jdom2.output.Format
@@ -28,14 +36,14 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ":kotlin-reflect",
             ":kotlin-test:kotlin-test-jvm",
             ":kotlin-test:kotlin-test-junit",
-            ":kotlin-script-runtime",
-            ":kotlin-serialization"
+            ":kotlin-script-runtime"
         )
 
         private val IGNORED_LIBRARIES = listOf(
             // Libraries
             ":kotlin-stdlib-common",
             ":kotlin-reflect-api",
+            ":kotlin-serialization",
             ":kotlin-test:kotlin-test-common",
             ":kotlin-test:kotlin-test-annotations-common",
             // Other
@@ -53,6 +61,11 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         )
 
         private val LIB_DIRECTORIES = listOf("dependencies", "dist")
+
+        private val ALLOWED_ARTIFACT_PATTERNS = listOf(
+            Regex.fromLiteral("dist_root.xml"),
+            Regex("kotlinx_cli_jvm_[\\d_]+_SNAPSHOT\\.xml")
+        )
     }
 
     private lateinit var projectDir: File
@@ -66,7 +79,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
         platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
             ?: platformVersion.substringBefore("-", "").takeIf { it.isNotEmpty() }
-                ?: error("Invalid platform version: $platformVersion")
+                    ?: error("Invalid platform version: $platformVersion")
         intellijCoreDir = File(platformDir.parentFile.parentFile.parentFile, "intellij-core")
         isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
@@ -83,17 +96,13 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.toLowerCase()}' variant...")
 
-        if (variant == PillExtensionMirror.Variant.NONE || variant == PillExtensionMirror.Variant.DEFAULT) {
-            rootProject.logger.error("'none' and 'default' should not be passed as a Pill variant property value")
-            return
-        }
-
-        val parserContext = ParserContext(variant)
+        val modulePrefix = System.getProperty("pill.module.prefix", "")
+        val modelParser = ModelParser(variant, modulePrefix)
 
         val dependencyPatcher = DependencyPatcher(rootProject)
         val dependencyMappers = listOf(dependencyPatcher, ::attachPlatformSources, ::attachAsmSources)
 
-        val jpsProject = parse(rootProject, parserContext)
+        val jpsProject = modelParser.parse(rootProject)
             .mapDependencies(dependencyMappers)
             .copy(libraries = dependencyPatcher.libraries)
 
@@ -101,28 +110,30 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
-        removeAllArtifactConfigurations()
+        removeArtifactConfigurations()
 
-        val artifactDependencyMapper = object : ArtifactDependencyMapper {
-            override fun map(dependency: PDependency): List<PDependency> {
-                val result = mutableListOf<PDependency>()
+        if (variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
+            val artifactDependencyMapper = object : ArtifactDependencyMapper {
+                override fun map(dependency: PDependency): List<PDependency> {
+                    val result = mutableListOf<PDependency>()
 
-                for (mappedDependency in jpsProject.mapDependency(dependency, dependencyMappers)) {
-                    result += mappedDependency
+                    for (mappedDependency in jpsProject.mapDependency(dependency, dependencyMappers)) {
+                        result += mappedDependency
 
-                    if (mappedDependency is PDependency.Module) {
-                        val module = jpsProject.modules.find { it.name == mappedDependency.name }
-                        if (module != null) {
-                            result += module.embeddedDependencies
+                        if (mappedDependency is PDependency.Module) {
+                            val module = jpsProject.modules.find { it.name == mappedDependency.name }
+                            if (module != null) {
+                                result += module.embeddedDependencies
+                            }
                         }
                     }
+
+                    return result
                 }
-
-                return result
             }
-        }
 
-        generateKotlinPluginArtifactFile(rootProject, artifactDependencyMapper).write()
+            ArtifactGenerator(artifactDependencyMapper).generateKotlinPluginArtifact(rootProject).write()
+        }
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)
@@ -135,7 +146,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
-        removeAllArtifactConfigurations()
+        removeArtifactConfigurations()
     }
 
     private fun removeExistingIdeaLibrariesAndModules() {
@@ -150,10 +161,10 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             .forEach { it.delete() }
     }
 
-    private fun removeAllArtifactConfigurations() {
+    private fun removeArtifactConfigurations() {
         File(projectDir, ".idea/artifacts")
             .walk()
-            .filter { it.extension.toLowerCase() == "xml" }
+            .filter { it.extension.toLowerCase() == "xml" && ALLOWED_ARTIFACT_PATTERNS.none { p -> p.matches(it.name) } }
             .forEach { it.delete() }
     }
 
@@ -292,11 +303,19 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             fun List<File>.filterExisting() = filter { it.exists() }
 
             for (path in DIST_LIBRARIES) {
-                val project = rootProject.findProject(path) ?: error("Project not found")
+                val project = rootProject.findProject(path) ?: error("Project '$path' not found")
                 val archiveName = project.convention.findPlugin(BasePluginConvention::class.java)!!.archivesBaseName
                 val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
                 val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
-                result["$path/main"] = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+                val sourceSets = project.convention.findPlugin(JavaPluginConvention::class.java)!!.sourceSets
+
+                val applicableSourceSets = listOfNotNull(
+                    sourceSets.findByName(SourceSet.MAIN_SOURCE_SET_NAME),
+                    sourceSets.findByName("java9")
+                )
+
+                val optLibrary = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+                applicableSourceSets.forEach { ss -> result["$path/${ss.name}"] = optLibrary }
             }
 
             for (path in IGNORED_LIBRARIES) {

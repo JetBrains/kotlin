@@ -22,8 +22,8 @@ class Owner {
         }
 
         fun err() {
-            <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-            this.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+            <!UNRESOLVED_REFERENCE!>foo<!>()
+            this.<!UNRESOLVED_REFERENCE!>foo<!>()
         }
     }
 }

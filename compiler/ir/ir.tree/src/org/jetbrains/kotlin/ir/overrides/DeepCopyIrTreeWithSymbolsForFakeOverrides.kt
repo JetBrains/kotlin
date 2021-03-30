@@ -26,7 +26,7 @@ class DeepCopyIrTreeWithSymbolsForFakeOverrides(typeArguments: Map<IrTypeParamet
 
         // Make symbol remapper aware of the callsite's type arguments.
         // Copy IR.
-        val result = irElement.transform(copier, data = null)
+        val result = irElement.transform(if (parent.isEffectivelyExternal()) copierMakingExternal else copier, data = null)
 
         result.patchDeclarationParents(parent)
         return result
@@ -93,5 +93,12 @@ class DeepCopyIrTreeWithSymbolsForFakeOverrides(typeArguments: Map<IrTypeParamet
         symbolRemapper,
         FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
         SymbolRenamer.DEFAULT
+    )
+
+    private val copierMakingExternal = FakeOverrideCopier(
+        symbolRemapper,
+        FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
+        SymbolRenamer.DEFAULT,
+        makeExternal = true,
     )
 }

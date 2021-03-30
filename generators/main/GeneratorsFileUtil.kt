@@ -11,6 +11,8 @@ import java.io.IOException
 import kotlin.io.path.*
 
 object GeneratorsFileUtil {
+    val isTeamCityBuild: Boolean = System.getProperty("TEAMCITY_VERSION") != null
+
     @OptIn(ExperimentalPathApi::class)
     @JvmStatic
     @JvmOverloads
@@ -18,6 +20,7 @@ object GeneratorsFileUtil {
     fun writeFileIfContentChanged(file: File, newText: String, logNotChanged: Boolean = true) {
         val parentFile = file.parentFile
         if (!parentFile.exists()) {
+            if (isTeamCityBuild) assertTeamCityMode()
             if (parentFile.mkdirs()) {
                 println("Directory created: " + parentFile.absolutePath)
             } else {
@@ -30,6 +33,7 @@ object GeneratorsFileUtil {
             }
             return
         }
+        if (isTeamCityBuild) assertTeamCityMode()
         val useTempFile = !SystemInfo.isWindows
         val targetFile = file.toPath()
         val tempFile =
@@ -41,6 +45,10 @@ object GeneratorsFileUtil {
             println("Renamed $tempFile to $targetFile")
         }
         println()
+    }
+
+    fun assertTeamCityMode(): Nothing {
+        throw IllegalStateException("You should commit all newly generated files before pushing them to TeamCity")
     }
 
     fun isFileContentChangedIgnoringLineSeparators(file: File, content: String): Boolean {

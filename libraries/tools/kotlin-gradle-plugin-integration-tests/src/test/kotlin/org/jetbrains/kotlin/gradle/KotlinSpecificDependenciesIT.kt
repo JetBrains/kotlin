@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.internals.KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -111,7 +110,7 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
         )
     }
 
-    private val kotlinTestMultiplatformDependency = "org.jetbrains.kotlin:$KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME"
+    private val kotlinTestMultiplatformDependency = "org.jetbrains.kotlin:kotlin-test"
 
     @Test
     fun testKotlinTestSingleDependency() {
@@ -222,7 +221,7 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
         gradleBuildScript().appendText(
             "\n" + """
             dependencies { testImplementation("$kotlinTestMultiplatformDependency") }
-            configurations.getByName("testImplementation").dependencies.removeAll { it.name == "$KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME" }
+            configurations.getByName("testImplementation").dependencies.removeAll { it.name == "kotlin-test" }
             """.trimIndent()
         )
         checkTaskCompileClasspath("compileTestKotlin", checkModulesNotInClasspath = listOf("kotlin-test"))
@@ -244,14 +243,14 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
             kotlin.coreLibrariesVersion = "$customVersion"
             dependencies {
                 testImplementation("org.jetbrains.kotlin:kotlin-reflect")
-                testImplementation("org.jetbrains.kotlin:kotlin-test-multiplatform")
+                testImplementation("org.jetbrains.kotlin:kotlin-test")
             }
             test.useJUnit()
         """.trimIndent()
         )
         checkTaskCompileClasspath(
             "compileTestKotlin",
-            listOf("kotlin-stdlib-", "kotlin-reflect-", "kotlin-test-junit-").map { it + customVersion }
+            listOf("kotlin-stdlib-", "kotlin-reflect-", "kotlin-test-").map { it + customVersion }
         )
     }
 

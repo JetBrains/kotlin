@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: stringVsTAny.kt
 fun <T : Any> useTAny(fn: () -> T) = fn()
 

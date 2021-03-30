@@ -9,6 +9,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -52,6 +53,8 @@ abstract class KotlinAsJavaSupport {
     abstract fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String>
 
     abstract fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile>
+
+    abstract fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass
 
     companion object {
         @JvmStatic

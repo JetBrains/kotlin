@@ -80,6 +80,7 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         AnonymousFunction(withBody = true),
         ClassInitializer(withBody = true),
         PropertyInitializer(withBody = true),
+        FieldInitializer(withBody = true),
         TopLevel(withBody = false),
         AnnotationCall(withBody = true),
         DefaultArgument(withBody = false),
@@ -128,6 +129,11 @@ sealed class EdgeLabel(val label: String?) {
 }
 
 object NormalPath : EdgeLabel(label = null) {
+    override val isNormal: Boolean
+        get() = true
+}
+
+object LoopBackPath : EdgeLabel(label = null) {
     override val isNormal: Boolean
         get() = true
 }

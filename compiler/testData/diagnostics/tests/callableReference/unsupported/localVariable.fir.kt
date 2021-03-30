@@ -3,13 +3,13 @@
 fun eat(value: Any) {}
 
 fun test(param: String) {
-    val a = ::param
+    val a = <!UNSUPPORTED!>::param<!>
 
     val local = "local"
-    val b = ::local
+    val b = <!UNSUPPORTED!>::local<!>
 
     val lambda = { -> }
-    val g = ::lambda
+    val g = <!UNSUPPORTED!>::lambda<!>
 
-    eat(::param)
+    eat(<!UNSUPPORTED!>::param<!>)
 }

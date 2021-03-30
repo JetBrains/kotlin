@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 <info>abstract</info> class Test() {
     <info>abstract</info> val x : Int
     <info>abstract</info> val x1 : Int <info>get</info>

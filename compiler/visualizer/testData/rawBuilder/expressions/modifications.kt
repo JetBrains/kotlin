@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // WITH_RUNTIME
 fun simple() {
 //      Int Int
@@ -29,17 +28,17 @@ fun simple() {
 //  collections/List<String>
 //  │
 fun List<String>.modify() {
-//       fun <T> collections/Collection<String>.plus<String>(String): collections/List<String>
+//       fun <T> collections/Collection<T>.plus<String>(T): collections/List<T>
 //       │
     this += "Alpha"
-//       fun <T> collections/Collection<String>.plus<String>(String): collections/List<String>
+//       fun <T> collections/Collection<T>.plus<String>(T): collections/List<T>
 //       │
     this += "Omega"
 }
 
 fun Any.modify() {
 //           collections/List<Int>
-//           │          fun <T> collections/Collection<Int>.plus<Int>(Int): collections/List<Int>
+//           │          fun <T> collections/Collection<T>.plus<Int>(T): collections/List<T>
 //           │          │  Int
 //           │          │  │
     (this as List<Int>) += 42

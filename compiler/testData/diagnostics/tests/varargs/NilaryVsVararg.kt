@@ -1,6 +1,7 @@
+// FIR_IDENTICAL
 fun foo0() : String = "noarg"
 
-fun foo0(vararg <!UNUSED_PARAMETER!>t<!> : Int) : String = "vararg"
+fun foo0(vararg t : Int) : String = "vararg"
 
 fun test0() {
     foo0()

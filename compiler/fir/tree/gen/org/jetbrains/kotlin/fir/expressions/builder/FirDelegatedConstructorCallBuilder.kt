@@ -35,6 +35,7 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var constructedTypeRef: FirTypeRef
     var dispatchReceiver: FirExpression = FirNoReceiverExpression
+    lateinit var calleeReference: FirReference
     var isThis: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirDelegatedConstructorCall {
@@ -44,6 +45,7 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
             argumentList,
             constructedTypeRef,
             dispatchReceiver,
+            calleeReference,
             isThis,
         )
     }

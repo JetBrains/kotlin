@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 fun baz(s: String?): Int {
     return if (s == null) {

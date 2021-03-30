@@ -12,8 +12,8 @@ import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedToLightMethods
 import org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport
 import org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport.Companion.createConstructorHandle
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -117,7 +117,7 @@ private fun processClassDelegationCallsToSpecifiedConstructor(
 }
 
 fun PsiElement.searchReferencesOrMethodReferences(): Collection<PsiReference> {
-    val lightMethods = providedToLightMethods()
+    val lightMethods = toLightMethods()
     return if (lightMethods.isNotEmpty()) {
         lightMethods.flatMapTo(LinkedHashSet()) { MethodReferencesSearch.search(it) }
     } else {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -11,7 +12,7 @@
 fun foo(x: Int) {
     r {
         when (x) {
-            2 -> <!UNUSED_EXPRESSION!>0<!>
+            2 -> 0
         }
     }
 }

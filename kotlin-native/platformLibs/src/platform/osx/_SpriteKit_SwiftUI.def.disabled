@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._SpriteKit_SwiftUI
+
+modules = _SpriteKit_SwiftUI
+compilerOpts = -framework _SpriteKit_SwiftUI
+linkerOpts = -framework _SpriteKit_SwiftUI
+#Disabled: Unavailable

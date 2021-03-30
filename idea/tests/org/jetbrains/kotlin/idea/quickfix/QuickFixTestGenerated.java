@@ -1761,110 +1761,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/assignOperatorAmbiguity")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AssignOperatorAmbiguity extends AbstractQuickFixTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInAssignOperatorAmbiguity() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ChangeToVal extends AbstractQuickFixTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInChangeToVal() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-            }
-
-            @TestMetadata("arrayList.kt")
-            public void testArrayList() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/arrayList.kt");
-            }
-
-            @TestMetadata("classVariable.kt")
-            public void testClassVariable() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/classVariable.kt");
-            }
-
-            @TestMetadata("hashMap.kt")
-            public void testHashMap() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/hashMap.kt");
-            }
-
-            @TestMetadata("hashSet.kt")
-            public void testHashSet() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/hashSet.kt");
-            }
-
-            @TestMetadata("mutableList.kt")
-            public void testMutableList() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/mutableList.kt");
-            }
-
-            @TestMetadata("mutableMap.kt")
-            public void testMutableMap() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/mutableMap.kt");
-            }
-
-            @TestMetadata("mutableSet.kt")
-            public void testMutableSet() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/mutableSet.kt");
-            }
-        }
-
-        @TestMetadata("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ReplaceWithAssignCall extends AbstractQuickFixTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInReplaceWithAssignCall() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-            }
-
-            @TestMetadata("arrayList.kt")
-            public void testArrayList() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/arrayList.kt");
-            }
-
-            @TestMetadata("hashMap.kt")
-            public void testHashMap() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/hashMap.kt");
-            }
-
-            @TestMetadata("hashSet.kt")
-            public void testHashSet() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/hashSet.kt");
-            }
-
-            @TestMetadata("mutableList.kt")
-            public void testMutableList() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/mutableList.kt");
-            }
-
-            @TestMetadata("mutableMap.kt")
-            public void testMutableMap() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/mutableMap.kt");
-            }
-
-            @TestMetadata("mutableSet.kt")
-            public void testMutableSet() throws Exception {
-                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/mutableSet.kt");
-            }
-        }
-    }
-
     @TestMetadata("idea/testData/quickfix/assignToProperty")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -2225,24 +2121,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
             runTest("idea/testData/quickfix/canBePrimaryConstructorProperty/vararg.kt");
-        }
-    }
-
-    @TestMetadata("idea/testData/quickfix/changeFeatureSupport")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ChangeFeatureSupport extends AbstractQuickFixTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInChangeFeatureSupport() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/changeFeatureSupport"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("inlineClass.kt")
-        public void testInlineClass() throws Exception {
-            runTest("idea/testData/quickfix/changeFeatureSupport/inlineClass.kt");
         }
     }
 
@@ -8519,6 +8397,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/inlineClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClass extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClass() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/inlineClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("inlineClassDeprecated.kt")
+        public void testInlineClassDeprecated() throws Exception {
+            runTest("idea/testData/quickfix/inlineClass/inlineClassDeprecated.kt");
+        }
+
+        @TestMetadata("inlineClassDeprecated_js.kt")
+        public void testInlineClassDeprecated_js() throws Exception {
+            runTest("idea/testData/quickfix/inlineClass/inlineClassDeprecated_js.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/inlineClassConstructorNotValParameter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -9213,6 +9114,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/modifiers/abstractModifierInEnum.kt");
         }
 
+        @TestMetadata("abstractVarWithPrivateSetter.kt")
+        public void testAbstractVarWithPrivateSetter() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/abstractVarWithPrivateSetter.kt");
+        }
+
         @TestMetadata("addLateinit.kt")
         public void testAddLateinit() throws Exception {
             runTest("idea/testData/quickfix/modifiers/addLateinit.kt");
@@ -9357,9 +9263,14 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/modifiers/openObject.kt");
         }
 
-        @TestMetadata("openVarWithPrivateSetter.kt")
-        public void testOpenVarWithPrivateSetter() throws Exception {
-            runTest("idea/testData/quickfix/modifiers/openVarWithPrivateSetter.kt");
+        @TestMetadata("openVarWithPrivateSetter1.kt")
+        public void testOpenVarWithPrivateSetter1() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/openVarWithPrivateSetter1.kt");
+        }
+
+        @TestMetadata("openVarWithPrivateSetter2.kt")
+        public void testOpenVarWithPrivateSetter2() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/openVarWithPrivateSetter2.kt");
         }
 
         @TestMetadata("operatorModifier.kt")
@@ -9387,9 +9298,14 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/modifiers/operatorModifierInherited.kt");
         }
 
-        @TestMetadata("overrideWithPrivateSetter.kt")
-        public void testOverrideWithPrivateSetter() throws Exception {
-            runTest("idea/testData/quickfix/modifiers/overrideWithPrivateSetter.kt");
+        @TestMetadata("overrideWithPrivateSetter1.kt")
+        public void testOverrideWithPrivateSetter1() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/overrideWithPrivateSetter1.kt");
+        }
+
+        @TestMetadata("overrideWithPrivateSetter2.kt")
+        public void testOverrideWithPrivateSetter2() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/overrideWithPrivateSetter2.kt");
         }
 
         @TestMetadata("packageMemberCannotBeProtected.kt")
@@ -9410,6 +9326,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("removeConst.kt")
         public void testRemoveConst() throws Exception {
             runTest("idea/testData/quickfix/modifiers/removeConst.kt");
+        }
+
+        @TestMetadata("removeExternalModifier.kt")
+        public void testRemoveExternalModifier() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/removeExternalModifier.kt");
         }
 
         @TestMetadata("removeIncompatibleModifier.kt")
@@ -11806,6 +11727,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/replaceWithSafeCall/assignmentToProperty.kt");
         }
 
+        @TestMetadata("assignmentToPropertyWithNoExplicitType.kt")
+        public void testAssignmentToPropertyWithNoExplicitType() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/assignmentToPropertyWithNoExplicitType.kt");
+        }
+
         @TestMetadata("comment.kt")
         public void testComment() throws Exception {
             runTest("idea/testData/quickfix/replaceWithSafeCall/comment.kt");
@@ -11824,6 +11750,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("functionCall.kt")
         public void testFunctionCall() throws Exception {
             runTest("idea/testData/quickfix/replaceWithSafeCall/functionCall.kt");
+        }
+
+        @TestMetadata("functionExpressionBody.kt")
+        public void testFunctionExpressionBody() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/functionExpressionBody.kt");
+        }
+
+        @TestMetadata("functionExpressionBodyWithNoExplicitType.kt")
+        public void testFunctionExpressionBodyWithNoExplicitType() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/functionExpressionBodyWithNoExplicitType.kt");
         }
 
         @TestMetadata("hasElvis.kt")
@@ -15165,6 +15101,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("valWithSetter.kt")
             public void testValWithSetter() throws Exception {
                 runTest("idea/testData/quickfix/variables/changeMutability/valWithSetter.kt");
+            }
+
+            @TestMetadata("varAnnotationParameter.kt")
+            public void testVarAnnotationParameter() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/varAnnotationParameter.kt");
             }
 
             @TestMetadata("idea/testData/quickfix/variables/changeMutability/canBeVal")

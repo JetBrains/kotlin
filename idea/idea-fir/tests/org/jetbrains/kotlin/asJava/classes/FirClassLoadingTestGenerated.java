@@ -29,6 +29,11 @@ public class FirClassLoadingTestGenerated extends AbstractFirClassLoadingTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/ultraLightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
+    @TestMetadata("annotationTargets_1_6.kt")
+    public void testAnnotationTargets_1_6() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/annotationTargets_1_6.kt");
+    }
+
     @TestMetadata("annotationWithSetParamPropertyModifier.kt")
     public void testAnnotationWithSetParamPropertyModifier() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/annotationWithSetParamPropertyModifier.kt");
@@ -57,6 +62,16 @@ public class FirClassLoadingTestGenerated extends AbstractFirClassLoadingTest {
     @TestMetadata("dataClasses.kt")
     public void testDataClasses() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/dataClasses.kt");
+    }
+
+    @TestMetadata("defaultMethodInKotlinWithSettingAll.kt")
+    public void testDefaultMethodInKotlinWithSettingAll() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/defaultMethodInKotlinWithSettingAll.kt");
+    }
+
+    @TestMetadata("defaultMethodInKotlinWithSettingAllCompatibility.kt")
+    public void testDefaultMethodInKotlinWithSettingAllCompatibility() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/defaultMethodInKotlinWithSettingAllCompatibility.kt");
     }
 
     @TestMetadata("delegatesWithAnnotations.kt")

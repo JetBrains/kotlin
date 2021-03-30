@@ -4,7 +4,7 @@ plugins {
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
     maven { setUrl(rootProject.projectDir.resolve("repo")) }
 }
 

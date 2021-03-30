@@ -1,7 +1,9 @@
 package
 
 public val test1: C<kotlin.Int> /* = Cons<kotlin.Int> */
-public val test2: C<kotlin.Int> /* = Cons<kotlin.Int> */
+public val test2: Cons<out kotlin.Any?>
+public val test23: C2<kotlin.Int?> /* = MapLike<kotlin.Int?> */
+public val test234: C2<(C2<kotlin.Int?> /* = MapLike<kotlin.Int?> */..C2<kotlin.Int?>? /* = MapLike<kotlin.Int?>? */)> /* = MapLike<(C2<kotlin.Int?> /* = MapLike<kotlin.Int?> */..C2<kotlin.Int?>? /* = MapLike<kotlin.Int?>? */)> */
 
 public final class Cons</*0*/ T : kotlin.Number> {
     public constructor Cons</*0*/ T : kotlin.Number>(/*0*/ head: T, /*1*/ tail: Cons<T>?)
@@ -11,4 +13,13 @@ public final class Cons</*0*/ T : kotlin.Number> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public open class MapLike</*0*/ @org.jetbrains.annotations.NotNull K : kotlin.Any!> {
+    public/*package*/ constructor MapLike</*0*/ @org.jetbrains.annotations.NotNull K : kotlin.Any!>(/*0*/ x: K!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 public typealias C</*0*/ T> = Cons<T>
+public typealias C2</*0*/ T> = MapLike<T>
+

@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // !DIAGNOSTICS: -DUPLICATE_CLASS_NAMES
 val <error>a</error> : Int = 1
 val <error>a</error> : Int = 1

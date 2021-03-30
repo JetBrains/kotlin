@@ -44,7 +44,7 @@ fun test() {
 
     x4 checkType { _<Function1<Int, Unit>>() }
 
-    <!UNUSED_LAMBDA_EXPRESSION!>{ y: Int -> fun named14(): Int {return 1} }<!>
+    { y: Int -> fun named14(): Int {return 1} }
     val b = (fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named15<!>(): Boolean { return true })()
 
     baz(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named16<!>(){})

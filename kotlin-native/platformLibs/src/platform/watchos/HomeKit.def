@@ -1,0 +1,7 @@
+depends = CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.HomeKit
+modules = HomeKit
+
+compilerOpts = -framework HomeKit
+linkerOpts = -framework HomeKit

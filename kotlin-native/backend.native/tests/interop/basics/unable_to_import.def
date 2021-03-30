@@ -1,0 +1,10 @@
+---
+int global;
+#define global bad macro
+
+void foo(void);
+#define foo <
+
+// Setter for x should not be generated.
+typedef const int cint;
+cint x;

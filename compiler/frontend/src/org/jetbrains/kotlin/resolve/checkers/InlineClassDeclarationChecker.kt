@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -140,27 +138,19 @@ object InlineClassDeclarationChecker : DeclarationChecker {
     }
 }
 
-class PropertiesWithInlineClassAsReceiver : DeclarationChecker {
+class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtProperty) return
         if (descriptor !is PropertyDescriptor) return
 
-        if (descriptor.containingDeclaration.isInlineClass()) {
-            if (context.trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
-                context.trace.report(Errors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS.on(declaration))
-            }
+        if (!descriptor.containingDeclaration.isInlineClass()) return
 
-            declaration.delegate?.let {
-                context.trace.report(Errors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS.on(it))
-            }
+        if (context.trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
+            context.trace.report(Errors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS.on(declaration))
         }
 
-        if (!descriptor.isVar) return
-
-        if (descriptor.containingDeclaration.isInlineClass() ||
-            descriptor.extensionReceiverParameter?.type?.isInlineClassType() == true
-        ) {
-            context.trace.report(Errors.RESERVED_VAR_PROPERTY_OF_VALUE_CLASS.on(declaration.valOrVarKeyword))
+        declaration.delegate?.let {
+            context.trace.report(Errors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS.on(it))
         }
     }
 }

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package first
 
 // For KT-3096 No completion in function literal

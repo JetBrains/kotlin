@@ -52,4 +52,8 @@ class FirCompositeScope(val scopes: Iterable<FirScope>) : FirScope(), FirContain
     override fun getClassifierNames(): Set<Name> {
         return scopes.flatMapTo(hashSetOf()) { it.getContainingClassifierNamesIfPresent() }
     }
+
+    override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        scopes.flatMap { it.scopeOwnerLookupNames }
+    }
 }

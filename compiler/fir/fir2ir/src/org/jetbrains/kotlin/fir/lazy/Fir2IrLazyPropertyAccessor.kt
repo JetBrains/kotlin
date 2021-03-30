@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
@@ -44,11 +45,11 @@ class Fir2IrLazyPropertyAccessor(
     override val name: Name
         get() = Name.special("<${if (isSetter) "set" else "get"}-${firParentProperty.name}>")
 
-    override var returnType: IrType by lazyVar {
+    override var returnType: IrType by lazyVar(lock) {
         if (isSetter) irBuiltIns.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
+    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
         if (containingClass != null && shouldHaveDispatchReceiver(containingClass, firParentProperty)
         ) {
@@ -56,13 +57,13 @@ class Fir2IrLazyPropertyAccessor(
         } else null
     }
 
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar {
+    override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
         firParentProperty.receiverTypeRef?.let {
             createThisReceiverParameter(it.toIrType(typeConverter, conversionTypeContext))
         }
     }
 
-    override var valueParameters: List<IrValueParameter> by lazyVar {
+    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         if (!isSetter) emptyList()
         else {
             declarationStorage.enterScope(this)
@@ -80,8 +81,19 @@ class Fir2IrLazyPropertyAccessor(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
-        firParentProperty.generateOverriddenAccessorSymbols(firParentClass, !isSetter, session, scopeSession, declarationStorage)
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
+        firParentProperty.generateOverriddenAccessorSymbols(
+            firParentClass,
+            !isSetter,
+            session,
+            scopeSession,
+            declarationStorage,
+            fakeOverrideGenerator
+        )
+    }
+
+    override val initialSignatureFunction: IrFunction? by lazy {
+        (fir as? FirSyntheticPropertyAccessor)?.delegate?.let { declarationStorage.getIrFunctionSymbol(it.symbol).owner }
     }
 
     override val containerSource: DeserializedContainerSource?

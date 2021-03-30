@@ -446,8 +446,14 @@ class DiagnosticReporterByTrackingStrategy(
 
                 if (isDiagnosticRedundant) return
                 val expression = when (val atom = error.resolvedAtom.atom) {
-                    is PSIKotlinCallForInvoke -> (atom.psiCall as? CallTransformer.CallForImplicitInvoke)?.outerCall?.calleeExpression
-                    is PSIKotlinCall -> atom.psiCall.calleeExpression
+                    is PSIKotlinCall -> {
+                        val psiCall = atom.psiCall
+                        if (psiCall is CallTransformer.CallForImplicitInvoke) {
+                            psiCall.outerCall.calleeExpression
+                        } else {
+                            psiCall.calleeExpression
+                        }
+                    }
                     is PSIKotlinCallArgument -> atom.valueArgument.getArgumentExpression()
                     else -> call.calleeExpression
                 } ?: return
@@ -472,9 +478,9 @@ class DiagnosticReporterByTrackingStrategy(
             OnlyInputTypesDiagnostic::class.java -> {
                 val typeVariable = (error as OnlyInputTypesDiagnostic).typeVariable as? TypeVariableFromCallableDescriptor ?: return
                 psiKotlinCall.psiCall.calleeExpression?.let {
-                    val factory = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NonStrictOnlyInputTypesChecks))
-                        TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING
-                    else TYPE_INFERENCE_ONLY_INPUT_TYPES
+                    val factory = if (context.languageVersionSettings.supportsFeature(LanguageFeature.StrictOnlyInputTypesChecks))
+                        TYPE_INFERENCE_ONLY_INPUT_TYPES
+                    else TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING
                     trace.report(factory.on(it, typeVariable.originalTypeParameter))
                 }
             }

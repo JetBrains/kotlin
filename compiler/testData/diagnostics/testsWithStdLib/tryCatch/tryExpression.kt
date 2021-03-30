@@ -9,7 +9,7 @@ fun test0(): List<Int> = run {
     try {
         emptyList()
     } finally {
-        <!UNUSED_EXPRESSION!>""<!>
+        ""
         fun foo() {}
     }
 }
@@ -22,7 +22,7 @@ fun test1(): Map<Int, Int> = run {
     } catch (e: ExcB) {
         e.map
     } finally {
-        <!UNUSED_EXPRESSION!>""<!>
+        ""
     }
 }
 

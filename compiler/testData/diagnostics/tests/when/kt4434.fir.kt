@@ -27,7 +27,7 @@ fun foo(): Int {
 fun bar(): Int {
     val a = "a"
     if (a.length > 0) {
-        return when (a) {
+        return <!NO_ELSE_IN_WHEN!>when<!> (a) {
             "a" -> 1
         }
     }

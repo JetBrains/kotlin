@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +NonStrictOnlyInputTypesChecks
+// !LANGUAGE: +NewInference -StrictOnlyInputTypesChecks
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")

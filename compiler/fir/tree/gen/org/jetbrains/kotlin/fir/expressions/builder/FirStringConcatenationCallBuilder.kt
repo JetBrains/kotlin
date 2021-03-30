@@ -44,7 +44,7 @@ class FirStringConcatenationCallBuilder : FirCallBuilder, FirAnnotationContainer
     @Deprecated("Modification of 'typeRef' has no impact for FirStringConcatenationCallBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef
         get() = throw IllegalStateException()
-        set(value) {
+        set(_) {
             throw IllegalStateException()
         }
 }

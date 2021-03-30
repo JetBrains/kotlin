@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 object CommonExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
         FirAnonymousFunctionChecker,
+        FirGetClassCallChecker,
     )
 
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker> = setOf(
+        FirCallableReferenceChecker,
         FirSuperNotAvailableChecker,
         FirNotASupertypeChecker,
         FirSuperclassNotAccessibleFromInterfaceChecker,
@@ -21,7 +23,23 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirProjectionsOnNonClassTypeArgumentChecker,
         FirUpperBoundViolatedChecker,
         FirTypeArgumentsNotAllowedExpressionChecker,
+        FirTypeParameterInQualifiedAccessChecker,
         FirSealedClassConstructorCallChecker,
     )
-    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf()
+
+    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+        FirConventionFunctionCallChecker,
+    )
+
+    override val tryExpressionCheckers: Set<FirTryExpressionChecker> = setOf(
+        FirCatchParameterChecker
+    )
+
+    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = setOf(
+        FirValReassignmentViaBackingFieldChecker
+    )
+
+    override val whenExpressionCheckers: Set<FirWhenExpressionChecker> = setOf(
+        FirExhaustiveWhenChecker
+    )
 }

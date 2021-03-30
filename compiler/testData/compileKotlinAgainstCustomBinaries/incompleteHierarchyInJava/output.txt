@@ -1,5 +1,6 @@
 error: supertypes of the following classes cannot be resolved. Please make sure you have the required dependencies in the classpath:
     class test.Sub, unresolved supertypes: test.Super
+Adding -Xextended-compiler-checks argument might provide additional information.
 
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyInJava/source.kt:3:1: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies
 class SubSub : Sub()

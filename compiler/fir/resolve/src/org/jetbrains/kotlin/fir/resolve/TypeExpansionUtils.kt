@@ -85,11 +85,10 @@ private fun mapTypeAliasArguments(
             val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
             val symbol = (type as? ConeTypeParameterType)?.lookupTag?.symbol ?: return super.substituteArgument(projection)
             val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection)
-            val mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type ?: return mappedProjection
+            val mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type.updateNullabilityIfNeeded(type)
+                ?: return mappedProjection
 
-            @Suppress("MoveVariableDeclarationIntoWhen")
-            val resultingKind = mappedProjection.kind + projection.kind
-            return when (resultingKind) {
+            return when (mappedProjection.kind + projection.kind) {
                 ProjectionKind.STAR -> ConeStarProjection
                 ProjectionKind.IN -> ConeKotlinTypeProjectionIn(mappedType)
                 ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(mappedType)

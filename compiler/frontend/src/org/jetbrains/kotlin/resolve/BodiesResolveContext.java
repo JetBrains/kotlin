@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 
 import java.util.Collection;
 import java.util.Map;
@@ -58,4 +59,7 @@ public interface BodiesResolveContext {
 
     @NotNull
     TopDownAnalysisMode getTopDownAnalysisMode();
+
+    @Nullable
+    ExpressionTypingContext getLocalContext();
 }

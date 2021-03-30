@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
-import org.jetbrains.kotlin.cfg.index
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.indexOrMinusOne
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.backend.common.SamType
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -263,7 +264,7 @@ class CoroutineCodegenForLambda private constructor(
 
     private fun ParameterDescriptor.isUnused(): Boolean =
         originalSuspendFunctionDescriptor is AnonymousFunctionDescriptor &&
-                bindingContext[BindingContext.SUSPEND_LAMBDA_PARAMETER_USED, originalSuspendFunctionDescriptor to index()] != true
+                bindingContext[BindingContext.SUSPEND_LAMBDA_PARAMETER_USED, originalSuspendFunctionDescriptor to indexOrMinusOne()] != true
 
     private val generateErasedCreate: Boolean = allFunctionParameters().size <= 1
 
@@ -721,9 +722,16 @@ class CoroutineCodegenForNamedFunction private constructor(
                     }
 
                     val isInterfaceMethod = DescriptorUtils.isInterface(suspendFunctionJvmView.containingDeclaration)
+                    val callableAccessorMethod =
+                        typeMapper.mapToCallableMethod(
+                            context.accessibleDescriptor(suspendFunctionJvmView.unwrapFrontendVersion(), null),
+                            // Obtain default impls method for interfaces
+                            isInterfaceMethod
+                        )
+
                     val callableMethod =
                         typeMapper.mapToCallableMethod(
-                            suspendFunctionJvmView,
+                            suspendFunctionJvmView.unwrapFrontendVersion(),
                             // Obtain default impls method for interfaces
                             isInterfaceMethod
                         )
@@ -736,10 +744,10 @@ class CoroutineCodegenForNamedFunction private constructor(
 
                     if (suspendFunctionJvmView.isOverridable && !isInterfaceMethod && captureThisType != null) {
                         val owner = captureThisType.internalName
-                        val impl = callableMethod.getAsmMethod().getImplForOpenMethod(owner)
+                        val impl = callableAccessorMethod.getAsmMethod().getImplForOpenMethod(owner)
                         codegen.v.invokestatic(owner, impl.name, impl.descriptor, false)
                     } else {
-                        callableMethod.genInvokeInstruction(codegen.v)
+                        callableAccessorMethod.genInvokeInstruction(codegen.v)
                     }
 
                     if (inlineClassToBoxInInvokeSuspend != null) {

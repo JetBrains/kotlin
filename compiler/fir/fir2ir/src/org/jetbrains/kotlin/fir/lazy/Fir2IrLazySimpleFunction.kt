@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
@@ -36,28 +37,28 @@ class Fir2IrLazySimpleFunction(
     override val name: Name
         get() = fir.name
 
-    override var returnType: IrType by lazyVar {
+    override var returnType: IrType by lazyVar(lock) {
         fir.returnTypeRef.toIrType(typeConverter)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
+    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
         if (containingClass != null && shouldHaveDispatchReceiver(containingClass, fir)) {
             createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
         } else null
     }
 
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar {
+    override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
         fir.receiverTypeRef?.let {
             createThisReceiverParameter(it.toIrType(typeConverter))
         }
     }
 
-    override var valueParameters: List<IrValueParameter> by lazyVar {
+    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
         fir.valueParameters.mapIndexed { index, valueParameter ->
             declarationStorage.createIrParameter(
-                valueParameter, index,
+                valueParameter, index, skipDefaultParameter = isFakeOverride
             ).apply {
                 this.parent = this@Fir2IrLazySimpleFunction
             }
@@ -66,13 +67,19 @@ class Fir2IrLazySimpleFunction(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
         val parent = parent
         if (isFakeOverride && parent is Fir2IrLazyClass) {
-            parent.declarations
-            fakeOverrideGenerator.getOverriddenSymbols(this)?.let { return@lazyVar it }
+            fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideFunction(
+                firParent, this, fir.symbol
+            )
+            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let { return@lazyVar it }
         }
-        fir.generateOverriddenFunctionSymbols(firParent, session, scopeSession, declarationStorage)
+        fir.generateOverriddenFunctionSymbols(firParent, session, scopeSession, declarationStorage, fakeOverrideGenerator)
+    }
+
+    override val initialSignatureFunction: IrFunction? by lazy {
+        (fir.initialSignatureAttr as? FirFunction<*>)?.symbol?.let { declarationStorage.getIrFunctionSymbol(it).owner }
     }
 
     override val containerSource: DeserializedContainerSource?

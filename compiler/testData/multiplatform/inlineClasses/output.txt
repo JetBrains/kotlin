@@ -1,10 +1,10 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/inlineClasses/common.kt:3:8: warning: the feature "inline classes" is experimental
+compiler/testData/multiplatform/inlineClasses/common.kt:3:8: warning: inline classes are deprecated in favor of value classes
 expect inline class Foo1(val x: Int)
        ^
-compiler/testData/multiplatform/inlineClasses/common.kt:4:8: warning: the feature "inline classes" is experimental
+compiler/testData/multiplatform/inlineClasses/common.kt:4:8: warning: inline classes are deprecated in favor of value classes
 expect inline class Foo2(val y: String)
        ^
 

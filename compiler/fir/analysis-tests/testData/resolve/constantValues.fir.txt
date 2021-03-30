@@ -44,7 +44,7 @@ FILE: constantValues.kt
         }
 
         public sealed class Value : R|kotlin/Any| {
-            private constructor(): R|KClassValue.Value| {
+            protected constructor(): R|KClassValue.Value| {
                 super<R|kotlin/Any|>()
             }
 

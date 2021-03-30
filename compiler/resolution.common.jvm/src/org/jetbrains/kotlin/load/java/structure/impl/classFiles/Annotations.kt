@@ -174,7 +174,7 @@ class BinaryJavaAnnotation private constructor(
         }
 
         internal fun computeTargetType(baseType: JavaType, typePath: TypePath) =
-            translatePath(typePath).fold(baseType) { targetType, (typePathKind, typeArgumentIndex) ->
+            translatePath(typePath).fold<Pair<Int, Int>, JavaType?>(baseType) { targetType, (typePathKind, typeArgumentIndex) ->
                 when (typePathKind) {
                     TypePath.TYPE_ARGUMENT -> {
                         require(targetType is JavaClassifierType)
@@ -182,10 +182,11 @@ class BinaryJavaAnnotation private constructor(
                             ?: throw IllegalArgumentException("There must be no less than ${typeArgumentIndex + 1} type arguments")
                     }
                     TypePath.WILDCARD_BOUND -> {
-                        // TODO: think about processing annotated wildcards themselves
                         require(targetType is JavaWildcardType)
+                        // below, returned `null` means annotated implicit lower and upper wildcard's bound,
+                        // it isn't supported yet to load type use annotations (null is further ignored)
+                        // TODO: consider taking into account such annotations through returning wildcard itself as a target type (KT-40498)
                         targetType.bound
-                            ?: throw IllegalArgumentException("Wildcard mast have a bound for annotation of WILDCARD_BOUND position")
                     }
                     TypePath.ARRAY_ELEMENT -> {
                         require(targetType is JavaArrayType)
@@ -278,7 +279,7 @@ class BinaryJavaAnnotationVisitor(
     }
 }
 
-abstract class PlainJavaAnnotationArgument(name: String?) : JavaAnnotationArgument {
+sealed class PlainJavaAnnotationArgument(name: String?) : JavaAnnotationArgument {
     override val name: Name? = name?.takeIf(Name::isValidIdentifier)?.let(Name::identifier)
 }
 

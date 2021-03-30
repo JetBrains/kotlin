@@ -63,8 +63,8 @@ fun case_6(x: EmptyClass) {
 
 // TESTCASE NUMBER: 7
 fun case_7() {
-    if (anonymousTypeProperty == null || <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>")!>anonymousTypeProperty<!> == null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>")!>anonymousTypeProperty<!>
+    if (anonymousTypeProperty == null || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>anonymousTypeProperty<!> == null) {
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>anonymousTypeProperty<!>
     }
 }
 
@@ -258,7 +258,7 @@ fun case_23(a: ((Float) -> Int), b: Float) {
     if (a == null && b == null) {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>b<!>)<!>
         if (x !== null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
         }
     }
 }

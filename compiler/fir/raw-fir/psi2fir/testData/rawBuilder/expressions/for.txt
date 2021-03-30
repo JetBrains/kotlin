@@ -38,14 +38,14 @@ FILE: for.kt
 
     }
     public? final? data class Some : R|kotlin/Any| {
-        public? constructor(x: Int, y: Int): R|Some| {
+        public? [ContainingClassKey=Some] constructor(x: Int, y: Int): R|Some| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val x: Int = R|<local>/x|
+        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
             public? get(): Int
 
-        public? final? val y: Int = R|<local>/y|
+        public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
             public? get(): Int
 
         public final operator fun component1(): Int

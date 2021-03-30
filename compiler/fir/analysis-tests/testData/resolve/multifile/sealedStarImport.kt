@@ -5,7 +5,7 @@ package test
 sealed class Test {
     object O : Test()
 
-    class Extra(val x: Int): Test
+    class Extra(val x: Int): <!SUPERTYPE_NOT_INITIALIZED!>Test<!>
 }
 
 // FILE: main.kt

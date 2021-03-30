@@ -28,12 +28,12 @@ class SomeClass {
     @setparam:Ann
     var propertyWithCustomSetter: Int
         get() = 5
-        set(<!UNUSED_PARAMETER!>v<!>) {}
+        set(v) {}
 
     <!INAPPLICABLE_TARGET_ON_PROPERTY!>@setparam:Ann<!>
     fun anotherFun() {
         <!INAPPLICABLE_TARGET_ON_PROPERTY!>@setparam:Ann<!>
-        val <!UNUSED_VARIABLE!>localVariable<!> = 5
+        val localVariable = 5
     }
 
 }

@@ -87,5 +87,5 @@ fun t7() : Int {
     }
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
-fun doSmth(<!UNUSED_PARAMETER!>i<!>: Int) {
+fun doSmth(i: Int) {
 }

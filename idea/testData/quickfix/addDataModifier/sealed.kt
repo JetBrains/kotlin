@@ -5,6 +5,7 @@
 // ACTION: Create member function 'Foo.component2'
 // ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Put arguments on separate lines
+// ERROR: Cannot access '<init>': it is protected in 'Foo'
 // ERROR: Destructuring declaration initializer of type Foo must have a 'component1()' function
 // ERROR: Destructuring declaration initializer of type Foo must have a 'component2()' function
 // ERROR: Sealed types cannot be instantiated

@@ -46,10 +46,13 @@ fun withVararg(vararg xs: Int): Int {
 fun test1() {
   { // BLOCK
     val tmp0_array: A = A
-    val tmp2_sam: IFoo = local fun withVararg(p0: Int) {
-      withVararg(xs = [p0]) /*~> Unit */
-    }
- /*-> IFoo */
+    val tmp2_sam: IFoo = { // BLOCK
+      local fun withVararg(p0: Int) {
+        withVararg(xs = [p0]) /*~> Unit */
+      }
+
+      ::withVararg
+    } /*-> IFoo */
     tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }
@@ -57,10 +60,13 @@ fun test1() {
 fun test2() {
   { // BLOCK
     val tmp0_array: B = B
-    val tmp2_sam: IFoo2 = local fun withVararg(p0: Int) {
-      withVararg(xs = [p0]) /*~> Unit */
-    }
- /*-> IFoo2 */
+    val tmp2_sam: IFoo2 = { // BLOCK
+      local fun withVararg(p0: Int) {
+        withVararg(xs = [p0]) /*~> Unit */
+      }
+
+      ::withVararg
+    } /*-> IFoo2 */
     tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }

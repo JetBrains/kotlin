@@ -1,4 +1,4 @@
-// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses
+// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @kotlin.jvm.JvmField

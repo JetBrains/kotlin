@@ -104,7 +104,7 @@ class Element(val name: String, kind: Kind) : AbstractElement {
     }
 
     val parentFields: List<Field> by lazy {
-        val result = LinkedHashSet<Field>()
+        val result = LinkedHashMap<String, Field>()
         parents.forEach { parent ->
             val fields = parent.allFields.map { field ->
                 val copy = (field as? SimpleField)?.let { simpleField ->
@@ -119,9 +119,23 @@ class Element(val name: String, kind: Kind) : AbstractElement {
                     fromParent = true
                 }
             }
-            result.addAll(fields)
+            fields.forEach {
+                result.merge(it.name, it) { previousField, thisField ->
+                    val resultField = previousField.copy()
+                    if (thisField.withReplace) {
+                        resultField.withReplace = true
+                    }
+                    if (thisField.useNullableForReplace) {
+                        resultField.useNullableForReplace = true
+                    }
+                    if (thisField.isMutable) {
+                        resultField.isMutable = true
+                    }
+                    resultField
+                }
+            }
         }
-        result.toList()
+        result.values.toList()
     }
 
     override val allFirFields: List<Field> by lazy {

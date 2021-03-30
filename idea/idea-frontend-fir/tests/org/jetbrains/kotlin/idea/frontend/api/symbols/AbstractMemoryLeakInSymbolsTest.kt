@@ -14,23 +14,20 @@ import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EntityWasGarbageCollectedException
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.trackers.KotlinOutOfBlockModificationTrackerFactory
-import sun.management.HotSpotDiagnostic
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.io.path.absolute
 
 abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun isFirPlugin() = true
@@ -39,7 +36,7 @@ abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTe
         val testDataFile = File(path)
         val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
         val symbols = executeOnPooledThreadInReadAction {
-            analyze(ktFile) {
+            analyse(ktFile) {
                 ktFile.collectDescendantsOfType<KtDeclaration>().map { it.getSymbol() }
             }
         }
@@ -67,7 +64,7 @@ abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTe
         (project.service<KotlinOutOfBlockModificationTrackerFactory>() as KotlinFirOutOfBlockModificationTrackerFactory).incrementModificationsCount()
         project.service<LibraryModificationTracker>().incModificationCount()
         (project.service<KtAnalysisSessionProvider>() as KtFirAnalysisSessionProvider).clearCaches()
-        executeOnPooledThreadInReadAction { analyze(ktFile) {} }
+        executeOnPooledThreadInReadAction { analyse(ktFile) {} }
     }
 
     private fun KtSymbol.hasNoFirElementLeak(): LeakCheckResult {

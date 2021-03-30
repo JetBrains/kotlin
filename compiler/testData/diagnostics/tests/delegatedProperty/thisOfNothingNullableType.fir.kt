@@ -4,7 +4,7 @@
 import kotlin.reflect.KProperty
 
 class A {
-  var a: Int by <!INAPPLICABLE_CANDIDATE!>Delegate()<!>
+  var a: Int by <!INAPPLICABLE_CANDIDATE!>Delegate<!>()
 }
 
 var aTopLevel: Int by Delegate()

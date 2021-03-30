@@ -11,9 +11,9 @@ class A {
 import foo.A as B
 
 fun test_1() {
-    val a = <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>A<!>()<!>
+    val a = <!UNRESOLVED_REFERENCE!>A<!>()
     val b = B() // should be OK
-    val c: B = <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>A<!>()<!>
+    val c: B = <!UNRESOLVED_REFERENCE!>A<!>()
 }
 
 fun test_2(b: B) {

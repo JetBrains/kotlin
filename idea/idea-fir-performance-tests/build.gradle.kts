@@ -30,6 +30,29 @@ dependencies {
     testRuntime(intellijDep())
 
     compile(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java"))
+
+    testRuntimeOnly(intellijDep())
+    testRuntimeOnly(intellijRuntimeAnnotations())
+    testRuntimeOnly(toolsJar())
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":plugins:android-extensions-ide"))
+    testRuntimeOnly(project(":plugins:kapt3-idea"))
+    testRuntimeOnly(project(":sam-with-receiver-ide-plugin"))
+    testRuntimeOnly(project(":noarg-ide-plugin"))
+    testRuntimeOnly(project(":allopen-ide-plugin"))
+    testRuntimeOnly(project(":kotlin-scripting-idea"))
+    testRuntimeOnly(project(":kotlinx-serialization-ide-plugin"))
+    testRuntimeOnly(project(":plugins:parcelize:parcelize-ide"))
+    testRuntimeOnly(project(":nj2k:nj2k-services"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":idea:kotlin-gradle-tooling"))
+    testRuntimeOnly(project(":kotlin-gradle-statistics"))
+
+    testImplementation("khttp:khttp:1.0.0")
+
+    testImplementation(intellijPluginDep("gradle-java"))
+    testRuntimeOnly(intellijPluginDep("gradle-java"))
 }
 
 sourceSets {
@@ -39,9 +62,10 @@ sourceSets {
 
 projectTest(parallel = true) {
     dependsOn(":dist")
-    workingDir = rootDir
+    workingDir = project.rootDir
+    val useFirIdeaPlugin = kotlinBuildProperties.useFirIdeaPlugin
     doFirst {
-        if (!kotlinBuildProperties.useFirIdeaPlugin) {
+        if (!useFirIdeaPlugin) {
             error("Test task in the module should be executed with -Pidea.fir.plugin=true")
         }
     }
@@ -50,15 +74,16 @@ projectTest(parallel = true) {
 testsJar()
 
 projectTest(taskName = "ideaFirPerformanceTest") {
+    exclude("**/*WholeProjectPerformanceComparisonFirImplTest*")
     val currentOs = org.gradle.internal.os.OperatingSystem.current()
 
     if (!currentOs.isWindows) {
-        System.getenv("ASYNC_PROFILER_HOME")?.let { asyncProfilerHome ->
-            classpath += files("$asyncProfilerHome/build/async-profiler.jar")
+        project.providers.systemProperty("ASYNC_PROFILER_HOME").forUseAtConfigurationTime().orNull?.let { asyncProfilerHome ->
+            classpath += project.files("$asyncProfilerHome/build/async-profiler.jar")
         }
     }
 
-    workingDir = rootDir
+    workingDir = project.rootDir
 
     jvmArgs?.removeAll { it.startsWith("-Xmx") }
 
@@ -72,7 +97,7 @@ projectTest(taskName = "ideaFirPerformanceTest") {
         "-XX:+UseConcMarkSweepGC"
     )
 
-    System.getenv("YOURKIT_PROFILER_HOME")?.let {yourKitHome ->
+    project.providers.systemProperty("YOURKIT_PROFILER_HOME").forUseAtConfigurationTime().orNull?.let {yourKitHome ->
         when {
             currentOs.isLinux -> {
                 jvmArgs("-agentpath:$yourKitHome/bin/linux-x86-64/libyjpagent.so")
@@ -84,6 +109,30 @@ projectTest(taskName = "ideaFirPerformanceTest") {
             }
         }
     }
+
+    systemProperty("idea.home.path", project.intellijRootDir().canonicalPath)
+
+    project.providers.gradleProperty("cacheRedirectorEnabled").forUseAtConfigurationTime().orNull?.let {
+        systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
+    }
+}
+
+projectTest(taskName = "firProjectPerformanceTest") {
+     include("**/*WholeProjectPerformanceComparisonFirImplTest*")
+
+    workingDir = rootDir
+
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
+
+    maxHeapSize = "3g"
+    jvmArgs("-DperformanceProjects=${System.getProperty("performanceProjects")}")
+    jvmArgs("-Didea.debug.mode=true")
+    jvmArgs("-DemptyProfile=${System.getProperty("emptyProfile")}")
+    jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
+    jvmArgs(
+        "-XX:+UseCompressedOops",
+        "-XX:+UseConcMarkSweepGC"
+    )
 
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)

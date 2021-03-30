@@ -17,8 +17,8 @@ object Best {
 
 }
 
-val a = <!TYPE_ARGUMENTS_NOT_ALLOWED!>rest<Int><!>.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>MyClass<!><String><!>
-val b = Best.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>MyClass<!><String><!>
+val a = <!TYPE_ARGUMENTS_NOT_ALLOWED!>rest<Int><!>.<!UNRESOLVED_REFERENCE!>MyClass<!><String>
+val b = Best.<!UNRESOLVED_REFERENCE!>MyClass<!><String>
 
 class B<E>
 class C<F<!SYNTAX{PSI}!><<!><!SYNTAX{PSI}!>Boolean<!><!SYNTAX{PSI}!>><!><!SYNTAX{PSI}!>><!> <!SYNTAX{PSI}!>:<!> <!SYNTAX{PSI}!>B<!><!SYNTAX{PSI}!><<!><!SYNTAX{PSI}!>F<!><!SYNTAX{PSI}!><<!><!SYNTAX{PSI}!>Boolean<!><!SYNTAX{PSI}!>><!><!SYNTAX{PSI}!>><!><!SYNTAX{PSI}!>(<!><!SYNTAX{PSI}!>)<!>

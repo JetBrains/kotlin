@@ -4,12 +4,11 @@ FILE: superCallWithDelegation.kt
 
     }
     public open class B : R|A| {
-        local final field <$$delegate_0>: R|A|
-
         public constructor(a: R|A|): R|B| {
             super<R|kotlin/Any|>()
-            this@R|/B|.R|<local>/<$$delegate_0>| = R|<local>/a|
         }
+
+        local final field <$$delegate_0>: R|A| = R|<local>/a|
 
         private final val a: R|A| = R|<local>/a|
             private get(): R|A|

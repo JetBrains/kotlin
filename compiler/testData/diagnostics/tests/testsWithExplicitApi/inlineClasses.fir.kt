@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -EXPERIMENTAL_FEATURE_WARNING
+// !LANGUAGE: -JvmInlineValueClasses
 // SKIP_TXT
 
 inline class Value1(val inner: Int)

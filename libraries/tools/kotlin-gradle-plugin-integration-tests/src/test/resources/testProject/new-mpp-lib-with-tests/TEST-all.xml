@@ -2,8 +2,8 @@
 <results>
   <testsuite name="com.example.lib.TestCommonCode" tests="2" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="testId" classname="com.example.lib.TestCommonCode" time="..." />
-    <testcase name="testExpectedFun" classname="com.example.lib.TestCommonCode" time="..." />
+    <testcase name="testId[js, node]" classname="com.example.lib.TestCommonCode" time="..." />
+    <testcase name="testExpectedFun[js, node]" classname="com.example.lib.TestCommonCode" time="..." />
     <system-out />
     <system-err />
   </testsuite>
@@ -16,8 +16,8 @@
   </testsuite>
   <testsuite name="com.example.lib.TestCommonCode" tests="2" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="testId" classname="com.example.lib.TestCommonCode" time="..." />
-    <testcase name="testExpectedFun" classname="com.example.lib.TestCommonCode" time="..." />
+    <testcase name="testId[linux64]" classname="com.example.lib.TestCommonCode" time="..." />
+    <testcase name="testExpectedFun[linux64]" classname="com.example.lib.TestCommonCode" time="..." />
     <system-out />
     <system-err />
   </testsuite>
@@ -29,7 +29,7 @@
   </testsuite>
   <testsuite name="com.example.lib.TestJs" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="testJsSpecificCode" classname="com.example.lib.TestJs" time="..." />
+    <testcase name="testJsSpecificCode[js, node]" classname="com.example.lib.TestJs" time="..." />
     <system-out />
     <system-err />
   </testsuite>

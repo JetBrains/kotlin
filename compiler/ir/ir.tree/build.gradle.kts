@@ -1,12 +1,15 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
+    api(project(":core:descriptors"))
+    api(project(":core:deserialization"))
+    api(project(":compiler:frontend.common"))
+    implementation(project(":compiler:util"))
+    implementation(project(":compiler:config"))
+
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 

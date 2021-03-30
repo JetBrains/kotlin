@@ -44,7 +44,7 @@ class FirEqualityOperatorCallBuilder : FirAnnotationContainerBuilder, FirExpress
     @Deprecated("Modification of 'typeRef' has no impact for FirEqualityOperatorCallBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef
         get() = throw IllegalStateException()
-        set(value) {
+        set(_) {
             throw IllegalStateException()
         }
 }

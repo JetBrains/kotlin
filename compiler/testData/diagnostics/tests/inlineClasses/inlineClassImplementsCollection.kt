@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 inline class UInt(val x: Int)
 

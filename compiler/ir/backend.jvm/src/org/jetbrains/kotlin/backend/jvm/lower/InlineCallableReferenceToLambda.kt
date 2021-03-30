@@ -59,6 +59,8 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
     }
 }
 
+const val STUB_FOR_INLINING = "stub_for_inlining"
+
 private class InlineCallableReferenceToLambdaTransformer(
     val context: JvmBackendContext,
     val inlinableReferences: Set<IrCallableReference<*>>
@@ -140,7 +142,7 @@ private class InlineCallableReferenceToLambdaTransformer(
             val function = context.irFactory.buildFun {
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-                name = Name.identifier("stub_for_inlining")
+                name = Name.identifier(STUB_FOR_INLINING)
                 visibility = DescriptorVisibilities.LOCAL
                 returnType = referencedFunction.returnType
                 isSuspend = referencedFunction.isSuspend

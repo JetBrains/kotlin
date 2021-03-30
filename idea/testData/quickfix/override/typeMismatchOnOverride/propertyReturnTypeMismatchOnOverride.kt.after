@@ -6,3 +6,4 @@ interface X {
 class A : X {
     override val x: Int = 42
 }
+/* FIR_COMPARISON */

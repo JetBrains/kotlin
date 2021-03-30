@@ -3,6 +3,7 @@
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// IR_DUMP
 
 import kotlin.collections.toList
 

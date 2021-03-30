@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl
-import com.intellij.lang.annotation.AnnotationSession
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
@@ -33,13 +32,14 @@ abstract class AbstractDslHighlighterTest : KotlinLightCodeInsightFixtureTestCas
             val styleIdByComment = commentText?.replace("//", "")?.trim()?.toInt()?.let { DslHighlighterExtension.externalKeyName(it) }
             val styleIdByCall = extension.highlightCall(element, call)?.externalName
             if (styleIdByCall != null && styleIdByCall == styleIdByComment) {
-                val annotationHolder = AnnotationHolderImpl(AnnotationSession(psiFile))
-                val checkers = KotlinPsiChecker.getAfterAnalysisVisitor(annotationHolder, bindingContext)
+                val holder = HighlightInfoHolder(psiFile)
+                val checkers = AbstractKotlinHighlightVisitor.getAfterAnalysisVisitor(holder, bindingContext)
                 checkers.forEach { call.call.callElement.accept(it) }
+
                 assertTrue(
-                    "KotlinPsiChecker did not contribute an Annotation containing the correct text attribute key at line ${lineNumber + 1}",
-                    annotationHolder.any {
-                        it.textAttributes.externalName == styleIdByComment
+                    "KotlinHighlightingPass did not contribute an Annotation containing the correct text attribute key at line ${lineNumber + 1}",
+                    (0 until holder.size()).map { holder[it] }.any {
+                        it.forcedTextAttributesKey.externalName == styleIdByComment
                     }
                 )
             } else if (styleIdByCall != styleIdByComment) {

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.testingBackgroundExec
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.testScriptConfigurationNotification
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
+import java.io.File
 
 abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurationTest() {
     lateinit var scriptConfigurationManager: CompositeScriptConfigurationManager
@@ -66,6 +67,18 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
 
     override fun loadScriptConfigurationSynchronously(script: VirtualFile) {
         // do nothings
+    }
+
+    protected inline fun <reified T : Any> copyFromTestdataToProject(file: String): T {
+        createFileAndSyncDependencies(File(file))
+        return (myFile as? T) ?: error("Couldn't configure project by $file")
+    }
+
+    protected fun createFileInProject(path: String): File {
+        val file = File(project.basePath, path)
+        file.parentFile.mkdirs()
+        file.createNewFile()
+        return file
     }
 
     protected fun assertAndDoAllBackgroundTasks() {

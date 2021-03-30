@@ -36,6 +36,7 @@ abstract class AbstractCandidateInfoProvider(
 ) : CandidateInfoProvider {
     override fun callInfo(): CallInfo = with(resolutionParameters) {
         CallInfo(
+            firFile, // TODO: consider passing more precise info here, if needed
             callKind = callKind(),
             name = callableSymbol.callableId.callableName,
             explicitReceiver = explicitReceiver,

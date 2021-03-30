@@ -15,6 +15,7 @@ import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -153,10 +154,10 @@ private fun configureDiscoveryTransformation(
 
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<TransformParameters.None> {
     @get:InputArtifact
-    abstract val inputArtifact: File
+    abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
-        val input = inputArtifact
+        val input = inputArtifact.get().asFile
 
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(

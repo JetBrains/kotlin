@@ -5,11 +5,11 @@ var x : Int = 1 + x
       field = 1.toLong()
     }
 
- val xx : Int = 1 + x
+ val xx : Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1 + x<!>
    get() : Int = 1
-   set(value : Long) {}
+   <!VAL_WITH_SETTER!>set(value : Long) {}<!>
 
-  val p : Int = 1
+  val p : Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
     get() = 1
 
 class Test() {

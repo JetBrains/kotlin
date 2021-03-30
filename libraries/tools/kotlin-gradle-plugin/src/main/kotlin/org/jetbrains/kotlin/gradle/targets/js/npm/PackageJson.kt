@@ -124,39 +124,40 @@ fun fromSrcPackageJson(packageJson: File?): PackageJson? =
         Gson().fromJson(it, PackageJson::class.java)
     }
 
-fun packageJson(
-    npmProject: NpmProject,
-    npmDependencies: Collection<NpmDependency>
+internal fun packageJson(
+    name: String,
+    version: String,
+    main: String,
+    npmDependencies: Collection<NpmDependencyDeclaration>
 ): PackageJson {
-    val compilation = npmProject.compilation
 
     val packageJson = PackageJson(
-        npmProject.name,
-        fixSemver(compilation.target.project.version.toString())
+        name,
+        fixSemver(version)
     )
 
-    packageJson.main = npmProject.main
+    packageJson.main = main
 
     val dependencies = mutableMapOf<String, String>()
 
     npmDependencies.forEach {
-        val module = it.key
+        val module = it.name
         dependencies[module] = chooseVersion(module, dependencies[module], it.version)
     }
 
     npmDependencies.forEach {
-        val dependency = dependencies.getValue(it.key)
+        val dependency = dependencies.getValue(it.name)
         when (it.scope) {
-            NpmDependency.Scope.NORMAL -> packageJson.dependencies[it.key] = dependency
-            NpmDependency.Scope.DEV -> packageJson.devDependencies[it.key] = dependency
-            NpmDependency.Scope.OPTIONAL -> packageJson.optionalDependencies[it.key] = dependency
-            NpmDependency.Scope.PEER -> packageJson.peerDependencies[it.key] = dependency
+            NpmDependency.Scope.NORMAL -> packageJson.dependencies[it.name] = dependency
+            NpmDependency.Scope.DEV -> packageJson.devDependencies[it.name] = dependency
+            NpmDependency.Scope.OPTIONAL -> packageJson.optionalDependencies[it.name] = dependency
+            NpmDependency.Scope.PEER -> packageJson.peerDependencies[it.name] = dependency
         }
     }
 
-    compilation.packageJsonHandlers.forEach {
-        it(packageJson)
-    }
+//    compilation.packageJsonHandlers.forEach {
+//        it(packageJson)
+//    }
 
     return packageJson
 }

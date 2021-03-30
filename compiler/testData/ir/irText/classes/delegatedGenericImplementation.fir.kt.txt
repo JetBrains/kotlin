@@ -14,7 +14,6 @@ class Test1<E : Any?> : IBase<E> {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = i
   }
 
   override fun <B : Any?> foo(a: E, b: B) {
@@ -34,7 +33,7 @@ class Test1<E : Any?> : IBase<E> {
       (<this>.#<$$delegate_0>, <this>).<set-x></* null */>(<set-?> = <set-?>)
     }
 
-  local /* final field */ val <$$delegate_0>: IBase<E>
+  local /* final field */ val <$$delegate_0>: IBase<E> = i
 
 }
 
@@ -43,13 +42,7 @@ class Test2 : IBase<String> {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = j
   }
-
-  var j: IBase<String>
-    field = j
-    get
-    set
 
   override fun <B : Any?> foo(a: String, b: B) {
     <this>.#<$$delegate_0>.foo</* null */>(a = a, b = b)
@@ -68,7 +61,10 @@ class Test2 : IBase<String> {
       (<this>.#<$$delegate_0>, <this>).<set-x></* null */>(<set-?> = <set-?>)
     }
 
-  local /* final field */ val <$$delegate_0>: IBase<String>
+  local /* final field */ val <$$delegate_0>: IBase<String> = j
+  var j: IBase<String>
+    field = j
+    get
+    set
 
 }
-

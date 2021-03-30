@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.findFileByName
 import org.jetbrains.kotlin.gradle.util.createTempDir
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 import java.net.URI
@@ -67,6 +68,22 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @Test
     fun testInstantExecutionForJs() = with(Project("instantExecutionToJs")) {
         testConfigurationCacheOf("assemble", executedTaskNames = asList(":compileKotlin2Js"))
+    }
+
+    @Test
+    fun testConfigurationCacheJsPlugin() = with(Project("kotlin-js-browser-project")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+        testConfigurationCacheOf(
+            ":app:build", executedTaskNames = asList(
+                ":app:packageJson",
+                ":app:publicPackageJson",
+                ":app:compileKotlinJs",
+                ":app:processDceKotlinJs",
+                ":app:browserProductionWebpack",
+            )
+        )
     }
 }
 

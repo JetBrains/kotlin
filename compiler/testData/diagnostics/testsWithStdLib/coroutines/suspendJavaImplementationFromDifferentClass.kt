@@ -28,7 +28,7 @@ class K3 : JavaClass() {
     <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: Int, y: Continuation<String>): Any? = null
 }
 
-fun builder(<!UNUSED_PARAMETER!>block<!>: suspend () -> Unit) {}
+fun builder(block: suspend () -> Unit) {}
 
 fun main(x: Continuation<String>) {
     JavaClass().<!ILLEGAL_SUSPEND_FUNCTION_CALL!>foo<!>(5, <!TOO_MANY_ARGUMENTS!>x<!>)

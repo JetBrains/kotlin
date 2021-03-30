@@ -7,8 +7,7 @@ plugins {
 
 repositories {
     mavenLocal()
-    jcenter()
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlin-dev") }
+    mavenCentral()
 }
 
 kotlin {

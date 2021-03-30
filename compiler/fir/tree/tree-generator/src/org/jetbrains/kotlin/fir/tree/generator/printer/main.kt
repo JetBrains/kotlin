@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.util.SmartPrinter
 import java.io.File
 
 private val COPYRIGHT = File("license/COPYRIGHT_HEADER.txt").readText()
@@ -19,15 +20,17 @@ val GENERATED_MESSAGE = """
      */
      """.trimIndent()
 
-fun printElements(builder: AbstractFirTreeBuilder, generationPath: File) {
-    builder.elements.forEach { it.generateCode(generationPath) }
-    builder.elements.flatMap { it.allImplementations }.forEach { it.generateCode(generationPath) }
-    builder.elements.flatMap { it.allImplementations }.mapNotNull { it.builder }.forEach { it.generateCode(generationPath) }
-    builder.intermediateBuilders.forEach { it.generateCode(generationPath) }
+fun generateElements(builder: AbstractFirTreeBuilder, generationPath: File): List<GeneratedFile> {
+    val generatedFiles = mutableListOf<GeneratedFile>()
+    builder.elements.mapTo(generatedFiles) { it.generateCode(generationPath) }
+    builder.elements.flatMap { it.allImplementations }.mapTo(generatedFiles) { it.generateCode(generationPath) }
+    builder.elements.flatMap { it.allImplementations }.mapNotNull { it.builder }.mapTo(generatedFiles) { it.generateCode(generationPath) }
+    builder.intermediateBuilders.mapTo(generatedFiles) { it.generateCode(generationPath) }
 
-    printVisitor(builder.elements, generationPath)
-    printVisitorVoid(builder.elements, generationPath)
-    printTransformer(builder.elements, generationPath)
+    generatedFiles += printVisitor(builder.elements, generationPath)
+    generatedFiles += printVisitorVoid(builder.elements, generationPath)
+    generatedFiles += printTransformer(builder.elements, generationPath)
+    return generatedFiles
 }
 
 fun SmartPrinter.printCopyright() {

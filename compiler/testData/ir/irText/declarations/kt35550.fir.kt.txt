@@ -11,7 +11,6 @@ class A : I {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = i
   }
 
   override val <T : Any?> T.id: T
@@ -19,7 +18,6 @@ class A : I {
       return (<this>.#<$$delegate_0>, <this>).<get-id></* null */>()
     }
 
-  local /* final field */ val <$$delegate_0>: I
+  local /* final field */ val <$$delegate_0>: I = i
 
 }
-

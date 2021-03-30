@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.load.kotlin.header
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.DELEGATING
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.MultifileClassKind.INHERITING
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
 class KotlinClassHeader(
     val kind: Kind,
     val metadataVersion: JvmMetadataVersion,
-    val bytecodeVersion: JvmBytecodeBinaryVersion,
     val data: Array<String>?,
     val incompatibleData: Array<String>?,
     val strings: Array<String>?,

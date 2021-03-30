@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isEnumEntry
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -156,8 +153,11 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 declaration.body = context.createJvmIrBuilder(declaration.symbol).run {
                     irExprBody(
                         when (body.kind) {
-                            IrSyntheticBodyKind.ENUM_VALUES ->
-                                irArray(valuesField.type) { addSpread(irGetField(null, valuesField)) }
+                            IrSyntheticBodyKind.ENUM_VALUES -> {
+                                irCall(this@EnumClassLowering.context.ir.symbols.objectCloneFunction, declaration.returnType).apply {
+                                    dispatchReceiver = irGetField(null, valuesField)
+                                }
+                            }
 
                             IrSyntheticBodyKind.ENUM_VALUEOF ->
                                 irCall(backendContext.ir.symbols.enumValueOfFunction).apply {

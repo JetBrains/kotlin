@@ -1,28 +1,28 @@
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 @kotlin.js.JsName(name = "$")
 public external fun jq(): jquery.JQuery
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 @kotlin.js.JsName(name = "$")
 public external fun jq(callback: () -> kotlin.Unit): jquery.JQuery
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 @kotlin.js.JsName(name = "$")
 public external fun jq(obj: jquery.JQuery): jquery.JQuery
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 @kotlin.js.JsName(name = "$")
 public external fun jq(selector: kotlin.String): jquery.JQuery
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 @kotlin.js.JsName(name = "$")
 public external fun jq(selector: kotlin.String, context: org.w3c.dom.Element): jquery.JQuery
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 @kotlin.js.JsName(name = "$")
 public external fun jq(el: org.w3c.dom.Element): jquery.JQuery
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 public final external class JQuery {
     public constructor JQuery()
 
@@ -83,14 +83,14 @@ public final external class JQuery {
     public final fun width(): kotlin.Number
 }
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 public final external class MouseClickEvent : jquery.MouseEvent {
     public constructor MouseClickEvent()
 
     public final val which: kotlin.Int { get; }
 }
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use declarations from 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/js-externals/kotlin/js/externals/kotlin-js-jquery/' package instead.")
 public open external class MouseEvent {
     public constructor MouseEvent()
 

@@ -123,7 +123,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
     @Suppress("UNCHECKED_CAST")
     private fun Task.getCompilerArguments(methodName: String): List<String>? {
         return try {
-            javaClass.getDeclaredMethod(methodName).invoke(this) as List<String>
+            this[methodName] as? List<String>
         } catch (e: Exception) {
             // No argument accessor method is available
             null
@@ -162,14 +162,24 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         }
     }
 
-    override fun buildAll(modelName: String?, project: Project): KotlinGradleModelImpl {
+    override fun buildAll(modelName: String?, project: Project): KotlinGradleModelImpl? {
         val kotlinPluginId = kotlinPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
         val platformPluginId = platformPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
+        val target = project.getTarget()
+
+        if (kotlinPluginId == null && platformPluginId == null && target == null) {
+            return null
+        }
 
         val compilerArgumentsBySourceSet = LinkedHashMap<String, ArgsInfo>()
         val extraProperties = HashMap<String, KotlinTaskProperties>()
 
-        project.getAllTasks(false)[project]?.forEach { compileTask ->
+
+        val kotlinCompileTasks = target?.let { it.compilations ?: emptyList() }
+                ?.mapNotNull { compilation -> compilation.getCompileKotlinTaskName(project) }
+                ?: (project.getAllTasks(false)[project]?.filter { it.javaClass.name in kotlinCompileTaskClasses } ?: emptyList())
+
+        kotlinCompileTasks.forEach { compileTask ->
             if (compileTask.javaClass.name !in kotlinCompileTaskClasses) return@forEach
 
             val sourceSetName = compileTask.getSourceSetName()

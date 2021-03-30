@@ -24,8 +24,8 @@ fun test_1(x: Any) {
 fun test_2(x: Any) {
     if (x is B || x is C) {
         x.foo()
-        x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
-        x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>baz<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>bar<!>()
+        x.<!UNRESOLVED_REFERENCE!>baz<!>()
     }
 }
 
@@ -59,26 +59,26 @@ fun test_6(x: Any) {
 fun test_7(x: Any) {
     if (x is A || false) {
         // TODO: should be smartcast
-        x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
 
 fun test_8(x: Any) {
     if (false || x is A) {
         // TODO: should be smartcast
-        x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
 
 fun test_9(x: Any) {
     if (x is A || true) {
-        x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
 
 fun test_10(x: Any) {
     if (true || x is A) {
-        x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
 
@@ -86,7 +86,7 @@ fun test_10(x: Any) {
 
 fun test_11(x: Any, b: Boolean) {
     if (false && x is A) {
-        x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+        x.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
 

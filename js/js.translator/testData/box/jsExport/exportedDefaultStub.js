@@ -7,6 +7,7 @@ module.exports = function() {
     var transform = api.transform;
     var Ping = api.Ping;
     var Pong = api.Pong;
+    var Foo = api.Foo;
 
     return {
         "ping00": ping(),
@@ -26,7 +27,8 @@ module.exports = function() {
         "Ping_ping00b": new Ping(10).ping(),
         "Ping_ping11": new Ping().ping(-4, function(it) { return it * it * it }),
 
-        "Pong_ping00": new Pong().ping()
+        "Pong_ping00": new Pong().ping(),
+        "Foo": new Foo().foo()
     };
 };
 

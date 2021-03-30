@@ -22,4 +22,4 @@ fun test() {
     B.foo()
 }
 
-val bb = <!UNRESOLVED_REFERENCE!>B<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+val bb = <!UNRESOLVED_REFERENCE!>B<!>.foo()

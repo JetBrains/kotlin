@@ -32,7 +32,7 @@ object Obj : A {
 
 fun testUnbound() {
   use1(fn = local fun foo(p0: A, p1: Int) {
-    p0.foo()
+    p0.foo(xs = [p1])
   }
 )
 }

@@ -1,4 +1,4 @@
-// !LANGUAGE: -ImprovementsAroundTypeEnhancement
+// !LANGUAGE: -TypeEnhancementImprovementsInStrictMode
 
 package test;
 

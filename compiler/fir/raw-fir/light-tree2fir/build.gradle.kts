@@ -13,7 +13,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven { setUrl("https://www.jetbrains.com/intellij-repository/releases") }
-    maven { setUrl("https://jetbrains.bintray.com/intellij-third-party-dependencies") }
+    maven { setUrl("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") }
 }
 
 dependencies {

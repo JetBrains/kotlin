@@ -44,7 +44,7 @@ internal class ClassMemberGenerator(
     fun convertClassContent(irClass: IrClass, klass: FirClass<*>) {
         declarationStorage.enterScope(irClass)
         conversionScope.withClass(irClass) {
-            val primaryConstructor = klass.getPrimaryConstructorIfAny()
+            val primaryConstructor = klass.primaryConstructor
             val irPrimaryConstructor = primaryConstructor?.let { declarationStorage.getCachedIrConstructor(it)!! }
             if (irPrimaryConstructor != null) {
                 with(declarationStorage) {
@@ -144,7 +144,7 @@ internal class ClassMemberGenerator(
             }
             if (irFunction is IrSimpleFunction && firFunction is FirSimpleFunction && containingClass != null) {
                 irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(
-                    containingClass, session, scopeSession, declarationStorage
+                    containingClass, session, scopeSession, declarationStorage, fakeOverrideGenerator
                 )
             }
         }
@@ -172,6 +172,18 @@ internal class ClassMemberGenerator(
         }
         annotationGenerator.generate(irProperty, property)
         return irProperty
+    }
+
+    fun convertFieldContent(irField: IrField, field: FirField): IrField {
+        conversionScope.withParent(irField) {
+            declarationStorage.enterScope(irField)
+            val initializerExpression = field.initializer
+            if (irField.initializer == null && initializerExpression != null) {
+                irField.initializer = irFactory.createExpressionBody(visitor.convertToIrExpression(initializerExpression))
+            }
+            declarationStorage.leaveScope(irField)
+        }
+        return irField
     }
 
     private fun IrProperty.initializeBackingField(
@@ -242,7 +254,7 @@ internal class ClassMemberGenerator(
             }
             if (containingClass != null) {
                 this.overriddenSymbols = property.generateOverriddenAccessorSymbols(
-                    containingClass, isGetter, session, scopeSession, declarationStorage
+                    containingClass, isGetter, session, scopeSession, declarationStorage, fakeOverrideGenerator
                 )
             }
 

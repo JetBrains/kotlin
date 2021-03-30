@@ -5,6 +5,7 @@
 
 package kotlin.text
 
+@SinceKotlin("1.5")
 public actual enum class CharCategory(internal val value: Int, public actual val code: String) {
     /**
      * General category "Cn" in the Unicode specification.

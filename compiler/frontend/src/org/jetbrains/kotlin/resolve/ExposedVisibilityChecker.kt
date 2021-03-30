@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 
@@ -80,7 +81,10 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
         // for checking situation with modified basic visibility
         visibility: DescriptorVisibility = functionDescriptor.visibility
     ): Boolean {
-        val functionVisibility = functionDescriptor.effectiveVisibility(visibility)
+        var functionVisibility = functionDescriptor.effectiveVisibility(visibility)
+        if (functionDescriptor is ConstructorDescriptor && functionDescriptor.constructedClass.isSealed() && function.visibilityModifier() == null) {
+            functionVisibility = EffectiveVisibility.Private
+        }
         var result = true
         if (function !is KtConstructor<*>) {
             val restricting = functionDescriptor.returnType?.leastPermissiveDescriptor(functionVisibility)

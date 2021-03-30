@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.context.*
-import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -553,8 +553,8 @@ class DoubleColonExpressionResolver(
 
         val dataFlowInfo = (lhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
 
-        if (c.inferenceSession is CoroutineInferenceSession && result?.contains { it is StubType } == true) {
-            c.inferenceSession.addSimpleCall(expression)
+        if (c.inferenceSession is BuilderInferenceSession && result?.contains { it is StubType } == true) {
+            c.inferenceSession.addOldCallableReferenceCalls(expression)
         }
 
         return dataFlowAnalyzer.checkType(createTypeInfo(result, dataFlowInfo), expression, c)

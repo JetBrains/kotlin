@@ -7,7 +7,7 @@ group = "org.sample.root"
 allprojects {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
 }
 

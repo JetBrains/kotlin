@@ -40,16 +40,16 @@ fun foo(
     a.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)
 
     b.containsAll(cs)
-    b.containsAll(ca)
+    b.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)
 
     ic.containsAll(cs)
-    ic.containsAll(ca)
+    ic.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)
 
     ka.containsAll(cs)
     ka.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)
 
     kb.containsAll(cs)
-    kb.containsAll(ca)
+    kb.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)
 
     al.containsAll(cs)
     al.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)

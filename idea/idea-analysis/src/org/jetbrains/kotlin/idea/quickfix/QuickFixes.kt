@@ -23,6 +23,10 @@ class QuickFixes {
         Extensions.getExtensions(QuickFixContributor.EP_NAME).forEach { it.registerQuickFixes(this) }
     }
 
+    fun register(diagnosticFactory: DiagnosticFactory<*>, vararg factory: QuickFixFactory) {
+        factories.putAll(diagnosticFactory, factory.map { it.asKotlinIntentionActionsFactory() })
+    }
+
     fun register(diagnosticFactory: DiagnosticFactory<*>, vararg factory: KotlinIntentionActionsFactory) {
         factories.putAll(diagnosticFactory, factory.toList())
     }

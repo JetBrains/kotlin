@@ -1,13 +1,13 @@
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
-@DefaultNonNull
+@NullMarked
 public class TypeArgumentsFromParameterBounds<T extends Object, E extends @Nullable Object, F extends @NullnessUnspecified Object> { }
 
 class A {
     public void bar(TypeArgumentsFromParameterBounds<@Nullable Test, @Nullable Test, @Nullable Test> a) {}
 }
 
-@DefaultNonNull
+@NullMarked
 class B {
     public void bar(TypeArgumentsFromParameterBounds<Test, Test, Test> a) {}
 }
@@ -18,7 +18,7 @@ class C {
 
 class Test {}
 
-@DefaultNonNull
+@NullMarked
 class Use {
     static public void main(
             TypeArgumentsFromParameterBounds<Test, Test, Test> aNotNullNotNullNotNull,

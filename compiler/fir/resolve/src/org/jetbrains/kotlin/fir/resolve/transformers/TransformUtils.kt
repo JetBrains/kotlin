@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.compose
 
 internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
     override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
@@ -96,17 +101,28 @@ internal fun FirValueParameter.transformVarargTypeToArrayType() {
 }
 
 internal fun FirTypedDeclaration.transformTypeToArrayType() {
+    val returnTypeRef = this.returnTypeRef
+    require(returnTypeRef is FirResolvedTypeRef)
+    // If the delegated type is already resolved, it means we have already created a resolved array type for this vararg type declaration.
+    // This is because in the buildResolvedTypeRef call below, we set the delegated type ref to the previous (non-vararg) resolved type ref.
+    if (returnTypeRef.delegatedTypeRef is FirResolvedTypeRef &&
+        returnTypeRef.delegatedTypeRef?.source?.kind == FirFakeSourceElementKind.ArrayTypeFromVarargParameter
+    ) return
     val returnType = returnTypeRef.coneType
+
     transformReturnTypeRef(
         StoreType,
-        returnTypeRef.withReplacedConeType(
-            ConeKotlinTypeProjectionOut(returnType).createArrayType(),
-            FirFakeSourceElementKind.ArrayTypeFromVarargParameter
-        )
+        buildResolvedTypeRef {
+            source = returnTypeRef.source
+            type = ConeKotlinTypeProjectionOut(returnType).createArrayType()
+            annotations += returnTypeRef.annotations
+            // ? do we really need replacing source of nested delegatedTypeRef ?
+            delegatedTypeRef = returnTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ArrayTypeFromVarargParameter)
+        }
     )
 }
 
-inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
+inline fun <T> withScopeCleanup(scopes: MutableList<*>, l: () -> T): T {
     val sizeBefore = scopes.size
     return try {
         l()

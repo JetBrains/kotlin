@@ -42,6 +42,8 @@ found top-level declarations to <destination dir> (*.kotlin_builtins files)"""
     assert(missing.isEmpty()) { "These source directories are missing: $missing" }
 
     BuiltInsSerializer(dependOnOldBuiltIns = false).serialize(destDir, srcDirs, listOf()) { totalSize, totalFiles ->
-        println("Total bytes written: $totalSize to $totalFiles files")
+        if (System.getProperty("kotlin.builtins.serializer.log") == "true") {
+            println("Total bytes written: $totalSize to $totalFiles files")
+        }
     }
 }

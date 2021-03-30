@@ -51,7 +51,6 @@ interface BaseExpressionCodegen {
 
     fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker)
 
-    @JvmDefault
     fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind) {
         with(typeSystem) {
             val (typeParameter, second) = extractReificationArgument(type) ?: return

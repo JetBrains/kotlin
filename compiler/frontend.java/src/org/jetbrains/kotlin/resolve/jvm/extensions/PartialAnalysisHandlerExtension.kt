@@ -73,19 +73,24 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
                     ForceResolveUtil.forceResolveAllContents(descriptor.typeConstructor.supertypes)
 
                     if (declaration is KtClassOrObject && descriptor is ClassDescriptorWithResolutionScopes) {
-                        bodyResolver.resolveSuperTypeEntryList(DataFlowInfo.EMPTY,
-                                                               declaration,
-                                                               descriptor,
-                                                               descriptor.unsubstitutedPrimaryConstructor,
-                                                               descriptor.scopeForConstructorHeaderResolution,
-                                                               descriptor.scopeForMemberDeclarationResolution)
+                        bodyResolver.resolveSuperTypeEntryList(
+                            DataFlowInfo.EMPTY, declaration, descriptor, descriptor.unsubstitutedPrimaryConstructor,
+                            descriptor.scopeForConstructorHeaderResolution,
+                            descriptor.scopeForMemberDeclarationResolution,
+                            resolveSession.inferenceSession
+                        )
                     }
                 }
                 is PropertyDescriptor -> {
                     if (declaration is KtProperty) {
                         /* TODO Now we analyse body with anonymous object initializers. Check if we can't avoid it
                          * val a: Runnable = object : Runnable { ... } */
-                        bodyResolver.resolveProperty(topDownAnalysisContext, declaration, descriptor)
+                        //resolve property in case it has delegate expression or explicit accessor, otherwise just infer type
+                        if (declaration.delegateExpression != null || declaration.accessors.isNotEmpty()) {
+                            bodyResolver.resolveProperty(topDownAnalysisContext, declaration, descriptor)
+                        } else {
+                            BodyResolver.computeDeferredType(descriptor.returnType)
+                        }
                     }
                 }
                 is FunctionDescriptor -> {
@@ -94,7 +99,8 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
                         if (containingScope != null) {
                             bodyResolver.resolveConstructorParameterDefaultValues(
                                 topDownAnalysisContext.outerDataFlowInfo, bindingTrace,
-                                declaration, descriptor as ConstructorDescriptor, containingScope
+                                declaration, descriptor as ConstructorDescriptor, containingScope,
+                                resolveSession.inferenceSession
                             )
                         }
                     } else if (declaration is KtFunction && !declaration.hasDeclaredReturnType() && !declaration.hasBlockBody()) {

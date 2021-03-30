@@ -7,7 +7,7 @@ import kotlin.contracts.*
 class Foo(val x: Int?) {
     fun isXNull(): Boolean {
         contract {
-            returns(false) implies (<!UNRESOLVED_REFERENCE!>x<!> != null)
+            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(false) implies (<!UNRESOLVED_REFERENCE!>x<!> != null)<!>
         }
         return x != null
     }

@@ -22,7 +22,7 @@ val x1 = fn1(1, ::foo, ::foo)
 val x2 = fn1(1, ::foo, ::bar)
 
 val x3 = fn2(::bar, ::foo)
-val x4 = <!AMBIGUITY!>fn2<!>(<!UNRESOLVED_REFERENCE!>::foo<!>, ::bar)
-val x5 = <!AMBIGUITY!>fn2<!>(<!UNRESOLVED_REFERENCE!>::foo<!>, <!UNRESOLVED_REFERENCE!>::foo<!>)
+val x4 = <!AMBIGUITY!>fn2<!>(::<!UNRESOLVED_REFERENCE!>foo<!>, ::bar)
+val x5 = <!AMBIGUITY!>fn2<!>(::<!UNRESOLVED_REFERENCE!>foo<!>, ::<!UNRESOLVED_REFERENCE!>foo<!>)
 
 val x6 = fn3(1, ::qux)

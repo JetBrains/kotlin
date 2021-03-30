@@ -47,7 +47,7 @@ class FinalDerived : Base() {
     // Redundant final
     override <!REDUNDANT_MODALITY_MODIFIER!>final<!> fun bar() {}
     // Non-final member in final class
-    override open val gav = 13
+    override <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val gav = 13
 }
 // Open
 open class OpenDerived : Base() {

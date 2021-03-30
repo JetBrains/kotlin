@@ -1,6 +1,6 @@
 // See also KT-7817
 
-fun <R> synchronized(<!UNUSED_PARAMETER!>lock<!>: Any, block: () -> R): R = block()
+fun <R> synchronized(lock: Any, block: () -> R): R = block()
 
 class My {
     val test: String

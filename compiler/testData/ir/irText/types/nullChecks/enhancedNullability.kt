@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: enhancedNullability.kt
 // WITH_JDK
 fun use(s: String) {}

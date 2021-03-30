@@ -80,12 +80,20 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $path")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            if (file.path.contains("testData") || file.path.contains("resources")) continue
+            /* TODO: fix this, please !!! */
+            if (file.path.contains("kotlin-native") ||
+                file.path.toLowerCase().contains("testdata") ||
+                file.path.contains("resources")
+            ) continue
             if (file.extension != "kt") continue
 
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             time += measureNanoTime {
-                generateFirFromPsi(onlyPsi, text, file.path)
+                try {
+                    generateFirFromPsi(onlyPsi, text, file.path)
+                } catch (e: Exception) {
+                    throw IllegalStateException(file.path, e)
+                }
             }
 
             counter++

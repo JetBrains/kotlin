@@ -1,16 +1,16 @@
 FILE: destructuring.kt
     public? final? data class Some : R|kotlin/Any| {
-        public? constructor(first: Int, second: Double, third: String): R|Some| {
+        public? [ContainingClassKey=Some] constructor(first: Int, second: Double, third: String): R|Some| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val first: Int = R|<local>/first|
+        public? final? [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
             public? get(): Int
 
-        public? final? val second: Double = R|<local>/second|
+        public? final? [IsFromPrimaryConstructor=true] val second: Double = R|<local>/second|
             public? get(): Double
 
-        public? final? val third: String = R|<local>/third|
+        public? final? [IsFromPrimaryConstructor=true] val third: String = R|<local>/third|
             public? get(): String
 
         public final operator fun component1(): Int

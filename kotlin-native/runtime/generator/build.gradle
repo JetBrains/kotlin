@@ -1,0 +1,27 @@
+configurations {
+    generatorRuntime
+}
+
+repositories {
+  maven { url buildKotlinCompilerRepo }
+}
+
+dependencies {
+    generatorRuntime "org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdlibVersion}"
+    generatorRuntime "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+    generatorRuntime "org.jetbrains.kotlin:kotlin-stdlib-gen:${kotlinStdlibVersion}"
+}
+
+task run(type: JavaExec) {
+    group 'application'
+    main 'generators.GenerateStandardLibKt'
+    classpath configurations.generatorRuntime
+    args = ["native", "${project(":runtime").projectDir}/src/main/kotlin/generated"]
+}
+
+task generateUnicodeData(type: JavaExec) {
+    group 'application'
+    main 'generators.unicode.GenerateUnicodeDataKt'
+    classpath configurations.generatorRuntime
+    args = ["native", "${project(":runtime").projectDir}/src/main/kotlin/generated", "${project(":backend.native").projectDir}/tests/stdlib_external/text"]
+}

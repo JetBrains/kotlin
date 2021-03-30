@@ -127,6 +127,7 @@ public external interface ClientQueryOptions {
     public open var type: org.w3c.workers.ClientType? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ClientType {
     public companion object of ClientType {
     }
@@ -226,7 +227,7 @@ public external interface FetchEventInit : org.w3c.workers.ExtendableEventInit {
 
     public open var isReload: kotlin.Boolean? { get; set; }
 
-    public open var request: org.w3c.fetch.Request? { get; set; }
+    public abstract var request: org.w3c.fetch.Request? { get; set; }
 }
 
 public open external class ForeignFetchEvent : org.w3c.workers.ExtendableEvent {
@@ -252,13 +253,13 @@ public open external class ForeignFetchEvent : org.w3c.workers.ExtendableEvent {
 public external interface ForeignFetchEventInit : org.w3c.workers.ExtendableEventInit {
     public open var origin: kotlin.String? { get; set; }
 
-    public open var request: org.w3c.fetch.Request? { get; set; }
+    public abstract var request: org.w3c.fetch.Request? { get; set; }
 }
 
 public external interface ForeignFetchOptions {
-    public open var origins: kotlin.Array<kotlin.String>? { get; set; }
+    public abstract var origins: kotlin.Array<kotlin.String>? { get; set; }
 
-    public open var scopes: kotlin.Array<kotlin.String>? { get; set; }
+    public abstract var scopes: kotlin.Array<kotlin.String>? { get; set; }
 }
 
 public external interface ForeignFetchResponse {
@@ -266,9 +267,10 @@ public external interface ForeignFetchResponse {
 
     public open var origin: kotlin.String? { get; set; }
 
-    public open var response: org.w3c.fetch.Response? { get; set; }
+    public abstract var response: org.w3c.fetch.Response? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface FrameType {
     public companion object of FrameType {
     }
@@ -430,6 +432,7 @@ public abstract external class ServiceWorkerRegistration : org.w3c.dom.events.Ev
     public final fun update(): kotlin.js.Promise<kotlin.Unit>
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ServiceWorkerState {
     public companion object of ServiceWorkerState {
     }

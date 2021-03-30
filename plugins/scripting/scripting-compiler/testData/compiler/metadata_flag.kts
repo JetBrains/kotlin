@@ -1,0 +1,3 @@
+class RandomClass
+
+println()

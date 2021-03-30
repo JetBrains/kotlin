@@ -2,7 +2,7 @@ open class Foo() {
 
 }
 
-class Barrr() : Foo by Foo() {}
+class Barrr() : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> by Foo() {}
 
 interface T {}
 

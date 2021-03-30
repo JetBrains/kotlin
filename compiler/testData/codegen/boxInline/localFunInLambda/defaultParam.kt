@@ -1,9 +1,9 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 inline fun <T> run(c: () -> T): T = c()
 
 // FILE: 2.kt
-// NO_CHECK_LAMBDA_INLINING
 
 interface Runnable {
     fun run(): String

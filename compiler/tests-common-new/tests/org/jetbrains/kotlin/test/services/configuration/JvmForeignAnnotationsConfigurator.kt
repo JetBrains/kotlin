@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
 import java.io.File
@@ -48,7 +45,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         get() = listOf(ForeignAnnotationsDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val extraClassPath = buildList {
             val foreignAnnotations = createJarWithForeignAnnotations(module)
             addAll(foreignAnnotations)
@@ -102,7 +99,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 
 class JvmForeignAnnotationsAgainstCompiledJavaConfigurator(testServices: TestServices) : JvmForeignAnnotationsConfigurator(testServices) {
     @OptIn(ExperimentalStdlibApi::class)
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val compiledJavaPath = testServices.createTempDirectory("java-compiled-files")
 
         val foreignAnnotations = createJarWithForeignAnnotations(module)

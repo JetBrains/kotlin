@@ -24,7 +24,7 @@ FILE: main.kt
 
     }
     public final fun callJava(derived: R|Test.Derived|, derivedRaw: R|Test.DerivedRaw|, v: R|Test.I123|): R|kotlin/Unit| {
-        R|<local>/derived|.R|/Test.Derived.foo|<R|ft<Test.I123, Test.I123?>!|>(R|<local>/v|)
+        R|<local>/derived|.R|/Test.Derived.foo|<R|ft<Test.I123, Test.I123?>|>(R|<local>/v|)
         R|<local>/derivedRaw|.R|/Test.DerivedRaw.foo|(R|<local>/v|)
     }
     public final fun callKotlin(derived: R|KDerived|): R|kotlin/Unit| {

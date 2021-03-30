@@ -60,15 +60,25 @@ class GlobalMetadataInfoHandler(
                 if (file.isAdditional) continue
                 processors.forEach { it.processMetaInfos(module, file) }
                 val codeMetaInfos = infosPerFile.getValue(file)
+                val fileBuilder = StringBuilder()
                 CodeMetaInfoRenderer.renderTagsToText(
-                    builder,
+                    fileBuilder,
                     codeMetaInfos,
                     testServices.sourceFileProvider.getContentOfSourceFile(file)
                 )
+                builder.append(fileBuilder.stripAdditionalEmptyLines(file))
             }
         }
         val actualText = builder.toString()
         testServices.assertions.assertEqualsToFile(moduleStructure.originalTestDataFiles.single(), actualText)
+    }
+
+    private fun StringBuilder.stripAdditionalEmptyLines(file: TestFile): CharSequence {
+        return if (file.startLineNumberInOriginalFile != 0) {
+            this.removePrefix((1..file.startLineNumberInOriginalFile).joinToString(separator = "") { "\n" })
+        } else {
+            this.toString()
+        }
     }
 }
 

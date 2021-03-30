@@ -1,28 +1,22 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateForCompletion
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 
@@ -66,7 +60,7 @@ object LowLevelFirApiFacadeForCompletion {
         firIdeProvider: FirIdeProvider,
         element: KtNamedFunction,
         originalFunction: FirSimpleFunction,
-        state: FirModuleResolveState
+        state: FirModuleResolveState,
     ): FirSimpleFunction {
         val builtFunction = firIdeProvider.buildFunctionWithBody(element, originalFunction)
 
@@ -79,7 +73,7 @@ object LowLevelFirApiFacadeForCompletion {
             resolvePhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
             source = builtFunction.source
             session = state.rootModuleSession
-        }.apply { reassignAllReturnTargets (builtFunction) }
+        }.apply { reassignAllReturnTargets(builtFunction) }
     }
 
     private fun buildPropertyCopyForCompletion(

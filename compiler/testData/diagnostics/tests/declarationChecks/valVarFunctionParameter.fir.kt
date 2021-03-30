@@ -2,9 +2,9 @@ fun f(
         val a: Int,
         var b: Int,
         c: Int,
-        vararg var d: Int,
-        vararg val e: Int,
-        vararg f: Int
+        <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> var d: Int,
+        <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val e: Int,
+        <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> f: Int
 ) {
     
     

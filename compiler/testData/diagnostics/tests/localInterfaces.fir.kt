@@ -6,7 +6,7 @@ fun foo() {
         <!LOCAL_INTERFACE_NOT_ALLOWED!>interface c<!> {}
     }
     class A {
-        <!LOCAL_INTERFACE_NOT_ALLOWED!>interface d<!> {}
+        <!LOCAL_INTERFACE_NOT_ALLOWED, NESTED_CLASS_NOT_ALLOWED!>interface d<!> {}
     }
     val f = {
         <!LOCAL_INTERFACE_NOT_ALLOWED!>interface e<!> {}

@@ -1,13 +1,13 @@
 FILE: lambda.kt
     public? final? data class Tuple : R|kotlin/Any| {
-        public? constructor(x: Int, y: Int): R|Tuple| {
+        public? [ContainingClassKey=Tuple] constructor(x: Int, y: Int): R|Tuple| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val x: Int = R|<local>/x|
+        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
             public? get(): Int
 
-        public? final? val y: Int = R|<local>/y|
+        public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
             public? get(): Int
 
         public final operator fun component1(): Int

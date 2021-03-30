@@ -154,6 +154,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
                 runTest("compiler/testData/cfg/bugs/kt37447.kt");
             }
 
+            @TestMetadata("kt44153.kt")
+            public void testKt44153() throws Exception {
+                runTest("compiler/testData/cfg/bugs/kt44153.kt");
+            }
+
             @TestMetadata("kt7761.kt")
             public void testKt7761() throws Exception {
                 runTest("compiler/testData/cfg/bugs/kt7761.kt");

@@ -39,17 +39,17 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
                 if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver)
+                    return sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = explicitReceiver.typeRef.coneTypeSafe()))
                 }
             }
             EXTENSION_RECEIVER, DISPATCH_RECEIVER -> {
                 if (explicitReceiver == null) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver)
+                    return sink.yieldDiagnostic(InapplicableWrongReceiver())
                 }
             }
             BOTH_RECEIVERS -> {
                 if (explicitReceiver == null) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver)
+                    return sink.yieldDiagnostic(InapplicableWrongReceiver())
                 }
                 // Here we should also check additional invoke receiver
             }
@@ -70,6 +70,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         )
         candidate.resolvePlainArgumentType(
             candidate.csBuilder,
+            argumentExtensionReceiverValue.receiverExpression,
             argumentType = argumentType,
             expectedType = expectedType,
             sink = sink,
@@ -105,7 +106,7 @@ object CheckDispatchReceiver : ResolutionStage() {
         val dispatchReceiverValueType = candidate.dispatchReceiverValue?.type ?: return
 
         if (!AbstractNullabilityChecker.isSubtypeOfAny(context.session.typeContext, dispatchReceiverValueType)) {
-            sink.yieldDiagnostic(InapplicableWrongReceiver)
+            sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = dispatchReceiverValueType))
         }
     }
 }
@@ -143,6 +144,7 @@ internal object CheckArguments : CheckerStage() {
         for (argument in callInfo.arguments) {
             val parameter = argumentMapping[argument]
             candidate.resolveArgument(
+                callInfo,
                 argument,
                 parameter,
                 isReceiver = false,
@@ -239,20 +241,19 @@ internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
 }
 
 internal object PostponedVariablesInitializerResolutionStage : ResolutionStage() {
-    private val BUILDER_INFERENCE_CLASS_ID: ClassId = ClassId.fromString("kotlin/BuilderInference")
 
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val argumentMapping = candidate.argumentMapping ?: return
         // TODO: convert type argument mapping to map [FirTypeParameterSymbol, FirTypedProjection?]
         if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
         for (parameter in argumentMapping.values) {
-            if (!parameter.hasBuilderInferenceMarker()) continue
+            if (!parameter.hasBuilderInferenceAnnotation()) continue
             val type = parameter.returnTypeRef.coneType
             val receiverType = type.receiverType(callInfo.session) ?: continue
 
             for (freshVariable in candidate.freshVariables) {
                 if (candidate.csBuilder.isPostponedTypeVariable(freshVariable)) continue
-                if (freshVariable !is TypeParameterBasedTypeVariable) continue
+                if (freshVariable !is ConeTypeParameterBasedTypeVariable) continue
                 val typeParameterSymbol = freshVariable.typeParameterSymbol
                 val typeHasVariable = receiverType.contains {
                     (it as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == typeParameterSymbol
@@ -262,9 +263,5 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
                 }
             }
         }
-    }
-
-    private fun FirValueParameter.hasBuilderInferenceMarker(): Boolean {
-        return this.hasAnnotation(BUILDER_INFERENCE_CLASS_ID)
     }
 }

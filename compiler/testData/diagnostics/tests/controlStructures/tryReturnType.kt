@@ -21,7 +21,7 @@ fun bar() : Int =
         <!TYPE_MISMATCH{OI}!>""<!>
     }<!>
     finally {
-        <!UNUSED_EXPRESSION!>""<!>
+        ""
     }
 
 

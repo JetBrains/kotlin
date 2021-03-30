@@ -1,0 +1,73 @@
+== crash_1 ==
+fun crash_1() {
+    "".split(----------------------------------)
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ "".split(----------------------------------) })
+    mark("".split(----------------------------------))
+    magic[UNRESOLVED_CALL](----|!<v0>) -> <v1>
+    magic[UNRESOLVED_CALL](------|<v1>) -> <v2>
+    magic[UNRESOLVED_CALL](--------|<v2>) -> <v3>
+    magic[UNRESOLVED_CALL](----------|<v3>) -> <v4>
+    magic[UNRESOLVED_CALL](------------|<v4>) -> <v5>
+    magic[UNRESOLVED_CALL](--------------|<v5>) -> <v6>
+    magic[UNRESOLVED_CALL](----------------|<v6>) -> <v7>
+    magic[UNRESOLVED_CALL](------------------|<v7>) -> <v8>
+    magic[UNRESOLVED_CALL](--------------------|<v8>) -> <v9>
+    magic[UNRESOLVED_CALL](----------------------|<v9>) -> <v10>
+    magic[UNRESOLVED_CALL](------------------------|<v10>) -> <v11>
+    magic[UNRESOLVED_CALL](--------------------------|<v11>) -> <v12>
+    magic[UNRESOLVED_CALL](----------------------------|<v12>) -> <v13>
+    magic[UNRESOLVED_CALL](------------------------------|<v13>) -> <v14>
+    magic[UNRESOLVED_CALL](--------------------------------|<v14>) -> <v15>
+    magic[UNRESOLVED_CALL](----------------------------------|<v15>) -> <v16>
+    mark("")
+    r("") -> <v17>
+    mark(split(----------------------------------))
+    magic[UNRESOLVED_CALL](split(----------------------------------)|<v16>, !<v18>, <v17>) -> <v19>
+L1:
+  1 <END>                                                                                              NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                            PREV:[]
+sink:
+    <SINK>                                                                                             PREV:[<ERROR>, <END>]
+=====================
+== crash_2 ==
+fun crash_2() {
+    "".split(-----------------------------------)
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ "".split(-----------------------------------) })
+    mark("".split(-----------------------------------))
+    magic[UNRESOLVED_CALL](---|!<v0>) -> <v1>
+    magic[UNRESOLVED_CALL](-----|<v1>) -> <v2>
+    magic[UNRESOLVED_CALL](-------|<v2>) -> <v3>
+    magic[UNRESOLVED_CALL](---------|<v3>) -> <v4>
+    magic[UNRESOLVED_CALL](-----------|<v4>) -> <v5>
+    magic[UNRESOLVED_CALL](-------------|<v5>) -> <v6>
+    magic[UNRESOLVED_CALL](---------------|<v6>) -> <v7>
+    magic[UNRESOLVED_CALL](-----------------|<v7>) -> <v8>
+    magic[UNRESOLVED_CALL](-------------------|<v8>) -> <v9>
+    magic[UNRESOLVED_CALL](---------------------|<v9>) -> <v10>
+    magic[UNRESOLVED_CALL](-----------------------|<v10>) -> <v11>
+    magic[UNRESOLVED_CALL](-------------------------|<v11>) -> <v12>
+    magic[UNRESOLVED_CALL](---------------------------|<v12>) -> <v13>
+    magic[UNRESOLVED_CALL](-----------------------------|<v13>) -> <v14>
+    magic[UNRESOLVED_CALL](-------------------------------|<v14>) -> <v15>
+    magic[UNRESOLVED_CALL](---------------------------------|<v15>) -> <v16>
+    magic[UNRESOLVED_CALL](-----------------------------------|<v16>) -> <v17>
+    mark("")
+    r("") -> <v18>
+    mark(split(-----------------------------------))
+    magic[UNRESOLVED_CALL](split(-----------------------------------)|<v17>, !<v19>, <v18>) -> <v20>
+L1:
+  1 <END>                                                                                               NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                             PREV:[]
+sink:
+    <SINK>                                                                                              PREV:[<ERROR>, <END>]
+=====================

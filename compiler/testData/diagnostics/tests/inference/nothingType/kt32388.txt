@@ -4,7 +4,7 @@ public fun </*0*/ A, /*1*/ B> Either<A, B>.recover(/*0*/ f: (A) -> B): Either<A,
 public fun </*0*/ A> A.right(): Either<kotlin.Nothing, A>
 
 public sealed class Either</*0*/ out A, /*1*/ out B> {
-    internal constructor Either</*0*/ out A, /*1*/ out B>()
+    protected constructor Either</*0*/ out A, /*1*/ out B>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

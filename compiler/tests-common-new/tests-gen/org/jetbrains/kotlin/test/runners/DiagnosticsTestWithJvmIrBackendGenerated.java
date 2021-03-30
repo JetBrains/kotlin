@@ -50,6 +50,12 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     }
 
     @Test
+    @TestMetadata("propertyInlineCycle.kt")
+    public void testPropertyInlineCycle() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/propertyInlineCycle.kt");
+    }
+
+    @Test
     @TestMetadata("suspendInlineCycle_ir.kt")
     public void testSuspendInlineCycle_ir() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle_ir.kt");
@@ -58,7 +64,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
-    public class DuplicateJvmSignature extends AbstractDiagnosticsTestWithJvmIrBackend {
+    public class DuplicateJvmSignature {
         @Test
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -85,7 +91,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides")
         @TestDataPath("$PROJECT_ROOT")
-        public class AccidentalOverrides extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class AccidentalOverrides {
             @Test
             @TestMetadata("accidentalOverrideFromGrandparent.kt")
             public void testAccidentalOverrideFromGrandparent() throws Exception {
@@ -185,7 +191,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges")
         @TestDataPath("$PROJECT_ROOT")
-        public class Bridges extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class Bridges {
             @Test
             public void testAllFilesPresentInBridges() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -213,7 +219,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure")
         @TestDataPath("$PROJECT_ROOT")
-        public class Erasure extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class Erasure {
             @Test
             public void testAllFilesPresentInErasure() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -325,7 +331,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns")
         @TestDataPath("$PROJECT_ROOT")
-        public class FinalMembersFromBuiltIns extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class FinalMembersFromBuiltIns {
             @Test
             public void testAllFilesPresentInFinalMembersFromBuiltIns() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -347,7 +353,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty")
         @TestDataPath("$PROJECT_ROOT")
-        public class FunctionAndProperty extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class FunctionAndProperty {
             @Test
             public void testAllFilesPresentInFunctionAndProperty() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -465,7 +471,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames")
         @TestDataPath("$PROJECT_ROOT")
-        public class SpecialNames extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class SpecialNames {
             @Test
             public void testAllFilesPresentInSpecialNames() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -535,7 +541,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics")
         @TestDataPath("$PROJECT_ROOT")
-        public class Statics extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class Statics {
             @Test
             public void testAllFilesPresentInStatics() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -581,7 +587,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized")
         @TestDataPath("$PROJECT_ROOT")
-        public class Synthesized extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class Synthesized {
             @Test
             public void testAllFilesPresentInSynthesized() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -597,7 +603,7 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl")
         @TestDataPath("$PROJECT_ROOT")
-        public class TraitImpl extends AbstractDiagnosticsTestWithJvmIrBackend {
+        public class TraitImpl {
             @Test
             public void testAllFilesPresentInTraitImpl() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -642,9 +648,25 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class MultifileClasses {
+        @Test
+        public void testAllFilesPresentInMultifileClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("jvmSynthetic.kt")
+        public void testJvmSynthetic() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses/jvmSynthetic.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
-    public class ValueClasses extends AbstractDiagnosticsTestWithJvmIrBackend {
+    public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);

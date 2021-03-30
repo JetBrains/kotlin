@@ -5,31 +5,17 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorReplacingKotlinToJava
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_COLLECTION_PARAMETER_SIGNATURES
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_VALUE_PARAMETERS_SHORT_NAMES
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_VALUE_PARAMETERS_SIGNATURES
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class JavaClassMembersEnhancementScope(
     session: FirSession,
@@ -62,91 +48,10 @@ class JavaClassMembersEnhancementScope(
         return super.processPropertiesByName(name, processor)
     }
 
-    private fun FirSimpleFunction.changeSignatureIfErasedValueParameter(): FirSimpleFunction {
-        val typeParameters = owner.fir.typeParameters
-        if (typeParameters.isEmpty() || name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) {
-            return this
-        }
-        val jvmDescriptor = this.computeJvmDescriptorReplacingKotlinToJava().replace(
-            "kotlin/collections/Collection",
-            "java/util/Collection"
-        )
-        if (ERASED_VALUE_PARAMETERS_SIGNATURES.none { it.endsWith(jvmDescriptor) }) {
-            return this
-        }
-        val superClassIds = listOfNotNull(symbol.callableId.classId) +
-                lookupSuperTypes(owner, lookupInterfaces = true, deep = true, useSiteSession = session).map { it.lookupTag.classId }
-        for (superClassId in superClassIds) {
-            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(superClassId.asSingleFqName().toUnsafe()) ?: superClassId
-            val newParameterTypes: List<ConeKotlinType?> = when (val fqJvmDescriptor = "${javaClassId.asString()}.$jvmDescriptor") {
-                in ERASED_COLLECTION_PARAMETER_SIGNATURES -> {
-                    valueParameters.map {
-                        val typeParameter = typeParameters.first()
-                        ConeClassLikeLookupTagImpl(ClassId.topLevel(StandardNames.FqNames.collection)).constructClassType(
-                            arrayOf(
-                                ConeTypeParameterLookupTag(typeParameter.symbol).constructType(emptyArray(), isNullable = false)
-                            ), isNullable = false
-                        )
-                    }
-                }
-                in ERASED_VALUE_PARAMETERS_SIGNATURES -> {
-                    val specialSignatureInfo = SpecialGenericSignatures.getSpecialSignatureInfo(fqJvmDescriptor)
-                    if (!specialSignatureInfo.isObjectReplacedWithTypeParameter) {
-                        return this
-                    }
-                    valueParameters.mapIndexed { i, valueParameter ->
-                        val classLikeType =
-                            valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible().safeAs<ConeClassLikeType>()
-                        if (classLikeType?.lookupTag?.classId == StandardClassIds.Any) {
-                            val typeParameterIndex = if (name.asString() == "containsValue") 1 else i
-                            val typeParameter = typeParameters.getOrNull(typeParameterIndex) ?: typeParameters.first()
-                            val type = ConeTypeParameterLookupTag(typeParameter.symbol).constructType(
-                                emptyArray(), valueParameter.returnTypeRef.isMarkedNullable == true
-                            )
-                            if (valueParameter.returnTypeRef.coneType is ConeFlexibleType) {
-                                ConeFlexibleType(
-                                    type.withAttributes(
-                                        type.attributes.withFlexibleUnless {
-                                            it.hasEnhancedNullability
-                                        }
-                                    ),
-                                    type.withNullability(ConeNullability.NULLABLE)
-                                )
-                            } else {
-                                type
-                            }
-                        } else {
-                            null
-                        }
-                    }
-                }
-                else -> {
-                    continue
-                }
-            }
-            if (newParameterTypes.none { it != null }) {
-                return this
-            }
-
-            return FirFakeOverrideGenerator.createCopyForFirFunction(
-                FirNamedFunctionSymbol(symbol.callableId),
-                this,
-                session,
-                FirDeclarationOrigin.Enhancement,
-                newParameterTypes = valueParameters.zip(newParameterTypes).map { (valueParameter, newType) ->
-                    newType ?: valueParameter.returnTypeRef.coneType
-                },
-                newDispatchReceiverType = dispatchReceiverType,
-            )
-
-        }
-        return this
-    }
-
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
             val symbol = signatureEnhancement.enhancedFunction(original, name)
-            val enhancedFunction = (symbol.fir as? FirSimpleFunction)?.changeSignatureIfErasedValueParameter()
+            val enhancedFunction = (symbol.fir as? FirSimpleFunction)
             val enhancedFunctionSymbol = enhancedFunction?.symbol ?: symbol
 
             if (enhancedFunctionSymbol is FirNamedFunctionSymbol) {
@@ -162,7 +67,6 @@ class JavaClassMembersEnhancementScope(
 
     private fun FirCallableMemberDeclaration<*>.overriddenMembers(name: Name): List<FirCallableMemberDeclaration<*>> {
         val backMap = overrideBindCache.getOrPut(name) {
-            useSiteMemberScope.bindOverrides(name)
             useSiteMemberScope
                 .overrideByBase
                 .toList()

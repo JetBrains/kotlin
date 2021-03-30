@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
 
 abstract class Flow {
@@ -17,6 +18,7 @@ abstract class Flow {
 
     abstract val directAliasMap: Map<RealVariable, RealVariableAndType>
     abstract val backwardsAliasMap: Map<RealVariable, List<RealVariable>>
+    abstract val assignmentIndex: Map<RealVariable, Int>
 }
 
 fun Flow.unwrapVariable(variable: RealVariable): RealVariable {
@@ -35,7 +37,9 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     abstract fun addImplication(flow: FLOW, implication: Implication)
 
-    abstract fun removeAllAboutVariable(flow: FLOW, variable: RealVariable)
+    abstract fun removeTypeStatementsAboutVariable(flow: FLOW, variable: RealVariable)
+    abstract fun removeLogicStatementsAboutVariable(flow: FLOW, variable: DataFlowVariable)
+    abstract fun removeAliasInformationAboutVariable(flow: FLOW, variable: RealVariable)
 
     abstract fun translateVariableFromConditionInStatements(
         flow: FLOW,
@@ -56,7 +60,11 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariableAndType)
     abstract fun removeLocalVariableAlias(flow: FLOW, alias: RealVariable)
 
+    abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
+
     protected abstract fun getImplicationsWithVariable(flow: FLOW, variable: DataFlowVariable): Collection<Implication>
+
+    protected abstract fun ConeKotlinType.isAcceptableForSmartcast(): Boolean
 
     // ------------------------------- Callbacks for updating implicit receiver stack -------------------------------
 
@@ -142,14 +150,21 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         if (types.any { it.isEmpty() }) return mutableSetOf()
         val intersectedTypes = types.map {
             if (it.size > 1) {
-                context.intersectTypes(it.toList()) as ConeKotlinType
+                context.intersectTypes(it.toList())
             } else {
                 assert(it.size == 1) { "We've already checked each set of types is not empty." }
                 it.single()
             }
         }
         val result = mutableSetOf<ConeKotlinType>()
-        context.commonSuperTypeOrNull(intersectedTypes)?.let { result.add(it) }
+        context.commonSuperTypeOrNull(intersectedTypes)?.let {
+            if (it.isAcceptableForSmartcast()) {
+                result.add(it)
+            } else if (!it.canBeNull) {
+                result.add(context.anyType())
+            }
+            Unit
+        }
         return result
     }
 

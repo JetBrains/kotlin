@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 open class FirFunctionCallImpl @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
@@ -92,6 +92,11 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
         calleeReference = calleeReference.transformSingle(transformer, data)
         return this
+    }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -31,7 +32,7 @@ object RedundantCallOfConversionMethod : FirQualifiedAccessChecker() {
         val qualifiedType = targetClassMap[functionName] ?: return
 
         if (expression.explicitReceiver?.isRedundant(qualifiedType) == true) {
-            reporter.report(expression.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD)
+            reporter.reportOn(expression.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD, context)
         }
     }
 

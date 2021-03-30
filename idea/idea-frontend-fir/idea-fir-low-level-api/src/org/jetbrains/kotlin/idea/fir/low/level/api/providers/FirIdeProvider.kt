@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirFragmentForLazyBodiesBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceCheckerForSingleModule
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.collectDesignation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -95,14 +96,29 @@ internal class FirIdeProvider(
 
     // TODO move out of here
     // used only for completion
-    fun buildFunctionWithBody(ktNamedFunction: KtNamedFunction, original: FirFunction<*>): FirFunction<*> {
-        return RawFirBuilder(session, kotlinScopeProvider).buildFunctionWithBody(ktNamedFunction, original)
+    fun buildFunctionWithBody(
+        ktNamedFunction: KtNamedFunction,
+        original: FirFunction<*>,
+    ): FirFunction<*> {
+        return RawFirFragmentForLazyBodiesBuilder.build(
+            session = original.session,
+            baseScopeProvider = original.session.firIdeProvider.kotlinScopeProvider,
+            designation = original.collectDesignation(),
+            declaration = ktNamedFunction
+        ) as FirFunction<*>
     }
 
-    fun buildPropertyWithBody(ktNamedFunction: KtProperty, original: FirProperty): FirProperty {
-        return RawFirBuilder(session, kotlinScopeProvider).buildPropertyWithBody(ktNamedFunction, original)
+    fun buildPropertyWithBody(
+        ktNamedFunction: KtProperty,
+        original: FirProperty,
+    ): FirProperty {
+        return RawFirFragmentForLazyBodiesBuilder.build(
+            session = original.session,
+            baseScopeProvider = original.session.firIdeProvider.kotlinScopeProvider,
+            designation = original.collectDesignation(),
+            declaration = ktNamedFunction
+        ) as FirProperty
     }
-
 
     @FirProviderInternals
     override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {

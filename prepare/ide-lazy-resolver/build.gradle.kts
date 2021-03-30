@@ -13,6 +13,9 @@ val markdownVersion = findProperty("versions.markdown").toString()
 
 val writeVersions by tasks.registering {
     val versionFile = File(versionFilePath)
+    val ideaVersion = ideaVersion
+    val markdownVersion = markdownVersion
+
     inputs.property("ideaVersion", ideaVersion)
     inputs.property("markdownVersion", markdownVersion)
 

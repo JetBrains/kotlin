@@ -10,7 +10,7 @@ fun main() {
     }
 }
 
-fun foo(<!UNUSED_PARAMETER!>map<!>: Pair<String, String>) {}
+fun foo(map: Pair<String, String>) {}
 
 
 //from library

@@ -9,6 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.UnknownTaskException
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -39,6 +41,14 @@ internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: St
 
 internal fun KotlinCompilation<*>.isMain(): Boolean =
     name == KotlinCompilation.MAIN_COMPILATION_NAME
+
+/**
+ * see https://youtrack.jetbrains.com/issue/KT-45412
+ * Some implementations of [KotlinCompilation] are not including their [KotlinCompilation.defaultSourceSet] into [kotlinSourceSet]s
+ * This helper function might disappear in the future, once the behaviour of those [KotlinCompilation] implementations is streamlined.
+ * @return [KotlinCompilation.kotlinSourceSets] + [KotlinCompilation.defaultSourceSet]
+ */
+internal val KotlinCompilation<*>.kotlinSourceSetsIncludingDefault: Set<KotlinSourceSet> get() = kotlinSourceSets + defaultSourceSet
 
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     target: KotlinTarget,
@@ -68,7 +78,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
     override val allKotlinSourceSets: Set<KotlinSourceSet>
-        get() = kotlinSourceSets.flatMapTo(mutableSetOf()) { it.getSourceSetHierarchy() }
+        get() = kotlinSourceSets + kotlinSourceSets.resolveAllDependsOnSourceSets()
 
     override val defaultSourceSetName: String
         get() = lowerCamelCaseName(
@@ -148,7 +158,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     final override fun source(sourceSet: KotlinSourceSet) {
         if (kotlinSourceSets.add(sourceSet)) {
             target.project.whenEvaluated {
-                addExactSourceSetsEagerly(sourceSet.getSourceSetHierarchy())
+                addExactSourceSetsEagerly(sourceSet.withAllDependsOnSourceSets())
             }
         }
     }
@@ -193,20 +203,37 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override fun toString(): String = "compilation '$compilationName' ($target)"
 
+    internal val friendArtifactsTask: TaskProvider<AbstractArchiveTask>? by lazy {
+        if (associateWithTransitiveClosure.any { it.isMain() }) {
+            val archiveTasks = target.project.tasks.withType(AbstractArchiveTask::class.java)
+            if (!archiveTasks.isEmpty()) {
+                try {
+                    archiveTasks.named(target.artifactsTaskName)
+                } catch (e: UnknownTaskException) {
+                    // Native tasks does not extend AbstractArchiveTask
+                    null
+                }
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+    }
+
     /**
      * If a compilation is aware of its associate compilations' outputs being added to the classpath in a transformed or packaged way,
      * it should point to those friend artifact files via this property.
      */
     internal open val friendArtifacts: FileCollection
         get() = with(target.project) {
-            if (associateWithTransitiveClosure.any { it.isMain() }) {
+            val friendArtifactsTaskProvider = friendArtifactsTask
+            if (friendArtifactsTaskProvider != null) {
                 // In case the main artifact is transitively added to the test classpath via a test dependency on another module
                 // that depends on this module's production part, include the main artifact in the friend artifacts, lazily:
                 files(
-                    provider {
-                        listOfNotNull(
-                            tasks.withType(AbstractArchiveTask::class.java).findByName(target.artifactsTaskName)?.archivePathCompatible
-                        )
+                    Callable {
+                        friendArtifactsTaskProvider.get().archivePathCompatible
                     }
                 )
             } else files()

@@ -5,3 +5,4 @@ var i: Int? = 0
 fun foo(s: String?) {
     i = s?.length
 }
+/* FIR_COMPARISON */

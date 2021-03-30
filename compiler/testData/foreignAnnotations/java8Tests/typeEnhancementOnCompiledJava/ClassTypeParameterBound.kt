@@ -1,4 +1,4 @@
-// !LANGUAGE: +ImprovementsAroundTypeEnhancement +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // SKIP_TXT
 

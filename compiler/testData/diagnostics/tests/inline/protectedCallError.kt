@@ -15,7 +15,7 @@ open class A {
     protected val z: String = "1"
 
     public var zVar: String = "1"
-        protected set(<!UNUSED_PARAMETER!>value<!>) {}
+        protected set(value) {}
 
     inline fun call() {
         <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>test<!>()
@@ -78,7 +78,7 @@ internal class AInternal {
     protected val z: String = "1"
 
     public var zVar: String = "1"
-        protected set(<!UNUSED_PARAMETER!>value<!>) {}
+        protected set(value) {}
 
 
     inline fun call() {

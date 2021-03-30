@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class Cn<T>
 
 fun <T, C: Cn<T>> C.some(arg: (T) -> Unit): C {

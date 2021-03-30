@@ -4,10 +4,10 @@ fun foo(arg: Int?) {
     if (x == null) return
     run {
         // Unsafe because of owner modification
-        x.hashCode()
+        x<!UNSAFE_CALL!>.<!>hashCode()
         x = null
     }
     if (x != null) x = 42
     // Unsafe because of lambda
-    x.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    x<!UNSAFE_CALL!>.<!>hashCode()
 }

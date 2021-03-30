@@ -382,7 +382,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                 descriptor.run {
                     irFactory.createFunction(
                         offset, offset, memberOrigin, it, name, visibility, modality, returnType,
-                        isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, true
+                        isInline, isEffectivelyExternal(), isTailrec, isSuspend, isOperator, isInfix, isExpect, true
                     )
                 }
             }

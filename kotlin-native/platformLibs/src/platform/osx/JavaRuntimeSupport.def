@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork CloudKit Cocoa CoreData CoreFoundation CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.JavaRuntimeSupport
+
+modules = JavaRuntimeSupport
+compilerOpts = -framework JavaRuntimeSupport
+linkerOpts = -framework JavaRuntimeSupport

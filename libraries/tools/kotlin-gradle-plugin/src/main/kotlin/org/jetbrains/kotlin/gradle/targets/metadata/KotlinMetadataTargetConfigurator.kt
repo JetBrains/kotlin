@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.getLibraries
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -260,7 +260,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
              * See also: [buildKotlinProjectStructureMetadata], where these dependencies must be included into the source set exported deps.
              */
             if (isSharedNativeCompilation) {
-                sourceSet.getSourceSetHierarchy().forEach { hierarchySourceSet ->
+                sourceSet.withAllDependsOnSourceSets().forEach { hierarchySourceSet ->
                     apiElementsConfiguration.extendsFrom(
                         sourceSetDependencyConfigurationByScope(hierarchySourceSet, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
                     )
@@ -293,7 +293,9 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
         val platformCompilations = compilationsBySourceSets(project).getValue(sourceSet)
 
-        val isNativeSourceSet = platformCompilations.all { compilation -> compilation.target is KotlinNativeTarget }
+        val isNativeSourceSet = platformCompilations.all { compilation ->
+            compilation.target is KotlinNativeTarget || compilation is KotlinSharedNativeCompilation
+        }
 
         val compilationFactory: KotlinCompilationFactory<out AbstractKotlinCompilation<*>> = when {
             isNativeSourceSet -> KotlinSharedNativeCompilationFactory(
@@ -318,6 +320,18 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
                     // not resolved:
                     compileDependencyFiles = project.files()
+                }
+            }
+
+            if (this is KotlinSharedNativeCompilation) {
+                project.commonizeCInteropTask?.let { task ->
+                    compileDependencyFiles = compileDependencyFiles.plus(task.getLibraries(this))
+                }
+                project.copyCommonizeCInteropForIdeTask?.let { task ->
+                    val libraries = task.getLibraries(this)
+                    kotlinSourceSetsIncludingDefault.forEach { sourceSet ->
+                        project.dependencies.add(sourceSet.implementationMetadataConfigurationName, libraries)
+                    }
                 }
             }
         }
@@ -438,7 +452,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             project.provider {
                 val sourceSet = compilation.defaultSourceSet
 
-                val transformationTaskHolders = sourceSet.getSourceSetHierarchy().mapNotNull { hierarchySourceSet ->
+                val transformationTaskHolders = sourceSet.withAllDependsOnSourceSets().mapNotNull { hierarchySourceSet ->
                     project.locateTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(hierarchySourceSet.name))
                 }
 
@@ -455,9 +469,9 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 val transformedFilesByResolution: Map<MetadataDependencyResolution, FileCollection> =
                     transformationTaskHolders.flatMap { it.get().filesByResolution.toList() }.toMap()
 
-                val dependsOnCompilationOutputs = sourceSet.getSourceSetHierarchy().mapNotNull { hierarchySourceSet ->
+                val dependsOnCompilationOutputs = sourceSet.resolveAllDependsOnSourceSets().mapNotNull { hierarchySourceSet ->
                     val dependencyCompilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet)
-                    dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
+                    dependencyCompilation?.output?.classesDirs
                 }
 
                 val artifactView = fromFiles.incoming.artifactView { view ->

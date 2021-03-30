@@ -45,4 +45,4 @@ val test8 = NL<String>()
 
 class NumberPhile<T: Number>(x: T)
 val np1 = NumberPhile(10)
-val np2 = <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>NumberPhile<!>("Test")<!>
+val np2 = <!INAPPLICABLE_CANDIDATE!>NumberPhile<!>("Test")

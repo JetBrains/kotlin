@@ -1,0 +1,27 @@
+FILE: lightMember.kt
+    public abstract interface PsiMember : R|kotlin/Any| {
+    }
+    public abstract interface PsiField : R|PsiMember| {
+    }
+    public abstract class LightMemberImpl<out D : R|PsiMember|> : R|kotlin/Any| {
+        public constructor<out D : R|PsiMember|>(computeRealDelegate: R|() -> D|): R|LightMemberImpl<D>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val delegate: R|D|by R|kotlin/lazy|<R|D|>(R|<local>/computeRealDelegate|)
+            public get(): R|D| {
+                ^ this@R|/LightMemberImpl|.D|/LightMemberImpl.delegate|.R|kotlin/getValue|<R|D|>(this@R|/LightMemberImpl|, ::R|/LightMemberImpl.delegate|)
+            }
+
+    }
+    public abstract class LightFieldImpl<D : R|PsiField|> : R|LightMemberImpl<PsiField>| {
+        public constructor<D : R|PsiField|>(computeRealDelegate: R|() -> D|): R|LightFieldImpl<D>| {
+            super<R|LightMemberImpl<PsiField>|>(R|<local>/computeRealDelegate|)
+        }
+
+        public open override val delegate: R|D|
+            public get(): R|D| {
+                ^ this@R|/LightFieldImpl|.super<R|LightMemberImpl<PsiField>|>.R|SubstitutionOverride</LightMemberImpl.delegate: R|PsiField|>|
+            }
+
+    }

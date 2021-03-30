@@ -13,7 +13,7 @@ fun foo(): Bar {
     y = Bar()
     while (x != null) {
         // Here call is unsafe because of inner loop
-        y.next()
+        y<!UNSAFE_CALL!>.<!>next()
         while (y != null) {
             if (x == y)
                 // x is not null because of outer while

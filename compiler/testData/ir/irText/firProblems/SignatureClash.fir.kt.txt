@@ -34,9 +34,13 @@ data class DataClass : Derived, Delegate {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = delegate
   }
 
+  override fun bar() {
+    <this>.#<$$delegate_0>.bar()
+  }
+
+  local /* final field */ val <$$delegate_0>: Delegate = delegate
   val delegate: Delegate
     field = delegate
     get
@@ -49,11 +53,6 @@ data class DataClass : Derived, Delegate {
     return DataClass(delegate = delegate)
   }
 
-  override fun bar() {
-    <this>.#<$$delegate_0>.bar()
-  }
-
-  local /* final field */ val <$$delegate_0>: Delegate
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -77,4 +76,3 @@ data class DataClass : Derived, Delegate {
   }
 
 }
-

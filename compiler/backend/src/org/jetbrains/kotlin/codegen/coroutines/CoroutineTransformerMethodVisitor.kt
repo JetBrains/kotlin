@@ -201,20 +201,38 @@ class CoroutineTransformerMethodVisitor(
 
     // When suspension point is inlined, it is in range of fake inliner variables.
     // Path from TABLESWITCH into unspilling goes to latter part of the range.
-    // In this case the variables are uninitialized, initialize them
+    // In this case the variables are uninitialized, initialize them, and split the local variable
+    // range so that the local variable is only defined when initialized.
     private fun initializeFakeInlinerVariables(methodNode: MethodNode, stateLabels: List<LabelNode>) {
         for (stateLabel in stateLabels) {
+            val newRecords = mutableListOf<LocalVariableNode>()
             for (record in methodNode.localVariables) {
                 if (isFakeLocalVariableForInline(record.name) &&
                     methodNode.instructions.indexOf(record.start) < methodNode.instructions.indexOf(stateLabel) &&
                     methodNode.instructions.indexOf(stateLabel) < methodNode.instructions.indexOf(record.end)
                 ) {
+                    val newEnd = record.end
+                    val newStart = LabelNode()
+                    record.end = stateLabel
                     methodNode.instructions.insert(stateLabel, withInstructionAdapter {
                         iconst(0)
                         store(record.index, Type.INT_TYPE)
+                    }.also {
+                        it.add(newStart)
                     })
+                    newRecords.add(
+                        LocalVariableNode(
+                            record.name,
+                            record.desc,
+                            record.signature,
+                            newStart,
+                            newEnd,
+                            record.index
+                        )
+                    )
                 }
             }
+            methodNode.localVariables.addAll(newRecords)
         }
     }
 
@@ -1217,6 +1235,27 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     fun isAlive(insnIndex: Int, variableIndex: Int): Boolean =
         liveness[insnIndex].isAlive(variableIndex)
 
+    fun nextSuspensionPointEndLabel(insn: AbstractInsnNode): LabelNode {
+        val suspensionPoint =
+            InsnSequence(insn, method.instructions.last).firstOrNull { isAfterSuspendMarker(it) } ?: method.instructions.last
+        return suspensionPoint as? LabelNode ?: suspensionPoint.findNextOrNull { it is LabelNode } as LabelNode
+    }
+
+    fun nextSuspensionPointStartLabel(insn: AbstractInsnNode): LabelNode {
+        val suspensionPoint =
+            InsnSequence(insn, method.instructions.last).firstOrNull { isBeforeSuspendMarker(it) } ?: method.instructions.last
+        return suspensionPoint as? LabelNode ?: suspensionPoint.findPreviousOrNull { it is LabelNode } as LabelNode
+    }
+
+    fun min(a: LabelNode, b: LabelNode): LabelNode =
+        if (method.instructions.indexOf(a) < method.instructions.indexOf(b)) a else b
+
+    fun max(a: LabelNode, b: LabelNode): LabelNode =
+        if (method.instructions.indexOf(a) < method.instructions.indexOf(b)) b else a
+
+    fun containsSuspensionPoint(a: LabelNode, b: LabelNode): Boolean =
+        InsnSequence(min(a, b), max(a, b)).none { isBeforeSuspendMarker(it) }
+
     val oldLvt = arrayListOf<LocalVariableNode>()
     for (record in method.localVariables) {
         oldLvt += record
@@ -1237,21 +1276,33 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 // No variable in LVT -> do not add one
                 val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
                 if (lvtRecord.name == CONTINUATION_VARIABLE_NAME) continue
-                val endLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode ?: continue
+                // Extend lvt record to the next suspension point
+                val endLabel = min(lvtRecord.end, nextSuspensionPointEndLabel(insn))
                 // startLabel can be null in case of parameters
                 @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
                 // Attempt to extend existing local variable node corresponding to the record in
                 // the original local variable table.
-                var recordToExtend: LocalVariableNode? = oldLvtNodeToLatestNewLvtNode[lvtRecord]
-                if (recordToExtend != null && InsnSequence(recordToExtend.end, startLabel).none { isBeforeSuspendMarker(it) }) {
+                val recordToExtend: LocalVariableNode? = oldLvtNodeToLatestNewLvtNode[lvtRecord]
+                if (recordToExtend != null && containsSuspensionPoint(recordToExtend.end, startLabel)) {
                     recordToExtend.end = endLabel
                 } else {
                     val node = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
-                    method.localVariables.add(node)
+                    if (lvtRecord !in oldLvtNodeToLatestNewLvtNode) {
+                        method.localVariables.add(node)
+                    }
                     oldLvtNodeToLatestNewLvtNode[lvtRecord] = node
                 }
             }
         }
+    }
+
+    val deadVariables = arrayListOf<Int>()
+    outer@for (variableIndex in start until method.maxLocals) {
+        if (oldLvt.none { it.index == variableIndex }) continue
+        for (insnIndex in 0 until (method.instructions.size() - 1)) {
+            if (isAlive(insnIndex, variableIndex)) continue@outer
+        }
+        deadVariables += variableIndex
     }
 
     for (variable in oldLvt) {
@@ -1262,10 +1313,26 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             isFakeLocalVariableForInline(variable.name)
         ) {
             method.localVariables.add(variable)
+            continue
         }
         // this acts like $continuation for lambdas. For example, it is used by debugger to create async stack trace. Keep it.
         if (variable.name == "this" && !isForNamedFunction) {
             method.localVariables.add(variable)
+            continue
+        }
+
+        // Shrink LVT records of dead variables to the next suspension point
+        if (variable.index in deadVariables) {
+            method.localVariables.add(
+                LocalVariableNode(
+                    variable.name,
+                    variable.desc,
+                    variable.signature,
+                    variable.start,
+                    nextSuspensionPointStartLabel(variable.start),
+                    variable.index
+                )
+            )
         }
     }
 }

@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
+import java.io.File
+
+class GeneratedFile(val file: File, val newText: String)
 
 enum class ImportKind(val postfix: String) {
     Element(""), Implementation(".impl"), Builder(".builder")
@@ -67,7 +70,11 @@ private fun Element.collectImportsInternal(base: List<String>, kind: ImportKind)
             allFields.flatMap { it.overridenTypes.mapNotNull { it.fullQualifiedName } } +
             allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
             typeArguments.flatMap { it.upperBounds.mapNotNull { it.fullQualifiedName } }
-    return fqns.filterRedundantImports(packageName, kind)
+    val result = fqns.filterRedundantImports(packageName, kind)
+    if (allFields.any { it.name == "source" && it.withReplace }) {
+        return (result + "org.jetbrains.kotlin.fir.FirImplementationDetail").distinct()
+    }
+    return result
 }
 
 private fun List<String>.filterRedundantImports(

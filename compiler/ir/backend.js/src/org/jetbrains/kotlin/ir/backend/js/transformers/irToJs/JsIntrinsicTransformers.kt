@@ -8,19 +8,16 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.getClassRef
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
 
@@ -92,18 +89,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsClass) { call, context ->
                 val typeArgument = call.getTypeArgument(0)
-                val classSymbol = typeArgument?.classOrNull
+                typeArgument?.getClassRef(context)
                     ?: error("Type argument of jsClass must be statically known class, but " + typeArgument?.render())
-
-                val klass = classSymbol.owner
-
-                when {
-                    klass.isEffectivelyExternal() ->
-                        context.getRefForExternalClass(klass)
-
-                    else ->
-                        context.getNameForStaticDeclaration(klass as IrDeclarationWithName).makeRef()
-                }
             }
 
             add(intrinsics.jsNewTarget) { _, _ ->
@@ -124,16 +111,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.es6DefaultType) { call, context ->
-                val classifier: IrClassifierSymbol = call.getTypeArgument(0)!!.classifierOrFail
-                val owner = classifier.owner
-
-                when {
-                    owner is IrClass && owner.isEffectivelyExternal() ->
-                        context.getRefForExternalClass(owner)
-
-                    else ->
-                        context.getNameForStaticDeclaration(owner as IrDeclarationWithName).makeRef()
-                }
+                val typeArgument = call.getTypeArgument(0)!!
+                typeArgument.getClassRef(context)
             }
 
             addIfNotNull(intrinsics.jsCode) { _, _ -> error("Should not be called") }

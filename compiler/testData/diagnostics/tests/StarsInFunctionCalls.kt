@@ -2,8 +2,8 @@
 
 fun <T> getT() {}
 fun <A, B> getTT() {}
-fun <A, B, C> getTTT(<!UNUSED_PARAMETER!>x<!> : Any) {}
-fun foo(<!UNUSED_PARAMETER!>a<!> : Any?) {}
+fun <A, B, C> getTTT(x : Any) {}
+fun foo(a : Any?) {}
 
 public fun main() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}!>getT<!><<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()

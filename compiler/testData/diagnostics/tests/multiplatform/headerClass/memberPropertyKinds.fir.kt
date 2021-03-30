@@ -23,7 +23,7 @@ expect class Foo {
     get() = "no"
     set(value) {}
 
-    lateinit var lateinitVar: String
+    <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 
     val delegated: String by <!EXPECTED_DELEGATED_PROPERTY!>Delegate<!>
 }

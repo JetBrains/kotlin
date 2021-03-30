@@ -30,8 +30,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val WITH_REFLECT by directive("Add Kotlin reflect to classpath")
     val NO_RUNTIME by directive("Don't add any runtime libs to classpath")
 
-    val ANDROID_ANNOTATIONS by directive("Add android annotations to classpath")
-
     val USE_PSI_CLASS_FILES_READING by directive("Use a slower (PSI-based) class files reading implementation")
     val USE_JAVAC by directive("Enable javac integration")
     val SKIP_JAVA_SOURCES by directive("Don't add java sources to compile classpath")
@@ -54,8 +52,17 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         additionalParser = JVMConstructorCallNormalizationMode.Companion::fromStringOrNull
     )
 
-    val SAM_CONVERSIONS by enumDirective<JvmSamConversions>(
+    val SAM_CONVERSIONS by enumDirective(
         description = "SAM conversion code generation scheme",
-        additionalParser = JvmSamConversions.Companion::fromString
+        additionalParser = JvmClosureGenerationScheme.Companion::fromString
+    )
+
+    val LAMBDAS by enumDirective(
+        description = "Lambdas code generation scheme",
+        additionalParser = JvmClosureGenerationScheme.Companion::fromString
+    )
+
+    val USE_OLD_INLINE_CLASSES_MANGLING_SCHEME by directive(
+        description = "Enable old mangling scheme for inline classes"
     )
 }

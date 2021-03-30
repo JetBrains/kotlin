@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -PLATFORM_CLASS_MAPPED_TO_KOTLIN
 // WITH_RUNTIME
 

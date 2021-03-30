@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.asTowerDataElement
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
-import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
-import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
-import org.jetbrains.kotlin.name.FqName
 
 open class FirBodyResolveTransformer(
     session: FirSession,
@@ -35,7 +34,6 @@ open class FirBodyResolveTransformer(
     val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve(),
     outerBodyResolveContext: BodyResolveContext? = null
 ) : FirAbstractBodyResolveTransformer(phase) {
-    private var packageFqName = FqName.ROOT
 
     final override val context: BodyResolveContext =
         outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext.empty(session))
@@ -50,22 +48,12 @@ open class FirBodyResolveTransformer(
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
-        context.cleanContextForAnonymousFunction()
-        context.towerDataContextForCallableReferences.clear()
-        context.cleanDataFlowContext()
-        @OptIn(PrivateForInline::class)
-        context.file = file
-        packageFqName = file.packageFqName
-        return withScopeCleanup(context.fileImportsScope) {
-            context.withTowerDataCleanup {
-                val importingScopes = createImportingScopes(file, session, components.scopeSession)
-                context.fileImportsScope += importingScopes
-                context.addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
+        return context.withFile(file, components) {
+            onBeforeFileContentResolution(file)
 
-                file.replaceResolvePhase(transformerPhase)
-                @Suppress("UNCHECKED_CAST")
-                transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>
-            }
+            file.replaceResolvePhase(transformerPhase)
+            @Suppress("UNCHECKED_CAST")
+            transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>
         }
     }
 
@@ -74,11 +62,13 @@ open class FirBodyResolveTransformer(
         return (element.transformChildren(this, data) as E).compose()
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: ResolutionMode): CompositeTransformResult<FirTypeRef> {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: ResolutionMode): CompositeTransformResult<FirResolvedTypeRef> {
         if (typeRef is FirResolvedTypeRef) {
             return typeRef.compose()
         }
-        return typeResolverTransformer.transformTypeRef(typeRef, FirCompositeScope(components.createCurrentScopeList()))
+        return typeResolverTransformer.withFile(context.file) {
+            transformTypeRef(typeRef, FirCompositeScope(components.createCurrentScopeList()))
+        }
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): CompositeTransformResult<FirTypeRef> {
@@ -86,6 +76,8 @@ open class FirBodyResolveTransformer(
             return implicitTypeRef.compose()
         return data.expectedTypeRef.compose()
     }
+
+    open fun onBeforeFileContentResolution(file: FirFile) {}
 
     open fun onBeforeStatementResolution(statement: FirStatement) {}
 
@@ -257,6 +249,10 @@ open class FirBodyResolveTransformer(
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
         return declarationsTransformer.transformProperty(property, data)
+    }
+
+    override fun transformField(field: FirField, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        return declarationsTransformer.transformField(field, data)
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {

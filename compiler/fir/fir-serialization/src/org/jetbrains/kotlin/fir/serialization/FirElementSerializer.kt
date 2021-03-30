@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,12 +25,11 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.suspendFunctionTypeToFunctionTypeWithContinuation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.sealedInheritors
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
@@ -197,6 +197,14 @@ class FirElementSerializer private constructor(
         return builder
     }
 
+    private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession, property: FirProperty): List<FirAnnotationCall> =
+        (this as FirAnnotationContainer).nonSourceAnnotations(session) + property.nonSourceAnnotations(session).filter {
+            val useSiteTarget = it.useSiteTarget
+            useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER && isGetter ||
+                    useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER && isSetter ||
+                    useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER && isSetter
+        }
+
     fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? {
         if (!extension.shouldSerializeProperty(property)) return null
 
@@ -235,13 +243,15 @@ class FirElementSerializer private constructor(
                 builder.setterFlags = accessorFlags
             }
 
+            val nonSourceAnnotations = setter.nonSourceAnnotations(session, property)
             if (setter !is FirDefaultPropertyAccessor ||
-                setter.nonSourceAnnotations(session).isNotEmpty() ||
+                nonSourceAnnotations.isNotEmpty() ||
                 setter.visibility != property.visibility
             ) {
                 val setterLocal = local.createChildSerializer(setter)
                 for (valueParameterDescriptor in setter.valueParameters) {
-                    builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor))
+                    val annotations = nonSourceAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
+                    builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor, annotations))
                 }
             }
         }
@@ -474,14 +484,19 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    private fun valueParameterProto(parameter: FirValueParameter): ProtoBuf.ValueParameter.Builder {
+    private fun valueParameterProto(
+        parameter: FirValueParameter,
+        additionalAnnotations: List<FirAnnotationCall> = emptyList()
+    ): ProtoBuf.ValueParameter.Builder {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
         val declaresDefaultValue = parameter.defaultValue != null // TODO: || parameter.isActualParameterWithAnyExpectedDefault
 
         val flags = Flags.getValueParameterFlags(
-            parameter.nonSourceAnnotations(session).isNotEmpty(), declaresDefaultValue,
-            parameter.isCrossinline, parameter.isNoinline
+            additionalAnnotations.isNotEmpty() || parameter.nonSourceAnnotations(session).isNotEmpty(),
+            declaresDefaultValue,
+            parameter.isCrossinline,
+            parameter.isNoinline
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -714,10 +729,12 @@ class FirElementSerializer private constructor(
     private fun getAccessorFlags(accessor: FirPropertyAccessor, property: FirProperty): Int {
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
-        val nonSourceAnnotations = accessor.nonSourceAnnotations(session)
+        val nonSourceAnnotations = accessor.nonSourceAnnotations(session, property)
         val isDefault = accessor is FirDefaultPropertyAccessor &&
-                nonSourceAnnotations.isEmpty() && accessor.visibility == property.visibility &&
-                !accessor.isExternal && !accessor.isInline
+                nonSourceAnnotations.isEmpty() &&
+                accessor.visibility == property.visibility &&
+                !accessor.isExternal &&
+                !accessor.isInline
         return Flags.getAccessorFlags(
             nonSourceAnnotations.isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
@@ -891,7 +908,7 @@ class FirElementSerializer private constructor(
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
             val parent = if (parentClassId != null && !parentClassId.isLocal) {
-                val parentClass = klass.session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)!!.fir as FirRegularClass
+                val parentClass = klass.session.symbolProvider.getClassLikeSymbolByFqName(parentClassId)!!.fir as FirRegularClass
                 parentSerializer ?: create(parentClass, extension, null, typeApproximator)
             } else {
                 createTopLevel(klass.session, extension, typeApproximator)

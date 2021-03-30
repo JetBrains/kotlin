@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 // Test for KT-8187
 interface A {
     fun get(x: Int)

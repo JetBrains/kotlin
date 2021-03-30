@@ -24,7 +24,6 @@ import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
-import org.gradle.api.artifacts.maven.MavenPom as OldMavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -49,6 +48,7 @@ import java.io.File
 import java.net.URL
 import java.util.concurrent.Callable
 import java.util.jar.Manifest
+import org.gradle.api.artifacts.maven.MavenPom as OldMavenPom
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"
@@ -354,27 +354,6 @@ internal class KotlinJsIrSourceSetProcessor(
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinPluginVersion)
             subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
         }
-
-        // outputFile can be set later during the configuration phase, get it only after the phase:
-        project.runOnceAfterEvaluated("KotlinJsIrSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
-            val kotlinTaskInstance = kotlinTask.get()
-            val kotlinOptions = kotlinTaskInstance.kotlinOptions
-            kotlinOptions.outputFile = kotlinTaskInstance.outputFile.absolutePath
-            val outputDir = if (kotlinOptions.isProduceUnzippedKlib())
-                kotlinTaskInstance.outputFile
-            else
-                kotlinTaskInstance.outputFile.parentFile
-
-            if (outputDir.isParentOf(project.rootDir))
-                throw InvalidUserDataException(
-                    "The output directory '$outputDir' (defined by outputFile of $kotlinTaskInstance) contains or " +
-                            "matches the project root directory '${project.rootDir}'.\n" +
-                            "Gradle will not be able to build the project because of the root directory lock.\n" +
-                            "To fix this, consider using the default outputFile location instead of providing it explicitly."
-                )
-
-            kotlinTaskInstance.destinationDir = outputDir
-        }
     }
 }
 
@@ -477,7 +456,7 @@ internal abstract class AbstractKotlinPlugin(
                 }
             }
 
-            // Setup conf2ScopeMappings so that the API dependencies are wriiten with the compile scope in the POMs in case of 'java' plugin
+            // Setup conf2ScopeMappings so that the API dependencies are written with the compile scope in the POMs in case of 'java' plugin
             project.convention.getPlugin(MavenPluginConvention::class.java)
                 .conf2ScopeMappings.addMapping(0, project.configurations.getByName("api"), Conf2ScopeMappingContainer.COMPILE)
         }
@@ -585,9 +564,6 @@ internal abstract class AbstractKotlinPlugin(
 
             // Setup the consuming configurations:
             project.dependencies.attributesSchema.attribute(KotlinPlatformType.attribute)
-            kotlinTarget.compilations.all { compilation ->
-                AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation)
-            }
 
             project.configurations.getByName("default").apply {
                 setupAsLocalTargetSpecificConfigurationIfSupported(kotlinTarget)
@@ -616,6 +592,7 @@ internal abstract class AbstractKotlinPlugin(
             buildSourceSetProcessor: (AbstractKotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             kotlinTarget.compilations.all { compilation ->
+                AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation)
                 buildSourceSetProcessor(compilation).run()
             }
         }
@@ -741,10 +718,9 @@ internal open class KotlinAndroidPlugin(
         ): AbstractAndroidProjectHandler {
             val tasksProvider = AndroidTasksProvider(androidTarget.targetName)
 
-            val version = loadAndroidPluginVersion()
-            if (version != null) {
+            if (androidPluginVersion != null) {
                 val minimalVersion = "3.0.0"
-                if (compareVersionNumbers(version, minimalVersion) < 0) {
+                if (compareVersionNumbers(androidPluginVersion, minimalVersion) < 0) {
                     throw IllegalStateException("Kotlin: Unsupported version of com.android.tools.build:gradle plugin: version $minimalVersion or higher should be used with kotlin-android plugin")
                 }
             }
@@ -950,9 +926,9 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
     private fun applyAndroidJavaVersion(baseExtension: BaseExtension, kotlinOptions: KotlinJvmOptions) {
         val javaVersion =
-            listOf(baseExtension.compileOptions.sourceCompatibility, baseExtension.compileOptions.targetCompatibility).min()!!
-        if (javaVersion >= JavaVersion.VERSION_1_8)
-            kotlinOptions.jvmTarget = "1.8"
+            minOf(baseExtension.compileOptions.sourceCompatibility, baseExtension.compileOptions.targetCompatibility)
+        if (javaVersion == JavaVersion.VERSION_1_6)
+            kotlinOptions.jvmTarget = "1.6"
     }
 
     private fun preprocessVariant(
@@ -1096,14 +1072,14 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
 }
 
 //copied from BasePlugin.getLocalVersion
-internal fun loadAndroidPluginVersion(): String? {
+internal val androidPluginVersion by lazy {
     try {
         val clazz = BasePlugin::class.java
         val className = clazz.simpleName + ".class"
         val classPath = clazz.getResource(className).toString()
         if (!classPath.startsWith("jar")) {
             // Class not from JAR, unlikely
-            return null
+            return@lazy null
         }
         val manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF"
 
@@ -1112,9 +1088,9 @@ internal fun loadAndroidPluginVersion(): String? {
         val jarInputStream = jarConnection.inputStream
         val attr = Manifest(jarInputStream).mainAttributes
         jarInputStream.close()
-        return attr.getValue("Plugin-Version")
+        return@lazy attr.getValue("Plugin-Version")
     } catch (t: Throwable) {
-        return null
+        return@lazy null
     }
 }
 

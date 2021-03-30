@@ -75,7 +75,7 @@ class LazyScriptDescriptor(
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
     }
 
-    override fun getResultValue(): ReplResultPropertyDescriptor? {
+    private val _resultValue: () -> ReplResultPropertyDescriptor? = resolveSession.storageManager.createNullableLazyValue {
         val expression = scriptInfo.script
             .getChildOfType<KtBlockExpression>()
             ?.getChildrenOfType<KtScriptInitializer>()?.lastOrNull()
@@ -85,7 +85,7 @@ class LazyScriptDescriptor(
             resolveSession.trace.bindingContext.getType(it)
         }
 
-        return if (type != null && !type.isUnit() && !type.isNothing()) {
+        if (type != null && !type.isUnit() && !type.isNothing()) {
             resultFieldName()?.let {
                 ReplResultPropertyDescriptor(
                     it,
@@ -97,6 +97,8 @@ class LazyScriptDescriptor(
             }
         } else null
     }
+
+    override fun getResultValue(): ReplResultPropertyDescriptor? = _resultValue()
 
     fun resultFieldName(): Name? {
         // TODO: implement robust REPL/script selection
@@ -148,11 +150,11 @@ class LazyScriptDescriptor(
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
         visitor.visitScriptDescriptor(this, data)
 
-    override fun createMemberScope(
+    override fun createScopesHolderForClass(
         c: LazyClassContext,
         declarationProvider: ClassMemberDeclarationProvider
     ): ScopesHolderForClass<LazyClassMemberScope> =
-        ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeChecker.kotlinTypeRefiner) {
+        ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeCheckerOfOwnerModule.kotlinTypeRefiner) {
             LazyScriptClassMemberScope(
                 // Must be a ResolveSession for scripts
                 c as ResolveSession,
@@ -288,7 +290,7 @@ class LazyScriptDescriptor(
 
     internal class ConstructorWithParams(
         val constructor: ClassConstructorDescriptorImpl,
-        val explicitConstructorParameters: List<ValueParameterDescriptor>,
+        val baseClassConstructorParameters: List<ValueParameterDescriptor>,
         val implicitReceiversParameters: List<ValueParameterDescriptor>,
         val scriptProvidedPropertiesParameters: List<ValueParameterDescriptor>
     )
@@ -337,14 +339,14 @@ class LazyScriptDescriptor(
 
         ConstructorWithParams(
             constructorDescriptor,
-            explicitConstructorParameters = explicitParameters,
+            baseClassConstructorParameters = explicitParameters,
             implicitReceiversParameters = implicitReceiversParameters,
             scriptProvidedPropertiesParameters = providedPropertiesParameters
         )
     }
 
     override fun getExplicitConstructorParameters(): List<ValueParameterDescriptor> =
-        scriptPrimaryConstructorWithParams().explicitConstructorParameters
+        scriptPrimaryConstructorWithParams().baseClassConstructorParameters
 
     override fun getImplicitReceiversParameters(): List<ValueParameterDescriptor> =
         scriptPrimaryConstructorWithParams().implicitReceiversParameters

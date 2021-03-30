@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.utils.threadLocal
 
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
@@ -61,13 +63,15 @@ interface ReferenceSymbolTable {
 class SymbolTable(
     val signaturer: IdSignatureComposer,
     val irFactory: IrFactory,
-    val nameProvider: NameProvider = NameProvider.DEFAULT
+    val nameProvider: NameProvider = NameProvider.DEFAULT,
 ) : ReferenceSymbolTable {
+
+    val lock = IrLock()
 
     @Suppress("LeakingThis")
     val lazyWrapper = IrLazySymbolTable(this)
 
-    private abstract class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> {
+    private abstract class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>>(val lock: IrLock) {
         val unboundSymbols = linkedSetOf<S>()
 
         abstract fun get(d: D): S?
@@ -75,107 +79,119 @@ class SymbolTable(
         abstract fun get(sig: IdSignature): S?
 
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
-            @Suppress("UNCHECKED_CAST")
-            val d0 = d.original as D
-            assert(d0 === d) {
-                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+            synchronized(lock) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+                }
+                val existing = get(d0)
+                val symbol = if (existing == null) {
+                    val new = createSymbol()
+                    set(new)
+                    new
+                } else {
+                    unboundSymbols.remove(existing)
+                    existing
+                }
+                return createOwner(symbol)
             }
-            val existing = get(d0)
-            val symbol = if (existing == null) {
-                val new = createSymbol()
-                set(new)
-                new
-            } else {
-                unboundSymbols.remove(existing)
-                existing
-            }
-            return createOwner(symbol)
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         inline fun declare(sig: IdSignature, createSymbol: () -> S, createOwner: (S) -> B): B {
-            val existing = get(sig)
-            val symbol = if (existing == null) {
-                createSymbol()
-            } else {
-                unboundSymbols.remove(existing)
-                existing
+            synchronized(lock) {
+                val existing = get(sig)
+                val symbol = if (existing == null) {
+                    createSymbol()
+                } else {
+                    unboundSymbols.remove(existing)
+                    existing
+                }
+                val result = createOwner(symbol)
+                // TODO: try to get rid of this
+                set(symbol)
+                return result
             }
-            val result = createOwner(symbol)
-            // TODO: try to get rid of this
-            set(symbol)
-            return result
         }
 
         inline fun declareIfNotExists(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
-            @Suppress("UNCHECKED_CAST")
-            val d0 = d.original as D
-            assert(d0 === d) {
-                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+            synchronized(lock) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+                }
+                val existing = get(d0)
+                val symbol = if (existing == null) {
+                    val new = createSymbol()
+                    set(new)
+                    new
+                } else {
+                    if (!existing.isBound) unboundSymbols.remove(existing)
+                    existing
+                }
+                return if (symbol.isBound) symbol.owner else createOwner(symbol)
             }
-            val existing = get(d0)
-            val symbol = if (existing == null) {
-                val new = createSymbol()
-                set(new)
-                new
-            } else {
-                if (!existing.isBound) unboundSymbols.remove(existing)
-                existing
-            }
-            return if (symbol.isBound) symbol.owner else createOwner(symbol)
         }
 
         inline fun declare(sig: IdSignature, d: D?, createSymbol: () -> S, createOwner: (S) -> B): B {
-            @Suppress("UNCHECKED_CAST")
-            val d0 = d?.original as D
-            assert(d0 === d) {
-                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+            synchronized(lock) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d?.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+                }
+                val existing = get(sig)
+                val symbol = if (existing == null) {
+                    val new = createSymbol()
+                    set(new)
+                    new
+                } else {
+                    unboundSymbols.remove(existing)
+                    existing
+                }
+                return createOwner(symbol)
             }
-            val existing = get(sig)
-            val symbol = if (existing == null) {
-                val new = createSymbol()
-                set(new)
-                new
-            } else {
-                unboundSymbols.remove(existing)
-                existing
-            }
-            return createOwner(symbol)
         }
 
         inline fun referenced(d: D, orElse: () -> S): S {
-            @Suppress("UNCHECKED_CAST")
-            val d0 = d.original as D
-            assert(d0 === d) {
-                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
-            }
-            val s = get(d0)
-            if (s == null) {
-                val new = orElse()
-                assert(unboundSymbols.add(new)) {
-                    "Symbol for $new was already referenced"
+            synchronized(lock) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
                 }
-                set(new)
-                return new
+                val s = get(d0)
+                if (s == null) {
+                    val new = orElse()
+                    assert(unboundSymbols.add(new)) {
+                        "Symbol for $new was already referenced"
+                    }
+                    set(new)
+                    return new
+                }
+                return s
             }
-            return s
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         inline fun referenced(sig: IdSignature, orElse: () -> S): S {
-            return get(sig) ?: run {
-                val new = orElse()
-                assert(unboundSymbols.add(new)) {
-                    "Symbol for ${new.signature} was already referenced"
+            synchronized(lock) {
+                return get(sig) ?: run {
+                    val new = orElse()
+                    assert(unboundSymbols.add(new)) {
+                        "Symbol for ${new.signature} was already referenced"
+                    }
+                    set(new)
+                    new
                 }
-                set(new)
-                new
             }
         }
     }
 
     private open inner class FlatSymbolTable<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> :
-        SymbolTableBase<D, B, S>() {
+        SymbolTableBase<D, B, S>(lock) {
         val descriptorToSymbol = linkedMapOf<D, S>()
         val idSigToSymbol = linkedMapOf<IdSignature, S>()
 
@@ -192,9 +208,10 @@ class SymbolTable(
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun set(s: S) {
-            s.signature?.let {
-                idSigToSymbol[it] = s
-            } ?: if (s.hasDescriptor) {
+            val signature = s.signature
+            if (signature != null) {
+                idSigToSymbol[signature] = s
+            } else if (s.hasDescriptor) {
                 descriptorToSymbol[s.descriptor] = s
             }
         }
@@ -211,7 +228,7 @@ class SymbolTable(
     }
 
     private inner class ScopedSymbolTable<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>>
-        : SymbolTableBase<D, B, S>() {
+        : SymbolTableBase<D, B, S>(lock) {
         inner class Scope(val owner: IrSymbol, val parent: Scope?) {
             private val descriptorToSymbol = linkedMapOf<D, S>()
             private val idSigToSymbol = linkedMapOf<IdSignature, S>()
@@ -326,13 +343,21 @@ class SymbolTable(
     private val typeAliasSymbolTable = FlatSymbolTable<TypeAliasDescriptor, IrTypeAlias, IrTypeAliasSymbol>()
 
     private val globalTypeParameterSymbolTable = FlatSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
-    private val scopedTypeParameterSymbolTable = ScopedSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
-    private val valueParameterSymbolTable = ScopedSymbolTable<ParameterDescriptor, IrValueParameter, IrValueParameterSymbol>()
-    private val variableSymbolTable = ScopedSymbolTable<VariableDescriptor, IrVariable, IrVariableSymbol>()
-    private val localDelegatedPropertySymbolTable =
+    private val scopedTypeParameterSymbolTable by threadLocal {
+        ScopedSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
+    }
+    private val valueParameterSymbolTable by threadLocal {
+        ScopedSymbolTable<ParameterDescriptor, IrValueParameter, IrValueParameterSymbol>()
+    }
+    private val variableSymbolTable by threadLocal {
+        ScopedSymbolTable<VariableDescriptor, IrVariable, IrVariableSymbol>()
+    }
+    private val localDelegatedPropertySymbolTable by threadLocal {
         ScopedSymbolTable<VariableDescriptorWithAccessors, IrLocalDelegatedProperty, IrLocalDelegatedPropertySymbol>()
-    private val scopedSymbolTables =
+    }
+    private val scopedSymbolTables by threadLocal {
         listOf(valueParameterSymbolTable, variableSymbolTable, scopedTypeParameterSymbolTable, localDelegatedPropertySymbolTable)
+    }
 
     fun referenceExternalPackageFragment(descriptor: PackageFragmentDescriptor) =
         externalPackageFragmentTable.referenced(descriptor) { IrExternalPackageFragmentSymbolImpl(descriptor) }
@@ -361,7 +386,7 @@ class SymbolTable(
     fun declareScript(
         descriptor: ScriptDescriptor,
         scriptFactory: (IrScriptSymbol) -> IrScript = { symbol: IrScriptSymbol ->
-            IrScriptImpl(symbol, nameProvider.nameForDeclaration(descriptor))
+            IrScriptImpl(symbol, nameProvider.nameForDeclaration(descriptor), irFactory)
         }
     ): IrScript {
         return scriptSymbolTable.declare(
@@ -1092,12 +1117,13 @@ val SymbolTable.allUnbound: Set<IrSymbol>
         return r.filter { !it.isBound }.toSet()
     }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun SymbolTable.noUnboundLeft(message: String) {
     val unbound = this.allUnbound
     assert(unbound.isEmpty()) {
         "$message\n" +
                 unbound.joinToString("\n") {
-                    "$it ${it.signature?.toString() ?: "(NON-PUBLIC API)"}"
+                    "$it ${it.signature?.toString() ?: "(NON-PUBLIC API)"}: ${it.descriptor}"
                 }
     }
 }

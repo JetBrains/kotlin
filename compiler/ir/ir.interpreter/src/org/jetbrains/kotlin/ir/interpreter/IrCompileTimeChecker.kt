@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
-import org.jetbrains.kotlin.ir.interpreter.builtins.compileTimeAnnotation
-import org.jetbrains.kotlin.ir.interpreter.builtins.contractsDslAnnotation
-import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.interpreter.builtins.compileTimeAnnotation
+import org.jetbrains.kotlin.ir.interpreter.builtins.contractsDslAnnotation
+import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -45,7 +45,7 @@ class IrCompileTimeChecker(
             parentType?.isPrimitiveType() == true -> (this as IrFunction).name.asString() !in setOf("inc", "dec", "rangeTo", "hashCode")
             parentType?.isString() == true -> (this as IrDeclarationWithName).name.asString() !in setOf("subSequence", "hashCode")
             parentType?.isAny() == true -> (this as IrFunction).name.asString() == "toString" && expression?.dispatchReceiver !is IrGetObjectValue
-            parent?.isObject == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
+            parent?.isObject == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsignedType() } == true
             else -> false
         }
     }
@@ -76,7 +76,10 @@ class IrCompileTimeChecker(
     override fun visitElement(element: IrElement, data: Nothing?) = false
 
     private fun visitStatements(statements: List<IrStatement>, data: Nothing?): Boolean {
-        if (mode == EvaluationMode.ONLY_BUILTINS) return false
+        if (mode == EvaluationMode.ONLY_BUILTINS) {
+            val statement = statements.singleOrNull() ?: return false
+            return statement is IrConst<*>
+        }
         return statements.all { it.accept(this, data) }
     }
 
@@ -116,6 +119,11 @@ class IrCompileTimeChecker(
 
     override fun visitBody(body: IrBody, data: Nothing?): Boolean {
         return visitStatements(body.statements, data)
+    }
+
+    // We need this separate method to explicitly indicate that IrExpressionBody can be interpreted in any evaluation mode
+    override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): Boolean {
+        return body.expression.accept(this, data)
     }
 
     override fun visitBlock(expression: IrBlock, data: Nothing?): Boolean {

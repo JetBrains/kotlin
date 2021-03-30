@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.idea.fir.highlighter.visitors
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
-import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors
 import org.jetbrains.kotlin.psi.*
 
 internal class ExpressionsSmartcastHighlightingVisitor(
@@ -17,34 +18,32 @@ internal class ExpressionsSmartcastHighlightingVisitor(
     holder: AnnotationHolder
 ) : FirAfterResolveHighlightingVisitor(analysisSession, holder) {
     override fun visitExpression(expression: KtExpression) = with(analysisSession) {
-        expression.getImplicitReceiverSmartCasts().forEach { (types, kind) ->
+        expression.getImplicitReceiverSmartCast().forEach { (type, kind) ->
             val receiverName = when (kind) {
                 ImplicitReceiverSmartcastKind.EXTENSION -> KotlinIdeaAnalysisBundle.message("extension.implicit.receiver")
                 ImplicitReceiverSmartcastKind.DISPATCH -> KotlinIdeaAnalysisBundle.message("implicit.receiver")
             }
 
-            types.forEach { type ->
-                createInfoAnnotation(
-                    expression,
-                    KotlinIdeaAnalysisBundle.message(
-                        "0.smart.cast.to.1",
-                        receiverName,
-                        type.asStringForDebugging()
-                    )
-                ).textAttributes = org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.SMART_CAST_RECEIVER
-            }
+            createInfoAnnotation(
+                expression,
+                KotlinIdeaAnalysisBundle.message(
+                    "0.smart.cast.to.1",
+                    receiverName,
+                    type.asStringForDebugging()
+                ),
+                KotlinHighlightingColors.SMART_CAST_RECEIVER
+            )
         }
-        expression.getSmartCasts()?.forEach { type ->
+        expression.getSmartCast()?.let { type ->
             createInfoAnnotation(
                 getSmartCastTarget(expression),
                 KotlinIdeaAnalysisBundle.message(
                     "smart.cast.to.0",
                     type.asStringForDebugging()
-                )
-            ).textAttributes = org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.SMART_CAST_VALUE
+                ),
+                KotlinHighlightingColors.SMART_CAST_VALUE
+            )
         }
-
-        //todo smartcast to null
 
         super.visitExpression(expression)
     }

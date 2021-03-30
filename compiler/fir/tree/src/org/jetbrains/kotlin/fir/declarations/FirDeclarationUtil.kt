@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -119,8 +118,34 @@ val FirClassSymbol<*>.superConeTypes
 
 val FirClass<*>.superConeTypes get() = superTypeRefs.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
 
-fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
-    declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
+val FirClass<*>.anonymousInitializers: List<FirAnonymousInitializer>
+    get() = declarations.filterIsInstance<FirAnonymousInitializer>()
+
+val FirClass<*>.constructors: List<FirConstructor>
+    get() = declarations.filterIsInstance<FirConstructor>()
+
+val FirConstructor.delegatedThisConstructor: FirConstructor?
+    get() = delegatedConstructor?.takeIf { it.isThis }
+        ?.let { (it.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirConstructor }
+
+private object ConstructorDelegationComparator : Comparator<FirConstructor> {
+    override fun compare(p0: FirConstructor?, p1: FirConstructor?): Int {
+        if (p0 == null && p1 == null) return 0
+        if (p0 == null) return -1
+        if (p1 == null) return 1
+        if (p0.delegatedThisConstructor == p1) return 1
+        if (p1.delegatedThisConstructor == p0) return -1
+        // If neither is a delegation to each other, the order doesn't matter.
+        // Here we return 0 to preserve the original order.
+        return 0
+    }
+}
+
+val FirClass<*>.constructorsSortedByDelegation: List<FirConstructor>
+    get() = constructors.sortedWith(ConstructorDelegationComparator)
+
+val FirClass<*>.primaryConstructor: FirConstructor?
+    get() = constructors.firstOrNull()?.takeIf { it.isPrimary }
 
 fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
@@ -141,26 +166,46 @@ fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
 }
 
 private object SourceElementKey : FirDeclarationDataKey()
+
 var FirRegularClass.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
+
+var FirTypeAlias.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 
 val FirMemberDeclaration.containerSource: SourceElement?
     get() = when (this) {
         is FirCallableMemberDeclaration<*> -> containerSource
         is FirRegularClass -> sourceElement
+        is FirTypeAlias -> sourceElement
         else -> null
     }
 
 private object IsFromVarargKey : FirDeclarationDataKey()
-var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 private object IsReferredViaField : FirDeclarationDataKey()
-var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
+private object IsFromPrimaryConstructor : FirDeclarationDataKey()
 
+var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
+var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
+var FirProperty.fromPrimaryConstructor: Boolean? by FirDeclarationDataRegistry.data(IsFromPrimaryConstructor)
+
+// See [BindingContext.BACKING_FIELD_REQUIRED]
 val FirProperty.hasBackingField: Boolean
-    get() = initializer != null ||
-            getter is FirDefaultPropertyGetter ||
-            isVar && setter is FirDefaultPropertySetter ||
-            delegate != null ||
-            isReferredViaField == true
+    get() {
+        if (isAbstract) return false
+        if (delegate != null) return false
+        when (origin) {
+            FirDeclarationOrigin.SubstitutionOverride -> return false
+            FirDeclarationOrigin.IntersectionOverride -> return false
+            FirDeclarationOrigin.Delegated -> return false
+            else -> {
+                val getter = getter ?: return true
+                if (isVar && setter == null) return true
+                if (setter?.hasBody == false && setter?.isAbstract == false) return true
+                if (!getter.hasBody && !getter.isAbstract) return true
+
+                return isReferredViaField == true
+            }
+        }
+    }
 
 inline val FirDeclaration.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library

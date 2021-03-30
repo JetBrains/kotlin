@@ -40,10 +40,12 @@ sourceSets {
 }
 
 projectTest {
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
+    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
     doFirst {
-        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-        systemProperty("compilerClasspath", testCompilerClasspath.asPath)
-        systemProperty("compilationClasspath", testCompilationClasspath.asPath)
+        systemProperty("compilerClasspath", testCompilerClasspathProvider.get())
+        systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
     }
 }
 

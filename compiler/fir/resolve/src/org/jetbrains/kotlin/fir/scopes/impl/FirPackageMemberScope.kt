@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 
 class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirScope() {
-    private val symbolProvider = session.firSymbolProvider
+    private val symbolProvider = session.symbolProvider
     private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = mutableMapOf()
     private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = mutableMapOf()
     private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = mutableMapOf()
@@ -56,4 +60,6 @@ class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirSc
             processor(symbol)
         }
     }
+
+    override val scopeOwnerLookupNames: List<String> = SmartList(fqName.asString())
 }

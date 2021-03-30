@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,23 +10,8 @@ package org.w3c.notifications
 
 import kotlin.js.*
 import org.khronos.webgl.*
-import org.w3c.css.masking.*
-import org.w3c.dom.*
-import org.w3c.dom.clipboard.*
-import org.w3c.dom.css.*
-import org.w3c.dom.encryptedmedia.*
 import org.w3c.dom.events.*
-import org.w3c.dom.mediacapture.*
-import org.w3c.dom.mediasource.*
-import org.w3c.dom.parsing.*
-import org.w3c.dom.pointerevents.*
-import org.w3c.dom.svg.*
-import org.w3c.dom.url.*
-import org.w3c.fetch.*
-import org.w3c.files.*
-import org.w3c.performance.*
 import org.w3c.workers.*
-import org.w3c.xhr.*
 
 /**
  * Exposes the JavaScript [Notification](https://developer.mozilla.org/en/docs/Web/API/Notification) to Kotlin
@@ -115,6 +100,7 @@ public external interface NotificationOptions {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: dynamic = undefined, timestamp: Number? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
     val o = js("({})")
@@ -140,16 +126,13 @@ public inline fun NotificationOptions(dir: NotificationDirection? = Notification
 
 public external interface NotificationAction {
     var action: String?
-        get() = definedExternally
-        set(value) = definedExternally
     var title: String?
-        get() = definedExternally
-        set(value) = definedExternally
     var icon: String?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun NotificationAction(action: String?, title: String?, icon: String? = undefined): NotificationAction {
     val o = js("({})")
@@ -165,6 +148,7 @@ public external interface GetNotificationOptions {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOptions {
     val o = js("({})")
@@ -189,13 +173,12 @@ public external open class NotificationEvent(type: String, eventInitDict: Notifi
 
 public external interface NotificationEventInit : ExtendableEventInit {
     var notification: Notification?
-        get() = definedExternally
-        set(value) = definedExternally
     var action: String? /* = "" */
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun NotificationEventInit(notification: Notification?, action: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): NotificationEventInit {
     val o = js("({})")
@@ -208,6 +191,7 @@ public inline fun NotificationEventInit(notification: Notification?, action: Str
 }
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface NotificationPermission {
     companion object
@@ -220,6 +204,7 @@ public inline val NotificationPermission.Companion.DENIED: NotificationPermissio
 public inline val NotificationPermission.Companion.GRANTED: NotificationPermission get() = "granted".asDynamic().unsafeCast<NotificationPermission>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface NotificationDirection {
     companion object

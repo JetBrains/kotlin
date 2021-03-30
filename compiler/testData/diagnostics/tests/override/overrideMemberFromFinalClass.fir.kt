@@ -1,11 +1,11 @@
 class Foo {
-    open fun openFoo() {}
+    <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> fun openFoo() {}
     fun finalFoo() {}
 }
 
 class Bar : Foo() {
     override fun openFoo() {}
-    override fun finalFoo() {}
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun finalFoo() {}
 }
 
 
@@ -22,7 +22,7 @@ abstract class A2 {
     abstract fun foo()
 }
 
-class B2 : A2()
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class B2<!> : A2()
 class C2 : B2() {
     override fun foo() {}
 }

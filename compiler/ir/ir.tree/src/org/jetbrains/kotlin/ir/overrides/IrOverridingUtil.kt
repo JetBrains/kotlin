@@ -57,7 +57,7 @@ fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, claz
     for (i in typeParameters.indices) {
         val tp = typeParameters[i]
         val ta = superArguments[i]
-        require(ta is IrTypeProjection) { "Unexpected super type argument: $ta @ $i" }
+        require(ta is IrTypeProjection) { "Unexpected super type argument: ${ta.render()} @ $i" }
         assert(ta.variance == Variance.INVARIANT) { "Unexpected variance in super type argument: ${ta.variance} @$i" }
         substitutionMap[tp.symbol] = ta.type
     }
@@ -425,14 +425,14 @@ class IrOverridingUtil(
         return if (a == null || b == null) true else isVisibilityMoreSpecific(a, b)
     }
 
-    private fun IrTypeCheckerContextWithAdditionalAxioms.isSubtypeOf(a: IrType, b: IrType) =
+    private fun IrTypeCheckerContext.isSubtypeOf(a: IrType, b: IrType) =
         AbstractTypeChecker.isSubtypeOf(this as AbstractTypeCheckerContext, a, b)
 
-    private fun IrTypeCheckerContextWithAdditionalAxioms.equalTypes(a: IrType, b: IrType) =
+    private fun IrTypeCheckerContext.equalTypes(a: IrType, b: IrType) =
         AbstractTypeChecker.equalTypes(this as AbstractTypeCheckerContext, a, b)
 
     private fun createTypeChecker(a: List<IrTypeParameter>, b: List<IrTypeParameter>) =
-        IrTypeCheckerContextWithAdditionalAxioms(irBuiltIns, a, b)
+        IrTypeCheckerContext(IrTypeSystemContextWithAdditionalAxioms(irBuiltIns, a, b))
 
     private fun isReturnTypeMoreSpecific(
         a: IrOverridableMember,
@@ -661,10 +661,12 @@ class IrOverridingUtil(
         }
 
         val typeCheckerContext =
-            IrTypeCheckerContextWithAdditionalAxioms(
-                irBuiltIns,
-                superTypeParameters,
-                subTypeParameters
+            IrTypeCheckerContext(
+                IrTypeSystemContextWithAdditionalAxioms(
+                    irBuiltIns,
+                    superTypeParameters,
+                    subTypeParameters
+                )
             )
 
         /* TODO: check the bounds. See OverridingUtil.areTypeParametersEquivalent()

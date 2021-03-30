@@ -10,5 +10,5 @@ public @interface Ann {
 
 fun test(ann: Ann) {
     ann.value
-    ann.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>value<!>()<!> // should be an error
+    ann.<!UNRESOLVED_REFERENCE!>value<!>() // should be an error
 }

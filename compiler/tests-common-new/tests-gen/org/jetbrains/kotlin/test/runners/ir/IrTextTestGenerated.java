@@ -28,7 +28,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/classes")
     @TestDataPath("$PROJECT_ROOT")
-    public class Classes extends AbstractIrTextTest {
+    public class Classes {
         @Test
         @TestMetadata("abstractMembers.kt")
         public void testAbstractMembers() throws Exception {
@@ -326,7 +326,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/declarations")
     @TestDataPath("$PROJECT_ROOT")
-    public class Declarations extends AbstractIrTextTest {
+    public class Declarations {
         @Test
         public void testAllFilesPresentInDeclarations() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -473,7 +473,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/declarations/annotations")
         @TestDataPath("$PROJECT_ROOT")
-        public class Annotations extends AbstractIrTextTest {
+        public class Annotations {
             @Test
             public void testAllFilesPresentInAnnotations() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -576,6 +576,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
+            @TestMetadata("genericAnnotationClasses.kt")
+            public void testGenericAnnotationClasses() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/genericAnnotationClasses.kt");
+            }
+
+            @Test
             @TestMetadata("inheritingDeprecation.kt")
             public void testInheritingDeprecation() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/inheritingDeprecation.kt");
@@ -675,7 +681,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
         @TestDataPath("$PROJECT_ROOT")
-        public class Multiplatform extends AbstractIrTextTest {
+        public class Multiplatform {
             @Test
             public void testAllFilesPresentInMultiplatform() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -703,7 +709,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/declarations/parameters")
         @TestDataPath("$PROJECT_ROOT")
-        public class Parameters extends AbstractIrTextTest {
+        public class Parameters {
             @Test
             public void testAllFilesPresentInParameters() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -791,7 +797,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/declarations/provideDelegate")
         @TestDataPath("$PROJECT_ROOT")
-        public class ProvideDelegate extends AbstractIrTextTest {
+        public class ProvideDelegate {
             @Test
             public void testAllFilesPresentInProvideDelegate() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -801,6 +807,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             @TestMetadata("differentReceivers.kt")
             public void testDifferentReceivers() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/provideDelegate/differentReceivers.kt");
+            }
+
+            @Test
+            @TestMetadata("javaDelegate.kt")
+            public void testJavaDelegate() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/provideDelegate/javaDelegate.kt");
             }
 
             @Test
@@ -838,7 +850,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/errors")
     @TestDataPath("$PROJECT_ROOT")
-    public class Errors extends AbstractIrTextTest {
+    public class Errors {
         @Test
         public void testAllFilesPresentInErrors() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/errors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -860,7 +872,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/expressions")
     @TestDataPath("$PROJECT_ROOT")
-    public class Expressions extends AbstractIrTextTest {
+    public class Expressions {
         @Test
         public void testAllFilesPresentInExpressions() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -1347,6 +1359,24 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("kt42321.kt")
+        public void testKt42321() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt42321.kt");
+        }
+
+        @Test
+        @TestMetadata("kt44993.kt")
+        public void testKt44993() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt44993.kt");
+        }
+
+        @Test
+        @TestMetadata("kt45022.kt")
+        public void testKt45022() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt45022.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
@@ -1721,7 +1751,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/expressions/callableReferences")
         @TestDataPath("$PROJECT_ROOT")
-        public class CallableReferences extends AbstractIrTextTest {
+        public class CallableReferences {
             @Test
             @TestMetadata("adaptedExtensionFunctions.kt")
             public void testAdaptedExtensionFunctions() throws Exception {
@@ -1812,6 +1842,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
+            @TestMetadata("varargFunImportedFromObject.kt")
+            public void testVarargFunImportedFromObject() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/varargFunImportedFromObject.kt");
+            }
+
+            @Test
             @TestMetadata("withAdaptationForSam.kt")
             public void testWithAdaptationForSam() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/withAdaptationForSam.kt");
@@ -1839,7 +1875,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/expressions/floatingPointComparisons")
         @TestDataPath("$PROJECT_ROOT")
-        public class FloatingPointComparisons extends AbstractIrTextTest {
+        public class FloatingPointComparisons {
             @Test
             public void testAllFilesPresentInFloatingPointComparisons() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/floatingPointComparisons"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -1915,7 +1951,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/expressions/funInterface")
         @TestDataPath("$PROJECT_ROOT")
-        public class FunInterface extends AbstractIrTextTest {
+        public class FunInterface {
             @Test
             public void testAllFilesPresentInFunInterface() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -1973,7 +2009,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/expressions/sam")
         @TestDataPath("$PROJECT_ROOT")
-        public class Sam extends AbstractIrTextTest {
+        public class Sam {
             @Test
             public void testAllFilesPresentInSam() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -2050,7 +2086,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/firProblems")
     @TestDataPath("$PROJECT_ROOT")
-    public class FirProblems extends AbstractIrTextTest {
+    public class FirProblems {
         @Test
         @TestMetadata("AbstractMutableMap.kt")
         public void testAbstractMutableMap() throws Exception {
@@ -2078,6 +2114,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("AnnotationLoader.kt")
         public void testAnnotationLoader() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/AnnotationLoader.kt");
+        }
+
+        @Test
+        @TestMetadata("ArrayMap.kt")
+        public void testArrayMap() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/ArrayMap.kt");
         }
 
         @Test
@@ -2117,6 +2159,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("Fir2IrClassifierStorage.kt")
+        public void testFir2IrClassifierStorage() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/Fir2IrClassifierStorage.kt");
+        }
+
+        @Test
         @TestMetadata("FirBuilder.kt")
         public void testFirBuilder() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
@@ -2144,6 +2192,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("JCTree.kt")
         public void testJCTree() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/JCTree.kt");
+        }
+
+        @Test
+        @TestMetadata("kt19251.kt")
+        public void testKt19251() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/kt19251.kt");
         }
 
         @Test
@@ -2180,6 +2234,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
         public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
+        }
+
+        @Test
+        @TestMetadata("SafeLetWithReturn.kt")
+        public void testSafeLetWithReturn() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/SafeLetWithReturn.kt");
         }
 
         @Test
@@ -2240,7 +2300,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/lambdas")
     @TestDataPath("$PROJECT_ROOT")
-    public class Lambdas extends AbstractIrTextTest {
+    public class Lambdas {
         @Test
         public void testAllFilesPresentInLambdas() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -2298,7 +2358,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/regressions")
     @TestDataPath("$PROJECT_ROOT")
-    public class Regressions extends AbstractIrTextTest {
+    public class Regressions {
         @Test
         public void testAllFilesPresentInRegressions() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -2337,7 +2397,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/regressions/newInference")
         @TestDataPath("$PROJECT_ROOT")
-        public class NewInference extends AbstractIrTextTest {
+        public class NewInference {
             @Test
             public void testAllFilesPresentInNewInference() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions/newInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -2354,7 +2414,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/singletons")
     @TestDataPath("$PROJECT_ROOT")
-    public class Singletons extends AbstractIrTextTest {
+    public class Singletons {
         @Test
         public void testAllFilesPresentInSingletons() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/singletons"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -2382,7 +2442,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/stubs")
     @TestDataPath("$PROJECT_ROOT")
-    public class Stubs extends AbstractIrTextTest {
+    public class Stubs {
         @Test
         public void testAllFilesPresentInStubs() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -2470,7 +2530,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
     @Nested
     @TestMetadata("compiler/testData/ir/irText/types")
     @TestDataPath("$PROJECT_ROOT")
-    public class Types extends AbstractIrTextTest {
+    public class Types {
         @Test
         @TestMetadata("abbreviatedTypes.kt")
         public void testAbbreviatedTypes() throws Exception {
@@ -2623,7 +2683,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @Nested
         @TestMetadata("compiler/testData/ir/irText/types/nullChecks")
         @TestDataPath("$PROJECT_ROOT")
-        public class NullChecks extends AbstractIrTextTest {
+        public class NullChecks {
             @Test
             public void testAllFilesPresentInNullChecks() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -2674,7 +2734,7 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             @Nested
             @TestMetadata("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult")
             @TestDataPath("$PROJECT_ROOT")
-            public class NullCheckOnLambdaResult extends AbstractIrTextTest {
+            public class NullCheckOnLambdaResult {
                 @Test
                 public void testAllFilesPresentInNullCheckOnLambdaResult() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);

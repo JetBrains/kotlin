@@ -26,11 +26,13 @@ open class GeneratedFile(
     val outputFile: File
 ) {
     val sourceFiles = sourceFiles.sortedBy { it.path }
+
+    override fun toString(): String = "${this::class.java.simpleName}: $outputFile"
 }
 
-class GeneratedJvmClass (
-        sourceFiles: Collection<File>,
-        outputFile: File
+class GeneratedJvmClass(
+    sourceFiles: Collection<File>,
+    outputFile: File
 ) : GeneratedFile(sourceFiles, outputFile) {
     val outputClass = LocalFileKotlinClass.create(outputFile).sure {
         "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations"

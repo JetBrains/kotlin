@@ -20,24 +20,28 @@ import java.util.function.Consumer;
 
 public class D8Checker {
 
+    public static final boolean RUN_D8_CHECKER = !Boolean.valueOf(System.getProperty("kotlin.test.box.d8.disable"));
+
     private D8Checker() {
     }
 
     public static void check(ClassFileFactory outputFiles) {
-        runD8(builder -> {
-            for (OutputFile file : ClassFileUtilsKt.getClassFiles(outputFiles)) {
-                byte[] bytes = file.asByteArray();
-                builder.addClassProgramData(bytes, new PathOrigin(Paths.get(file.getRelativePath())));
-            }
-        });
+        if (!RUN_D8_CHECKER) return;
+        runD8(builder -> addOutputFiles(builder, outputFiles));
+    }
+
+    private static void addOutputFiles(D8Command.Builder builder, ClassFileFactory outputFiles) {
+        for (OutputFile file : ClassFileUtilsKt.getClassFiles(outputFiles)) {
+            byte[] bytes = file.asByteArray();
+            builder.addClassProgramData(bytes, new PathOrigin(Paths.get(file.getRelativePath())));
+        }
     }
 
     public static void checkFilesWithD8(Collection<Pair<byte[], String>> classFiles) {
-        runD8(builder -> {
-            classFiles.forEach(pair -> {
-                builder.addClassProgramData(pair.getFirst(), new PathOrigin(Paths.get(pair.getSecond())));
-            });
-        });
+        if (!RUN_D8_CHECKER) return;
+        runD8(builder -> classFiles.forEach(
+                pair -> builder.addClassProgramData(pair.getFirst(), new PathOrigin(Paths.get(pair.getSecond())))
+        ));
     }
 
     // Compilation with D8 should proceed with no output. There should be no info, warnings, or errors.
@@ -61,7 +65,7 @@ public class D8Checker {
     private static void runD8(Consumer<D8Command.Builder> addInput) {
         ProgramConsumer ignoreOutputConsumer = new DexIndexedConsumer.ForwardingConsumer(null);
         D8Command.Builder builder = D8Command.builder(new TestDiagnosticsHandler())
-                .setMinApiLevel(28)
+                .setMinApiLevel(30)
                 .setMode(CompilationMode.DEBUG)
                 .setProgramConsumer(ignoreOutputConsumer);
         addInput.accept(builder);
@@ -77,8 +81,7 @@ public class D8Checker {
         StringWriter writer = new StringWriter();
         try (PrintWriter printWriter = new PrintWriter(writer)) {
             e.printStackTrace(printWriter);
-            String stackTrace = writer.toString();
-            return stackTrace;
+            return writer.toString();
         }
     }
 }

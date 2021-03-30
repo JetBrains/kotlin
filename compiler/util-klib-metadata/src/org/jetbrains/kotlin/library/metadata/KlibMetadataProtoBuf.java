@@ -10,17 +10,21 @@ public final class KlibMetadataProtoBuf {
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.packageFqName);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classFile);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classKdoc);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classUniqId);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.constructorAnnotation);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.constructorKdoc);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.constructorUniqId);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.functionFile);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.functionKdoc);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.functionUniqId);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertyAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertyGetterAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertySetterAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertyFile);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertyKdoc);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertyUniqId);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.enumEntryAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.enumEntryOrdinal);
@@ -2561,6 +2565,22 @@ public final class KlibMetadataProtoBuf {
         175,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
+  public static final int CLASS_KDOC_FIELD_NUMBER = 176;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Class,
+      java.lang.String> classKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Class.getDefaultInstance(),
+        "",
+        null,
+        null,
+        176,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+        java.lang.String.class);
   public static final int CLASS_UNIQ_ID_FIELD_NUMBER = 171;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
@@ -2593,6 +2613,22 @@ public final class KlibMetadataProtoBuf {
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false,
         org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+  public static final int CONSTRUCTOR_KDOC_FIELD_NUMBER = 173;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Constructor { ... }</code>
+   */
+  public static final
+  org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+          org.jetbrains.kotlin.metadata.ProtoBuf.Constructor,
+          java.lang.String> constructorKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+                  org.jetbrains.kotlin.metadata.ProtoBuf.Constructor.getDefaultInstance(),
+                  "",
+                  null,
+                  null,
+                  173,
+                  org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+                  java.lang.String.class);
   public static final int CONSTRUCTOR_UNIQ_ID_FIELD_NUMBER = 172;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Constructor { ... }</code>
@@ -2641,6 +2677,22 @@ public final class KlibMetadataProtoBuf {
         172,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
+  public static final int FUNCTION_KDOC_FIELD_NUMBER = 174;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Function { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Function,
+      java.lang.String> functionKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Function.getDefaultInstance(),
+        "",
+        null,
+        null,
+        174,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+        java.lang.String.class);
   public static final int FUNCTION_UNIQ_ID_FIELD_NUMBER = 173;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Function { ... }</code>
@@ -2737,6 +2789,22 @@ public final class KlibMetadataProtoBuf {
         176,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
+  public static final int PROPERTY_KDOC_FIELD_NUMBER = 180;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+  org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+          org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+          java.lang.String> propertyKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+                  org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+                  "",
+                  null,
+                  null,
+                  180,
+                  org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+                  java.lang.String.class);
   public static final int PROPERTY_UNIQ_ID_FIELD_NUMBER = 179;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>

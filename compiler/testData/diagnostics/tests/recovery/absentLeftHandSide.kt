@@ -4,7 +4,7 @@ fun import() {
 }
 
 fun composite() {
-    val <!UNUSED_VARIABLE!>s<!> = 13+<!SYNTAX!>~<!><!DEBUG_INFO_MISSING_UNRESOLVED!>/<!>12
+    val s = 13+<!SYNTAX!>~<!><!DEBUG_INFO_MISSING_UNRESOLVED!>/<!>12
 }
 
 fun html() {

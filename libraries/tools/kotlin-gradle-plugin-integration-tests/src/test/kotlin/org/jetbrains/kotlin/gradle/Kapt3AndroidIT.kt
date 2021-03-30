@@ -9,31 +9,18 @@ import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
-class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
+class Kapt3WorkersAndroid34IT : Kapt3Android34IT() {
     override fun kaptOptions(): KaptOptions =
         super.kaptOptions().copy(useWorkers = true)
-
-    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.6.4")
 }
 
-open class Kapt3Android32IT : Kapt3AndroidIT() {
+open class Kapt3Android34IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_2_0
+        get() = AGPVersion.v3_4_1
 
-    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
+    // AGP 3.4 is not working with Gradle 7+
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.6.4")
-}
-
-open class Kapt3Android33IT : Kapt3AndroidIT() {
-    override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_3_2
-
-    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.6.4")
+        get() = GradleVersionRequired.Until("6.8.4")
 
     @Test
     fun testAndroidxNavigationSafeArgs() = with(Project("androidx-navigation-safe-args", directoryPrefix = "kapt2")) {
@@ -82,15 +69,6 @@ open class Kapt3Android33IT : Kapt3AndroidIT() {
             assertTasksSkipped(":compileDebugJavaWithJavac")
         }
     }
-}
-
-class Kapt3Android34IT : Kapt3AndroidIT() {
-    override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_4_1
-
-    // there is a weird validation exception in testICWithAnonymousClasses with 5.0 todo: fix it
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.4.1")
 }
 
 class Kapt3Android70IT : Kapt3AndroidIT() {
@@ -292,6 +270,19 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
 
             // KT-23866
             assertNotContains("The following options were not recognized by any processor")
+        }
+    }
+
+    // KT-45532
+    @Test
+    open fun kaptTasksShouldNotCreateOutputsOnConfigurationPhase() {
+        Project(
+            "android-dagger",
+            directoryPrefix = "kapt2"
+        ).build("--dry-run", "assembleDebug") {
+            assertSuccessful()
+            assertNoSuchFile("app/build/tmp")
+            assertNoSuchFile("app/build/generated")
         }
     }
 

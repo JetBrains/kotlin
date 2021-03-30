@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
-import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.QuickFixFactory
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
@@ -86,11 +86,12 @@ inline fun <reified T : PsiElement> diagnosticBasedProcessing(
         }
     }
 
-fun diagnosticBasedProcessing(fixFactory: KotlinIntentionActionsFactory, vararg diagnosticFactory: DiagnosticFactory<*>) =
+fun diagnosticBasedProcessing(fixFactory: QuickFixFactory, vararg diagnosticFactory: DiagnosticFactory<*>) =
     object : DiagnosticBasedProcessing {
         override val diagnosticFactories = diagnosticFactory.toList()
         override fun fix(diagnostic: Diagnostic) {
-            val fix = runReadAction { fixFactory.createActions(diagnostic).singleOrNull() } ?: return
+            val actionFactory = fixFactory.asKotlinIntentionActionsFactory()
+            val fix = runReadAction { actionFactory.createActions(diagnostic).singleOrNull() } ?: return
             runUndoTransparentActionInEdt(inWriteAction = true) {
                 fix.invoke(diagnostic.psiElement.project, null, diagnostic.psiFile)
             }

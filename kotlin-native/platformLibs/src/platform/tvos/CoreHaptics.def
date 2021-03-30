@@ -1,0 +1,6 @@
+depends = CoreFoundation Foundation darwin posix
+language = Objective-C
+package = platform.CoreHaptics
+modules = CoreHaptics
+compilerOpts = -framework CoreHaptics
+linkerOpts = -framework CoreHaptics

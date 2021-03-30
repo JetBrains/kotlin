@@ -15,8 +15,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -41,6 +41,10 @@ abstract class AbstractKotlinNativeCompilation(
         override var languageVersion: String?
             get() = languageSettings.languageVersion
             set(value) { languageSettings.languageVersion = value }
+
+        override var useFir: Boolean
+            get() = false
+            set(@Suppress("UNUSED_PARAMETER") value) {}
 
         override var allWarningsAsErrors: Boolean = false
         override var suppressWarnings: Boolean = false
@@ -120,8 +124,7 @@ class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, v
             val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(project, defaultSourceSet).toMutableSet().apply {
                 // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
                 //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
-                addAll(defaultSourceSet.getSourceSetHierarchy())
-                remove(defaultSourceSet)
+                addAll(defaultSourceSet.resolveAllDependsOnSourceSets())
             }
             project.files(friendSourceSets.mapNotNull { project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs })
         })

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
@@ -93,6 +94,10 @@ open class IncrementalJvmCache(
 
     fun sourcesByInternalName(internalName: String): Collection<File> =
         internalNameToSource[internalName]
+
+    fun getAllPartsOfMultifileFacade(facade: JvmClassName): Collection<String>? {
+        return multifileFacadeToParts[facade]
+    }
 
     fun isMultifileFacade(className: JvmClassName): Boolean =
         className in multifileFacadeToParts
@@ -395,7 +400,9 @@ open class IncrementalJvmCache(
             }
 
             for (const in oldMap.keys + newMap.keys) {
-                changesCollector.collectMemberIfValueWasChanged(kotlinClass.scopeFqName(), const, oldMap[const], newMap[const])
+                //Constant can be declared via companion object or via const field declaration
+                changesCollector.collectMemberIfValueWasChanged(kotlinClass.scopeFqName(companion = true), const, oldMap[const], newMap[const])
+                changesCollector.collectMemberIfValueWasChanged(kotlinClass.scopeFqName(companion = false), const, oldMap[const], newMap[const])
             }
         }
 
@@ -425,6 +432,8 @@ open class IncrementalJvmCache(
 
     private inner class MultifileClassFacadeMap(storageFile: File) :
         BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
+
+        @Synchronized
         operator fun set(className: JvmClassName, partNames: Collection<String>) {
             storage[className.internalName] = partNames
         }
@@ -435,6 +444,7 @@ open class IncrementalJvmCache(
         operator fun contains(className: JvmClassName): Boolean =
             className.internalName in storage
 
+        @Synchronized
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
@@ -444,6 +454,8 @@ open class IncrementalJvmCache(
 
     private inner class MultifileClassPartMap(storageFile: File) :
         BasicStringMap<String>(storageFile, EnumeratorStringDescriptor.INSTANCE) {
+
+        @Synchronized
         fun set(partName: String, facadeName: String) {
             storage[partName] = facadeName
         }
@@ -451,6 +463,7 @@ open class IncrementalJvmCache(
         fun get(partName: JvmClassName): String? =
             storage[partName.internalName]
 
+        @Synchronized
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
@@ -589,11 +602,12 @@ sealed class ChangeInfo(val fqName: FqName) {
     }
 }
 
-private fun LocalFileKotlinClass.scopeFqName() =
-    when (classHeader.kind) {
-        KotlinClassHeader.Kind.CLASS -> className.fqNameForClassNameWithoutDollars
-        else -> className.packageFqName
+private fun LocalFileKotlinClass.scopeFqName(companion: Boolean = false) = when (classHeader.kind) {
+    KotlinClassHeader.Kind.CLASS -> {
+        className.fqNameForClassNameWithoutDollars.let { if (companion) it.child(DEFAULT_NAME_FOR_COMPANION_OBJECT) else it }
     }
+    else -> className.packageFqName
+}
 
 fun ByteArray.md5(): Long {
     val d = MessageDigest.getInstance("MD5").digest(this)!!

@@ -1,7 +1,7 @@
 @kotlin.Metadata
-final class A$sam$java_lang_Runnable$0 {
+synthetic final class A$sam$java_lang_Runnable$0 {
     // source: 'reusedSamWrapperClasses.kt'
-    enclosing class A
+    enclosing method A.test1()V
     private synthetic final field function: kotlin.jvm.functions.Function0
     inner (anonymous) class A$sam$java_lang_Runnable$0
     method <init>(p0: kotlin.jvm.functions.Function0): void

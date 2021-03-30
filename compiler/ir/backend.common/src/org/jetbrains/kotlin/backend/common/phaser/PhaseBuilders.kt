@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower
@@ -98,40 +97,6 @@ fun <Context : CommonBackendContext> namedOpUnitPhase(
         }
     }
 )
-
-fun <Context : CommonBackendContext> performByIrFile(
-    name: String = "PerformByIrFile",
-    description: String = "Perform phases by IrFile",
-    lower: List<CompilerPhase<Context, IrFile, IrFile>>
-): NamedCompilerPhase<Context, IrModuleFragment> =
-    NamedCompilerPhase(
-        name, description, emptySet(), PerformByIrFilePhase(lower), emptySet(), emptySet(), emptySet(),
-        setOf(defaultDumper), nlevels = 1,
-    )
-
-private class PerformByIrFilePhase<Context : CommonBackendContext>(
-    private val lower: List<CompilerPhase<Context, IrFile, IrFile>>
-) : SameTypeCompilerPhase<Context, IrModuleFragment> {
-    override fun invoke(
-        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
-    ): IrModuleFragment {
-        for (irFile in input.files) {
-            try {
-                for (phase in lower) {
-                    phase.invoke(phaseConfig, phaserState.changeType(), context, irFile)
-                }
-            } catch (e: Throwable) {
-                CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name)
-            }
-        }
-
-        // TODO: no guarantee that module identity is preserved by `lower`
-        return input
-    }
-
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *>>> =
-        lower.flatMap { it.getNamedSubphases(startDepth) }
-}
 
 fun <Context : CommonBackendContext> makeIrFilePhase(
     lowering: (Context) -> FileLoweringPass,

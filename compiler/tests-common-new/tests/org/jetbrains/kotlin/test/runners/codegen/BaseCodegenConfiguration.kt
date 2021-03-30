@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -30,7 +31,6 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonCon
     }
 
     defaultDirectives {
-        +USE_PSI_CLASS_FILES_READING
         +RUN_DEX_CHECKER
     }
 
@@ -48,4 +48,41 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonCon
     useFrontendFacades(frontendFacade)
     useFrontend2BackendConverters(frontendToBackendConverter)
     useBackendFacades(backendFacade)
+}
+
+fun TestConfigurationBuilder.dumpHandlersForCodegenTest() {
+    useBackendHandlers(::IrTextDumpHandler)
+    useArtifactsHandlers(::BytecodeListingHandler)
+}
+
+fun TestConfigurationBuilder.commonHandlersForBoxTest() {
+    commonHandlersForCodegenTest()
+    useArtifactsHandlers(
+        ::JvmBoxRunner
+    )
+}
+
+fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
+    useFrontendHandlers(
+        ::NoCompilationErrorsHandler,
+        ::NoFirCompilationErrorsHandler,
+    )
+
+    useArtifactsHandlers(
+        ::NoJvmSpecificCompilationErrorsHandler,
+        ::DxCheckerHandler,
+    )
+}
+
+fun TestConfigurationBuilder.useInlineHandlers() {
+    useArtifactsHandlers(
+        ::BytecodeInliningHandler,
+        ::SMAPDumpHandler
+    )
+
+    forTestsMatching("compiler/testData/codegen/boxInline/smap/*") {
+        defaultDirectives {
+            +DUMP_SMAP
+        }
+    }
 }

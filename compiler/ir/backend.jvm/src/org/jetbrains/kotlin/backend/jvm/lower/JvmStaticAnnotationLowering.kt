@@ -150,6 +150,7 @@ private class MakeCallsStatic(val context: JvmBackendContext) : IrElementTransfo
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
         val callee = expression.symbol.owner
         if (callee is IrDeclaration && callee.isJvmStaticInObject() && expression.dispatchReceiver != null) {
+            expression.transformChildrenVoid()
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                 // OldReceiver has to be evaluated for its side effects.
                 val oldReceiver = super.visitExpression(expression.dispatchReceiver!!)

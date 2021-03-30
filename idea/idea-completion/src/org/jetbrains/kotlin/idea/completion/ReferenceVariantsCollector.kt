@@ -183,7 +183,9 @@ class ReferenceVariantsCollector(
             val extensions = if (runtimeReceiver != null)
                 indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), nameFilter)
             else
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, nameExpression, bindingContext, nameFilter)
+                indicesHelper.getCallableTopLevelExtensions(
+                    callTypeAndReceiver, nameExpression, bindingContext, receiverTypeFromDiagnostic = null, nameFilter
+                )
 
             val (extensionsVariants, notImportedExtensions) = extensions.partition {
                 importableFqNameClassifier.isImportableDescriptorImported(

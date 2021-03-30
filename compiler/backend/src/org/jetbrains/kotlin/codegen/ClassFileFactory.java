@@ -52,13 +52,14 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
 
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
-    private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<>();
+    private final Map<String, OutAndSourceFileList> generators = Collections.synchronizedMap(new LinkedHashMap<>());
 
     private boolean isDone = false;
 
@@ -346,7 +347,9 @@ public class ClassFileFactory implements OutputFileCollection {
 
         @Override
         public byte[] asBytes(ClassBuilderFactory factory) {
-            return factory.asBytes(classBuilder);
+            synchronized(this) {
+                return factory.asBytes(classBuilder);
+            }
         }
 
         @Override

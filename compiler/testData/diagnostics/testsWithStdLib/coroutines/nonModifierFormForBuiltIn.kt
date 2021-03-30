@@ -28,7 +28,7 @@ fun bar() {
         println()
     }
 
-    val <!UNUSED_VARIABLE!>w<!>: (suspend () -> Int) -> Any? = ::<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!>
+    val w: (suspend () -> Int) -> Any? = ::<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!>
 }
 
 @Target(AnnotationTarget.EXPRESSION)
@@ -41,5 +41,5 @@ fun main(suspend: WLambdaInvoke) {
 }
 
 class WLambdaInvoke {
-    operator fun invoke(<!UNUSED_PARAMETER!>l<!>: () -> Unit) {}
+    operator fun invoke(l: () -> Unit) {}
 }

@@ -26,7 +26,7 @@ class FirGlobalNewMemberGenerationProcessor(
     private val index = session.generatedClassIndex
     private val provider = session.predicateBasedProvider
 
-    override fun process() {
+    override fun process(files: Collection<FirFile>) {
         val extensions = session.extensionService.declarationGenerators
         if (extensions.isEmpty()) return
         for (extension in extensions) {

@@ -76,6 +76,9 @@ val jsMainSources by task<Sync> {
 
     into("$buildDir/jsMainSources")
 
+    val unimplementedNativeBuiltIns = unimplementedNativeBuiltIns
+    val buildDir = buildDir
+    val builtInsHeader = builtInsHeader
     doLast {
         unimplementedNativeBuiltIns.forEach { path ->
             val file = File("$buildDir/jsMainSources/$path")
@@ -151,10 +154,11 @@ val compileKotlinJs by tasks.existing(KotlinCompile::class) {
 
 
 val compileTestKotlinJs by tasks.existing(KotlinCompile::class) {
+    val sources: FileCollection = kotlin.sourceSets["commonTest"].kotlin
     doFirst {
         // Note: common test sources are copied to the actual source directory by commonMainSources task,
         // so can't do this at configuration time:
-        kotlinOptions.freeCompilerArgs += "-Xcommon-sources=${kotlin.sourceSets["commonTest"].kotlin.joinToString(",")}"
+        kotlinOptions.freeCompilerArgs += "-Xcommon-sources=${sources.joinToString(",")}"
     }
 }
 

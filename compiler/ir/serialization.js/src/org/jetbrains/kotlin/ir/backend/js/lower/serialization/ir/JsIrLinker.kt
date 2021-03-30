@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
@@ -14,20 +13,20 @@ import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.containsErrorCode
-import org.jetbrains.kotlin.resolve.BindingContext
 
 class JsIrLinker(
-    private val currentModule: ModuleDescriptor?, logger: LoggingContext, builtIns: IrBuiltIns, symbolTable: SymbolTable,
+    private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null
-) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
 
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(JsManglerIr), builtIns)
 
@@ -41,7 +40,7 @@ class JsIrLinker(
         JsModuleDeserializer(moduleDescriptor, klib ?: error("Expecting kotlin library"), strategy, klib.libContainsErrorCode)
 
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy, allowErrorCode: Boolean) :
-        KotlinIrLinker.BasicIrModuleDeserializer(moduleDescriptor, klib, strategy, allowErrorCode)
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategy, allowErrorCode)
 
     override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
         val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
@@ -60,7 +59,6 @@ class JsIrLinker(
 
     class JsFePluginContext(
         override val moduleDescriptor: ModuleDescriptor,
-        override val bindingContext: BindingContext,
         override val symbolTable: ReferenceSymbolTable,
         override val typeTranslator: TypeTranslator,
         override val irBuiltIns: IrBuiltIns,

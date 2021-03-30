@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -153,7 +154,7 @@ class JvmSignatureClashDetector(
         }
     }
 
-    private fun IrDeclaration.findPsiElement() = context.psiSourceManager.findPsiElement(this)
+    private fun IrDeclaration.findPsiElement(): PsiElement? = PsiSourceManager.findPsiElement(this)
 
     private fun IrDeclaration.getElementForDiagnostics(): PsiElement? =
         findPsiElement()
@@ -176,7 +177,7 @@ class JvmSignatureClashDetector(
         // However, if needed, we can provide more meaningful information regarding function origin.
         return JvmDeclarationOrigin(
             JvmDeclarationOriginKind.OTHER,
-            context.psiSourceManager.findPsiElement(this),
+            PsiSourceManager.findPsiElement(this),
             toIrBasedDescriptor()
         )
     }

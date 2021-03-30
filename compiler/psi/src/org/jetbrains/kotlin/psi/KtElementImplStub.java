@@ -70,7 +70,15 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
         PsiFile file = getContainingFile();
         if (!(file instanceof KtFile)) {
             // KtElementImpl.copy() might be the reason for this exception
-            String fileString = file.isValid() ? (" " + file.getText()) : "";
+            String fileString = "";
+            if (file.isValid()) {
+                try {
+                    fileString = " " + file.getText();
+                }
+                catch (Exception e) {
+                    // ignore when failed to get file text
+                }
+            }
             // getNode() will fail if getContainingFile() returns not PsiFileImpl instance
             String nodeString = (file instanceof PsiFileImpl ? (" node = " + getNode()) : "");
 

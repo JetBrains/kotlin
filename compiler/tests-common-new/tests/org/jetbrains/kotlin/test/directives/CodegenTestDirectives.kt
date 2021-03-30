@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
-import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
@@ -26,6 +23,19 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val IGNORE_BACKEND_MULTI_MODULE by enumDirective<TargetBackend>(
+        description = "Ignore failures of multimodule test on target backend",
+        applicability = Global
+    )
+
+    val USE_JAVAC_BASED_ON_JVM_TARGET by directive(
+        description = """
+            Determine version of javac for compilation of java files based
+              on JvmTarget of module. If not enabled then javac from
+              current runtime will be used
+        """.trimIndent()
+    )
+
     val JAVAC_OPTIONS by stringDirective(
         description = "Specify javac options to compile java files"
     )
@@ -38,7 +48,12 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 
     val CHECK_BYTECODE_LISTING by directive(
-        description = "Dump resulting bytecode to .txt or _ir.txt file",
+        description = "Dump generated classes to .txt or _ir.txt file",
+        applicability = Global
+    )
+
+    val WITH_SIGNATURES by directive(
+        description = "Include generic signatures in generated classes dump",
         applicability = Global
     )
 
@@ -89,5 +104,31 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val TREAT_AS_ONE_FILE by directive(
         description = "Treat bytecode from all files as one in ${BytecodeTextHandler::class}"
+    )
+
+    val NO_CHECK_LAMBDA_INLINING by directive(
+        description = "Skip checking of lambda inlining in ${BytecodeInliningHandler::class.java}"
+    )
+
+    val SKIP_INLINE_CHECK_IN by stringDirective(
+        description = "Skip checking of specific methods in ${BytecodeInliningHandler::class.java}"
+    )
+
+    val DUMP_SMAP by directive(
+        description = """Enables ${SMAPDumpHandler::class}"""
+    )
+
+    val NO_SMAP_DUMP by directive(
+        description = "Don't dump smap for marked file",
+        applicability = File
+    )
+
+    val SEPARATE_SMAP_DUMPS by directive(
+        description = """
+            If enabled then ${SMAPDumpHandler::class} will dump smap dumps
+              into ${SMAPDumpHandler.SMAP_SEP_EXT} and ${SMAPDumpHandler.SMAP_EXT}
+              files instead of ${SMAPDumpHandler.SMAP_EXT} depending of module
+              structure of test
+        """.trimIndent()
     )
 }

@@ -7,21 +7,21 @@ class C {
 }
 
 fun test1(c: C) {
-    val (<!UNUSED_VARIABLE!>a<!>, <!UNUSED_VARIABLE!>b<!>) = c
+    val (a, b) = c
 }
 
 fun test2(c: C) {
-    val (a, <!UNUSED_VARIABLE!>b<!>) = c
+    val (a, b) = c
     a + 3
 }
 
 fun test3(c: C) {
-    var (<!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!>, <!UNUSED_VARIABLE!>b<!>) = c
-    <!UNUSED_VALUE!>a =<!> 3
+    var (<!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!>, b) = c
+    a = 3
 }
 
 fun test4(c: C) {
-    var (<!VARIABLE_WITH_REDUNDANT_INITIALIZER!>a<!>, <!UNUSED_VARIABLE!>b<!>) = c
+    var (<!VARIABLE_WITH_REDUNDANT_INITIALIZER!>a<!>, b) = c
     a = 3
     a + 1
 }

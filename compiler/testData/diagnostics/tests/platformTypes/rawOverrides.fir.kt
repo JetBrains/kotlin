@@ -33,7 +33,7 @@ class E : D(), B {
     override fun bar(x: CharSequence?, y: List<*>?): String = ""
 }
 
-class E2 : B {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class E2<!> : B {
     override fun foo(x: Any, y: List<String?>): String = ""
 }
 

@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION, -UNUSED_VARIABLE
-// !LANGUAGE: +InlineClasses +AllowResultInReturnType
+// !LANGUAGE: +InlineClasses +AllowResultInReturnType, -JvmInlineValueClasses
 
 typealias ResultAlias<T> = Result<T>
 
@@ -11,7 +11,7 @@ fun params(
     r3: ResultAlias<String>,
     r4: List<Result<Int>>,
     r5: InlineResult<Int>,
-    vararg r6: Result<Int>
+    <!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> r6: Result<Int>
 ) {}
 
 class CtorParams(r1: Result<Int>)

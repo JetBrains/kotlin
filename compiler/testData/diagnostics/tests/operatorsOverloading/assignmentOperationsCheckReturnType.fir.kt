@@ -1,12 +1,12 @@
 fun intBinEq() {
     var x = 0
-    <!UNRESOLVED_REFERENCE!>x += 'a'<!>
+    x <!UNRESOLVED_REFERENCE!>+=<!> 'a'
     x += 1.toByte()
     x += 1.toShort()
     x += 1L
     x += 1f
     x += 1.0
-    <!UNRESOLVED_REFERENCE!>x *= 'a'<!>
+    x <!UNRESOLVED_REFERENCE!>*=<!> 'a'
     x *= 1.toByte()
     x *= 1.toShort()
     x *= 1L
@@ -16,14 +16,14 @@ fun intBinEq() {
 
 fun shortBinEq() {
     var x = 0.toShort()
-    <!UNRESOLVED_REFERENCE!>x += 'a'<!>
+    x <!UNRESOLVED_REFERENCE!>+=<!> 'a'
     x += 1.toByte()
     x += 1.toShort()
     x += 1L
     x += 1f
     x += 1.0
 
-    <!UNRESOLVED_REFERENCE!>x *= 'a'<!>
+    x <!UNRESOLVED_REFERENCE!>*=<!> 'a'
     x *= 1.toByte()
     x *= 1.toShort()
     x *= 1L

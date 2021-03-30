@@ -10,3 +10,4 @@ interface B {
 interface C : A, B {
     override val x: (Int) -> Int<caret>
 }
+/* FIR_COMPARISON */

@@ -40,11 +40,13 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class CommonAnalysisParameters(
     val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider
@@ -118,6 +120,7 @@ class CommonResolverForModuleFactory(
         fun analyzeFiles(
             files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
             targetPlatform: TargetPlatform,
+            targetEnvironment: TargetEnvironment,
             capabilities: Map<ModuleCapability<*>, Any?> = emptyMap(),
             dependenciesContainer: CommonDependenciesContainer? = null,
             metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
@@ -141,16 +144,17 @@ class CommonResolverForModuleFactory(
 
             val resolverForModuleFactory = CommonResolverForModuleFactory(
                 CommonAnalysisParameters(metadataPartProviderFactory),
-                CompilerEnvironment,
+                targetEnvironment,
                 targetPlatform,
                 shouldCheckExpectActual = false,
                 dependenciesContainer
             )
 
+            val projectContext = ProjectContext(project, "metadata serializer")
             @Suppress("NAME_SHADOWING")
             val resolver = ResolverForSingleModuleProject<ModuleInfo>(
                 "sources for metadata serializer",
-                ProjectContext(project, "metadata serializer"),
+                projectContext,
                 moduleInfo,
                 resolverForModuleFactory,
                 GlobalSearchScope.allScope(project),
@@ -166,9 +170,24 @@ class CommonResolverForModuleFactory(
 
             val container = resolver.resolverForModule(moduleInfo).componentProvider
 
-            container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+            val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
+            val trace = container.get<BindingTrace>()
 
-            return AnalysisResult.success(container.get<BindingTrace>().bindingContext, moduleDescriptor)
+            // Mimic the behavior in the jvm frontend. The extensions have 2 chances to override the normal analysis:
+            // * If any of the extensions returns a non-null result, it. Otherwise do the normal analysis.
+            // * `analysisCompleted` can be used to override the result, too.
+            var result = analysisHandlerExtensions.firstNotNullResult { extension ->
+                extension.doAnalysis(project, moduleDescriptor, projectContext, files, trace, container)
+            } ?: run {
+                container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+                AnalysisResult.success(trace.bindingContext, moduleDescriptor)
+            }
+
+            result = analysisHandlerExtensions.firstNotNullResult { extension ->
+                extension.analysisCompleted(project, moduleDescriptor, trace, files)
+            } ?: result
+
+            return result
         }
     }
 }

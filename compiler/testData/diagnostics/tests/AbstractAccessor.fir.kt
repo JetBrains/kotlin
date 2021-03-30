@@ -1,14 +1,14 @@
 abstract class My {
     abstract var x: Int
         public get
-        private set
+        <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     abstract val y: Int
         protected get
 
     abstract protected var z: Int
         internal get
-        private set
+        <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     abstract internal val w: Int
         protected get
@@ -17,5 +17,5 @@ abstract class My {
         protected set
 
     open var t: Int = 0
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 }

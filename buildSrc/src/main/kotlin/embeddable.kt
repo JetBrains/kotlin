@@ -25,6 +25,7 @@ val packagesToRelocate =
         "org.fusesource",
         "net.jpountz",
         "one.util.streamex",
+        "it.unimi.dsi.fastutil",
         "kotlinx.collections.immutable"
     )
 
@@ -127,7 +128,6 @@ fun Project.rewriteDepsToShadedJar(
         archiveClassifier.set("original")
     }
 
-    val compilerDummyJarFile by lazy { configurations.getAt("compilerDummyJar").singleFile }
 
     shadowJarTask.configure {
         dependsOn(originalJarTask)
@@ -135,7 +135,8 @@ fun Project.rewriteDepsToShadedJar(
 
         // When Gradle traverses the inputs, reject the shaded compiler JAR,
         // which leads to the content of that JAR being excluded as well:
-        exclude { it.file == compilerDummyJarFile }
+        val compilerDummyJarFile = project.provider { configurations.getByName("compilerDummyJar").singleFile }
+        exclude { it.file == compilerDummyJarFile.get() }
 
         archiveClassifier.set("original")
         body()

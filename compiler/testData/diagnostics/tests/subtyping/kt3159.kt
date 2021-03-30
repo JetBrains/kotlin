@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Super {
     var v: CharSequence
     val v2: CharSequence

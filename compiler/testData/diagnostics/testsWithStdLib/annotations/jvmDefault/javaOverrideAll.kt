@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !JVM_DEFAULT_MODE: all
 // !JVM_TARGET: 1.8
 
@@ -14,7 +13,7 @@ public interface JavaInterface {
 // FILE: 1.kt
 
 interface KotlinInterface : JavaInterface {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     override fun test() {}
 
     override fun testForNonDefault() {}

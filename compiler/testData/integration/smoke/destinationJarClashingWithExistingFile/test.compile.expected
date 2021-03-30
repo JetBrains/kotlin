@@ -1,0 +1,4 @@
+ERR:
+error: invalid jar path: [Temp]/clashingFile/test.jar
+
+Return code: 1

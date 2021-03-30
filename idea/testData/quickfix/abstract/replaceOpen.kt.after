@@ -2,3 +2,4 @@
 abstract class B() {
     abstract fun <caret>foo()
 }
+/* FIR_COMPARISON */

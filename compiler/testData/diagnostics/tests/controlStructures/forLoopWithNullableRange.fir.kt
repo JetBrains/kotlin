@@ -8,7 +8,7 @@ class It {
 }
 
 fun test(c: Coll?) {
-  <!INAPPLICABLE_CANDIDATE!>for (x in c) {}<!>
+  <!UNSAFE_CALL!>for (x in c) {}<!>
 
   if (c != null) {
     for(x in c) {}

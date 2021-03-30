@@ -1,14 +1,14 @@
-import com.moowork.gradle.node.npm.NpmTask
+import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
-  id("com.github.node-gradle.node") version "2.2.0"
+  id("com.github.node-gradle.node") version "3.0.1"
   base
 }
 
 description = "Node utils"
 
 node {
-    download = true
+    download.set(true)
 }
 
 val deployDir = "$buildDir/deploy_to_npm"
@@ -47,15 +47,15 @@ fun Project.createCopyLibraryFilesTask(libraryName: String, fromJar: String): Co
 fun Project.createPublishToNpmTask(templateName: String): NpmTask {
   return task<NpmTask>("publish-$templateName-to-npm") {
     val deployDir = File("$deployDir/$templateName")
-    setWorkingDir(deployDir)
+    workingDir.set(deployDir)
 
     val deployArgs = listOf("publish", "--//registry.npmjs.org/:_authToken=$authToken", "--tag=$deployTag")
     if (dryRun == "true") {
       println("$deployDir \$ npm arguments: $deployArgs");
-      setArgs(listOf("pack"))
+      args.set(listOf("pack"))
     }
     else {
-      setArgs(deployArgs)
+      args.set(deployArgs)
     }
   }
 }

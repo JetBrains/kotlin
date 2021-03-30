@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 sealed class A
 sealed class B : A()
 

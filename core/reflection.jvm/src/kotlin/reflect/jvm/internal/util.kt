@@ -101,6 +101,9 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
     return classLoader.tryLoadClass(fqName)
 }
 
+internal fun Class<*>.createArrayType(): Class<*> =
+    java.lang.reflect.Array.newInstance(this, 0)::class.java
+
 internal fun DescriptorVisibility.toKVisibility(): KVisibility? =
     when (this) {
         DescriptorVisibilities.PUBLIC -> KVisibility.PUBLIC

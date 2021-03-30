@@ -9,7 +9,9 @@ import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
 fun runBlocking(c: suspend () -> Unit) {
-    c.startCoroutine(Continuation(EmptyCoroutineContext){})
+    c.startCoroutine(Continuation(EmptyCoroutineContext){
+        it.getOrThrow()
+    })
 }
 
 inline fun <reified E> foo(noinline block: (String) -> Unit) = runBlocking {

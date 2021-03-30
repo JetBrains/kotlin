@@ -24,15 +24,26 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirInfixFunctionDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,
         FirSealedSupertypeChecker,
+        FirTypeAliasChecker,
     )
 
     override val functionCheckers: Set<FirFunctionChecker> = setOf(
+        FirContractChecker,
         FirFunctionNameChecker,
+        FirFunctionParameterChecker,
     )
 
     override val propertyCheckers: Set<FirPropertyChecker> = setOf(
         FirInapplicableLateinitChecker,
         FirDestructuringDeclarationChecker,
+        FirConstPropertyChecker,
+    )
+
+    override val classCheckers: Set<FirClassChecker> = setOf(
+        FirOverrideChecker,
+        FirNotImplementedOverrideChecker,
+        FirThrowableSubclassChecker,
+        FirOpenMemberChecker,
     )
 
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
@@ -46,13 +57,13 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirLocalEntityNotAllowedChecker,
         FirManyCompanionObjectsChecker,
         FirMethodOfAnyImplementedInInterfaceChecker,
-        FirPrimaryConstructorRequiredForDataClassChecker,
-        FirSupertypeInitializedInInterfaceChecker,
-        FirSupertypeInitializedWithoutPrimaryConstructor,
+        FirDataClassPrimaryConstructorChecker,
+        FirPrimaryConstructorSuperTypeChecker,
         FirTypeParametersInObjectChecker,
-        FirTypeMismatchOnOverrideChecker,
-        FirMemberFunctionChecker,
-        FirMemberPropertyChecker,
+        FirMemberFunctionsChecker,
+        FirMemberPropertiesChecker,
+        FirNestedClassChecker,
+        FirInlineClassDeclarationChecker,
     )
 
     override val constructorCheckers: Set<FirConstructorChecker> = setOf(
@@ -60,8 +71,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     )
 
     override val fileCheckers: Set<FirFileChecker> = setOf(
-        FirTopLevelFunctionChecker,
-        FirTopLevelPropertyChecker,
+        FirKClassWithIncorrectTypeArgumentChecker,
+        FirTopLevelFunctionsChecker,
+        FirTopLevelPropertiesChecker,
     )
 
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(

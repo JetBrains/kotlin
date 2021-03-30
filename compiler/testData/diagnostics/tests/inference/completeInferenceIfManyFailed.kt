@@ -5,11 +5,11 @@ package d
 
 import checkSubtype
 
-fun <T: Any> joinT(<!UNUSED_PARAMETER!>x<!>: Int, vararg <!UNUSED_PARAMETER!>a<!>: T): T? {
+fun <T: Any> joinT(x: Int, vararg a: T): T? {
     return null
 }
 
-fun <T: Any> joinT(<!UNUSED_PARAMETER!>x<!>: Comparable<*>, <!UNUSED_PARAMETER!>y<!>: T): T? {
+fun <T: Any> joinT(x: Comparable<*>, y: T): T? {
     return null
 }
 

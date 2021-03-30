@@ -1,6 +1,6 @@
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
-@DefaultNonNull
+@NullMarked
 public class IgnoreAnnotations {
     @Nullable public Derived field = null;
 

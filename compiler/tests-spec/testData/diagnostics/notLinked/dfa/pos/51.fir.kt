@@ -6,7 +6,7 @@
 fun case_1(x: Any?) {
     val y = run {
         if (x is Class)
-            return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class & kotlin.Any?")!>x<!>
+            return@run <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>
         Class()
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>
@@ -17,7 +17,7 @@ fun case_1(x: Any?) {
 fun case_2(x: Class?) {
     val y = run {
         x!!
-        return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
+        return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>.fun_1()

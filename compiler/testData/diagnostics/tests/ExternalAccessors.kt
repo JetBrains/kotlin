@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-13997
 
 class Foo {

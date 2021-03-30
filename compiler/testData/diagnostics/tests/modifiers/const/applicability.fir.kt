@@ -4,7 +4,7 @@ import kotlin.reflect.KProperty
 
 const val topLevel: Int = 0
 const val topLevelInferred = 1
-const var topLeveLVar: Int = 2
+<!WRONG_MODIFIER_TARGET!>const<!> var topLeveLVar: Int = 2
 
 private val privateTopLevel = 3
 
@@ -12,19 +12,19 @@ object A {
     const val inObject: Int = 4
 }
 
-class B(const val constructor: Int = 5)
+class B(<!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val constructor: Int = 5)
 
 abstract class C {
-    <!INCOMPATIBLE_MODIFIERS!>open<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 6
+    <!INCOMPATIBLE_MODIFIERS!>open<!> <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 6
 
-    <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val y: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>7<!>
+    <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, INCOMPATIBLE_MODIFIERS!>const<!> val y: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>7<!>
 
     companion object {
         const val inCompaionObject = 8
     }
 }
 
-object D : C() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object D<!> : C() {
     <!INCOMPATIBLE_MODIFIERS!>override<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 9
 
     const val inObject = 10
@@ -38,14 +38,14 @@ object D : C() {
     }
 }
 
-const val delegated: Int by Delegate()
+const val delegated: Int by <!CONST_VAL_WITH_DELEGATE!>Delegate()<!>
 
 
 const val withGetter: Int
-    get() = 13
+    <!CONST_VAL_WITH_GETTER!>get() = 13<!>
 
 const val withExplicitDefaultGetter: Int = 1
-    get
+    <!CONST_VAL_WITH_GETTER!>get<!>
 
 fun foo(): Int {
     const val local: Int = 14
@@ -54,21 +54,21 @@ fun foo(): Int {
 
 enum class MyEnum {
     A {
-        const val inEnumEntry = 16
+        <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val inEnumEntry = 16
     };
-    const val inEnum = 17
+    <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val inEnum = 17
 }
 
 class Outer {
     inner class Inner {
-        object C {
+        <!NESTED_CLASS_NOT_ALLOWED!>object C<!> {
             const val a = 18
         }
     }
 }
 
 const val defaultGetter = 19
-    get
+    <!CONST_VAL_WITH_GETTER!>get<!>
 
 const val nonConstInitializer1 = foo()
 const val nonConstInitializer2 = 1 as String

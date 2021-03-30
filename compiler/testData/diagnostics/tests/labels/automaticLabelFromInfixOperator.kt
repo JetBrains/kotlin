@@ -14,4 +14,4 @@ fun myMap(x: List<Int>): Int {
     return 0
 }
 
-infix fun List<Int>.myMap(<!UNUSED_PARAMETER!>x<!>: () -> Unit) {}
+infix fun List<Int>.myMap(x: () -> Unit) {}

@@ -7,7 +7,7 @@ private operator fun J.component2(): Int {
 }
 
 fun test() {
-  val <destruct>: J? = j()
+  val <destruct>: @FlexibleNullability J? = j()
   val a: Int = <destruct>.component1()
-  val b: Int = <destruct> /*!! J */.component2()
+  val b: Int = <destruct> /*!! @FlexibleNullability J */.component2()
 }

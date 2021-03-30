@@ -19,7 +19,7 @@ import kotlin.test.assertFailsWith
 class MetadataSmokeTest {
     private fun Class<*>.readMetadata(): KotlinClassHeader {
         return getAnnotation(Metadata::class.java).run {
-            KotlinClassHeader(kind, metadataVersion, bytecodeVersion, data1, data2, extraString, packageName, extraInt)
+            KotlinClassHeader(kind, metadataVersion, data1, data2, extraString, packageName, extraInt)
         }
     }
 
@@ -75,7 +75,6 @@ class MetadataSmokeTest {
             // Use the created KotlinMetadata instance to write @kotlin.Metadata annotation on the class file
             visitAnnotation("Lkotlin/Metadata;", true).run {
                 visit("mv", header.metadataVersion)
-                visit("bv", header.bytecodeVersion)
                 visit("k", header.kind)
                 visitArray("d1").run {
                     header.data1.forEach { visit(null, it) }
@@ -160,7 +159,6 @@ class MetadataSmokeTest {
             KotlinClassHeader(
                 kind = annotation.kind,
                 metadataVersion = annotation.metadataVersion,
-                bytecodeVersion = annotation.bytecodeVersion,
                 data1 = annotation.data1,
                 data2 = annotation.data2,
                 extraInt = annotation.extraInt,

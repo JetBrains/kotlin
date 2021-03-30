@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.printElements
+import org.jetbrains.kotlin.fir.tree.generator.printer.generateElements
 import org.jetbrains.kotlin.fir.tree.generator.util.*
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import java.io.File
 
 
@@ -19,8 +20,9 @@ fun main(args: Array<String>) {
     ImplementationConfigurator.configureImplementations()
     configureInterfacesAndAbstractClasses(FirTreeBuilder)
     BuilderConfigurator.configureBuilders()
-    removePreviousGeneratedFiles(generationPath)
-    printElements(FirTreeBuilder, generationPath)
-//    printFieldUsageTable(FirTreeBuilder)
-//    printHierarchyGraph(FirTreeBuilder)
+    val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)
+    val generatedFiles = generateElements(FirTreeBuilder, generationPath)
+    generatedFiles.forEach { GeneratorsFileUtil.writeFileIfContentChanged(it.file, it.newText, logNotChanged = false) }
+    removeExtraFilesFromPreviousGeneration(previouslyGeneratedFiles, generatedFiles.map { it.file })
 }
+

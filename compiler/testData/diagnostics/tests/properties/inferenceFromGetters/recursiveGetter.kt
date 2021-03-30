@@ -17,4 +17,4 @@ class A {
 }
 
 fun <E> id(x: E) = x
-fun <E> l(<!UNUSED_PARAMETER!>x<!>: E): List<E> = null!!
+fun <E> l(x: E): List<E> = null!!

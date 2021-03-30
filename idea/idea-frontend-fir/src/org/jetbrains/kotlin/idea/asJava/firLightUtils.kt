@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,13 +26,10 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirClassType
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
@@ -63,16 +62,16 @@ internal fun KtTypeAndAnnotations.asPsiType(
     return type.coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
 }
 
-internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
-    require(this is KtFirClassOrObjectSymbol)
-    val (session, type) = firRef.withFir(FirResolvePhase.TYPES) { firClass ->
-        firClass.session to ConeClassLikeTypeImpl(
-            firClass.symbol.toLookupTag(),
-            firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false) }.toTypedArray(),
-            isNullable = false
-        )
+internal fun KtNamedClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
+    require(this is KtFirSymbol<*>)
+
+    val types = analyzeWithSymbolAsContext(this) {
+        this@typeForClassSymbol.buildSelfClassType()
     }
-    return type.asPsiType(session, this.firRef.resolveState, TypeMappingMode.DEFAULT, psiElement)
+    require(types is KtFirType)
+
+    val session = firRef.withFir { it.session }
+    return types.coneType.asPsiType(session, firRef.resolveState, TypeMappingMode.DEFAULT, psiElement)
 }
 
 private class AnonymousTypesSubstitutor(private val session: FirSession, private val state: FirModuleResolveState) :
@@ -162,7 +161,7 @@ internal fun KtType.mapSupertype(
     annotations: List<KtAnnotationCall>
 ): PsiClassType? {
     if (this !is KtClassType) return null
-    require(this is KtFirClassType)
+    require(this is KtFirType)
     val contextSymbol = classSymbol
     require(contextSymbol is KtFirSymbol<*>)
 
@@ -203,15 +202,14 @@ internal fun FirMemberDeclaration.computeSimpleModality(): Set<String> {
     return modifier?.let { setOf(it) } ?: emptySet()
 }
 
-internal fun KtSymbolWithModality<*>.computeSimpleModality(): String? = when (modality) {
-    KtSymbolModality.SEALED -> PsiModifier.ABSTRACT
-    KtCommonSymbolModality.FINAL -> PsiModifier.FINAL
-    KtCommonSymbolModality.ABSTRACT -> PsiModifier.ABSTRACT
-    KtCommonSymbolModality.OPEN -> null
-    else -> throw NotImplementedError()
+internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modality) {
+    Modality.SEALED -> PsiModifier.ABSTRACT
+    Modality.FINAL -> PsiModifier.FINAL
+    Modality.ABSTRACT -> PsiModifier.ABSTRACT
+    Modality.OPEN -> null
 }
 
-internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMethod(
+internal fun KtSymbolWithModality.computeModalityForMethod(
     isTopLevel: Boolean,
     suppressFinal: Boolean,
     result: MutableSet<String>
@@ -239,15 +237,15 @@ internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(isTopLevel: Boolean
 internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isTopLevel: Boolean): String =
     visibility.toPsiVisibility(isTopLevel, forClass = true)
 
-internal fun KtSymbolVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
+internal fun Visibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
     toPsiVisibility(isTopLevel, forClass = false)
 
-private fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
+private fun Visibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
     // Top-level private class has PACKAGE_LOCAL visibility in Java
     // Nested private class has PRIVATE visibility
-    KtSymbolVisibility.PRIVATE, KtSymbolVisibility.PRIVATE_TO_THIS ->
+    Visibilities.Private, Visibilities.PrivateToThis ->
         if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
-    KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
+    Visibilities.Protected -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC
 }
 

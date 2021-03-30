@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: +UNUSED_PARAMETER
 var y: Int = 1
 
 // No backing field!

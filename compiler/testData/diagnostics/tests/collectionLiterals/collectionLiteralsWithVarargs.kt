@@ -37,5 +37,5 @@ annotation class AnnArray(val a: Array<String>)
 @AnnArray(<!NON_VARARG_SPREAD{OI}!>*<!>["/"])
 fun testArray() {}
 
-@Ann1(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH!>[""]<!>)
+@Ann1(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>)
 fun testVararg() {}

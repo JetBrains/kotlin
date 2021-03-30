@@ -5,7 +5,7 @@ class F {
     fun p(): String? = null
 }
 
-fun foo(<!UNUSED_PARAMETER!>s<!>: String) {}
+fun foo(s: String) {}
 
 fun r(): Int? = null
 

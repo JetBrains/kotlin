@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: +UNUSED_EXPRESSION
+
 fun unusedExpressions() {
     if (1 == 1)
         <!UNUSED_EXPRESSION!>fun(): Int {return 1}<!>

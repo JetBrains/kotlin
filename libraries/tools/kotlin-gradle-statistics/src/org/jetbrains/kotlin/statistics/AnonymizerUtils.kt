@@ -11,6 +11,8 @@ internal interface ValueAnonymizer<T> {
 
     fun anonymize(t: T): T
 
+    fun anonymizeOnIdeSize(): Boolean = false
+
 }
 
 internal val salt: String by lazy {

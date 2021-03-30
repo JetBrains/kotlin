@@ -13,12 +13,11 @@ FILE: delegatedSuperType.kt
 
     }
     public final class C : R|A| {
-        local final field <$$delegate_0>: R|A|
-
         public constructor(b: R|B|): R|C| {
             super<R|kotlin/Any|>()
-            this@R|/C|.R|<local>/<$$delegate_0>| = R|<local>/b|
         }
+
+        local final field <$$delegate_0>: R|A| = R|<local>/b|
 
         public final val b: R|B| = R|<local>/b|
             public get(): R|B|

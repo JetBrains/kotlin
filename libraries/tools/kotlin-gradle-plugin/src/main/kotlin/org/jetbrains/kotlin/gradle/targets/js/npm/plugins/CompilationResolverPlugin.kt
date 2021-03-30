@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.plugins
 
-import org.gradle.api.artifacts.FileCollectionDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 
@@ -15,6 +14,6 @@ internal interface CompilationResolverPlugin {
         internalCompositeDependencies: Set<KotlinCompilationNpmResolver.CompositeDependency>,
         externalGradleDependencies: Set<KotlinCompilationNpmResolver.ExternalGradleDependency>,
         externalNpmDependencies: Set<NpmDependency>,
-        fileCollectionDependencies: Set<FileCollectionDependency>
+        fileCollectionDependencies: Set<KotlinCompilationNpmResolver.FileCollectionExternalGradleDependency>
     )
 }

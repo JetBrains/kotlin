@@ -31,11 +31,11 @@ FILE: unary.kt
 
     }
     public? final? class X : R|kotlin/Any| {
-        public? constructor(i: Int): R|X| {
+        public? [ContainingClassKey=X] constructor(i: Int): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val i: Int = R|<local>/i|
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
             public? get(): Int
 
     }
@@ -74,11 +74,11 @@ FILE: unary.kt
 
     }
     public? final? class Y : R|kotlin/Any| {
-        public? constructor(arr: Array<Int>): R|Y| {
+        public? [ContainingClassKey=Y] constructor(arr: Array<Int>): R|Y| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val arr: Array<Int> = R|<local>/arr|
+        public? final? [IsFromPrimaryConstructor=true] val arr: Array<Int> = R|<local>/arr|
             public? get(): Array<Int>
 
     }

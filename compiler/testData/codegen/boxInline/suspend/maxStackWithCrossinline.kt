@@ -1,8 +1,8 @@
-// FILE: inlined.kt
+// WITH_COROUTINES
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
 // WITH_RUNTIME
-// WITH_COROUTINES
+// FILE: inlined.kt
 fun handle(f: suspend () -> Unit) {}
 
 open class Foo {

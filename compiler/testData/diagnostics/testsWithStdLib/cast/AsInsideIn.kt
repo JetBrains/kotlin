@@ -1,4 +1,3 @@
-// !LANGUAGE: -NonStrictOnlyInputTypesChecks
 // !WITH_NEW_INFERENCE
 // See also KT-10386
 interface A

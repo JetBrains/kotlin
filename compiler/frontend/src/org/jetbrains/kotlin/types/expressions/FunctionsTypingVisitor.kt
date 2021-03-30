@@ -77,7 +77,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val functionDescriptor: SimpleFunctionDescriptor
         if (isDeclaration) {
             functionDescriptor = components.functionDescriptorResolver.resolveFunctionDescriptor(
-                context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo
+                context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo, context.inferenceSession
             )
             assert(statementScope != null) {
                 "statementScope must be not null for function: " + function.name + " at location " + PsiDiagnosticUtils.atLocation(
@@ -88,7 +88,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         } else {
             functionDescriptor = components.functionDescriptorResolver.resolveFunctionExpressionDescriptor(
                 context.scope.ownerDescriptor, context.scope, function,
-                context.trace, context.dataFlowInfo, context.expectedType
+                context.trace, context.dataFlowInfo, context.expectedType, context.inferenceSession
             )
         }
         // Necessary for local functions
@@ -100,12 +100,13 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             ForceResolveUtil.forceResolveAllContents(functionDescriptor.returnType)
         } else {
             components.expressionTypingServices.checkFunctionReturnType(
-                functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace
+                functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace, context
             )
         }
 
         components.valueParameterResolver.resolveValueParameters(
-            function.valueParameters, functionDescriptor.valueParameters, functionInnerScope, context.dataFlowInfo, context.trace
+            function.valueParameters, functionDescriptor.valueParameters, functionInnerScope,
+            context.dataFlowInfo, context.trace, context.inferenceSession
         )
 
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
@@ -211,7 +212,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         }
         components.functionDescriptorResolver.initializeFunctionDescriptorAndExplicitReturnType(
             context.scope.ownerDescriptor, context.scope, functionLiteral,
-            functionDescriptor, context.trace, context.expectedType, context.dataFlowInfo
+            functionDescriptor, context.trace, context.expectedType, context.dataFlowInfo, context.inferenceSession
         )
         for (parameterDescriptor in functionDescriptor.valueParameters) {
             ForceResolveUtil.forceResolveAllContents(parameterDescriptor.annotations)

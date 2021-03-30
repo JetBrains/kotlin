@@ -1,6 +1,6 @@
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
-@DefaultNonNull
+@NullMarked
 public class Simple {
     @Nullable public Derived field = null;
 
@@ -19,7 +19,7 @@ class Derived extends Base {
     void foo() {}
 }
 
-@DefaultNonNull
+@NullMarked
 class Use {
     static public void main(Simple a, Derived x) {
         a.foo(x, null).foo();

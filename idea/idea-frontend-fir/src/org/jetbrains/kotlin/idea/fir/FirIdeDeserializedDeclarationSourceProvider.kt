@@ -42,7 +42,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
     ): PsiElement? {
         val candidates = if (function.isTopLevel) {
             KotlinTopLevelFunctionFqnNameIndex.getInstance().get(
-                function.symbol.callableId.asFqNameForDebugInfo().asString(),
+                function.symbol.callableId.asSingleFqName().asString(),
                 project,
                 function.scope(project)
             ).filter(KtNamedFunction::isCompiled)
@@ -58,7 +58,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
     private fun provideSourceForProperty(property: FirProperty, project: Project): PsiElement? {
         val candidates = if (property.isTopLevel) {
             KotlinTopLevelFunctionFqnNameIndex.getInstance().get(
-                property.symbol.callableId.asFqNameForDebugInfo().asString(),
+                property.symbol.callableId.asSingleFqName().asString(),
                 project,
                 property.scope(project)
             )
@@ -139,8 +139,17 @@ object FirIdeDeserializedDeclarationSourceProvider {
 
 private fun KtElement.isCompiled(): Boolean = containingKtFile.isCompiled
 
+private val allowedFakeElementKinds = setOf(FirFakeSourceElementKind.PropertyFromParameter)
+
+private fun FirElement.getAllowedPsi() = when (val source = source) {
+    null -> null
+    is FirRealPsiSourceElement<*> -> source.psi
+    is FirFakeSourceElement<*> -> if (source.kind in allowedFakeElementKinds) psi else null
+    else -> null
+}
+
 fun FirElement.findPsi(project: Project): PsiElement? =
-    realPsi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, project)
+    getAllowedPsi() ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, project)
 
 fun FirElement.findPsi(session: FirSession): PsiElement? =
     findPsi((session as FirIdeSession).project)

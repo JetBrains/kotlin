@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IdSignatureComposer
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
@@ -193,20 +196,15 @@ private fun getIrMethodSymbolByName(methodName: String): String {
 }
 
 private fun getIrBuiltIns(): IrBuiltIns {
-    val builtIns = DefaultBuiltIns.Instance
     val languageSettings = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3)
 
-    val moduleDescriptor = ModuleDescriptorImpl(Name.special("<test-module>"), LockBasedStorageManager(""), builtIns)
+    val moduleDescriptor = ModuleDescriptorImpl(Name.special("<test-module>"), LockBasedStorageManager(""), DefaultBuiltIns.Instance)
     val signaturer = object : IdSignatureComposer {
         override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature? = null
 
         override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature? = null
     }
     val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
-    val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-    val typeTranslator = TypeTranslator(symbolTable, languageSettings, builtIns)
-    constantValueGenerator.typeTranslator = typeTranslator
-    typeTranslator.constantValueGenerator = constantValueGenerator
-
-    return IrBuiltIns(builtIns, typeTranslator, symbolTable)
+    val typeTranslator = TypeTranslatorImpl(symbolTable, languageSettings, moduleDescriptor)
+    return IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 }

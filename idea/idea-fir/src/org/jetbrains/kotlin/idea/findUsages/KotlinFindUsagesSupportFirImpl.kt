@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.refactoring.CHECK_SUPER_METHODS_YES_NO_DIALOG
 import org.jetbrains.kotlin.idea.refactoring.formatPsiClass
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 class KotlinFindUsagesSupportFirImpl : KotlinFindUsagesSupport {
@@ -70,7 +71,7 @@ class KotlinFindUsagesSupportFirImpl : KotlinFindUsagesSupport {
         val analyzeResult = analyseInModalWindow(declaration, KotlinBundle.message("find.usages.progress.text.declaration.superMethods")) {
             (declaration.getSymbol() as? KtCallableSymbol)?.let { callableSymbol ->
                 ((callableSymbol as? KtSymbolWithKind)?.getContainingSymbol() as? KtClassOrObjectSymbol)?.let { containingClass ->
-                    val overriddenSymbols = callableSymbol.getOverriddenSymbols(containingClass)
+                    val overriddenSymbols = callableSymbol.getAllOverriddenSymbols()
 
                     val renderToPsi = overriddenSymbols.mapNotNull {
                         it.psi?.let { psi ->
@@ -81,7 +82,7 @@ class KotlinFindUsagesSupportFirImpl : KotlinFindUsagesSupport {
                     val filteredDeclarations =
                         if (ignore != null) renderToPsi.filter { ignore.contains(it.first) } else renderToPsi
 
-                    val renderedClass = containingClass.name.asString() //TODO render class
+                    val renderedClass = containingClass.name?.asString() ?: SpecialNames.ANONYMOUS //TODO render class
 
                     AnalyzedModel(renderedClass, filteredDeclarations.toMap())
                 }

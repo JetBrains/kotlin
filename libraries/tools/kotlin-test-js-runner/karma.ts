@@ -8,11 +8,12 @@ import {runWithFilteringAndConsoleAdapters} from "./src/Adapter";
 
 const kotlin_test = require('kotlin-test');
 
-process.exit = (exitCode) => {
-    throw new Error(`Exit with ${exitCode}`)
-};
-
-const parser = new CliArgsParser(getDefaultCliDescription());
+const parser = new CliArgsParser(
+    getDefaultCliDescription(),
+    (exitCode) => {
+        throw new Error(`Exit with ${exitCode}`)
+    }
+);
 const untypedArgs = parser.parse(window.__karma__.config.args);
 
 const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();

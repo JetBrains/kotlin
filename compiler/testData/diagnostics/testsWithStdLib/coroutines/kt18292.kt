@@ -8,7 +8,7 @@ interface Job : CoroutineContext.Element {}
 interface Deferred<out T> : Job {
     suspend fun await(): T
 }
-fun <T> async(<!UNUSED_PARAMETER!>block<!>: suspend () -> T): Deferred<T> = TODO()
+fun <T> async(block: suspend () -> T): Deferred<T> = TODO()
 
 suspend fun fib(n: Long) =
     async {

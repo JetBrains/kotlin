@@ -2,12 +2,12 @@ class A {
     companion object Comp {}
 
     fun foo() {
-        <!HIDDEN{LT}!><!HIDDEN{PSI}!>Comp<!>()<!>
+        <!HIDDEN!>Comp<!>()
     }
 }
 
 object B {
-    private val x = <!HIDDEN{LT}!><!HIDDEN{PSI}!>B<!>()<!>
+    private val x = <!HIDDEN!>B<!>()
 }
 
 class D {
@@ -26,6 +26,6 @@ enum class E {
     };
 
     fun foo() {
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>X<!>()<!>
+        <!UNRESOLVED_REFERENCE!>X<!>()
     }
 }

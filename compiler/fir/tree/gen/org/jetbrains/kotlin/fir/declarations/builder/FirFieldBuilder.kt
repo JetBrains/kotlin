@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -43,6 +44,7 @@ open class FirFieldBuilder : FirAnnotationContainerBuilder {
     open lateinit var returnTypeRef: FirTypeRef
     open lateinit var name: Name
     open lateinit var symbol: FirVariableSymbol<FirField>
+    open var initializer: FirExpression? = null
     open var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     open val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
@@ -50,6 +52,7 @@ open class FirFieldBuilder : FirAnnotationContainerBuilder {
     open var containerSource: DeserializedContainerSource? = null
     open var dispatchReceiverType: ConeKotlinType? = null
 
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirField {
         return FirFieldImpl(
             source,
@@ -60,6 +63,7 @@ open class FirFieldBuilder : FirAnnotationContainerBuilder {
             returnTypeRef,
             name,
             symbol,
+            initializer,
             isVar,
             annotations,
             typeParameters,

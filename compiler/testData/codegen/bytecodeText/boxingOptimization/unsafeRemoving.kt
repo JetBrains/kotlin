@@ -15,9 +15,6 @@ fun foo() {
     val b = arrayOfNulls<Int>(4)
     b[100] = 5
 
-    val x: Int? = 6
-    val hc = x!!.hashCode()
-
     val y: Int? = 7
     val z: Int? = 8
     val res = y === z
@@ -26,5 +23,5 @@ fun foo() {
     val c2: Any = if (1 != one) 0 else "abc"
 }
 
-// 9 java/lang/Integer.valueOf
+// 8 java/lang/Integer.valueOf
 // 0 intValue

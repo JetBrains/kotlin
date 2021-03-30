@@ -38,15 +38,21 @@ import org.jetbrains.kotlin.js.util.TextOutputImpl
 import java.io.File
 import java.io.InputStreamReader
 
-class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit) {
+class DeadCodeElimination(
+    private val printReachabilityInfo: Boolean,
+    private val logConsumer: (DCELogLevel, String) -> Unit
+) {
     val moduleMapping = mutableMapOf<JsBlock, String>()
     private val reachableNames = mutableSetOf<String>()
 
-    var reachableNodes = setOf<Node>()
+    var reachableNodes: Iterable<Node> = setOf()
         private set
+
+    var context: Context? = null
 
     fun apply(root: JsNode) {
         val context = Context()
+        this.context = context
 
         val topLevelVars = collectDefinedNames(root)
         context.addNodesForLocalVars(topLevelVars)
@@ -58,7 +64,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
         analyzer.moduleMapping += moduleMapping
         root.accept(analyzer)
 
-        val usageFinder = ReachabilityTracker(context, analyzer.analysisResult, logConsumer)
+        val usageFinder = ReachabilityTracker(context, analyzer.analysisResult, logConsumer.takeIf { printReachabilityInfo })
         root.accept(usageFinder)
 
         for (reachableName in reachableNames) {
@@ -75,10 +81,11 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
         fun run(
                 inputFiles: Collection<InputFile>,
                 rootReachableNames: Set<String>,
+                printReachabilityInfo: Boolean,
                 logConsumer: (DCELogLevel, String) -> Unit
         ): DeadCodeEliminationResult {
             val program = JsProgram()
-            val dce = DeadCodeElimination(logConsumer)
+            val dce = DeadCodeElimination(printReachabilityInfo, logConsumer)
 
             var hasErrors = false
             val blocks = inputFiles.map { file ->
@@ -107,7 +114,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                 block
             }
 
-            if (hasErrors) return DeadCodeEliminationResult(emptySet(), DeadCodeEliminationStatus.FAILED)
+            if (hasErrors) return DeadCodeEliminationResult(dce.context, emptySet(), DeadCodeEliminationStatus.FAILED)
 
             program.globalBlock.statements += blocks
             program.globalBlock.fixForwardNameReferences()
@@ -139,7 +146,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                 }
             }
 
-            return DeadCodeEliminationResult(dce.reachableNodes, DeadCodeEliminationStatus.OK)
+            return DeadCodeEliminationResult(dce.context, dce.reachableNodes, DeadCodeEliminationStatus.OK)
         }
 
         private class Reporter(private val fileName: String, private val logConsumer: (DCELogLevel, String) -> Unit) : ErrorReporter {

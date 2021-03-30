@@ -12,8 +12,8 @@ fun case_1() {
         x = 42
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv()
 }
 
 // TESTCASE NUMBER: 2
@@ -26,8 +26,8 @@ fun case_2() {
         x = 42.0
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Double> & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Double> & kotlin.Any?")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Double>")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Double>")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 3
@@ -40,8 +40,8 @@ fun case_3() {
         x = ClassLevel3()
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 4
@@ -54,8 +54,8 @@ fun case_4() {
         x = 42.0
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double & kotlin.Any?")!>x<!>.minus(10.0)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double")!>x<!>.minus(10.0)
 }
 
 // TESTCASE NUMBER: 5
@@ -68,8 +68,8 @@ fun case_5() {
         x = 42.0
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double & kotlin.Any?")!>x<!>.minus(10.0)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double")!>x<!>.minus(10.0)
 }
 
 /*

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 
@@ -64,7 +65,8 @@ abstract class AbstractJsScriptlikeCodeAnalyser(
             languageVersionSettings,
             lookupTracker,
             expectActualTracker,
-            additionalPackages
+            additionalPackages,
+            CompilerEnvironment,
         )
         val analyzerContext = analyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(psi))
 

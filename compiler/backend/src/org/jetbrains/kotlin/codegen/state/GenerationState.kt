@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.LanguageVersion.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.File
+import java.util.*
 
 class GenerationState private constructor(
     val project: Project,
@@ -204,15 +206,29 @@ class GenerationState private constructor(
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val runtimeStringConcat =
         if (target.majorVersion >= JvmTarget.JVM_9.majorVersion)
-            configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INLINE
+            configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INDY_WITH_CONSTANTS
         else JvmStringConcat.INLINE
 
     val samConversionsScheme = run {
-        val fromConfig = configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS) ?: JvmSamConversions.DEFAULT
+        val fromConfig = configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS)
+        if (fromConfig != null && target >= fromConfig.minJvmTarget)
+            fromConfig
+        else if (
+            target >= JvmClosureGenerationScheme.INDY.minJvmTarget &&
+            languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic)
+        )
+            JvmClosureGenerationScheme.INDY
+        else
+            JvmClosureGenerationScheme.CLASS
+    }
+
+    val lambdasScheme = run {
+        val fromConfig = configuration.get(JVMConfigurationKeys.LAMBDAS)
+            ?: JvmClosureGenerationScheme.DEFAULT
         if (target >= fromConfig.minJvmTarget)
             fromConfig
         else
-            JvmSamConversions.DEFAULT
+            JvmClosureGenerationScheme.DEFAULT
     }
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
@@ -229,7 +245,6 @@ class GenerationState private constructor(
         this.moduleName,
         languageVersionSettings,
         useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
-        IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         target,
         isIrBackend
     )
@@ -306,8 +321,7 @@ class GenerationState private constructor(
 
     val metadataVersion =
         configuration.get(CommonConfigurationKeys.METADATA_VERSION)
-            ?: if (languageVersionSettings.languageVersion >= LanguageVersion.LATEST_STABLE) JvmMetadataVersion.INSTANCE
-            else JvmMetadataVersion(1, 1, 18)
+            ?: LANGUAGE_TO_METADATA_VERSION.getValue(languageVersionSettings.languageVersion)
 
     val abiStability = configuration.get(JVMConfigurationKeys.ABI_STABILITY)
 
@@ -378,6 +392,24 @@ class GenerationState private constructor(
 
     private fun shouldOnlyCollectSignatures(origin: JvmDeclarationOrigin) =
         classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind in doNotGenerateInLightClassMode
+
+    companion object {
+        private val LANGUAGE_TO_METADATA_VERSION = EnumMap<LanguageVersion, JvmMetadataVersion>(LanguageVersion::class.java).apply {
+            val oldMetadataVersion = JvmMetadataVersion(1, 1, 18)
+            this[KOTLIN_1_0] = oldMetadataVersion
+            this[KOTLIN_1_1] = oldMetadataVersion
+            this[KOTLIN_1_2] = oldMetadataVersion
+            this[KOTLIN_1_3] = oldMetadataVersion
+            this[KOTLIN_1_4] = JvmMetadataVersion(1, 4, 3)
+            this[KOTLIN_1_5] = JvmMetadataVersion.INSTANCE
+            this[KOTLIN_1_6] = JvmMetadataVersion(1, 6, 0)
+
+            check(size == LanguageVersion.values().size) {
+                "Please add mappings from the missing LanguageVersion instances to the corresponding JvmMetadataVersion " +
+                        "in `GenerationState.LANGUAGE_TO_METADATA_VERSION`"
+            }
+        }
+    }
 }
 
 private val doNotGenerateInLightClassMode = setOf(CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, BRIDGE, COLLECTION_STUB, AUGMENTED_BUILTIN_API)

@@ -66,8 +66,8 @@ class Reducer(private val builtIns: KotlinBuiltIns) : ESExpressionVisitor<ESExpr
         return ESConstants.booleanValue(result.xor(isOperator.functor.isNegated))
     }
 
-    override fun visitEqual(equal: ESEqual): ESExpression {
-        val reducedLeft = equal.left.accept(this) as ESValue
+    override fun visitEqual(equal: ESEqual): ESExpression? {
+        val reducedLeft = equal.left.accept(this) as ESValue? ?: return null
         val reducedRight = equal.right
 
         if (reducedLeft is ESConstant) return ESConstants.booleanValue((reducedLeft == reducedRight).xor(equal.functor.isNegated))
@@ -114,4 +114,8 @@ class Reducer(private val builtIns: KotlinBuiltIns) : ESExpressionVisitor<ESExpr
     override fun visitConstant(esConstant: ESConstant): ESConstant = esConstant
 
     override fun visitReceiver(esReceiver: ESReceiver): ESReceiver = esReceiver
+
+    override fun visitLambda(lambda: ESValue): ESExpression? {
+        return null
+    }
 }

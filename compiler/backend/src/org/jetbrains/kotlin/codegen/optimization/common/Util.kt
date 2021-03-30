@@ -61,7 +61,7 @@ class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequ
     }
 }
 
-fun InsnList.asSequence() = InsnSequence(this)
+fun InsnList.asSequence(): Sequence<AbstractInsnNode> = if (size() == 0) emptySequence() else InsnSequence(this)
 
 fun MethodNode.prepareForEmitting() {
     stripOptimizationMarkers()

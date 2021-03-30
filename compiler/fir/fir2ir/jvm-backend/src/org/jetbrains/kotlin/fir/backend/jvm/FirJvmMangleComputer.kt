@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -34,6 +35,11 @@ open class FirJvmMangleComputer(
     private var isRealExpect = false
 
     open fun FirFunction<*>.platformSpecificFunctionName(): String? = null
+
+    open fun FirFunction<*>.platformSpecificSuffix(): String? =
+        if (this is FirSimpleFunction && name.asString() == "main")
+            this@FirJvmMangleComputer.session.firProvider.getFirCallableContainerFile(symbol)?.name
+        else null
 
     open fun FirFunction<*>.specialValueParamPrefix(param: FirValueParameter): String = ""
 
@@ -79,7 +85,7 @@ open class FirJvmMangleComputer(
             else -> return
         }
         if (parentClassId != null && !parentClassId.isLocal) {
-            val parentClassLike = this@FirJvmMangleComputer.session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)?.fir
+            val parentClassLike = this@FirJvmMangleComputer.session.symbolProvider.getClassLikeSymbolByFqName(parentClassId)?.fir
                 ?: error("Attempt to find parent ($parentClassId) for probably-local declaration!")
             if (parentClassLike is FirRegularClass || parentClassLike is FirTypeAlias) {
                 parentClassLike.accept(this@FirJvmMangleComputer, false)
@@ -120,6 +126,11 @@ open class FirJvmMangleComputer(
 
         val name = (this as? FirSimpleFunction)?.name ?: Name.special("<anonymous>")
         builder.append(name.asString())
+
+        platformSpecificSuffix()?.let {
+            builder.append(MangleConstant.PLATFORM_FUNCTION_MARKER)
+            builder.append(it)
+        }
 
         mangleSignature(isCtor, isStatic)
     }

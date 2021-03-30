@@ -109,6 +109,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/TypeParameters.kt");
     }
 
+    @TestMetadata("ValueClass.kt")
+    public void testValueClass() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/ValueClass.kt");
+    }
+
     @TestMetadata("VersionRequirement.kt")
     public void testVersionRequirement() throws Exception {
         runTest("libraries/tools/kotlinp/testData/VersionRequirement.kt");

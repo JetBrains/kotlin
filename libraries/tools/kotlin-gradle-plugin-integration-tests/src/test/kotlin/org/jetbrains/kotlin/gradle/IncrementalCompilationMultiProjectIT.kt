@@ -29,7 +29,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         get() = "compileKotlin2Js"
 }
 
-class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val additionalLibDependencies: String =
         "implementation \"org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version\""
 
@@ -139,6 +139,12 @@ open class A {
     }
 }
 
+class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(useFir = true)
+    }
+}
+
 abstract class BaseIncrementalCompilationMultiProjectIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
@@ -194,6 +200,9 @@ open class A {
 
     @Test
     fun testLibClassBecameFinal() {
+        // TODO: fix fir IC and remove
+        if (defaultBuildOptions().useFir) return
+
         val project = defaultProject()
         project.build("build") {
             assertSuccessful()
@@ -345,6 +354,34 @@ open class A {
         project.build("build") {
             assertSuccessful()
             assertCompiledKotlinSources(project.relativize(aaKt))
+        }
+    }
+
+    /** Regression test for KT-40875. */
+    @Test
+    fun testMoveFunctionFromLibWithRemappedBuildDirs() {
+        val project = defaultProject()
+        project.setupWorkingDir()
+        project.projectDir.resolve("build.gradle").appendText("""
+
+            allprojects {
+                it.buildDir = new File(rootDir,  "../out" + it.path.replace(":", "/") + "/build")
+            }
+        """.trimIndent())
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val barUseABKt = project.projectDir.getFileByName("barUseAB.kt")
+        val barInApp = File(project.projectDir, "app/src/main/kotlin/bar").apply { mkdirs() }
+        barUseABKt.copyTo(File(barInApp, barUseABKt.name))
+        barUseABKt.delete()
+
+        project.build("build") {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("fooCallUseAB.kt", "barUseAB.kt")
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
         }
     }
 }

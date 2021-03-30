@@ -3,7 +3,10 @@ FILE: noPrimaryConstructor.kt
         public? final? val x: String
             public? get(): String
 
-        public? constructor(x: String): R|NoPrimary| { LAZY_BLOCK }
+        public? constructor(x: String): R|NoPrimary| {
+            super<R|kotlin/Any|>()
+            this#.x# = x#
+        }
 
         public? constructor(): R|NoPrimary| {
             this<R|NoPrimary|>(String())

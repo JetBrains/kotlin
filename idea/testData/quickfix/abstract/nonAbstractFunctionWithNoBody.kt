@@ -2,3 +2,4 @@
 class A() {
     fun <caret>foo()
 }
+/* FIR_COMPARISON */

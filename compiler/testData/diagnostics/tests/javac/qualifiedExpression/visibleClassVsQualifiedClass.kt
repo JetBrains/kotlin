@@ -19,8 +19,8 @@ package other
 
 class a {}
 
-fun test(<!UNUSED_PARAMETER!>a_<!>: a.<!UNRESOLVED_REFERENCE!>b<!>) {
-    val <!UNUSED_VARIABLE!>a_2<!> = a.<!UNRESOLVED_REFERENCE!>b<!>()
+fun test(a_: a.<!UNRESOLVED_REFERENCE!>b<!>) {
+    val a_2 = a.<!UNRESOLVED_REFERENCE!>b<!>()
 }
 
 //FILE: c2.kt
