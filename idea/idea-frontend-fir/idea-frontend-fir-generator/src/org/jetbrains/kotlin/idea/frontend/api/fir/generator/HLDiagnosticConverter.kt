@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -173,6 +174,11 @@ private object FirToKtConversionCreator {
             "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0}.fir as FirProperty)",
             KtVariableSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirProperty")
+        ),
+        FirVariableSymbol::class to HLFunctionCallConversion(
+            "firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol({0}.fir)",
+            KtVariableLikeSymbol::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirVariable")
         ),
     )
 

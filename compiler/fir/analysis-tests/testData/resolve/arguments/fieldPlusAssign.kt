@@ -5,6 +5,6 @@ var x: Int = 1
 
 val y: Int = 1
     get() {
-        <!VARIABLE_EXPECTED!>field<!> += 1
+        <!VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR!>field<!> += 1
         return 1
     }

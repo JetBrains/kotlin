@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -1346,7 +1347,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.VAL_REASSIGNMENT) { firDiagnostic ->
         ValReassignmentImpl(
-            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir as FirProperty),
+            firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

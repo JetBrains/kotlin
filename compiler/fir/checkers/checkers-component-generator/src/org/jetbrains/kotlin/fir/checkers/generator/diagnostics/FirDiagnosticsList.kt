@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
@@ -483,13 +484,13 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<FirPropertySymbol>("variable")
         }
         val VAL_REASSIGNMENT by error<FirSourceElement, KtExpression> {
-            parameter<FirPropertySymbol>("variable")
+            parameter<FirVariableSymbol<*>>("variable")
         }
         val VAL_REASSIGNMENT_VIA_BACKING_FIELD by warning<FirSourceElement, KtExpression> {
-            parameter<FirPropertySymbol>("variable")
+            parameter<FirPropertySymbol>("property")
         }
         val VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR by error<FirSourceElement, KtExpression> {
-            parameter<FirPropertySymbol>("variable")
+            parameter<FirPropertySymbol>("property")
         }
         val WRONG_INVOCATION_KIND by warning<FirSourceElement, PsiElement> {
             parameter<AbstractFirBasedSymbol<*>>("declaration")

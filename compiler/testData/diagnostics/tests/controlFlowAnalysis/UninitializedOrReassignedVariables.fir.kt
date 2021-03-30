@@ -89,18 +89,18 @@ fun t3() {
 
 fun t4() {
     val x = 1
-    <!VARIABLE_EXPECTED!>x<!> += 2
+    <!VAL_REASSIGNMENT!>x<!> += 2
     val y = 3
-    <!VARIABLE_EXPECTED!>y<!> *= 4
+    <!VAL_REASSIGNMENT!>y<!> *= 4
     var z = 5
     z -= y
 }
 
 fun t5() {
     for (i in 0..2) {
-        <!VARIABLE_EXPECTED!>i<!> += 1
+        <!VAL_REASSIGNMENT!>i<!> += 1
         fun t5() {
-            <!VARIABLE_EXPECTED!>i<!> += 3
+            <!VAL_REASSIGNMENT!>i<!> += 3
         }
     }
 }
@@ -213,7 +213,7 @@ class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     var xx = w
     var yy : Int
     init {
-        <!VARIABLE_EXPECTED!>w<!> += 1
+        <!VAL_REASSIGNMENT!>w<!> += 1
         yy = w
     }
 }

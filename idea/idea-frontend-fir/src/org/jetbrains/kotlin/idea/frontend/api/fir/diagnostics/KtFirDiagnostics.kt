@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -951,17 +952,17 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ValReassignment : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ValReassignment::class
-        abstract val variable: KtVariableSymbol
+        abstract val variable: KtVariableLikeSymbol
     }
 
     abstract class ValReassignmentViaBackingField : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ValReassignmentViaBackingField::class
-        abstract val variable: KtVariableSymbol
+        abstract val property: KtVariableSymbol
     }
 
     abstract class ValReassignmentViaBackingFieldError : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ValReassignmentViaBackingFieldError::class
-        abstract val variable: KtVariableSymbol
+        abstract val property: KtVariableSymbol
     }
 
     abstract class WrongInvocationKind : KtFirDiagnostic<PsiElement>() {

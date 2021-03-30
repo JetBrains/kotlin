@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.NamedArgumentNotAllowed
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.calls.VarargArgumentOutsideParentheses
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -39,6 +40,10 @@ private fun ConeDiagnostic.toFirDiagnostic(
     }
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, this.candidates)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)
+    is ConeValReassignmentError -> when (val symbol = this.variable) {
+        is FirBackingFieldSymbol -> FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR.on(source, symbol.fir.symbol)
+        else -> FirErrors.VAL_REASSIGNMENT.on(source, symbol)
+    }
     is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(qualifiedAccessSource ?: source, this.expectedType, this.actualType)
     is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(this.source.safeAs() ?: source)
     is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, this.name.asString())
