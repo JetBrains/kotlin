@@ -4896,20 +4896,6 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
     task.useFilter = false
     task.testLogger = KonanTest.Logger.GTEST
 
-    if (twoStageEnabled) {
-        // Exclude tests with lone surrogates/incorrect surrogate pairs failing due to KT-33175.
-        def excludedTests = [
-            "test.text.harmony_regex.PatternTest.testCanonEqFlagWithSupplementaryCharacters",
-            "test.text.harmony_regex.PatternTest.testRangesWithSurrogatesSupplementary",
-            "test.text.harmony_regex.PatternTest.testSequencesWithSurrogatesSupplementary",
-            "test.text.harmony_regex.PatternTest.testPredefinedClassesWithSurrogatesSupplementary",
-            "test.text.harmony_regex.PatternTest.testDotConstructionWithSurrogatesSupplementary",
-            "test.text.harmony_regex.PatternTest.testAlternationsWithSurrogatesSupplementary",
-            "test.text.harmony_regex.PatternTest.testGroupsWithSurrogatesSupplementary"
-        ]
-        task.arguments += "--ktest_filter=*-${excludedTests.join(":")}"
-    }
-
     def sources = UtilsKt.getFilesToCompile(project, ["harmony_regex"], [])
 
     konanArtifacts {
