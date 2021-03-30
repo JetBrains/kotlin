@@ -87,6 +87,36 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("tryFinally.kt")
+    public void testTryFinally() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally2.kt")
+    public void testTryFinally2() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally2.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally3.kt")
+    public void testTryFinally3() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally3.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally4.kt")
+    public void testTryFinally4() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally4.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally5.kt")
+    public void testTryFinally5() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally5.kt");
+    }
+
+    @Test
     @TestMetadata("underscoreNames.kt")
     public void testUnderscoreNames() throws Exception {
         runTest("compiler/testData/debug/localVariables/underscoreNames.kt");
