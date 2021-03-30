@@ -38,19 +38,19 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
         globalAccessors: Accessors
     ): SimpleFunctionDescriptor? {
         val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
-        val propertyName = field.toPropertyName(accessors)
+        return field.toPropertyName(accessors)?.let { propertyName ->
+            val functionName =
+                if (accessors.fluent) propertyName
+                else AccessorNames.SET + propertyName.capitalize()
 
-        val functionName =
-            if (accessors.fluent) propertyName
-            else AccessorNames.SET + propertyName.capitalize()
+            val returnType = if (accessors.chain) classDescriptor.defaultType else classDescriptor.builtIns.unitType
 
-        val returnType = if (accessors.chain) classDescriptor.defaultType else classDescriptor.builtIns.unitType
-
-        return classDescriptor.createFunction(
-            Name.identifier(functionName),
-            listOf(ValueParameter(field.name, field.type)),
-            returnType,
-            visibility = getter.visibility
-        )
+            classDescriptor.createFunction(
+                Name.identifier(functionName),
+                listOf(ValueParameter(field.name, field.type)),
+                returnType,
+                visibility = getter.visibility
+            )
+        }
     }
 }
