@@ -48,6 +48,13 @@ class ConeInapplicableCandidateError(
     override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidate.symbol)}"
 }
 
+class ConeArgumentTypeMismatchCandidateError(
+    val expectedType: ConeKotlinType, val actualType: ConeKotlinType
+) : ConeDiagnostic() {
+    override val reason: String
+        get() = "Type mismatch. Expected: $expectedType, Actual: $actualType"
+}
+
 class ConeAmbiguityError(val name: Name, val applicability: CandidateApplicability, val candidates: Collection<AbstractFirBasedSymbol<*>>) : ConeDiagnostic() {
     override val reason: String get() = "Ambiguity: $name, ${candidates.map { describeSymbol(it) }}"
 }

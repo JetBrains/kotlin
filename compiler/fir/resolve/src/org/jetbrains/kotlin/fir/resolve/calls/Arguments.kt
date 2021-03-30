@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -217,6 +219,7 @@ fun Candidate.resolvePlainExpressionArgument(
     isDispatch: Boolean,
     useNullableArgumentType: Boolean = false
 ) {
+
     if (expectedType == null) return
     val argumentType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
     resolvePlainArgumentType(
@@ -343,24 +346,32 @@ private fun checkApplicabilityForArgumentType(
         unstableType: ConeKotlinType?,
         actualExpectedType: ConeKotlinType,
         position: ConstraintPosition
-    ): ResolutionDiagnostic? {
+    ): ResolutionDiagnostic {
         if (unstableType != null) {
             if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, actualExpectedType, position)) {
                 return UnstableSmartCast.ResolutionError(argument, unstableType)
             }
         }
-        if (argumentType.isMarkedNullable) {
-            if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, actualExpectedType, position)) return null
-            if (csBuilder.addSubtypeConstraintIfCompatible(
-                    argumentType.withNullability(ConeNullability.NOT_NULL),
-                    actualExpectedType,
-                    position
-                )
-            ) return ArgumentTypeMismatch(actualExpectedType, argumentType, argument)
+
+        fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType {
+            if (type is ConeTypeVariableType) {
+                val originalTypeParameter =
+                    (type.lookupTag as? ConeTypeVariableTypeConstructor)?.originalTypeParameter as? ConeTypeParameterLookupTag
+
+                if (originalTypeParameter != null)
+                    return ConeTypeParameterTypeImpl(originalTypeParameter, type.isNullable, type.attributes)
+            } else if (type is ConeIntegerLiteralType) {
+                return type.possibleTypes.firstOrNull() ?: type
+            }
+
+            return type
         }
 
-        csBuilder.addSubtypeConstraint(argumentType, actualExpectedType, position)
-        return null
+        return ArgumentTypeMismatch(
+            tryGetConeTypeThatCompatibleWithKtType(actualExpectedType),
+            tryGetConeTypeThatCompatibleWithKtType(argumentType),
+            argument
+        )
     }
 
 

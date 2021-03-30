@@ -137,6 +137,11 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source,
                 rootCause.forbiddenNamedArgumentsTarget
             )
+            is ArgumentTypeMismatch -> FirErrors.ARGUMENT_TYPE_MISMATCH.on(
+                rootCause.argument.source ?: source,
+                rootCause.expectedType,
+                rootCause.actualType
+            )
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.on(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.on(rootCause.argument.source)
             is TooManyArguments -> FirErrors.TOO_MANY_ARGUMENTS.on(rootCause.argument.source ?: source, rootCause.function)
