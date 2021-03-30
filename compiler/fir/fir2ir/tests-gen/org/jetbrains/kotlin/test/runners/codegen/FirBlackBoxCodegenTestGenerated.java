@@ -8660,6 +8660,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("nonLocalReturnInTryFinally.kt")
+            public void testNonLocalReturnInTryFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/nonLocalReturnInTryFinally.kt");
+            }
+
+            @Test
             @TestMetadata("splitTry.kt")
             public void testSplitTry() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTry.kt");
