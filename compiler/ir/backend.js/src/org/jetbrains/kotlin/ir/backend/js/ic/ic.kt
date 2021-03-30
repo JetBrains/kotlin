@@ -41,6 +41,8 @@ fun prepareIcCaches(
     val stdlibResolved = findStdlib(allDependencies)
     val stdlibKlib = stdlibResolved.getFullList().single()
 
+    icCache.clear()
+
     icCache.getOrPut(stdlibKlib.libraryName) {
         val mainModule = MainModule.Klib(stdlibKlib)
 
@@ -115,7 +117,7 @@ fun loadIrForIc(
 //    }
 
 
-    if (true) {
+    if (false) {
 
         println("==== Dumping ====")
 

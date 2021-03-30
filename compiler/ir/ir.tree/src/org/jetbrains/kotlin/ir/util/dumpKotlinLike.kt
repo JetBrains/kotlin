@@ -612,7 +612,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         try {
             if (printTypeParametersAndExtensionReceiver) printTypeParametersWithNoIndent(postfix = " ")
         } catch (t: Throwable) {
-
+            p.printWithNoIndent("<unbound receiver>")
         }
 
         if (printTypeParametersAndExtensionReceiver) {
@@ -628,7 +628,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 p.printWithNoIndent(": ")
                 returnType.printTypeWithNoIndent()
             }
-            printWhereClauseIfNeededWithNoIndent()
+            try {
+                printWhereClauseIfNeededWithNoIndent()
+            } catch (t: Throwable) {
+                p.printWithNoIndent("<unbound where>")
+            }
             p.printWithNoIndent(" ")
 
             body?.accept(this@KotlinLikeDumper, null)

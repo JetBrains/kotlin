@@ -206,7 +206,7 @@ fun storeOrder(file: IrFile, idSigToInt: (IrSymbol) -> Int): SerializedOrder {
                 // First element is the container signature
                 val list = mutableListOf(declaration.idSigIndex())
                 declaration.declarations.forEach {
-                    list += it.idSigIndex()
+                    if (!it.isFakeOverride) list += it.idSigIndex()
                 }
 
                 containerDeclarationSignatures += IrMemoryIntArrayWriter(list).writeIntoMemory()

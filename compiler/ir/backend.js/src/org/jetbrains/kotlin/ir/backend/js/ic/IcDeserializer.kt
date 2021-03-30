@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
@@ -219,7 +220,9 @@ class IcDeserializer(
                 1
             }
 
-            icFileDeserializer.injectCarriers(declaration, signature)
+            if (!declaration.isFakeOverride) {
+                icFileDeserializer.injectCarriers(declaration, signature)
+            }
 
 //            println("  mappings:")
 
@@ -291,7 +294,7 @@ class IcDeserializer(
                             }
                         }
 
-                        irClass.declarations.clear()
+                        irClass.declarations.removeIf { !it.isFakeOverride }
 
                         for (j in 1 until indices.size) {
                             val idSig = icDeserializer.deserializeIdSignature(indices[j])
