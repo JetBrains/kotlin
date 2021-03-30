@@ -435,12 +435,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
         } ?: owner.superTypes.first()
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
-        // Code in inlineClassesUtils.kt loads the property with the same name from the scope of the substituted type and takes its type.
-        // This code below should have the same effect.
-        val irClass = (this as? IrType)?.classOrNull?.owner?.takeIf { it.isInline }
-        return irClass?.primaryConstructor?.valueParameters?.singleOrNull()?.type
-    }
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
+        (this as IrType).classOrNull?.owner?.inlineClassRepresentation?.underlyingType
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? =
         getUnsubstitutedUnderlyingType()?.let { type ->

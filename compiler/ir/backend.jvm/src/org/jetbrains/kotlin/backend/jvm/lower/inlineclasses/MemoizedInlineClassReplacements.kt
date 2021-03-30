@@ -131,7 +131,7 @@ class MemoizedInlineClassReplacements(
                 copyTypeParametersFrom(irClass)
                 addValueParameter {
                     name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
-                    type = InlineClassAbi.getUnderlyingType(irClass)
+                    type = irClass.inlineClassRepresentation!!.underlyingType
                 }
             }
         }
@@ -146,7 +146,7 @@ class MemoizedInlineClassReplacements(
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
-                returnType = InlineClassAbi.getUnderlyingType(irClass)
+                returnType = irClass.inlineClassRepresentation!!.underlyingType
             }.apply {
                 parent = irClass
                 createDispatchReceiverParameter()

@@ -247,9 +247,6 @@ class JvmSymbols(
     private val resultClassStub: IrClassSymbol =
         createClass(StandardNames.RESULT_FQ_NAME, classIsInline = true) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
-            klass.addConstructor { isPrimary = true }.apply {
-                addValueParameter("value", irBuiltIns.anyNType)
-            }
             klass.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("value"), irBuiltIns.anyNType as IrSimpleType)
         }
 

@@ -615,7 +615,8 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
         TODO("not implemented")
     }
 
-    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = TODO("not implemented")
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? =
+        owner.inlineClassRepresentation?.mapUnderlyingType { it.toIrBasedKotlinType() as SimpleType }
 
     override fun getOriginal() = this
 

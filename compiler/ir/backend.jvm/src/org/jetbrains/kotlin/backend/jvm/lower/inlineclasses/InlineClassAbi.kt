@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.lower.STUB_FOR_INLINING
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
@@ -40,26 +39,16 @@ object InlineClassAbi {
      */
     internal fun unboxType(type: IrType): IrType? {
         val klass = type.classOrNull?.owner ?: return null
-        if (!klass.isInline) return null
+        val representation = klass.inlineClassRepresentation ?: return null
 
         // TODO: Apply type substitutions
-        val underlyingType = getUnderlyingType(klass).unboxInlineClass()
+        val underlyingType = representation.underlyingType.unboxInlineClass()
         if (!type.isNullable())
             return underlyingType
         if (underlyingType.isNullable() || underlyingType.isPrimitiveType())
             return null
         return underlyingType.makeNullable()
     }
-
-    /**
-     * Get the underlying type of an inline class based on the single argument to its
-     * primary constructor. This is what the current jvm backend does.
-     *
-     * Looking for a backing field does not work for unsigned types, which don't
-     * contain a field.
-     */
-    fun getUnderlyingType(irClass: IrClass): IrType =
-        irClass.singlePrimaryConstructorParameter.type
 
     /**
      * Returns a mangled name for a function taking inline class arguments
@@ -157,20 +146,9 @@ internal val IrFunction.hasMangledParameters: Boolean
 internal val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
 
-private val IrClass.singlePrimaryConstructorParameter: IrValueParameter
-    get() {
-        require(isInline) { "Not an inline class: ${render()} "}
-        val primaryConstructor = primaryConstructor ?: error("Inline class has no primary constructor: ${render()}")
-        return primaryConstructor.valueParameters.singleOrNull()
-            ?: error("Inline class primary constructor should have one parameter: ${primaryConstructor.render()}")
-    }
-
 internal val IrClass.inlineClassFieldName: Name
-    get() = singlePrimaryConstructorParameter.name
+    get() = (inlineClassRepresentation ?: error("Not an inline class: ${render()}")).underlyingPropertyName
 
 val IrFunction.isInlineClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isInline == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
-
-val IrFunction.isPrimaryInlineClassConstructor: Boolean
-    get() = this is IrConstructor && isPrimary && constructedClass.isInline

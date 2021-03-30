@@ -112,7 +112,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     }
 
     private fun transformFunctionFlat(function: IrFunction): List<IrDeclaration>? {
-        if (function.isPrimaryInlineClassConstructor)
+        if (function is IrConstructor && function.isPrimary && function.constructedClass.isInline)
             return null
 
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)

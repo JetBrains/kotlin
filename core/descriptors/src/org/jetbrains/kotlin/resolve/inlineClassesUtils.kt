@@ -7,37 +7,24 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
 
-private fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
-    if (!isInlineClass()) return null
-    return unsubstitutedPrimaryConstructor?.valueParameters?.singleOrNull()
-}
-
 // FIXME: DeserializedClassDescriptor in reflection do not have @JvmInline annotation, that we
 // FIXME: would like to check as well.
-fun DeclarationDescriptor.isInlineClass() = this is ClassDescriptor && (isInline || isValue)
+fun DeclarationDescriptor.isInlineClass(): Boolean = this is ClassDescriptor && (isInline || isValue)
 
-private fun KotlinType.unsubstitutedUnderlyingParameter(): ValueParameterDescriptor? {
-    return constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.underlyingRepresentation()
-}
-
-fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? = unsubstitutedUnderlyingParameter()?.type
+fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
+    constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.inlineClassRepresentation?.underlyingType
 
 fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?.isInlineClass() ?: false
 
-fun KotlinType.substitutedUnderlyingType(): KotlinType? {
-    val parameter = unsubstitutedUnderlyingParameter() ?: return null
-    return TypeSubstitutor.create(this).substitute(parameter.type, Variance.INVARIANT)
-}
+fun KotlinType.substitutedUnderlyingType(): KotlinType? =
+    unsubstitutedUnderlyingType()?.let { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
 
-fun KotlinType.isRecursiveInlineClassType() =
+fun KotlinType.isRecursiveInlineClassType(): Boolean =
     isRecursiveInlineClassTypeInner(hashSetOf())
 
 private fun KotlinType.isRecursiveInlineClassTypeInner(visited: HashSet<ClassifierDescriptor>): Boolean {
