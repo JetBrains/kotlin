@@ -326,8 +326,7 @@ task run_external () {
 
     rootProject.files(
             'compiler/testData/codegen/box',
-            'compiler/codegen/boxInline',
-            'compiler/compileKotlinAgainstKotlin'
+            'compiler/testData/codegen/boxInline'
     ).asFileTree.visit { file ->
         if (!file.isDirectory() || !file.file.list().any{ it.endsWith(".kt")})
             return
