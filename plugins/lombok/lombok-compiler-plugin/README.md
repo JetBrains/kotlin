@@ -21,7 +21,7 @@ Features support:
    - [ ] lombok.noArgsConstructor.extraPrivate
    - [ ] lombok.copyableAnnotations
  - [ ] Copy annotations
- - [ ] Strip defined prefixes - in config and @Accessors
+ - [~] Strip defined prefixes - in config and @Accessors
  - [ ] Skip generation with AccessLevel.NONE
  - [x] Strip 'is' prefix for boolean fields
 

@@ -37,20 +37,21 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
         globalAccessors: Accessors
     ): SimpleFunctionDescriptor? {
         val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
-        val propertyName = field.toPropertyName(accessors)
-        val functionName =
-            if (accessors.fluent) {
-                propertyName
-            } else {
-                val prefix = if (field.type.isPrimitiveBoolean() && !accessors.noIsPrefix) AccessorNames.IS else AccessorNames.GET
-                prefix + propertyName.capitalize()
-            }
-        return classDescriptor.createFunction(
-            Name.identifier(functionName),
-            emptyList(),
-            field.returnType,
-            visibility = getter.visibility
-        )
+        return field.toPropertyName(accessors)?.let { propertyName ->
+            val functionName =
+                if (accessors.fluent) {
+                    propertyName
+                } else {
+                    val prefix = if (field.type.isPrimitiveBoolean() && !accessors.noIsPrefix) AccessorNames.IS else AccessorNames.GET
+                    prefix + propertyName.capitalize()
+                }
+            classDescriptor.createFunction(
+                Name.identifier(functionName),
+                emptyList(),
+                field.returnType,
+                visibility = getter.visibility
+            )
+        }
     }
 
 }

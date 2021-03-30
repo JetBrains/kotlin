@@ -14,14 +14,20 @@ object AccessorNames {
     const val SET = "set"
 }
 
-fun PropertyDescriptor.toPropertyName(config: Accessors): String {
+fun PropertyDescriptor.toPropertyName(config: Accessors): String? {
     val isPrimitiveBoolean = type.isPrimitiveBoolean()
-    val prefixes = if (isPrimitiveBoolean) config.prefix + AccessorNames.IS else config.prefix
-    return toPropertyName(name.identifier, prefixes)
+    return if (config.prefix.isEmpty()) {
+        val prefixes = if (isPrimitiveBoolean) listOf(AccessorNames.IS) else emptyList()
+        toPropertyName(name.identifier, prefixes)
+    } else {
+        val id = name.identifier
+        val name = toPropertyName(id, config.prefix)
+        name.takeIf { it.length != id.length}
+    }
 }
 
 fun toPropertyName(name: String, prefixesToStrip: List<String> = emptyList()): String =
-    name.stripPrefixes(prefixesToStrip)
+    name.stripPrefixes(prefixesToStrip).decapitalize()
 
 fun toPropertyNameCapitalized(name: String, prefixesToStrip: List<String> = emptyList()): String =
     name.stripPrefixes(prefixesToStrip).capitalize()
