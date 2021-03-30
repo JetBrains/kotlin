@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.ir.serialization
 import org.jetbrains.kotlin.backend.common.serialization.IrDeclarationDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.IrFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -17,11 +17,12 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
-
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoIrConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation as ProtoIrInlineClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoIrVariable
 
 internal class IrCarrierDeserializerImpl(
@@ -100,6 +101,10 @@ internal class IrCarrierDeserializerImpl(
 
     override fun deserializeModality(proto: Long): Modality {
         return ProtoEnumFlags.modality(IrFlags.MODALITY.get(proto.toInt()))
+    }
+
+    override fun deserializeInlineClassRepresentation(proto: ProtoIrInlineClassRepresentation): InlineClassRepresentation<IrSimpleType> {
+        return declarationDeserializer.deserializeInlineClassRepresentation(proto)
     }
 
     override fun deserializeIsExternalClass(proto: Long): Boolean {

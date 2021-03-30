@@ -29,9 +29,9 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
         ?.toSymbol(session) as? FirRegularClassSymbol
         ?: return null
     symbol.ensureResolved(FirResolvePhase.STATUS, session)
-    val firClass = symbol.fir
-    if (!firClass.status.isInline) return null
-    val constructor = firClass.declarations.singleOrNull { it is FirConstructor && it.isPrimary } as FirConstructor? ?: return null
-    val valueParameter = constructor.valueParameters.singleOrNull() ?: return null
-    return valueParameter.returnTypeRef.coneType
+    return symbol.fir.getInlineClassUnderlyingParameter()?.returnTypeRef?.coneType
 }
+
+// TODO: implement inlineClassRepresentation in FirRegularClass instead.
+fun FirRegularClass.getInlineClassUnderlyingParameter(): FirValueParameter? =
+    if (isInline) primaryConstructor?.valueParameters?.singleOrNull() else null

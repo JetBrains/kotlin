@@ -182,6 +182,22 @@ class FirElementSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
+        val representation = (klass as? FirRegularClass)?.getInlineClassUnderlyingParameter()
+        if (representation != null) {
+            builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.name)
+
+            val property = callableMembers.single {
+                it is FirProperty && it.receiverTypeRef == null && it.name == representation.name
+            }
+            if (!property.visibility.isPublicAPI) {
+                if (useTypeTable()) {
+                    builder.inlineClassUnderlyingTypeId = typeId(representation.returnTypeRef)
+                } else {
+                    builder.setInlineClassUnderlyingType(typeProto(representation.returnTypeRef))
+                }
+            }
+        }
+
         if (versionRequirementTable == null) error("Version requirements must be serialized for classes: ${klass.render()}")
 
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(klass))

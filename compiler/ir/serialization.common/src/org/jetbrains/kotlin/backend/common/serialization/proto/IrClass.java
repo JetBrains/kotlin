@@ -121,6 +121,19 @@ public final class IrClass extends
             input.popLimit(limit);
             break;
           }
+          case 58: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder subBuilder = null;
+            if (((bitField0_ & 0x00000008) == 0x00000008)) {
+              subBuilder = inlineClassRepresentation_.toBuilder();
+            }
+            inlineClassRepresentation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(inlineClassRepresentation_);
+              inlineClassRepresentation_ = subBuilder.buildPartial();
+            }
+            bitField0_ |= 0x00000008;
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -302,6 +315,21 @@ public final class IrClass extends
   }
   private int superTypeMemoizedSerializedSize = -1;
 
+  public static final int INLINE_CLASS_REPRESENTATION_FIELD_NUMBER = 7;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation_;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+   */
+  public boolean hasInlineClassRepresentation() {
+    return ((bitField0_ & 0x00000008) == 0x00000008);
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation() {
+    return inlineClassRepresentation_;
+  }
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
@@ -309,6 +337,7 @@ public final class IrClass extends
     typeParameter_ = java.util.Collections.emptyList();
     declaration_ = java.util.Collections.emptyList();
     superType_ = java.util.Collections.emptyList();
+    inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -346,6 +375,12 @@ public final class IrClass extends
         return false;
       }
     }
+    if (hasInlineClassRepresentation()) {
+      if (!getInlineClassRepresentation().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -374,6 +409,9 @@ public final class IrClass extends
     }
     for (int i = 0; i < superType_.size(); i++) {
       output.writeInt32NoTag(superType_.get(i));
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      output.writeMessage(7, inlineClassRepresentation_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -417,6 +455,10 @@ public final class IrClass extends
             .computeInt32SizeNoTag(dataSize);
       }
       superTypeMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(7, inlineClassRepresentation_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -524,6 +566,8 @@ public final class IrClass extends
       bitField0_ = (bitField0_ & ~0x00000010);
       superType_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000020);
+      inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
+      bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
 
@@ -574,6 +618,10 @@ public final class IrClass extends
         bitField0_ = (bitField0_ & ~0x00000020);
       }
       result.superType_ = superType_;
+      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+        to_bitField0_ |= 0x00000008;
+      }
+      result.inlineClassRepresentation_ = inlineClassRepresentation_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -619,6 +667,9 @@ public final class IrClass extends
         }
         
       }
+      if (other.hasInlineClassRepresentation()) {
+        mergeInlineClassRepresentation(other.getInlineClassRepresentation());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -651,6 +702,12 @@ public final class IrClass extends
       }
       for (int i = 0; i < getDeclarationCount(); i++) {
         if (!getDeclaration(i).isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasInlineClassRepresentation()) {
+        if (!getInlineClassRepresentation().isInitialized()) {
           
           return false;
         }
@@ -1142,6 +1199,66 @@ public final class IrClass extends
       superType_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000020);
       
+      return this;
+    }
+
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    public boolean hasInlineClassRepresentation() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation() {
+      return inlineClassRepresentation_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    public Builder setInlineClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      inlineClassRepresentation_ = value;
+
+      bitField0_ |= 0x00000040;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    public Builder setInlineClassRepresentation(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder builderForValue) {
+      inlineClassRepresentation_ = builderForValue.build();
+
+      bitField0_ |= 0x00000040;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    public Builder mergeInlineClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation value) {
+      if (((bitField0_ & 0x00000040) == 0x00000040) &&
+          inlineClassRepresentation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance()) {
+        inlineClassRepresentation_ =
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.newBuilder(inlineClassRepresentation_).mergeFrom(value).buildPartial();
+      } else {
+        inlineClassRepresentation_ = value;
+      }
+
+      bitField0_ |= 0x00000040;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    public Builder clearInlineClassRepresentation() {
+      inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
+
+      bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
 

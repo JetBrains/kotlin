@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
@@ -96,6 +98,12 @@ class IrLazyClass(
             descriptor.typeConstructor.supertypes.mapNotNullTo(arrayListOf()) {
                 it.toIrType()
             }
+        }
+    }
+
+    override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>? by lazyVar(stubGenerator.lock) {
+        descriptor.inlineClassRepresentation?.mapUnderlyingType {
+            it.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: ${render()}")
         }
     }
 

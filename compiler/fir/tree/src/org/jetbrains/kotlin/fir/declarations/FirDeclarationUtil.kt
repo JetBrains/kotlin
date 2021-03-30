@@ -155,7 +155,7 @@ val FirClass<*>.constructorsSortedByDelegation: List<FirConstructor>
     get() = constructors.sortedWith(ConstructorDelegationComparator)
 
 val FirClass<*>.primaryConstructor: FirConstructor?
-    get() = constructors.firstOrNull()?.takeIf { it.isPrimary }
+    get() = constructors.find(FirConstructor::isPrimary)
 
 fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)

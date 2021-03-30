@@ -25,7 +25,8 @@ message PirClassCarrier {
     optional int64 thisReceiver = 5;
     repeated int64 typeParameters = 6;
     repeated int32 superTypes = 7;
-    optional int64 flags = 8 [default = 0];
+    optional IrInlineClassRepresentation inlineClassRepresentation = 8;
+    optional int64 flags = 9 [default = 0];
 }
 
 message PirConstructorCarrier {

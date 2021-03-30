@@ -84,11 +84,20 @@ public interface PirClassCarrierOrBuilder extends
   int getSuperTypes(int index);
 
   /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
+   */
+  boolean hasInlineClassRepresentation();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation();
+
+  /**
+   * <code>optional int64 flags = 9 [default = 0];</code>
    */
   boolean hasFlags();
   /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
+   * <code>optional int64 flags = 9 [default = 0];</code>
    */
   long getFlags();
 }

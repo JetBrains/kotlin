@@ -10,6 +10,7 @@ import java.util.Collections
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -154,6 +156,17 @@ internal class PersistentIrClass(
             if (modality !== v) {
                 setCarrier()
                 modalityField = v
+            }
+        }
+
+    override var inlineClassRepresentationField: InlineClassRepresentation<IrSimpleType>? = null
+
+    override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
+        get() = getCarrier().inlineClassRepresentationField
+        set(v) {
+            if (inlineClassRepresentation !== v) {
+                setCarrier()
+                inlineClassRepresentationField = v
             }
         }
 

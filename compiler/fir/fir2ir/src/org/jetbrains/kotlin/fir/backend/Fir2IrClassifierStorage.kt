@@ -127,6 +127,10 @@ class Fir2IrClassifierStorage(
         superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
     }
 
+    private fun IrClass.declareInlineClassRepresentation(klass: FirRegularClass) {
+        inlineClassRepresentation = computeInlineClassRepresentation(klass)
+    }
+
     private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass<*>): IrClass {
         declareTypeParameters(klass)
         declareSupertypes(klass)
@@ -175,6 +179,7 @@ class Fir2IrClassifierStorage(
         irClass.declareTypeParameters(regularClass)
         irClass.setThisReceiver(regularClass.typeParameters)
         irClass.declareSupertypes(regularClass)
+        irClass.declareInlineClassRepresentation(regularClass)
         return irClass
     }
 

@@ -11,4 +11,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 class InlineClassRepresentation<Type : SimpleTypeMarker>(
     val underlyingPropertyName: Name,
     val underlyingType: Type,
-)
+) {
+    inline fun <Other : SimpleTypeMarker> mapUnderlyingType(transform: (Type) -> Other): InlineClassRepresentation<Other> =
+        InlineClassRepresentation(underlyingPropertyName, transform(underlyingType))
+}

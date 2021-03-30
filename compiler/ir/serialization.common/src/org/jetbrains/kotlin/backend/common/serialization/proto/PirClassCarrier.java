@@ -123,8 +123,21 @@ public final class PirClassCarrier extends
             input.popLimit(limit);
             break;
           }
-          case 64: {
+          case 66: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder subBuilder = null;
+            if (((bitField0_ & 0x00000010) == 0x00000010)) {
+              subBuilder = inlineClassRepresentation_.toBuilder();
+            }
+            inlineClassRepresentation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(inlineClassRepresentation_);
+              inlineClassRepresentation_ = subBuilder.buildPartial();
+            }
             bitField0_ |= 0x00000010;
+            break;
+          }
+          case 72: {
+            bitField0_ |= 0x00000020;
             flags_ = input.readInt64();
             break;
           }
@@ -310,16 +323,31 @@ public final class PirClassCarrier extends
     return superTypes_.get(index);
   }
 
-  public static final int FLAGS_FIELD_NUMBER = 8;
-  private long flags_;
+  public static final int INLINECLASSREPRESENTATION_FIELD_NUMBER = 8;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation_;
   /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
    */
-  public boolean hasFlags() {
+  public boolean hasInlineClassRepresentation() {
     return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation() {
+    return inlineClassRepresentation_;
+  }
+
+  public static final int FLAGS_FIELD_NUMBER = 9;
+  private long flags_;
+  /**
+   * <code>optional int64 flags = 9 [default = 0];</code>
+   */
+  public boolean hasFlags() {
+    return ((bitField0_ & 0x00000020) == 0x00000020);
+  }
+  /**
+   * <code>optional int64 flags = 9 [default = 0];</code>
    */
   public long getFlags() {
     return flags_;
@@ -333,6 +361,7 @@ public final class PirClassCarrier extends
     thisReceiver_ = 0L;
     typeParameters_ = java.util.Collections.emptyList();
     superTypes_ = java.util.Collections.emptyList();
+    inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
     flags_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
@@ -347,6 +376,12 @@ public final class PirClassCarrier extends
     }
     for (int i = 0; i < getAnnotationCount(); i++) {
       if (!getAnnotation(i).isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    if (hasInlineClassRepresentation()) {
+      if (!getInlineClassRepresentation().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -380,7 +415,10 @@ public final class PirClassCarrier extends
       output.writeInt32(7, superTypes_.get(i));
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt64(8, flags_);
+      output.writeMessage(8, inlineClassRepresentation_);
+    }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      output.writeInt64(9, flags_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -431,7 +469,11 @@ public final class PirClassCarrier extends
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(8, flags_);
+        .computeMessageSize(8, inlineClassRepresentation_);
+    }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(9, flags_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -541,8 +583,10 @@ public final class PirClassCarrier extends
       bitField0_ = (bitField0_ & ~0x00000020);
       superTypes_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000040);
-      flags_ = 0L;
+      inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000080);
+      flags_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000100);
       return this;
     }
 
@@ -600,6 +644,10 @@ public final class PirClassCarrier extends
       if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
         to_bitField0_ |= 0x00000010;
       }
+      result.inlineClassRepresentation_ = inlineClassRepresentation_;
+      if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+        to_bitField0_ |= 0x00000020;
+      }
       result.flags_ = flags_;
       result.bitField0_ = to_bitField0_;
       return result;
@@ -649,6 +697,9 @@ public final class PirClassCarrier extends
         }
         
       }
+      if (other.hasInlineClassRepresentation()) {
+        mergeInlineClassRepresentation(other.getInlineClassRepresentation());
+      }
       if (other.hasFlags()) {
         setFlags(other.getFlags());
       }
@@ -664,6 +715,12 @@ public final class PirClassCarrier extends
       }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasInlineClassRepresentation()) {
+        if (!getInlineClassRepresentation().isInitialized()) {
           
           return false;
         }
@@ -1075,33 +1132,93 @@ public final class PirClassCarrier extends
       return this;
     }
 
-    private long flags_ ;
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
     /**
-     * <code>optional int64 flags = 8 [default = 0];</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
      */
-    public boolean hasFlags() {
+    public boolean hasInlineClassRepresentation() {
       return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
-     * <code>optional int64 flags = 8 [default = 0];</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation() {
+      return inlineClassRepresentation_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
+     */
+    public Builder setInlineClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      inlineClassRepresentation_ = value;
+
+      bitField0_ |= 0x00000080;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
+     */
+    public Builder setInlineClassRepresentation(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder builderForValue) {
+      inlineClassRepresentation_ = builderForValue.build();
+
+      bitField0_ |= 0x00000080;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
+     */
+    public Builder mergeInlineClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation value) {
+      if (((bitField0_ & 0x00000080) == 0x00000080) &&
+          inlineClassRepresentation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance()) {
+        inlineClassRepresentation_ =
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.newBuilder(inlineClassRepresentation_).mergeFrom(value).buildPartial();
+      } else {
+        inlineClassRepresentation_ = value;
+      }
+
+      bitField0_ |= 0x00000080;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation = 8;</code>
+     */
+    public Builder clearInlineClassRepresentation() {
+      inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
+
+      bitField0_ = (bitField0_ & ~0x00000080);
+      return this;
+    }
+
+    private long flags_ ;
+    /**
+     * <code>optional int64 flags = 9 [default = 0];</code>
+     */
+    public boolean hasFlags() {
+      return ((bitField0_ & 0x00000100) == 0x00000100);
+    }
+    /**
+     * <code>optional int64 flags = 9 [default = 0];</code>
      */
     public long getFlags() {
       return flags_;
     }
     /**
-     * <code>optional int64 flags = 8 [default = 0];</code>
+     * <code>optional int64 flags = 9 [default = 0];</code>
      */
     public Builder setFlags(long value) {
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000100;
       flags_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 flags = 8 [default = 0];</code>
+     * <code>optional int64 flags = 9 [default = 0];</code>
      */
     public Builder clearFlags() {
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000100);
       flags_ = 0L;
       
       return this;

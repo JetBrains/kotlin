@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -497,3 +498,14 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
     conversionScope: Fir2IrConversionScope
 ): Pair<IrVariable, IrValueSymbol> =
     createTemporaryVariable(receiverExpression, conversionScope, "safe_receiver")
+
+// TODO: implement inlineClassRepresentation in FirRegularClass instead.
+fun Fir2IrComponents.computeInlineClassRepresentation(klass: FirRegularClass): InlineClassRepresentation<IrSimpleType>? {
+    if (!klass.isInline) return null
+    val parameter = klass.getInlineClassUnderlyingParameter() ?: error("Inline class has no underlying parameter: ${klass.render()}")
+    val underlyingType = parameter.returnTypeRef.toIrType(typeConverter)
+    return InlineClassRepresentation(
+        parameter.name,
+        underlyingType as? IrSimpleType ?: error("Inline class underlying type is not a simple type: ${klass.render()}")
+    )
+}

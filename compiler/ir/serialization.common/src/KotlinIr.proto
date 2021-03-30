@@ -507,6 +507,7 @@ message IrClass {
   repeated IrTypeParameter type_parameter = 4;
   repeated IrDeclaration declaration = 5;
   repeated int32 super_type = 6 [packed=true];
+  optional IrInlineClassRepresentation inline_class_representation = 7;
 }
 
 message IrTypeAlias {
@@ -588,6 +589,11 @@ message IrStatement {
     IrCatch catch = 6;
     IrSyntheticBody synthetic_body = 7;
   }
+}
+
+message IrInlineClassRepresentation {
+  required int32 underlying_property_name = 1;
+  required int32 underlying_property_type = 2;
 }
 
 message PirBodyCarrier {

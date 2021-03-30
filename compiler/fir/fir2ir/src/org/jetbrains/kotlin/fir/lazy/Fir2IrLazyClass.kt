@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.computeInlineClassRepresentation
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.isFakeOverride
@@ -116,6 +118,12 @@ class Fir2IrLazyClass(
         symbolTable.leaveScope(this)
         receiver
     }
+
+    override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
+        get() = computeInlineClassRepresentation(fir)
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     private val fakeOverridesByName = mutableMapOf<Name, Collection<IrDeclaration>>()
 

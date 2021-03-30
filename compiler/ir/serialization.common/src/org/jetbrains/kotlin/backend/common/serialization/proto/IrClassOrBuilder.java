@@ -74,4 +74,13 @@ public interface IrClassOrBuilder extends
    * <code>repeated int32 super_type = 6 [packed = true];</code>
    */
   int getSuperType(int index);
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+   */
+  boolean hasInlineClassRepresentation();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation();
 }

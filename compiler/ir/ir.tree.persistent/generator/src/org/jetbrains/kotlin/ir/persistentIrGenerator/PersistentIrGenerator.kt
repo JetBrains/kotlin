@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 import java.io.File
-import java.lang.IllegalStateException
-import java.lang.StringBuilder
 
 internal interface R {
     fun text(t: String): R
@@ -156,6 +156,11 @@ internal object PersistentIrGenerator {
 
     val visibilityProto = Proto(null, "visibility", +"Long", DescriptorVisibility)
     val modalityProto = Proto(null, "modality", +"Long", descriptorType("Modality"))
+    val inlineClassRepresentationProto = Proto(
+        "IrInlineClassRepresentation", "inlineClassRepresentation",
+        import("IrInlineClassRepresentation", protoPackage, "ProtoIrInlineClassRepresentation"),
+        descriptorType("InlineClassRepresentation") + "<" + import("IrSimpleType", "org.jetbrains.kotlin.ir.types") + ">"
+    )
 
     val isExternalClassProto = Proto(null, "isExternalClass", +"Long", +"Boolean")
     val isExternalFieldProto = Proto(null, "isExternalField", +"Long", +"Boolean")
@@ -180,6 +185,7 @@ internal object PersistentIrGenerator {
         variableProto,
         visibilityProto,
         modalityProto,
+        inlineClassRepresentationProto,
         isExternalClassProto,
         isExternalFieldProto,
         isExternalFunctionProto,

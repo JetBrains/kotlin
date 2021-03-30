@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -63,6 +64,8 @@ class IrClassImpl(
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
     override var superTypes: List<IrType> = emptyList()
+
+    override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>? = null
 
     override var metadata: MetadataSource? = null
 
