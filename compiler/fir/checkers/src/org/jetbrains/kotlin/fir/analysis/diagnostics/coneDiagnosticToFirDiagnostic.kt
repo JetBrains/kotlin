@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInfix
 import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.calls.InapplicableWrongReceiver
-import org.jetbrains.kotlin.fir.resolve.calls.NamedArgumentNotAllowed
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
-import org.jetbrains.kotlin.fir.resolve.calls.VarargArgumentOutsideParentheses
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -119,6 +116,11 @@ private fun mapInapplicableCandidateError(
             is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.on(
                 rootCause.argument.source ?: source,
                 rootCause.forbiddenNamedArgumentsTarget
+            )
+            is ArgumentTypeMismatch -> FirErrors.ARGUMENT_TYPE_MISMATCH.on(
+                rootCause.argument.source ?: source,
+                rootCause.expectedType,
+                rootCause.actualType
             )
             else -> null
         }

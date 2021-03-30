@@ -197,6 +197,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<AbstractFirBasedSymbol<*>>("candidate")
         }
 
+        val ARGUMENT_TYPE_MISMATCH by error<FirSourceElement, PsiElement> {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+        }
+
         val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")
         }

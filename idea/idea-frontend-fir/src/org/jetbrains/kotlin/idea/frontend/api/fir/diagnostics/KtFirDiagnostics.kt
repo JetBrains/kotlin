@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 
 /*
- * This file was generated automatically
+ * This file was generated automaticallyabstract class ArgumentTypeMismatch : KtFirDiagnos
  * DO NOT MODIFY IT MANUALLY
  */
 
@@ -465,6 +465,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class InapplicableCandidate : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = InapplicableCandidate::class
         abstract val candidate: KtSymbol
+    }
+
+    abstract class ArgumentTypeMismatch : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ArgumentTypeMismatch::class
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
     }
 
     abstract class InapplicableLateinitModifier : KtFirDiagnostic<KtModifierListOwner>() {
