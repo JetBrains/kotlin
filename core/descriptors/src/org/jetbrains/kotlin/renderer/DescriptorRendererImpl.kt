@@ -323,7 +323,7 @@ internal class DescriptorRendererImpl(
                 insert(lengthBefore, '(')
             } else {
                 if (hasAnnotations) {
-                    assert(last() == ' ')
+                    assert(last().isWhitespace())
                     if (get(lastIndex - 1) != ')') {
                         // last annotation rendered without parenthesis - need to add them otherwise parsing will be incorrect
                         insert(lastIndex, "()")
