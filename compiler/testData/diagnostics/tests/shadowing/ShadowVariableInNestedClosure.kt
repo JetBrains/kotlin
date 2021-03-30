@@ -1,5 +1,6 @@
+// !DIAGNOSTICS: +UNUSED_LAMBDA_EXPRESSION +UNUSED_VARIABLE
 fun f(): Int {
     var i = 17
-    { var <!NAME_SHADOWING!>i<!> = 18 }
+    <!UNUSED_LAMBDA_EXPRESSION!>{ var <!NAME_SHADOWING, UNUSED_VARIABLE!>i<!> = 18 }<!>
     return i
 }
