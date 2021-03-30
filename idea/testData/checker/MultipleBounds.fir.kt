@@ -30,8 +30,8 @@ class Test1<T>()
 }
 
 fun test() {
-  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol@4c663d20'">B</error>>()
-  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol@4c663d20'">A</error>>()
+  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'it(Jet87/A & Jet87/B)'">B</error>>()
+  Test1<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'it(Jet87/A & Jet87/B)'">A</error>>()
   Test1<C>()
 }
 

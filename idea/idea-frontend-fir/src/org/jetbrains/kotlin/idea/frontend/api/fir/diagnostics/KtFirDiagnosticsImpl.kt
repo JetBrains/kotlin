@@ -883,8 +883,7 @@ internal class ProjectionOnNonClassTypeArgumentImpl(
 }
 
 internal class UpperBoundViolatedImpl(
-    override val typeParameter: KtTypeParameterSymbol,
-    override val violatedType: KtType,
+    override val upperBound: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UpperBoundViolated(), KtAbstractFirDiagnostic<PsiElement> {
