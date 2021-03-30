@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -1518,7 +1519,7 @@ internal class UninitializedVariableImpl(
 }
 
 internal class ValReassignmentImpl(
-    override val variable: KtVariableSymbol,
+    override val variable: KtVariableLikeSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ValReassignment(), KtAbstractFirDiagnostic<KtExpression> {
@@ -1526,7 +1527,7 @@ internal class ValReassignmentImpl(
 }
 
 internal class ValReassignmentViaBackingFieldImpl(
-    override val variable: KtVariableSymbol,
+    override val property: KtVariableSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ValReassignmentViaBackingField(), KtAbstractFirDiagnostic<KtExpression> {
@@ -1534,7 +1535,7 @@ internal class ValReassignmentViaBackingFieldImpl(
 }
 
 internal class ValReassignmentViaBackingFieldErrorImpl(
-    override val variable: KtVariableSymbol,
+    override val property: KtVariableSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ValReassignmentViaBackingFieldError(), KtAbstractFirDiagnostic<KtExpression> {

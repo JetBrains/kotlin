@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.render
 
@@ -43,7 +40,7 @@ object FirDiagnosticRenderers {
         element.toString()
     }
 
-    val PROPERTY_NAME = Renderer { symbol: FirPropertySymbol ->
+    val VARIABLE_NAME = Renderer { symbol: FirVariableSymbol<*> ->
         symbol.fir.name.asString()
     }
 

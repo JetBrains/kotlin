@@ -6,6 +6,6 @@ FILE: fieldPlusAssign.kt
         }
     public final val y: R|kotlin/Int| = Int(1)
         public get(): R|kotlin/Int| {
-            <Variable expected># = F|/y|.R|kotlin/Int.plus|(Int(1))
+            <Re-assigning a val variable># = F|/y|.R|kotlin/Int.plus|(Int(1))
             ^ Int(1)
         }

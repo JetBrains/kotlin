@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -57,6 +58,10 @@ class ConeOperatorAmbiguityError(val candidates: Collection<AbstractFirBasedSymb
 
 class ConeVariableExpectedError : ConeDiagnostic() {
     override val reason: String get() = "Variable expected"
+}
+
+class ConeValReassignmentError(val variable: FirVariableSymbol<*>) : ConeDiagnostic() {
+    override val reason: String get() = "Re-assigning a val variable"
 }
 
 class ConeTypeMismatchError(val expectedType: ConeKotlinType, val actualType: ConeKotlinType) : ConeDiagnostic() {

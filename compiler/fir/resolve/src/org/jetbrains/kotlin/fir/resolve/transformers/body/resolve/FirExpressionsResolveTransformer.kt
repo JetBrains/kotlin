@@ -385,7 +385,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val operatorIsError = operatorCallReference?.isError ?: true
 
         val lhsReference = leftArgument.toResolvedCallableReference()
-        val lhsVariable = (lhsReference?.resolvedSymbol as? FirVariableSymbol<*>)?.fir
+        val lhsSymbol = lhsReference?.resolvedSymbol as? FirVariableSymbol<*>
+        val lhsVariable = lhsSymbol?.fir
         val lhsIsVar = lhsVariable?.isVar == true
         return when {
             operatorIsError || (!lhsIsVar && !assignIsError) -> {
@@ -409,7 +410,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                                         leftArgument.calleeReference.source
                                     else -> leftArgument.source
                                 }
-                                diagnostic = ConeVariableExpectedError()
+                                diagnostic = if (lhsSymbol == null) ConeVariableExpectedError() else ConeValReassignmentError(lhsSymbol)
                             }
                         }
                         (leftArgument as? FirQualifiedAccess)?.let {

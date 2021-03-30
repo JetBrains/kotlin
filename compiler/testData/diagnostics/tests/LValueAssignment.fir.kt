@@ -103,7 +103,7 @@ class Test() {
         a += 34
         (l@ a) += 34
 
-        <!VARIABLE_EXPECTED!>b<!> += 34
+        <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
         (l@ a)++
@@ -113,9 +113,9 @@ class Test() {
     fun testVariables1() {
         val b: Int = 34
 
-        (l@ <!VARIABLE_EXPECTED!>b<!>) += 34
+        (l@ <!VAL_REASSIGNMENT!>b<!>) += 34
         //repeat for b
-        (<!VARIABLE_EXPECTED!>b<!>) += 3
+        (<!VAL_REASSIGNMENT!>b<!>) += 3
     }
 
     fun testArrays(a: Array<Int>, ab: Ab) {

@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULLABLE_STRING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.PROPERTY_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TO_STRING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS
@@ -646,10 +646,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             )
 
             // Control flow diagnostics
-            map.put(UNINITIALIZED_VARIABLE, "{0} must be initialized before access", PROPERTY_NAME)
-            map.put(VAL_REASSIGNMENT, "Val cannot be reassigned", PROPERTY_NAME)
-            map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD, "Reassignment of read-only property via backing field is deprecated", PROPERTY_NAME)
-            map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, "Reassignment of read-only property via backing field", PROPERTY_NAME)
+            map.put(UNINITIALIZED_VARIABLE, "{0} must be initialized before access", VARIABLE_NAME)
+            map.put(VAL_REASSIGNMENT, "Val cannot be reassigned", VARIABLE_NAME)
+            map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD, "Reassignment of read-only property via backing field is deprecated", VARIABLE_NAME)
+            map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, "Reassignment of read-only property via backing field", VARIABLE_NAME)
             map.put(
                 WRONG_INVOCATION_KIND,
                 "{2} wrong invocation kind: given {3} case, but {4} case is possible",
