@@ -69,7 +69,7 @@ internal class KtFirNamedClassOrObjectSymbol(
     }
 
     override val typeParameters by firRef.withFirAndCache { fir ->
-        fir.typeParameters.map { typeParameter ->
+        fir.typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
             builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol.fir)
         }
     }
