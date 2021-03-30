@@ -1,5 +1,5 @@
 // !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER +UNUSED_DESTRUCTURED_PARAMETER_ENTRY
 data class A(val x: Int, val y: String)
 data class B(val u: Double, val w: Short)
 
@@ -7,36 +7,36 @@ fun foo(block: (A) -> Unit) { }
 fun foobar(block: (A, B) -> Unit) { }
 
 fun bar() {
-    foo { (a, b) ->
+    foo { (a, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>) ->
         a checkType { _<Int>() }
     }
 
-    foo { (a, b) ->
+    foo { (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>, b) ->
         b checkType { _<String>() }
     }
 
-    foo { (a: Int, b: String) ->
+    foo { (a: Int, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>: String) ->
         a checkType { _<Int>() }
     }
 
-    foo { (a: Int, b: String) ->
+    foo { (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>: Int, b: String) ->
         b checkType { _<String>() }
     }
 
-    foobar { (a, b), c ->
+    foobar { (a, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>), c ->
         a checkType { _<Int>() }
     }
 
-    foobar { a, (b, c) ->
+    foobar { a, (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>, c) ->
         c checkType { _<Short>() }
     }
 
-    foobar { (a, b), (c, d) ->
+    foobar { (a, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>), (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>c<!>, d) ->
         a checkType { _<Int>() }
         d checkType { _<Short>() }
     }
 
-    foobar { (a, b), (c, d) ->
+    foobar { (<!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>, b), (c, <!UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>d<!>) ->
         b checkType { _<String>() }
         c checkType { _<Double>() }
     }
