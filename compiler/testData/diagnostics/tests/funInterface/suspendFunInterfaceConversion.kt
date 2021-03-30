@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
 

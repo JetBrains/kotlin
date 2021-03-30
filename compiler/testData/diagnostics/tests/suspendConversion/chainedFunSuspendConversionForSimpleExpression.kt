@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +SuspendConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
