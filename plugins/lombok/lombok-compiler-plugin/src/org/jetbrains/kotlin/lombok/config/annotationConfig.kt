@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.lombok.utils.LombokNames
-import org.jetbrains.kotlin.lombok.utils.getBooleanArgument
-import org.jetbrains.kotlin.lombok.utils.getNonBlankStringArgument
-import org.jetbrains.kotlin.lombok.utils.getVisibility
+import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.FqName
 
 /*
@@ -56,7 +53,12 @@ abstract class AnnotationAndConfigCompanion<T> {
 
 }
 
-data class Accessors(val fluent: Boolean = false, val chain: Boolean = false) {
+data class Accessors(
+    val fluent: Boolean = false,
+    val chain: Boolean = false,
+    val noIsPrefix: Boolean = false,
+    val prefix: List<String> = emptyList()
+) {
     companion object : AnnotationAndConfigCompanion<Accessors>() {
 
         override val annotationName: FqName = LombokNames.ACCESSORS
@@ -70,7 +72,11 @@ data class Accessors(val fluent: Boolean = false, val chain: Boolean = false) {
                 annotation?.getBooleanArgument("chain")
                     ?: config.getBoolean("lombok.accessors.chain")
                     ?: fluent
-            return Accessors(fluent, chain)
+            val noIsPrefix = config.getBoolean("lombok.getter.noIsPrefix") ?: false
+            val prefix = annotation?.getStringArrayArgument("prefix")
+                ?: emptyList()
+
+            return Accessors(fluent, chain, noIsPrefix, prefix)
         }
     }
 }

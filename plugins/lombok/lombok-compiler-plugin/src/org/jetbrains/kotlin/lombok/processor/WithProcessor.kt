@@ -33,7 +33,7 @@ class WithProcessor(private val config: LombokConfig) : Processor {
         with: With
     ): SimpleFunctionDescriptor? {
 
-        val functionName = "with" + toPreparedBase(field.name.identifier)
+        val functionName = "with" + toPropertyNameCapitalized(field.name.identifier)
 
         return classDescriptor.createFunction(
             Name.identifier(functionName),

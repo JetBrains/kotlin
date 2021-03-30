@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 data class ValueParameter(val name: Name, val type: KotlinType)
 
@@ -93,3 +95,5 @@ fun ClassDescriptor.getJavaFields(): List<PropertyDescriptor> =
         .map {
             this.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).single()
         }.filter { it.isJavaField }
+
+fun KotlinType.isPrimitiveBoolean(): Boolean = this is SimpleTypeMarker && isBoolean()

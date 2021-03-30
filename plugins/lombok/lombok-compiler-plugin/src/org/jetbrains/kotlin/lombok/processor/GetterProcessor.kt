@@ -10,18 +10,10 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.*
-import org.jetbrains.kotlin.lombok.utils.collectWithNotNull
-import org.jetbrains.kotlin.lombok.utils.createFunction
-import org.jetbrains.kotlin.lombok.utils.getJavaFields
-import org.jetbrains.kotlin.lombok.utils.toPreparedBase
+import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 class GetterProcessor(private val config: LombokConfig) : Processor {
-
-    private val noIsPrefix by lazy { config.getBooleanOrDefault("lombok.getter.noIsPrefix") }
 
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
         val globalAccessors = Accessors.get(classDescriptor, config)
@@ -45,13 +37,13 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
         globalAccessors: Accessors
     ): SimpleFunctionDescriptor? {
         val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
-
+        val propertyName = field.toPropertyName(accessors)
         val functionName =
             if (accessors.fluent) {
-                field.name.identifier
+                propertyName
             } else {
-                val prefix = if (field.type.isPrimitiveBoolean() && !noIsPrefix) "is" else "get"
-                prefix + toPreparedBase(field.name.identifier)
+                val prefix = if (field.type.isPrimitiveBoolean() && !accessors.noIsPrefix) AccessorNames.IS else AccessorNames.GET
+                prefix + propertyName.capitalize()
             }
         return classDescriptor.createFunction(
             Name.identifier(functionName),
@@ -60,7 +52,5 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
             visibility = getter.visibility
         )
     }
-
-    private fun KotlinType.isPrimitiveBoolean(): Boolean = this is SimpleTypeMarker && isBoolean()  //todo
 
 }
