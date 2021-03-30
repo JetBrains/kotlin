@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.config
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.arguments.Argument
@@ -264,10 +263,12 @@ class KotlinFacetSettings {
 
     var externalProjectId: String = ""
 
-    @Deprecated(message = "Use mppVersion.isHmppEnabled")
     var isHmppEnabled: Boolean = false
+        @Deprecated(message = "Use mppVersion.isHmppEnabled", ReplaceWith("mppVersion.isHmpp"))
+        get
 
     val mppVersion: KotlinMultiplatformVersion?
+        @Suppress("DEPRECATION")
         get() = when {
             isHmppEnabled -> KotlinMultiplatformVersion.M3
             kind.isNewMPP -> KotlinMultiplatformVersion.M2
@@ -283,11 +284,7 @@ interface KotlinFacetSettingsProvider {
     fun getInitializedSettings(module: Module): KotlinFacetSettings
 
     companion object {
-        fun getInstance(project: Project): KotlinFacetSettingsProvider? {
-            if (project.isDisposed) {
-                return null
-            }
-            return ServiceManager.getService(project, KotlinFacetSettingsProvider::class.java)
-        }
+        fun getInstance(project: Project): KotlinFacetSettingsProvider? = project.takeUnless(Project::isDisposed)
+            ?.getService(KotlinFacetSettingsProvider::class.java)
     }
 }
