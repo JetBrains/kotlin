@@ -2,10 +2,6 @@ plugins {
     kotlin("jvm")
 }
 
-repositories {
-    maven("https://kotlin.bintray.com/dukat")
-}
-
 dependencies {
     implementation(kotlinStdlib())
     implementation("org.jetbrains.dukat:dukat:0.5.8-rc.4")
