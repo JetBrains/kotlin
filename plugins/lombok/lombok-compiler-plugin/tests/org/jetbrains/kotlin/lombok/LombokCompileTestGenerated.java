@@ -126,6 +126,11 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/simple.kt");
     }
 
+    @TestMetadata("value.kt")
+    public void testValue() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/value.kt");
+    }
+
     @TestMetadata("with.kt")
     public void testWith() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/with.kt");

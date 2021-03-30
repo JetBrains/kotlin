@@ -31,7 +31,9 @@ Features support:
 
 [x] [@Data](https://projectlombok.org/features/Data)
 
-[ ] [@Value](https://projectlombok.org/features/Value)
+[~] [@Value](https://projectlombok.org/features/Value)
+  - [x] generate getters and constructors
+  - [ ] make class final, make fields private and final
 
 [ ] [@Builder](https://projectlombok.org/features/Builder)
 

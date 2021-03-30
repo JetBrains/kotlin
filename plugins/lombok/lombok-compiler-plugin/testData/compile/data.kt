@@ -11,8 +11,8 @@ import lombok.*;
     @ToString(includeFieldNames=true)
     @Data(staticConstructor="of")
     public static class Exercise<T> {
-    private final String name;
-    private final T value;
+        private final String name;
+        private final T value;
     }
 
     public static void usage() {
