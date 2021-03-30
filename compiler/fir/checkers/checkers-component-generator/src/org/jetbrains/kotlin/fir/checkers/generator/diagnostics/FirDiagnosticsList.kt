@@ -242,8 +242,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val INFERENCE_ERROR by error<FirSourceElement, PsiElement>()
         val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error<FirSourceElement, PsiElement>()
         val UPPER_BOUND_VIOLATED by error<FirSourceElement, PsiElement> {
-            parameter<FirTypeParameterSymbol>("typeParameter")
-            parameter<ConeKotlinType>("violatedType")
+            parameter<ConeKotlinType>("upperBound")
         }
         val TYPE_ARGUMENTS_NOT_ALLOWED by error<FirSourceElement, PsiElement>()
         val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error<FirSourceElement, PsiElement> {
