@@ -496,6 +496,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/ambiguityOnJavaOverride.kt");
         }
 
+        @TestMetadata("argParamTypeMismatch.kt")
+        public void testArgParamTypeMismatch() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argParamTypeMismatch.kt");
+        }
+
         @TestMetadata("argumentsOfAnnotations.kt")
         public void testArgumentsOfAnnotations() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argumentsOfAnnotations.kt");
