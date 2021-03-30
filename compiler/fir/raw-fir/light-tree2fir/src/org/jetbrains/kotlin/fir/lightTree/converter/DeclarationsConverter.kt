@@ -524,6 +524,8 @@ class DeclarationsConverter(
                     }
                 }
             }
+        }.also {
+            it.initContainingClassForLocalAttr()
         }
     }
 

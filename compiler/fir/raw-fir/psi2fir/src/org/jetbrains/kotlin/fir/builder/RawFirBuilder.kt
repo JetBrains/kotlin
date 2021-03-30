@@ -896,6 +896,8 @@ open class RawFirBuilder(
                         }
                     }
                 }
+            }.also {
+                it.initContainingClassForLocalAttr()
             }
         }
 

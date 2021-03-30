@@ -32,9 +32,12 @@ fun FirCallableDeclaration<*>.containingClass(): ConeClassLikeLookupTag? {
 fun FirCallableMemberDeclaration<*>.containingClass(): ConeClassLikeLookupTag? {
     return (containingClassAttr ?: dispatchReceiverClassOrNull())
 }
+fun FirRegularClass.containingClassForLocal(): ConeClassLikeLookupTag? =
+    if (isLocal) containingClassForLocalAttr else null
 
 private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration<*>.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
+var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 
 val FirCallableDeclaration<*>.isIntersectionOverride get() = origin == FirDeclarationOrigin.IntersectionOverride
 val FirCallableDeclaration<*>.isSubstitutionOverride get() = origin == FirDeclarationOrigin.SubstitutionOverride
