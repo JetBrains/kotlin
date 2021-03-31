@@ -20,8 +20,9 @@ class SubpluginEnvironment(
     private val kotlinPluginVersion: String
 ) {
     companion object {
-        fun loadSubplugins(project: Project, kotlinPluginVersion: String): SubpluginEnvironment =
-            try {
+        fun loadSubplugins(project: Project): SubpluginEnvironment {
+            val kotlinPluginVersion = project.getKotlinPluginVersion()
+            return try {
                 @Suppress("DEPRECATION") // support for the deprecated plugin API
                 val klass = KotlinGradleSubplugin::class.java
                 val buildscriptClassloader = project.buildscript.classLoader
@@ -51,6 +52,7 @@ class SubpluginEnvironment(
                 project.logger.error("Could not load subplugins", e)
                 SubpluginEnvironment(listOf(), kotlinPluginVersion)
             }
+        }
     }
 
     fun addSubpluginOptions(
@@ -136,7 +138,6 @@ internal class LegacyKotlinCompilerPluginSupportPlugin(
 
         val androidProjectHandlerOrNull: AbstractAndroidProjectHandler? = if (kotlinCompilation is KotlinJvmAndroidCompilation)
             KotlinAndroidPlugin.androidTargetHandler(
-                checkNotNull(project.getKotlinPluginVersion()),
                 kotlinCompilation.target as KotlinAndroidTarget
             ) else null
 

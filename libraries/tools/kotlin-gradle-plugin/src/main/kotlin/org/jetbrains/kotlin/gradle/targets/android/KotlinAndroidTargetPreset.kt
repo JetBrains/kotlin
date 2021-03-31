@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 
 class KotlinAndroidTargetPreset(
-    private val project: Project,
-    private val kotlinPluginVersion: String
+    private val project: Project
 ) : KotlinTargetPreset<KotlinAndroidTarget> {
 
     override fun getName(): String = PRESET_NAME
@@ -23,7 +22,7 @@ class KotlinAndroidTargetPreset(
             preset = this@KotlinAndroidTargetPreset
         }
 
-        KotlinAndroidPlugin.applyToTarget(kotlinPluginVersion, result)
+        KotlinAndroidPlugin.applyToTarget(result)
         return result
     }
 

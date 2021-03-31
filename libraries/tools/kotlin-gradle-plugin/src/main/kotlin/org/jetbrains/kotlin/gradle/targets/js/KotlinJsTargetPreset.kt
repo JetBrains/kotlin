@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 open class KotlinJsTargetPreset(
-    project: Project,
-    kotlinPluginVersion: String
+    project: Project
 ) : KotlinOnlyTargetPreset<KotlinJsTarget, KotlinJsCompilation>(
-    project,
-    kotlinPluginVersion
+    project
 ) {
     var irPreset: KotlinJsIrTargetPreset? = null
         internal set
@@ -84,9 +82,7 @@ open class KotlinJsTargetPreset(
         }
     }
 
-    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
-        kotlinPluginVersion
-    )
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator()
 
     override fun getName(): String {
         return lowerCamelCaseName(
@@ -105,11 +101,9 @@ open class KotlinJsTargetPreset(
 }
 
 class KotlinJsSingleTargetPreset(
-    project: Project,
-    kotlinPluginVersion: String
+    project: Project
 ) : KotlinJsTargetPreset(
-    project,
-    kotlinPluginVersion
+    project
 ) {
     override val isMpp: Boolean
         get() = false
@@ -125,7 +119,5 @@ class KotlinJsSingleTargetPreset(
                 ?.decapitalize()
         }
 
-    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(
-        kotlinPluginVersion
-    )
+    override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator()
 }

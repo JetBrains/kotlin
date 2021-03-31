@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import java.util.concurrent.Callable
 
-open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
-    KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsTarget>(true, true, kotlinPluginVersion),
+open class KotlinJsTargetConfigurator :
+    KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsTarget>(true, true),
     KotlinTargetWithTestsConfigurator<KotlinJsReportAggregatingTestRun, KotlinJsTarget> {
 
     override val testRunClass: Class<KotlinJsReportAggregatingTestRun> get() = KotlinJsReportAggregatingTestRun::class.java
@@ -51,7 +51,7 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
         val tasksProvider = KotlinTasksProvider()
-        return Kotlin2JsSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
+        return Kotlin2JsSourceSetProcessor(tasksProvider, compilation)
     }
 
     override fun configureCompilationDefaults(target: KotlinJsTarget) {

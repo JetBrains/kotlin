@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinJsIrTargetPreset(
-    project: Project,
-    kotlinPluginVersion: String
+    project: Project
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
-    project,
-    kotlinPluginVersion
+    project
 ) {
     internal var mixedMode: Boolean? = null
 
@@ -53,7 +51,7 @@ open class KotlinJsIrTargetPreset(
     }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
-        KotlinJsIrTargetConfigurator(kotlinPluginVersion)
+        KotlinJsIrTargetConfigurator()
 
     override fun getName(): String = PRESET_NAME
 
@@ -72,11 +70,9 @@ open class KotlinJsIrTargetPreset(
 }
 
 class KotlinJsIrSingleTargetPreset(
-    project: Project,
-    kotlinPluginVersion: String
+    project: Project
 ) : KotlinJsIrTargetPreset(
-    project,
-    kotlinPluginVersion
+    project
 ) {
     override val isMpp: Boolean
         get() = false
@@ -93,5 +89,5 @@ class KotlinJsIrSingleTargetPreset(
     }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
-        KotlinJsIrTargetConfigurator(kotlinPluginVersion)
+        KotlinJsIrTargetConfigurator()
 }
