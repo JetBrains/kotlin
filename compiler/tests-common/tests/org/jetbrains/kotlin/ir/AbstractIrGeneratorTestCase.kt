@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.JvmNameProvider
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -138,9 +139,14 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             psi2ir: Psi2IrTranslator,
             languageVersionSettings: LanguageVersionSettings
         ): IrModuleFragment {
+            val analysisResult = JvmResolveUtil.analyze(ktFilesToAnalyze, environment)
+            val mangler = JvmManglerDesc(
+                MainFunctionDetector(analysisResult.bindingContext, environment.configuration.languageVersionSettings)
+            )
+            val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl, JvmNameProvider)
             return generateIrModule(
-                JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze,
-                JvmGeneratorExtensions(generateFacades = false),
+                analysisResult, psi2ir, ktFilesToAnalyze,
+                JvmGeneratorExtensions(symbolTable, generateFacades = false),
                 createIdSignatureComposer = { bindingContext ->
                     JvmIdSignatureDescriptor(JvmManglerDesc(MainFunctionDetector(bindingContext, languageVersionSettings)))
                 }
