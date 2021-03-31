@@ -1170,7 +1170,11 @@ class ExpressionsConverter(
             }
         }
 
-        return firExpression.toReturn(labelName = labelName)
+        return firExpression.toReturn(
+            baseSource = returnExpression.toFirSourceElement(),
+            labelName = labelName,
+            fromKtReturnExpression = true
+        )
     }
 
     /**
