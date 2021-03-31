@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 
 /* Reads serialized IR from annotations in classfiles */
 class SingleClassJvmIrProvider(
@@ -83,6 +82,7 @@ class SingleClassJvmIrProvider(
         val facadeClass = irFactory.buildClass {
             name = facadeName.shortName()
             origin = IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
+            source = containerSource
         }.apply {
             parent = packageFragment
             createParameterDeclarations()
@@ -116,13 +116,7 @@ class SingleClassJvmIrProvider(
         val packageFragment = getPackageFragment(signature.packageFqName(), source)
         val declarationDeserializer = getDeclarationDeserializer(packageFragment, irProto.auxTables)
 
-        /* Need to create a ProtoDeclaration. */
-        val protoDecl = ProtoDeclaration.newBuilder().run {
-            this.irClass = irProto.irClass
-            build()
-        }
-
-        declarationDeserializer.deserializeDeclaration(protoDecl)
+        declarationDeserializer.deserializeIrClass(irProto.irClass, source)
     }
 
     private fun getDeclarationDeserializer(packageFragment: IrPackageFragment, auxTables: JvmIr.AuxTables): IrDeclarationDeserializer {

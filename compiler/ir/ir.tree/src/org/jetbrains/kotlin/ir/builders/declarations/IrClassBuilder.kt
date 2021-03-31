@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.builders.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 
 class IrClassBuilder : IrDeclarationBuilder() {
@@ -20,6 +21,7 @@ class IrClassBuilder : IrDeclarationBuilder() {
     var isInline: Boolean = false
     var isExpect: Boolean = false
     var isFun: Boolean = false
+    var source: SourceElement = SourceElement.NO_SOURCE
 
     fun updateFrom(from: IrClass) {
         super.updateFrom(from)
@@ -33,5 +35,6 @@ class IrClassBuilder : IrDeclarationBuilder() {
         isInline = from.isInline
         isExpect = from.isExpect
         isFun = from.isFun
+        source = from.source
     }
 }

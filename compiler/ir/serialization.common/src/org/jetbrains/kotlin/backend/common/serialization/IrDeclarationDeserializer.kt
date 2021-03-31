@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
@@ -274,7 +275,7 @@ class IrDeclarationDeserializer(
             }
         }
 
-    private fun deserializeIrClass(proto: ProtoClass): IrClass =
+    fun deserializeIrClass(proto: ProtoClass, source: SourceElement = SourceElement.NO_SOURCE): IrClass =
         withDeserializedIrDeclarationBase(proto.base) { symbol, signature, startOffset, endOffset, origin, fcode ->
             val flags = ClassFlags.decode(fcode)
 
@@ -293,6 +294,7 @@ class IrDeclarationDeserializer(
                     flags.isInline,
                     flags.isExpect,
                     flags.isFun,
+                    source,
                 )
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)
