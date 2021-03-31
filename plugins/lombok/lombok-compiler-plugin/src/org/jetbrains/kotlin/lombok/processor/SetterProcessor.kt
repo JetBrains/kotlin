@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.*
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
@@ -14,9 +13,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class SetterProcessor(private val config: LombokConfig) : Processor {
 
-    override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
+    override fun contribute(classDescriptor: ClassDescriptor): SyntheticParts {
         //lombok doesn't generate setters for enums
-        if (classDescriptor.kind == ClassKind.ENUM_CLASS) return Parts.Empty
+        if (classDescriptor.kind == ClassKind.ENUM_CLASS) return SyntheticParts.Empty
 
         val globalAccessors = Accessors.get(classDescriptor, config)
         val clSetter = Setter.getOrNull(classDescriptor) ?: Data.getOrNull(classDescriptor)?.asSetter()
@@ -25,7 +24,7 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
             .getJavaFields()
             .collectWithNotNull { field -> Setter.getOrNull(field) ?: clSetter.takeIf { field.isVar } }
             .mapNotNull { (field, setter) -> createSetter(classDescriptor, field, setter, globalAccessors) }
-        return Parts(functions)
+        return SyntheticParts(functions)
     }
 
     private fun createSetter(
@@ -37,7 +36,7 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
         if (getter.visibility == AccessLevel.NONE) return null
 
         val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
-        return field.toPropertyName(accessors)?.let { propertyName ->
+        return field.toAccessorBaseName(accessors)?.let { propertyName ->
             val functionName =
                 if (accessors.fluent) propertyName
                 else AccessorNames.SET + propertyName.capitalize()

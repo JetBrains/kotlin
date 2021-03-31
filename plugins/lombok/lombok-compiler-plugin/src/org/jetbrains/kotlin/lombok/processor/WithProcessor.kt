@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.With
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
 
 class WithProcessor : Processor {
-    override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
+    override fun contribute(classDescriptor: ClassDescriptor): SyntheticParts {
 
         val clWith = With.getOrNull(classDescriptor)
 
@@ -24,7 +23,7 @@ class WithProcessor : Processor {
             .collectWithNotNull { With.getOrNull(it) ?: clWith }
             .mapNotNull { (field, annotation) -> createWith(classDescriptor, field, annotation) }
 
-        return Parts(functions)
+        return SyntheticParts(functions)
     }
 
     private fun createWith(

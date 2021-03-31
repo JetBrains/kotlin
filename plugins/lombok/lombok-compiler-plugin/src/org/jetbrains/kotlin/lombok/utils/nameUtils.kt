@@ -14,7 +14,11 @@ object AccessorNames {
     const val SET = "set"
 }
 
-fun PropertyDescriptor.toPropertyName(config: Accessors): String? {
+/**
+ * Make property name from variable name
+ * Returns null in case getter/setter shouldn't be generated at all
+ */
+fun PropertyDescriptor.toAccessorBaseName(config: Accessors): String? {
     val isPrimitiveBoolean = type.isPrimitiveBoolean()
     return if (config.prefix.isEmpty()) {
         val prefixes = if (isPrimitiveBoolean) listOf(AccessorNames.IS) else emptyList()

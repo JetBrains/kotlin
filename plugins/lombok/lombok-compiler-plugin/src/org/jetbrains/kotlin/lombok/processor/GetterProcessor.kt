@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.lombok.config.*
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
 
 class GetterProcessor(private val config: LombokConfig) : Processor {
 
-    override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
+    override fun contribute(classDescriptor: ClassDescriptor): SyntheticParts {
         val globalAccessors = Accessors.get(classDescriptor, config)
         val clGetter =
             Getter.getOrNull(classDescriptor)
@@ -27,7 +26,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
             .collectWithNotNull { Getter.getOrNull(it) ?: clGetter }
             .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation, globalAccessors) }
 
-        return Parts(functions)
+        return SyntheticParts(functions)
     }
 
     private fun createGetter(
@@ -39,7 +38,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
         if (getter.visibility == AccessLevel.NONE) return null
 
         val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
-        return field.toPropertyName(accessors)?.let { propertyName ->
+        return field.toAccessorBaseName(accessors)?.let { propertyName ->
             val functionName =
                 if (accessors.fluent) {
                     propertyName
