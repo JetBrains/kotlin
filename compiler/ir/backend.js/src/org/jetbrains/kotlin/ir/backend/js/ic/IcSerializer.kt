@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
@@ -101,7 +103,7 @@ class IcSerializer(
 
             // Only save newly created declarations
             val newDeclarations = declarations.filter { d ->
-                d is PersistentIrDeclarationBase<*> && d.createdOn > 0
+                d is PersistentIrDeclarationBase<*> && (d.createdOn > 0 || d.isFakeOverride || d is IrValueParameter && (d.parent as IrDeclaration).isFakeOverride)
             }
 
             val serializedCarriers = fileSerializer.serializeCarriers(
@@ -187,7 +189,7 @@ fun storeOrder(file: IrFile, idSigToInt: (IrSymbol) -> Int): SerializedOrder {
                 // First element is the container signature
                 val list = mutableListOf(declaration.idSigIndex())
                 declaration.declarations.forEach {
-                    if (!it.isFakeOverride) list += it.idSigIndex()
+                    list += it.idSigIndex()
                 }
 
                 containerDeclarationSignatures += IrMemoryIntArrayWriter(list).writeIntoMemory()

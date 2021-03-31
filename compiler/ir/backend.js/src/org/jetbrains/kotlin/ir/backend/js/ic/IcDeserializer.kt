@@ -245,7 +245,7 @@ class IcDeserializer(
                             }
                         }
 
-                        irClass.declarations.removeIf { !it.isFakeOverride }
+                        irClass.declarations.clear()
 
                         for (j in 1 until indices.size) {
                             val idSig = icDeserializer.deserializeIdSignature(indices[j])
