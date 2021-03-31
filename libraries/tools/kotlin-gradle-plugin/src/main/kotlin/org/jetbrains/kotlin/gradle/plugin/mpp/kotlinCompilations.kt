@@ -277,6 +277,43 @@ internal val KotlinCompilation<*>.ownModuleName: String
         return filterModuleName("$baseName$suffix")
     }
 
+internal fun addCommonSourcesToKotlinCompileTask(
+    project: Project,
+    taskName: String,
+    sourceFileExtensions: Iterable<String>,
+    sources: () -> Any
+) = addSourcesToKotlinCompileTask(project, taskName, sourceFileExtensions, lazyOf(true), sources)
+
+// FIXME this function dangerously ignores an incorrect type of the task (e.g. if the actual task is a K/N one); consider reporting a failure
+internal fun addSourcesToKotlinCompileTask(
+    project: Project,
+    taskName: String,
+    sourceFileExtensions: Iterable<String>,
+    addAsCommonSources: Lazy<Boolean> = lazyOf(false),
+    /** Evaluated as project.files(...) */
+    sources: () -> Any
+) {
+    fun AbstractKotlinCompile<*>.configureAction() {
+        // In this call, the super-implementation of `source` adds the directories files to the roots of the union file tree,
+        // so it's OK to pass just the source roots.
+        source(Callable(sources))
+        sourceFilesExtensions(sourceFileExtensions)
+
+        // The `commonSourceSet` is passed to the compiler as-is, converted with toList
+        commonSourceSet += project.files(Callable<Any> {
+            if (addAsCommonSources.value) sources else emptyList<Any>()
+        })
+    }
+
+    project.tasks
+        // To configure a task that may have not yet been created at this point, use 'withType-matching-configureEach`:
+        .withType(AbstractKotlinCompile::class.java)
+        .matching { it.name == taskName }
+        .configureEach { compileKotlinTask ->
+            compileKotlinTask.configureAction()
+        }
+}
+
 internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
     get() = mutableSetOf<KotlinCompilation<*>>().apply {
         fun visit(other: KotlinCompilation<*>) {
