@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.lombok.config.Accessors
-import org.jetbrains.kotlin.lombok.config.Data
-import org.jetbrains.kotlin.lombok.config.LombokConfig
-import org.jetbrains.kotlin.lombok.config.Setter
+import org.jetbrains.kotlin.lombok.config.*
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -37,6 +34,8 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
         getter: Setter,
         globalAccessors: Accessors
     ): SimpleFunctionDescriptor? {
+        if (getter.visibility == AccessLevel.NONE) return null
+
         val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
         return field.toPropertyName(accessors)?.let { propertyName ->
             val functionName =
@@ -49,7 +48,7 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
                 Name.identifier(functionName),
                 listOf(ValueParameter(field.name, field.type)),
                 returnType,
-                visibility = getter.visibility
+                visibility = getter.visibility.toDescriptorVisibility()
             )
         }
     }

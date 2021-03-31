@@ -83,35 +83,35 @@ data class Accessors(
     }
 }
 
-data class Getter(val visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC) {
+data class Getter(val visibility: AccessLevel = AccessLevel.PUBLIC) {
     companion object : AnnotationCompanion<Getter>() {
         override val name: FqName = LombokNames.GETTER
 
         override fun extract(annotation: AnnotationDescriptor): Getter =
             Getter(
-                visibility = getVisibility(annotation)
+                visibility = getAccessLevel(annotation)
             )
     }
 }
 
-data class Setter(val visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC) {
+data class Setter(val visibility: AccessLevel = AccessLevel.PUBLIC) {
     companion object : AnnotationCompanion<Setter>() {
         override val name: FqName = LombokNames.SETTER
 
         override fun extract(annotation: AnnotationDescriptor): Setter =
             Setter(
-                visibility = getVisibility(annotation)
+                visibility = getAccessLevel(annotation)
             )
     }
 }
 
-data class With(val visibility: DescriptorVisibility) {
+data class With(val visibility: AccessLevel = AccessLevel.PUBLIC) {
     companion object : AnnotationCompanion<With>() {
         override val name: FqName = LombokNames.WITH
 
         override fun extract(annotation: AnnotationDescriptor): With =
             With(
-                visibility = getVisibility(annotation)
+                visibility = getAccessLevel(annotation)
             )
     }
 }

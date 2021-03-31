@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.lombok.config.LombokConfig
+import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.With
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
 
-class WithProcessor(private val config: LombokConfig) : Processor {
+class WithProcessor : Processor {
     override fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts {
 
         val clWith = With.getOrNull(classDescriptor)
@@ -32,6 +32,7 @@ class WithProcessor(private val config: LombokConfig) : Processor {
         field: PropertyDescriptor,
         with: With
     ): SimpleFunctionDescriptor? {
+        if (with.visibility == AccessLevel.NONE) return null
 
         val functionName = "with" + toPropertyNameCapitalized(field.name.identifier)
 
@@ -39,7 +40,7 @@ class WithProcessor(private val config: LombokConfig) : Processor {
             Name.identifier(functionName),
             listOf(ValueParameter(field.name, field.type)),
             classDescriptor.defaultType,
-            visibility = with.visibility
+            visibility = with.visibility.toDescriptorVisibility()
         )
     }
 }

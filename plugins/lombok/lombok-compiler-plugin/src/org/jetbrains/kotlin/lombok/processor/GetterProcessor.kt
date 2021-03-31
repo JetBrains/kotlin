@@ -36,6 +36,8 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
         getter: Getter,
         globalAccessors: Accessors
     ): SimpleFunctionDescriptor? {
+        if (getter.visibility == AccessLevel.NONE) return null
+
         val accessors = Accessors.getIfAnnotated(field, config) ?: globalAccessors
         return field.toPropertyName(accessors)?.let { propertyName ->
             val functionName =
@@ -49,7 +51,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
                 Name.identifier(functionName),
                 emptyList(),
                 field.returnType,
-                visibility = getter.visibility
+                visibility = getter.visibility.toDescriptorVisibility()
             )
         }
     }
