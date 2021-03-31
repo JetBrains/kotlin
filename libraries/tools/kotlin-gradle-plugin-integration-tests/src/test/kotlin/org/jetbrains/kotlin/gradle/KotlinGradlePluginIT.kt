@@ -1207,4 +1207,24 @@ class KotlinGradleIT : BaseGradleIT() {
             assertTrue(compiledKotlinClasses.isEmpty())
         }
     }
+
+    /** Regression test for KT-45787. **/
+    @Test
+    fun testPluginDoesNotUseDeprecatedConfigurationsForAssociatedDependencies() {
+        with(
+            Project(
+                projectName = "associatedDependencies",
+                minLogLevel = LogLevel.INFO
+            )
+        ) {
+            setupWorkingDir()
+
+            build(
+                "tasks",
+                options = defaultBuildOptions().copy(warningMode = WarningMode.Fail)
+            ) {
+                assertSuccessful()
+            }
+        }
+    }
 }

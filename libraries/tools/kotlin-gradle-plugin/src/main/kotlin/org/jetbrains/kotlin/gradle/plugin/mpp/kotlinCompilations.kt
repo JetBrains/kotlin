@@ -253,18 +253,23 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     }
 
     protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        target.project.dependencies.run {
-            val project = target.project
+        with(target.project) {
 
-            add(
-                compileDependencyConfigurationName,
-                project.files(Callable { other.output.classesDirs }, Callable { other.compileDependencyFiles })
+            dependencies.add(
+                compileOnlyConfigurationName,
+                project.files(Callable { other.output.classesDirs })
             )
 
+            configurations.named(compileOnlyConfigurationName).configure {
+                it.extendsFrom(configurations.findByName(other.compileDependencyConfigurationName))
+            }
+
             if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
-                add(runtimeDependencyConfigurationName, project.files(Callable { other.output.allOutputs }))
+                dependencies.add(runtimeOnlyConfigurationName, project.files(Callable { other.output.allOutputs }))
                 if (other is KotlinCompilationToRunnableFiles<*>) {
-                    add(runtimeDependencyConfigurationName, project.files(Callable { other.runtimeDependencyFiles }))
+                    configurations.named(runtimeOnlyConfigurationName).configure {
+                        it.extendsFrom(configurations.findByName(other.runtimeDependencyConfigurationName))
+                    }
                 }
             }
         }
