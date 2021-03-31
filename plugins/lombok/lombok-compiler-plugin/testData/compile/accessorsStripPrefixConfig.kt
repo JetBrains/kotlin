@@ -4,17 +4,16 @@ import lombok.*;
 import lombok.experimental.*;
 
 @Getter @Setter
-@Accessors(prefix = {"f", "field"})
 public class AccessorsTest {
 //    @Accessors
     private int age = 10;
     private int fTarget = 42;
     private String fieldValue;
 
-    @Accessors
+    @Accessors(prefix = {})
     private boolean isHuman;
     private boolean fPrefixedBoolean;
-    @Accessors
+    @Accessors(prefix = {})
     private Boolean isNonPrimitiveHuman;
 
     static void test() {
@@ -69,3 +68,7 @@ class Test {
     }
 
 }
+
+//FILE: lombok.config
+lombok.accessors.prefix += f
+lombok.accessors.prefix+=field

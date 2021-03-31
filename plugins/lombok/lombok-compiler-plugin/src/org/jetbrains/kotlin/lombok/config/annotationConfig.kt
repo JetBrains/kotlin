@@ -73,8 +73,10 @@ data class Accessors(
                     ?: config.getBoolean("lombok.accessors.chain")
                     ?: fluent
             val noIsPrefix = config.getBoolean("lombok.getter.noIsPrefix") ?: false
-            val prefix = annotation?.getStringArrayArgument("prefix")
-                ?: emptyList()
+            val prefix =
+                annotation?.getStringArrayArgument("prefix")
+                    ?: config.getMultiString("lombok.accessors.prefix")
+                    ?: emptyList()
 
             return Accessors(fluent, chain, noIsPrefix, prefix)
         }
