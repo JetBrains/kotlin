@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
@@ -163,12 +164,7 @@ private fun createCommonMetadataCompilation(
             metadataCompilationRegistry,
             lazy { resolvedMetadataProviders(fragment) }
         )
-    KotlinCommonSourceSetProcessor(
-        metadataCompilationData,
-        KotlinTasksProvider(),
-        project.getKotlinPluginVersion() ?: "undefined"
-    ).run()
-    addSourcesToMetadataCompileTask(metadataCompilationData)
+    MetadataCompilationTasksConfigurator(project).createKotlinCommonCompilationTask(fragment, metadataCompilationData)
     metadataCompilationRegistry.registerCommon(fragment, metadataCompilationData)
 }
 
@@ -189,37 +185,39 @@ private fun createNativeMetadataCompilation(
             metadataCompilationRegistry,
             lazy { resolvedMetadataProviders(fragment) }
         )
-    NativeSharedCompilationProcessor(metadataCompilationData).run()
-    addSourcesToMetadataCompileTask(metadataCompilationData)
+    MetadataCompilationTasksConfigurator(project).createKotlinNativeCompilationTask(fragment, metadataCompilationData)
     metadataCompilationRegistry.registerNative(fragment, metadataCompilationData)
 }
 
-private fun addSourcesToMetadataCompileTask(compilationData: AbstractKotlinFragmentMetadataCompilationData<*>) {
-    val sources = { compilationData.fragment.kotlinSourceRoots }
-    when (compilationData) {
-        // Note: this call is invalid for compilations that use Kotlin/Native compile tasks!
-        is KotlinCommonFragmentMetadataCompilationData -> addSourcesToKotlinCompileTask(
-            compilationData.project,
-            compilationData.compileKotlinTaskName,
-            /*FIXME*/ emptyList(),
-            lazyOf(true),
-            sources
-        )
-        is KotlinNativeFragmentMetadataCompilationData -> addSourcesToKotlinNativeCompileTask(
-            compilationData.project,
-            compilationData.compileKotlinTaskName,
-            sources,
-            lazyOf(true)
-        )
-        else -> error("unexpected compilation data $compilationData")
+private class MetadataCompilationTasksConfigurator(project: Project) : KotlinCompilationTaskConfigurator(project) {
+    fun createKotlinCommonCompilationTask(
+        fragment: KotlinGradleFragment,
+        compilationData: KotlinCommonFragmentMetadataCompilationData
+    ) {
+        KotlinCommonSourceSetProcessor(
+            compilationData,
+            KotlinTasksProvider()
+        ).run()
+        val allSources = getSourcesForFragmentCompilation(fragment)
+        val commonSources = getCommonSourcesForFragmentCompilation(fragment)
+
+        addSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { allSources }
+        addCommonSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { commonSources }
+    }
+
+    override fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment): FileCollection {
+        return fragmentSourcesProvider.getFragmentOwnSources(fragment)
+    }
+
+    override fun getCommonSourcesForFragmentCompilation(fragment: KotlinGradleFragment): FileCollection {
+        return fragmentSourcesProvider.getFragmentOwnSources(fragment)
     }
 }
 
 private fun resolvedMetadataProviders(fragment: KotlinGradleFragment) =
     fragment.refinesClosure.map {
         FragmentResolvedMetadataProvider(
-            fragment.project.tasks.withType<TransformKotlinGranularMetadataForFragment>()
-                .named(transformFragmentMetadataTaskName(it))
+            fragment.project.tasks.withType<TransformKotlinGranularMetadataForFragment>().named(transformFragmentMetadataTaskName(it))
         )
     }
 

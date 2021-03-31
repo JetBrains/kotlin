@@ -18,15 +18,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.withType
 
 open class KotlinCompilationTaskConfigurator(
-    private val project: Project
+    protected val project: Project
 ) {
-    private val kotlinPluginVersion =
-        project.getKotlinPluginVersion() ?: error("Kotlin plugin version not found; the Kotlin plugin must be applied to $project")
+    open val fragmentSourcesProvider: FragmentSourcesProvider = FragmentSourcesProvider()
 
-    open val variantSourcesProvider: VariantSourcesProvider = VariantSourcesProvider()
+    open fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment) =
+        fragmentSourcesProvider.getSourcesFromRefinesClosure(fragment)
+
+    open fun getCommonSourcesForFragmentCompilation(fragment: KotlinGradleFragment) =
+        fragmentSourcesProvider.getCommonSourcesFromRefinesClosure(fragment)
 
     fun createKotlinJvmCompilationTask(
-        variant: KotlinGradleVariant,
+        fragment: KotlinGradleFragment,
         compilationData: KotlinCompilationData<*>
     ): TaskProvider<out KotlinCompile> {
         Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilationData, kotlinPluginVersion).run()
@@ -41,7 +44,7 @@ open class KotlinCompilationTaskConfigurator(
     }
 
     fun createKotlinNativeCompilationTask(
-        variant: KotlinNativeVariant,
+        fragment: KotlinGradleFragment,
         compilationData: KotlinNativeCompilationData<*>
     ): TaskProvider<KotlinNativeCompile> {
         val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
