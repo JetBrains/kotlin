@@ -73,8 +73,6 @@ class IcSerializer(
             it.file
         }
 
-//        val allFiles = dataToSerialize.keys + filteredBodies.keys.filterNotNull()
-
         val icData = mutableListOf<SerializedIcDataForFile>()
 
         for (file in fileToDeserializer.keys) {
@@ -92,14 +90,6 @@ class IcSerializer(
 
             val icDeclarationTable = IcDeclarationTable(globalDeclarationTable, irFactory, maxFileLocalIndex + 1, maxScopeLocalIndex + 1, symbolToSignature)
             val fileSerializer = JsIrFileSerializer(IrMessageLogger.None, icDeclarationTable, mutableMapOf(), skipExpects = true, icMode = true)
-
-            // TODO add local bodies
-
-            if ("Effect.kt" in file.name) {
-                1
-            }
-
-//            val sortedBodyEntries = bodies.entries.sortedBy { it.value }
 
             bodies.forEachIndexed { index, body ->
                 if (body is IrExpressionBody) {
@@ -156,18 +146,9 @@ class IcSerializer(
             signaturer.reset(newLocalIndex, newScopeIndex)
         }
 
-        override fun isExportedDeclaration(declaration: IrDeclaration): Boolean {
-//            if (declaration is PersistentIrDeclarationBase<*>) return true
-            return super.isExportedDeclaration(declaration)
-        }
-
         override fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
             return exisitingMappings.getOrPut(declaration.symbol) {
                 irFactory.declarationSignature(declaration) ?: super.signatureByDeclaration(declaration)
-            }.also {
-                if (it is IdSignature.ScopeLocalDeclaration && it.id == 2) {
-                    1
-                }
             }
         }
     }

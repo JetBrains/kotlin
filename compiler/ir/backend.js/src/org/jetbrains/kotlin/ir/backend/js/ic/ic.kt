@@ -41,9 +41,9 @@ fun prepareIcCaches(
     val stdlibResolved = findStdlib(allDependencies)
     val stdlibKlib = stdlibResolved.getFullList().single()
 
-    icCache.clear()
+//    icCache.clear()
 
-    icCache.getOrPut(stdlibKlib.libraryName) {
+    icCache.computeIfAbsent(stdlibKlib.libraryName) {
         val mainModule = MainModule.Klib(stdlibKlib)
 
         val (moduleFragment: IrModuleFragment, _, irBuiltIns, symbolTable, deserializer) =
@@ -100,11 +100,17 @@ fun loadIrForIc(
     checkEq: (String, String) -> Unit,
 ) {
 
+    val time = System.currentTimeMillis()
+
     moveBodilessDeclarationsToSeparatePlace(context, module)
+
+//    println(module.name.asString())
 
     val icData = icCache.values.single() // TODO find a stable key present both in klib and module
 
     IcDeserializer(linker, context).injectIcData(module, icData)
+
+    println("${(System.currentTimeMillis() - time) / 1000.0}s")
 
 //    linker.symbolTable.noUnboundLeft("Unbound symbols found")
 

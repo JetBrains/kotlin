@@ -56,12 +56,7 @@ class IcDeserializer(
         val kindQueue = ArrayDeque<BinarySymbolData.SymbolKind>()
 
         fun IdSignature.enqueue(icDeserializer: IcFileDeserializer, kind: BinarySymbolData.SymbolKind) {
-            if ("$this" == "private kotlin.js.internal/IntCompanionObject.MIN_VALUE|7841734059694520564[0]:15") {
-                1
-            }
-
             if (this !in icDeserializer.visited) {
-//                println("   -> $this (${icDeserializer.fileDeserializer.file.name})")
                 fileQueue.addLast(icDeserializer)
                 signatureQueue.addLast(this)
                 kindQueue.addLast(kind)
@@ -83,8 +78,6 @@ class IcDeserializer(
         context.irBuiltIns.packageFragment.declarations.forEach {
             existingPublicSymbols[it.symbol.signature!!] = it.symbol
         }
-
-//        val
 
         context.intrinsics.externalPackageFragment.declarations.forEach {
             val signature = it.symbol.signature ?: globalDeclarationTable.computeSignatureByDeclaration(it)
@@ -120,11 +113,6 @@ class IcDeserializer(
                 pathToFileSymbol = { p -> pathToFileSymbol[p]!! },
                 context.mapping.state,
             ) { idSig, kind ->
-
-                if (idSig.toString() == "public kotlin.coroutines/ContinuationInterceptor.key|1144547298251177939[0]") {
-                    1
-                }
-
                 existingPublicSymbols[idSig] ?: icDeserializer.privateSymbols[idSig] ?: if (moduleDeserializer.contains(idSig)) moduleDeserializer.deserializeIrSymbol(idSig, kind) else null ?: run {
                     if (idSig.isPublic || idSig is IdSignature.FileLocalSignature) {
                         val fileDeserializer = publicSignatureToIcFileDeserializer[idSig.topLevelSignature()]
@@ -187,22 +175,10 @@ class IcDeserializer(
 
             if (signature is IdSignature.FileSignature) continue
 
-
-            if ("$signature" == "private kotlin.js.internal/IntCompanionObject.MIN_VALUE|7841734059694520564[0]:4638265728071529947") {
-                1
-            }
-            if ("$signature" == "private kotlin.contracts/ContractBuilder.callsInPlace\$default|-8084630878733243362[0]:10") {
-                2
-            }
-
-//            println("$signature")
-
-//            println("$signature (${icFileDeserializer.fileDeserializer.file.name})")
-//            println("  decl:")
             // Deserialize the declaration
             val symbol = existingPublicSymbols[signature] ?: icFileDeserializer.privateSymbols[signature]
             val declaration = if (symbol != null && symbol.isBound) symbol.owner as IrDeclaration else icFileDeserializer.deserializeDeclaration(signature)
-//
+
             if (declaration == null) {
                 if (kind != BinarySymbolData.SymbolKind.VARIABLE_SYMBOL) {
 //                    println("skipped $signature [$kind] (${icFileDeserializer.fileDeserializer.file.name});")
@@ -212,39 +188,20 @@ class IcDeserializer(
 
             icFileDeserializer.signatureToDeclaration[signature] = declaration
 
-//            println("  carriers:")
-
-
-            // public kotlin.contracts/Returns.implies|-5823325932675831010[0]
-            if ("$signature" == "public kotlin.contracts/Returns.implies|-5823325932675831010[0]") {
-                1
-            }
-
             if (!declaration.isFakeOverride) {
                 icFileDeserializer.injectCarriers(declaration, signature)
             }
 
-//            println("  mappings:")
-
             icFileDeserializer.mappingsDeserializer(signature, declaration)
-
-//            println(";")
         }
 
-//        // TODO declaration to be deserialized
-//        for (icFileDeserializer in allIcDeserializers) {
-//            // TODO how to filter out only relevant mappings?
-//            context.mapping.state.mappingsDeserializer(icFileDeserializer.icFileData.mappings) {
-//                icFileDeserializer.deserializeIrSymbol(it)
-//            }
-//        }
 
         for (fd in fdToIcFd.values) {
-             for (d in fd.visited) {
-                 if (d is PersistentIrDeclarationBase<*> && d.values == null) {
-                     error("Declaration ${d.render()} didn't get injected with the carriers")
-                 }
-             }
+            for (d in fd.visited) {
+                if (d is PersistentIrDeclarationBase<*> && d.values == null) {
+                    error("Declaration ${d.render()} didn't get injected with the carriers")
+                }
+            }
         }
 
 
@@ -256,12 +213,6 @@ class IcDeserializer(
                 val icFileData = pathToIcFileData[fd.file.path] ?: continue
                 val order = icFileData.order
                 val icDeserializer = fdToIcFd[fd]!!
-
-                if ("ExceptionsH" in icDeserializer.fileDeserializer.file.name) {
-                    1
-                }
-
-//                println(fd.file.name)
 
                 fd.file.declarations.clear()
 
@@ -369,10 +320,6 @@ class IcDeserializer(
 
         private val carrierDeserializer = CarrierDeserializer(declarationDeserializer, icFileData.carriers)
 
-//        init {
-//            IrArrayMemoryReader(icFileData.file.signatures)
-//        }
-
         val reversedSignatureIndex: Map<IdSignature, Int> = protoFile.declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
 
         val visited = HashSet<IdSignature>()
@@ -385,15 +332,6 @@ class IcDeserializer(
         }
 
         fun deserializeDeclaration(idSig: IdSignature): IrDeclaration? {
-            // Check if the declaration was deserialized before
-            // TODO is this needed?
-//            val symbol = symbolDeserializer.deserial[idSig]
-//            if (symbol != null && symbol.isBound) return symbol.owner as IrDeclaration
-
-//            val originalSymbol = fileDeserializer.symbolDeserializer.deserializedSymbols[idSig]
-//            if (originalSymbol != null) return originalSymbol.owner as IrDeclaration
-
-            // Do deserialize stuff
             val idSigIndex = reversedSignatureIndex[idSig] ?: return null
 //                error("Not found Idx for $idSig")
             val declarationStream = fileReader.irDeclaration(idSigIndex).codedInputStream
@@ -421,11 +359,11 @@ class IcDeserializer(
 }
 
 class FileReaderFromSerializedIrFile(val irFile: SerializedIrFile) : IrLibraryFile() {
-    val declarationReader = DeclarationIrTableMemoryReader(irFile.declarations)
-    val typeReader = IrArrayMemoryReader(irFile.types)
-    val signatureReader = IrArrayMemoryReader(irFile.signatures)
-    val stringReader = IrArrayMemoryReader(irFile.strings)
-    val bodyReader = IrArrayMemoryReader(irFile.bodies)
+    private val declarationReader = DeclarationIrTableMemoryReader(irFile.declarations)
+    private val typeReader = IrArrayMemoryReader(irFile.types)
+    private val signatureReader = IrArrayMemoryReader(irFile.signatures)
+    private val stringReader = IrArrayMemoryReader(irFile.strings)
+    private val bodyReader = IrArrayMemoryReader(irFile.bodies)
 
     override fun irDeclaration(index: Int): ByteArray = declarationReader.tableItemBytes(DeclarationId(index))
 

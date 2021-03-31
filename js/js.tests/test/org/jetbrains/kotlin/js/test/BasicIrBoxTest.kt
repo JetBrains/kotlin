@@ -96,7 +96,7 @@ abstract class BasicIrBoxTest(
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
-        val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
+        val runtimeKlibs = /*if (needsFullIrRuntime) */listOf(fullRuntimeKlib, kotlinTestKLib)/* else listOf(defaultRuntimeKlib)*/
 
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 
