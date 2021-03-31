@@ -518,8 +518,9 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             import a.*
             import androidx.compose.runtime.Composable
 
-            @Composable fun A(y: Any) {
+            @Composable fun A(y: Any? = null) {
                 used(y)
+                A()
                 A(EmptyClass())
                 A(SingleStableValInt(123))
                 A(SingleStableVal(StableClass()))
@@ -541,28 +542,40 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(y: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(A)<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
-              used(y)
-              A(EmptyClass(), %composer, EmptyClass.%stable)
-              A(SingleStableValInt(123), %composer, SingleStableValInt.%stable)
-              A(SingleStableVal(StableClass()), %composer, SingleStableVal.%stable)
-              A(SingleParamProp(StableClass()), %composer, SingleParamProp.%stable or StableClass.%stable)
-              A(SingleParamProp(UnstableClass()), %composer, SingleParamProp.%stable or UnstableClass.%stable)
-              A(SingleParamNonProp(StableClass()), %composer, SingleParamNonProp.%stable)
-              A(SingleParamNonProp(UnstableClass()), %composer, SingleParamNonProp.%stable)
-              A(DoubleParamSingleProp(StableClass(), StableClass()), %composer, DoubleParamSingleProp.%stable or StableClass.%stable)
-              A(DoubleParamSingleProp(UnstableClass(), StableClass()), %composer, DoubleParamSingleProp.%stable or UnstableClass.%stable)
-              A(DoubleParamSingleProp(StableClass(), UnstableClass()), %composer, DoubleParamSingleProp.%stable or StableClass.%stable)
-              A(DoubleParamSingleProp(UnstableClass(), UnstableClass()), %composer, DoubleParamSingleProp.%stable or UnstableClass.%stable)
-              A(X(listOf(StableClass())), %composer, X.%stable)
-              A(X(listOf(StableClass())), %composer, X.%stable)
-              A(NonBackingFieldUnstableVal(), %composer, NonBackingFieldUnstableVal.%stable)
-              A(NonBackingFieldUnstableVar(), %composer, NonBackingFieldUnstableVar.%stable)
-              A(StableDelegateProp(), %composer, StableDelegateProp.%stable)
-              A(UnstableDelegateProp(), %composer, UnstableDelegateProp.%stable)
+            fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
+              %composer = %composer.startRestartGroup(<>, "C(A)<A()>,<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
+              val %dirty = %changed
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0010
+              }
+              if (%default.inv() and 0b0001 !== 0 || %dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (%default and 0b0001 !== 0) {
+                  y = null
+                }
+                used(y)
+                A(null, %composer, 0, 0b0001)
+                A(EmptyClass(), %composer, EmptyClass.%stable, 0)
+                A(SingleStableValInt(123), %composer, SingleStableValInt.%stable, 0)
+                A(SingleStableVal(StableClass()), %composer, SingleStableVal.%stable, 0)
+                A(SingleParamProp(StableClass()), %composer, SingleParamProp.%stable or StableClass.%stable, 0)
+                A(SingleParamProp(UnstableClass()), %composer, SingleParamProp.%stable or UnstableClass.%stable, 0)
+                A(SingleParamNonProp(StableClass()), %composer, SingleParamNonProp.%stable, 0)
+                A(SingleParamNonProp(UnstableClass()), %composer, SingleParamNonProp.%stable, 0)
+                A(DoubleParamSingleProp(StableClass(), StableClass()), %composer, DoubleParamSingleProp.%stable or StableClass.%stable, 0)
+                A(DoubleParamSingleProp(UnstableClass(), StableClass()), %composer, DoubleParamSingleProp.%stable or UnstableClass.%stable, 0)
+                A(DoubleParamSingleProp(StableClass(), UnstableClass()), %composer, DoubleParamSingleProp.%stable or StableClass.%stable, 0)
+                A(DoubleParamSingleProp(UnstableClass(), UnstableClass()), %composer, DoubleParamSingleProp.%stable or UnstableClass.%stable, 0)
+                A(X(listOf(StableClass())), %composer, X.%stable, 0)
+                A(X(listOf(StableClass())), %composer, X.%stable, 0)
+                A(NonBackingFieldUnstableVal(), %composer, NonBackingFieldUnstableVal.%stable, 0)
+                A(NonBackingFieldUnstableVar(), %composer, NonBackingFieldUnstableVar.%stable, 0)
+                A(StableDelegateProp(), %composer, StableDelegateProp.%stable, 0)
+                A(UnstableDelegateProp(), %composer, UnstableDelegateProp.%stable, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, %composer, %changed or 0b0001)
+                A(y, %composer, %changed or 0b0001, %default)
               }
             }
         """
