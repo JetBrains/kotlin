@@ -22,7 +22,7 @@ Features support:
    - [ ] lombok.copyableAnnotations
  - [ ] Copy annotations
  - [x] Strip defined prefixes - in config and @Accessors
- - [ ] Skip generation with AccessLevel.NONE
+ - [x] Skip generation with AccessLevel.NONE
  - [x] Strip 'is' prefix for boolean fields
 
 [~] [@With](https://projectlombok.org/features/With)

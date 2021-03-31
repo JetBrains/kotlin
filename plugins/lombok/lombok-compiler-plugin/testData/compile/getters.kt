@@ -12,9 +12,12 @@ public class GetterTest {
 
     @Getter private Boolean boxedBoolean;
 
+    @Getter(AccessLevel.NONE) private Boolean invisible;
+
     void test() {
         getAge();
         isPrimitiveBoolean();
+//        getInvisible();
     }
 
 }
@@ -37,6 +40,8 @@ class Test {
 
         //shouldn't be accesible from here
 //        obj.getName()
+
+//        obj.getInvisible()
 
         OverridenGetterTest().usage()
     }

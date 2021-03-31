@@ -25,7 +25,7 @@ class LombokSyntheticJavaPartsProvider(private val config: LombokConfig) : Synth
         listOf(
             GetterProcessor(config),
             SetterProcessor(config),
-            WithProcessor(config),
+            WithProcessor(),
             NoArgsConstructorProcessor(),
             AllArgsConstructorProcessor(),
             RequiredArgsConstructorProcessor()

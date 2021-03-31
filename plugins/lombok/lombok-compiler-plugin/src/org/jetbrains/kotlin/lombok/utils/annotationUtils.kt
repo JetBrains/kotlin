@@ -5,25 +5,18 @@
 
 package org.jetbrains.kotlin.lombok.utils
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
 
-fun getVisibility(annotation: AnnotationDescriptor, field: String = "value"): DescriptorVisibility {
-    val value = annotation.getStringArgument(field) ?: "PUBLIC"
-    val visibility = when (value) {
-        "PUBLIC" -> Visibilities.Public
-        "PROTECTED" -> Visibilities.Protected
-        "PRIVATE" -> Visibilities.Private
-        "PACKAGE" -> JavaVisibilities.PackageVisibility
-        else -> Visibilities.Public
-    }
-    return JavaDescriptorVisibilities.toDescriptorVisibility(visibility)
+fun getVisibility(annotation: AnnotationDescriptor, field: String = "value"): DescriptorVisibility =
+    getAccessLevel(annotation, field).toDescriptorVisibility()
+
+fun getAccessLevel(annotation: AnnotationDescriptor, field: String = "value"): AccessLevel {
+    val value = annotation.getStringArgument(field) ?: return AccessLevel.PUBLIC
+    return AccessLevel.valueOf(value)
 }
 
 fun AnnotationDescriptor.getStringArgument(argumentName: String): String? {
