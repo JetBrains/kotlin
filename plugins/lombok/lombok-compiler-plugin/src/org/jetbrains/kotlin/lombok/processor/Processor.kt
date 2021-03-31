@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 
+/**
+ * Generates synthetic parts for [ClassDescriptor]
+ */
 interface Processor {
 
-    fun contribute(classDescriptor: ClassDescriptor, jClass: JavaClassImpl): Parts
+    fun contribute(classDescriptor: ClassDescriptor): SyntheticParts
 }

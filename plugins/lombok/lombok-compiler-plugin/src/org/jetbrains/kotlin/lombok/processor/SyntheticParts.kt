@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 
-data class Parts(
+data class SyntheticParts(
     val methods: List<SimpleFunctionDescriptor> = emptyList(),
     val staticFunctions: List<SimpleFunctionDescriptor> = emptyList(),
     val constructors: List<ClassConstructorDescriptor> = emptyList()
 ) {
 
-    operator fun plus(other: Parts): Parts = Parts(
+    operator fun plus(other: SyntheticParts): SyntheticParts = SyntheticParts(
         methods + other.methods,
         staticFunctions + other.staticFunctions,
         constructors + other.constructors
     )
 
     companion object {
-        val Empty = Parts()
+        val Empty = SyntheticParts()
     }
 }
