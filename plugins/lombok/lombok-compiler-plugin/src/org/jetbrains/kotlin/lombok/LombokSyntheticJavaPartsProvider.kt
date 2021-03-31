@@ -64,17 +64,18 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
         addNonExistent(result, constructors)
     }
 
+    //we process only local java files
     private fun extractClass(descriptor: ClassDescriptor): JavaClassImpl? =
         (descriptor as? LazyJavaClassDescriptor)?.jClass as? JavaClassImpl
 
     private fun getSyntheticParts(descriptor: ClassDescriptor): SyntheticParts =
-        extractClass(descriptor)?.let { jClass ->
+        extractClass(descriptor)?.let { _ ->
             partsCache.getOrPut(descriptor) {
-                computeSyntheticParts(descriptor, jClass)
+                computeSyntheticParts(descriptor)
             }
         } ?: SyntheticParts.Empty
 
-    private fun computeSyntheticParts(descriptor: ClassDescriptor, jClass: JavaClassImpl): SyntheticParts =
+    private fun computeSyntheticParts(descriptor: ClassDescriptor): SyntheticParts =
         processors.map { it.contribute(descriptor) }.reduce { a, b -> a + b }
 
     /**

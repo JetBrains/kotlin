@@ -19,7 +19,7 @@ Features support:
    - [x] lombok.accessors.chain
    - [x] lombok.accessors.prefix
    - [ ] lombok.noArgsConstructor.extraPrivate (probably we don't need to support it - it is private after all)
-   - [ ] lombok.copyableAnnotations
+   - [ ] lombok.copyableAnnotations (probably don't need it)
  - [ ] Copy annotations
  - [x] Strip defined prefixes - in config and @Accessors
  - [x] Skip generation with AccessLevel.NONE
@@ -49,8 +49,9 @@ Other todos:
  - [x] Actually run compiled code 
  - [x] Don't generate members that already exist (if having a duplicate is a problem)
  - [x] Gradle integration (as subplugin or just a way to enable lombok support)
+ - [ ] Gradle plugin integration test
  - [ ] Maven integration (as subplugin or just a way to enable lombok support)
- - [ ] Nullability from annotations. Check if it is inherited from variable definition
+ - [x] Nullability from annotations. Check if it is inherited from variable definition
 
 
 
