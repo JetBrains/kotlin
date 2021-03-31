@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.backend.common.SamType
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -451,7 +450,7 @@ class CoroutineCodegenForLambda private constructor(
                             if (parameter.type.isInlineClassType()) {
                                 load(cloneIndex, fieldInfoForCoroutineLambdaParameter.ownerType)
                                 load(index, AsmTypes.OBJECT_TYPE)
-                                StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, parameter.type, this)
+                                StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, parameter.type, this, typeMapper)
                                 putfield(
                                     fieldInfoForCoroutineLambdaParameter.ownerInternalName,
                                     fieldInfoForCoroutineLambdaParameter.fieldName,
@@ -757,7 +756,7 @@ class CoroutineCodegenForNamedFunction private constructor(
                             generateCoroutineSuspendedCheck(languageVersionSettings)
                             // Now we box the inline class
                             StackValue.coerce(AsmTypes.OBJECT_TYPE, typeMapper.mapType(inlineClassToBoxInInvokeSuspend), this)
-                            StackValue.boxInlineClass(inlineClassToBoxInInvokeSuspend, this)
+                            StackValue.boxInlineClass(inlineClassToBoxInInvokeSuspend, this, typeMapper)
                         }
                     }
 

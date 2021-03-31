@@ -12,15 +12,11 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -50,12 +46,12 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
 
             when {
                 isFromTypeUnboxed && !isToTypeUnboxed -> {
-                    StackValue.boxInlineClass(erasedSourceType.toIrBasedKotlinType(), mv)
+                    StackValue.boxInlineClass(erasedSourceType, mv, typeMapper)
                     return
                 }
 
                 !isFromTypeUnboxed && isToTypeUnboxed -> {
-                    StackValue.unboxInlineClass(type, erasedTargetType.toIrBasedKotlinType(), mv)
+                    StackValue.unboxInlineClass(type, erasedTargetType, mv, typeMapper)
                     return
                 }
             }
@@ -64,7 +60,6 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         if (type != target || (castForReified && irType.anyTypeArgument { it.isReified })) {
             StackValue.coerce(type, target, mv, type == target)
         }
-
     }
 
     abstract fun discard()

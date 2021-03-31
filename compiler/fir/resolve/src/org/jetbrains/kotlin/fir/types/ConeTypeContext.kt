@@ -497,6 +497,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             ?: session.builtinTypes.nullableAnyType.type
     }
 
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
+        require(this is ConeKotlinType)
+        return unsubstitutedUnderlyingTypeForInlineClass(session)
+    }
+
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
         require(this is ConeKotlinType)
         return substitutedUnderlyingTypeForInlineClass(session, this@ConeTypeContext)

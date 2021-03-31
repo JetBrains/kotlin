@@ -11,10 +11,19 @@ import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.ConeTypeContext
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.types.model.typeConstructor
 
-fun ConeKotlinType.substitutedUnderlyingTypeForInlineClass(session: FirSession, context: ConeTypeContext): ConeKotlinType? {
+internal fun ConeKotlinType.substitutedUnderlyingTypeForInlineClass(session: FirSession, context: ConeTypeContext): ConeKotlinType? {
+    val unsubstitutedType = unsubstitutedUnderlyingTypeForInlineClass(session) ?: return null
+    val substitutor = createTypeSubstitutorByTypeConstructor(mapOf(this.typeConstructor(context) to this), context)
+    return substitutor.substituteOrNull(unsubstitutedType)
+}
+
+internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
     val symbol = (this.fullyExpandedType(session) as? ConeLookupTagBasedType)
         ?.lookupTag
         ?.toSymbol(session) as? FirRegularClassSymbol
@@ -24,8 +33,5 @@ fun ConeKotlinType.substitutedUnderlyingTypeForInlineClass(session: FirSession, 
     if (!firClass.status.isInline) return null
     val constructor = firClass.declarations.singleOrNull { it is FirConstructor && it.isPrimary } as FirConstructor? ?: return null
     val valueParameter = constructor.valueParameters.singleOrNull() ?: return null
-    val unsubstitutedType = valueParameter.returnTypeRef.coneType
-
-    val substitutor = createTypeSubstitutorByTypeConstructor(mapOf(this.typeConstructor(context) to this), context)
-    return substitutor.substituteOrNull(unsubstitutedType)
+    return valueParameter.returnTypeRef.coneType
 }

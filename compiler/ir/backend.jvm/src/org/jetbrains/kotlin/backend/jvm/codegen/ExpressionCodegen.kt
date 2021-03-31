@@ -468,7 +468,7 @@ class ExpressionCodegen(
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
             addSuspendMarker(mv, isStartNotEnd = false, isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
             if (unboxedInlineClassIrType != null) {
-                generateResumePathUnboxing(mv, unboxedInlineClassIrType.toIrBasedKotlinType())
+                generateResumePathUnboxing(mv, unboxedInlineClassIrType, typeMapper)
             }
             addInlineMarker(mv, isStartNotEnd = false)
         }
@@ -484,7 +484,7 @@ class ExpressionCodegen(
                 mv.checkcast(unboxedInlineClassIrType.asmType)
             }
             if (irFunction.isInvokeSuspendOfContinuation()) {
-                StackValue.boxInlineClass(unboxedInlineClassIrType.toIrBasedKotlinType(), mv)
+                StackValue.boxInlineClass(unboxedInlineClassIrType, mv, typeMapper)
             }
         }
 
@@ -637,7 +637,7 @@ class ExpressionCodegen(
         if (!irFunction.isInlineCallableReference) return
         if (irFunction.extensionReceiverParameter?.symbol == arg.symbol) return
         if (arg.type.isNullable() && arg.type.makeNotNull().unboxInlineClass().isNullable()) return
-        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
+        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType, mv, typeMapper)
     }
 
     // We do not mangle functions if Result is the only parameter of the function,
@@ -664,7 +664,7 @@ class ExpressionCodegen(
         // Result parameter of SAM-wrapper to Java SAM is already unboxed in visitGetValue, do not unbox it anymore
         if (irFunction.parentAsClass.superTypes.any { it.getClass()?.isFromJava() == true }) return
 
-        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
+        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType, mv, typeMapper)
     }
 
     private fun IrClass.isSamAdapter(): Boolean = this.superTypes.any { it.getClass()?.isFun == true }
@@ -920,7 +920,7 @@ class ExpressionCodegen(
         expression.value.accept(this, data).materializeAt(returnType, returnIrType)
         // In case of non-local return from suspend lambda 'materializeAt' does not box return value, box it manually.
         if (isNonLocalReturn && owner.isInvokeSuspendOfLambda() && expression.value.type.isKotlinResult()) {
-            StackValue.boxInlineClass(expression.value.type.toIrBasedKotlinType(), mv)
+            StackValue.boxInlineClass(expression.value.type, mv, typeMapper)
         }
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, null)
         expression.markLineNumber(startOffset = true)

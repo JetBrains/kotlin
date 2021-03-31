@@ -75,7 +75,6 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.backend.common.SamType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -100,6 +99,9 @@ class KotlinTypeMapper @JvmOverloads constructor(
             require(!useOldInlineClassesManglingScheme)
             field = value
         }
+
+    override val typeSystem: TypeSystemCommonBackendContext
+        get() = SimpleClassicTypeSystemContext
 
     private val typeMappingConfiguration = object : TypeMappingConfiguration<Type> {
         override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
@@ -231,6 +233,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
     override fun mapClass(classifier: ClassifierDescriptor): Type {
         return mapType(classifier.defaultType, null, TypeMappingMode.CLASS_DECLARATION)
+    }
+
+    override fun mapTypeCommon(type: KotlinTypeMarker, mode: TypeMappingMode): Type {
+        return mapType(type as KotlinType, null, mode)
     }
 
     fun mapTypeAsDeclaration(kotlinType: KotlinType): Type {
@@ -1272,29 +1278,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
     }
 
     companion object {
-
-        private val staticTypeMappingConfiguration = object : TypeMappingConfiguration<Type> {
-            override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
-                return CommonSupertypes.commonSupertype(types)
-            }
-
-            override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): Type? {
-                return null
-            }
-
-            override fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String? {
-                return null
-            }
-
-            override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {
-                throw IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor))
-            }
-
-            override fun preprocessType(kotlinType: KotlinType): KotlinType? {
-                return null
-            }
-        }
-
         /**
          * Use proper LanguageVersionSettings where possible.
          */
@@ -1412,30 +1395,15 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return ContainingClassesInfo.forPackageMember(facadeName, implClassName)
         }
 
-        // Make sure this method is called only from back-end
-        // It uses staticTypeMappingConfiguration that throws exception on error types
         @JvmStatic
-        fun mapInlineClassTypeAsDeclaration(kotlinType: KotlinType): Type {
-            return mapInlineClassType(kotlinType, TypeMappingMode.CLASS_DECLARATION, staticTypeMappingConfiguration)
+        fun mapUnderlyingTypeOfInlineClassType(kotlinType: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase): Type {
+            val underlyingType = with(typeMapper.typeSystem) {
+                kotlinType.getUnsubstitutedUnderlyingType()
+            } ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
+            return typeMapper.mapTypeCommon(underlyingType, TypeMappingMode.DEFAULT)
         }
 
-        // Make sure this method is called only from back-end
-        // It uses staticTypeMappingConfiguration that throws exception on error types
-        @JvmStatic
-        fun mapUnderlyingTypeOfInlineClassType(kotlinType: KotlinType): Type {
-            val underlyingType = kotlinType.unsubstitutedUnderlyingType()
-                ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
-            return mapInlineClassType(underlyingType, TypeMappingMode.DEFAULT, staticTypeMappingConfiguration)
-        }
-
-        private fun mapInlineClassType(
-            kotlinType: KotlinType,
-            mode: TypeMappingMode,
-            configuration: TypeMappingConfiguration<Type>
-        ): Type =
-            mapType(kotlinType, AsmTypeFactory, mode, configuration, null)
-
-        private fun generateErrorMessageForErrorType(type: KotlinType, descriptor: DeclarationDescriptor): String {
+        internal fun generateErrorMessageForErrorType(type: KotlinType, descriptor: DeclarationDescriptor): String {
             val declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
                 ?: return "Error type encountered: $type (${type.javaClass.simpleName})."
 
