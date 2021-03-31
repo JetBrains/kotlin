@@ -191,7 +191,7 @@ internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlin
     // Force boxing for nullable inline class types with nullable underlying type
     if (returnType.isNullable() && unboxedReturnType.isNullable()) return null
     // Force boxing if the function overrides function with different type modulo nullability ignoring type parameters
-    if ((this as? IrSimpleFunction)?.overridesReturningDifferentType(returnType) != false) return null
+    if ((this as? IrSimpleFunction)?.overridesReturningDifferentType(returnType)) return null
     // Don't box other inline classes
     return returnType
 }
