@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
 import org.jetbrains.kotlin.gradle.utils.isKotlinFile
@@ -60,33 +62,27 @@ internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
     }
 }
 
-internal class FilteringSourceRootsContainer(roots: List<File> = emptyList(), val filter: (File) -> Boolean = { true }) {
-    private val mutableSourceRoots = roots.filterTo(mutableListOf(), filter)
+internal class FilteringSourceRootsContainer(
+    private val objectFactory: ObjectFactory,
+    val filter: (File) -> Boolean = { true }
+) {
+    private val resultFilesUnfiltered: ConfigurableFileCollection = objectFactory.fileCollection()
+    private val result = resultFilesUnfiltered.filter(filter)
 
     val sourceRoots: List<File>
-        get() = mutableSourceRoots
+        get() = result.toList()
 
     fun clear() {
-        mutableSourceRoots.clear()
+        resultFilesUnfiltered.setFrom()
     }
 
-    fun set(source: Any?): List<File> {
+    fun set(source: Any?): FileCollection {
         clear()
         return add(source)
     }
 
-    fun add(vararg sources: Any?): List<File> {
-        val filteredDirs = mutableListOf<File>()
-        for (source in sources) {
-            when (source) {
-                is SourceDirectorySet -> filteredDirs += source.srcDirs.filter { filter(it) }
-                is File -> if (filter(source)) filteredDirs.add(source)
-                is Collection<*> -> source.forEach { filteredDirs += add(it) }
-                is Array<*> -> source.forEach { filteredDirs += add(it) }
-            }
-        }
-
-        mutableSourceRoots += filteredDirs
-        return filteredDirs
+    fun add(vararg sources: Any?): FileCollection {
+        resultFilesUnfiltered.from(sources)
+        return objectFactory.fileCollection().from(sources).filter(filter)
     }
 }

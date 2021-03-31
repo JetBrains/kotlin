@@ -33,7 +33,7 @@ import java.io.File
 
 @CacheableTask
 open class KaptGenerateStubsTask : KotlinCompile() {
-    override val sourceRootsContainer = FilteringSourceRootsContainer(emptyList(), { isSourceRootAllowed(it) })
+    override val sourceRootsContainer = FilteringSourceRootsContainer(project.objects, { isSourceRootAllowed(it) })
 
     override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
 

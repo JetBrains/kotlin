@@ -103,7 +103,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             compileKotlinTaskName,
             sourceSet.customSourceFilesExtensions,
             addAsCommonSources
-        ) { sourceSet.kotlin }
+        ) { sourceSet.kotlin.sourceDirectories }
 
     internal fun addExactSourceSetsEagerly(sourceSets: Set<KotlinSourceSet>) {
         with(target.project) {
@@ -285,14 +285,20 @@ internal fun addSourcesToKotlinCompileTask(
     taskName: String,
     sourceFileExtensions: Iterable<String>,
     addAsCommonSources: Lazy<Boolean> = lazyOf(false),
+    /** Expected to return paths of the source root directories. */
     sources: () -> Iterable<File>
 ) {
     fun AbstractKotlinCompile<*>.configureAction() {
+        // In this call, the super-implementation of `source` adds the directories files to the roots of the union file tree,
+        // so it's OK to pass just the source roots.
         source(project.files(Callable { sources() }))
         sourceFilesExtensions(sourceFileExtensions)
+
+        // The `commonSourceSet` is passed to the compiler as-is, so we have to expand the source roots to get all the
+        // nested files from the file tree.
         commonSourceSet += project.files(Callable {
             if (addAsCommonSources.value) sources() else emptyList<Any>()
-        })
+        }).asFileTree
     }
 
     project.tasks

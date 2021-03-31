@@ -464,7 +464,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         get() = taskData.compilation.kotlinOptions as KotlinJvmOptions
 
     @get:Internal
-    internal open val sourceRootsContainer = FilteringSourceRootsContainer()
+    internal open val sourceRootsContainer = FilteringSourceRootsContainer(project.objects)
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
