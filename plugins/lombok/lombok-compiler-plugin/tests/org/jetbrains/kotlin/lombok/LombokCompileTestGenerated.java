@@ -114,6 +114,11 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/noArgsConstructorStatic.kt");
     }
 
+    @TestMetadata("nullability.kt")
+    public void testNullability() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/nullability.kt");
+    }
+
     @TestMetadata("requiredArgsConstructor.kt")
     public void testRequiredArgsConstructor() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/requiredArgsConstructor.kt");
