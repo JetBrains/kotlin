@@ -370,14 +370,18 @@ internal abstract class MppDependencyMetadataExtractor(val project: Project, val
 private class ProjectMppDependencyMetadataExtractor(
     project: Project,
     dependency: ResolvedComponentResult,
-    val moduleIdentifier: KotlinModuleIdentifier?,
+    val moduleIdentifier: KotlinModuleIdentifier,
     val dependencyProject: Project
 ) : MppDependencyMetadataExtractor(project, dependency) {
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? =
-        moduleIdentifier?.let {
-            val module = dependencyProject.pm20Extension.modules.single { it.moduleIdentifier == moduleIdentifier }
-            buildProjectStructureMetadata(module)
-        } ?: buildKotlinProjectStructureMetadata(dependencyProject)
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
+        val topLevelExtension = dependencyProject.topLevelExtension
+        return when {
+            topLevelExtension is KotlinPm20ProjectExtension -> buildProjectStructureMetadata(
+                topLevelExtension.modules.single { it.moduleIdentifier == moduleIdentifier }
+            )
+            else -> buildKotlinProjectStructureMetadata(dependencyProject)
+        }
+    }
 
     override fun getExtractableMetadataFiles(
         visibleSourceSetNames: Set<String>,
