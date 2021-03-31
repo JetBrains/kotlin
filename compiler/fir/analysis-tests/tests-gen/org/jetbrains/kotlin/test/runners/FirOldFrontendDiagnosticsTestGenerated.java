@@ -31457,9 +31457,15 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
-                @TestMetadata("jvmFieldApplicability.kt")
-                public void testJvmFieldApplicability() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/jvmFieldApplicability.kt");
+                @TestMetadata("jvmFieldApplicability_1_5.kt")
+                public void testJvmFieldApplicability_1_5() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/jvmFieldApplicability_1_5.kt");
+                }
+
+                @Test
+                @TestMetadata("jvmFieldApplicability_1_6.kt")
+                public void testJvmFieldApplicability_1_6() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/jvmFieldApplicability_1_6.kt");
                 }
             }
 

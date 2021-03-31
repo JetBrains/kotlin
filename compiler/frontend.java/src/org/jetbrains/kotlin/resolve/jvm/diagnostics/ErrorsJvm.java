@@ -38,6 +38,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> ILLEGAL_JVM_NAME = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<KtAnnotationEntry, String> INAPPLICABLE_JVM_FIELD = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtAnnotationEntry, String> INAPPLICABLE_JVM_FIELD_WARNING = DiagnosticFactory1.create(WARNING);
 
     DiagnosticFactory0<KtAnnotationEntry> JVM_SYNTHETIC_ON_DELEGATE = DiagnosticFactory0.create(ERROR);
 

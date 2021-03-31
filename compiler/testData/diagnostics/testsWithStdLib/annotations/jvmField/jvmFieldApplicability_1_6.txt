@@ -1,0 +1,151 @@
+package
+
+@field:kotlin.jvm.JvmField public const val Const: kotlin.Int = 4
+@field:kotlin.jvm.JvmField public var i: kotlin.Int
+@field:kotlin.jvm.JvmField private val private: kotlin.Int = 3
+@kotlin.jvm.JvmField public fun foo(): kotlin.Unit
+
+@kotlin.jvm.JvmField public abstract class C : I {
+    @kotlin.jvm.JvmField public constructor C(/*0*/ s: kotlin.String)
+    @field:kotlin.jvm.JvmField public final val a: kotlin.String
+    @field:kotlin.jvm.JvmField public final override /*1*/ val ai: kotlin.Int = 3
+    @field:kotlin.jvm.JvmField public open val b: kotlin.Int = 3
+    @field:kotlin.jvm.JvmField public open override /*1*/ /*fake_override*/ val bi: kotlin.Int
+    @field:kotlin.jvm.JvmField public abstract val c: kotlin.Int
+    @field:kotlin.jvm.JvmField public final val customGetter: kotlin.String = ""
+    @field:kotlin.jvm.JvmField public final var customSetter: kotlin.String
+    @field:kotlin.jvm.JvmField @get:DemoAnnotation public final val explicitDefaultAnnotatedGetter: kotlin.String = ""
+    @field:kotlin.jvm.JvmField @set:DemoAnnotation public final var explicitDefaultAnnotatedSetter: kotlin.String
+    @field:kotlin.jvm.JvmField public final val explicitDefaultGetter: kotlin.String = ""
+    @field:kotlin.jvm.JvmField public final var explicitDefaultSetter: kotlin.String
+    @field:kotlin.jvm.JvmField public final val noBackingField: kotlin.String
+    @field:kotlin.jvm.JvmField private final val private: kotlin.Int = 3
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.jvm.JvmField private final fun foo(/*0*/ s: kotlin.String = ...): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class DemoAnnotation : kotlin.Annotation {
+    public constructor DemoAnnotation()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final inline class Foo {
+    public constructor Foo(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class G {
+    public constructor G()
+    @field:kotlin.jvm.JvmField public final lateinit var lateInit: kotlin.String
+    @delegate:kotlin.jvm.JvmField public final val s: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class H {
+    public constructor H()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        @field:kotlin.jvm.JvmField public final var c: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public interface I {
+    @field:kotlin.jvm.JvmField public abstract val ai: kotlin.Int
+    @field:kotlin.jvm.JvmField public open val bi: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object IObject {
+    private constructor IObject()
+    @field:kotlin.jvm.JvmField public final val c: Foo
+    @field:kotlin.jvm.JvmField private final val r: kotlin.Result<kotlin.Int>
+    @field:kotlin.jvm.JvmField public final val u: kotlin.UInt = 42.toUInt()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class JK : K {
+    public constructor JK(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int)
+    public open override /*1*/ val i: kotlin.Int
+    @field:kotlin.jvm.JvmField public open override /*1*/ val j: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface K {
+    public abstract val i: kotlin.Int
+    public abstract val j: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        @field:kotlin.jvm.JvmField public final var c: kotlin.Int
+        public final var x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class KK : K {
+    public constructor KK()
+    @field:kotlin.jvm.JvmField public open override /*1*/ val i: kotlin.Int = 0
+    @field:kotlin.jvm.JvmField public final override /*1*/ val j: kotlin.Int = 0
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class KKK : K {
+    public constructor KKK()
+    @field:kotlin.jvm.JvmField public open override /*1*/ val i: kotlin.Int = 0
+    @field:kotlin.jvm.JvmField public final override /*1*/ val j: kotlin.Int = 0
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class L : kotlin.Annotation {
+    public constructor L()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        @field:kotlin.jvm.JvmField public final var c: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public object O {
+    private constructor O()
+    @field:kotlin.jvm.JvmField public final val c: kotlin.Int = 3
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

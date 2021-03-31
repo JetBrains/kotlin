@@ -120,6 +120,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array");
 
         MAP.put(INAPPLICABLE_JVM_FIELD, "{0}", STRING);
+        MAP.put(INAPPLICABLE_JVM_FIELD_WARNING, "{0}. This warning will become an error in further releases", STRING);
 
         MAP.put(JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties");
 

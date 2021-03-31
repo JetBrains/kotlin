@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -53,18 +55,18 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is PropertyDescriptor || declaration !is KtProperty) return
+        if (descriptor !is PropertyDescriptor || (declaration !is KtProperty && declaration !is KtParameter)) return
 
         val annotation = descriptor.findJvmFieldAnnotation()
             ?: descriptor.delegateField?.annotations?.findAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
             ?: return
 
         val problem = when {
-            declaration.hasDelegate() -> DELEGATE
+            declaration is KtProperty && declaration.hasDelegate() -> DELEGATE
             !descriptor.hasBackingField(context.trace.bindingContext) -> return
             descriptor.isOverridable -> NOT_FINAL
             DescriptorVisibilities.isPrivate(descriptor.visibility) -> PRIVATE
-            declaration.hasCustomAccessor() -> CUSTOM_ACCESSOR
+            declaration is KtProperty && declaration.hasCustomAccessor() -> CUSTOM_ACCESSOR
             descriptor.overriddenDescriptors.isNotEmpty() -> OVERRIDES
             descriptor.isLateInit -> LATEINIT
             descriptor.isConst -> CONST
@@ -83,7 +85,14 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         }
 
         val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
-        context.trace.report(ErrorsJvm.INAPPLICABLE_JVM_FIELD.on(annotationEntry, problem.errorMessage))
+
+        val factory =
+            if (declaration is KtParameter && !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor)) {
+                ErrorsJvm.INAPPLICABLE_JVM_FIELD_WARNING
+            } else {
+                ErrorsJvm.INAPPLICABLE_JVM_FIELD
+            }
+        context.trace.report(factory.on(annotationEntry, problem.errorMessage))
     }
 
     private fun isInterfaceCompanionWithPublicJvmFieldProperties(companionObject: ClassDescriptor): Boolean {

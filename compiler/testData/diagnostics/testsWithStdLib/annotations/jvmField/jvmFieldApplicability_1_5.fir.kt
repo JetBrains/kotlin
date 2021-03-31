@@ -1,4 +1,4 @@
-// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses
+// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses -JvmInlineValueClasses -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @kotlin.jvm.JvmField
@@ -113,6 +113,11 @@ open class KKK : K {
     @JvmField
     override final val j: Int = 0
 }
+
+class JK(
+    override val i: Int,
+    @JvmField override val j: Int,
+) : K
 
 annotation class L {
     companion object {
