@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.codeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 
 object CodeMetaInfoParser {
-    val openingRegex = """(<!([^"]*?((".*?")(, ".*?")*?)?[^"]*?)!>)""".toRegex()
-    val closingRegex = """(<!>)""".toRegex()
+    private val openingRegex = """<!([^>][^"]*?((".*?")(, ".*?")*?)?[^"]*?)!>""".toRegex()
+    private val closingRegex = "<!>".toRegex()
 
     val openingOrClosingRegex = """(${closingRegex.pattern}|${openingRegex.pattern})""".toRegex()
 
@@ -21,7 +21,19 @@ object CodeMetaInfoParser {
      */
     private val tagRegex = """([\S&&[^,(){}]]+)([{](.*?)[}])?(\("(.*?)"\))?(, )?""".toRegex()
 
-    private class Opening(val index: Int, val tags: String, val startOffset: Int) {
+    private enum class MatchType {
+        Opening,
+        Closing,
+    }
+
+    private val matchTypeRegexMap = mutableMapOf(
+        MatchType.Opening to openingRegex,
+        MatchType.Closing to closingRegex
+    )
+
+    private abstract class MatchElement
+
+    private class Opening(val index: Int, val tags: String, val startOffset: Int) : MatchElement() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -38,63 +50,87 @@ object CodeMetaInfoParser {
         }
     }
 
+    private class Closing(val index: Int, val startOffset: Int) : MatchElement() {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Closing
+
+            if (index != other.index) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return index
+        }
+    }
+
     fun getCodeMetaInfoFromText(renderedText: String): List<ParsedCodeMetaInfo> {
-        var text = renderedText
+        val elements = mutableListOf<MatchElement>()
+
+        val matches = mutableMapOf<MatchType, MatchResult?>()
+        for (matchType in matchTypeRegexMap.keys) {
+            matches[matchType] = matchTypeRegexMap[matchType]!!.find(renderedText, 0)
+        }
+
+        var offset = 0
+        var counter = 0
+        var selectedMatch: MatchResult?
+        do {
+            var selectedMatchType: MatchType = MatchType.Opening
+            selectedMatch = null
+
+            for (matchType in matches.keys) {
+                val match = matches[matchType]
+                if (match != null && match.range.first < (selectedMatch?.range?.first ?: Int.MAX_VALUE)) {
+                    selectedMatch = match
+                    selectedMatchType = matchType
+                }
+            }
+
+            if (selectedMatch != null) {
+                val first = selectedMatch.range.first
+                elements.add(
+                    if (selectedMatchType == MatchType.Opening) {
+                        Opening(counter++, selectedMatch.groupValues[1], first - offset)
+                    } else {
+                        Closing(counter++, first - offset)
+                    }
+                )
+                matches[selectedMatchType] = matchTypeRegexMap[selectedMatchType]!!.find(renderedText, selectedMatch.range.last + 1)
+                offset += selectedMatch.value.length
+            }
+        } while (selectedMatch != null)
 
         val openings = ArrayDeque<Opening>()
-        val stackOfOpenings = ArrayDeque<Opening>()
-        val closingOffsets = mutableMapOf<Opening, Int>()
         val result = mutableListOf<ParsedCodeMetaInfo>()
 
-        var counter = 0
+        for (element in elements) {
+            if (element is Opening) {
+                openings.addLast(element)
+            } else if (element is Closing) {
+                val opening = openings.removeLastOrNull() ?: error("Closing element does not contain corresponding opening")
+                val allMetaInfos = opening.tags
+                tagRegex.findAll(allMetaInfos).map { it.groups }.forEach {
+                    val tag = it[1]!!.value
+                    val attributes = it[3]?.value?.split(";") ?: emptyList()
+                    val description = it[5]?.value
 
-        while (true) {
-            var openingStartOffset = Int.MAX_VALUE
-            var closingStartOffset = Int.MAX_VALUE
-            val opening = openingRegex.find(text)
-            val closing = closingRegex.find(text)
-            if (opening == null && closing == null) break
-
-            if (opening != null)
-                openingStartOffset = opening.range.first
-            if (closing != null)
-                closingStartOffset = closing.range.first
-
-            text = if (openingStartOffset < closingStartOffset) {
-                requireNotNull(opening)
-                val openingMatch = Opening(counter++, opening.groups[2]!!.value, opening.range.first)
-                openings.addLast(openingMatch)
-                stackOfOpenings.addLast(openingMatch)
-                text.removeRange(openingStartOffset, opening.range.last + 1)
-            } else {
-                requireNotNull(closing)
-                closingOffsets[stackOfOpenings.removeLast()] = closing.range.first
-                text.removeRange(closingStartOffset, closing.range.last + 1)
-            }
-        }
-        if (openings.size != closingOffsets.size) {
-            error("Opening and closing tags counts are not equals")
-        }
-        while (!openings.isEmpty()) {
-            val openingMatchResult = openings.removeLast()
-            val closingMatchResult = closingOffsets.getValue(openingMatchResult)
-            val allMetaInfos = openingMatchResult.tags
-            tagRegex.findAll(allMetaInfos).map { it.groups }.forEach {
-                val tag = it[1]!!.value
-                val attributes = it[3]?.value?.split(";") ?: emptyList()
-                val description = it[5]?.value
-
-                result.add(
-                    ParsedCodeMetaInfo(
-                        openingMatchResult.startOffset,
-                        closingMatchResult,
-                        attributes.toMutableList(),
-                        tag,
-                        description
+                    result.add(
+                        ParsedCodeMetaInfo(
+                            opening.startOffset,
+                            element.startOffset,
+                            attributes.toMutableList(),
+                            tag,
+                            description
+                        )
                     )
-                )
+                }
             }
         }
+
         return result
     }
 }
