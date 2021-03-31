@@ -4,7 +4,7 @@
  */
 package kotlin.native
 
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
@@ -51,10 +51,8 @@ public final class Vector128 private constructor() {
     }
 }
 
-@SymbolName("Kotlin_Vector4f_of")
-@GCCritical
+@GCUnsafeCall("Kotlin_Vector4f_of")
 external fun vectorOf(f0: Float, f1: Float, f2: Float, f3: Float): Vector128
 
-@SymbolName("Kotlin_Vector4i32_of")
-@GCCritical
+@GCUnsafeCall("Kotlin_Vector4i32_of")
 external fun vectorOf(f0: Int, f1: Int, f2: Int, f3: Int): Vector128

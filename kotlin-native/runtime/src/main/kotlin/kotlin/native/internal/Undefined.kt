@@ -9,6 +9,5 @@ package kotlin.native.internal
  * Returns undefined value of type `T`.
  * This method is unsafe and should be used with care.
  */
-@SymbolName("Kotlin_native_internal_undefined")
-@GCCritical
+@GCUnsafeCall("Kotlin_native_internal_undefined")
 internal external fun <T> undefined(): T

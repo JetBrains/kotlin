@@ -16,7 +16,7 @@
 
 package kotlinx.cinterop
 import kotlin.native.*
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 
 data class Pinned<out T : Any> internal constructor(private val stablePtr: COpaquePointer) {
 
@@ -93,50 +93,38 @@ private inline fun <T : Any, P : CPointed> T.usingPinned(
     }
 }
 
-@SymbolName("Kotlin_Arrays_getByteArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getByteArrayAddressOfElement")
 private external fun ByteArray.addressOfElement(index: Int): CPointer<ByteVar>
 
-@SymbolName("Kotlin_Arrays_getStringAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getStringAddressOfElement")
 private external fun String.addressOfElement(index: Int): CPointer<COpaque>
 
-@SymbolName("Kotlin_Arrays_getCharArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getCharArrayAddressOfElement")
 private external fun CharArray.addressOfElement(index: Int): CPointer<COpaque>
 
-@SymbolName("Kotlin_Arrays_getShortArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getShortArrayAddressOfElement")
 private external fun ShortArray.addressOfElement(index: Int): CPointer<ShortVar>
 
-@SymbolName("Kotlin_Arrays_getIntArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getIntArrayAddressOfElement")
 private external fun IntArray.addressOfElement(index: Int): CPointer<IntVar>
 
-@SymbolName("Kotlin_Arrays_getLongArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getLongArrayAddressOfElement")
 private external fun LongArray.addressOfElement(index: Int): CPointer<LongVar>
 
-@SymbolName("Kotlin_Arrays_getByteArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getByteArrayAddressOfElement")
 private external fun UByteArray.addressOfElement(index: Int): CPointer<UByteVar>
 
-@SymbolName("Kotlin_Arrays_getShortArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getShortArrayAddressOfElement")
 private external fun UShortArray.addressOfElement(index: Int): CPointer<UShortVar>
 
-@SymbolName("Kotlin_Arrays_getIntArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getIntArrayAddressOfElement")
 private external fun UIntArray.addressOfElement(index: Int): CPointer<UIntVar>
 
-@SymbolName("Kotlin_Arrays_getLongArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getLongArrayAddressOfElement")
 private external fun ULongArray.addressOfElement(index: Int): CPointer<ULongVar>
 
-@SymbolName("Kotlin_Arrays_getFloatArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getFloatArrayAddressOfElement")
 private external fun FloatArray.addressOfElement(index: Int): CPointer<FloatVar>
 
-@SymbolName("Kotlin_Arrays_getDoubleArrayAddressOfElement")
-@GCCritical
+@GCUnsafeCall("Kotlin_Arrays_getDoubleArrayAddressOfElement")
 private external fun DoubleArray.addressOfElement(index: Int): CPointer<DoubleVar>

@@ -125,10 +125,8 @@ private class CleanerImpl(
     private val cleanPtr: NativePtr,
 ): Cleaner {}
 
-@SymbolName("Kotlin_Any_isShareable")
-@GCCritical // Fast: just a check for the legacy MM and always true for the new MM.
+@GCUnsafeCall("Kotlin_Any_isShareable")
 external private fun Any?.isShareable(): Boolean
 
-@SymbolName("CreateStablePointer")
-@GCCritical // Modifies the root set.
+@GCUnsafeCall("CreateStablePointer")
 external private fun createStablePointer(obj: Any): NativePtr

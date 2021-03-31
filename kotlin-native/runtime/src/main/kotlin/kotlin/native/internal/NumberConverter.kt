@@ -22,8 +22,7 @@ package kotlin.native.internal
 private external fun bigIntDigitGeneratorInstImpl(results: IntArray, uArray: IntArray, f: Long, e: Int,
                                                   isDenormalized: Boolean, mantissaIsZero: Boolean, p: Int)
 
-@SymbolName("Kotlin_native_NumberConverter_ceil")
-@GCCritical
+@GCUnsafeCall("Kotlin_native_NumberConverter_ceil")
 private external fun ceil(x: Double): Double
 
 /**

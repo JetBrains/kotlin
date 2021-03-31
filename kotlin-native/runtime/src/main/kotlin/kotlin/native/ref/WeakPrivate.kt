@@ -8,7 +8,7 @@ package kotlin.native.ref
 import kotlinx.cinterop.COpaquePointer
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.Frozen
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.NoReorderFields
 import kotlin.native.internal.Escapes
 
@@ -44,8 +44,7 @@ internal class WeakReferenceCounter(var referred: COpaquePointer?) : WeakReferen
     // Optimization for concurrent access.
     var cookie: Int = 0
 
-    @SymbolName("Konan_WeakReferenceCounter_get")
-    @GCCritical // Fast: just an atomic read in the new MM.
+    @GCUnsafeCall("Konan_WeakReferenceCounter_get")
     external override fun get(): Any?
 }
 
@@ -55,8 +54,7 @@ internal abstract class WeakReferenceImpl {
 }
 
 // Get a counter from non-null object.
-@SymbolName("Konan_getWeakReferenceImpl")
-@GCCritical // Calls Kotlin methods and modifies the root set. Relatively fast (performs an instanceof check).
+@GCUnsafeCall("Konan_getWeakReferenceImpl")
 @Escapes(0b01) // referent escapes.
 external internal fun getWeakReferenceImpl(referent: Any): WeakReferenceImpl
 

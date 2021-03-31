@@ -47,18 +47,15 @@ internal class NonNullNativePtr private constructor() { // TODO: refactor to use
 @ExportTypeInfo("theNativePtrArrayTypeInfo")
 internal class NativePtrArray {
 
-    @SymbolName("Kotlin_NativePtrArray_get")
-    @GCCritical
+    @GCUnsafeCall("Kotlin_NativePtrArray_get")
     external public operator fun get(index: Int): NativePtr
 
-    @SymbolName("Kotlin_NativePtrArray_set")
-    @GCCritical
+    @GCUnsafeCall("Kotlin_NativePtrArray_set")
     external public operator fun set(index: Int, value: NativePtr): Unit
 
     val size: Int
         get() = getArrayLength()
 
-    @SymbolName("Kotlin_NativePtrArray_getArrayLength")
-    @GCCritical
+    @GCUnsafeCall("Kotlin_NativePtrArray_getArrayLength")
     external private fun getArrayLength(): Int
 }
