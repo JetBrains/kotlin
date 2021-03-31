@@ -39825,6 +39825,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("sameNameMethodFromInterface.kt")
+        public void testSameNameMethodFromInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/traits/sameNameMethodFromInterface.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticAccessor.kt")
         public void testSyntheticAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/traits/syntheticAccessor.kt");

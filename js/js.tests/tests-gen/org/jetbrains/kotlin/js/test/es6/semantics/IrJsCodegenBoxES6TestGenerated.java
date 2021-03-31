@@ -26881,6 +26881,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/traits/receiverOfIntersectionType.kt");
         }
 
+        @TestMetadata("sameNameMethodFromInterface.kt")
+        public void testSameNameMethodFromInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/traits/sameNameMethodFromInterface.kt");
+        }
+
         @TestMetadata("syntheticAccessor.kt")
         public void testSyntheticAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/traits/syntheticAccessor.kt");

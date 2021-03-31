@@ -67,21 +67,9 @@ class FakeOverrideGenerator(
     }
 
     fun IrClass.getFakeOverrides(klass: FirClass<*>, realDeclarations: Collection<FirDeclaration>): List<IrDeclaration> {
-        val classLookupTag = klass.symbol.toLookupTag()
-        val realDeclarationNames = realDeclarations.mapNotNullTo(mutableSetOf()) {
-            val callableDeclaration = (it as? FirCallableMemberDeclaration<*>) ?: return@mapNotNullTo null
-            // We may need to create a new fake override or compute base symbols.
-            if (callableDeclaration.symbol.shouldHaveComputedBaseSymbolsForClass(classLookupTag) ||
-                callableDeclaration.allowsToHaveFakeOverrideIn(klass)
-            ) null
-            // Otherwise, bail out early based on the name of the contributed member declaration
-            else callableDeclaration.symbol.callableId.callableName
-        }
-
         val result = mutableListOf<IrDeclaration>()
         val useSiteMemberScope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
-        val superTypesCallableNames = useSiteMemberScope.getCallableNames().filter { it !in realDeclarationNames }
-
+        val superTypesCallableNames = useSiteMemberScope.getCallableNames()
         val realDeclarationSymbols = realDeclarations.filterIsInstance<FirSymbolOwner<*>>().mapTo(mutableSetOf(), FirSymbolOwner<*>::symbol)
 
         for (name in superTypesCallableNames) {
