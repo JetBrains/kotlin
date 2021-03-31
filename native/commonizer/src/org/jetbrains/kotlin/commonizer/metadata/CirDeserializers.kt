@@ -49,7 +49,7 @@ object CirDeserializers {
         if (allValueArguments.isEmpty())
             return CirAnnotation.createInterned(type = type, constantValueArguments = emptyMap(), annotationValueArguments = emptyMap())
 
-        val constantValueArguments: MutableMap<CirName, CirConstantValue<*>> = THashMap(allValueArguments.size)
+        val constantValueArguments: MutableMap<CirName, CirConstantValue> = THashMap(allValueArguments.size)
         val annotationValueArguments: MutableMap<CirName, CirAnnotation> = THashMap(allValueArguments.size)
 
         allValueArguments.forEach { (name, constantValue) ->
@@ -208,7 +208,7 @@ object CirDeserializers {
         constantValue: KmAnnotationArgument?,
         constantName: CirName? = null,
         owner: Any,
-    ): CirConstantValue<*> = constantValue(
+    ): CirConstantValue = constantValue(
         constantValue = constantValue,
         location = { "${owner::class.java}, $owner" + constantName?.toString()?.let { "[$it]" } }
     )
@@ -217,7 +217,7 @@ object CirDeserializers {
     private fun constantValue(
         constantValue: KmAnnotationArgument?,
         location: () -> String
-    ): CirConstantValue<*> = when (constantValue) {
+    ): CirConstantValue = when (constantValue) {
         null -> CirConstantValue.NullValue
 
         is KmAnnotationArgument.StringValue -> CirConstantValue.StringValue(constantValue.value)

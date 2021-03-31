@@ -109,7 +109,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             val properties: MutableList<CirProperty> = mutableListOf()
         }
 
-        class ConstSameValue(val compileTimeInitializer: CirConstantValue<*>) : Const() {
+        class ConstSameValue(val compileTimeInitializer: CirConstantValue) : Const() {
             init {
                 check(compileTimeInitializer != CirConstantValue.NullValue)
             }

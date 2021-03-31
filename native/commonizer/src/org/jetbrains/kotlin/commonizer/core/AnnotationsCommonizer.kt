@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.cir.CirConstantValue.*
 import org.jetbrains.kotlin.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
 import org.jetbrains.kotlin.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.commonizer.utils.compactMap
 import org.jetbrains.kotlin.commonizer.utils.compactMapOf
+import org.jetbrains.kotlin.descriptors.Visibilities
 import kotlin.DeprecationLevel.WARNING
 
 /**
@@ -52,7 +52,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
             val level: DeprecationLevel = level ?: failInEmptyState()
             val messageValue: StringValue = message.toDeprecationMessageValue()
 
-            val constantValueArguments: Map<CirName, CirConstantValue<*>> =
+            val constantValueArguments: Map<CirName, CirConstantValue> =
                 if (level == WARNING) {
                     // don't populate with the default level value
                     compactMapOf(PROPERTY_NAME_MESSAGE, messageValue)
@@ -186,17 +186,17 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
         private fun String.toReplaceWithValue(imports: List<String>): CirAnnotation =
             createReplaceWithAnnotation(this, imports)
 
-        private inline fun Map<CirName, CirConstantValue<*>>.getString(name: CirName): String? =
+        private inline fun Map<CirName, CirConstantValue>.getString(name: CirName): String? =
             (this[name] as? StringValue)?.value
 
-        private inline fun Map<CirName, CirConstantValue<*>>.getEnumEntryName(name: CirName): String? =
+        private inline fun Map<CirName, CirConstantValue>.getEnumEntryName(name: CirName): String? =
             (this[name] as? EnumValue)?.enumEntryName?.name
 
         private inline fun Map<CirName, CirAnnotation>.getAnnotation(name: CirName): CirAnnotation? =
             this[name]
 
-        private inline fun Map<CirName, CirConstantValue<*>>.getStringArray(name: CirName): List<String>? {
-            val elements: List<CirConstantValue<*>> = (this[name] as? ArrayValue)?.value ?: return null
+        private inline fun Map<CirName, CirConstantValue>.getStringArray(name: CirName): List<String>? {
+            val elements: List<CirConstantValue> = (this[name] as? ArrayValue)?.elements ?: return null
             if (elements.isEmpty()) return emptyList()
 
             val result = ArrayList<String>(elements.size)

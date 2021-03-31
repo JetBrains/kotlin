@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.commonizer.utils.hashCode
 
 interface CirAnnotation {
     val type: CirClassType
-    val constantValueArguments: Map<CirName, CirConstantValue<*>>
+    val constantValueArguments: Map<CirName, CirConstantValue>
     val annotationValueArguments: Map<CirName, CirAnnotation>
 
     companion object {
         fun createInterned(
             type: CirClassType,
-            constantValueArguments: Map<CirName, CirConstantValue<*>>,
+            constantValueArguments: Map<CirName, CirConstantValue>,
             annotationValueArguments: Map<CirName, CirAnnotation>
         ): CirAnnotation = interner.intern(
             CirAnnotationInternedImpl(
@@ -33,7 +33,7 @@ interface CirAnnotation {
 
 private data class CirAnnotationInternedImpl(
     override val type: CirClassType,
-    override val constantValueArguments: Map<CirName, CirConstantValue<*>>,
+    override val constantValueArguments: Map<CirName, CirConstantValue>,
     override val annotationValueArguments: Map<CirName, CirAnnotation>
 ) : CirAnnotation {
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode

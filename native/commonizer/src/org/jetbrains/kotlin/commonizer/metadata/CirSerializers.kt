@@ -197,7 +197,7 @@ internal fun CirFunction.serializeFunction(
 private fun CirAnnotation.serializeAnnotation(): KmAnnotation {
     val arguments = LinkedHashMap<String, KmAnnotationArgument>(constantValueArguments.size + annotationValueArguments.size, 1F)
 
-    constantValueArguments.forEach { (name: CirName, value: CirConstantValue<*>) ->
+    constantValueArguments.forEach { (name: CirName, value: CirConstantValue) ->
         arguments[name.name] = value.serializeConstantValue()
             ?: error("Unexpected <null> constant value inside of $this")
     }
@@ -213,7 +213,7 @@ private fun CirAnnotation.serializeAnnotation(): KmAnnotation {
 }
 
 @OptIn(ExperimentalUnsignedTypes::class)
-private fun CirConstantValue<*>.serializeConstantValue(): KmAnnotationArgument? = when (this) {
+private fun CirConstantValue.serializeConstantValue(): KmAnnotationArgument? = when (this) {
     is CirConstantValue.StringValue -> KmAnnotationArgument.StringValue(value)
     is CirConstantValue.CharValue -> KmAnnotationArgument.CharValue(value)
 
@@ -234,7 +234,7 @@ private fun CirConstantValue<*>.serializeConstantValue(): KmAnnotationArgument? 
     is CirConstantValue.EnumValue -> KmAnnotationArgument.EnumValue(enumClassId.toString(), enumEntryName.name)
     is CirConstantValue.NullValue -> null
 
-    is CirConstantValue.ArrayValue -> KmAnnotationArgument.ArrayValue(value.compactMap { element ->
+    is CirConstantValue.ArrayValue -> KmAnnotationArgument.ArrayValue(elements.compactMap { element ->
         element.serializeConstantValue() ?: error("Unexpected <null> constant value inside of $this")
     })
 }

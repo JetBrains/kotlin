@@ -5,41 +5,41 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-sealed class CirConstantValue<out T> {
-    abstract val value: T
-
-    data class StringValue(override val value: String) : CirConstantValue<String>()
-    data class CharValue(override val value: Char) : CirConstantValue<Char>()
-
-    data class ByteValue(override val value: Byte) : CirConstantValue<Byte>()
-    data class ShortValue(override val value: Short) : CirConstantValue<Short>()
-    data class IntValue(override val value: Int) : CirConstantValue<Int>()
-    data class LongValue(override val value: Long) : CirConstantValue<Long>()
-
-    @ExperimentalUnsignedTypes
-    data class UByteValue(override val value: UByte) : CirConstantValue<UByte>()
-
-    @ExperimentalUnsignedTypes
-    data class UShortValue(override val value: UShort) : CirConstantValue<UShort>()
-
-    @ExperimentalUnsignedTypes
-    data class UIntValue(override val value: UInt) : CirConstantValue<UInt>()
-
-    @ExperimentalUnsignedTypes
-    data class ULongValue(override val value: ULong) : CirConstantValue<ULong>()
-
-    data class FloatValue(override val value: Float) : CirConstantValue<Float>()
-    data class DoubleValue(override val value: Double) : CirConstantValue<Double>()
-    data class BooleanValue(override val value: Boolean) : CirConstantValue<Boolean>()
-
-    data class EnumValue(val enumClassId: CirEntityId, val enumEntryName: CirName) : CirConstantValue<String>() {
-        override val value: String = "${enumClassId}.${enumEntryName}"
+sealed class CirConstantValue {
+    sealed class LiteralValue<out T> : CirConstantValue() {
+        abstract val value: T
     }
 
-    data class ArrayValue(override val value: List<CirConstantValue<*>>) : CirConstantValue<List<CirConstantValue<*>>>()
+    data class StringValue(override val value: String) : LiteralValue<String>()
+    data class CharValue(override val value: Char) : LiteralValue<Char>()
 
-    object NullValue : CirConstantValue<Void?>() {
-        override val value: Void? get() = null
+    data class ByteValue(override val value: Byte) : LiteralValue<Byte>()
+    data class ShortValue(override val value: Short) : LiteralValue<Short>()
+    data class IntValue(override val value: Int) : LiteralValue<Int>()
+    data class LongValue(override val value: Long) : LiteralValue<Long>()
+
+    // TODO: remove @ExperimentalUnsignedTypes once bootstrap stdlib has stable unsigned types.
+    @ExperimentalUnsignedTypes
+    data class UByteValue(override val value: UByte) : LiteralValue<UByte>()
+
+    @ExperimentalUnsignedTypes
+    data class UShortValue(override val value: UShort) : LiteralValue<UShort>()
+
+    @ExperimentalUnsignedTypes
+    data class UIntValue(override val value: UInt) : LiteralValue<UInt>()
+
+    @ExperimentalUnsignedTypes
+    data class ULongValue(override val value: ULong) : LiteralValue<ULong>()
+
+    data class FloatValue(override val value: Float) : LiteralValue<Float>()
+    data class DoubleValue(override val value: Double) : LiteralValue<Double>()
+    data class BooleanValue(override val value: Boolean) : LiteralValue<Boolean>()
+
+    data class EnumValue(val enumClassId: CirEntityId, val enumEntryName: CirName) : CirConstantValue()
+
+    data class ArrayValue(val elements: List<CirConstantValue>) : CirConstantValue()
+
+    object NullValue : CirConstantValue() {
         override fun toString() = "NullValue(value=null)"
     }
 }

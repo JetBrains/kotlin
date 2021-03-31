@@ -281,7 +281,7 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
 
 private fun mockAnnotation(
     classId: String,
-    constantValueArguments: Map<CirName, CirConstantValue<*>> = emptyMap(),
+    constantValueArguments: Map<CirName, CirConstantValue> = emptyMap(),
     annotationValueArguments: Map<CirName, CirAnnotation> = emptyMap()
 ): CirAnnotation = CirAnnotation.createInterned(
     type = mockClassType(classId),
@@ -308,7 +308,7 @@ private fun mockDeprecated(
 
     return mockAnnotation(
         classId = "kotlin/Deprecated",
-        constantValueArguments = HashMap<CirName, CirConstantValue<*>>().apply {
+        constantValueArguments = HashMap<CirName, CirConstantValue>().apply {
             this[CirName.create("message")] = StringValue(message)
 
             if (level != WARNING)
