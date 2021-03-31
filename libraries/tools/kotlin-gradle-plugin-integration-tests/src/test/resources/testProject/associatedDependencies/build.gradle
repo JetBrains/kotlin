@@ -1,0 +1,29 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+sourceSets {
+    integrationTest {
+        kotlin {
+            srcDirs += "src/integrationTest/kotlin"
+        }
+        java {
+            srcDirs += "src/integrationTest/java"
+        }
+        resources {
+            srcDirs += "src/integrationTest/resources"
+        }
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+kotlin {
+    target {
+        java
+        compilations.integrationTest {
+            associateWith compilations.main
+            associateWith compilations.test
+        }
+    }
+}
