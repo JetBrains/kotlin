@@ -471,7 +471,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         get() = taskData.compilation.kotlinOptions as KotlinJvmOptions
 
     @get:Internal
-    internal open val sourceRootsContainer = FilteringSourceRootsContainer()
+    @field:Transient
+    internal open val sourceRootsContainer = FilteringSourceRootsContainer(project.objects)
+
+    private val jvmSourceRoots by project.provider {
+        // serialize in the task state for configuration caching; avoid building anew in task execution, as it may access the project model
+        SourceRoots.ForJvm.create(source, sourceRootsContainer, sourceFilesExtensions)
+    }
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
@@ -512,8 +518,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(this))
     }
 
-    @Internal
-    override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer, sourceFilesExtensions)
+    override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
 
     override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.ForJvm

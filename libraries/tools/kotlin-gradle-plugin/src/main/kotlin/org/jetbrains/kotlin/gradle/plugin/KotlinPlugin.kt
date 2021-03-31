@@ -15,6 +15,7 @@ import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaPlugin
@@ -146,11 +147,11 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         java.allSource.srcDirs(kotlinSrcDirsToAdd)
     }
 
-    private fun filterOutJavaSrcDirsIfPossible(sourceDirectories: FileCollection): FileCollection {
+    private fun filterOutJavaSrcDirsIfPossible(sourceDirectories: SourceDirectorySet): FileCollection {
         val java = javaSourceSet ?: return sourceDirectories
 
         // Build a lazily-resolved file collection that filters out Java sources from sources of this sourceDirectorySet
-        return sourceDirectories.minus(java.java.sourceDirectories)
+        return sourceDirectories.sourceDirectories.minus(java.java.sourceDirectories)
     }
 
     private fun createAdditionalClassesTaskForIdeRunner() {
