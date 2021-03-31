@@ -99,7 +99,11 @@ open class RawFirBuilder(
     }
 
     override fun PsiElement.getLabelName(): String? {
-        return (this as? KtExpressionWithLabel)?.getLabelName()
+        return when (this) {
+            is KtExpressionWithLabel -> getLabelName()
+            is KtNamedFunction -> parent.getLabelName()
+            else -> null
+        }
     }
 
     override fun PsiElement.getExpressionInParentheses(): PsiElement? {
@@ -967,7 +971,7 @@ open class RawFirBuilder(
                     receiverTypeRef = receiverType
                     symbol = FirAnonymousFunctionSymbol()
                     isLambda = false
-                    labelName = function.getLabelName()
+                    labelName = function.getLabelName() ?: context.calleeNamesForLambda.lastOrNull()?.identifier
                 }
             } else {
                 FirSimpleFunctionBuilder().apply {

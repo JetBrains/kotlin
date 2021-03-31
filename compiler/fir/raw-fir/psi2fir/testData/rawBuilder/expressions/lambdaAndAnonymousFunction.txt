@@ -14,7 +14,7 @@ FILE: lambdaAndAnonymousFunction.kt
     }
     public? final? fun test_2(): R|kotlin/Unit| {
         run#(fun <anonymous>(): Int <inline=Unknown>  {
-            ^ IntegerLiteral(1)
+            ^@run IntegerLiteral(1)
         }
         )
     }
