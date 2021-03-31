@@ -167,4 +167,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.ARRAY_ACCESS,
         PositioningStrategies.ARRAY_ACCESS
     )
+
+    val RETURN_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.RETURN_KEYWORD,
+        PositioningStrategies.RETURN_KEYWORD
+    )
 }

@@ -496,6 +496,17 @@ object LightTreePositioningStrategies {
             return markElement(tree.findChildByType(node, KtNodeTypes.INDICES)!!, startOffset, endOffset, tree, node)
         }
     }
+
+    val RETURN_KEYWORD = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.returnKeyword(node) ?: node, startOffset, endOffset, tree)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
@@ -524,6 +535,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.whenKeyword(node: Ligh
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.ifKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IF_KEYWORD)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.returnKeyword(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.RETURN_KEYWORD)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IDENTIFIER)
