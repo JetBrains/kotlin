@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -426,6 +427,7 @@ class StabilityInferencer(val context: IrPluginContext) {
         val stability = stabilityOf(expr.type)
         if (stability.knownStable()) return stability
         return when (expr) {
+            is IrConst<*> -> Stability.Stable
             is IrGetObjectValue ->
                 if (expr.symbol.owner.superTypes.any { stabilityOf(it).knownStable() })
                     Stability.Stable
@@ -436,6 +438,14 @@ class StabilityInferencer(val context: IrPluginContext) {
                 val owner = expr.symbol.owner
                 if (owner is IrVariable && !owner.isVar) {
                     owner.initializer?.let { stabilityOf(it) } ?: stability
+                } else {
+                    stability
+                }
+            }
+            // some default parameters and consts can be wrapped in composite
+            is IrComposite -> {
+                if (expr.statements.all { it is IrExpression && stabilityOf(it).knownStable() }) {
+                    Stability.Stable
                 } else {
                     stability
                 }
