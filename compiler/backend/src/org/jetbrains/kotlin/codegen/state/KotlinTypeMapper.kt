@@ -218,7 +218,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return mapType(returnType, sw, typeMappingModeFromAnnotation)
         }
 
-        val mappingMode = TypeMappingMode.getOptimalModeForReturnType(returnType, isAnnotationMethod)
+        val mappingMode = typeSystem.getOptimalModeForReturnType(returnType, isAnnotationMethod)
 
         return mapType(returnType, sw, mappingMode)
     }
@@ -1084,7 +1084,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 ?: if (callableDescriptor.isMethodWithDeclarationSiteWildcards && type.arguments.isNotEmpty()) {
                     TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
                 } else {
-                    TypeMappingMode.getOptimalModeForValueParameter(type)
+                    typeSystem.getOptimalModeForValueParameter(type)
                 }
 
         mapType(type, sw, typeMappingMode)

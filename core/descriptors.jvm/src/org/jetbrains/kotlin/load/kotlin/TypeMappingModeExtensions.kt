@@ -5,28 +5,32 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-fun TypeMappingMode.Companion.getOptimalModeForValueParameter(
-    type: KotlinType
+fun TypeSystemCommonBackendContext.getOptimalModeForValueParameter(
+    type: KotlinTypeMarker
 ): TypeMappingMode = getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = true)
 
-fun TypeMappingMode.Companion.getOptimalModeForReturnType(
-    type: KotlinType,
+fun TypeSystemCommonBackendContext.getOptimalModeForReturnType(
+    type: KotlinTypeMarker,
     isAnnotationMethod: Boolean
 ): TypeMappingMode {
     return if (isAnnotationMethod)
-        VALUE_FOR_ANNOTATION
+        TypeMappingMode.VALUE_FOR_ANNOTATION
     else
         getOptimalModeForSignaturePart(type, canBeUsedInSupertypePosition = false)
 }
 
 @OptIn(TypeMappingModeInternals::class)
-private fun getOptimalModeForSignaturePart(type: KotlinType, canBeUsedInSupertypePosition: Boolean): TypeMappingMode {
-    if (type.arguments.isEmpty()) return TypeMappingMode.DEFAULT
+private fun TypeSystemCommonBackendContext.getOptimalModeForSignaturePart(
+    type: KotlinTypeMarker,
+    canBeUsedInSupertypePosition: Boolean
+): TypeMappingMode {
+    if (type.argumentsCount() == 0) return TypeMappingMode.DEFAULT
 
-    if (type.isInlineClassType() && shouldUseUnderlyingType(type)) {
+    val isInlineClassType = type.typeConstructor().isInlineClass()
+    if (isInlineClassType && shouldUseUnderlyingType(type)) {
         val underlyingType = computeUnderlyingType(type)
         if (underlyingType != null) {
             return getOptimalModeForSignaturePart(underlyingType, canBeUsedInSupertypePosition).dontWrapInlineClassesMode()
@@ -50,6 +54,6 @@ private fun getOptimalModeForSignaturePart(type: KotlinType, canBeUsedInSupertyp
         skipDeclarationSiteWildcardsIfPossible = true,
         genericContravariantArgumentMode = contravariantArgumentMode,
         genericInvariantArgumentMode = invariantArgumentMode,
-        needInlineClassWrapping = !type.isInlineClassType()
+        needInlineClassWrapping = !isInlineClassType
     )
 }

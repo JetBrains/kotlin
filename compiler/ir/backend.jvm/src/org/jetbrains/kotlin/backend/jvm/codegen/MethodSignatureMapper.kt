@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -190,7 +189,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             return typeMapper.mapType(returnType, typeMappingModeFromAnnotation, sw)
         }
 
-        val mappingMode = TypeMappingMode.getOptimalModeForReturnType(returnType.toIrBasedKotlinType(), isAnnotationMethod)
+        val mappingMode = typeSystem.getOptimalModeForReturnType(returnType, isAnnotationMethod)
 
         return typeMapper.mapType(returnType, mappingMode, sw)
     }
@@ -358,7 +357,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 ?: if (declaration.isMethodWithDeclarationSiteWildcards && type.argumentsCount() != 0) {
                     TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
                 } else {
-                    TypeMappingMode.getOptimalModeForValueParameter(type.toIrBasedKotlinType())
+                    typeSystem.getOptimalModeForValueParameter(type)
                 }
         }
 

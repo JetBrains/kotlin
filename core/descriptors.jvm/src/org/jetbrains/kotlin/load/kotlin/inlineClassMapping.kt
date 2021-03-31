@@ -5,27 +5,21 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
-import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
-internal fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
+internal fun TypeSystemCommonBackendContext.computeUnderlyingType(inlineClassType: KotlinTypeMarker): KotlinTypeMarker? {
     if (!shouldUseUnderlyingType(inlineClassType)) return null
 
-    val descriptor = inlineClassType.unsubstitutedUnderlyingType()?.constructor?.declarationDescriptor ?: return null
-    return if (descriptor is TypeParameterDescriptor)
-        descriptor.representativeUpperBound
-    else
-        inlineClassType.substitutedUnderlyingType()
+    val underlyingType = inlineClassType.getUnsubstitutedUnderlyingType() ?: return null
+    return underlyingType.typeConstructor().getTypeParameterClassifier()?.getRepresentativeUpperBound()
+        ?: inlineClassType.getSubstitutedUnderlyingType()
 }
 
-internal fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
-    val underlyingType = inlineClassType.unsubstitutedUnderlyingType() ?: return false
+internal fun TypeSystemCommonBackendContext.shouldUseUnderlyingType(inlineClassType: KotlinTypeMarker): Boolean {
+    val underlyingType = inlineClassType.getUnsubstitutedUnderlyingType() ?: return false
 
-    return !inlineClassType.isMarkedNullable ||
-            !TypeUtils.isNullableType(underlyingType) && !KotlinBuiltIns.isPrimitiveType(underlyingType)
+    return !inlineClassType.isMarkedNullable() ||
+            !underlyingType.isNullableType() && !(underlyingType is SimpleTypeMarker && underlyingType.isPrimitiveType())
 }
