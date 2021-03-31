@@ -4640,6 +4640,13 @@ linkTest("private_fake_overrides_1") {
     goldValue = "PASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\nPASS\n"
 }
 
+linkTest("remap_expect_property_refs") {
+    source = "codegen/mpp/remap_expect_property_ref_main.kt"
+    lib = "codegen/mpp/remap_expect_property_ref_lib.kt"
+    flags = ["-Xmulti-platform"]
+    goldValue = "42\n"
+}
+
 Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
     return KotlinNativeTestKt.createTest(project, name, FrameworkTest) { task ->
         configurator.delegate = task

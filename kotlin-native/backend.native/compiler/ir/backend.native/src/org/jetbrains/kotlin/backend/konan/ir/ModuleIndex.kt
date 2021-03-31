@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -25,9 +26,15 @@ class ModuleIndex(val module: IrModuleFragment) {
      */
     val functions: Map<FunctionDescriptor, IrFunction>
 
+    /**
+     * Contains all properties declared in [module]
+     */
+    val properties: Map<PropertyDescriptor, IrProperty>
+
     init {
         classes = mutableMapOf()
         functions = mutableMapOf()
+        properties = mutableMapOf()
 
         module.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -43,6 +50,11 @@ class ModuleIndex(val module: IrModuleFragment) {
             override fun visitFunction(declaration: IrFunction) {
                 super.visitFunction(declaration)
                 functions[declaration.descriptor] = declaration
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                super.visitProperty(declaration)
+                properties[declaration.descriptor] = declaration
             }
         })
     }

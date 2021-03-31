@@ -89,8 +89,11 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
         })
     }
 
-    private inline fun <reified T: IrFunction> T.findActualForExpected(): T =
+    private inline fun <reified T : IrFunction> T.findActualForExpected(): T =
             moduleIndex.functions[descriptor.findActualForExpect()] as T
+
+    private fun IrProperty.findActualForExpected(): IrProperty =
+            moduleIndex.properties[descriptor.findActualForExpect()]!!
 
     private fun IrClass.findActualForExpected(): IrClass =
             moduleIndex.classes[descriptor.findActualForExpect()]!!
@@ -146,6 +149,12 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
 
                 else -> super.getReferencedSimpleFunction(symbol)
             }
+
+            override fun getReferencedProperty(symbol: IrPropertySymbol) =
+                    if (symbol.descriptor.isExpect)
+                        symbol.owner.findActualForExpected().symbol
+                    else
+                        super.getReferencedProperty(symbol)
 
             override fun getReferencedValue(symbol: IrValueSymbol) =
                     remapExpectValue(symbol)?.symbol ?: super.getReferencedValue(symbol)
