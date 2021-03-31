@@ -20,6 +20,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testImplementation(projectTests(":generators:test-generator"))
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -46,3 +47,5 @@ projectTest(parallel = true, jUnit5Enabled = true) {
 }
 
 testsJar()
+
+val generateVisualizerTests by generator("org.jetbrains.kotlin.visualizer.GenerateVisualizerTestsKt")
