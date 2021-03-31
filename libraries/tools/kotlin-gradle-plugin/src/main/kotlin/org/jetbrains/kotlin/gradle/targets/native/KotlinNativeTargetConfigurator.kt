@@ -41,9 +41,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
-    private val kotlinPluginVersion: String
-) : AbstractKotlinTargetConfigurator<T>(
+open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotlinTargetConfigurator<T>(
     createDefaultSourceSets = true,
     createTestCompilation = true
 ) {
@@ -386,7 +384,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
 
             project.whenEvaluated {
                 SubpluginEnvironment
-                    .loadSubplugins(project, project.getKotlinPluginVersion() ?: "unspecified" /* TODO */)
+                    .loadSubplugins(project)
                     .addSubpluginOptions(project, compilation)
 
                 compilation.compileKotlinTaskProvider.configure {
@@ -456,8 +454,7 @@ abstract class KotlinNativeTargetWithTestsConfigurator<
         TargetType : KotlinNativeTargetWithTests<TestRunType>,
         TestRunType : KotlinNativeBinaryTestRun,
         TaskType : KotlinNativeTest>(
-    kotlinPluginVersion: String
-) : KotlinNativeTargetConfigurator<TargetType>(kotlinPluginVersion),
+) : KotlinNativeTargetConfigurator<TargetType>(),
     KotlinTargetWithTestsConfigurator<TestRunType, TargetType> {
 
     abstract val testTaskClass: Class<TaskType>
@@ -493,13 +490,11 @@ abstract class KotlinNativeTargetWithTestsConfigurator<
     }
 }
 
-class KotlinNativeTargetWithHostTestsConfigurator(kotlinPluginVersion: String) :
+class KotlinNativeTargetWithHostTestsConfigurator() :
     KotlinNativeTargetWithTestsConfigurator<
             KotlinNativeTargetWithHostTests,
             KotlinNativeHostTestRun,
-            KotlinNativeHostTest>(
-        kotlinPluginVersion
-    ) {
+            KotlinNativeHostTest>() {
 
     override val testTaskClass: Class<KotlinNativeHostTest>
         get() = KotlinNativeHostTest::class.java
@@ -517,13 +512,11 @@ class KotlinNativeTargetWithHostTestsConfigurator(kotlinPluginVersion: String) :
         DefaultHostTestRun(name, target).apply { configureTestRun(target, this) }
 }
 
-class KotlinNativeTargetWithSimulatorTestsConfigurator(kotlinPluginVersion: String) :
+class KotlinNativeTargetWithSimulatorTestsConfigurator :
     KotlinNativeTargetWithTestsConfigurator<
             KotlinNativeTargetWithSimulatorTests,
             KotlinNativeSimulatorTestRun,
-            KotlinNativeSimulatorTest>(
-        kotlinPluginVersion
-    ) {
+            KotlinNativeSimulatorTest>() {
 
     override val testTaskClass: Class<KotlinNativeSimulatorTest>
         get() = KotlinNativeSimulatorTest::class.java

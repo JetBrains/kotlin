@@ -46,11 +46,10 @@ internal val Project.isKotlinGranularMetadataEnabled: Boolean
 internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
     get() = PropertiesProvider(this).enableCompatibilityMetadataVariant == true
 
-class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
+class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<AbstractKotlinCompilation<*>, KotlinMetadataTarget>(
         createDefaultSourceSets = false,
-        createTestCompilation = false,
-        kotlinPluginVersion = kotlinPluginVersion
+        createTestCompilation = false
     ) {
     companion object {
         internal const val ALL_METADATA_JAR_NAME = "allMetadataJar"
@@ -114,7 +113,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     override fun buildCompilationProcessor(compilation: AbstractKotlinCompilation<*>): KotlinCompilationProcessor<*> = when (compilation) {
         is KotlinCommonCompilation -> {
             val tasksProvider = KotlinTasksProvider()
-            KotlinCommonSourceSetProcessor(compilation, tasksProvider, kotlinPluginVersion)
+            KotlinCommonSourceSetProcessor(compilation, tasksProvider)
         }
         is KotlinSharedNativeCompilation -> NativeSharedCompilationProcessor(compilation)
         else -> error("unsupported compilation type ${compilation::class.qualifiedName}")
@@ -462,13 +461,8 @@ internal class NativeSharedCompilationProcessor(
     override val kotlinCompilation: KotlinNativeFragmentMetadataCompilationData
 ) : KotlinCompilationProcessor<KotlinNativeCompile>(kotlinCompilation) {
 
-    private val nativeTargetConfigurator =
-        KotlinNativeTargetConfigurator<KotlinNativeTarget>(kotlinCompilation.project.getKotlinPluginVersion() ?: "" /*FIXME*/)
-
     override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
-        with(nativeTargetConfigurator) {
-            KotlinNativeTargetConfigurator.createKlibCompilationTask(kotlinCompilation)
-        }
+        KotlinNativeTargetConfigurator.createKlibCompilationTask(kotlinCompilation)
 
     override fun run() = Unit
 }

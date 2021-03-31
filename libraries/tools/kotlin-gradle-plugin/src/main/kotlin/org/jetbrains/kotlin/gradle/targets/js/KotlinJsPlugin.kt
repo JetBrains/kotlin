@@ -42,8 +42,8 @@ open class KotlinJsPlugin(
         customizeKotlinDependencies(project)
 
         kotlinExtension.apply {
-            irPreset = KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion)
-            legacyPreset = KotlinJsSingleTargetPreset(project, kotlinPluginVersion)
+            irPreset = KotlinJsIrSingleTargetPreset(project)
+            legacyPreset = KotlinJsSingleTargetPreset(project)
             defaultJsCompilerType = PropertiesProvider(project).jsCompiler
         }
 

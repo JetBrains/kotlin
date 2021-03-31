@@ -23,6 +23,7 @@ import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
+import org.jetbrains.kotlin.gradle.plugin.loadKotlinPluginVersionFromResourcesOf
 import java.io.File
 import java.net.URLClassLoader
 import java.net.URLDecoder
@@ -139,7 +140,7 @@ private fun findKotlinModuleJar(project: Project, expectedClassName: String, mod
 }
 
 private fun pluginVersionFromAppliedPlugin(project: Project): String? =
-    project.plugins.filterIsInstance<KotlinBasePluginWrapper>().firstOrNull()?.kotlinPluginVersion
+    project.plugins.filterIsInstance<KotlinBasePluginWrapper>().firstOrNull()?.let { loadKotlinPluginVersionFromResourcesOf(it) }
 
 private fun getModuleFromClassLoader(moduleId: String, moduleVersion: String): File? {
     val urlClassLoader = KotlinPlugin::class.java.classLoader as? URLClassLoader ?: return null

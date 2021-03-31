@@ -11,15 +11,8 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.provider.Provider
-import org.gradle.api.publish.PublicationContainer
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPom
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -34,12 +27,9 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -48,10 +38,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
-class KotlinMultiplatformPlugin(
-    private val kotlinPluginVersion: String,
-    private val featurePreviews: FeaturePreviews // TODO get rid of this internal API usage once twe don't need it
-) : Plugin<Project> {
+class KotlinMultiplatformPlugin : Plugin<Project> {
 
     private class TargetFromPresetExtension(val targetsContainer: KotlinTargetsContainerWithPresets) {
         fun <T : KotlinTarget> fromPreset(preset: KotlinTargetPreset<T>, name: String, configureClosure: Closure<*>): T =
@@ -98,7 +85,7 @@ class KotlinMultiplatformPlugin(
 
         // set up metadata publishing
         targetsFromPreset.fromPreset(
-            KotlinMetadataTargetPreset(project, kotlinPluginVersion),
+            KotlinMetadataTargetPreset(project),
             METADATA_TARGET_NAME
         )
         configurePublishingWithMavenPublish(project)
@@ -167,20 +154,17 @@ class KotlinMultiplatformPlugin(
 
     fun setupDefaultPresets(project: Project) {
         with(project.multiplatformExtension.presets) {
-            add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
-            add(KotlinJsTargetPreset(project, kotlinPluginVersion).apply { irPreset = null })
-            add(KotlinJsIrTargetPreset(project, kotlinPluginVersion).apply { mixedMode = false })
+            add(KotlinJvmTargetPreset(project))
+            add(KotlinJsTargetPreset(project).apply { irPreset = null })
+            add(KotlinJsIrTargetPreset(project).apply { mixedMode = false })
             add(
-                KotlinJsTargetPreset(
-                    project,
-                    kotlinPluginVersion
-                ).apply {
-                    irPreset = KotlinJsIrTargetPreset(project, kotlinPluginVersion)
+                KotlinJsTargetPreset(project).apply {
+                    irPreset = KotlinJsIrTargetPreset(project)
                         .apply { mixedMode = true }
                 }
             )
-            add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
-            add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
+            add(KotlinAndroidTargetPreset(project))
+            add(KotlinJvmWithJavaTargetPreset(project))
 
             // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
             val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MINGW_X64)
@@ -190,10 +174,10 @@ class KotlinMultiplatformPlugin(
                 .forEach { (_, konanTarget) ->
                     val targetToAdd = when (konanTarget) {
                         in nativeTargetsWithHostTests ->
-                            KotlinNativeTargetWithHostTestsPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
+                            KotlinNativeTargetWithHostTestsPreset(konanTarget.presetName, project, konanTarget)
                         in nativeTargetsWithSimulatorTests ->
-                            KotlinNativeTargetWithSimulatorTestsPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
-                        else -> KotlinNativeTargetPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
+                            KotlinNativeTargetWithSimulatorTestsPreset(konanTarget.presetName, project, konanTarget)
+                        else -> KotlinNativeTargetPreset(konanTarget.presetName, project, konanTarget)
                     }
 
                     add(targetToAdd)

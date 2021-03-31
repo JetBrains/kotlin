@@ -8,9 +8,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.BuildAdapter
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGene
 import org.jetbrains.kotlin.gradle.targets.native.internal.setUpKotlinNativePlatformDependencies
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -29,8 +26,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
     private val name: String,
     val project: Project,
-    val konanTarget: KonanTarget,
-    protected val kotlinPluginVersion: String
+    val konanTarget: KonanTarget
 ) : KotlinTargetPreset<T> {
 
     init {
@@ -111,32 +107,32 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
 }
 
-open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
-    AbstractKotlinNativeTargetPreset<KotlinNativeTarget>(name, project, konanTarget, kotlinPluginVersion) {
+open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget: KonanTarget) :
+    AbstractKotlinNativeTargetPreset<KotlinNativeTarget>(name, project, konanTarget) {
 
     override fun createTargetConfigurator(): KotlinTargetConfigurator<KotlinNativeTarget> =
-        KotlinNativeTargetConfigurator(kotlinPluginVersion)
+        KotlinNativeTargetConfigurator()
 
     override fun instantiateTarget(name: String): KotlinNativeTarget {
         return project.objects.newInstance(KotlinNativeTarget::class.java, project, konanTarget)
     }
 }
 
-open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
-    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithHostTests>(name, project, konanTarget, kotlinPluginVersion) {
+open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project, konanTarget: KonanTarget) :
+    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithHostTests>(name, project, konanTarget) {
 
     override fun createTargetConfigurator(): KotlinNativeTargetWithHostTestsConfigurator =
-        KotlinNativeTargetWithHostTestsConfigurator(kotlinPluginVersion)
+        KotlinNativeTargetWithHostTestsConfigurator()
 
     override fun instantiateTarget(name: String): KotlinNativeTargetWithHostTests =
         project.objects.newInstance(KotlinNativeTargetWithHostTests::class.java, project, konanTarget)
 }
 
-open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
-    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithSimulatorTests>(name, project, konanTarget, kotlinPluginVersion) {
+open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Project, konanTarget: KonanTarget) :
+    AbstractKotlinNativeTargetPreset<KotlinNativeTargetWithSimulatorTests>(name, project, konanTarget) {
 
     override fun createTargetConfigurator(): KotlinNativeTargetWithSimulatorTestsConfigurator =
-        KotlinNativeTargetWithSimulatorTestsConfigurator(kotlinPluginVersion)
+        KotlinNativeTargetWithSimulatorTestsConfigurator()
 
     override fun instantiateTarget(name: String): KotlinNativeTargetWithSimulatorTests =
         project.objects.newInstance(KotlinNativeTargetWithSimulatorTests::class.java, project, konanTarget)
