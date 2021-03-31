@@ -7,7 +7,7 @@ package kotlin.native.concurrent
 
 import kotlin.native.internal.DescribeObjectForDebugging
 import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 import kotlin.native.internal.debugDescription
 import kotlin.native.identityHashCode
@@ -71,23 +71,17 @@ internal fun ThrowWorkerInvalidState(): Unit =
 internal fun WorkerLaunchpad(function: () -> Any?) = function()
 
 @PublishedApi
-@SymbolName("Kotlin_Worker_detachObjectGraphInternal")
-@GCCritical // Modifies the root set and runs a Kotlin callback.
+@GCUnsafeCall("Kotlin_Worker_detachObjectGraphInternal")
 external internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr
 
 @PublishedApi
-@SymbolName("Kotlin_Worker_attachObjectGraphInternal")
-@GCCritical // Modifies the root set via stable pointer adoption.
+@GCUnsafeCall("Kotlin_Worker_attachObjectGraphInternal")
 external internal fun attachObjectGraphInternal(stable: NativePtr): Any?
 
-@SymbolName("Kotlin_Worker_freezeInternal")
-// Modifies the object graph.
-// TODO: Reconsider this annotation when freezing is implemented for the new MM.
-@GCCritical
+@GCUnsafeCall("Kotlin_Worker_freezeInternal")
 internal external fun freezeInternal(it: Any?)
 
-@SymbolName("Kotlin_Worker_isFrozenInternal")
-@GCCritical // Fast, just a flags check.
+@GCUnsafeCall("Kotlin_Worker_isFrozenInternal")
 internal external fun isFrozenInternal(it: Any?): Boolean
 
 @ExportForCppRuntime
@@ -106,8 +100,7 @@ internal fun ThrowIllegalObjectSharingException(typeInfo: NativePtr, address: Na
     throw IncorrectDereferenceException("illegal attempt to access non-shared $description from other thread")
 }
 
-@SymbolName("Kotlin_AtomicReference_checkIfFrozen")
-@GCCritical // Fast, just a flags check.
+@GCUnsafeCall("Kotlin_AtomicReference_checkIfFrozen")
 external internal fun checkIfFrozen(ref: Any?)
 
 @InternalForKotlinNative

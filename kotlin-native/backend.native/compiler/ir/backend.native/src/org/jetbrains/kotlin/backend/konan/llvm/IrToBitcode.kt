@@ -2370,7 +2370,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         get() = context.memoryModel == MemoryModel.EXPERIMENTAL &&
                 isExternal &&
                 origin != INTERNAL_ABI_ORIGIN &&
-                !annotations.hasAnnotation(KonanFqNames.gcCritical)
+                !annotations.hasAnnotation(KonanFqNames.gcUnsafeCall)
 
     private fun call(function: IrFunction, llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime): LLVMValueRef {

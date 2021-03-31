@@ -24,22 +24,19 @@
 @file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 
 // Access to the decomposition tables. =========================================================================
 /** Gets canonical class for given codepoint from decomposition mappings table. */
-@SymbolName("Kotlin_text_regex_getCanonicalClassInternal")
-@GCCritical
+@GCUnsafeCall("Kotlin_text_regex_getCanonicalClassInternal")
 external private fun getCanonicalClassInternal(ch: Int): Int
 
 /** Check if the given character is in table of single decompositions. */
-@SymbolName("Kotlin_text_regex_hasSingleCodepointDecompositionInternal")
-@GCCritical
+@GCUnsafeCall("Kotlin_text_regex_hasSingleCodepointDecompositionInternal")
 external private fun hasSingleCodepointDecompositionInternal(ch: Int): Boolean
 
 /** Returns a decomposition for a given codepoint. */
-@SymbolName("Kotlin_text_regex_getDecompositionInternal")
-@GCCritical
+@GCUnsafeCall("Kotlin_text_regex_getDecompositionInternal")
 external private fun getDecompositionInternal(ch: Int): IntArray?
 
 /**

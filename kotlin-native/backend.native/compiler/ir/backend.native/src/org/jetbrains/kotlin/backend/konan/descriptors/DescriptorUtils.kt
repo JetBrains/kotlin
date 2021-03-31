@@ -291,6 +291,8 @@ fun <T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
 fun IrFunction.externalSymbolOrThrow(): String? {
     annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let { return it.getAnnotationStringValue() }
 
+    annotations.findAnnotation(KonanFqNames.gcUnsafeCall)?.let { return it.getAnnotationStringValue("callee") }
+
     if (annotations.hasAnnotation(KonanFqNames.objCMethod)) return null
 
     if (annotations.hasAnnotation(KonanFqNames.typedIntrinsic)) return null

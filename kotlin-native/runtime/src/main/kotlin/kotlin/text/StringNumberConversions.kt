@@ -6,7 +6,7 @@
 package kotlin.text
 
 import kotlin.native.internal.FloatingPointParser
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].
@@ -26,8 +26,7 @@ public actual inline fun Byte.toString(radix: Int): String = this.toInt().toStri
 @kotlin.internal.InlineOnly
 public actual inline fun Short.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
 
-@SymbolName("Kotlin_Int_toStringRadix")
-@GCCritical
+@GCUnsafeCall("Kotlin_Int_toStringRadix")
 @PublishedApi
 external internal fun intToString(value: Int, radix: Int): String
 
@@ -40,8 +39,7 @@ external internal fun intToString(value: Int, radix: Int): String
 @kotlin.internal.InlineOnly
 public actual inline fun Int.toString(radix: Int): String = intToString(this, checkRadix(radix))
 
-@SymbolName("Kotlin_Long_toStringRadix")
-@GCCritical
+@GCUnsafeCall("Kotlin_Long_toStringRadix")
 @PublishedApi
 external internal fun longToString(value: Long, radix: Int): String
 

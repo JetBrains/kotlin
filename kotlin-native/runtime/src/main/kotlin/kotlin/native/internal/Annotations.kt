@@ -153,10 +153,13 @@ internal annotation class InternalForKotlinNative
 internal annotation class HasFreezeHook
 
 /**
- * Marks an external function whose call should not be wrapped by GC thread state switches.
+ * Indicates that calls of this function will be replaced with calls to the
+ * [callee] implemented in the C++ part of the runtime.
+ *
+ * Note that [callee] is responsible for correct interaction with the garbage collector:
+ * placing safe points and switching thread state when using blocking APIs.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Target(AnnotationTarget.FUNCTION)
 @Retention(value = AnnotationRetention.BINARY)
 @InternalForKotlinNative
-// TODO: Add a frontend check that the annotated function is external.
-internal annotation class GCCritical
+internal annotation class GCUnsafeCall(val callee: String)

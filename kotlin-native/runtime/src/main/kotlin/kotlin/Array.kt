@@ -7,7 +7,7 @@ package kotlin
 
 import kotlin.native.internal.ExportForCompiler
 import kotlin.native.internal.ExportTypeInfo
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.PointsTo
 
 /**
@@ -54,8 +54,7 @@ public final class Array<T> {
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
-    @SymbolName("Kotlin_Array_get")
-    @GCCritical
+    @GCUnsafeCall("Kotlin_Array_get")
     @PointsTo(0x000, 0x000, 0x002) // ret -> this.intestines
     external public operator fun get(index: Int): T
 
@@ -68,8 +67,7 @@ public final class Array<T> {
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
-    @SymbolName("Kotlin_Array_set")
-    @GCCritical
+    @GCUnsafeCall("Kotlin_Array_set")
     @PointsTo(0x300, 0x000, 0x000) // this.intestines -> value
     external public operator fun set(index: Int, value: T): Unit
 
@@ -80,8 +78,7 @@ public final class Array<T> {
         return IteratorImpl(this)
     }
 
-    @SymbolName("Kotlin_Array_getArrayLength")
-    @GCCritical
+    @GCUnsafeCall("Kotlin_Array_getArrayLength")
     external private fun getArrayLength(): Int
 }
 

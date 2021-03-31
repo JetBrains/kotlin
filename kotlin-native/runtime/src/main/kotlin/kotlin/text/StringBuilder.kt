@@ -5,7 +5,7 @@
 
 package kotlin.text
 
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 
 /**
  * A mutable sequence of characters.
@@ -805,12 +805,10 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequen
 internal fun insertString(array: CharArray, start: Int, value: String): Int =
         insertString(array, start, value, 0, value.length)
 
-@SymbolName("Kotlin_StringBuilder_insertString")
-@GCCritical
+@GCUnsafeCall("Kotlin_StringBuilder_insertString")
 internal external fun insertString(array: CharArray, distIndex: Int, value: String, sourceIndex: Int, count: Int): Int
 
-@SymbolName("Kotlin_StringBuilder_insertInt")
-@GCCritical
+@GCUnsafeCall("Kotlin_StringBuilder_insertInt")
 internal external fun insertInt(array: CharArray, start: Int, value: Int): Int
 
 

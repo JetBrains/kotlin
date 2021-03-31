@@ -16,14 +16,11 @@ public object Debugging {
         get() = Debugging_isThreadStateRunnable()
 }
 
-@SymbolName("Kotlin_Debugging_getForceCheckedShutdown")
-@GCCritical
+@GCUnsafeCall("Kotlin_Debugging_getForceCheckedShutdown")
 private external fun Debugging_getForceCheckedShutdown(): Boolean
 
-@SymbolName("Kotlin_Debugging_setForceCheckedShutdown")
-@GCCritical
+@GCUnsafeCall("Kotlin_Debugging_setForceCheckedShutdown")
 private external fun Debugging_setForceCheckedShutdown(value: Boolean): Unit
 
-@SymbolName("Kotlin_Debugging_isThreadStateRunnable")
-@GCCritical
+@GCUnsafeCall("Kotlin_Debugging_isThreadStateRunnable")
 private external fun Debugging_isThreadStateRunnable(): Boolean

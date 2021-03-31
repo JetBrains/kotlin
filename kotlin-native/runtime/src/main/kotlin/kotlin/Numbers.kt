@@ -5,7 +5,7 @@
 
 package kotlin
 
-import kotlin.native.internal.GCCritical
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
@@ -13,44 +13,38 @@ import kotlin.native.internal.IntrinsicType
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-@SymbolName("Kotlin_Double_isNaN")
-@GCCritical
+@GCUnsafeCall("Kotlin_Double_isNaN")
 public actual external fun Double.isNaN(): Boolean
 
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-@SymbolName("Kotlin_Float_isNaN")
-@GCCritical
+@GCUnsafeCall("Kotlin_Float_isNaN")
 public actual external fun Float.isNaN(): Boolean
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-@SymbolName("Kotlin_Double_isInfinite")
-@GCCritical
+@GCUnsafeCall("Kotlin_Double_isInfinite")
 public actual external fun Double.isInfinite(): Boolean
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-@SymbolName("Kotlin_Float_isInfinite")
-@GCCritical
+@GCUnsafeCall("Kotlin_Float_isInfinite")
 public actual external fun Float.isInfinite(): Boolean
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-@SymbolName("Kotlin_Double_isFinite")
-@GCCritical
+@GCUnsafeCall("Kotlin_Double_isFinite")
 public actual external fun Double.isFinite(): Boolean
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-@SymbolName("Kotlin_Float_isFinite")
-@GCCritical
+@GCUnsafeCall("Kotlin_Float_isFinite")
 public actual external fun Float.isFinite(): Boolean
 
 /**
@@ -116,16 +110,14 @@ internal external fun fromBits(bits: Int): Float
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
-@SymbolName("Kotlin_Int_countOneBits")
-@GCCritical
+@GCUnsafeCall("Kotlin_Int_countOneBits")
 public actual external fun Int.countOneBits(): Int
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of [Int] [value].
  * Returns undefined result for zero [value].
  */
-@SymbolName("Kotlin_Int_countLeadingZeroBits")
-@GCCritical
+@GCUnsafeCall("Kotlin_Int_countLeadingZeroBits")
 private external fun countLeadingZeroBits(value: Int): Int
 
 /**
@@ -140,8 +132,7 @@ public actual fun Int.countLeadingZeroBits(): Int =
  * Counts the number of consecutive least significant bits that are zero in the binary representation of [Int] [value].
  * Returns undefined result for zero [value].
  */
-@SymbolName("Kotlin_Int_countTrailingZeroBits")
-@GCCritical
+@GCUnsafeCall("Kotlin_Int_countTrailingZeroBits")
 private external fun countTrailingZeroBits(value: Int): Int
 
 /**
@@ -207,16 +198,14 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
-@SymbolName("Kotlin_Long_countOneBits")
-@GCCritical
+@GCUnsafeCall("Kotlin_Long_countOneBits")
 public actual external fun Long.countOneBits(): Int
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of [Long] [value].
  * Returns undefined result for zero [value].
  */
-@SymbolName("Kotlin_Long_countLeadingZeroBits")
-@GCCritical
+@GCUnsafeCall("Kotlin_Long_countLeadingZeroBits")
 private external fun countLeadingZeroBits(value: Long): Int
 
 /**
@@ -231,8 +220,7 @@ public actual fun Long.countLeadingZeroBits(): Int =
  * Counts the number of consecutive least significant bits that are zero in the binary representation of [Long] [value].
  * Returns undefined result for zero [value].
  */
-@SymbolName("Kotlin_Long_countTrailingZeroBits")
-@GCCritical
+@GCUnsafeCall("Kotlin_Long_countTrailingZeroBits")
 private external fun countTrailingZeroBits(value: Long): Int
 
 /**
