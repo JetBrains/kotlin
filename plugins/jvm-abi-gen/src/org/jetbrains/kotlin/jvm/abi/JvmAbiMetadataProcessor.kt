@@ -20,21 +20,25 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  */
 fun abiMetadataProcessor(internalName: String, publicClasses: Set<String>, annotationVisitor: AnnotationVisitor): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
+        // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
+        // update the metadata version if we encounter older metadata annotations.
+        val metadataVersion =
+            if (header.metadataVersion.let { it.size >= 2 && it[0] >= 1 && it[1] >= 4 }) header.metadataVersion else intArrayOf(1, 4)
         val newHeader = when (val metadata = KotlinClassMetadata.read(header)) {
             is KotlinClassMetadata.Class -> {
                 val writer = KotlinClassMetadata.Class.Writer()
                 metadata.accept(AbiKmClassVisitor(internalName, publicClasses, writer))
-                writer.write(header.metadataVersion, header.extraInt).header
+                writer.write(metadataVersion, header.extraInt).header
             }
             is KotlinClassMetadata.FileFacade -> {
                 val writer = KotlinClassMetadata.FileFacade.Writer()
                 metadata.accept(AbiKmPackageVisitor(writer))
-                writer.write(header.metadataVersion, header.extraInt).header
+                writer.write(metadataVersion, header.extraInt).header
             }
             is KotlinClassMetadata.MultiFileClassPart -> {
                 val writer = KotlinClassMetadata.MultiFileClassPart.Writer()
                 metadata.accept(AbiKmPackageVisitor(writer))
-                writer.write(metadata.facadeClassName, header.metadataVersion, header.extraInt).header
+                writer.write(metadata.facadeClassName, metadataVersion, header.extraInt).header
             }
             else -> header
         }
