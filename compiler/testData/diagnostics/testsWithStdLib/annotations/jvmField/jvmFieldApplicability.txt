@@ -83,6 +83,15 @@ public object IObject {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final class JK : K {
+    public constructor JK(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int)
+    public open override /*1*/ val i: kotlin.Int
+    @field:kotlin.jvm.JvmField public open override /*1*/ val j: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface K {
     public abstract val i: kotlin.Int
     public abstract val j: kotlin.Int

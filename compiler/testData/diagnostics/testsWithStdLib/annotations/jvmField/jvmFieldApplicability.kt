@@ -114,6 +114,11 @@ open class KKK : K {
     override final val j: Int = 0
 }
 
+class JK(
+    override val i: Int,
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> override val j: Int,
+) : K
+
 annotation class L {
     companion object {
         <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
