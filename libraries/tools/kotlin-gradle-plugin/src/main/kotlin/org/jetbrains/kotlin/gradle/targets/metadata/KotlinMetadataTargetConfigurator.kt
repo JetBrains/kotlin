@@ -484,6 +484,7 @@ internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<
     }
 
 internal interface ResolvedMetadataFilesProvider {
+    val buildDependencies: Iterable<TaskProvider<*>>
     val metadataResolutions: Iterable<MetadataDependencyResolution>
     val metadataFilesByResolution: Map<MetadataDependencyResolution, FileCollection>
 }
@@ -517,6 +518,7 @@ internal fun createTransformedMetadataClasspath(
             }
 
             mutableSetOf<Any /* File | FileCollection */>().apply {
+                addAll(metadataResolutionProviders.value.map { project.files().builtBy(it.buildDependencies) })
                 addAll(parentCompiledMetadataFiles.value)
                 artifactView.artifacts.forEach { artifact ->
                     val resolutions = allResolutionsByComponentId[artifact.id.componentIdentifier]

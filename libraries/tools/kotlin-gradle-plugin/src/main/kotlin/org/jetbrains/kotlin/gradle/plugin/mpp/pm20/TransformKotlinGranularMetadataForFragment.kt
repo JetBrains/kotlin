@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.ExtractableMetadataFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
@@ -90,6 +91,7 @@ internal open class TransformKotlinGranularMetadataForFragment
 internal class FragmentResolvedMetadataProvider(
     taskProvider: TaskProvider<out TransformKotlinGranularMetadataForFragment>
 ) : ResolvedMetadataFilesProvider {
+    override val buildDependencies: Iterable<TaskProvider<*>> = listOf(taskProvider)
     override val metadataResolutions: Iterable<MetadataDependencyResolution> by taskProvider.map { it.metadataDependencyResolutions }
     override val metadataFilesByResolution: Map<MetadataDependencyResolution, FileCollection> by taskProvider.map { it.filesByResolution }
 }

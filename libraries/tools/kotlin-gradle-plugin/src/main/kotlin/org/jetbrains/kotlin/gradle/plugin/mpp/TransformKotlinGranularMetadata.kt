@@ -121,8 +121,9 @@ open class TransformKotlinGranularMetadata
 }
 
 internal class SourceSetResolvedMetadataProvider(
-    private val taskProvider: TaskProvider<out TransformKotlinGranularMetadata>
+    taskProvider: TaskProvider<out TransformKotlinGranularMetadata>
 ) : ResolvedMetadataFilesProvider {
+    override val buildDependencies: Iterable<TaskProvider<*>> = listOf(taskProvider)
     override val metadataResolutions: Iterable<MetadataDependencyResolution> by taskProvider.map { it.metadataDependencyResolutions }
     override val metadataFilesByResolution: Map<MetadataDependencyResolution, FileCollection> by taskProvider.map { it.filesByResolution }
 }
