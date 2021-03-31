@@ -16,5 +16,5 @@ fun topLevelFun(param: T) {
     val secondVariable = T()
 }
 
-// EXIST: firstVariable, param, constructorParam, localClassField, localParam
+// EXIST: firstVariable, param, localClassField, localParam
 // ABSENT: secondVariable
