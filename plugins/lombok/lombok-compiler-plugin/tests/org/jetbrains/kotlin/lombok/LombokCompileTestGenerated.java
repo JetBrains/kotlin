@@ -36,6 +36,11 @@ public class LombokCompileTestGenerated extends AbstractLombokCompileTest {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/accessorsStripPrefix.kt");
     }
 
+    @TestMetadata("accessorsStripPrefixConfig.kt")
+    public void testAccessorsStripPrefixConfig() throws Exception {
+        runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/accessorsStripPrefixConfig.kt");
+    }
+
     @TestMetadata("allArgsConstructor.kt")
     public void testAllArgsConstructor() throws Exception {
         runTest("plugins/lombok/lombok-compiler-plugin/testData/compile/allArgsConstructor.kt");

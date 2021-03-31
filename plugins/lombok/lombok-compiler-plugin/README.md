@@ -17,11 +17,11 @@ Features support:
    - [x] lombok.getter.noIsPrefix
    - [x] lombok.accessors.fluent
    - [x] lombok.accessors.chain
-   - [ ] lombok.accessors.prefix
-   - [ ] lombok.noArgsConstructor.extraPrivate
+   - [x] lombok.accessors.prefix
+   - [ ] lombok.noArgsConstructor.extraPrivate (probably we don't need to support it - it is private after all)
    - [ ] lombok.copyableAnnotations
  - [ ] Copy annotations
- - [~] Strip defined prefixes - in config and @Accessors
+ - [x] Strip defined prefixes - in config and @Accessors
  - [ ] Skip generation with AccessLevel.NONE
  - [x] Strip 'is' prefix for boolean fields
 
