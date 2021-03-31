@@ -10,7 +10,7 @@ FILE: inPlaceLambdas.kt
     public final fun test_1(x: R|kotlin/Any?|): R|kotlin/Unit| {
         when () {
             (R|<local>/x| is R|A|) ->  {
-                R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+                R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                     R|<local>/x|.R|/A.foo|()
                 }
                 )
@@ -19,7 +19,7 @@ FILE: inPlaceLambdas.kt
 
     }
     public final fun test_2(x: R|kotlin/Any?|): R|kotlin/Unit| {
-        R|kotlin/run|<R|B|>(<L> = run@fun <anonymous>(): R|B| <kind=EXACTLY_ONCE>  {
+        R|kotlin/run|<R|B|>(<L> = run@fun <anonymous>(): R|B| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ (R|<local>/x| as R|B|)
         }
         )
@@ -28,7 +28,7 @@ FILE: inPlaceLambdas.kt
     public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
         when () {
             (R|<local>/x| is R|A|) ->  {
-                R|kotlin/run|<R|B|>(<L> = run@fun <anonymous>(): R|B| <kind=EXACTLY_ONCE>  {
+                R|kotlin/run|<R|B|>(<L> = run@fun <anonymous>(): R|B| <inline=Inline, kind=EXACTLY_ONCE>  {
                     R|<local>/x|.R|/A.foo|()
                     ^ (R|<local>/x| as R|B|)
                 }

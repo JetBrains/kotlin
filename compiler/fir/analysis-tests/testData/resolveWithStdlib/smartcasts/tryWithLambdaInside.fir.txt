@@ -6,7 +6,7 @@ FILE: tryWithLambdaInside.kt
     }
     public final fun testInPlace(list: R|kotlin/collections/List<kotlin/Boolean>|): R|kotlin/collections/List<kotlin/Boolean>| {
         ^testInPlace try {
-            R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <kind=UNKNOWN>  {
+            R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
                 ^ R|<local>/it|
             }
             )
@@ -17,7 +17,7 @@ FILE: tryWithLambdaInside.kt
     }
     public final fun testNotInPlace(list: R|kotlin/collections/List<kotlin/Boolean>|): R|kotlin/collections/List<kotlin/Boolean>| {
         ^testNotInPlace try {
-            R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| {
+            R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=NoInline>  {
                 ^ R|<local>/it|
             }
             )

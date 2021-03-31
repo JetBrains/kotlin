@@ -205,7 +205,7 @@ digraph lambdas_kt {
             }
             64 [label="Postponed exit from lambda"];
             65 [label="Function call: R|/getInt|(...)"];
-            66 [label="Jump: ^test_3 R|/getInt|(<L> = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
+            66 [label="Jump: ^test_3 R|/getInt|(<L> = getInt@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
     ^test_3 Int(1)
 }
 )"];
@@ -257,7 +257,7 @@ digraph lambdas_kt {
             }
             80 [label="Postponed exit from lambda"];
             81 [label="Function call: R|/getInt|(...)"];
-            82 [label="Jump: ^test_4 R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
+            82 [label="Jump: ^test_4 R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
     ^test_4 Int(1)
 }
 )"];

@@ -13,11 +13,11 @@ FILE: valueOfOrNull.kt
 
     }
     public final fun foo(s: R|kotlin/String?|): R|kotlin/Unit| {
-        lval result: R|SomeEnum| = R|<local>/s|?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|SomeEnum?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|SomeEnum?| <kind=EXACTLY_ONCE>  {
+        lval result: R|SomeEnum| = R|<local>/s|?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|SomeEnum?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|SomeEnum?| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ R|/valueOfOrNull|<R|SomeEnum|>(R|<local>/it|)
         }
         ) } ?: Q|SomeEnum|.R|/SomeEnum.ENTRY|
-        lval result2: R|SomeEnum| = R|<local>/s|?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|SomeEnum?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|SomeEnum?| <kind=EXACTLY_ONCE>  {
+        lval result2: R|SomeEnum| = R|<local>/s|?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|SomeEnum?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|SomeEnum?| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ R|/valueOfOrNull|<R|SomeEnum|>(R|<local>/it|)
         }
         ) } ?: Q|SomeEnum|.R|/SomeEnum.ENTRY|
@@ -35,7 +35,7 @@ FILE: valueOfOrNull.kt
                 Q|SomeEnum|.R|/SomeEnum.ENTRY|
             }
             else ->  {
-                R|<local>/s|.R|kotlin/let|<R|kotlin/String|, R|SomeEnum?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|SomeEnum?| <kind=EXACTLY_ONCE>  {
+                R|<local>/s|.R|kotlin/let|<R|kotlin/String|, R|SomeEnum?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|SomeEnum?| <inline=Inline, kind=EXACTLY_ONCE>  {
                     ^ R|/valueOfOrNull|<R|SomeEnum|>(R|<local>/it|)
                 }
                 )

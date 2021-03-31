@@ -9,7 +9,7 @@ FILE: complexConstraintSystem.kt
 
     }
     public final fun test_0(list: R|kotlin/collections/List<kotlin/Int>|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int| = R|<local>/list|.R|kotlin/collections/mapNotNull|<R|kotlin/Int|, R|Inv<kotlin/Int>|>(<L> = mapNotNull@fun <anonymous>(it: R|kotlin/Int|): R|Inv<kotlin/Int>?| <kind=UNKNOWN>  {
+        lval x: R|kotlin/Int| = R|<local>/list|.R|kotlin/collections/mapNotNull|<R|kotlin/Int|, R|Inv<kotlin/Int>|>(<L> = mapNotNull@fun <anonymous>(it: R|kotlin/Int|): R|Inv<kotlin/Int>?| <inline=Inline, kind=UNKNOWN>  {
             ^ when () {
                 R|<local>/b| ->  {
                     R|/Inv.Inv|<R|kotlin/Int|>(R|<local>/it|)

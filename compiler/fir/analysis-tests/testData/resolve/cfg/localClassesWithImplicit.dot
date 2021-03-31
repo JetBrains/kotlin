@@ -163,7 +163,7 @@ digraph localClassesWithImplicit_kt {
             }
             37 [label="Postponed exit from lambda"];
             38 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
-            39 [label="Jump: ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+            39 [label="Jump: ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/a|.R|kotlin/String.length|
     ^ when () {
         (R|<local>/b| is R|kotlin/String|) ->  {
@@ -245,7 +245,7 @@ digraph localClassesWithImplicit_kt {
             }
             72 [label="Postponed exit from lambda"];
             73 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
-            74 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+            74 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/b|.<Unresolved name: length>#
     R|<local>/a|.R|kotlin/String.length|
     ^ this@R|/A|.R|/A.baz|()
@@ -364,7 +364,7 @@ digraph localClassesWithImplicit_kt {
             }
             100 [label="Postponed exit from lambda"];
             101 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
-            102 [label="Jump: ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+            102 [label="Jump: ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/a|.R|kotlin/String.length|
     ^ when () {
         (R|<local>/b| is R|kotlin/String|) ->  {
@@ -446,7 +446,7 @@ digraph localClassesWithImplicit_kt {
             }
             135 [label="Postponed exit from lambda"];
             136 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
-            137 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+            137 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
     R|<local>/a|.R|kotlin/String.length|
     R|<local>/b|.<Unresolved name: length>#
     ^ this@R|/<anonymous>|.R|/<anonymous>.baz|()

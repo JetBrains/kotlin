@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 
+val ConeKotlinType.isArrayOrPrimitiveArray: Boolean
+    get() = arrayElementType() != null
+
 fun ConeKotlinType.createOutArrayType(nullable: Boolean = false): ConeKotlinType {
     return ConeKotlinTypeProjectionOut(this).createArrayType(nullable)
 }

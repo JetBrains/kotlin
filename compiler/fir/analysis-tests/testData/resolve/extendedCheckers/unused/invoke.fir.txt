@@ -1,10 +1,10 @@
 FILE: invoke.kt
     public final fun foo(): R|kotlin/Int| {
-        lval x: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| {
+        lval x: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
             ^ Int(4)
         }
 
-        lval y: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| {
+        lval y: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
             ^ Int(2)
         }
 

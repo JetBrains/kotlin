@@ -24,7 +24,7 @@ fun buildBinaryArgumentList(left: FirExpression, right: FirExpression): FirArgum
 fun buildArraySetArgumentList(rValue: FirExpression, indexes: List<FirExpression>): FirArgumentList =
     FirArraySetArgumentList(rValue, indexes)
 
-fun buildResolvedArgumentList(mapping: LinkedHashMap<FirExpression, FirValueParameter>): FirArgumentList =
+fun buildResolvedArgumentList(mapping: LinkedHashMap<FirExpression, FirValueParameter>): FirResolvedArgumentList =
     FirResolvedArgumentList(mapping)
 
 fun buildPartiallyResolvedArgumentList(

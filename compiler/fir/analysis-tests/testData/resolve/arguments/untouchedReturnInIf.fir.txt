@@ -7,13 +7,13 @@ FILE: untouchedReturnInIf.kt
     public final fun leaves(value: R|kotlin/String|, forward: R|kotlin/Boolean|): R|Box<kotlin/String>| {
         when () {
             R|<local>/forward| ->  {
-                ^leaves R|/foo|<R|kotlin/String|>(<L> = foo@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| {
+                ^leaves R|/foo|<R|kotlin/String|>(<L> = foo@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
                     ^ String()
                 }
                 )
             }
             else ->  {
-                ^leaves R|/foo|<R|kotlin/String|>(<L> = foo@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| {
+                ^leaves R|/foo|<R|kotlin/String|>(<L> = foo@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
                     ^ String()
                 }
                 )

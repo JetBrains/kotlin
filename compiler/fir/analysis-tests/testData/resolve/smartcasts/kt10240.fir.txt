@@ -21,7 +21,7 @@ FILE: kt10240.kt
     public final fun println(arg: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun d(): R|kotlin/Unit| {
-        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| {
+        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             lvar koko: R|kotlin/String?| = String(Alpha)
             while(!=(R|<local>/koko|, Null(null))) {
                 R|/println|(R|<local>/koko|.R|kotlin/String.length|)
@@ -30,7 +30,7 @@ FILE: kt10240.kt
 
         }
         )
-        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| {
+        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             lvar koko: R|kotlin/String?| = String(Omega)
             while(!=(R|<local>/koko|, Null(null))) {
                 R|/println|(R|<local>/koko|.R|kotlin/String.length|)

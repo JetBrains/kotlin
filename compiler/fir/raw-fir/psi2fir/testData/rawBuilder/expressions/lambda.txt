@@ -21,19 +21,19 @@ FILE: lambda.kt
         ^use f#(Tuple#(IntegerLiteral(1), IntegerLiteral(2)))
     }
     public? final? fun foo(): Int {
-        lval l1: <implicit> = fun <implicit>.<anonymous>(t: Tuple): <implicit> {
+        lval l1: <implicit> = fun <implicit>.<anonymous>(t: Tuple): <implicit> <inline=Unknown>  {
             lval x: <implicit> = t#.x#
             lval y: <implicit> = t#.y#
             x#.plus#(y#)
         }
 
-        use#(<L> = use@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> {
+        use#(<L> = use@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> <inline=Unknown>  {
             lval x: <implicit> = R|<local>/<destruct>|.component1#()
             lval y: <implicit> = R|<local>/<destruct>|.component2#()
             x#.plus#(y#)
         }
         )
-        ^foo use#(<L> = use@fun <implicit>.<anonymous>(): <implicit> {
+        ^foo use#(<L> = use@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             when () {
                 ==(it#.x#, IntegerLiteral(0)) ->  {
                     ^foo IntegerLiteral(0)
@@ -45,7 +45,7 @@ FILE: lambda.kt
         )
     }
     public? final? fun bar(): Int {
-        ^bar use#(<L> = lambda@fun <implicit>.<anonymous>(): <implicit> {
+        ^bar use#(<L> = lambda@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             when () {
                 ==(it#.x#, IntegerLiteral(0)) ->  {
                     ^bar IntegerLiteral(0)
@@ -58,20 +58,20 @@ FILE: lambda.kt
     }
     public? final? fun test(list: List<Int>): R|kotlin/Unit| {
         lval map: <implicit> = mutableMapOf#<Int, String>()
-        list#.forEach#(<L> = forEach@fun <implicit>.<anonymous>(): <implicit> {
-            +=(map#.getOrPut#(it#, getOrPut@fun <implicit>.<anonymous>(): <implicit> {
+        list#.forEach#(<L> = forEach@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            +=(map#.getOrPut#(it#, getOrPut@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 mutableListOf#()
             }
             ), String())
         }
         )
     }
-    public? final? val simple: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
+    public? final? val simple: <implicit> = fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
         ^ Unit
     }
 
         public? get(): <implicit>
-    public? final? val another: <implicit> = fun <implicit>.<anonymous>(): <implicit> {
+    public? final? val another: <implicit> = fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
         IntegerLiteral(42)
     }
 

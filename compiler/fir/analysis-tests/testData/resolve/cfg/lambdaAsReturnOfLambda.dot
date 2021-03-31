@@ -34,7 +34,7 @@ digraph lambdaAsReturnOfLambda_kt {
                     13 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                 }
                 3 [label="Postponed exit from lambda"];
-                4 [label="Jump: ^@run lambda@fun <anonymous>(foo: R|kotlin/String|): R|kotlin/Unit| {
+                4 [label="Jump: ^@run lambda@fun <anonymous>(foo: R|kotlin/String|): R|kotlin/Unit| <inline=Unknown>  {
     R|/bar|(R|<local>/foo|)
 }
 "];

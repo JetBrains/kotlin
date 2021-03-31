@@ -811,13 +811,13 @@ digraph kt44814_kt {
         Null(null)
     }
     ($subj$ is R|FirPsiSourceElement|) ->  {
-        (this@R|/FirModifierList.Companion.getModifierList|.R|/FirPsiSourceElement.psi| as? R|KtModifierListOwner|)?.{ $subj$.R|/KtModifierListOwner.modifierList| }?.{ $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(<L> = let@fun <anonymous>(it: R|KtModifierList|): R|FirModifierList.FirPsiModifierList| <kind=EXACTLY_ONCE>  {
+        (this@R|/FirModifierList.Companion.getModifierList|.R|/FirPsiSourceElement.psi| as? R|KtModifierListOwner|)?.{ $subj$.R|/KtModifierListOwner.modifierList| }?.{ $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(<L> = let@fun <anonymous>(it: R|KtModifierList|): R|FirModifierList.FirPsiModifierList| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ R|/FirModifierList.FirPsiModifierList.FirPsiModifierList|(R|<local>/it|)
         }
         ) }
     }
     ($subj$ is R|FirLightSourceElement|) ->  {
-        lval modifierListNode: R|LighterASTNode| = this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.treeStructure|).R|kotlin/collections/find|<R|LighterASTNode?|>(<L> = find@fun <anonymous>(it: R|LighterASTNode?|): R|kotlin/Boolean| <kind=UNKNOWN>  {
+        lval modifierListNode: R|LighterASTNode| = this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.treeStructure|).R|kotlin/collections/find|<R|LighterASTNode?|>(<L> = find@fun <anonymous>(it: R|LighterASTNode?|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
             ^ ==(R|<local>/it|?.{ $subj$.R|/LighterASTNode.tokenType| }, Q|TokenType|.R|/TokenType.Companion.MODIFIER_LIST|)
         }
         ) ?: ^getModifierList Null(null)

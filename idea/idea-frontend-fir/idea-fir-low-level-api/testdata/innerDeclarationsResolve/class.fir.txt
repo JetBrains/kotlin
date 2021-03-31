@@ -11,7 +11,7 @@ FILE: class.kt
             [BODY_RESOLVE] private get(): R|ERROR CLASS: Symbol not found for C|
 
         public final [BODY_RESOLVE] fun foo([BODY_RESOLVE] a: <ERROR TYPE REF: Symbol not found for A>): <ERROR TYPE REF: Unresolved name: with> {
-            ^foo <Unresolved name: with>#(R|<local>/a|, <L> = [BODY_RESOLVE] with@fun <anonymous>(): R|ERROR CLASS: Unresolved name: bar| {
+            ^foo <Unresolved name: with>#(R|<local>/a|, <L> = [BODY_RESOLVE] with@fun <anonymous>(): R|ERROR CLASS: Unresolved name: bar| <inline=Unknown>  {
                 ^ <Unresolved name: bar>#(String(a), this@R|/B|.R|/B.y|)
             }
             )

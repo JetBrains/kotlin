@@ -6,23 +6,23 @@ FILE: main.kt
     public final fun <X, Y> foo3(f: R|MyFunction<X, Y>|, x: R|X|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/foo1|(R|/MyFunction|<R|kotlin/Int|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| {
+        R|/foo1|(R|/MyFunction|<R|kotlin/Int|, R|kotlin/String|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Any.toString|()
         }
         ))
-        R|/foo2|(R|/MyFunction|<R|kotlin/Number|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Number, kotlin/Number?>|): R|ft<kotlin/String, kotlin/String?>| {
+        R|/foo2|(R|/MyFunction|<R|kotlin/Number|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Number, kotlin/Number?>|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         ))
-        <Inapplicable(INAPPLICABLE): /foo2>#(R|/MyFunction|<R|kotlin/Number|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/String, kotlin/String?>| {
+        <Inapplicable(INAPPLICABLE): /foo2>#(R|/MyFunction|<R|kotlin/Number|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Any.toString|()
         }
         ))
-        R|/foo3|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>|>(R|/MyFunction|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| {
+        R|/foo3|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>|>(R|/MyFunction|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.plus|(Int(1)).R|kotlin/Any.toString|()
         }
         ), Int(1))
-        R|/foo3|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>|>(R|/MyFunction|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Number|): R|ft<kotlin/String, kotlin/String?>| {
+        R|/foo3|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>|>(R|/MyFunction|<R|kotlin/Int|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Number|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         ), Int(2))

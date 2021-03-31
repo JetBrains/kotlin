@@ -12,7 +12,7 @@ FILE: kt41989.kt
             public get(): R|A.() -> kotlin/Unit| {
                 ^ when () {
                     R|/cond|() ->  {
-                        fun R|A|.<anonymous>(): R|kotlin/Unit| {
+                        fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                             (this@R|/C|, this@R|special/anonymous|).R|/B.withBottomBorder|()
                         }
 

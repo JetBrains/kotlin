@@ -15,7 +15,7 @@ FILE: lambdaReturningObject.kt
         ^MyOut R|kotlin/TODO|()
     }
     public final fun foo(): R|kotlin/Unit| {
-        R|/bar|(R|/MyOut|<R|IrStarProjectionImpl|>(<L> = MyOut@fun <anonymous>(): R|IrStarProjectionImpl| {
+        R|/bar|(R|/MyOut|<R|IrStarProjectionImpl|>(<L> = MyOut@fun <anonymous>(): R|IrStarProjectionImpl| <inline=NoInline>  {
             ^ Q|IrStarProjectionImpl|
         }
         ))

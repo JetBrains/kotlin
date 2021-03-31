@@ -29,26 +29,26 @@ FILE: kotlinSam.kt
     public final fun foo4(m: R|Derived|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        lval f: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(t: R|kotlin/Int|): R|kotlin/Boolean| {
+        lval f: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(t: R|kotlin/Int|): R|kotlin/Boolean| <inline=Unknown>  {
             ^ CMP(>, R|<local>/t|.R|kotlin/Int.compareTo|(Int(1)))
         }
 
-        R|/foo1|(<L> = foo1@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
+        R|/foo1|(<L> = foo1@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
         )
         R|/foo1|(R|<local>/f|)
-        <Inapplicable(INAPPLICABLE): /foo2>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Nothing| {
+        <Inapplicable(INAPPLICABLE): /foo2>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Nothing| <inline=Unknown>  {
             ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
         }
         )
         <Inapplicable(INAPPLICABLE): /foo2>#(R|<local>/f|)
-        <Inapplicable(INAPPLICABLE): /foo3>#(<L> = foo3@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Nothing| {
+        <Inapplicable(INAPPLICABLE): /foo3>#(<L> = foo3@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Nothing| <inline=Unknown>  {
             ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
         }
         )
         <Inapplicable(INAPPLICABLE): /foo3>#(R|<local>/f|)
-        R|/foo4|(<L> = foo4@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
+        R|/foo4|(<L> = foo4@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
         )

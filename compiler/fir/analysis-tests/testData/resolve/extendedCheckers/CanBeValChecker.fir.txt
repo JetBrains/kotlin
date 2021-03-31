@@ -92,7 +92,7 @@ FILE: CanBeValChecker.kt
         R|kotlin/io/print|(R|<local>/v|)
     }
     public final fun withReadonlyDeligate(): R|kotlin/Unit| {
-        lval s: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
+        lval s: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(Hello!)
         }
         )
@@ -189,14 +189,14 @@ FILE: CanBeValChecker.kt
     public final fun lambda(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int|
         R|<local>/a| = Int(10)
-        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| {
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/a| = Int(20)
         }
         )
     }
     public final fun lambdaInitialization(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int|
-        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| {
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/a| = Int(20)
         }
         )

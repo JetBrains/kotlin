@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArguments
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.writeResultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -173,7 +176,21 @@ class FirCallCompletionResultsWriterTransformer(
                 } else {
                     subCandidate.handleVarargs()
                     subCandidate.argumentMapping?.let {
-                        result.replaceArgumentList(buildResolvedArgumentList(it))
+                        val newArgumentList = buildResolvedArgumentList(it)
+                        val symbol = subCandidate.symbol
+                        val functionIsInline =
+                            (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
+                        for ((argument, parameter) in newArgumentList.mapping) {
+                            val lambda = argument.unwrapArgument() as? FirAnonymousFunction ?: continue
+                            val inlineStatus = when {
+                                parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
+                                parameter.isNoinline -> InlineStatus.NoInline
+                                functionIsInline -> InlineStatus.Inline
+                                else -> InlineStatus.NoInline
+                            }
+                            lambda.replaceInlineStatus(inlineStatus)
+                        }
+                        result.replaceArgumentList(newArgumentList)
                     }
                 }
                 result
@@ -198,6 +215,13 @@ class FirCallCompletionResultsWriterTransformer(
 
         return result.compose()
     }
+
+    private val AbstractFirBasedSymbol<*>.isArrayConstructorWithLambda: Boolean
+        get() {
+            val constructor = (this as? FirConstructorSymbol)?.fir ?: return false
+            if (constructor.valueParameters.size != 2) return false
+            return constructor.returnTypeRef.coneType.isArrayOrPrimitiveArray
+        }
 
     override fun transformAnnotationCall(
         annotationCall: FirAnnotationCall,

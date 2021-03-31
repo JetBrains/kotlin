@@ -3,7 +3,7 @@ FILE: nestedIfInLambda.kt
     }
     public final fun test(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit| {
         lvar result: R|kotlin/Boolean| = Boolean(false)
-        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| {
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             when () {
                 R|<local>/b1| ->  {
                     when () {

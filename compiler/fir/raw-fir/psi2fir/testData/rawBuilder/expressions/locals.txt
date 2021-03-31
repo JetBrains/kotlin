@@ -30,7 +30,7 @@ FILE: locals.kt
 
         }
         .foo#()
-        ^withLocals sum#(code#, Local#(IntegerLiteral(1)).diff#(), fun <anonymous>(x: Int, y: Int): <implicit> {
+        ^withLocals sum#(code#, Local#(IntegerLiteral(1)).diff#(), fun <anonymous>(x: Int, y: Int): <implicit> <inline=Unknown>  {
             ^ x#.plus#(y#)
         }
         )

@@ -6,7 +6,7 @@ FILE: overloadWithDefault.kt
 
     }
     public final fun test(a: R|A|): R|kotlin/Unit| {
-        R|<local>/a|.R|/A.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Boolean| {
+        R|<local>/a|.R|/A.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Boolean| <inline=NoInline>  {
             ^ Boolean(true)
         }
         )

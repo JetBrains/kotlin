@@ -577,9 +577,11 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         anonymousFunction.valueParameters.renderParameters()
         print(": ")
         anonymousFunction.returnTypeRef.accept(this)
+        print(" <inline=${anonymousFunction.inlineStatus}")
         if (anonymousFunction.invocationKind != null) {
-            print(" <kind=${anonymousFunction.invocationKind}> ")
+            print(", kind=${anonymousFunction.invocationKind}")
         }
+        print("> ")
         if (mode.renderLambdaBodies) {
             anonymousFunction.body?.renderBody()
         }

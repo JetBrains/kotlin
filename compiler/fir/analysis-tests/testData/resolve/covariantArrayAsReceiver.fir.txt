@@ -19,7 +19,7 @@ FILE: covariantArrayAsReceiver.kt
     public final fun foo(element: R|PsiElement|, usages: R|kotlin/Array<UsageInfo>|): R|kotlin/Unit| {
         lval adjusted: R|kotlin/collections/List<UsageInfo>?| = when () {
             (R|<local>/element| is R|KtParameter|) ->  {
-                R|<local>/usages|.R|/filterNot|<R|UsageInfo|>(<L> = filterNot@fun <anonymous>(it: R|UsageInfo|): R|kotlin/Boolean| {
+                R|<local>/usages|.R|/filterNot|<R|UsageInfo|>(<L> = filterNot@fun <anonymous>(it: R|UsageInfo|): R|kotlin/Boolean| <inline=NoInline>  {
                     ^ (R|<local>/it|.R|/UsageInfo.usage| is R|KtLightMethod|)
                 }
                 )

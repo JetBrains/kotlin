@@ -52,24 +52,24 @@ FILE: operatorsOverLiterals.kt
         <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1).R|kotlin/Int.inv|())
     }
     public final fun test_6(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): /takeByte>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): /takeByte>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ Int(127).R|kotlin/Int.plus|(Int(1))
         }
         ))
-        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1).R|kotlin/Int.plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1).R|kotlin/Int.plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ Int(1)
         }
         )))
-        <Inapplicable(INAPPLICABLE): /takeByte>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): /takeByte>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ Int(1).R|kotlin/Int.plus|(Int(1))
         }
         ))
         Int(1).R|kotlin/Int.plus|(Int(1))
-        R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ Int(1)
         }
         )
-        Int(1).R|kotlin/Int.plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        Int(1).R|kotlin/Int.plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ Int(1)
         }
         ))

@@ -8,7 +8,7 @@ FILE: runOnIntegerLiteral.kt
             public get(): R|kotlin/Int|
 
         init {
-            Int(1).R|kotlin/run|<R|kotlin/Int|, R|kotlin/Unit|>(<L> = run@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            Int(1).R|kotlin/run|<R|kotlin/Int|, R|kotlin/Unit|>(<L> = run@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                 this@R|/TestInitValInLambdaCalledOnce|.R|/TestInitValInLambdaCalledOnce.x| = Int(0)
             }
             )

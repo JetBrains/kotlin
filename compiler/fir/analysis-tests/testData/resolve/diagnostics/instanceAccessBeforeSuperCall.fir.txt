@@ -25,7 +25,7 @@ FILE: instanceAccessBeforeSuperCall.kt
         }
 
         public constructor(x: R|kotlin/Int|): R|C| {
-            this<R|C|>(fun <anonymous>(): R|ERROR CLASS: Cannot access ''<this>'' before superclass constructor has been called| {
+            this<R|C|>(fun <anonymous>(): R|ERROR CLASS: Cannot access ''<this>'' before superclass constructor has been called| <inline=Unknown>  {
                 lval a: R|kotlin/Int| = Int(10)
                 ^ this@R|/C|
             }
@@ -47,13 +47,13 @@ FILE: instanceAccessBeforeSuperCall.kt
     public final fun main(): R|kotlin/Unit| {
         lval x1: R|kotlin/String.() -> kotlin/String| = when () {
             Boolean(true) ->  {
-                fun R|kotlin/String|.<anonymous>(): R|kotlin/String| {
+                fun R|kotlin/String|.<anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ this@R|special/anonymous|
                 }
 
             }
             else ->  {
-                fun R|kotlin/String|.<anonymous>(): R|kotlin/String| {
+                fun R|kotlin/String|.<anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ this@R|special/anonymous|
                 }
 
@@ -75,7 +75,7 @@ FILE: instanceAccessBeforeSuperCall.kt
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
         public constructor(x: R|kotlin/Int|): R|F| {
-            this<R|F|>(R|<local>/x|, R|<local>/x|, fun <anonymous>(): R|kotlin/Unit| {
+            this<R|F|>(R|<local>/x|, R|<local>/x|, fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 lval a: R|kotlin/Int| = Int(10)
                 this@R|/F|
                 R|/test|(this@R|/F|)

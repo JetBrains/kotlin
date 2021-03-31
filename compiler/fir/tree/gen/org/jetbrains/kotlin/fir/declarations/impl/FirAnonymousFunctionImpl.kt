@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -42,6 +43,7 @@ internal class FirAnonymousFunctionImpl(
     override val symbol: FirAnonymousFunctionSymbol,
     override var label: FirLabel?,
     override var invocationKind: EventOccurrencesRange?,
+    override var inlineStatus: InlineStatus,
     override val isLambda: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirAnonymousFunction() {
@@ -137,5 +139,9 @@ internal class FirAnonymousFunctionImpl(
 
     override fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?) {
         invocationKind = newInvocationKind
+    }
+
+    override fun replaceInlineStatus(newInlineStatus: InlineStatus) {
+        inlineStatus = newInlineStatus
     }
 }

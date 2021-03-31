@@ -30,42 +30,42 @@ FILE: simpleMostSpecific.kt
     public abstract interface D3 : R|A|, R|C| {
     }
     public final fun main(d1: R|D1|, d2: R|D2|, d3: R|D3|): R|kotlin/Unit| {
-        R|<local>/d1|.R|/B.x|.R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d1|.R|/B.x|.R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String|>()
         }
         )
         R|<local>/d1|.R|/B.x| = String()
-        R|<local>/d1|.R|/B.foo|().R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d1|.R|/B.foo|().R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String|>()
         }
         )
-        R|<local>/d1|.R|/B.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d1|.R|/B.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String|>()
         }
         )
-        R|<local>/d2|.R|/B.x|.R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d2|.R|/B.x|.R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String|>()
         }
         )
         R|<local>/d2|.R|/B.x| = String()
-        R|<local>/d2|.R|/B.foo|().R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d2|.R|/B.foo|().R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String|>()
         }
         )
-        R|<local>/d2|.R|/B.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d2|.R|/B.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String|>()
         }
         )
-        R|<local>/d3|.R|/C.x|.R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d3|.R|/C.x|.R|/checkType|<R|kotlin/String|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String|>()
         }
         )
         R|<local>/d3|.R|/C.x| = String()
-        R|<local>/d3|.R|/A.foo|().R|/checkType|<R|kotlin/String?|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String?>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d3|.R|/A.foo|().R|/checkType|<R|kotlin/String?|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String?|>()
         }
         )
-        R|<local>/d3|.R|/A.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|/checkType|<R|kotlin/String?|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String?>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/d3|.R|/A.bar|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String()).R|/checkType|<R|kotlin/String?|>(<L> = checkType@fun R|CheckTypeInv<kotlin/String?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/String?|>()
         }
         )

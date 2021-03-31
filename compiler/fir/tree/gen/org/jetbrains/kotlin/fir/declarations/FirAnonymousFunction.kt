@@ -38,6 +38,7 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
     abstract override val symbol: FirAnonymousFunctionSymbol
     abstract val label: FirLabel?
     abstract val invocationKind: EventOccurrencesRange?
+    abstract val inlineStatus: InlineStatus
     abstract val isLambda: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
 
@@ -58,6 +59,8 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?)
+
+    abstract fun replaceInlineStatus(newInlineStatus: InlineStatus)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 

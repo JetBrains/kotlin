@@ -8,32 +8,32 @@ FILE: lambda.kt
     public final fun multipleArgs(block: R|(kotlin/String, kotlin/String) -> kotlin/String|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             String(This is test)
         }
         )
-        R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/String| {
+        R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(This is also test)
         }
         )
-        R|/itIs|(<L> = itIs@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| {
+        R|/itIs|(<L> = itIs@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
             ^ <strcat>(String(this is ), R|<local>/it|.R|kotlin/Any.toString|(), String( test))
         }
         )
-        R|/multipleArgs|(<L> = multipleArgs@fun <anonymous>(a: R|kotlin/String|, b: R|kotlin/String|): R|kotlin/String| {
+        R|/multipleArgs|(<L> = multipleArgs@fun <anonymous>(a: R|kotlin/String|, b: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
             ^ <strcat>(String(This is test of ), R|<local>/a|.R|kotlin/Any.toString|(), String(, ), R|<local>/b|.R|kotlin/Any.toString|())
         }
         )
-        lval s: R|kotlin/String| = fun <anonymous>(): R|kotlin/String| {
+        lval s: R|kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
             ^ String(OK)
         }
         .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
-        lval f: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| {
+        lval f: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
             ^ String(OK)
         }
 
         lval ss: R|kotlin/String| = R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
-        lval empty: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| {
+        lval empty: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 

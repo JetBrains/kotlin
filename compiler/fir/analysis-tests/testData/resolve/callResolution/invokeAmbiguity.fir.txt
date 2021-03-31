@@ -40,7 +40,7 @@ FILE: invokeAmbiguity.kt
             ^ R|kotlin/TODO|()
         }
     public final fun box(d: R|D|): R|kotlin/Unit| {
-        R|<local>/d|.R|/attr|.R|/B.invoke|(<L> = attr@fun <anonymous>(): R|kotlin/Unit| {
+        R|<local>/d|.R|/attr|.R|/B.invoke|(<L> = attr@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@attr Unit
         }
         ).R|kotlin/CharSequence.length|

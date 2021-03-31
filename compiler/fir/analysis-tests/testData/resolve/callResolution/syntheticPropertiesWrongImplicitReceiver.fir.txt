@@ -6,13 +6,13 @@ FILE: main.kt
             ^ Int(1)
         }
     public final fun bar(a: R|A|): R|kotlin/Unit| {
-        R|<local>/a|.R|/foo|.R|/checkType|<R|kotlin/Int|>(checkType@fun R|CheckTypeInv<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/a|.R|/foo|.R|/checkType|<R|kotlin/Int|>(checkType@fun R|CheckTypeInv<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/Int|>()
         }
         )
     }
     public final fun R|JavaClass|.bar(a: R|A|): R|kotlin/Unit| {
-        R|<local>/a|.R|/foo|.R|/checkType|<R|kotlin/Int|>(checkType@fun R|CheckTypeInv<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| {
+        R|<local>/a|.R|/foo|.R|/checkType|<R|kotlin/Int|>(checkType@fun R|CheckTypeInv<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_|<R|kotlin/Int|>()
         }
         )

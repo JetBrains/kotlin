@@ -282,6 +282,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("invocationKind", eventOccurrencesRangeType, nullable = true, withReplace = true).apply {
                 isMutable = true
             }
+            +field("inlineStatus", inlineStatusType, withReplace = true).apply {
+                isMutable = true
+            }
             +booleanField("isLambda")
             +typeParameters
         }

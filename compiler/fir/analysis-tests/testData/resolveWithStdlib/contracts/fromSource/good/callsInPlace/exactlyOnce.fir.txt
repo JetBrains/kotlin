@@ -19,7 +19,7 @@ FILE: exactlyOnce.kt
     }
     public final fun test_1(): R|kotlin/Unit| {
         lval x: R|kotlin/Int|
-        R|/inlineRun|(<L> = inlineRun@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|/inlineRun|(<L> = inlineRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|<local>/x| = Int(1)
         }
         )
@@ -27,7 +27,7 @@ FILE: exactlyOnce.kt
     }
     public final fun test_2(): R|kotlin/Unit| {
         lval x: R|kotlin/Int|
-        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=EXACTLY_ONCE>  {
             R|<local>/x| = Int(1)
         }
         )

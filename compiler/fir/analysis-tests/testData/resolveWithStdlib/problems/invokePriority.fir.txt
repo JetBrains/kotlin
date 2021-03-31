@@ -5,7 +5,7 @@ FILE: invokePriority.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            lval foo: R|kotlin/String.() -> kotlin/Unit| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| {
+            lval foo: R|kotlin/String.() -> kotlin/Unit| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 
@@ -13,7 +13,7 @@ FILE: invokePriority.kt
             }
 
             String(1).R|<local>/foo|()
-            R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(2), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(2), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                 this@R|special/anonymous|.R|<local>/foo|()
             }
             )
@@ -25,7 +25,7 @@ FILE: invokePriority.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val foo: R|kotlin/String.() -> kotlin/Unit| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| {
+        public final val foo: R|kotlin/String.() -> kotlin/Unit| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 
@@ -36,7 +36,7 @@ FILE: invokePriority.kt
 
         public final fun bar(): R|kotlin/Unit| {
             (this@R|/B|, String(1)).R|/B.foo|()
-            R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(2), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(2), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                 (this@R|/B|, this@R|special/anonymous|).R|/B.foo|()
             }
             )
@@ -64,7 +64,7 @@ FILE: invokePriority.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val f: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| {
+            public final val f: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 

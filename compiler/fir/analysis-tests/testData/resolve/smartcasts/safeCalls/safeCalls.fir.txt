@@ -20,7 +20,7 @@ FILE: safeCalls.kt
         (R|<local>/x| as? R|A|)?.{ $subj$.R|/A.bar|(R|<local>/x|) }
     }
     public final fun test_3(x: R|kotlin/Any|): R|kotlin/Unit| {
-        (R|<local>/x| as? R|A|)?.{ $subj$.R|/A.bar|(R|<local>/x|) }?.{ $subj$.R|/foo|(R|<local>/x|.R|/A.bool|()) }?.{ $subj$.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| {
+        (R|<local>/x| as? R|A|)?.{ $subj$.R|/A.bar|(R|<local>/x|) }?.{ $subj$.R|/foo|(R|<local>/x|.R|/A.bool|()) }?.{ $subj$.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/x|.R|/A.bool|()
         }
         ) }
@@ -33,7 +33,7 @@ FILE: safeCalls.kt
     public final fun R|kotlin/Any?|.boo(b: R|kotlin/Boolean|): R|kotlin/Unit| {
     }
     public final fun test_5(x: R|A?|): R|kotlin/Unit| {
-        R|<local>/x|?.{ $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
+        R|<local>/x|?.{ $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^test_5 Unit
         }
         ) }?.{ $subj$.R|/boo|(R|<local>/x|.R|/A.bool|()) }

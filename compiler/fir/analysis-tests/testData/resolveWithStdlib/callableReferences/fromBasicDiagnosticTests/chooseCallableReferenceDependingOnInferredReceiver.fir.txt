@@ -30,10 +30,10 @@ FILE: chooseCallableReferenceDependingOnInferredReceiver.kt
         ^bar R|kotlin/TODO|()
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/myWith|<R|A|, R|kotlin/Nothing|>(R|/A.A|(), <L> = myWith@fun R|A|.<anonymous>(): R|kotlin/Nothing| <kind=UNKNOWN>  {
+        R|/myWith|<R|A|, R|kotlin/Nothing|>(R|/A.A|(), <L> = myWith@fun R|A|.<anonymous>(): R|kotlin/Nothing| <inline=Inline, kind=UNKNOWN>  {
             lval t1: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
             lval t2: R|A| = R|/bar|<R|A|>(::R|/A.baz|)
-            ^ R|/myWith|<R|B|, R|kotlin/Nothing|>(R|/B.B|(), <L> = myWith@fun R|B|.<anonymous>(): R|kotlin/Nothing| <kind=UNKNOWN>  {
+            ^ R|/myWith|<R|B|, R|kotlin/Nothing|>(R|/B.B|(), <L> = myWith@fun R|B|.<anonymous>(): R|kotlin/Nothing| <inline=Inline, kind=UNKNOWN>  {
                 lval a: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
                 lval b: R|B| = R|/bar|<R|B|>(::R|/B.foo|)
                 lval t3: R|B| = R|/bar|<R|B|>(::R|/B.baz|)

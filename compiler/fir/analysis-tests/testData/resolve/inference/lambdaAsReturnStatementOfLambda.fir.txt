@@ -6,8 +6,8 @@ FILE: lambdaAsReturnStatementOfLambda.kt
 
     }
     public final fun test(a: R|A|): R|kotlin/Unit| {
-        lval lambda: R|() -> A| = R|<local>/a|.R|kotlin/let|<R|A|, R|() -> A|>(<L> = let@fun <anonymous>(it: R|A|): R|() -> A| <kind=EXACTLY_ONCE>  {
-            ^ let@fun <anonymous>(): R|A| {
+        lval lambda: R|() -> A| = R|<local>/a|.R|kotlin/let|<R|A|, R|() -> A|>(<L> = let@fun <anonymous>(it: R|A|): R|() -> A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ let@fun <anonymous>(): R|A| <inline=Unknown>  {
                 ^ R|<local>/it|
             }
 

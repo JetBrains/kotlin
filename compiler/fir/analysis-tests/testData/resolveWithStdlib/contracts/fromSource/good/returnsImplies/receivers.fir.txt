@@ -23,20 +23,20 @@ FILE: receivers.kt
     }
     public final fun test_2(x: R|A?|): R|kotlin/Unit| {
         R|<local>/x|.R|/myRequireNotNull|()
-        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|<local>/x|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|A|, R|kotlin/Unit|>(R|<local>/x|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|/foo|()
         }
         )
     }
     public final fun test_3(x: R|A?|): R|kotlin/Unit| {
-        R|kotlin/with|<R|A?|, R|kotlin/Unit|>(R|<local>/x|, <L> = with@fun R|A?|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|A?|, R|kotlin/Unit|>(R|<local>/x|, <L> = with@fun R|A?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|/myRequireNotNull|()
         }
         )
         R|<local>/x|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /foo>#()
     }
     public final fun test_4(x: R|A?|): R|kotlin/Unit| {
-        R|kotlin/with|<R|A?|, R|kotlin/Unit|>(R|<local>/x|, <L> = with@fun R|A?|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|A?|, R|kotlin/Unit|>(R|<local>/x|, <L> = with@fun R|A?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|/myRequireNotNull|()
             this@R|special/anonymous|.R|/foo|()
         }
