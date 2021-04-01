@@ -15,7 +15,7 @@ fun list(j: J): Any {
 
     a?.get(0)
     if (a == null) {}
-    a!!
+    a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 
     a.get(0)
     return a

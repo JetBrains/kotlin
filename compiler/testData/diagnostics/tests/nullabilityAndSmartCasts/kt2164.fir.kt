@@ -11,7 +11,7 @@ fun main() {
 
     if (x != null) {
         foo(x)
-        foo(x!!)
+        foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
         foo(x)
     }
 
@@ -19,7 +19,7 @@ fun main() {
 
     if (x != null) {
         foo(x)
-        foo(x!!)
+        foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
         foo(x)
     } else {
         <!INAPPLICABLE_CANDIDATE!>foo<!>(x)
@@ -28,12 +28,12 @@ fun main() {
     }
 
     foo(x)
-    foo(x!!)
+    foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
     foo(x)
     
     val y: Int? = null
     y!!
-    y!!
+    y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     foo(y)
-    foo(y!!)
+    foo(y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }

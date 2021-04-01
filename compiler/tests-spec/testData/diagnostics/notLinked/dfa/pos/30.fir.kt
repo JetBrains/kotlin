@@ -98,7 +98,7 @@ fun case_6(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_7(x: Class) {
-    if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
+    if (x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.prop_8?.prop_8?.prop_8?.prop_8 != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
@@ -113,7 +113,7 @@ fun case_7(x: Class) {
  * ISSUES: KT-30376
  */
 fun case_8(x: Class) {
-    if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
+    if (x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.prop_8?.prop_8?.prop_8?.prop_8 != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8

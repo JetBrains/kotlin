@@ -159,6 +159,6 @@ class case_10_class {
  */
 fun case_11(value_1: Any?, value_2: Any?, value_3: Any?) {
     funWithReturnsAndInvertCondition(value_1 !is String || value_2 !is Number || value_3 !is Any?)
-    println(value_1!!.length)
+    println(value_1<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length)
     println(value_2?.toByte())
 }

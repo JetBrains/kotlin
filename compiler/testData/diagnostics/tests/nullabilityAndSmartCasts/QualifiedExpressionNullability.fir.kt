@@ -10,7 +10,7 @@ fun main() {
     x<!UNSAFE_CALL!>.<!>foo(y)
     x!!.<!INAPPLICABLE_CANDIDATE!>foo<!>(y)
     x.foo(y!!)
-    x!!.foo(y!!)
+    x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.foo(y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
     
     val a: Foo? = null
     val b: Foo? = null
@@ -19,12 +19,12 @@ fun main() {
     a<!UNSAFE_CALL!>.<!>foo(b<!UNSAFE_CALL!>.<!>foo(c))
     a!!.foo(b<!UNSAFE_CALL!>.<!>foo(c))
     a.foo(b!!.<!INAPPLICABLE_CANDIDATE!>foo<!>(c))
-    a!!.foo(b!!.<!INAPPLICABLE_CANDIDATE!>foo<!>(c))
+    a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.foo(b<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.<!INAPPLICABLE_CANDIDATE!>foo<!>(c))
     a.foo(b.foo(c!!))
-    a!!.foo(b.foo(c!!))
-    a.foo(b!!.foo(c!!))
-    a!!.foo(b!!.foo(c!!))
+    a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.foo(b.foo(c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
+    a.foo(b<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.foo(c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
+    a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.foo(b<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.foo(c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
     
     val z: Foo? = null
-    z!!.foo(z!!)
+    z!!.foo(z<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }

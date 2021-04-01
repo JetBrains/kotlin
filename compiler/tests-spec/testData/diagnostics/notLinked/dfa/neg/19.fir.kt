@@ -339,7 +339,7 @@ fun case_25(x: Boolean?) {
  */
 fun case_26(x: Boolean?) {
     while (true) {
-        for (i in listOf(break, x!!, x!!)) {
+        for (i in listOf(break, x!!, x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)) {
 
         }
     }

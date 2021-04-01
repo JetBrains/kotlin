@@ -1,5 +1,5 @@
 fun foo1(p: Pair<Int?, Int>): Int {
-    if (p.first != null) return p.first!!
+    if (p.first != null) return p.first<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     return p.second
 }
 

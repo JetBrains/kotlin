@@ -234,37 +234,37 @@ fun poll66() {
 }
 
 fun poll7() {
-    val inv = ::bar!!
+    val inv = ::bar<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
 fun poll71() {
-    val inv = ::bar2!!
+    val inv = ::bar2<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv()
 }
 
 fun poll72() {
-    val inv = ::bar3!!
+    val inv = ::bar3<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
 fun poll73() {
-    val inv = ::bar4!!
+    val inv = ::bar4<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv
 }
 
 fun poll74() {
-    val inv = ::bar5!!
+    val inv = ::bar5<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv
 }
 
 fun poll75() {
-    val inv = ::Foo6!!
+    val inv = ::Foo6<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv
 }
 
 fun poll76() {
-    val inv = ::Foo7!!
+    val inv = ::Foo7<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv
 }
 
