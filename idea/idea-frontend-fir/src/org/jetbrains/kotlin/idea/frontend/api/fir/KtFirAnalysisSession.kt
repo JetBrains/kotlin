@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
@@ -21,11 +20,9 @@ import org.jetbrains.kotlin.idea.frontend.api.tokens.ReadActionConfinementValidi
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
-import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.recordCompletionContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -62,9 +59,9 @@ private constructor(
 
     override val expressionInfoProviderImpl = KtFirExpressionInfoProvider(this, token)
 
-    override val KtType.canBeNull: Boolean get() = (this as KtFirType).coneType.canBeNull
-
     override val typeProviderImpl = KtFirTypeProvider(this, token)
+
+    override val typeInfoProviderImpl = KtFirTypeInfoProvider(this, token)
 
     override val subtypingComponentImpl = KtFirSubtypingComponent(this, token)
 

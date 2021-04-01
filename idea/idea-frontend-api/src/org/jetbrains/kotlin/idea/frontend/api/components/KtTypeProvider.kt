@@ -32,9 +32,6 @@ interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
 
     fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
         analysisSession.typeProvider.buildSelfClassType(this)
-
-    val KtType.canBeNull: Boolean
-
 }
 
 @Suppress("PropertyName")
