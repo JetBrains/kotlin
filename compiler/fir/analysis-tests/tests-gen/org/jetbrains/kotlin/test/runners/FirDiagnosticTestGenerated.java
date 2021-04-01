@@ -3672,6 +3672,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("ignoreAttributeInComments.kt")
+            public void testIgnoreAttributeInComments() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/suppress/ignoreAttributeInComments.kt");
+            }
+
+            @Test
             @TestMetadata("multipleWarnings.kt")
             public void testMultipleWarnings() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/suppress/multipleWarnings.kt");

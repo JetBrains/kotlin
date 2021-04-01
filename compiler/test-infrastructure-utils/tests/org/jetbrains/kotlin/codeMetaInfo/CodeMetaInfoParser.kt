@@ -1,17 +1,17 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codeMetaInfo
 
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
+import java.lang.StringBuilder
 
 object CodeMetaInfoParser {
     private val openingRegex = """<!([^>][^"]*?((".*?")(, ".*?")*?)?[^"]*?)!>""".toRegex()
     private val closingRegex = "<!>".toRegex()
-
-    val openingOrClosingRegex = """(${closingRegex.pattern}|${openingRegex.pattern})""".toRegex()
+    private val commentRegex = """(//[^\r\n]*)|(/\*(.*?)\*/)""".toRegex(RegexOption.DOT_MATCHES_ALL)
 
     /*
      * ([\S&&[^,(){}]]+) -- tag, allowing all non-space characters except bracers and curly bracers
@@ -67,16 +67,23 @@ object CodeMetaInfoParser {
         }
     }
 
-    fun getCodeMetaInfoFromText(renderedText: String): List<ParsedCodeMetaInfo> {
+    fun clearTextFromDiagnosticMarkup(text: String): String = getCodeMetaInfoAndClearedText(text).first
+
+    fun getCodeMetaInfoFromText(text: String): List<ParsedCodeMetaInfo> = getCodeMetaInfoAndClearedText(text).second
+
+    fun getCodeMetaInfoAndClearedText(text: String): Pair<String, List<ParsedCodeMetaInfo>> {
+        val commentMatches = commentRegex.findAll(text).toList()
+
         val elements = mutableListOf<MatchElement>()
 
         val matches = mutableMapOf<MatchType, MatchResult?>()
         for (matchType in matchTypeRegexMap.keys) {
-            matches[matchType] = matchTypeRegexMap[matchType]!!.find(renderedText, 0)
+            matches[matchType] = matchTypeRegexMap[matchType]!!.find(text, 0)
         }
 
-        var offset = 0
+        val resultText = StringBuilder(text.length)
         var counter = 0
+        var prevPosition = 0
         var selectedMatch: MatchResult?
         do {
             var selectedMatchType: MatchType = MatchType.Opening
@@ -91,18 +98,25 @@ object CodeMetaInfoParser {
             }
 
             if (selectedMatch != null) {
-                val first = selectedMatch.range.first
-                elements.add(
-                    if (selectedMatchType == MatchType.Opening) {
-                        Opening(counter++, selectedMatch.groupValues[1], first - offset)
-                    } else {
-                        Closing(counter++, first - offset)
-                    }
-                )
-                matches[selectedMatchType] = matchTypeRegexMap[selectedMatchType]!!.find(renderedText, selectedMatch.range.last + 1)
-                offset += selectedMatch.value.length
+                if (!commentMatches.any { commentMatch ->
+                        selectedMatch.range.first >= commentMatch.range.first &&
+                                selectedMatch.range.first <= commentMatch.range.last
+                    }) {
+                    resultText.append(text, prevPosition, selectedMatch.range.first)
+                    prevPosition = selectedMatch.range.last + 1
+                    elements.add(
+                        if (selectedMatchType == MatchType.Opening) {
+                            Opening(counter++, selectedMatch.groupValues[1], resultText.length)
+                        } else {
+                            Closing(counter++, resultText.length)
+                        }
+                    )
+                }
+                matches[selectedMatchType] = matchTypeRegexMap[selectedMatchType]!!.find(text, selectedMatch.range.last + 1)
             }
         } while (selectedMatch != null)
+
+        resultText.append(text, prevPosition, text.length)
 
         val openings = ArrayDeque<Opening>()
         val result = mutableListOf<ParsedCodeMetaInfo>()
@@ -111,7 +125,7 @@ object CodeMetaInfoParser {
             if (element is Opening) {
                 openings.addLast(element)
             } else if (element is Closing) {
-                val opening = openings.removeLastOrNull() ?: error("Closing element does not contain corresponding opening")
+                val opening = openings.removeLastOrNull() ?: error("Excess closing element")
                 val allMetaInfos = opening.tags
                 tagRegex.findAll(allMetaInfos).map { it.groups }.forEach {
                     val tag = it[1]!!.value
@@ -131,6 +145,9 @@ object CodeMetaInfoParser {
             }
         }
 
-        return result
+        if (openings.size > 0)
+            error("Opening element does not have corresponding closing")
+
+        return Pair(resultText.toString(), result)
     }
 }

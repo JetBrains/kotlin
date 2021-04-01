@@ -3295,6 +3295,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/suppress/allWarnings.kt");
         }
 
+        @TestMetadata("ignoreAttributeInComments.kt")
+        public void testIgnoreAttributeInComments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/ignoreAttributeInComments.kt");
+        }
+
         @TestMetadata("multipleWarnings.kt")
         public void testMultipleWarnings() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/suppress/multipleWarnings.kt");

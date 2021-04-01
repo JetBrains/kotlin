@@ -99,4 +99,4 @@ object CodeMetaInfoRenderer {
     }
 }
 
-fun clearTextFromDiagnosticMarkup(text: String): String = text.replace(CodeMetaInfoParser.openingOrClosingRegex, "")
+fun clearTextFromDiagnosticMarkup(text: String): String = CodeMetaInfoParser.clearTextFromDiagnosticMarkup(text)
