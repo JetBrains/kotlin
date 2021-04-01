@@ -20,8 +20,8 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         }
 
         result.assertCommonized("((a,b), (c,d))", "expect fun x(): Int")
-        result.assertCommonized("(a,b)", "actual fun x(): Int = 42")
-        result.assertCommonized("(c,d)", "actual fun x(): Int = 42")
+        result.assertCommonized("(a,b)", "expect fun x(): Int")
+        result.assertCommonized("(c,d)", "expect fun x(): Int")
         result.assertCommonized("a", "actual fun x(): Int = 42")
         result.assertCommonized("b", "actual fun x(): Int = 42")
         result.assertCommonized("c", "actual fun x(): Int = 42")
@@ -37,10 +37,10 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         }
 
         result.assertCommonized("((a,b), c)", "expect fun x(): Int")
-        result.assertCommonized("(a,b)", "actual fun x(): Int = 42")
-        result.assertCommonized("a", "actual fun x(): Int = 42")
-        result.assertCommonized("b", "actual fun x(): Int = 42")
-        result.assertCommonized("c", "actual fun x(): Int = 42")
+        result.assertCommonized("(a,b)", "expect fun x(): Int")
+        result.assertCommonized("a", "fun x(): Int = 42")
+        result.assertCommonized("b", "fun x(): Int = 42")
+        result.assertCommonized("c", "fun x(): Int = 42")
     }
 
     fun `test function with returnType`() {
@@ -75,43 +75,43 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
 
         result.assertCommonized(
             "a", """
-            actual interface ABCD
-            actual fun x(): ABCD = TODO()
+            interface ABCD
+            fun x(): ABCD = TODO()
             """
         )
 
         result.assertCommonized(
             "b", """
-            actual interface ABCD
-            actual fun x(): ABCD = TODO()
+            interface ABCD
+            fun x(): ABCD = TODO()
             """
         )
 
         result.assertCommonized(
             "c", """
-            actual interface ABCD
-            actual fun x(): ABCD = TODO()
+            interface ABCD
+            fun x(): ABCD = TODO()
             """
         )
 
         result.assertCommonized(
             "d", """
-            actual interface ABCD
-            actual fun x(): ABCD = TODO()
+            interface ABCD
+            fun x(): ABCD = TODO()
             """
         )
 
         result.assertCommonized(
             "(a, b)", """
-            actual interface ABCD
-            actual fun x(): ABCD
+            expect interface ABCD
+            expect fun x(): ABCD
             """
         )
 
         result.assertCommonized(
             "(c, d)", """
-            actual interface ABCD
-            actual fun x(): ABCD
+            expect interface ABCD
+            expect fun x(): ABCD
             """
         )
 
@@ -133,12 +133,12 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
             simpleSingleSourceTarget("d", "fun x(): ABCD = TODO()")
         }
 
-        result.assertCommonized("a", "actual fun x(): ABCD")
-        result.assertCommonized("b", "actual fun x(): ABCD")
-        result.assertCommonized("c", "actual fun x(): ABCD")
-        result.assertCommonized("d", "actual fun x(): ABCD")
-        result.assertCommonized("(c, d)", "fun x(): ABCD")
-        result.assertCommonized("(a, b)", "fun x(): ABCD")
+        result.assertCommonized("a", "fun x(): ABCD")
+        result.assertCommonized("b", "fun x(): ABCD")
+        result.assertCommonized("c", "fun x(): ABCD")
+        result.assertCommonized("d", "fun x(): ABCD")
+        result.assertCommonized("(c, d)", "expect fun x(): ABCD")
+        result.assertCommonized("(a, b)", "expect fun x(): ABCD")
         result.assertCommonized("((a,b), (c,d))", "expect fun x(): ABCD")
     }
 
@@ -153,12 +153,12 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
             simpleSingleSourceTarget("d", "fun x(): ABCD = TODO()")
         }
 
-        result.assertCommonized("a", "actual fun x(): ABCD")
-        result.assertCommonized("b", "actual fun x(): ABCD")
-        result.assertCommonized("c", "actual fun x(): ABCD")
-        result.assertCommonized("d", "actual fun x(): ABCD")
-        result.assertCommonized("(c, d)", "fun x(): ABCD")
-        result.assertCommonized("(a, b)", "fun x(): ABCD")
+        result.assertCommonized("a", "fun x(): ABCD")
+        result.assertCommonized("b", "fun x(): ABCD")
+        result.assertCommonized("c", "fun x(): ABCD")
+        result.assertCommonized("d", "fun x(): ABCD")
+        result.assertCommonized("(c, d)", "expect fun x(): ABCD")
+        result.assertCommonized("(a, b)", "expect fun x(): ABCD")
         result.assertCommonized("((a,b), (c,d))", "")
     }
 
@@ -172,10 +172,10 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
             simpleSingleSourceTarget("c", "fun x(): ABCD = TODO()")
         }
 
-        result.assertCommonized("a", "actual fun x(): ABCD")
-        result.assertCommonized("b", "actual fun x(): ABCD")
-        result.assertCommonized("c", "actual fun x(): ABCD")
-        result.assertCommonized("(a, b)", "fun x(): ABCD")
+        result.assertCommonized("a", "fun x(): ABCD")
+        result.assertCommonized("b", "fun x(): ABCD")
+        result.assertCommonized("c", "fun x(): ABCD")
+        result.assertCommonized("(a, b)", "expect fun x(): ABCD")
         result.assertCommonized("((a,b), c)", "expect fun x(): ABCD")
     }
 }

@@ -22,11 +22,11 @@ class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonization
         }
 
         result.assertCommonized("((a,b), (c,d))", "expect val x: Int")
-        result.assertCommonized("(a, b)", "actual val x: Int")
-        result.assertCommonized("(c, d)", "actual val x: Int")
-        result.assertCommonized("a", "actual val x: Int = 42")
-        result.assertCommonized("b", "actual val x: Int = 42")
-        result.assertCommonized("c", "actual val x: Int = 42")
-        result.assertCommonized("d", "actual val x: Int = 42")
+        result.assertCommonized("(a, b)", "expect val x: Int")
+        result.assertCommonized("(c, d)", "expect val x: Int")
+        result.assertCommonized("a", "val x: Int = 42")
+        result.assertCommonized("b", "val x: Int = 42")
+        result.assertCommonized("c", "val x: Int = 42")
+        result.assertCommonized("d", "val x: Int = 42")
     }
 }

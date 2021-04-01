@@ -20,8 +20,10 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
         }
 
         result.assertCommonized("((a,b), (c,d))", "typealias X = Int")
-        result.assertCommonized("(a,b)", "")
-        result.assertCommonized("(c, d)", "")
+        result.assertCommonized("(a,b)", "typealias X = Int")
+        result.assertCommonized("(c, d)", "typealias X = Int")
+
+        /* Special case: For now, leaves should depend on commonized platform libraries */
         result.assertCommonized("a", "")
         result.assertCommonized("b", "")
         result.assertCommonized("c", "")

@@ -20,15 +20,15 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
             simpleSingleSourceTarget("e", "class X")
         }
 
-        result.assertCommonized("a", "actual class X")
-        result.assertCommonized("b", "actual class X")
-        result.assertCommonized("c", "actual class X")
-        result.assertCommonized("d", "actual class X")
-        result.assertCommonized("e", "actual class X")
+        result.assertCommonized("a", "class X")
+        result.assertCommonized("b", "class X")
+        result.assertCommonized("c", "class X")
+        result.assertCommonized("d", "class X")
+        result.assertCommonized("e", "class X")
 
-        result.assertCommonized("(a,b)", "class X")
-        result.assertCommonized("(c,d)", "class X")
-        result.assertCommonized("(a,b)", "class X")
+        result.assertCommonized("(a,b)", "expect class X expect constructor()")
+        result.assertCommonized("(c,d)", "expect class X expect constructor()")
+        result.assertCommonized("(a,b)", "expect class X expect constructor()")
         result.assertCommonized("((a,b), (c,d), e)", "expect class X expect constructor()")
     }
 
@@ -78,58 +78,58 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
 
         result.assertCommonized(
             "a", """
-               actual class X {
-                    actual val a: Int = 42
-                    actual val ab: Int = 42
-                    actual val abcd: Int = 42
+               class X {
+                    val a: Int = 42
+                    val ab: Int = 42
+                    val abcd: Int = 42
                } 
                 """
         )
 
         result.assertCommonized(
             "b", """
-               actual class X {
-                    actual val b: Int = 42
-                    actual val ab: Int = 42
-                    actual val abcd: Int = 42
+               class X {
+                    val b: Int = 42
+                    val ab: Int = 42
+                    val abcd: Int = 42
                } 
                 """
         )
 
         result.assertCommonized(
             "c", """
-               actual class X {
-                    actual val c: Int = 42
-                    actual val cd: Int = 42
-                    actual val abcd: Int = 42
+               class X {
+                    val c: Int = 42
+                    val cd: Int = 42
+                    val abcd: Int = 42
                } 
                 """
         )
 
         result.assertCommonized(
             "d", """
-               actual class X {
-                    actual val d: Int = 42
-                    actual val cd: Int = 42
-                    actual val abcd: Int = 42
+               class X {
+                   val d: Int = 42
+                   val cd: Int = 42
+                   val abcd: Int = 42
                } 
                 """
         )
 
         result.assertCommonized(
             "(a,b)", """
-               class X {
-                    val ab: Int
-                    val abcd: Int
+               expect class X expect constructor() {
+                    expect val ab: Int
+                    expect val abcd: Int
                } 
                 """
         )
 
         result.assertCommonized(
             "(c,d)", """
-               class X {
-                    val cd: Int
-                    val abcd: Int
+               expect class X expect constructor() {
+                    expect val cd: Int
+                    expect val abcd: Int
                } 
                 """
         )

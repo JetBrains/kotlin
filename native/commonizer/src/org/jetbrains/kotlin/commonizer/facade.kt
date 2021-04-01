@@ -30,7 +30,7 @@ fun runCommonization(parameters: CommonizerParameters) {
     }
 
     val storageManager = LockBasedStorageManager("Declarations commonization")
-    serializeCommonDeclarations(commonize(parameters, storageManager, parameters.outputTarget), parameters)
+    commonize(parameters, storageManager, parameters.outputTarget)
     parameters.resultsConsumer.allConsumed(Status.DONE)
 }
 
@@ -52,7 +52,7 @@ private fun commonize(
     mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
     parameters.progressLogger?.invoke("Commonized declarations for $target")
 
-    serializeTargetDeclarations(mergedTree, parameters)
+    serialize(mergedTree, parameters)
     parameters.progressLogger?.invoke("Commonized target $target")
 
     return mergedTree
@@ -69,27 +69,14 @@ private fun getCirTree(
     }
 }
 
-private fun serializeTargetDeclarations(mergedTree: CirRootNode, parameters: CommonizerParameters) {
-    for (targetIndex in (mergedTree.indices - mergedTree.indexOfCommon)) {
+private fun serialize(mergedTree: CirRootNode, parameters: CommonizerParameters) {
+    for (targetIndex in mergedTree.indices) {
         serializeTarget(mergedTree, targetIndex, parameters)
     }
 }
 
-private fun serializeCommonDeclarations(mergedTree: CirRootNode, parameters: CommonizerParameters) {
-    serializeTarget(mergedTree, mergedTree.indexOfCommon, parameters)
-}
-
 private fun serializeTarget(mergedTree: CirRootNode, targetIndex: Int, parameters: CommonizerParameters) {
     val target = mergedTree.getTarget(targetIndex)
-
-    CirTreeSerializer.serializeSingleTarget(mergedTree, targetIndex, parameters.statsCollector) { metadataModule ->
-        val libraryName = metadataModule.name
-        val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
-            SerializedMetadata(header, fragments, fragmentNames)
-        }
-        val manifestData = parameters.manifestProvider[target].getManifest(libraryName)
-        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
-    }
 
     if (target in parameters.targetProviders.targets) {
         parameters.targetProviders[target].modulesProvider.loadModuleInfos()
@@ -97,7 +84,17 @@ private fun serializeTarget(mergedTree: CirRootNode, targetIndex: Int, parameter
             .forEach { missingModule -> parameters.resultsConsumer.consume(target, ModuleResult.Missing(missingModule.originalLocation)) }
     }
 
-    parameters.resultsConsumer.targetConsumed(target)
+    if (targetIndex == mergedTree.indexOfCommon || target is LeafCommonizerTarget) {
+        CirTreeSerializer.serializeSingleTarget(mergedTree, targetIndex, parameters.statsCollector) { metadataModule ->
+            val libraryName = metadataModule.name
+            val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
+                SerializedMetadata(header, fragments, fragmentNames)
+            }
+            val manifestData = parameters.manifestProvider[target].getManifest(libraryName)
+            parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
+        }
+        parameters.resultsConsumer.targetConsumed(target)
+    }
 }
 
 private val KLIB_FRAGMENT_WRITE_STRATEGY = ChunkedKlibModuleFragmentWriteStrategy()

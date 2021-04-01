@@ -195,13 +195,13 @@ class HierarchicalPackageCommonizationTest : AbstractInlineSourcesCommonizationT
             source(
                 """
                 package pkg.abcd
-                val dummy: String
+                expect val dummy: String
                 """, "abcd.kt"
             )
             source(
                 """
                 package pkg.ab
-                val dummy: String
+                expect val dummy: String
                 """, "ab.kt"
             )
         }
@@ -210,13 +210,13 @@ class HierarchicalPackageCommonizationTest : AbstractInlineSourcesCommonizationT
             source(
                 """
                 package pkg.abcd
-                val dummy: String
+                expect val dummy: String
                 """, "abcd.kt"
             )
             source(
                 """
                 package pkg.cd
-                val dummy: String
+                expect val dummy: String
                 """, "cd.kt"
             )
         }
