@@ -232,6 +232,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     AnalyzerWithCompilerReport(config.configuration),
                     config.configuration,
                     PhaseConfig(wasmPhases),
+                    IrFactoryImpl,
                     allDependencies = resolvedLibraries,
                     friendDependencies = friendDependencies,
                     exportedDeclarations = setOf(FqName("main"))
