@@ -26,5 +26,5 @@ fun foo() {
     if (z != null) bar(z)
     <!INAPPLICABLE_CANDIDATE!>bar<!>(z)
     bar(z!!)
-    if (z != null) bar(z!!)
+    if (z != null) bar(z<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }

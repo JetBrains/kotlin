@@ -60,7 +60,7 @@ fun case_6(x: Any?) {
 
 // TESTCASE NUMBER: 7
 fun case_7(x: Boolean?) {
-    if (x != null && x!!) {
+    if (x != null && x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.not()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>select(x)<!>.not()
     }

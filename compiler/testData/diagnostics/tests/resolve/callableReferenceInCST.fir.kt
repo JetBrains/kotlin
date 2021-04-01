@@ -28,7 +28,7 @@ fun testElvis(x: Any?) {
 }
 
 fun testExclExcl() {
-    val y = :: unresolved!!
+    val y = :: unresolved<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
 }
 
 fun testTry() {

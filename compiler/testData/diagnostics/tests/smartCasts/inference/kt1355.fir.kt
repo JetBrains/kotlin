@@ -25,7 +25,7 @@ public data class Tag(public var tagName: String) {
                 attributes.remove("id")
             }
             else {
-                attributes["id"] = value!!
+                attributes["id"] = value<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
                 attributes["id"] = value
             }
         }

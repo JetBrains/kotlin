@@ -10,7 +10,7 @@ fun test1(s: String?) {
 
 fun test2(s: String?) {
     assert(s!!.isEmpty())
-    s!!.length
+    s<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 }
 
 fun test3(s: String?) {
@@ -27,7 +27,7 @@ fun test4() {
 fun test5() {
     val s: String? = null;
     assert(s!!.isEmpty())
-    s!!.length
+    s<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 }
 
 fun test6() {

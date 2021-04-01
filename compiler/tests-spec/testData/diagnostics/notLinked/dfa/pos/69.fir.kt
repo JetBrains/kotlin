@@ -35,7 +35,7 @@ fun case_4(x: Any?) {
 
 // TESTCASE NUMBER: 5
 fun case_5(x: Class) {
-    if (x!!.prop_8 != null) {
+    if (x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.prop_8 != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
     }

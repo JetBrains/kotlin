@@ -548,6 +548,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<FirExpression>("rhs")
         }
         // TODO: val UNEXPECTED_SAFE_CALL by ...
+        val UNNECESSARY_NOT_NULL_ASSERTION by warning<FirSourceElement, KtExpression>(PositioningStrategy.OPERATOR) {
+            parameter<ConeKotlinType>("receiverType")
+        }
+        val NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION by warning<FirSourceElement, KtExpression>(PositioningStrategy.OPERATOR)
+        val NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE by warning<FirSourceElement, KtExpression>(PositioningStrategy.OPERATOR)
     }
 
     val WHEN_EXPRESSIONS by object : DiagnosticGroup("When expressions") {

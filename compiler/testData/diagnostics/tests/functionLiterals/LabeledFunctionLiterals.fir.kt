@@ -11,6 +11,6 @@ fun <T> foo(b: B, f: () -> T): T = f()
 
 fun test(c: C) {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(c) f@ {
-        c!!
+        c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     }
 }
