@@ -77,6 +77,7 @@ object FirSessionFactory {
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker)
             registerJavaSpecificResolveComponents()
+            registerSealedClassInheritorsProvider()
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
@@ -127,6 +128,7 @@ object FirSessionFactory {
         return FirLibrarySession(moduleInfo, sessionProvider).apply {
             registerThreadUnsafeCaches()
             registerCommonComponents(languageVersionSettings)
+            registerSealedClassInheritorsProvider()
 
             val javaSymbolProvider = JavaSymbolProvider(this, project, scope)
 

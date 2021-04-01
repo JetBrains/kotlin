@@ -313,7 +313,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             return
         }
         when {
-            fir.modality == Modality.SEALED -> fir.sealedInheritors?.forEach {
+            fir.modality == Modality.SEALED -> fir.getSealedClassInheritors(session).forEach {
                 val symbol = session.symbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol
                 symbol?.collectAllSubclassesTo(destination, session)
             }

@@ -86,7 +86,7 @@ class FirSealedClassInheritorsProcessor(
             if (regularClass.modality == Modality.SEALED) {
                 val inheritors = inheritorsMap.remove(regularClass)
                 if (inheritors != null) {
-                    regularClass.sealedInheritors = inheritors
+                    regularClass.setSealedClassInheritors(inheritors)
                 }
             }
             if (inheritorsMap.isEmpty()) return regularClass.compose()

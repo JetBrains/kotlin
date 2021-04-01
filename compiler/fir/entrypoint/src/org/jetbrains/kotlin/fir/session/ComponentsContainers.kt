@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
+import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
@@ -50,6 +52,12 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
 fun FirSession.registerThreadUnsafeCaches() {
     register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
 }
+
+@OptIn(SessionConfiguration::class)
+fun FirSession.registerSealedClassInheritorsProvider() {
+    register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
+}
+
 
 
 // -------------------------- Resolve components --------------------------

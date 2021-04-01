@@ -166,8 +166,7 @@ class FirElementSerializer private constructor(
         }
 
         if (klass is FirRegularClass && klass.modality == Modality.SEALED) {
-            val inheritors = klass.sealedInheritors
-            requireNotNull(inheritors)
+            val inheritors = klass.getSealedClassInheritors(session)
             for (inheritorId in inheritors) {
                 builder.addSealedSubclassFqName(stringTable.getQualifiedClassNameIndex(inheritorId))
             }

@@ -195,9 +195,10 @@ fun deserializeClassToSymbol(
         })
     }.also {
         if (isSealed) {
-            it.sealedInheritors = classProto.sealedSubclassFqNameList.map { nameIndex ->
+            val inheritors = classProto.sealedSubclassFqNameList.map { nameIndex ->
                 ClassId.fromString(nameResolver.getQualifiedClassName(nameIndex))
             }
+            it.setSealedClassInheritors(inheritors)
         }
         (it.annotations as MutableList<FirAnnotationCall>) +=
             context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)

@@ -332,10 +332,11 @@ class JavaSymbolProvider(
             }
         }.apply {
             if (modality == Modality.SEALED) {
-                sealedInheritors = javaClass.permittedTypes.mapNotNull { classifierType ->
+                val inheritors = javaClass.permittedTypes.mapNotNull { classifierType ->
                     val classifier = classifierType.classifier as? JavaClass
                     classifier?.let { JavaToKotlinClassMap.mapJavaToKotlin(it.fqName!!) }
                 }
+                setSealedClassInheritors(inheritors)
             }
 
             if (classIsAnnotation) {

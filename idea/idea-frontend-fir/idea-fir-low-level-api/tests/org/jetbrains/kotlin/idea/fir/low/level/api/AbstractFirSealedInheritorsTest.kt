@@ -25,7 +25,13 @@ abstract class AbstractFirSealedInheritorsTest : AbstractFirMultiModuleLazyResol
 
     override fun checkFirFile(firFile: FirFile, path: String) {
         val allClasses = firFile.listNestedClasses().closure { it.listNestedClasses() }
-        val inheritorNames = allClasses.flatMap { it.sealedInheritors ?: emptyList() }.map { it.asString() }.sorted()
+        val inheritorNames = allClasses.flatMap { firClass ->
+            if (firClass.isSealed) {
+                firClass.getSealedClassInheritors(firFile.session)
+            } else {
+                emptyList()
+            }
+        }.map { it.asString() }.sorted()
         KotlinTestUtils.assertEqualsToFile(File("$path/expected.txt"), inheritorNames.joinToString("\n"))
     }
 }

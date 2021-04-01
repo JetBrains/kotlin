@@ -81,7 +81,7 @@ internal fun FirResolvePhase.createTransformerBasedProcessorByPhase(
         FirResolvePhase.CLASS_GENERATION -> FirDummyTransformerBasedProcessor(session, scopeSession) // TODO: remove
         FirResolvePhase.IMPORTS -> FirImportResolveProcessor(session, scopeSession)
         FirResolvePhase.SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
-        FirResolvePhase.SEALED_CLASS_INHERITORS -> FirIdeSealedHierarchyProcessor(session, scopeSession)
+        FirResolvePhase.SEALED_CLASS_INHERITORS -> FirDummyTransformerBasedProcessor(session, scopeSession)
         FirResolvePhase.TYPES -> FirTypeResolveProcessor(session, scopeSession)
         FirResolvePhase.ARGUMENTS_OF_PLUGIN_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
         FirResolvePhase.EXTENSION_STATUS_UPDATE -> FirTransformerBasedExtensionStatusProcessor(session, scopeSession)

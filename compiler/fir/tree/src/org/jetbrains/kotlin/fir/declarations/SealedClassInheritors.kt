@@ -5,8 +5,41 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.name.ClassId
 
-object SealedClassInheritorsKey : FirDeclarationDataKey()
 
-var FirRegularClass.sealedInheritors: List<ClassId>? by FirDeclarationDataRegistry.data(SealedClassInheritorsKey)
+@RequiresOptIn("For getting/setting sealed class inheritors, consider using getSealedClassInheritors/setSealedClassInheritors")
+annotation class SealedClassInheritorsProviderInternals
+
+abstract class SealedClassInheritorsProvider : FirSessionComponent {
+    abstract fun getSealedClassInheritors(firClass: FirRegularClass): List<ClassId>
+}
+
+private val FirSession.sealedClassInheritorsProvider: SealedClassInheritorsProvider by FirSession.sessionComponentAccessor()
+
+object SealedClassInheritorsProviderImpl : SealedClassInheritorsProvider() {
+    @OptIn(SealedClassInheritorsProviderInternals::class)
+    override fun getSealedClassInheritors(firClass: FirRegularClass): List<ClassId> {
+        return firClass.sealedInheritorsAttr ?: emptyList()
+    }
+}
+
+
+fun FirRegularClass.getSealedClassInheritors(session: FirSession): List<ClassId> {
+    require(this.isSealed)
+    return session.sealedClassInheritorsProvider.getSealedClassInheritors(this)
+}
+
+@OptIn(SealedClassInheritorsProviderInternals::class)
+fun FirRegularClass.setSealedClassInheritors(inheritors: List<ClassId>) {
+    require(this.isSealed)
+    sealedInheritorsAttr = inheritors
+}
+
+private object SealedClassInheritorsKey : FirDeclarationDataKey()
+
+@SealedClassInheritorsProviderInternals
+var FirRegularClass.sealedInheritorsAttr: List<ClassId>? by FirDeclarationDataRegistry.data(SealedClassInheritorsKey)
+    private set
