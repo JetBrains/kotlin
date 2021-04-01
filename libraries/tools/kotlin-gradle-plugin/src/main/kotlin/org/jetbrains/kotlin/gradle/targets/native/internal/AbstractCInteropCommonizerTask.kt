@@ -12,6 +12,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.commonizer.HierarchicalCommonizerOutputLayout
 import org.jetbrains.kotlin.commonizer.prettyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
 
 internal abstract class AbstractCInteropCommonizerTask : DefaultTask() {
@@ -28,15 +29,14 @@ internal abstract class AbstractCInteropCommonizerTask : DefaultTask() {
 
     internal fun getLibraries(compilation: KotlinSharedNativeCompilation): FileCollection {
         val compilationCommonizerTarget = project.getCommonizerTarget(compilation) ?: return project.files()
-        val fileProvider = project.provider<Set<File>> {
-            val parameters = getCommonizationParameters(compilation) ?: return@provider emptySet()
-            HierarchicalCommonizerOutputLayout.getTargetDirectory(outputDirectory(parameters), compilationCommonizerTarget)
+        val fileProvider = project.filesProvider {
+            val parameters = getCommonizationParameters(compilation) ?: return@filesProvider emptySet<File>()
+            HierarchicalCommonizerOutputLayout
+                .getTargetDirectory(outputDirectory(parameters), compilationCommonizerTarget)
                 .listFiles().orEmpty().toSet()
         }
 
-        return project.files(fileProvider) { fileCollection ->
-            fileCollection.builtBy(this)
-        }
+        return fileProvider.builtBy(this)
     }
 }
 

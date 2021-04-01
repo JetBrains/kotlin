@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.commonizer.HierarchicalCommonizerOutputLayout
-import org.jetbrains.kotlin.commonizer.KonanDistribution
-import org.jetbrains.kotlin.commonizer.isAncestorOf
-import org.jetbrains.kotlin.commonizer.stdlib
+import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -22,19 +19,27 @@ internal fun Project.setUpHierarchicalKotlinNativePlatformDependencies() {
     val kotlin = multiplatformExtensionOrNull ?: return
     kotlin.sourceSets.forEach { sourceSet ->
         val target = getCommonizerTarget(sourceSet) ?: return@forEach
-
-        val rootTarget = task.rootCommonizerTargets
-            .firstOrNull { rootTarget -> rootTarget == target || rootTarget.isAncestorOf(target) }
-            ?: return@forEach
-
-        val rootOutputDirectory = task.getRootOutputDirectory(rootTarget)
-        val targetOutputDirectory = HierarchicalCommonizerOutputLayout.getTargetDirectory(rootOutputDirectory, target)
-
-        val dependencies = project.filesProvider { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(task)
+        val commonizedDependencies = task.dependenciesFor(target)
         val stdlib = project.filesProvider { listOf(konanDistribution.stdlib) }
-        addDependencies(sourceSet, dependencies)
+        addDependencies(sourceSet, commonizedDependencies)
         addDependencies(sourceSet, stdlib)
     }
+}
+
+private fun HierarchicalNativeDistributionCommonizerTask.dependenciesFor(target: CommonizerTarget): FileCollection {
+    val rootTarget = rootCommonizerTargets.firstOrNull { rootTarget -> rootTarget.isEqualOrAncestorOf(target) } ?: return project.files()
+    val targetOutputDirectory = HierarchicalCommonizerOutputLayout.getTargetDirectory(getRootOutputDirectory(rootTarget), target)
+    val targetDependencies = project.filesProvider { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(this)
+
+    if (target is LeafCommonizerTarget) {
+        val expectTarget = rootTarget.withAllAncestors()
+            .firstOrNull { (it as? SharedCommonizerTarget)?.targets?.contains(target) == true }
+            ?: return targetDependencies
+
+        return targetDependencies + dependenciesFor(expectTarget)
+    }
+
+    return targetDependencies
 }
 
 private fun Project.addDependencies(sourceSet: KotlinSourceSet, libraries: FileCollection) {
