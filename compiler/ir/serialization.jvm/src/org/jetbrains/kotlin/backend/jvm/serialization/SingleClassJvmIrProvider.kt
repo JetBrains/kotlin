@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerIr
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -60,16 +59,16 @@ class SingleClassJvmIrProvider(
     val facadeClassMap = mutableMapOf<IdSignature, Name>()
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
-        val facadeName = findFacadeClassName(symbol)
-        if (facadeName != null)
-            loadIrFileFromFacadeClass(facadeName)
+        val fileClassInfo = findFacadeClassInfo(symbol)
+        if (fileClassInfo != null)
+            loadIrFileFromFacadeClass(fileClassInfo.first, fileClassInfo.second)
         else
             symbol.signature?.let { loadToplevelClassBySignature(it) }
         return if (symbol.isBound) (symbol.owner as IrDeclaration) else null
     }
 
-    private fun loadIrFileFromFacadeClass(facadeName: FqName) {
-        val vfile = fileFinder.findVirtualFileWithHeader(ClassId.topLevel(facadeName)) ?: return
+    private fun loadIrFileFromFacadeClass(fileClassName: FqName, facadeName: FqName) {
+        val vfile = fileFinder.findVirtualFileWithHeader(ClassId.topLevel(fileClassName)) ?: return
         val binaryClass = KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(vfile)?.toKotlinJvmBinaryClass() ?: return
         val classHeader = binaryClass.classHeader
         if (classHeader.serializedIr == null || classHeader.serializedIr!!.isEmpty()) return
@@ -223,7 +222,7 @@ class SingleClassJvmIrProvider(
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun findFacadeClassName(symbol: IrSymbol): FqName? {
+    private fun findFacadeClassInfo(symbol: IrSymbol): Pair<FqName, FqName>? {
         if (symbol.hasDescriptor) {
             var descriptor = symbol.descriptor
             if (descriptor is CallableMemberDescriptor) descriptor = descriptor.propertyIfAccessor
@@ -233,11 +232,10 @@ class SingleClassJvmIrProvider(
             if (descriptor is ClassDescriptor) return null
             val source = (descriptor as? DescriptorWithContainerSource)?.containerSource as? JvmPackagePartSource ?: return null
             val facadeName = source.facadeClassName ?: source.className
-            return facadeName.fqNameForTopLevelClassMaybeWithDollars
+            val fileClassName = source.className
+            return fileClassName.fqNameForTopLevelClassMaybeWithDollars to facadeName.fqNameForTopLevelClassMaybeWithDollars
         } else {
-            val signature = symbol.signature ?: return null
-            val facadeName = facadeClassMap[signature] ?: return null
-            return signature.packageFqName().child(facadeName)
+            error("No descriptor in symbol")
         }
     }
 
