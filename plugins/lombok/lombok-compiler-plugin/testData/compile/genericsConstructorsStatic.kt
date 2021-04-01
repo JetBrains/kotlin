@@ -24,6 +24,8 @@ public class ConstructorExample<A, B> {
 class Test {
     fun run() {
         val generated: ConstructorExample<Long, Boolean> = ConstructorExample.of(12, 42L, true)
-        val generatedReq: ConstructorExample<String, Boolean> = ConstructorExample.of("234");
+        assertEquals(generated.name, 42L)
+        val generatedReq: ConstructorExample<String, Boolean> = ConstructorExample.of("234")
+        assertEquals(generatedReq.name, "234")
     }
 }

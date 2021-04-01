@@ -9,22 +9,25 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lombok.config.*
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Accessors
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Setter
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Data
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class SetterProcessor(private val config: LombokConfig) : Processor {
 
-    override fun contribute(classDescriptor: ClassDescriptor): SyntheticParts {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
         //lombok doesn't generate setters for enums
-        if (classDescriptor.kind == ClassKind.ENUM_CLASS) return SyntheticParts.Empty
+        if (classDescriptor.kind == ClassKind.ENUM_CLASS) return
 
         val globalAccessors = Accessors.get(classDescriptor, config)
         val clSetter = Setter.getOrNull(classDescriptor) ?: Data.getOrNull(classDescriptor)?.asSetter()
 
-        val functions = classDescriptor
+        classDescriptor
             .getJavaFields()
             .collectWithNotNull { field -> Setter.getOrNull(field) ?: clSetter.takeIf { field.isVar } }
             .mapNotNull { (field, setter) -> createSetter(classDescriptor, field, setter, globalAccessors) }
-        return SyntheticParts(functions)
+            .forEach(partsBuilder::addMethod)
     }
 
     private fun createSetter(
@@ -45,7 +48,7 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
 
             classDescriptor.createFunction(
                 Name.identifier(functionName),
-                listOf(ValueParameter(field.name, field.type)),
+                listOf(LombokValueParameter(field.name, field.type)),
                 returnType,
                 visibility = getter.visibility.toDescriptorVisibility()
             )

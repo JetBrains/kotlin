@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.lombok.utils
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.lombok.config.Accessors
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Accessors
 
 object AccessorNames {
     const val IS = "is"

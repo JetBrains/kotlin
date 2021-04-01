@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.lombok.utils
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -18,11 +17,11 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
-data class ValueParameter(val name: Name, val type: KotlinType)
+data class LombokValueParameter(val name: Name, val type: KotlinType)
 
 fun ClassDescriptor.createFunction(
     name: Name,
-    valueParameters: List<ValueParameter>,
+    valueParameters: List<LombokValueParameter>,
     returnType: KotlinType?,
     typeParameters: List<TypeParameterDescriptor> = emptyList(),
     modality: Modality? = Modality.OPEN,
@@ -52,7 +51,7 @@ fun ClassDescriptor.createFunction(
 }
 
 fun ClassDescriptor.createJavaConstructor(
-    valueParameters: List<ValueParameter>,
+    valueParameters: List<LombokValueParameter>,
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
 ): ClassConstructorDescriptor {
     val constructor = JavaClassConstructorDescriptor.create(
@@ -74,7 +73,7 @@ fun ClassDescriptor.createJavaConstructor(
     return constructor
 }
 
-private fun CallableDescriptor.makeValueParameter(param: ValueParameter, index: Int): ValueParameterDescriptor {
+private fun CallableDescriptor.makeValueParameter(param: LombokValueParameter, index: Int): ValueParameterDescriptor {
     return ValueParameterDescriptorImpl(
         containingDeclaration = this,
         original = null,

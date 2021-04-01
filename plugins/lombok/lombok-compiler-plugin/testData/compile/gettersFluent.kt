@@ -30,7 +30,7 @@ public class FluentTest {
 class Test {
     fun run() {
         val obj = FluentTest()
-        val getter = obj.age()
+        assertEquals(obj.age(), 10)
 
         obj.primitiveBoolean()
 

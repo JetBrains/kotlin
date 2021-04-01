@@ -18,9 +18,13 @@ import java.net.URLClassLoader
 abstract class AbstractLombokCompileTest : CodegenTestCase() {
 
     private val commonClassLoader = URLClassLoader(arrayOf(getLombokJar().toURI().toURL()))
+    private val commonSourceFile = TestFile(
+        "common.kt",
+        File("plugins/lombok/lombok-compiler-plugin/testData/common.kt").readText()
+    )
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        compile(files, true, true)
+        compile(files + commonSourceFile, true, true)
     }
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
