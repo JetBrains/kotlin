@@ -18,6 +18,6 @@ fun foo() {
     // these both also ok (with smart cast / unnecessary safe call)
     if (rule != null) {
         rule.apply()
-        rule?.apply()
+        rule<!UNNECESSARY_SAFE_CALL!>?.<!>apply()
     }
 }

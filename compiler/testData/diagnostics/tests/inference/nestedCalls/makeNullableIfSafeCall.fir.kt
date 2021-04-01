@@ -11,7 +11,7 @@ interface B {
 
 fun test(u: A?, x: A?, y: A?, z: A?, w: A, v: A?) {
     u?.b?.foo()!! // was UNNECESSARY_SAFE_CALL everywhere, because result type (of 'foo()') wasn't made nullable
-    u!!.b?.foo()!!
+    u!!.b<!UNNECESSARY_SAFE_CALL!>?.<!>foo()!!
     x?.b!!.foo()!!
     // x?.b is not null
     x!!.b!!.foo()!!
@@ -22,7 +22,7 @@ fun test(u: A?, x: A?, y: A?, z: A?, w: A, v: A?) {
     // z?.nb is not null
     z!!.nb!!.foo()!!
 
-    w.b?.foo()!!
+    w.b<!UNNECESSARY_SAFE_CALL!>?.<!>foo()!!
     w.b!!.foo()!!
     w.nb?.foo()!!
     w.nb!!.foo()!!

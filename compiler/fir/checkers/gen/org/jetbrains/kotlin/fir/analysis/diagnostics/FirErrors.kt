@@ -326,6 +326,8 @@ object FirErrors {
     val UNSAFE_IMPLICIT_INVOKE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNSAFE_INFIX_CALL by error3<FirSourceElement, KtExpression, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNSAFE_OPERATOR_CALL by error3<FirSourceElement, KtExpression, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val UNNECESSARY_SAFE_CALL by warning1<FirSourceElement, PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.SAFE_ACCESS)
+    val UNEXPECTED_SAFE_CALL by error0<FirSourceElement, PsiElement>(SourceElementPositioningStrategies.SAFE_ACCESS)
 
     // When expressions
     val NO_ELSE_IN_WHEN by error1<FirSourceElement, KtWhenExpression, List<WhenMissingCase>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)

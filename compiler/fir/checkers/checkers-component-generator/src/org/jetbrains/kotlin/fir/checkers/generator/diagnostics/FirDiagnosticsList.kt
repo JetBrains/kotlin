@@ -547,7 +547,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("operator")
             parameter<FirExpression>("rhs")
         }
-        // TODO: val UNEXPECTED_SAFE_CALL by ...
+        val UNNECESSARY_SAFE_CALL by warning<FirSourceElement, PsiElement>(PositioningStrategy.SAFE_ACCESS) {
+            parameter<ConeKotlinType>("receiverType")
+        }
+        val UNEXPECTED_SAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.SAFE_ACCESS)
     }
 
     val WHEN_EXPRESSIONS by object : DiagnosticGroup("When expressions") {

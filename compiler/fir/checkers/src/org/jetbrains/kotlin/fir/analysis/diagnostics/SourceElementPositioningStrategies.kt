@@ -168,6 +168,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.ARRAY_ACCESS
     )
 
+    val SAFE_ACCESS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.SAFE_ACCESS,
+        PositioningStrategies.SAFE_ACCESS
+    )
+
     val RETURN_WITH_LABEL = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.RETURN_WITH_LABEL,
         PositioningStrategies.RETURN_WITH_LABEL

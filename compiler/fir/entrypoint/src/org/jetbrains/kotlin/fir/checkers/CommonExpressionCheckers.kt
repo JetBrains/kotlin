@@ -11,6 +11,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
         FirAnonymousFunctionChecker,
         FirGetClassCallChecker,
+        FirSafeCallExpressionChecker,
     )
 
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker> = setOf(

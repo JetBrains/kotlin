@@ -1063,6 +1063,15 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val rhs: KtExpression
     }
 
+    abstract class UnnecessarySafeCall : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UnnecessarySafeCall::class
+        abstract val receiverType: KtType
+    }
+
+    abstract class UnexpectedSafeCall : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UnexpectedSafeCall::class
+    }
+
     abstract class NoElseInWhen : KtFirDiagnostic<KtWhenExpression>() {
         override val diagnosticClass get() = NoElseInWhen::class
         abstract val missingWhenCases: List<WhenMissingCase>

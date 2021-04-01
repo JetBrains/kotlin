@@ -1994,7 +1994,10 @@ open class RawFirBuilder(
                 val receiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
 
                 if (expression is KtSafeQualifiedExpression) {
-                    return firSelector.wrapWithSafeCall(receiver)
+                    return firSelector.wrapWithSafeCall(
+                        receiver,
+                        expression.toFirSourceElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
+                    )
                 }
 
                 firSelector.replaceExplicitReceiver(receiver)
