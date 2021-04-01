@@ -53,6 +53,11 @@ message FileSignature {
   required string path = 1;
 }
 
+message ScopeLocalIdSignature {
+  required int32 id = 1;
+  optional int32 file = 2;
+}
+
 message IdSignature {
   oneof idsig {
     PublicIdSignature public_sig = 1;
@@ -62,6 +67,7 @@ message IdSignature {
     LoweredIdSignature ic_sig = 5;
     int32 returnable_block_sig = 6;
     FileSignature file_sig = 7;
+    ScopeLocalIdSignature external_scoped_local_sig = 8;
   }
 }
 

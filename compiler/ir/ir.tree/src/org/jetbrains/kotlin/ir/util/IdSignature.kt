@@ -199,7 +199,7 @@ sealed class IdSignature {
     }
 
     // Used to reference local variable and value parameters in function
-    class ScopeLocalDeclaration(val id: Int, val description: String = "<no description>") : IdSignature() {
+    class ScopeLocalDeclaration(val id: Int, val description: String = "<no description>", val filePath: String) : IdSignature() {
         override val isPublic: Boolean get() = false
 
         override val hasTopLevel: Boolean get() = false
@@ -213,9 +213,9 @@ sealed class IdSignature {
         override fun render(): String = "#$id"
 
         override fun equals(other: Any?): Boolean =
-            other is ScopeLocalDeclaration && id == other.id
+            other is ScopeLocalDeclaration && id == other.id /*&& filePath == other.filePath*/
 
-        override fun hashCode(): Int = id
+        override fun hashCode(): Int = id /** 31 + filePath.hashCode()*/
     }
 
     class LoweredDeclarationSignature(val original: IdSignature, val stage: Int, val index: Int): IdSignature() {

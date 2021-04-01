@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoAc
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature as ProtoScopeLocalIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as ProtoFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
@@ -229,7 +230,14 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeScopeLocalSignature(signature: IdSignature.ScopeLocalDeclaration): Int = signature.id
+    private fun serializeScopeLocalSignature(signature: IdSignature.ScopeLocalDeclaration): ProtoScopeLocalIdSignature {
+        val proto = ProtoScopeLocalIdSignature.newBuilder()
+
+        proto.id = signature.id
+        proto.file = serializeString(signature.filePath)
+
+        return proto.build()
+    }
 
     private fun serializeFileSignature(signature: IdSignature.FileSignature): ProtoFileSignature {
         val proto = ProtoFileSignature.newBuilder()
@@ -253,7 +261,7 @@ open class IrFileSerializer(
             is IdSignature.PublicSignature -> proto.publicSig = serializePublicSignature(idSignature)
             is IdSignature.AccessorSignature -> proto.accessorSig = serializeAccessorSignature(idSignature)
             is IdSignature.FileLocalSignature -> proto.privateSig = serializePrivateSignature(idSignature)
-            is IdSignature.ScopeLocalDeclaration -> proto.scopedLocalSig = serializeScopeLocalSignature(idSignature)
+            is IdSignature.ScopeLocalDeclaration -> proto.externalScopedLocalSig = serializeScopeLocalSignature(idSignature)
             is IdSignature.LoweredDeclarationSignature -> proto.icSig = serializeLoweredDeclarationSignature(idSignature)
             is IdSignature.ReturnableBlockSignature -> proto.returnableBlockSig = idSignature.upCnt
             is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature(idSignature)

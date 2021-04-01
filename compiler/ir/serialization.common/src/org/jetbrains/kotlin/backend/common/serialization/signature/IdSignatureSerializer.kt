@@ -119,7 +119,7 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
 
         return table.privateDeclarationSignature(declaration) {
             when (declaration) {
-                is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
+                is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString(), filePath)
                 is IrField -> {
                     val p = declaration.correspondingPropertySymbol?.let { composeSignatureForDeclaration(it.owner) }
                         ?: composeContainerIdSignature(declaration.parent)

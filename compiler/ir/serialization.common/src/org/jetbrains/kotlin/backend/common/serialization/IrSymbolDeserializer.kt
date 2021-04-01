@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature as ProtoScopeLocalIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature as ProtoLoweredIdSignature
@@ -153,7 +154,11 @@ class IrSymbolDeserializer(
     }
 
     private fun deserializeScopeLocalIdSignature(proto: Int): IdSignature.ScopeLocalDeclaration {
-        return IdSignature.ScopeLocalDeclaration(proto)
+        return IdSignature.ScopeLocalDeclaration(proto, filePath = filePath)
+    }
+
+    private fun deserializeExternalScopeLocalIdSignature(proto: ProtoScopeLocalIdSignature): IdSignature.ScopeLocalDeclaration {
+        return IdSignature.ScopeLocalDeclaration(proto.id, filePath = fileReader.deserializeString(proto.file))
     }
 
     private fun deserializeLoweredDeclarationSignature(proto: ProtoLoweredIdSignature): IdSignature.LoweredDeclarationSignature {
@@ -169,6 +174,7 @@ class IrSymbolDeserializer(
             IC_SIG -> deserializeLoweredDeclarationSignature(proto.icSig)
             RETURNABLE_BLOCK_SIG -> IdSignature.ReturnableBlockSignature(proto.returnableBlockSig)
             FILE_SIG -> IdSignature.FileSignature(proto.fileSig.path)
+            EXTERNAL_SCOPED_LOCAL_SIG -> deserializeExternalScopeLocalIdSignature(proto.externalScopedLocalSig)
             else -> error("Unexpected IdSignature kind: ${proto.idsigCase}")
         }
     }

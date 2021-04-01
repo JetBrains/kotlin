@@ -69,4 +69,13 @@ public interface IdSignatureOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature getFileSig();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature external_scoped_local_sig = 8;</code>
+   */
+  boolean hasExternalScopedLocalSig();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature external_scoped_local_sig = 8;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.ScopeLocalIdSignature getExternalScopedLocalSig();
 }
