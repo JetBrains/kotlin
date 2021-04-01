@@ -43,8 +43,7 @@ external private fun getDecompositionInternal(ch: Int): IntArray?
  * Decomposes the given string represented as an array of codepoints. Saves the decomposition into [outputCodepoints] array.
  * Returns the length of the decomposition.
  */
-@SymbolName("Kotlin_text_regex_decomposeString")
-// The method has nested loops inside, so we do not mark it as GCCritical.
+@GCUnsafeCall("Kotlin_text_regex_decomposeString")
 external private fun decomposeString(inputCodePoints: IntArray, inputLength: Int, outputCodePoints: IntArray): Int
 // =============================================================================================================
 

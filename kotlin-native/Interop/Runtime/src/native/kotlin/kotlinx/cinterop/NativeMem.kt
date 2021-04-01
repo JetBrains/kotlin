@@ -17,6 +17,7 @@
 package kotlinx.cinterop
 
 import kotlin.native.*
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.Intrinsic
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
@@ -158,10 +159,10 @@ public fun CPointer<ShortVar>.toKString(): String = this.toKStringFromUtf16()
 
 public fun CPointer<UShortVar>.toKString(): String = this.toKStringFromUtf16()
 
-@SymbolName("Kotlin_interop_malloc")
+@GCUnsafeCall("Kotlin_interop_malloc")
 private external fun malloc(size: Long, align: Int): NativePtr
 
-@SymbolName("Kotlin_interop_free")
+@GCUnsafeCall("Kotlin_interop_free")
 private external fun cfree(ptr: NativePtr)
 
 @TypedIntrinsic(IntrinsicType.INTEROP_READ_BITS)

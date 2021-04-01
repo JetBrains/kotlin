@@ -105,7 +105,7 @@ fun waitCleanerWorker() =
         Unit
     }.result
 
-@SymbolName("Kotlin_CleanerImpl_getCleanerWorker")
+@GCUnsafeCall("Kotlin_CleanerImpl_getCleanerWorker")
 external private fun getCleanerWorker(): Worker
 
 @ExportForCppRuntime("Kotlin_CleanerImpl_shutdownCleanerWorker")

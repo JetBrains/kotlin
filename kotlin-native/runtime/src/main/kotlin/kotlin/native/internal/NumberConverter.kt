@@ -17,8 +17,7 @@
 
 package kotlin.native.internal
 
-@SymbolName("Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl")
-// The method has several nested loops, so we do not annotate it as GCCritical.
+@GCUnsafeCall("Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl")
 private external fun bigIntDigitGeneratorInstImpl(results: IntArray, uArray: IntArray, f: Long, e: Int,
                                                   isDenormalized: Boolean, mantissaIsZero: Boolean, p: Int)
 

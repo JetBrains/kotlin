@@ -8,7 +8,7 @@ package kotlin.io
 import kotlin.native.internal.GCUnsafeCall
 
 /** Prints the given [message] to the standard output stream. */
-@SymbolName("Kotlin_io_Console_print")
+@GCUnsafeCall("Kotlin_io_Console_print")
 public external fun print(message: String)
 
 /** Prints the given [message] to the standard output stream. */
@@ -17,7 +17,7 @@ public actual fun print(message: Any?) {
 }
 
 /** Prints the given [message] and the line separator to the standard output stream. */
-@SymbolName("Kotlin_io_Console_println")
+@GCUnsafeCall("Kotlin_io_Console_println")
 public external fun println(message: String)
 
 /** Prints the given [message] and the line separator to the standard output stream. */
@@ -26,7 +26,7 @@ public actual fun println(message: Any?) {
 }
 
 /** Prints the line separator to the standard output stream. */
-@SymbolName("Kotlin_io_Console_println0")
+@GCUnsafeCall("Kotlin_io_Console_println0")
 public actual external fun println()
 
 /**

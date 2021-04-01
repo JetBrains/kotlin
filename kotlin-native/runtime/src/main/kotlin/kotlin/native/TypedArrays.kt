@@ -4,7 +4,6 @@
  */
 package kotlin.native
 
-import kotlin.native.SymbolName
 import kotlin.native.internal.GCUnsafeCall
 
 /**

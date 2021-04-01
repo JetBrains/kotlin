@@ -46,8 +46,6 @@ TEST_F(CleanerTest, ConcurrentCreation) {
             atomicAdd(&startedThreads, 1);
             while (!atomicGet(&allowRunning)) {
             }
-            // New MM expects running getCleanerWorker in the native thread state.
-            ThreadStateGuard stateGuard(ThreadState::kNative);
             return Kotlin_CleanerImpl_getCleanerWorker();
         });
         futures.push_back(std::move(future));
@@ -82,13 +80,8 @@ TEST_F(CleanerTest, ShutdownWithCreation) {
 
         auto createCleanerWorkerMock = ScopedCreateCleanerWorkerMock();
         auto shutdownCleanerWorkerMock = ScopedShutdownCleanerWorkerMock();
-
-        {
-            // New MM expects running getCleanerWorker in the native thread state.
-            ThreadStateGuard stateGuard(ThreadState::kNative);
-            EXPECT_CALL(*createCleanerWorkerMock, Call()).WillOnce(testing::Return(workerId));
-            Kotlin_CleanerImpl_getCleanerWorker();
-        }
+        EXPECT_CALL(*createCleanerWorkerMock, Call()).WillOnce(testing::Return(workerId));
+        Kotlin_CleanerImpl_getCleanerWorker();
 
         EXPECT_CALL(*shutdownCleanerWorkerMock, Call(workerId, executeScheduledCleaners));
         ShutdownCleaners(executeScheduledCleaners);

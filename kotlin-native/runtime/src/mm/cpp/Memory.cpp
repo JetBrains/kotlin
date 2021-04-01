@@ -260,14 +260,12 @@ extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
 
 extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
     // TODO: Remove when legacy MM is gone.
-    // GC API works in the native thread state.
-    CallKotlinNoReturn(ThrowIllegalArgumentException);
+    ThrowIllegalArgumentException();
 }
 
 extern "C" void Kotlin_native_internal_GC_setThreshold(ObjHeader*, int32_t value) {
     if (value < 0) {
-        // GC API works in the native thread state.
-        CallKotlinNoReturn(ThrowIllegalArgumentException);
+        ThrowIllegalArgumentException();
     }
     mm::GlobalData::Instance().gc().SetThreshold(static_cast<size_t>(value));
 }
@@ -283,20 +281,17 @@ extern "C" int32_t Kotlin_native_internal_GC_getThreshold(ObjHeader*) {
 
 extern "C" void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value) {
     // TODO: Remove when legacy MM is gone.
-    // GC API works in the native thread state.
-    CallKotlinNoReturn(ThrowIllegalArgumentException);
+    ThrowIllegalArgumentException();
 }
 
 extern "C" int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader*) {
     // TODO: Remove when legacy MM is gone.
-    // GC API works in the native thread state.
-    CallKotlinNoReturn(ThrowIllegalArgumentException);
+    ThrowIllegalArgumentException();
 }
 
 extern "C" void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value) {
     if (value < 0) {
-        // GC API works in the native thread state.
-        CallKotlinNoReturn(ThrowIllegalArgumentException);
+        ThrowIllegalArgumentException();
     }
     mm::GlobalData::Instance().gc().SetAllocationThresholdBytes(static_cast<size_t>(value));
 }
@@ -328,8 +323,7 @@ extern "C" bool Kotlin_native_internal_GC_getCyclicCollector(ObjHeader* gc) {
 extern "C" void Kotlin_native_internal_GC_setCyclicCollector(ObjHeader* gc, bool value) {
     // TODO: Remove when legacy MM is gone.
     if (value)
-        // GC API works in the native thread state.
-        CallKotlinNoReturn(ThrowIllegalArgumentException);
+        ThrowIllegalArgumentException();
 }
 
 extern "C" bool Kotlin_Any_isShareable(ObjHeader* thiz) {

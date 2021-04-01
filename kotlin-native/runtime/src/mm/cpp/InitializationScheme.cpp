@@ -35,7 +35,6 @@ OBJ_GETTER(mm::InitThreadLocalSingleton, ThreadData* threadData, ObjHeader** loc
 }
 
 OBJ_GETTER(mm::InitSingleton, ThreadData* threadData, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    // TODO: Is it possible that threadData != CurrentThreadData?
     AssertThreadState(threadData, ThreadState::kRunnable);
     auto& initializingSingletons = threadData->initializingSingletons();
 
