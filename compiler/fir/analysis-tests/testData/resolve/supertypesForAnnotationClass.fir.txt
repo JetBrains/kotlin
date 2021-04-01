@@ -1,0 +1,33 @@
+FILE: supertypesForAnnotationClass.kt
+    public abstract interface SomeInterface : R|kotlin/Any| {
+    }
+    public abstract class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class Ann : R|SomeInterface|, R|SomeClass|, R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class Ann2 : R|kotlin/Annotation| {
+        public constructor(): R|Ann2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class Ann3 : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public constructor(): R|Ann3| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class MyClass : R|SomeInterface|, R|SomeClass| {
+        public constructor(): R|MyClass| {
+            super<R|SomeClass|>()
+        }
+
+    }
