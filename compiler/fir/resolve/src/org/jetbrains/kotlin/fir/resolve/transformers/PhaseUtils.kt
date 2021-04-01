@@ -64,15 +64,17 @@ fun AbstractFirBasedSymbol<*>.ensureResolvedForCalls(
 
 fun ConeKotlinType.ensureResolvedTypeDeclaration(
     useSiteSession: FirSession,
+    requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS,
 ) {
     if (this !is ConeClassLikeType) return
 
-    lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.DECLARATIONS, useSiteSession)
-    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.DECLARATIONS, useSiteSession)
+    lookupTag.toSymbol(useSiteSession)?.ensureResolved(requiredPhase, useSiteSession)
+    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(requiredPhase, useSiteSession)
 }
 
 fun FirTypeRef.ensureResolvedTypeDeclaration(
     useSiteSession: FirSession,
+    requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS,
 ) {
-    coneTypeSafe<ConeKotlinType>()?.ensureResolvedTypeDeclaration(useSiteSession)
+    coneTypeSafe<ConeKotlinType>()?.ensureResolvedTypeDeclaration(useSiteSession, requiredPhase)
 }
