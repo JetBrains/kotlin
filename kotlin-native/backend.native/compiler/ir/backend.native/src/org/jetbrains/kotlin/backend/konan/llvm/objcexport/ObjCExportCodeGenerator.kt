@@ -626,8 +626,8 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
 
         val value = kotlinToObjC(kotlinValue, objCValueType)
 
-        val nsNumberSubclass = genGetLinkedClass(namer.numberBoxName(boxClass.classId!!).binaryName)
-        ret(genSendMessage(int8TypePtr, nsNumberSubclass, nsNumberFactorySelector, value))
+        val nsNumberClass = genGetLinkedClass("NSNumber")
+        ret(genSendMessage(int8TypePtr, nsNumberClass, nsNumberFactorySelector, value))
     }
 
     LLVMSetLinkage(converter, LLVMLinkage.LLVMPrivateLinkage)

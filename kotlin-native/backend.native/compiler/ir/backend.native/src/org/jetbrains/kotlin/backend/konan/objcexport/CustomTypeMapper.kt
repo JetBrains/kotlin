@@ -47,7 +47,7 @@ internal object CustomTypeMappers {
             // TODO: NSNumber seem to have different equality semantics.
             val classId = it.mappedKotlinClassId
             if (classId != null) {
-                result += Simple(classId, { namer.numberBoxName(classId).objCName })
+                result += Simple(classId, { "NSNumber" })
             }
 
         }
