@@ -8,6 +8,7 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.InteropConfiguration
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
+import org.jetbrains.kotlin.native.interop.gen.jvm.Plugin
 import org.jetbrains.kotlin.native.interop.indexer.*
 import java.io.File
 import java.util.*
@@ -19,7 +20,8 @@ class StubIrContext(
         val imports: Imports,
         val platform: KotlinPlatform,
         val generationMode: GenerationMode,
-        val libName: String
+        val libName: String,
+        val plugin: Plugin
 ) {
     val libraryForCStubs = configuration.library.copy(
             includes = mutableListOf<String>().apply {

@@ -485,16 +485,12 @@ class StubIrTextEmitter(
             "@CCall.WCString"
         is AnnotationStub.CCall.Symbol ->
             "@CCall(${annotationStub.symbolName.quoteAsKotlinLiteral()})"
-        AnnotationStub.CCall.SkiaSharedPointerReturn ->
-            "@CCall.SkiaSharedPointerReturn"
-        AnnotationStub.CCall.SkiaSharedPointerParameter ->
-            "@CCall.SkiaSharedPointerParameter"
-        AnnotationStub.CCall.SkiaStructValueReturn ->
-            "@CCall.SkiaStructValueReturn"
-        AnnotationStub.CCall.SkiaStructValueParameter ->
-            "@CCall.SkiaStructValueParameter"
-        AnnotationStub.CCall.SkiaClassConstructor ->
-            "@CCall.SkiaClassConstructor"
+        AnnotationStub.CCall.ManagedTypeReturn ->
+            "@CCall.ManagedTypeReturn"
+        AnnotationStub.CCall.ManagedTypeParameter ->
+            "@CCall.ManagedTypeParameter"
+        AnnotationStub.CCall.CppClassConstructor ->
+            "@CCall.CppClassConstructor"
         is AnnotationStub.CStruct ->
             "@CStruct(${annotationStub.struct.quoteAsKotlinLiteral()})"
         is AnnotationStub.CNaturalStruct ->

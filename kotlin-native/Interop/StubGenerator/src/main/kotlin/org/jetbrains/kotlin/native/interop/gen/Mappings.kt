@@ -26,7 +26,6 @@ interface DeclarationMapper {
 
     val useUnsignedTypes: Boolean
 
-    // TODO: Skia
     fun getKotlinClassForManaged(structDecl: StructDecl): Classifier
 }
 
@@ -402,10 +401,9 @@ private fun byRefTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.ByRe
     return TypeMirror.ByRef(pointedType, info)
 }
 
-// This is for C++ Skia plugin.
 private fun managedTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.ByValue {
     val info = TypeInfo.ByRef(pointedType) // There are all error() anyways.
-    return TypeMirror.ByValue(pointedType, info, pointedType, nullable = true) // 1 vs 3?
+    return TypeMirror.ByValue(pointedType, info, pointedType, nullable = true)
 }
 
 fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when (type) {

@@ -772,7 +772,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         expression.transformChildrenVoid(this)
 
-        if (expression.symbol.owner.hasCCallAnnotation("SkiaClassConstructor")) return expression
+        if (expression.symbol.owner.hasCCallAnnotation("CppClassConstructor")) return expression
 
         val callee = expression.symbol.owner
         val inlinedClass = callee.returnType.getInlinedClassNative()

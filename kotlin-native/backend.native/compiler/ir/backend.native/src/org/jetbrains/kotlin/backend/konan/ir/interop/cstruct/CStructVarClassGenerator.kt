@@ -144,7 +144,6 @@ internal class CStructVarClassGenerator(
                 }
             }
         }
-        println("\t${irConstructor.render()}")
         return irConstructor
     }
 }

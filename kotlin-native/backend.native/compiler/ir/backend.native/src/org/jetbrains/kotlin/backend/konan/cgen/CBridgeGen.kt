@@ -8,12 +8,9 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.backend.konan.ir.getAnnotationArgumentValue
-import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.isObjCMetaClass
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -175,9 +172,8 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
         mapReturnType(returnType, expression, signature = null)
     } else {
         mapReturnType(callee.returnType, expression, signature = callee,
-            skiaAnnotation =
-                expression.symbol.owner.hasCCallAnnotation("SkiaSharedPointerReturn") ||
-                expression.symbol.owner.hasCCallAnnotation("SkiaStructValueReturn")
+            managedTypeAnnotation =
+                expression.symbol.owner.hasCCallAnnotation("ManagedTypeReturn")
         )
     }
 
@@ -465,7 +461,7 @@ private fun CCallbackBuilder.addParameter(it: IrValueParameter, functionParamete
             retained = it.isObjCConsumed(),
             variadic = false,
             location = location,
-            skiaAnnotation = it.hasCCallAnnotation("SkiaSharedPointerParameter") || it.hasCCallAnnotation("SkiaStructValueParameter")
+            managedTypeAnnotation = it.hasCCallAnnotation("ManagedTypeParameter")
     )
 
     val kotlinArgument = with(valuePassing) { receiveValue() }
@@ -477,7 +473,7 @@ private fun CCallbackBuilder.build(function: IrSimpleFunction, signature: IrSimp
             signature.returnType,
             location = if (isObjCMethod) function else location,
             signature = signature,
-            skiaAnnotation = function.hasCCallAnnotation("SkiaSharedPointerReturn") || function.hasCCallAnnotation("SkiaStructValueReturn")
+            managedTypeAnnotation = function.hasCCallAnnotation("ManagedTypeReturn")
     )
     buildValueReturn(function, valueReturning)
     return buildCFunction()
@@ -614,14 +610,6 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
 private fun getCStructType(kotlinClass: IrClass): CType? =
         kotlinClass.getCStructSpelling()?.let { CTypes.simple(it) }
 
-// TODO: Skia plugin.
-private fun KotlinStubs.getNamedCSkiaSharedPointerToStructType(kotlinClass: IrClass): CType? {
-    val cStructType = kotlinClass.getCStructSpelling()?.let { CTypes.simple("sk_sp<$it>") } ?: return null
-    val name = getUniqueCName("struct")
-    addC(listOf("typedef ${cStructType.render(name)};"))
-    return CTypes.simple(name)
-}
-
 private fun KotlinStubs.getNamedCStructType(kotlinClass: IrClass): CType? {
     val cStructType = getCStructType(kotlinClass) ?: return null
     val name = getUniqueCName("struct")
@@ -660,30 +648,30 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
                 retained = parameter?.isObjCConsumed() ?: false,
                 variadic = variadic,
                 location = argument,
-                skiaAnnotation = parameter?.hasCCallAnnotation("SkiaSharedPointerParameter") ?: false
+                managedTypeAnnotation = parameter?.hasCCallAnnotation("ManagedTypeParameter") ?: false
         )
     }
 }
 
 private fun KotlinStubs.mapFunctionParameterType(
-    type: IrType,
-    retained: Boolean,
-    variadic: Boolean,
-    location: IrElement,
-    skiaAnnotation: Boolean = false
+        type: IrType,
+        retained: Boolean,
+        variadic: Boolean,
+        location: IrElement,
+        managedTypeAnnotation: Boolean = false
 ): ArgumentPassing = when {
     type.isUnit() && !variadic -> IgnoredUnitArgumentPassing
-    else -> mapType(type, retained = retained, variadic = variadic, location = location, skiaAnnotation = skiaAnnotation)
+    else -> mapType(type, retained = retained, variadic = variadic, location = location, managedTypeAnnotation = managedTypeAnnotation)
 }
 
 private fun KotlinStubs.mapReturnType(
-    type: IrType,
-    location: IrElement,
-    signature: IrSimpleFunction?,
-    skiaAnnotation: Boolean = false
+        type: IrType,
+        location: IrElement,
+        signature: IrSimpleFunction?,
+        managedTypeAnnotation: Boolean = false
 ): ValueReturning = when {
     type.isUnit() -> VoidReturning
-    else -> mapType(type, retained = signature?.objCReturnsRetained() ?: false, variadic = false, location = location, skiaAnnotation = skiaAnnotation)
+    else -> mapType(type, retained = signature?.objCReturnsRetained() ?: false, variadic = false, location = location, managedTypeAnnotation = managedTypeAnnotation)
 }
 
 private fun KotlinStubs.mapBlockType(
@@ -720,11 +708,11 @@ private fun KotlinStubs.mapBlockType(
 }
 
 private fun KotlinStubs.mapType(
-    type: IrType,
-    retained: Boolean,
-    variadic: Boolean,
-    location: IrElement,
-    skiaAnnotation: Boolean = false
+        type: IrType,
+        retained: Boolean,
+        variadic: Boolean,
+        location: IrElement,
+        managedTypeAnnotation: Boolean = false
 ): ValuePassing = when {
     type.isBoolean() -> {
         val cBoolType = cBoolType(target)
@@ -767,14 +755,14 @@ private fun KotlinStubs.mapType(
         val cStructType = getNamedCStructType(kotlinClass)
         require(cStructType != null) { renderCompilerError(location) }
 
-        if (skiaAnnotation) {
+        if (managedTypeAnnotation) {
             TrivialValuePassing(type, CTypes.voidPtr)
         } else {
             StructValuePassing(kotlinClass, cStructType)
         }
     }
 
-    type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true -> if (skiaAnnotation) {
+    type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true -> if (managedTypeAnnotation) {
         TrivialValuePassing(type, CTypes.voidPtr)
     } else {
         TrivialValuePassing(type, CTypes.voidPtr)

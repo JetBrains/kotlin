@@ -100,7 +100,7 @@ private fun getParentName(cursor: CValue<CXCursor>, pkg: List<String> = emptyLis
 }
 
 
-internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean = false) : NativeIndex() {
+public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean = false) : NativeIndex() {
 
     private sealed class DeclarationID {
         data class USR(val usr: String) : DeclarationID()
@@ -200,9 +200,9 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         return DeclarationID.USR(usr)
     }
 
-    private fun getStructDeclAt(
+    protected fun getStructDeclAt(
             cursor: CValue<CXCursor>
-    ): StructDeclImpl = structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
+    ): StructDecl = structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
         val definitionCursor = clang_getCursorDefinition(cursor)
         if (clang_Cursor_isNull(definitionCursor) == 0) {
             assert(clang_isCursorDefinition(definitionCursor) != 0)
@@ -610,7 +610,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         else -> UnsupportedType
     }
 
-    fun convertType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>? = null): Type {
+    open fun convertType(type: CValue<CXType>, typeAttributes: CValue<CXTypeAttributes>? = null): Type {
         val primitiveType = convertUnqualifiedPrimitiveType(type)
         if (primitiveType != UnsupportedType) {
             return primitiveType
@@ -620,16 +620,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
         return when (kind) {
             CXType_Elaborated -> {
-                val declCursor = clang_getTypeDeclaration(type)
-                val declSpelling = getCursorSpelling(declCursor)
-                // TODO: Skip std::string for now.
-                // TODO: is there a better way?
-                // At least manage it with Skia plugin!
-                if (library.language == Language.CPP && declSpelling == "string") {
-                    UnsupportedType
-                } else {
-                    convertType(clang_Type_getNamedType(type))
-                }
+                convertType(clang_Type_getNamedType(type))
             }
 
             CXType_Unexposed -> {
@@ -659,13 +650,8 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
                 }
             }
 
-            CXType_Record -> getStructDeclAt(clang_getTypeDeclaration(type)).let {
-                // TODO: extract as a Skia plugin function
-                if ((it as StructDecl).isSkiaSharedPointer)
-                    ManagedType(it)
-                else
-                    RecordType(it)
-            }
+            CXType_Record -> RecordType(getStructDeclAt(clang_getTypeDeclaration(type)))
+
             CXType_Enum -> EnumType(getEnumDefAt(clang_getTypeDeclaration(type)))
 
             CXType_Pointer, CXType_LValueReference -> {
@@ -1047,15 +1033,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
             getObjCProtocolAt(cursor)
         }
     }
-
-    // TODO: This should be managed by Skia plugin.
-    private val wellKnownSkiaStructs: List<String>
-            = listOf("SkImage", "SkSurface", "SkData", "GrDirectContext", "SkColorSpace", "SkPicture")
-
-    // TODO: This should be managed by Skia plugin.
-    private fun String.isUnknownTemplate() =
-            this.startsWith("sk_sp") &&
-            wellKnownSkiaStructs.none { this == "sk_sp<$it>" }
+    protected open fun String.isUnknownTemplate() = false
 
     private fun getFunction(cursor: CValue<CXCursor>, receiver: StructDecl? = null): FunctionDecl? {
         if (!isFuncDeclEligible(cursor)) {
@@ -1167,19 +1145,14 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
     }
 
     // Skip functions which parameter or return type is TemplateRef
-    private fun isFuncDeclEligible(cursor: CValue<CXCursor>): Boolean {
-
+    protected open fun isFuncDeclEligible(cursor: CValue<CXCursor>): Boolean {
         var ret = true
         visitChildren(cursor) { childCursor, _ ->
             when (childCursor.kind) {
-                CXCursorKind.CXCursor_TemplateRef ->
-                    // TODO: this should be managed by Skia plugin
-                    if (childCursor.spelling.startsWith("sk_sp")) {
-                        CXChildVisitResult.CXChildVisit_Recurse
-                    } else {
-                        ret = false
-                        CXChildVisitResult.CXChildVisit_Break
-                    }
+                CXCursorKind.CXCursor_TemplateRef -> {
+                    ret = false
+                    CXChildVisitResult.CXChildVisit_Break
+                }
                 else -> CXChildVisitResult.CXChildVisit_Recurse
             }
         }
@@ -1221,7 +1194,11 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
 fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResult {
     val result = NativeIndexImpl(library, verbose)
-    val compilation = indexDeclarations(result)
+    return buildNativeIndexImpl(result)
+}
+
+fun buildNativeIndexImpl(result: NativeIndex): IndexerResult {
+    val compilation = indexDeclarations(result as NativeIndexImpl)
     return IndexerResult(result, compilation)
 }
 
