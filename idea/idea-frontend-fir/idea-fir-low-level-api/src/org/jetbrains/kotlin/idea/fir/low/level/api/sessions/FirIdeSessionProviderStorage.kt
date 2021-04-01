@@ -132,5 +132,5 @@ private class FirSessionWithModificationTracker(
         isInvalidated = true
     }
 
-    val isValid: Boolean get() = isInvalidated || modificationTracker.modificationCount == timeStamp
+    val isValid: Boolean get() = !isInvalidated && modificationTracker.modificationCount == timeStamp
 }
