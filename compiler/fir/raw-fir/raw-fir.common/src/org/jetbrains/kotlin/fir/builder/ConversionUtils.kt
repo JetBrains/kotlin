@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -513,8 +514,7 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
     return receiverName == name
 }
 
-
-fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExpression {
+fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression, source: FirSourceElement): FirSafeCallExpression {
     val checkedSafeCallSubject = buildCheckedSafeCallSubject {
         @OptIn(FirContractViolation::class)
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
@@ -531,7 +531,7 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExp
             bind(checkedSafeCallSubject)
         }
         this.regularQualifiedAccess = this@wrapWithSafeCall
-        this.source = this@wrapWithSafeCall.source?.fakeElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
+        this.source = source
     }
 }
 

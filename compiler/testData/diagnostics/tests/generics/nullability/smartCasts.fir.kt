@@ -13,7 +13,7 @@ fun <T : CharSequence?> foo(x: T) {
         if (x != null) {}
 
         x.length
-        x?.length
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         x.bar1()
         x.bar2()
@@ -21,14 +21,14 @@ fun <T : CharSequence?> foo(x: T) {
         x.bar4()
 
 
-        x?.bar1()
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()
     }
 
     x.<!INAPPLICABLE_CANDIDATE!>length<!>
 
     if (x is String) {
         x.length
-        x?.length
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         x.bar1()
         x.bar2()
@@ -37,7 +37,7 @@ fun <T : CharSequence?> foo(x: T) {
 
     if (x is CharSequence) {
         x.length
-        x?.length
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         x.bar1()
         x.bar2()

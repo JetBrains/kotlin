@@ -490,7 +490,10 @@ class ExpressionsConverter(
 
         (firSelector as? FirQualifiedAccess)?.let {
             if (isSafe) {
-                return it.wrapWithSafeCall(firReceiver!!)
+                return it.wrapWithSafeCall(
+                    firReceiver!!,
+                    dotQualifiedExpression.toFirSourceElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
+                )
             }
 
             it.replaceExplicitReceiver(firReceiver)

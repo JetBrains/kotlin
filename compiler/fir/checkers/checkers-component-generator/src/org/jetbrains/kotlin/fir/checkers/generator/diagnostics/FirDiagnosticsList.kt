@@ -299,11 +299,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
 
         val UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE by error<FirSourceElement, KtTypeReference>()
-        
+
         val BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER by error<FirSourceElement, KtElement>()
-        
+
         val ONLY_ONE_CLASS_BOUND_ALLOWED by error<FirSourceElement, KtTypeReference>()
-        
+
         val REPEATED_BOUND by error<FirSourceElement, KtTypeReference>()
 
         val CONFLICTING_UPPER_BOUNDS by error<FirSourceElement, KtNamedDeclaration> {
@@ -559,7 +559,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("operator")
             parameter<FirExpression>("rhs")
         }
-        // TODO: val UNEXPECTED_SAFE_CALL by ...
+        val UNNECESSARY_SAFE_CALL by warning<FirSourceElement, PsiElement>(PositioningStrategy.SAFE_ACCESS) {
+            parameter<ConeKotlinType>("receiverType")
+        }
+        val UNEXPECTED_SAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.SAFE_ACCESS)
         val UNNECESSARY_NOT_NULL_ASSERTION by warning<FirSourceElement, KtExpression>(PositioningStrategy.OPERATOR) {
             parameter<ConeKotlinType>("receiverType")
         }

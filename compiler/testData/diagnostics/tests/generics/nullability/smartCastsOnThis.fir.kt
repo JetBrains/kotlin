@@ -12,7 +12,7 @@ fun <T : String?> T.foo() {
         if (this != null) {}
 
         length
-        this?.length
+        this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         bar1()
         bar2()
@@ -20,14 +20,14 @@ fun <T : String?> T.foo() {
         bar4()
 
 
-        this?.bar1()
+        this<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()
     }
 
     <!INAPPLICABLE_CANDIDATE!>length<!>
 
     if (this is String) {
         length
-        this?.length
+        this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         bar1()
         bar2()

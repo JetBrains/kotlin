@@ -11,7 +11,7 @@ interface B {
 
 fun test(u: A?, x: A?, y: A?, z: A?, w: A, v: A?) {
     u?.b?.foo()!! // was UNNECESSARY_SAFE_CALL everywhere, because result type (of 'foo()') wasn't made nullable
-    u!!.b?.foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    u!!.b<!UNNECESSARY_SAFE_CALL!>?.<!>foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     x?.b!!.foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     // x?.b is not null
     x!!.b<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
@@ -22,7 +22,7 @@ fun test(u: A?, x: A?, y: A?, z: A?, w: A, v: A?) {
     // z?.nb is not null
     z!!.nb!!.foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 
-    w.b?.foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    w.b<!UNNECESSARY_SAFE_CALL!>?.<!>foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     w.b<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     w.nb?.foo()!!
     w.nb!!.foo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>

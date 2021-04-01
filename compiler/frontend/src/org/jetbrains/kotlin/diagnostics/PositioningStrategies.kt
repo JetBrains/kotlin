@@ -421,6 +421,13 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField
+    val SAFE_ACCESS: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            return markElement(element.node.findChildByType(KtTokens.SAFE_ACCESS)?.psi ?: element)
+        }
+    }
+
     private class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PositioningStrategy<KtModifierListOwner>() {
         override fun mark(element: KtModifierListOwner): List<TextRange> {
             val modifierList = element.modifierList

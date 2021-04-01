@@ -1754,6 +1754,21 @@ internal class UnsafeOperatorCallImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class UnnecessarySafeCallImpl(
+    override val receiverType: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UnnecessarySafeCall(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class UnexpectedSafeCallImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UnexpectedSafeCall(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class UnnecessaryNotNullAssertionImpl(
     override val receiverType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,

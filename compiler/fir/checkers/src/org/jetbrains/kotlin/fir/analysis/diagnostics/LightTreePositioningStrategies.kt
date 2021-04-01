@@ -497,6 +497,17 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val SAFE_ACCESS = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.safeAccess(node) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
+
     val RETURN_WITH_LABEL = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -530,6 +541,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.constructorKeyword(nod
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.dotOperator(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.DOT)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.safeAccess(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.SAFE_ACCESS)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.initKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.INIT_KEYWORD)
