@@ -112,7 +112,7 @@ internal object EnumValues : IntrinsicBase() {
         val enumClass = getEnumClass(irFunction, environment)
         val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
 
-        return listOf(customEvaluateInstruction(irFunction, environment)) + enumEntries.reversed().map { CompoundInstruction(it) }
+        return listOf(customEvaluateInstruction(irFunction, environment)) + enumEntries.reversed().map { SimpleInstruction(it) }
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
@@ -151,7 +151,7 @@ internal object EnumValueOf : IntrinsicBase() {
 
     override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
         val enumEntry = getEnumEntryByName(irFunction, environment) ?: return emptyList()
-        return listOf(customEvaluateInstruction(irFunction, environment), CompoundInstruction(enumEntry))
+        return listOf(customEvaluateInstruction(irFunction, environment), SimpleInstruction(enumEntry))
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {

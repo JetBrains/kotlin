@@ -211,7 +211,9 @@ class IrInterpreter private constructor(
             generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
         }
 
-        callInterceptor.interceptCall(call, irFunction, dispatchReceiver, args.map { it.state })
+        callInterceptor.interceptCall(call, irFunction, dispatchReceiver, args.map { it.state }) {
+            callStack.addInstruction(CompoundInstruction(irFunction))
+        }
     }
 
     private fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall) {
@@ -273,7 +275,10 @@ class IrInterpreter private constructor(
         }
         superReceiver?.let { callStack.addVariable(Variable(it, objectVar.state)) }
 
-        callInterceptor.interceptConstructor(constructorCall, objectVar.state, valueArguments)
+        callInterceptor.interceptConstructor(constructorCall, objectVar.state, valueArguments) {
+            callStack.pushState(objectVar.state)
+            callStack.addInstruction(CompoundInstruction(constructor))
+        }
     }
 
     private fun interpretDelegatingConstructorCall(constructorCall: IrDelegatingConstructorCall) {
@@ -379,8 +384,16 @@ class IrInterpreter private constructor(
     }
 
     private fun interpretGetObjectValue(expression: IrGetObjectValue) {
-        callStack.dropSubFrame()
-        callInterceptor.interceptGetObjectValue(expression)
+        callInterceptor.interceptGetObjectValue(expression) {
+            val objectClass = expression.symbol.owner
+            val state = Common(objectClass)
+            environment.mapOfObjects[objectClass.symbol] = state  // must set object's state here to avoid cyclic evaluation
+            callStack.addVariable(Variable(objectClass.thisReceiver!!.symbol, state))
+
+            val constructor = objectClass.constructors.first()
+            val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
+            callStack.newSubFrame(constructorCall, listOf(SimpleInstruction(constructorCall)))
+        }
     }
 
     private fun interpretGetEnumValue(expression: IrGetEnumValue) {
@@ -388,7 +401,32 @@ class IrInterpreter private constructor(
     }
 
     private fun interpretEnumEntry(enumEntry: IrEnumEntry) {
-        callInterceptor.interceptEnumEntry(enumEntry)
+        callInterceptor.interceptEnumEntry(enumEntry) {
+            val enumClass = enumEntry.symbol.owner.parentAsClass
+            val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
+            val enumSuperCall = (enumClass.primaryConstructor?.body?.statements?.firstOrNull() as? IrEnumConstructorCall)
+
+            val cleanEnumSuperCall = fun() {
+                enumSuperCall?.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
+                callStack.dropSubFrame()
+            }
+
+            if (enumEntries.isNotEmpty() && enumSuperCall != null) {
+                val valueArguments = listOf(
+                    enumEntry.name.asString().toIrConst(irBuiltIns.stringType),
+                    enumEntries.indexOf(enumEntry).toIrConst(irBuiltIns.intType)
+                )
+                valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
+            }
+
+            val enumConstructorCall = enumEntry.initializerExpression?.expression as? IrEnumConstructorCall
+                ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+            val enumClassObject = Variable(enumConstructorCall.getThisReceiver(), Common(enumEntry.correspondingClass ?: enumClass))
+            environment.mapOfEnums[enumEntry.symbol] = enumClassObject.state as Complex
+
+            callStack.newSubFrame(enumEntry, listOf(CompoundInstruction(enumConstructorCall), CustomInstruction(cleanEnumSuperCall)))
+            callStack.addVariable(enumClassObject)
+        }
     }
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall) {

@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
@@ -22,7 +20,6 @@ import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 
 internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
@@ -44,7 +41,6 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrGetValue -> unfoldGetValue(element, environment)
         is IrGetObjectValue -> unfoldGetObjectValue(element, environment)
         is IrGetEnumValue -> unfoldGetEnumValue(element, environment)
-        is IrEnumEntry -> unfoldEnumEntry(element, environment)
         is IrConst<*> -> callStack.addInstruction(SimpleInstruction(element))
         is IrVariable -> unfoldVariable(element, callStack)
         is IrSetValue -> unfoldSetValue(element, callStack)
@@ -235,18 +231,7 @@ private fun unfoldGetObjectValue(expression: IrGetObjectValue, environment: IrIn
     val objectClass = expression.symbol.owner
     environment.mapOfObjects[objectClass.symbol]?.let { return callStack.pushState(it) }
 
-    callStack.newSubFrame(expression, listOf(SimpleInstruction(expression)))
-    when {
-        !objectClass.hasAnnotation(evaluateIntrinsicAnnotation) -> {
-            val state = Common(objectClass)
-            environment.mapOfObjects[objectClass.symbol] = state  // must set object's state here to avoid cyclic evaluation
-            callStack.addVariable(Variable(objectClass.thisReceiver!!.symbol, state))
-
-            val constructor = objectClass.constructors.first()
-            val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            callStack.addInstruction(CompoundInstruction(constructorCall))
-        }
-    }
+    callStack.addInstruction(SimpleInstruction(expression))
 }
 
 private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterpreterEnvironment) {
@@ -257,31 +242,8 @@ private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterp
     val enumEntry = expression.symbol.owner
     val enumClass = enumEntry.symbol.owner.parentAsClass
     enumClass.declarations.filterIsInstance<IrEnumEntry>().forEach {
-        if (enumClass.hasAnnotation(evaluateIntrinsicAnnotation)) return@forEach callStack.addInstruction(SimpleInstruction(it))
-        callStack.addInstruction(CompoundInstruction(it))
+        callStack.addInstruction(SimpleInstruction(it))
     }
-}
-
-private fun unfoldEnumEntry(enumEntry: IrEnumEntry, environment: IrInterpreterEnvironment) {
-    val enumClass = enumEntry.symbol.owner.parentAsClass
-    val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
-
-    val enumSuperCall = (enumClass.primaryConstructor?.body?.statements?.firstOrNull() as? IrEnumConstructorCall)
-    if (enumEntries.isNotEmpty() && enumSuperCall != null) {
-        val valueArguments = listOf(
-            enumEntry.name.asString().toIrConst(environment.irBuiltIns.stringType),
-            enumEntries.indexOf(enumEntry).toIrConst(environment.irBuiltIns.intType)
-        )
-        valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
-    }
-
-    val enumConstructorCall = enumEntry.initializerExpression?.expression as? IrEnumConstructorCall
-        ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
-    val enumClassObject = Variable(enumConstructorCall.getThisReceiver(), Common(enumEntry.correspondingClass ?: enumClass))
-    environment.mapOfEnums[enumEntry.symbol] = enumClassObject.state as Complex
-
-    environment.callStack.newSubFrame(enumEntry, listOf(CompoundInstruction(enumConstructorCall), SimpleInstruction(enumEntry)))
-    environment.callStack.addVariable(enumClassObject)
 }
 
 private fun unfoldVariable(variable: IrVariable, callStack: CallStack) {
