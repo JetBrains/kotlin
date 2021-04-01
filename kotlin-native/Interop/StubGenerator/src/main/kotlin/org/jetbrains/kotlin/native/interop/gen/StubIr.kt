@@ -197,12 +197,9 @@ sealed class AnnotationStub(val classifier: Classifier) {
         object CString : CCall(cCallClassifier.nested("CString"))
         object WCString : CCall(cCallClassifier.nested("WCString"))
         class Symbol(val symbolName: String) : CCall(cCallClassifier)
-        // TODO: this needs to go to the plugin somehow.
-        object SkiaStructValueReturn : CCall(cCallClassifier.nested("SkiaStructValueReturn"))
-        object SkiaStructValueParameter : CCall(cCallClassifier.nested("SkiaStructValueParameter"))
-        object SkiaSharedPointerReturn : CCall(cCallClassifier.nested("SkiaSharedPointerReturn"))
-        object SkiaSharedPointerParameter : CCall(cCallClassifier.nested("SkiaSharedPointerParameter"))
-        object SkiaClassConstructor : CCall(cCallClassifier.nested("SkiaClassConstructor"))
+        object ManagedTypeReturn : CCall(cCallClassifier.nested("ManagedTypeReturn"))
+        object ManagedTypeParameter : CCall(cCallClassifier.nested("ManagedTypeParameter"))
+        object CppClassConstructor : CCall(cCallClassifier.nested("CppClassConstructor"))
     }
 
     class CStruct(val struct: String) : AnnotationStub(cStructClassifier) {

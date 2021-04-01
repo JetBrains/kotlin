@@ -23,8 +23,6 @@ apply plugin: 'application'
 
 mainClassName = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
 
-
-
 dependencies {
     implementation project(":kotlin-native:Interop:Indexer")
     implementation project(":kotlin-native:utilities:basic-utils")
@@ -51,6 +49,7 @@ compileKotlin {
 sourceSets{
     main {
         kotlin {
+            srcDir("../Skia/StubIr/src/main/kotlin")
             srcDir("../../shared/src/library/kotlin")
             srcDir("../../shared/src/main/kotlin")
             srcDir(VersionGeneratorKt.kotlinNativeVersionSrc(project))

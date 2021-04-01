@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin`
@@ -127,16 +128,15 @@ sourceSets {
     "main" {
         java {
             srcDirs("prebuilt/nativeInteropStubs/kotlin")
+            srcDir("../Skia/Indexer/src/main/kotlin")
         }
         kotlin{
-
             target {
 
             }
         }
     }
 }
-
 
 dependencies {
     compile(project(":kotlin-stdlib"))

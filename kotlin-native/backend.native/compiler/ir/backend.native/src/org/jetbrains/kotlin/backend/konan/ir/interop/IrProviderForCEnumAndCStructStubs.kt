@@ -73,8 +73,6 @@ internal class IrProviderForCEnumAndCStructStubs(
         }
         symbol.findCStructDescriptor(interopBuiltIns)?.let { structDescriptor ->
             cStructClassGenerator.findOrGenerateCStruct(structDescriptor, file)
-        }?.also {
-            println(it.render())
         }
     }
 

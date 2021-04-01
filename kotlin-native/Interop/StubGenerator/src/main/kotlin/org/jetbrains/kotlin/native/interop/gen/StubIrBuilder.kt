@@ -136,7 +136,7 @@ internal interface StubElementBuilder {
     fun build(): List<StubIrElement>
 }
 
-class StubsBuildingContextImpl(
+open class StubsBuildingContextImpl(
         private val stubIrContext: StubIrContext
 ) : StubsBuildingContext {
 
@@ -144,7 +144,7 @@ class StubsBuildingContextImpl(
     override val platform: KotlinPlatform = stubIrContext.platform
     override val generationMode: GenerationMode = stubIrContext.generationMode
     val imports: Imports = stubIrContext.imports
-    private val nativeIndex: NativeIndex = stubIrContext.nativeIndex
+    protected val nativeIndex: NativeIndex = stubIrContext.nativeIndex
 
     private var theCounter = 0
 
@@ -189,44 +189,7 @@ class StubsBuildingContextImpl(
 
     override val generatedObjCCategoriesMembers = mutableMapOf<ObjCClass, GeneratedObjCCategoriesMembers>()
 
-    override val declarationMapper = object : DeclarationMapper {
-        override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier {
-            val baseName = structDecl.kotlinName
-            val pkg = when (platform) {
-                KotlinPlatform.JVM -> pkgName
-                KotlinPlatform.NATIVE -> if (structDecl.def == null) {
-                    cnamesStructsPackageName // to be imported as forward declaration.
-                } else {
-                    getPackageFor(structDecl)
-                }
-            }
-            return Classifier.topLevel(pkg, baseName)
-        }
-
-        override fun isMappedToStrict(enumDef: EnumDef): Boolean = isStrictEnum(enumDef)
-
-        override fun getKotlinNameForValue(enumDef: EnumDef): String = enumDef.kotlinName
-
-        override fun getPackageFor(declaration: TypeDeclaration): String {
-            return imports.getPackage(declaration.location) ?: pkgName
-        }
-
-        override val useUnsignedTypes: Boolean
-            get() = when (platform) {
-                KotlinPlatform.JVM -> false
-                KotlinPlatform.NATIVE -> true
-            }
-
-        // TODO: Skia
-        override fun getKotlinClassForManaged(structDecl: StructDecl): Classifier {
-            assert(structDecl.isSkiaSharedPointer)
-            val struct = structDecl.stripSkiaSharedPointer
-            val structArgument = nativeIndex.structs.singleOrNull {
-                it.spelling == struct && it.def != null
-            } ?: error("Finding template arg struct by name has found multiple candidates")
-            return getKotlinClassForPointed(structArgument)
-        }
-    }
+    override val declarationMapper = DeclarationMapperImpl()
 
     override val macroConstantsByName: Map<String, MacroDef> =
             (nativeIndex.macroConstants + nativeIndex.wrappedMacros).associateBy { it.name }
@@ -283,12 +246,38 @@ class StubsBuildingContextImpl(
         return classifier
     }
 
-    // TODO: what should we really do to be able to get Foo from sk_sp<Foo>?
-    fun tryFindingStructByName(name: String): StructDecl {
-        return nativeIndex.structs.singleOrNull {
-            it.spelling == name && it.def != null
-        } ?: error("Finding template arg struct by name has found multiple candidates")
+    open inner class DeclarationMapperImpl : DeclarationMapper {
+        override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier {
+            val baseName = structDecl.kotlinName
+            val pkg = when (platform) {
+                KotlinPlatform.JVM -> pkgName
+                KotlinPlatform.NATIVE -> if (structDecl.def == null) {
+                    cnamesStructsPackageName // to be imported as forward declaration.
+                } else {
+                    getPackageFor(structDecl)
+                }
+            }
+            return Classifier.topLevel(pkg, baseName)
+        }
+
+        override fun getKotlinClassForManaged(structDecl: StructDecl): Classifier =
+                error("ManagedType requires a plugin")
+
+        override fun isMappedToStrict(enumDef: EnumDef): Boolean = isStrictEnum(enumDef)
+
+        override fun getKotlinNameForValue(enumDef: EnumDef): String = enumDef.kotlinName
+
+        override fun getPackageFor(declaration: TypeDeclaration): String {
+            return imports.getPackage(declaration.location) ?: pkgName
+        }
+
+        override val useUnsignedTypes: Boolean
+            get() = when (platform) {
+                KotlinPlatform.JVM -> false
+                KotlinPlatform.NATIVE -> true
+            }
     }
+
 }
 
 data class StubIrBuilderResult(
@@ -331,7 +320,7 @@ class StubIrBuilder(private val context: StubIrContext) {
     private val excludedMacros: Set<String>
         get() = configuration.excludedMacros
 
-    private val buildingContext = StubsBuildingContextImpl(context)
+    private val buildingContext = context.plugin.stubsBuildingContext(context)
 
     fun build(): StubIrBuilderResult {
         nativeIndex.objCProtocols.filter { !it.isForwardDeclaration }.forEach { generateStubsForObjCProtocol(it) }

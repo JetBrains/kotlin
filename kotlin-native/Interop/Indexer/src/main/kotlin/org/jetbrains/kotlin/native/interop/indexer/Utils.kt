@@ -26,12 +26,12 @@ import java.nio.file.Paths
 import java.security.DigestInputStream
 import java.security.MessageDigest
 
-internal val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
+val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
 
-internal val CValue<CXCursor>.kind: CXCursorKind get() = this.useContents { kind }
+val CValue<CXCursor>.kind: CXCursorKind get() = this.useContents { kind }
 
 internal val CValue<CXCursor>.type: CValue<CXType> get() = clang_getCursorType(this)
-internal val CValue<CXCursor>.spelling: String get() = clang_getCursorSpelling(this).convertAndDispose()
+val CValue<CXCursor>.spelling: String get() = clang_getCursorSpelling(this).convertAndDispose()
 internal val CValue<CXType>.name: String get() = clang_getTypeSpelling(this).convertAndDispose()
 internal val CXTypeKind.spelling: String get() = clang_getTypeKindSpelling(this).convertAndDispose()
 internal val CXCursorKind.spelling: String get() = clang_getCursorKindSpelling(this).convertAndDispose()
@@ -127,7 +127,6 @@ internal fun parseTranslationUnit(
         options: Int
 ): CXTranslationUnit {
 
-    println("COMPILER: ${sourceFile.absolutePath} ${compilerArgs.joinToString(" ")}" )
     memScoped {
         val resultVar = alloc<CXTranslationUnitVar>()
 
@@ -195,7 +194,7 @@ internal fun CXTranslationUnit.ensureNoCompileErrors(): CXTranslationUnit {
 
 internal typealias CursorVisitor = (cursor: CValue<CXCursor>, parent: CValue<CXCursor>) -> CXChildVisitResult
 
-internal fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
+fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
     val visitorStableRef = StableRef.create(visitor)
     try {
         val clientData = visitorStableRef.asCPointer()
@@ -811,13 +810,3 @@ internal inline fun <T : Disposable, R> T.use(block: (T) -> R): R = try {
 } finally {
     this.dispose()
 }
-
-// TODO: This should be managed by Skia plugin.
-val StructDecl.isSkiaSharedPointer: Boolean
-    get() = spelling.startsWith("sk_sp<") && spelling.endsWith(">")
-
-// TODO: This should be managed by Skia plugin
-val StructDecl.stripSkiaSharedPointer: String
-    get() = this.spelling.drop(6).dropLast(1).let {
-        if (it.startsWith("const ")) it.drop(6) else it
-    }

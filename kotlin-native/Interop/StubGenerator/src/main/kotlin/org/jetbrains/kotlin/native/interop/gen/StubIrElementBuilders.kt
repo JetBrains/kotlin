@@ -554,7 +554,7 @@ internal abstract class FunctionalStubBuilder(
                 parameter.type is ManagedType  -> {
                     val mirror = context.mirror(parameter.type)
                     val type = mirror.argType.toStubIrType()
-                    FunctionParameterStub(parameterName, type, annotations = listOf(AnnotationStub.CCall.SkiaStructValueParameter))
+                    FunctionParameterStub(parameterName, type, annotations = listOf(AnnotationStub.CCall.ManagedTypeParameter))
                 }
                 else -> {
                     val mirror = context.mirror(parameter.type)
@@ -567,22 +567,7 @@ internal abstract class FunctionalStubBuilder(
     }
 
     protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) = listOf(
-            // TODO: this should be managed by Skia plugin, not just C++ mode.
-            AnnotationStub.CCall.SkiaSharedPointerReturn.takeIf {
-                func.returnType.let {
-                    it is ManagedType &&
-                    it.decl.isSkiaSharedPointer &&
-                    context.configuration.library.language == Language.CPP
-                }
-            },
-            // TODO: this should be managed by Skia plugin, not just C++ mode.
-            AnnotationStub.CCall.SkiaStructValueReturn.takeIf {
-                func.returnType.let {
-                    it is ManagedType &&
-                    !it.decl.isSkiaSharedPointer &&
-                    context.configuration.library.language == Language.CPP
-                }
-            },
+            AnnotationStub.CCall.ManagedTypeReturn.takeIf { func.returnType is ManagedType },
             AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}")
         ).filterNotNull()
 
@@ -705,7 +690,7 @@ internal class ConstructorStubBuilder(
 
         val name = func.parentName ?: return emptyList()
 
-        /*val hasStableParameterNames = */buildParameters(parameters, platform)
+        buildParameters(parameters, platform)
 
         // We build it on the basis of "__init__" member, so drop the "placement" argugment.
         parameters.removeFirst()
@@ -721,7 +706,7 @@ internal class ConstructorStubBuilder(
                     val type = KotlinTypes.any.makeNullable().toStubIrType()
                     parameters += FunctionParameterStub("variadicArguments", type, isVararg = true)
                 }
-                buildFunctionAnnotations(func, name) + AnnotationStub.CCall.SkiaClassConstructor
+                buildFunctionAnnotations(func, name) + AnnotationStub.CCall.CppClassConstructor
             }
 
         val result = ConstructorStub(
