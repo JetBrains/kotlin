@@ -26,39 +26,39 @@ object GC {
      * To force garbage collection immediately, unless collector is stopped
      * with [stop] operation. Even if GC is suspended, [collect] still triggers collection.
      */
-    @SymbolName("Kotlin_native_internal_GC_collect")
+    @GCUnsafeCall("Kotlin_native_internal_GC_collect")
     external fun collect()
 
     /**
      * Request global cyclic collector, operation is async and just triggers the collection.
      */
-    @SymbolName("Kotlin_native_internal_GC_collectCyclic")
+    @GCUnsafeCall("Kotlin_native_internal_GC_collectCyclic")
     external fun collectCyclic()
 
     /**
      * Suspend garbage collection. Release candidates are still collected, but
      * GC algorithm is not executed.
      */
-    @SymbolName("Kotlin_native_internal_GC_suspend")
+    @GCUnsafeCall("Kotlin_native_internal_GC_suspend")
     external fun suspend()
 
     /**
      * Resume garbage collection. Can potentially lead to GC immediately.
      */
-    @SymbolName("Kotlin_native_internal_GC_resume")
+    @GCUnsafeCall("Kotlin_native_internal_GC_resume")
     external fun resume()
 
     /**
      * Stop garbage collection. Cyclical garbage is no longer collected.
      */
-    @SymbolName("Kotlin_native_internal_GC_stop")
+    @GCUnsafeCall("Kotlin_native_internal_GC_stop")
     external fun stop()
 
     /**
      * Start garbage collection. Cyclical garbage produced while GC was stopped
      * cannot be reclaimed, but all new garbage is collected.
      */
-    @SymbolName("Kotlin_native_internal_GC_start")
+    @GCUnsafeCall("Kotlin_native_internal_GC_start")
     external fun start()
 
     /**
@@ -105,42 +105,42 @@ object GC {
      * or `null` if the leak detector is not available. Use [Platform.isMemoryLeakCheckerActive] to check
      * leak detector availability.
      */
-    @SymbolName("Kotlin_native_internal_GC_detectCycles")
+    @GCUnsafeCall("Kotlin_native_internal_GC_detectCycles")
     external fun detectCycles(): Array<Any>?
 
     /**
      * Find a reference cycle including from the given object, `null` if no cycles detected.
      */
-    @SymbolName("Kotlin_native_internal_GC_findCycle")
+    @GCUnsafeCall("Kotlin_native_internal_GC_findCycle")
     external fun findCycle(root: Any): Array<Any>?
 
-    @SymbolName("Kotlin_native_internal_GC_getThreshold")
+    @GCUnsafeCall("Kotlin_native_internal_GC_getThreshold")
     private external fun getThreshold(): Int
 
-    @SymbolName("Kotlin_native_internal_GC_setThreshold")
+    @GCUnsafeCall("Kotlin_native_internal_GC_setThreshold")
     private external fun setThreshold(value: Int)
 
-    @SymbolName("Kotlin_native_internal_GC_getCollectCyclesThreshold")
+    @GCUnsafeCall("Kotlin_native_internal_GC_getCollectCyclesThreshold")
     private external fun getCollectCyclesThreshold(): Long
 
-    @SymbolName("Kotlin_native_internal_GC_setCollectCyclesThreshold")
+    @GCUnsafeCall("Kotlin_native_internal_GC_setCollectCyclesThreshold")
     private external fun setCollectCyclesThreshold(value: Long)
 
-    @SymbolName("Kotlin_native_internal_GC_getThresholdAllocations")
+    @GCUnsafeCall("Kotlin_native_internal_GC_getThresholdAllocations")
     private external fun getThresholdAllocations(): Long
 
-    @SymbolName("Kotlin_native_internal_GC_setThresholdAllocations")
+    @GCUnsafeCall("Kotlin_native_internal_GC_setThresholdAllocations")
     private external fun setThresholdAllocations(value: Long)
 
-    @SymbolName("Kotlin_native_internal_GC_getTuneThreshold")
+    @GCUnsafeCall("Kotlin_native_internal_GC_getTuneThreshold")
     private external fun getTuneThreshold(): Boolean
 
-    @SymbolName("Kotlin_native_internal_GC_setTuneThreshold")
+    @GCUnsafeCall("Kotlin_native_internal_GC_setTuneThreshold")
     private external fun setTuneThreshold(value: Boolean)
 
-    @SymbolName("Kotlin_native_internal_GC_getCyclicCollector")
+    @GCUnsafeCall("Kotlin_native_internal_GC_getCyclicCollector")
     private external fun getCyclicCollectorEnabled(): Boolean
 
-    @SymbolName("Kotlin_native_internal_GC_setCyclicCollector")
+    @GCUnsafeCall("Kotlin_native_internal_GC_setCyclicCollector")
     private external fun setCyclicCollectorEnabled(value: Boolean)
 }

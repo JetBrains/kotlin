@@ -5,7 +5,6 @@
 
 package kotlin.native.concurrent
 
-import kotlin.native.SymbolName
 import kotlinx.cinterop.NativePtr
 import kotlin.native.internal.*
 

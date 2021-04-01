@@ -434,19 +434,10 @@ private:
     ThreadState oldState_;
 };
 
-// Calls the given function in the `Runnable` thread state.
-template <typename R, typename... Args>
-ALWAYS_INLINE inline R CallKotlin(R(*kotlinFunction)(Args...), Args... args) {
-    ThreadStateGuard guard(ThreadState::kRunnable);
-    return kotlinFunction(std::forward<Args>(args)...);
-}
-
-// Calls the given function in the `Runnable` thread state. The function must be marked as RUNTIME_NORETURN.
-// If the function returns, behaviour is undefined.
-template <typename... Args>
-ALWAYS_INLINE RUNTIME_NORETURN inline void CallKotlinNoReturn(void(*noreturnKotlinFunction)(Args...), Args... args) {
-    CallKotlin(noreturnKotlinFunction, std::forward<Args>(args)...);
-    RuntimeFail("The function must not return");
+template <ThreadState state, typename R, typename... Args>
+ALWAYS_INLINE inline R CallWithThreadState(R(*function)(Args...), Args... args) {
+    ThreadStateGuard guard(state);
+    return function(std::forward<Args>(args)...);
 }
 
 } // namespace kotlin
