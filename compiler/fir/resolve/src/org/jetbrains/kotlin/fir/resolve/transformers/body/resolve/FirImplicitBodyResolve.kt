@@ -56,7 +56,7 @@ class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSes
     }
 }
 
-fun <F : FirClass<F>> F.runContractAndBodiesResolutionForLocalClass(
+fun <F : FirClassLikeDeclaration<F>> F.runContractAndBodiesResolutionForLocalClass(
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
     localClassesNavigationInfo: LocalClassesNavigationInfo,
@@ -183,7 +183,7 @@ private class ReturnTypeCalculatorWithJump(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
-    val designationMapForLocalClasses: Map<FirCallableMemberDeclaration<*>, List<FirClass<*>>> = mapOf(),
+    val designationMapForLocalClasses: Map<FirCallableMemberDeclaration<*>, List<FirClassLikeDeclaration<*>>> = mapOf(),
     val createTransformer: (
         designation: Iterator<FirElement>,
         session: FirSession,

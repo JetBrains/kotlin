@@ -302,6 +302,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformValueParameter(valueParameter, data)
     }
 
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        return declarationsTransformer.transformTypeAlias(typeAlias, data)
+    }
+
     // ------------------------------------- Control flow statements -------------------------------------
 
     override fun transformWhileLoop(whileLoop: FirWhileLoop, data: ResolutionMode): CompositeTransformResult<FirStatement> {

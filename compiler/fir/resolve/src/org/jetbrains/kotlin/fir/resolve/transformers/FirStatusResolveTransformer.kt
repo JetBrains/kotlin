@@ -39,7 +39,7 @@ class FirStatusResolveProcessor(
     }
 }
 
-fun <F : FirClass<F>> F.runStatusResolveForLocalClass(
+fun <F : FirClassLikeDeclaration<F>> F.runStatusResolveForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
     scopesForLocalClass: List<FirScope>,
@@ -75,7 +75,7 @@ class FirStatusResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     statusComputationSession: StatusComputationSession,
-    designationMapForLocalClasses: Map<FirClass<*>, FirClass<*>?> = mapOf(),
+    designationMapForLocalClasses: Map<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?> = mapOf(),
     scopeForLocalClass: FirScope? = null,
 ) : AbstractFirStatusResolveTransformer(
     session,
@@ -117,9 +117,9 @@ private class FirDesignatedStatusResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     private val designation: Iterator<FirDeclaration>,
-    private val targetClass: FirClass<*>,
+    private val targetClass: FirClassLikeDeclaration<*>,
     statusComputationSession: StatusComputationSession,
-    designationMapForLocalClasses: Map<FirClass<*>, FirClass<*>?>,
+    designationMapForLocalClasses: Map<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?>,
     scopeForLocalClass: FirScope?,
 ) : AbstractFirStatusResolveTransformer(
     session,
@@ -204,7 +204,7 @@ sealed class StatusComputationSession {
         }
     }
 
-    class ForLocalClassResolution(private val localClasses: Set<FirClass<*>>) : StatusComputationSession() {
+    class ForLocalClassResolution(private val localClasses: Set<FirClassLikeDeclaration<*>>) : StatusComputationSession() {
         private val delegate = Regular()
 
         override fun get(klass: FirClass<*>): StatusComputationStatus {
@@ -226,7 +226,7 @@ abstract class AbstractFirStatusResolveTransformer(
     final override val session: FirSession,
     val scopeSession: ScopeSession,
     protected val statusComputationSession: StatusComputationSession,
-    protected val designationMapForLocalClasses: Map<FirClass<*>, FirClass<*>?>,
+    protected val designationMapForLocalClasses: Map<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?>,
     private val scopeForLocalClass: FirScope?
 ) : FirAbstractTreeTransformer<FirResolvedDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
     private val classes = mutableListOf<FirClass<*>>()

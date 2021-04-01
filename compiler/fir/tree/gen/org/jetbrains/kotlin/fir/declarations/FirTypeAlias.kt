@@ -42,5 +42,7 @@ abstract class FirTypeAlias : FirPureAbstractElement(), FirClassLikeDeclaration<
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAlias
 
+    abstract fun <D> transformExpandedTypeRef(transformer: FirTransformer<D>, data: D): FirTypeAlias
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeAlias
 }

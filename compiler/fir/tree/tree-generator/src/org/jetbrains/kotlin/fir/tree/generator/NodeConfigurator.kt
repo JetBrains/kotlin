@@ -271,7 +271,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(classLikeDeclaration, "F", typeAlias)
             +name
             +symbol("FirTypeAliasSymbol")
-            +field("expandedTypeRef", typeRef, withReplace = true)
+            +field("expandedTypeRef", typeRef, withReplace = true).withTransform()
             +annotations
         }
 

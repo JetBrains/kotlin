@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -39,11 +40,11 @@ class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: Sc
     }
 }
 
-fun <F : FirClass<F>> F.runContractResolveForLocalClass(
+fun <F : FirClassLikeDeclaration<F>> F.runContractResolveForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
     outerBodyResolveContext: BodyResolveContext,
-    targetedClasses: Set<FirClass<*>>
+    targetedClasses: Set<FirClassLikeDeclaration<*>>
 ): F {
     val newContext = outerBodyResolveContext.createSnapshotForLocalClasses(
         ReturnTypeCalculatorForFullBodyResolve(),

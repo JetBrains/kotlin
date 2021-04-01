@@ -58,7 +58,7 @@ class FirSupertypeResolverTransformer(
     }
 }
 
-fun <F : FirClass<F>> F.runSupertypeResolvePhaseForLocalClass(
+fun <F : FirClassLikeDeclaration<F>> F.runSupertypeResolvePhaseForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
     currentScopeList: List<FirScope>,
@@ -223,9 +223,6 @@ private class FirSupertypeResolverVisitor(
 
         val result = when {
             classId.isLocal -> {
-                // Local type aliases are not supported
-                if (classLikeDeclaration !is FirClass<*>) return persistentListOf()
-
                 // Local classes should be treated specially and supplied with localClassesNavigationInfo, normally
                 // But it seems to be too strict to add an assertion here
                 if (localClassesNavigationInfo == null) return persistentListOf()
@@ -233,7 +230,7 @@ private class FirSupertypeResolverVisitor(
                 val parent = localClassesNavigationInfo.parentForClass[classLikeDeclaration]
 
                 when {
-                    parent != null -> prepareScopeForNestedClasses(parent)
+                    parent != null && parent is FirClass<*> -> prepareScopeForNestedClasses(parent)
                     else -> scopeForLocalClass ?: return persistentListOf()
                 }
             }

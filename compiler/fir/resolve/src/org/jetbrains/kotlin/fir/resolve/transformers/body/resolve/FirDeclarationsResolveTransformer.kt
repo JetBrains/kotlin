@@ -358,6 +358,16 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return doTransformRegularClass(regularClass, data)
     }
 
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
+            return typeAlias.runAllPhasesForLocalClass(transformer, components, data).compose()
+        }
+        doTransformTypeParameters(typeAlias)
+        typeAlias.transformAnnotations(transformer, data)
+        typeAlias.transformExpandedTypeRef(transformer, data)
+        return typeAlias.compose()
+    }
+
     private fun doTransformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode

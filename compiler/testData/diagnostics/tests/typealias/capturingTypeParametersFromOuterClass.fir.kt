@@ -17,13 +17,13 @@ class Outer<TO> {
 
 fun <TF> foo() {
     class Local<TL> {
-        typealias LTF = <!UNRESOLVED_REFERENCE!>List<<!UNRESOLVED_REFERENCE!>TF<!>><!>
-        typealias LTL = <!UNRESOLVED_REFERENCE!>List<<!UNRESOLVED_REFERENCE!>TL<!>><!>
+        typealias LTF = List<TF>
+        typealias LTL = List<<!UNRESOLVED_REFERENCE!>TL<!>>
     }
 
     fun <TLF> localfun() =
             object {
-                typealias LTF = List<<!UNRESOLVED_REFERENCE!>TF<!>>
-                typealias LTLF = List<<!UNRESOLVED_REFERENCE!>TLF<!>>
+                typealias LTF = List<TF>
+                typealias LTLF = List<TLF>
             }
 }

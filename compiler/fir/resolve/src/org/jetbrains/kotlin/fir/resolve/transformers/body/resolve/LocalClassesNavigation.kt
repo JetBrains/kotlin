@@ -15,18 +15,18 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.utils.keysToMap
 
 class LocalClassesNavigationInfo(
-    val parentForClass: Map<FirClass<*>, FirClass<*>?>,
-    private val parentClassForFunction: Map<FirCallableMemberDeclaration<*>, FirClass<*>>,
+    val parentForClass: Map<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?>,
+    private val parentClassForFunction: Map<FirCallableMemberDeclaration<*>, FirClassLikeDeclaration<*>>,
     val allMembers: List<FirSymbolOwner<*>>
 ) {
-    val designationMap: Map<FirCallableMemberDeclaration<*>, List<FirClass<*>>> by lazy {
+    val designationMap: Map<FirCallableMemberDeclaration<*>, List<FirClassLikeDeclaration<*>>> by lazy {
         parentClassForFunction.keys.keysToMap {
             pathForCallable(it)
         }
     }
 
-    private fun pathForCallable(callableMemberDeclaration: FirCallableMemberDeclaration<*>): List<FirClass<*>> {
-        val result = mutableListOf<FirClass<*>>()
+    private fun pathForCallable(callableMemberDeclaration: FirCallableMemberDeclaration<*>): List<FirClassLikeDeclaration<*>> {
+        val result = mutableListOf<FirClassLikeDeclaration<*>>()
         var current = parentClassForFunction[callableMemberDeclaration]
 
         while (current != null) {
@@ -38,7 +38,7 @@ class LocalClassesNavigationInfo(
     }
 }
 
-fun FirClass<*>.collectLocalClassesNavigationInfo(): LocalClassesNavigationInfo =
+fun FirClassLikeDeclaration<*>.collectLocalClassesNavigationInfo(): LocalClassesNavigationInfo =
     NavigationInfoVisitor().run {
         this@collectLocalClassesNavigationInfo.accept(this@run)
 
@@ -46,10 +46,10 @@ fun FirClass<*>.collectLocalClassesNavigationInfo(): LocalClassesNavigationInfo 
     }
 
 private class NavigationInfoVisitor : FirDefaultVisitorVoid() {
-    val resultingMap: MutableMap<FirCallableMemberDeclaration<*>, FirClass<*>> = mutableMapOf()
-    val parentForClass: MutableMap<FirClass<*>, FirClass<*>?> = mutableMapOf()
+    val resultingMap: MutableMap<FirCallableMemberDeclaration<*>, FirClassLikeDeclaration<*>> = mutableMapOf()
+    val parentForClass: MutableMap<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?> = mutableMapOf()
     val allMembers: MutableList<FirSymbolOwner<*>> = mutableListOf()
-    private var currentPath: PersistentList<FirClass<*>> = persistentListOf()
+    private var currentPath: PersistentList<FirClassLikeDeclaration<*>> = persistentListOf()
 
     override fun visitElement(element: FirElement) {}
 

@@ -51,7 +51,7 @@ internal class FirTypeAliasImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
         transformStatus(transformer, data)
         transformTypeParameters(transformer, data)
-        expandedTypeRef = expandedTypeRef.transformSingle(transformer, data)
+        transformExpandedTypeRef(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
@@ -63,6 +63,11 @@ internal class FirTypeAliasImpl(
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
         typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformExpandedTypeRef(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
+        expandedTypeRef = expandedTypeRef.transformSingle(transformer, data)
         return this
     }
 
