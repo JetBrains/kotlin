@@ -26,7 +26,7 @@ interface KotlinGradleVariant : KotlinGradleFragment, KotlinModuleVariant {
     val compilationOutputs: KotlinCompilationOutput
 
     // TODO rewrite using our own artifacts API
-    val sourceArchiveTask: TaskProvider<AbstractArchiveTask>
+    val sourceArchiveTaskName: String
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
     val apiElementsConfigurationName: String

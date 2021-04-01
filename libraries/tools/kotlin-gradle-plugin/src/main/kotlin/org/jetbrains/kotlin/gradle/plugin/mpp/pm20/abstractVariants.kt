@@ -15,7 +15,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.mpp.MavenPublicationCoordinatesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -49,8 +49,8 @@ abstract class KotlinGradleVariantInternal(
         )
 
     // TODO rewrite using our own artifacts API
-    override val sourceArchiveTask: TaskProvider<AbstractArchiveTask>
-        get() = project.tasks.withType<AbstractArchiveTask>().named(defaultSourceArtifactTaskName)
+    override val sourceArchiveTaskName: String
+        get() = defaultSourceArtifactTaskName
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
     override val apiElementsConfigurationName: String
@@ -81,7 +81,7 @@ class DefaultSingleMavenPublishedModuleHolder(
             project,
             { assignedMavenPublication },
             defaultPublishedModuleSuffix,
-            capabilities = listOfNotNull(CalculatedCapability.capabilityStringFromModule(module))
+            capabilities = listOfNotNull(ComputedCapability.capabilityStringFromModule(module))
         )
 }
 

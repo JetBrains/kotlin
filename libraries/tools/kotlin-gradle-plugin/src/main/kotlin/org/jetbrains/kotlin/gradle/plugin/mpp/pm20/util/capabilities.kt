@@ -9,7 +9,7 @@ import org.gradle.api.capabilities.Capability
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
-internal class CalculatedCapability(
+internal class ComputedCapability(
     val groupProvider: Provider<String>,
     val nameValue: String,
     val versionProvider: Provider<String>,
@@ -22,15 +22,20 @@ internal class CalculatedCapability(
     override fun getVersion(): String? = versionProvider.get()
 
     companion object {
-        fun fromModule(module: KotlinGradleModule): CalculatedCapability {
+        fun fromModule(module: KotlinGradleModule): ComputedCapability {
             val project = module.project
-            return CalculatedCapability(
+            return ComputedCapability(
                 project.provider { project.group.toString() },
                 project.name,
                 project.provider { project.version.toString() },
                 module.moduleClassifier
             )
         }
+
+        fun fromModuleOrNull(module: KotlinGradleModule): ComputedCapability? =
+            if (module.moduleClassifier != null)
+                fromModule(module)
+            else null
 
         fun capabilityStringFromModule(module: KotlinGradleModule): String? =
             if (module.moduleClassifier != null) fromModule(module).notation() else null

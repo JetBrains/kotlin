@@ -5,28 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import jdk.internal.org.objectweb.asm.tree.VarInsnNode
-import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.Bundling
+import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.component.AdhocComponentWithVariants
-import org.gradle.api.component.SoftwareComponentFactory
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
-import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
+import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTaskNamed
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.project.model.refinesClosure
-import javax.inject.Inject
 
 abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
     module: KotlinGradleModule
@@ -51,17 +38,21 @@ abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
 
     open fun configureApiElementsConfiguration(fragment: T, configuration: Configuration) {
         setPlatformAttributesInConfiguration(fragment, configuration)
-        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(project, fragment.platformType))
+        configuration.attributes.apply {
+            attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(project, fragment.platformType))
+            attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category::class.java, Category.LIBRARY))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
+        }
     }
 
     abstract fun configureKotlinCompilation(fragment: T)
 
     open fun createSourcesArchiveTask(fragment: T) {
-        sourcesJarTask(
+        sourcesJarTaskNamed(
+            fragment.sourceArchiveTaskName,
             project,
-            lazy { fragment.refinesClosure.associate { it.disambiguateName("") to project.files(it.kotlinSourceRoots) } },
-            fragment.name,
-            fragment.name.toLowerCase()
+            lazy { FragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(fragment).mapKeys { it.key.fragmentName } },
+            fragment.name
         )
     }
 
@@ -104,7 +95,11 @@ abstract class AbstractKotlinGradleVariantWithRuntimeFactory<T : KotlinGradleVar
 
     open fun configureRuntimeElementsConfiguration(fragment: T, configuration: Configuration) {
         setPlatformAttributesInConfiguration(fragment, configuration)
-        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(project, fragment.platformType))
+        configuration.attributes.apply {
+            attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(project, fragment.platformType))
+            attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category::class.java, Category.LIBRARY))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
+        }
     }
 
     override fun createDependencyConfigurations(fragment: T) {
@@ -153,6 +148,6 @@ abstract class AbstractKotlinGradleRuntimePublishedVariantFactory<T : KotlinGrad
 
 internal fun setModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
     if (module.moduleClassifier != null) {
-        configuration.outgoing.capability(CalculatedCapability.fromModule(module))
+        configuration.outgoing.capability(ComputedCapability.fromModule(module))
     }
 }

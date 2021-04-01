@@ -14,6 +14,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import org.jetbrains.kotlin.project.model.refinesClosure
 
 interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Named {
     override val kotlinSourceRoots: SourceDirectorySet
@@ -49,3 +50,6 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Na
                 // TODO: resolvable metadata configurations?
                 listOf(transitiveApiConfigurationName, transitiveImplementationConfigurationName)
 }
+
+val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
+    get() = (this as KotlinModuleFragment).refinesClosure.mapTo(mutableSetOf()) { it as KotlinGradleFragment }
