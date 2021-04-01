@@ -50,6 +50,19 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
     val outputDirectories: Set<File>
         get() = rootCommonizerTargets.map(::getRootOutputDirectory).toSet()
 
+    @get:Internal
+    internal val commonizerRunner = KotlinNativeCommonizerToolRunner(project)
+
+    @get:Classpath
+    @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
+    internal val commonizerClasspath: Set<File>
+        get() = commonizerRunner.classpath
+
+    @get:Input
+    @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
+    internal val commonizerJvmArgs: List<String>
+        get() = commonizerRunner.getCustomJvmArgs()
+
     internal fun getRootOutputDirectory(target: SharedCommonizerTarget): File {
         val kotlinVersion = checkNotNull(project.getKotlinPluginVersion()) { "Missing Kotlin Plugin version" }
 
@@ -69,7 +82,7 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
     protected fun run() {
         for (target in rootCommonizerTargets) {
             getRootOutputDirectory(target).deleteRecursively()
-            KotlinNativeCommonizerToolRunner(project).run(getCommandLineArguments(target))
+            commonizerRunner.run(getCommandLineArguments(target))
         }
     }
 

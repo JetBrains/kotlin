@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.utils.fileProvider
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -180,7 +180,7 @@ private fun CInteropProcess.toGist(): CInteropGist {
         konanTarget = konanTarget,
         sourceSets = project.provider { settings.compilation.kotlinSourceSetsIncludingDefault },
         libraryFile = outputFileProvider,
-        dependencies = project.fileProvider { settings.dependencyFiles }.filter(File::isValidDependency)
+        dependencies = project.filesProvider { settings.dependencyFiles }.filter(File::isValidDependency)
     )
 }
 

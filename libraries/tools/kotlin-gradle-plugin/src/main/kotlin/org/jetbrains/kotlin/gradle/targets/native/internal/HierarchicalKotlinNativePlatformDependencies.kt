@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.commonizer.HierarchicalCommonizerOutputLayout
 import org.jetbrains.kotlin.commonizer.KonanDistribution
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
-import java.io.File
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal fun Project.setUpHierarchicalKotlinNativePlatformDependencies() {
     val task = commonizeNativeDistributionHierarchicalTask?.get() ?: return
@@ -31,8 +30,8 @@ internal fun Project.setUpHierarchicalKotlinNativePlatformDependencies() {
         val rootOutputDirectory = task.getRootOutputDirectory(rootTarget)
         val targetOutputDirectory = HierarchicalCommonizerOutputLayout.getTargetDirectory(rootOutputDirectory, target)
 
-        val dependencies = project.lazyFiles { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(task)
-        val stdlib = project.lazyFiles { listOf(konanDistribution.stdlib) }
+        val dependencies = project.filesProvider { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(task)
+        val stdlib = project.filesProvider { listOf(konanDistribution.stdlib) }
         addDependencies(sourceSet, dependencies)
         addDependencies(sourceSet, stdlib)
     }
@@ -43,11 +42,6 @@ private fun Project.addDependencies(sourceSet: KotlinSourceSet, libraries: FileC
         compilation.compileDependencyFiles += libraries
     }
     dependencies.add(sourceSet.implementationMetadataConfigurationName, libraries)
-}
-
-
-private fun Project.lazyFiles(provider: () -> Iterable<File>): ConfigurableFileCollection {
-    return project.files(project.provider { provider() })
 }
 
 private val Project.konanDistribution: KonanDistribution
