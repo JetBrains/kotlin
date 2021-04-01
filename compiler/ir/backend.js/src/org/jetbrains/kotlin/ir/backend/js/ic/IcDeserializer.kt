@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -77,8 +78,10 @@ class IcDeserializer(
         }
 
         context.intrinsics.externalPackageFragment.declarations.forEach {
-            val signature = it.symbol.signature ?: globalDeclarationTable.computeSignatureByDeclaration(it)
-            existingPublicSymbols[signature] = it.symbol
+//            it.traverse {
+                val signature = it.symbol.signature ?: globalDeclarationTable.computeSignatureByDeclaration(it)
+                existingPublicSymbols[signature] = it.symbol
+//            }
         }
 
         fileDeserializers.forEach { fd ->
@@ -177,8 +180,8 @@ class IcDeserializer(
             val declaration = if (symbol != null && symbol.isBound) symbol.owner as IrDeclaration else icFileDeserializer.deserializeDeclaration(signature)
 
             if (declaration == null) {
-                if (kind != BinarySymbolData.SymbolKind.VARIABLE_SYMBOL) {
-//                    println("skipped $signature [$kind] (${icFileDeserializer.fileDeserializer.file.name});")
+                if (/*kind != BinarySymbolData.SymbolKind.VARIABLE_SYMBOL && */kind == BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL) {
+                    println("skipped $signature [$kind] (${icFileDeserializer.fileDeserializer.file.name});")
                 }
                 continue
             }
@@ -386,4 +389,17 @@ class FileReaderFromSerializedIrFile(val irFile: SerializedIrFile) : IrLibraryFi
     override fun string(index: Int): ByteArray = stringReader.tableItemBytes(index)
 
     override fun body(index: Int): ByteArray = bodyReader.tableItemBytes(index)
+}
+
+private fun IrDeclaration.traverse(fn: (IrDeclaration) -> Unit) {
+    this.acceptVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitDeclaration(declaration: IrDeclarationBase) {
+            fn(declaration)
+            super.visitDeclaration(declaration)
+        }
+    })
 }
