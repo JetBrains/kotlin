@@ -9,21 +9,19 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.lombok.config.AccessLevel
-import org.jetbrains.kotlin.lombok.config.With
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.With
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
 
 class WithProcessor : Processor {
-    override fun contribute(classDescriptor: ClassDescriptor): SyntheticParts {
-
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
         val clWith = With.getOrNull(classDescriptor)
 
-        val functions = classDescriptor
+        classDescriptor
             .getJavaFields()
             .collectWithNotNull { With.getOrNull(it) ?: clWith }
             .mapNotNull { (field, annotation) -> createWith(classDescriptor, field, annotation) }
-
-        return SyntheticParts(functions)
+            .forEach(partsBuilder::addMethod)
     }
 
     private fun createWith(
@@ -37,7 +35,7 @@ class WithProcessor : Processor {
 
         return classDescriptor.createFunction(
             Name.identifier(functionName),
-            listOf(ValueParameter(field.name, field.type)),
+            listOf(LombokValueParameter(field.name, field.type)),
             classDescriptor.defaultType,
             visibility = with.visibility.toDescriptorVisibility()
         )

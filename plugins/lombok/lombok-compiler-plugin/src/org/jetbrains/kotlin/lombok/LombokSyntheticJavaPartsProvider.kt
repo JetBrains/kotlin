@@ -37,7 +37,7 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
      * but for us it is much easier to run full generation for class once
      * hence we cache results and reuse it
      */
-    private val partsCache: MutableMap<ClassDescriptor, SyntheticParts> = WeakHashMap()
+    private val partsCache: MutableMap<ClassDescriptor, SyntheticParts> = HashMap()
 
     override fun getMethodNames(thisDescriptor: ClassDescriptor): List<Name> =
         getSyntheticParts(thisDescriptor).methods.map { it.name }
@@ -75,28 +75,19 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
             }
         } ?: SyntheticParts.Empty
 
-    private fun computeSyntheticParts(descriptor: ClassDescriptor): SyntheticParts =
-        processors.map { it.contribute(descriptor) }.reduce { a, b -> a + b }
+    private fun computeSyntheticParts(descriptor: ClassDescriptor): SyntheticParts {
+        val builder = SyntheticPartsBuilder()
+        processors.forEach { it.contribute(descriptor, builder) }
+        return builder.build()
+    }
 
     /**
      * Deduplicates generated functions using name and argument counts, as lombok does
      */
     private fun <T : FunctionDescriptor> addNonExistent(result: MutableCollection<T>, toAdd: List<T>) {
-        if (toAdd.isEmpty()) return
-
-        val index = mutableMapOf<Name, List<T>>()
-
-        fun addToIndex(f: T) {
-            index.merge(f.name, listOf(f)) { a, b -> a + b}
-        }
-
-        result.forEach(::addToIndex)
-
         toAdd.forEach { f ->
-            val existing = index.getOrDefault(f.name, emptyList())
-            if (existing.none { sameSignature (it, f) } ) {
+            if (result.none { sameSignature(it, f) }) {
                 result += f
-                addToIndex(f)
             }
         }
     }
@@ -106,6 +97,7 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
 
         /**
          * Lombok treat functions as having the same signature by arguments count only
+         * Corresponding code in lombok - https://github.com/projectlombok/lombok/blob/v1.18.20/src/core/lombok/javac/handlers/JavacHandlerUtil.java#L752
          */
         private fun sameSignature(a: FunctionDescriptor, b: FunctionDescriptor): Boolean {
             val aVararg = a.valueParameters.any { it.varargElementType != null }

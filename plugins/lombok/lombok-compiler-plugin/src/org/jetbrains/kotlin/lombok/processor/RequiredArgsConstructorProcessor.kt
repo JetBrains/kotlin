@@ -9,8 +9,8 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.lombok.config.Data
-import org.jetbrains.kotlin.lombok.config.RequiredArgsConstructor
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Data
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.RequiredArgsConstructor
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.lombok.utils.getJavaFields
 import org.jetbrains.kotlin.resolve.source.getPsi

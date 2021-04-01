@@ -13,5 +13,5 @@ class LombokResolveExtension(pluginConfig: LombokPluginConfig) : SyntheticJavaRe
 
     private val config = pluginConfig.configFile?.let(LombokConfig::parse) ?: LombokConfig.Empty
 
-    override fun getProvider(): SyntheticJavaPartsProvider = LombokSyntheticJavaPartsProvider(config)
+    override fun buildProvider(): SyntheticJavaPartsProvider = LombokSyntheticJavaPartsProvider(config)
 }

@@ -9,24 +9,27 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.lombok.config.*
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Accessors
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Getter
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Data
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Value
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
 
 class GetterProcessor(private val config: LombokConfig) : Processor {
 
-    override fun contribute(classDescriptor: ClassDescriptor): SyntheticParts {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
         val globalAccessors = Accessors.get(classDescriptor, config)
         val clGetter =
             Getter.getOrNull(classDescriptor)
                 ?: Data.getOrNull(classDescriptor)?.asGetter()
                 ?: Value.getOrNull(classDescriptor)?.asGetter()
 
-        val functions = classDescriptor
+        classDescriptor
             .getJavaFields()
             .collectWithNotNull { Getter.getOrNull(it) ?: clGetter }
             .mapNotNull { (field, annotation) -> createGetter(classDescriptor, field, annotation, globalAccessors) }
-
-        return SyntheticParts(functions)
+            .forEach(partsBuilder::addMethod)
     }
 
     private fun createGetter(

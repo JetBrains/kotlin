@@ -17,7 +17,7 @@ interface SyntheticJavaResolveExtension {
     ) {
         fun getProvider(project: Project): SyntheticJavaPartsProvider {
             val instances = getInstances(project)
-            val providers = instances.map { it.getProvider() }
+            val providers = instances.map { it.buildProvider() }
             return if (providers.isEmpty()) {
                 SyntheticJavaPartsProvider.EMPTY
             } else {
@@ -26,7 +26,7 @@ interface SyntheticJavaResolveExtension {
         }
     }
 
-    fun getProvider(): SyntheticJavaPartsProvider
+    fun buildProvider(): SyntheticJavaPartsProvider
 
 }
 

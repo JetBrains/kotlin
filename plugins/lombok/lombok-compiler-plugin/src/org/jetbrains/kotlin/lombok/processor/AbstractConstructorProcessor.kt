@@ -7,26 +7,26 @@ package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.lombok.config.ConstructorAnnotation
-import org.jetbrains.kotlin.lombok.utils.ValueParameter
-import org.jetbrains.kotlin.lombok.utils.createJavaConstructor
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.ConstructorAnnotation
+import org.jetbrains.kotlin.lombok.utils.LombokValueParameter
 import org.jetbrains.kotlin.lombok.utils.createFunction
+import org.jetbrains.kotlin.lombok.utils.createJavaConstructor
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractConstructorProcessor<A : ConstructorAnnotation> : Processor {
 
-    override fun contribute(classDescriptor: ClassDescriptor): SyntheticParts {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
         val valueParameters = getPropertiesForParameters(classDescriptor).map { property ->
-            ValueParameter(property.name, property.type)
+            LombokValueParameter(property.name, property.type)
         }
 
-        val result = getAnnotation(classDescriptor)?.let { annotation ->
+        getAnnotation(classDescriptor)?.let { annotation ->
             if (annotation.staticName == null) {
                 val constructor = classDescriptor.createJavaConstructor(
                     valueParameters = valueParameters,
                     visibility = annotation.visibility
                 )
-                SyntheticParts(constructors = listOfNotNull(constructor))
+                partsBuilder.addConstructor(constructor)
             } else {
                 val function = classDescriptor.createFunction(
                     Name.identifier(annotation.staticName!!),
@@ -36,10 +36,9 @@ abstract class AbstractConstructorProcessor<A : ConstructorAnnotation> : Process
                     visibility = annotation.visibility,
                     receiver = null
                 )
-                SyntheticParts(staticFunctions = listOf(function))
+                partsBuilder.addStaticFunction(function)
             }
         }
-        return result ?: SyntheticParts.Empty
     }
 
     protected abstract fun getAnnotation(classDescriptor: ClassDescriptor): A?

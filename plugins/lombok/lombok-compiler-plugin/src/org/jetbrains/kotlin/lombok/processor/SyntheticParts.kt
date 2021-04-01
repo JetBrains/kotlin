@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 
-data class SyntheticParts(
+class SyntheticParts(
     val methods: List<SimpleFunctionDescriptor> = emptyList(),
     val staticFunctions: List<SimpleFunctionDescriptor> = emptyList(),
     val constructors: List<ClassConstructorDescriptor> = emptyList()
@@ -23,4 +23,24 @@ data class SyntheticParts(
     companion object {
         val Empty = SyntheticParts()
     }
+}
+
+class SyntheticPartsBuilder {
+    private val methods = mutableListOf<SimpleFunctionDescriptor>()
+    private val staticFunctions = mutableListOf<SimpleFunctionDescriptor>()
+    private val constructors = mutableListOf<ClassConstructorDescriptor>()
+
+    fun addMethod(method: SimpleFunctionDescriptor) {
+        methods += method
+    }
+
+    fun addStaticFunction(function: SimpleFunctionDescriptor) {
+        staticFunctions += function
+    }
+
+    fun addConstructor(constructor: ClassConstructorDescriptor) {
+        constructors += constructor
+    }
+
+    fun build(): SyntheticParts = SyntheticParts(methods, staticFunctions, constructors)
 }

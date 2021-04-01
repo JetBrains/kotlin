@@ -1,25 +1,17 @@
 //FILE: WithExample.java
 
-import lombok.AccessLevel;
-import lombok.With;
+import lombok.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class WithExample {
 
-    //todo replace constructors with annotations when supported
-    public WithExample() {
+    @Getter @With private int age = 10;
 
-    }
+    @Getter @With private String name;
 
-    public WithExample(int age, String name) {
-
-    }
-
-    @With private int age = 10;
-
-    @With private String name;
-
-    static void test() {
-        WithExample obj = new WithExample().withAge(16).withName("fooo");
+    public static WithExample test() {
+        return new WithExample().withAge(16).withName("fooo");
     }
 }
 
@@ -27,7 +19,10 @@ public class WithExample {
 //FILE: test.kt
 
 class Test {
+
     fun run() {
         val obj: WithExample = WithExample().withAge(16).withName("fooo")
+        assertEquals(obj.getName(), "fooo")
+        assertEquals(obj.age, 16)
     }
 }

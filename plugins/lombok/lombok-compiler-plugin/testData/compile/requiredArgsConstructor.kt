@@ -36,5 +36,6 @@ public class ConstructorExample {
 class Test {
     fun run() {
         val generated = ConstructorExample("foo", true)
+        assertEquals(generated.foo, "foo")
     }
 }

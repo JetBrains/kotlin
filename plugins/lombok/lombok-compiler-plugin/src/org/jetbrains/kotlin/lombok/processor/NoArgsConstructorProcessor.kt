@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.lombok.config.NoArgsConstructor
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.NoArgsConstructor
 
 class NoArgsConstructorProcessor : AbstractConstructorProcessor<NoArgsConstructor>() {
 

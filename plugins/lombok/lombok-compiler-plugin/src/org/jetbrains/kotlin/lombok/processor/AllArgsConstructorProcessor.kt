@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.lombok.config.AllArgsConstructor
-import org.jetbrains.kotlin.lombok.config.Value
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.AllArgsConstructor
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Value
 import org.jetbrains.kotlin.lombok.utils.getJavaFields
 
 class AllArgsConstructorProcessor : AbstractConstructorProcessor<AllArgsConstructor>() {

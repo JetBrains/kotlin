@@ -31,12 +31,14 @@ import lombok.*;
 class Test {
     fun run() {
         val obj = ValueExample("name", 12, 4.5)
-        obj.getName()
-        val name = obj.name
-        obj.getAge()
-        val age = obj.age
-        val score = obj.score
+        assertEquals(obj.getName(), "name")
+        assertEquals(obj.name, "name")
+        assertEquals(obj.getAge(), 12)
+        assertEquals(obj.age, 12)
+        assertEquals(obj.score, 4.5)
 
-        val ex: ValueExample.Exercise<Int> = ValueExample.Exercise.of("name", 12)
+        val ex: ValueExample.Exercise<Int> = ValueExample.Exercise.of("nam1e", 42)
+        assertEquals(ex.name, "nam1e")
+        assertEquals(ex.value, 42)
     }
 }

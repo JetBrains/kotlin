@@ -31,11 +31,13 @@ class Test {
     fun run() {
         val obj = DataExample("name")
         obj.getName()
-        val name = obj.name
+        assertEquals(obj.name, "name")
         obj.getTags()
         val tags = obj.tags
         obj.setScore(1.5)
+        assertEquals(obj.score, 1.5)
         obj.score = 2.5
+        assertEquals(obj.score, 2.5)
 
         val ex: DataExample.Exercise<Int> = DataExample.Exercise.of("name", 12)
     }

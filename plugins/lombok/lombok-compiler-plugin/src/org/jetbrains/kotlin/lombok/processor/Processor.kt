@@ -12,5 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
  */
 interface Processor {
 
-    fun contribute(classDescriptor: ClassDescriptor): SyntheticParts
+    fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder)
+
 }
