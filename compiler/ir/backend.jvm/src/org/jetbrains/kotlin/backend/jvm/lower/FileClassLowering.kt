@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
@@ -78,13 +79,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
 
     private fun createFileClass(irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
         val fileEntry = irFile.fileEntry
-        val fileClassInfo = when (fileEntry) {
-            is PsiIrFileEntry ->
-                JvmFileClassUtil.getFileClassInfoNoResolve(fileEntry.psiFile as KtFile)
-            is NaiveSourceBasedFileEntryImpl ->
-                JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(irFile.fqName, fileEntry.name), false)
-            else -> error("unknown kind of file entry: $fileEntry")
-        }
+        val fileClassInfo = irFile.getFileClassInfo()
         val isMultifilePart = fileClassInfo.withJvmMultifileClass
 
         val onlyPrivateDeclarationsAndFeatureIsEnabled =
@@ -95,10 +90,14 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                     isPrivate || isInlineOnly
                 }
 
+        val fileClassOrigin =
+            if (!isMultifilePart || context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
+                IrDeclarationOrigin.FILE_CLASS
+            else
+                IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
         return IrClassImpl(
             0, fileEntry.maxOffset,
-            if (!isMultifilePart || context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
-                IrDeclarationOrigin.FILE_CLASS else IrDeclarationOrigin.SYNTHETIC_FILE_CLASS,
+            fileClassOrigin,
             symbol = IrClassSymbolImpl(),
             name = fileClassInfo.fileClassFqName.shortName(),
             kind = ClassKind.CLASS,
@@ -148,3 +147,14 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
         private val JVM_NAME = IdSignature.PublicSignature("kotlin.jvm", "JvmName", null, 0)
     }
 }
+
+
+fun IrFile.getFileClassInfo(): JvmFileClassInfo =
+    when (val fileEntry = this.fileEntry) {
+        is PsiIrFileEntry ->
+            JvmFileClassUtil.getFileClassInfoNoResolve(fileEntry.psiFile as KtFile)
+        is NaiveSourceBasedFileEntryImpl ->
+            JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(fqName, fileEntry.name), false)
+        else ->
+            error("unknown kind of file entry: $fileEntry")
+    }

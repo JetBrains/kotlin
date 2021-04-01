@@ -19771,6 +19771,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("anonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/anonymousObject.kt");
+        }
+
+        @TestMetadata("anonymousObjectInInheritedMultifilePart.kt")
+        public void testAnonymousObjectInInheritedMultifilePart() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/anonymousObjectInInheritedMultifilePart.kt");
+        }
+
+        @TestMetadata("anonymousObjectInMultifilePart.kt")
+        public void testAnonymousObjectInMultifilePart() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/anonymousObjectInMultifilePart.kt");
+        }
+
+        @TestMetadata("localClass.kt")
+        public void testLocalClass() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/localClass.kt");
+        }
+
         @TestMetadata("metadataField.kt")
         public void testMetadataField() throws Exception {
             runTest("compiler/testData/codegen/box/jvmPackageName/metadataField.kt");

@@ -23463,6 +23463,30 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("anonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/anonymousObject.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousObjectInInheritedMultifilePart.kt")
+        public void testAnonymousObjectInInheritedMultifilePart() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/anonymousObjectInInheritedMultifilePart.kt");
+        }
+
+        @Test
+        @TestMetadata("anonymousObjectInMultifilePart.kt")
+        public void testAnonymousObjectInMultifilePart() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/anonymousObjectInMultifilePart.kt");
+        }
+
+        @Test
+        @TestMetadata("localClass.kt")
+        public void testLocalClass() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmPackageName/localClass.kt");
+        }
+
+        @Test
         @TestMetadata("metadataField.kt")
         public void testMetadataField() throws Exception {
             runTest("compiler/testData/codegen/box/jvmPackageName/metadataField.kt");

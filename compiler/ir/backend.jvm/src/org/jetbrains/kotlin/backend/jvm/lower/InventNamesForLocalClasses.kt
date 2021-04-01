@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -54,15 +55,22 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             if (!data.isLocal) {
                 // This is not a local class, so we need not invent a name for it, the type mapper will correctly compute it
                 // by navigating through its containers.
-
-                val internalName = data.enclosingName?.let { enclosingName ->
+                val enclosingName = data.enclosingName
+                val internalName = if (enclosingName != null) {
                     "$enclosingName$${declaration.name.asString()}"
-                } ?: (declaration.parent as IrFile).let { file ->
-                    JvmClassName.byFqNameWithoutInnerClasses(file.fqName.child(declaration.name)).internalName
+                } else {
+                    val file = declaration.parent as? IrFile
+                        ?: throw AssertionError("Top-level class expected: ${declaration.render()}")
+                    val classFqn =
+                        if (declaration.origin == IrDeclarationOrigin.FILE_CLASS ||
+                            declaration.origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
+                        )
+                            file.getFileClassInfo().fileClassFqName
+                        else
+                            file.fqName.child(declaration.name)
+                    JvmClassName.byFqNameWithoutInnerClasses(classFqn).internalName
                 }
-
                 declaration.acceptChildren(this, data.withName(internalName))
-
                 return
             }
 
