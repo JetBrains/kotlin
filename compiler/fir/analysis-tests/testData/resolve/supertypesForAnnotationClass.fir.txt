@@ -25,7 +25,7 @@ FILE: supertypesForAnnotationClass.kt
         }
 
     }
-    public final class MyClass : R|SomeClass| {
+    public final class MyClass : R|SomeInterface|, R|SomeClass| {
         public constructor(): R|MyClass| {
             super<R|SomeClass|>()
         }

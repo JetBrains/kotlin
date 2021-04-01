@@ -27,7 +27,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         if (declaration.isLocal) reporter.reportOn(declaration.source, FirErrors.LOCAL_ANNOTATION_CLASS_ERROR, context)
 
         if (declaration.superTypeRefs.size != 1) {
-            reporter.report(declaration.source, FirErrors.SUPERTYPES_FOR_ANNOTATION_CLASS)
+            reporter.reportOn(declaration.source, FirErrors.SUPERTYPES_FOR_ANNOTATION_CLASS, context)
         }
 
         for (it in declaration.declarations) {
