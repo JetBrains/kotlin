@@ -11,7 +11,7 @@ import java.lang.StringBuilder
 object CodeMetaInfoParser {
     private val openingRegex = """<!([^>][^"]*?((".*?")(, ".*?")*?)?[^"]*?)!>""".toRegex()
     private val closingRegex = "<!>".toRegex()
-    private val commentRegex = """(//[^\r\n]*)|(/\*(.*?)\*/)""".toRegex(RegexOption.DOT_MATCHES_ALL)
+    private val commentRegex = """/\*(.*?)\*/""".toRegex(RegexOption.DOT_MATCHES_ALL)
 
     /*
      * ([\S&&[^,(){}]]+) -- tag, allowing all non-space characters except bracers and curly bracers
