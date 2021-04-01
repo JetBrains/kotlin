@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
@@ -31,7 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
-import org.jetbrains.kotlin.library.impl.IrMemoryIntArrayWriter
+import org.jetbrains.kotlin.library.impl.IrMemoryLongArrayWriter
 
 class IcSerializer(
     irBuiltIns: IrBuiltIns,
@@ -118,8 +116,7 @@ class IcSerializer(
             }
 
             val order = storeOrder(file) { symbol ->
-                val idSig = icDeclarationTable.signatureByDeclaration(symbol.owner as IrDeclaration)
-                fileSerializer.protoIdSignature(idSig)
+                fileSerializer.serializeIrSymbol(symbol)
             }
 
             val serializedIrFile = fileSerializer.serializeDeclarationsForIC(file, newDeclarations)
@@ -172,11 +169,11 @@ class SerializedOrder(
     val containerDeclarationSignatures: ByteArray,
 )
 
-fun storeOrder(file: IrFile, idSigToInt: (IrSymbol) -> Int): SerializedOrder {
-    val topLevelSignatures = mutableListOf<Int>()
+fun storeOrder(file: IrFile, idSigToLong: (IrSymbol) -> Long): SerializedOrder {
+    val topLevelSignatures = mutableListOf<Long>()
     val containerDeclarationSignatures = mutableListOf<ByteArray>()
 
-    fun IrDeclaration.idSigIndex(): Int = idSigToInt(symbol)
+    fun IrDeclaration.idSigIndex(): Long = idSigToLong(symbol)
 
     file.declarations.forEach { d ->
         topLevelSignatures += d.idSigIndex()
@@ -192,7 +189,7 @@ fun storeOrder(file: IrFile, idSigToInt: (IrSymbol) -> Int): SerializedOrder {
                     list += it.idSigIndex()
                 }
 
-                containerDeclarationSignatures += IrMemoryIntArrayWriter(list).writeIntoMemory()
+                containerDeclarationSignatures += IrMemoryLongArrayWriter(list).writeIntoMemory()
 
                 super.visitClass(declaration)
             }
@@ -200,7 +197,7 @@ fun storeOrder(file: IrFile, idSigToInt: (IrSymbol) -> Int): SerializedOrder {
     }
 
     return SerializedOrder(
-        IrMemoryIntArrayWriter(topLevelSignatures).writeIntoMemory(),
+        IrMemoryLongArrayWriter(topLevelSignatures).writeIntoMemory(),
         IrMemoryArrayWriter(containerDeclarationSignatures).writeIntoMemory(),
     )
 }

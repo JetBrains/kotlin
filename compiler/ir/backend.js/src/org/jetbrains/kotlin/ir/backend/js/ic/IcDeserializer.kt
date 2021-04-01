@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.library.impl.DeclarationId
-import org.jetbrains.kotlin.library.impl.DeclarationIrTableMemoryReader
-import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
-import org.jetbrains.kotlin.library.impl.IrIntArrayMemoryReader
+import org.jetbrains.kotlin.library.impl.*
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import kotlin.collections.ArrayDeque
 import kotlin.collections.HashSet
@@ -188,11 +185,14 @@ class IcDeserializer(
 
             icFileDeserializer.signatureToDeclaration[signature] = declaration
 
-            if (!declaration.isFakeOverride) {
                 icFileDeserializer.injectCarriers(declaration, signature)
-            }
 
             icFileDeserializer.mappingsDeserializer(signature, declaration)
+
+            // Make sure all members are loaded
+            if (declaration is IrClass) {
+                icFileDeserializer.loadClassOrder(signature) {}
+            }
         }
 
 
@@ -216,8 +216,9 @@ class IcDeserializer(
 
                 fd.file.declarations.clear()
 
-                IrIntArrayMemoryReader(order.topLevelSignatures).array.forEach {
-                    val idSig = icDeserializer.deserializeIdSignature(it)
+                IrLongArrayMemoryReader(order.topLevelSignatures).array.forEach {
+                    val symbolData = icDeserializer.symbolDeserializer.parseSymbolData(it)
+                    val idSig = icDeserializer.symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
 
                     if (idSig in icDeserializer.visited) {
                         val declaration = icDeserializer.signatureToDeclaration[idSig]!!
@@ -228,34 +229,18 @@ class IcDeserializer(
                 val containerDeclarations = IrArrayMemoryReader(order.containerDeclarationSignatures)
                 for (i in 0 until containerDeclarations.entryCount()) {
                     val bytes = containerDeclarations.tableItemBytes(i)
-                    val indices = IrIntArrayMemoryReader(bytes).array
+                    val indices = IrLongArrayMemoryReader(bytes).array
 
-                    val containerSig = icDeserializer.deserializeIdSignature(indices[0])
+                    val symbolData = icDeserializer.symbolDeserializer.parseSymbolData(indices[0])
+                    val containerSig = icDeserializer.symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
 
                     if (containerSig in icDeserializer.visited) {
                         val irClass = icDeserializer.signatureToDeclaration[containerSig]!! as IrClass
 
-                        val localSignatureMap = mutableMapOf<IdSignature?, IrSymbol>()
-                        irClass.declarations.forEach {
-                            localSignatureMap[it.symbol.signature] = it.symbol
-                            if (it is IrProperty) {
-                                it.backingField?.let { localSignatureMap[it.symbol.signature] = it.symbol }
-                                it.getter?.let { localSignatureMap[it.symbol.signature] = it.symbol }
-                                it.setter?.let { localSignatureMap[it.symbol.signature] = it.symbol }
-                            }
-                        }
-
                         irClass.declarations.clear()
 
-                        for (j in 1 until indices.size) {
-                            val idSig = icDeserializer.deserializeIdSignature(indices[j])
-
-                            val symbol = localSignatureMap[idSig] ?: existingPublicSymbols[idSig] ?: icDeserializer.privateSymbols[idSig]
-
-                            val declaration = if (symbol != null && symbol.isBound) symbol.owner as IrDeclaration else icDeserializer.signatureToDeclaration[idSig]
-                            if (declaration == null) continue
-
-                            irClass.declarations += declaration
+                        icDeserializer.loadClassOrder(containerSig) {
+                            irClass.declarations += it.owner as IrDeclaration
                         }
                     }
                 }
@@ -283,7 +268,7 @@ class IcDeserializer(
 
         val signatureToDeclaration = mutableMapOf<IdSignature, IrDeclaration>()
 
-        private val symbolDeserializer = IrSymbolDeserializer(
+        val symbolDeserializer = IrSymbolDeserializer(
             linker.symbolTable,
             fileReader,
             fileDeserializer.file.path,
@@ -330,6 +315,33 @@ class IcDeserializer(
         }) {
             deserializeIrSymbol(it)
         }
+
+        val topLevelSignatures = IrLongArrayMemoryReader(icFileData.order.topLevelSignatures).array.map {
+            val symbolData = symbolDeserializer.parseSymbolData(it)
+            symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+        }
+
+        private val containerSigToOrder = mutableMapOf<IdSignature, LongArray>().also { map ->
+            val containerDeclarations = IrArrayMemoryReader(icFileData.order.containerDeclarationSignatures)
+            for (i in 0 until containerDeclarations.entryCount()) {
+                val bytes = containerDeclarations.tableItemBytes(i)
+                val indices = IrLongArrayMemoryReader(bytes).array
+
+                val symbolData = symbolDeserializer.parseSymbolData(indices[0])
+                val containerSig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+
+                map[containerSig] = indices
+            }
+        }
+
+        fun loadClassOrder(classSignature: IdSignature, fn: (IrSymbol) -> Unit) {
+            val indices = containerSigToOrder[classSignature] ?: return
+
+            for (i in 1 until indices.size) {
+                fn(deserializeIrSymbol(indices[i]))
+            }
+        }
+
 
         fun deserializeDeclaration(idSig: IdSignature): IrDeclaration? {
             val idSigIndex = reversedSignatureIndex[idSig] ?: return null
