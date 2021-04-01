@@ -299,7 +299,7 @@ object KotlinCompilerClient {
     }
 
     fun detectCompilerClasspath(): List<String>? =
-            System.getProperty("java.class.path")
+        CompilerSystemProperties.JAVA_CLASS_PATH.value
             ?.split(File.pathSeparator)
             ?.map { File(it).parentFile }
             ?.distinct()
@@ -368,13 +368,13 @@ object KotlinCompilerClient {
 
 
     private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, reportingTargets: DaemonReportingTargets): Boolean {
-        val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+        val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
         val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value ?: error("${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property} is not set!")
         val platformSpecificOptions = listOf(
                 // hide daemon window
                 "-Djava.awt.headless=true",
                 "-D$${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname")
-        val javaVersion = System.getProperty("java.specification.version")?.toIntOrNull()
+        val javaVersion = CompilerSystemProperties.JAVA_VERSION.value?.toIntOrNull()
         val javaIllegalAccessWorkaround =
             if (javaVersion != null && javaVersion >= 16)
                 listOf("--illegal-access=permit")
