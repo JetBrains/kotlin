@@ -64,6 +64,17 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         testConfigurationCacheOf("assemble", executedTaskNames = asList(":lib-project:compileKotlin"))
     }
 
+    // KT-43605
+    @Test
+    fun testInstantExecutionWithBuildSrc() = with(Project("instantExecutionWithBuildSrc")) {
+        setupWorkingDir()
+        testConfigurationCacheOf(
+            "build", executedTaskNames = listOf(
+                ":compileKotlin",
+            )
+        )
+    }
+
     @Test
     fun testInstantExecutionForJs() = with(Project("instantExecutionToJs")) {
         testConfigurationCacheOf("assemble", executedTaskNames = asList(":compileKotlin2Js"))
