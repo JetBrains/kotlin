@@ -1,7 +1,11 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
+
+// IGNORE_BACKEND: ANDROID
+
 // FULL_JDK
 // WITH_RUNTIME
+
 import java.util.function.Consumer
 
 class A : Iterable<String> {
