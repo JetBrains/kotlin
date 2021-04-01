@@ -69,16 +69,6 @@ fun ConeDiagnostic.toFirDiagnostics(
     return listOfNotNull(toFirDiagnostic(source, qualifiedAccessSource))
 }
 
-private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
-    return when (this) {
-        is ConeClassLikeType -> !isMarkedNullable
-        is ConeTypeParameterType -> !isMarkedNullable && lookupTag.typeParameterSymbol.fir.bounds.any {
-            it.coneTypeSafe<ConeKotlinType>()?.isEffectivelyNotNull() == true
-        }
-        else -> false
-    }
-}
-
 private fun mapUnsafeCallError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
@@ -88,7 +78,8 @@ private fun mapUnsafeCallError(
     if (rootCause !is InapplicableWrongReceiver) return null
     val actualType = rootCause.actualType ?: return null
     val expectedType = rootCause.expectedType
-    if (actualType.isNullable && (expectedType == null || expectedType.isEffectivelyNotNull())) {
+    if (actualType.canBeNull && expectedType?.canBeNull != true) {
+        // TODO: Distinguish UPPER_BOUND_VIOLATED (currently mapped to UNSAFE_CALL)
         if (diagnostic.candidate.callInfo.isImplicitInvoke) {
             return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, actualType)
         }

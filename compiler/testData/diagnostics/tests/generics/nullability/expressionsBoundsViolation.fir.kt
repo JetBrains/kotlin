@@ -13,7 +13,7 @@ fun <F : String?> bar(x: F) {
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(x)
     <!INAPPLICABLE_CANDIDATE!>foo1<!><F>(x)
 
-    x.<!INAPPLICABLE_CANDIDATE!>foo2<!>()
-    x.<!INAPPLICABLE_CANDIDATE!>foo2<!><F>()
+    x<!UNSAFE_CALL!>.<!>foo2()
+    x<!UNSAFE_CALL!>.<!>foo2<F>()
 }
 

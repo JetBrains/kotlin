@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -167,9 +170,15 @@ val ConeKotlinType.canBeNull: Boolean
             is ConeDefinitelyNotNullType -> false
             is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.fir.bounds.any { it.canBeNull }
             is ConeIntersectionType -> intersectedTypes.any { it.canBeNull }
+            is ConeTypeVariableType -> lookupTag.originalTypeParameter?.safeAs<ConeTypeParameterLookupTag>()?.typeParameterSymbol?.allBoundsAreNullable()
+                ?: isNullable
             else -> isNullable
         }
     }
+
+private fun FirTypeParameterSymbol.allBoundsAreNullable(): Boolean {
+    return fir.bounds.all { it.coneType.isNullable }
+}
 
 val ConeKotlinType?.functionTypeKind: FunctionClassKind?
     get() {
