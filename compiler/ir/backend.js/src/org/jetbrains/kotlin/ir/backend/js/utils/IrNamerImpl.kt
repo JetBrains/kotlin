@@ -20,7 +20,8 @@ class IrNamerImpl(
 
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {
         require(function.dispatchReceiverParameter != null)
-        val signature = jsFunctionSignature(function, context)
+        val signature = try { jsFunctionSignature(function, context) } catch (t: Throwable) { "error_signature"}
+//        val signature = jsFunctionSignature(function, context)
         return signature.toJsName()
     }
 
