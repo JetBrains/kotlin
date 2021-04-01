@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.project.model
 
-fun module(name: String) = BasicKotlinModule(LocalModuleIdentifier("current", name))
+fun module(name: String, classifier: String? = null) = BasicKotlinModule(LocalModuleIdentifier("current", name, classifier))
 
 fun BasicKotlinModule.fragment(vararg nameParts: String): BasicKotlinModuleFragment =
     fragment(nameParts.drop(1).joinToString("", nameParts.first()) { it.capitalize() })
@@ -21,10 +21,16 @@ fun BasicKotlinModule.variant(name: String): BasicKotlinModuleVariant =
         ?.let { it as? BasicKotlinModuleVariant ?: error("$name is not a variant") }
         ?: BasicKotlinModuleVariant(this, name).also { fragments.add(it) }
 
+fun KotlinModuleIdentifier.equalsWithoutClassifier(other: KotlinModuleIdentifier) = when (this) {
+    is LocalModuleIdentifier -> other is LocalModuleIdentifier &&
+            LocalModuleIdentifier(buildId, projectId, null) == LocalModuleIdentifier(other.buildId, other.projectId, null)
+    is MavenModuleIdentifier -> other is MavenModuleIdentifier &&
+            MavenModuleIdentifier(group, name, null) == MavenModuleIdentifier(other.group, other.name, null)
+    else -> error("can't check equality yet")
+}
 
-fun BasicKotlinModuleFragment.depends(fragment: BasicKotlinModuleFragment) {
-    require(fragment.containingModule == containingModule)
-    declaredContainingModuleFragmentDependencies.add(fragment)
+fun BasicKotlinModuleFragment.depends(module: BasicKotlinModule) {
+    this.declaredModuleDependencies += KotlinModuleDependency(module.moduleIdentifier)
 }
 
 fun BasicKotlinModuleFragment.refinedBy(fragment: BasicKotlinModuleFragment) {
@@ -38,38 +44,50 @@ fun BasicKotlinModuleFragment.refines(fragment: BasicKotlinModuleFragment) {
 
 // ---
 
-fun simpleModule(name: String) = module(name).apply {
-    listOf("main", "test").forEach { purpose ->
-        val common = fragment("common", purpose)
-        if (purpose == "test")
-            common.depends(fragment("common", "main"))
+internal data class ModuleBundle(val modules: List<BasicKotlinModule>) {
+    val main: BasicKotlinModule
+        get() = modules.single { it.moduleIdentifier.moduleClassifier == null }
 
-        val (jvm, js, linux) = listOf("jvm", "js", "linux").map { platform ->
-            variant(platform, purpose).apply {
-                variantAttributes[KotlinPlatformTypeAttribute] = when (platform) {
-                    "jvm" -> KotlinPlatformTypeAttribute.JVM
-                    "js" -> KotlinPlatformTypeAttribute.JS
-                    else -> {
-                        variantAttributes[KotlinNativeTargetAttribute] = platform
-                        KotlinPlatformTypeAttribute.NATIVE
+    operator fun get(modulePurpose: String): BasicKotlinModule = when (modulePurpose) {
+        "main" -> main
+        else -> modules.single { it.moduleIdentifier.moduleClassifier == modulePurpose }
+    }
+}
+
+internal fun simpleModuleBundle(name: String): ModuleBundle {
+    fun createModule(purpose: String): BasicKotlinModule =
+        module(name, purpose.takeIf { it != "main" }).apply {
+            val common = fragment("common")
+
+            val (jvm, js, linux) = listOf("jvm", "js", "linux").map { platform ->
+                variant(platform).apply {
+                    variantAttributes[KotlinPlatformTypeAttribute] = when (platform) {
+                        "jvm" -> KotlinPlatformTypeAttribute.JVM
+                        "js" -> KotlinPlatformTypeAttribute.JS
+                        else -> {
+                            variantAttributes[KotlinNativeTargetAttribute] = platform
+                            KotlinPlatformTypeAttribute.NATIVE
+                        }
                     }
                 }
-                if (purpose == "test") {
-                    isExported = false
-                    depends(variant(platform, "main"))
-                }
+            }
+
+            fragment("jvmAndJs").apply {
+                refines(common)
+                refinedBy(jvm)
+                refinedBy(js)
+            }
+            fragment("jsAndLinux").apply {
+                refines(common)
+                refinedBy(js)
+                refinedBy(linux)
             }
         }
 
-        fragment("jvmAndJs", purpose).apply {
-            refines(common)
-            refinedBy(jvm)
-            refinedBy(js)
-        }
-        fragment("jsAndLinux", purpose).apply {
-            refines(common)
-            refinedBy(js)
-            refinedBy(linux)
-        }
-    }
+    val main = createModule("main")
+    val test = createModule("test")
+
+    test.fragment("common").depends(main)
+
+    return ModuleBundle(listOf(main, test))
 }

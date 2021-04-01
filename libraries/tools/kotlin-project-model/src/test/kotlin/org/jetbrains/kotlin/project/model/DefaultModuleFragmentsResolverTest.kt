@@ -8,27 +8,32 @@ package org.jetbrains.kotlin.project.model
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class DefaultModuleFragmentsResolverTest {
-    val moduleFoo = simpleModule("foo")
-    val moduleBar = simpleModule("bar")
+internal class DefaultModuleFragmentsResolverTest {
+    val bundleFoo = simpleModuleBundle("foo")
+    val bundleBar = simpleModuleBundle("bar")
 
     val fragmentResolver = DefaultModuleFragmentsResolver(MatchVariantsByExactAttributes())
 
     @Test
     fun testFragmentVisibility() {
+        val moduleFooMain = bundleFoo.main
+        val moduleBarMain = bundleBar.main
+
         val expectedVisibleFragments = mapOf(
-            "common" to setOf("commonMain"),
-            "jvmAndJs" to setOf("commonMain", "jvmAndJsMain"),
-            "jsAndLinux" to setOf("commonMain", "jsAndLinuxMain"),
-            "jvm" to setOf("commonMain", "jvmAndJsMain", "jvmMain"),
-            "js" to setOf("commonMain", "jvmAndJsMain", "jsAndLinuxMain", "jsMain"),
-            "linux" to setOf("commonMain", "jsAndLinuxMain", "linuxMain")
+            "common" to setOf("common"),
+            "jvmAndJs" to setOf("common", "jvmAndJs"),
+            "jsAndLinux" to setOf("common", "jsAndLinux"),
+            "jvm" to setOf("common", "jvmAndJs", "jvm"),
+            "js" to setOf("common", "jvmAndJs", "jsAndLinux", "js"),
+            "linux" to setOf("common", "jsAndLinux", "linux")
         )
 
-        moduleBar.fragments.forEach { consumingFragment ->
-            val result = fragmentResolver.getChosenFragments(consumingFragment, moduleFoo)
-            val expected = expectedVisibleFragments.getValue(consumingFragment.fragmentName.removeSuffix("Main").removeSuffix("Test"))
+        moduleBarMain.fragments.forEach { consumingFragment ->
+            val result = fragmentResolver.getChosenFragments(consumingFragment, moduleFooMain)
+            assertTrue(result is FragmentResolution.ChosenFragments)
+            val expected = expectedVisibleFragments.getValue(consumingFragment.fragmentName)
             assertEquals(expected, result.visibleFragments.map { it.fragmentName }.toSet())
         }
     }
@@ -38,16 +43,20 @@ class DefaultModuleFragmentsResolverTest {
         // TODO this behavior replicates 1.3.x MPP where a mismatched variant gets ignored and only matched variants are intersected.
         //  This helps with non-published local native targets.
         //  Consider making it more strict when we have a solution to the original problem.
-        val dependingModule = simpleModule("baz").apply {
-            variant("linuxMain").variantAttributes.replace(KotlinNativeTargetAttribute, "notLinux")
+        val dependingModule = simpleModuleBundle("baz").main.apply {
+            variant("linux").variantAttributes.replace(KotlinNativeTargetAttribute, "notLinux")
         }
-        assumeTrue(MatchVariantsByExactAttributes().getChosenVariant(dependingModule.variant("linuxMain"), moduleFoo) is NoVariantMatch)
+        val moduleFooMain = bundleFoo.main
+        val variantResolution = MatchVariantsByExactAttributes().getChosenVariant(dependingModule.variant("linux"), moduleFooMain)
+        assumeTrue(variantResolution is VariantResolution.NoVariantMatch)
 
-        val (commonMainResult, jsAndLinuxResult) = listOf("commonMain", "jsAndLinuxMain").map {
-            fragmentResolver.getChosenFragments(dependingModule.fragment(it), moduleFoo).visibleFragments.map { it.fragmentName }.toSet()
+        val (commonMainResult, jsAndLinuxResult) = listOf("common", "jsAndLinux").map {
+            val chosenFragments = fragmentResolver.getChosenFragments(dependingModule.fragment(it), moduleFooMain)
+            assertTrue(chosenFragments is FragmentResolution.ChosenFragments)
+            chosenFragments.visibleFragments.map { it.fragmentName }.toSet()
         }
 
-        assertEquals(setOf("commonMain", "jvmAndJsMain"), commonMainResult)
-        assertEquals(setOf("commonMain", "jvmAndJsMain", "jsAndLinuxMain", "jsMain"), jsAndLinuxResult)
+        assertEquals(setOf("common", "jvmAndJs"), commonMainResult)
+        assertEquals(setOf("common", "jvmAndJs", "jsAndLinux", "js"), jsAndLinuxResult)
     }
 }
