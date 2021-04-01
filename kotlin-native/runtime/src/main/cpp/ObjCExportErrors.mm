@@ -70,6 +70,10 @@ extern "C" id Kotlin_ObjCExport_ExceptionAsNSError(KRef exception, const TypeInf
     TerminateWithUnhandledException(exception);
   }
 
+  return Kotlin_ObjCExport_WrapExceptionToNSError(exception);
+}
+
+extern "C" id Kotlin_ObjCExport_WrapExceptionToNSError(KRef exception) {
   NSMutableDictionary<NSErrorUserInfoKey, id>* userInfo = [[NSMutableDictionary new] autorelease];
   userInfo[@"KotlinException"] = Kotlin_ObjCExport_refToObjC(exception);
   userInfo[@"KotlinExceptionOrigin"] = @(&kotlinExceptionOriginChar); // Support for different Kotlin runtimes loaded.

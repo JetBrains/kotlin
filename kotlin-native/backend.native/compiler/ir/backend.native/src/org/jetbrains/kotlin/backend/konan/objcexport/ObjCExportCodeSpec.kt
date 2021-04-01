@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -88,6 +89,10 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 }
             }
 
+            if (KotlinBuiltIns.isThrowable(descriptor)) {
+                methods += ObjCKotlinThrowableAsErrorMethod
+            }
+
             val categoryMethods = categoryMembers[descriptor].orEmpty().toObjCMethods()
 
             val superClassNotAny = descriptor.getSuperClassNotAny()
@@ -148,6 +153,8 @@ internal class ObjCClassMethodForKotlinEnumValues(
 ) : ObjCMethodSpec()
 
 internal class ObjCGetterForObjectInstance(val selector: String) : ObjCMethodSpec()
+
+internal object ObjCKotlinThrowableAsErrorMethod : ObjCMethodSpec()
 
 internal sealed class ObjCTypeSpec(val binaryName: String)
 
