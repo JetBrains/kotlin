@@ -501,7 +501,7 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
         result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies || useFir
         result[JvmAnalysisFlags.disableUltraLightClasses] = disableUltraLightClasses
-        result[JvmAnalysisFlags.useIR] = useIR
+        result[JvmAnalysisFlags.useIR] = !useOldBackend
         return result
     }
 
