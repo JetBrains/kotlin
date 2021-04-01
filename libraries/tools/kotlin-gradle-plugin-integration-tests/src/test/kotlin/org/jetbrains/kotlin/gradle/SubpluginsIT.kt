@@ -263,4 +263,12 @@ class SubpluginsIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testLombokPlugin() {
+        Project("lombokProject").build("build") {
+            assertSuccessful()
+        }
+        
+    }
 }

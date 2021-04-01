@@ -1,0 +1,14 @@
+plugins {
+    id "java"
+    id "kotlin"
+    id "kotlin-lombok"
+    id "io.freefair.lombok" version "5.3.0"
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+
+
+
