@@ -145,6 +145,11 @@ object ConeTypeIntersector {
         protected fun ConeKotlinType.resultNullability(context: ConeTypeContext): ResultNullability =
             when {
                 isMarkedNullable -> ACCEPT_NULL
+                // Technically, upper bound's nullability is more accurate, e.g., a type from Java with @NotNull.
+                // However, it requires one more recursive call here. In contrast, UNKNOWN here is a safe approximation: for even such
+                // flexible type case, as long as the upper bound is still used in the intersection computation (and it indeed is),
+                // we will still get the same nullability from the resulting intersected type.
+                this is ConeFlexibleType -> UNKNOWN
                 ConeNullabilityChecker.isSubtypeOfAny(context, this) -> NOT_NULL
                 else -> UNKNOWN
             }
