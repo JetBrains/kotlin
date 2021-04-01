@@ -20,6 +20,7 @@ dependencies {
     testImplementation(project(":kotlin-gradle-subplugin-example"))
     testImplementation(project(":kotlin-allopen"))
     testImplementation(project(":kotlin-noarg"))
+    testImplementation(project(":kotlin-lombok"))
     testImplementation(project(":kotlin-sam-with-receiver"))
     testImplementation(project(":kotlin-test:kotlin-test-jvm"))
     testImplementation(project(":native:kotlin-native-utils"))
