@@ -86,11 +86,13 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         val project = module.project
 
         val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
+        val sourceElements = project.configurations.getByName(sourceElementsConfigurationName(module))
 
         val componentName = rootPublicationComponentName(module)
         val rootSoftwareComponent = softwareComponentFactory.adhoc(componentName).also {
             project.components.add(it)
             it.addVariantsFromConfiguration(metadataElements) { }
+            it.addVariantsFromConfiguration(sourceElements) { }
         }
 
         module.ifMadePublic {

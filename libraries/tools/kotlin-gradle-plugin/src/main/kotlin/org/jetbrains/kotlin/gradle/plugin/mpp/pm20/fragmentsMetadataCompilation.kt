@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.targets.metadata.NativeSharedCompilationProcessor
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
@@ -58,10 +60,25 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
         }
         setModuleCapability(this, module)
     }
+
+    val sourcesArtifactAppendix = dashSeparatedName(module.moduleClassifier, "all", "sources")
+    val sourcesArtifact = sourcesJarTaskNamed(
+        module.disambiguateName("allSourcesJar"),
+        project,
+        lazy { FragmentSourcesProvider().getAllFragmentSourcesAsMap(module).mapKeys { it.key.fragmentName } },
+        sourcesArtifactAppendix
+    )
+    DocumentationVariantConfigurator().createSourcesElementsConfiguration(
+        project, sourceElementsConfigurationName(module),
+        sourcesArtifact.get(), "sources", ComputedCapability.fromModuleOrNull(module)
+    )
 }
 
 fun metadataElementsConfigurationName(module: KotlinGradleModule) =
     module.disambiguateName("metadataElements")
+
+fun sourceElementsConfigurationName(module: KotlinGradleModule) =
+    module.disambiguateName("sourceElements")
 
 private fun generateAndExportProjectStructureMetadata(
     module: KotlinGradleModule

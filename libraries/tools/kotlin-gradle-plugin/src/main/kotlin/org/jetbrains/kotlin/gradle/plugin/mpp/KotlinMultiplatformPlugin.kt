@@ -277,9 +277,14 @@ internal fun sourcesJarTask(
     sourceSets: Lazy<Map<String, FileCollection>>,
     componentName: String?,
     artifactNameAppendix: String
-): TaskProvider<Jar> {
-    val taskName = lowerCamelCaseName(componentName, "sourcesJar")
+): TaskProvider<Jar> = sourcesJarTaskNamed(lowerCamelCaseName(componentName, "sourcesJar"), project, sourceSets, artifactNameAppendix)
 
+internal fun sourcesJarTaskNamed(
+    taskName: String,
+    project: Project,
+    sourceSets: Lazy<Map<String, FileCollection>>,
+    artifactNameAppendix: String
+): TaskProvider<Jar> {
     project.locateTask<Jar>(taskName)?.let {
         return it
     }

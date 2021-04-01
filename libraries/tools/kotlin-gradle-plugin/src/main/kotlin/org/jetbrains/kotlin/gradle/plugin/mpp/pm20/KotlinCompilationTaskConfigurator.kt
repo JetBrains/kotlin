@@ -32,9 +32,9 @@ open class KotlinCompilationTaskConfigurator(
         fragment: KotlinGradleFragment,
         compilationData: KotlinCompilationData<*>
     ): TaskProvider<out KotlinCompile> {
-        Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilationData, kotlinPluginVersion).run()
-        val allSources = variantSourcesProvider.getSourcesFromRefinesClosure(variant)
-        val commonSources = variantSourcesProvider.getCommonSourcesFromRefinesClosure(variant)
+        Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilationData).run()
+        val allSources = getSourcesForFragmentCompilation(fragment)
+        val commonSources = getCommonSourcesForFragmentCompilation(fragment)
 
         // FIXME support custom source file extensions in the two calls below
         addSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { allSources }
@@ -49,8 +49,8 @@ open class KotlinCompilationTaskConfigurator(
     ): TaskProvider<KotlinNativeCompile> {
         val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
 
-        val allSources = variantSourcesProvider.getSourcesFromRefinesClosure(variant)
-        val commonSources = variantSourcesProvider.getSourcesFromRefinesClosure(variant)
+        val allSources = getSourcesForFragmentCompilation(fragment)
+        val commonSources = getCommonSourcesForFragmentCompilation(fragment)
 
         compileTask.configure {
             it.source(allSources)

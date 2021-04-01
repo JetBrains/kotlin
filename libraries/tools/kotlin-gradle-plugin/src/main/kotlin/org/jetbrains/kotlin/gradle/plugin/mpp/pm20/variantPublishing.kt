@@ -6,16 +6,21 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.*
+import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import javax.inject.Inject
 
@@ -37,7 +42,7 @@ open class VariantPublishingConfigurator @Inject constructor(
     private val softwareComponentFactory: SoftwareComponentFactory
 ) {
     companion object {
-        fun get(project: Project) = project.objects.newInstance(VariantPublishingConfigurator::class.java, project)
+        fun get(project: Project): VariantPublishingConfigurator = project.objects.newInstance(VariantPublishingConfigurator::class.java, project)
     }
 
     open fun platformComponentName(variant: KotlinGradleVariant) = variant.disambiguateName("")
@@ -59,11 +64,29 @@ open class VariantPublishingConfigurator @Inject constructor(
         val componentName = platformComponentName(variant)
         val configurationsMap = inferMavenScopes(variant, publishConfigurations)
 
-        // FIXME: add the sources artifact of the variant to the publication!!!
-        //  do that following the Gradle's guidelines on publishing sources variant along library variants, if possible
+        registerPlatformModulePublication(
+            componentName,
+            publishedModuleHolder,
+            configurationsMap,
+            variant.containingModule::ifMadePublic
+        )
 
-        registerPlatformModulePublication(componentName, publishedModuleHolder, configurationsMap, variant.containingModule::ifMadePublic)
-        registerPlatformVariantsInRootModule(publishedModuleHolder, variant.containingModule, publishConfigurations)
+        configureSourceElementsPublishing(variant)
+
+        registerPlatformVariantsInRootModule(
+            publishedModuleHolder,
+            variant.containingModule,
+            publishConfigurations
+        )
+    }
+
+    protected open fun configureSourceElementsPublishing(variant: KotlinGradleVariant) {
+        val configurationName = variant.disambiguateName("sourceElements")
+        val componentName = platformComponentName(variant)
+        val docsVariants = DocumentationVariantConfigurator().createSourcesElementsConfiguration(configurationName, variant)
+        project.components.withType(AdhocComponentWithVariants::class.java).named(componentName).configure { component ->
+            component.addVariantsFromConfiguration(docsVariants) { }
+        }
     }
 
     /**
@@ -79,7 +102,7 @@ open class VariantPublishingConfigurator @Inject constructor(
     ) {
         val platformComponent = softwareComponentFactory.adhoc(componentName)
         project.components.add(platformComponent)
-        publishConfigurationsWithMavenScopes.forEach { configurationName, mavenScopeOrNull ->
+        publishConfigurationsWithMavenScopes.forEach { (configurationName, mavenScopeOrNull) ->
             platformComponent.addVariantsFromConfiguration(project.configurations.getByName(configurationName)) { variantDetails ->
                 mavenScopeOrNull?.let { variantDetails.mapToMavenScope(it) }
             }
@@ -108,7 +131,7 @@ open class VariantPublishingConfigurator @Inject constructor(
             val coordinates = publishedModuleHolder.publishedMavenModuleCoordinates
             (project.dependencies.create("${coordinates.group}:${coordinates.name}:${coordinates.version}") as ModuleDependency).apply {
                 if (kotlinModule.moduleClassifier != null) {
-                    capabilities { it.requireCapability(CalculatedCapability.fromModule(kotlinModule)) }
+                    capabilities { it.requireCapability(ComputedCapability.fromModule(kotlinModule)) }
                 }
             }
         }
@@ -137,5 +160,45 @@ open class VariantPublishingConfigurator @Inject constructor(
                 rootSoftwareComponent.addVariantsFromConfiguration(this) { }
             }
         }
+    }
+}
+
+open class DocumentationVariantConfigurator {
+    open fun createSourcesElementsConfiguration(
+        project: Project,
+        configurationName: String,
+        sourcesArtifactProvider: AbstractArchiveTask,
+        artifactClassifier: String,
+        capability: Capability?
+    ): Configuration {
+        return project.configurations.create(configurationName).apply {
+            isCanBeResolved = false
+            isCanBeConsumed = true
+//            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_SOURCES))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category::class.java, Category.DOCUMENTATION))
+            attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
+            attributes.attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType::class.java, DocsType.SOURCES))
+            outgoing.artifact(sourcesArtifactProvider) {
+                it.classifier = artifactClassifier
+            }
+            if (capability != null) {
+                outgoing.capability(capability)
+            }
+        }
+    }
+
+    open fun createSourcesElementsConfiguration(
+        configurationName: String,
+        variant: KotlinGradleVariant
+    ): Configuration {
+        val sourcesArtifactTask = variant.project.tasks.withType<AbstractArchiveTask>().named(variant.sourceArchiveTaskName)
+        val artifactClassifier = dashSeparatedName(variant.containingModule.moduleClassifier, "sources")
+        return createSourcesElementsConfiguration(
+            variant.project,
+            configurationName,
+            sourcesArtifactTask.get(),
+            artifactClassifier,
+            ComputedCapability.fromModuleOrNull(variant.containingModule)
+        )
     }
 }

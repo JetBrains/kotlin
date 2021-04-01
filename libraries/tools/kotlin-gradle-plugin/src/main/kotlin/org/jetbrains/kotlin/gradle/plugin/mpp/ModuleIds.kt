@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
@@ -88,7 +88,7 @@ internal object ModuleIds {
                 }
                 val capabilities = when (topLevelExtension) {
                     is KotlinMultiplatformExtension -> emptyList()
-                    is KotlinPm20ProjectExtension -> listOfNotNull(CalculatedCapability.capabilityStringFromModule(
+                    is KotlinPm20ProjectExtension -> listOfNotNull(ComputedCapability.capabilityStringFromModule(
                         topLevelExtension.modules.single { it.moduleIdentifier == moduleIdentifier }
                     ))
                     else -> error("unexpected top-level extension $topLevelExtension")
