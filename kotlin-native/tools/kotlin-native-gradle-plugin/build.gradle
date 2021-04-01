@@ -49,12 +49,6 @@ version = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
 
 repositories {
     mavenCentral()
-    maven {
-        url buildKotlinCompilerRepo
-    }
-    maven {
-        url kotlinCompilerRepo
-    }
 }
 
 configurations {
@@ -85,8 +79,8 @@ dependencies {
     bundleDependencies "org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:${project.bootstrapKotlinVersion}"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${project.bootstrapKotlinVersion}"
     testImplementation "org.tools4j:tools4j-spockito:1.6"
     testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
@@ -146,7 +140,7 @@ pluginUnderTestMetadata {
 test {
     dependsOn shadowJar
     systemProperty("kotlin.version", kotlinVersion)
-    systemProperty("kotlin.repo", kotlinCompilerRepo)
+    systemProperty("kotlin.repo", project.bootstrapKotlinRepo)
     if (project.hasProperty("konan.home")) {
         systemProperty("konan.home", project.property("konan.home"))
         systemProperty("org.jetbrains.kotlin.native.home", project.property("konan.home"))

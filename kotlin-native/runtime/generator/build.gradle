@@ -3,13 +3,15 @@ configurations {
 }
 
 repositories {
-  maven { url buildKotlinCompilerRepo }
+    maven {
+        url project.bootstrapKotlinRepo
+    }
 }
 
 dependencies {
-    generatorRuntime "org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdlibVersion}"
-    generatorRuntime "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
-    generatorRuntime "org.jetbrains.kotlin:kotlin-stdlib-gen:${kotlinStdlibVersion}"
+    generatorRuntime "org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}"
+    generatorRuntime "org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}"
+    generatorRuntime "org.jetbrains.kotlin:kotlin-stdlib-gen:${project.bootstrapKotlinVersion}"
 }
 
 task run(type: JavaExec) {

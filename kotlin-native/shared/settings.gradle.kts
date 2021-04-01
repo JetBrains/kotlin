@@ -3,11 +3,10 @@ pluginManagement {
         rootDir.resolve("../gradle.properties").reader().use(::load)
     }
 
-    val kotlinCompilerRepo: String by rootProperties
     val kotlinVersion: String by rootProperties
 
     repositories {
-        maven(kotlinCompilerRepo)
+        maven(project.bootstrapKotlinRepo)
         maven("https://cache-redirector.jetbrains.com/maven-central")
         mavenCentral()
     }

@@ -26,11 +26,7 @@ plugins {
 val rootBuildDirectory by extra(file(".."))
 apply(from="../gradle/loadRootProperties.gradle")
 
-val kotlinVersion: String by extra
-val buildKotlinVersion: String by extra
 val konanVersion: String by extra
-val kotlinCompilerRepo: String by extra
-val buildKotlinCompilerRepo: String by extra
 
 group = "org.jetbrains.kotlin"
 version = konanVersion
@@ -38,8 +34,6 @@ version = konanVersion
 repositories {
     maven("https://cache-redirector.jetbrains.com/maven-central")
     mavenCentral()
-    maven(kotlinCompilerRepo)
-    maven(buildKotlinCompilerRepo)
 }
 
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: drop generation of KonanVersion!
@@ -71,7 +65,7 @@ tasks.jar {
 }
 
 dependencies {
-    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$buildKotlinVersion")
+    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:${project.bootstrapKotlinVersion}")
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")

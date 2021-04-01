@@ -29,7 +29,7 @@ buildscript {
         }
         jcenter()
         maven {
-            url kotlinCompilerRepo
+            url project.bootstrapKotlinRepo
         }
     }
 
@@ -43,12 +43,6 @@ repositories {
         url 'https://cache-redirector.jetbrains.com/jcenter'
     }
     jcenter()
-    maven {
-        url kotlinCompilerRepo
-    }
-    maven {
-        url buildKotlinCompilerRepo
-    }
     maven {
         url project.bootstrapKotlinRepo
     }

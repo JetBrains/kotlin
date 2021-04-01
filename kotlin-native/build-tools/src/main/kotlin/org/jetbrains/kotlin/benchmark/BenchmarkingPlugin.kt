@@ -41,12 +41,6 @@ internal val Project.kotlinVersion: String
 internal val Project.konanVersion: String
     get() = property("konanVersion") as String
 
-internal val Project.kotlinStdlibVersion: String
-    get() = property("kotlinStdlibVersion") as String
-
-internal val Project.kotlinStdlibRepo: String
-    get() = property("kotlinStdlibRepo") as String
-
 internal val Project.nativeJson: String
     get() = project.property("nativeJson") as String
 

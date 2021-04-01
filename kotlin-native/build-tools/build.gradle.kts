@@ -26,9 +26,6 @@ val rootProperties = Properties().apply {
 }
 
 val kotlinVersion: String by rootProperties
-val kotlinCompilerRepo: String by rootProperties
-val buildKotlinVersion: String by rootProperties
-val buildKotlinCompilerRepo: String by rootProperties
 val konanVersion: String by rootProperties
 val slackApiVersion: String by rootProperties
 val ktorVersion: String by rootProperties
@@ -39,8 +36,6 @@ group = "org.jetbrains.kotlin"
 version = konanVersion
 
 repositories {
-    maven(kotlinCompilerRepo)
-    maven(buildKotlinCompilerRepo)
     maven("https://cache-redirector.jetbrains.com/maven-central")
     mavenCentral()
 }

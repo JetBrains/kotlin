@@ -35,10 +35,10 @@ open class CopySamples : Copy() {
         from(samplesDir) {
             include("**/gradle.properties")
 
-            val kotlinVersion = project.property("kotlinVersion") as? String
-                ?: throw IllegalArgumentException("Property kotlinVersion should be specified in the root project")
-            val kotlinCompilerRepo = project.property("kotlinCompilerRepo") as? String
-                ?: throw IllegalArgumentException("Property kotlinCompilerRepo should be specified in the root project")
+            val kotlinVersion = project.property("bootstrapKotlinVersion") as? String
+                ?: throw IllegalArgumentException("Property bootstrapKotlinVersion should be specified in the root project")
+            val kotlinCompilerRepo = project.property("bootstrapKotlinRepo") as? String
+                ?: throw IllegalArgumentException("Property bootstrapKotlinRepo should be specified in the root project")
 
             filter { line ->
                 when {
