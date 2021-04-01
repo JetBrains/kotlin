@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -24,7 +24,11 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirPredicate
 
     final override val extensionType: KClass<out FirExtension> = FirStatusTransformerExtension::class
 
-    abstract fun transformStatus(declaration: FirDeclaration, owners: List<FirAnnotatedDeclaration>, status: FirDeclarationStatus): FirDeclarationStatus
+    abstract fun transformStatus(
+        declaration: FirDeclaration,
+        owners: List<FirAnnotatedDeclaration>,
+        status: FirDeclarationStatus
+    ): FirDeclarationStatus
 
     fun interface Factory : FirExtension.Factory<FirStatusTransformerExtension>
 }
@@ -36,6 +40,7 @@ inline fun FirDeclarationStatus.transform(
     modality: Modality? = this.modality,
     init: FirDeclarationStatusImpl.() -> Unit = {}
 ): FirDeclarationStatus {
+    @Suppress("DuplicatedCode")
     return FirDeclarationStatusImpl(visibility, modality).apply {
         isExpect = this@transform.isExpect
         isActual = this@transform.isActual
