@@ -450,6 +450,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("supertypesForAnnotationClass.kt")
+        public void testSupertypesForAnnotationClass() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/supertypesForAnnotationClass.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticsVsNormalProperties.kt")
         public void testSyntheticsVsNormalProperties() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/syntheticsVsNormalProperties.kt");

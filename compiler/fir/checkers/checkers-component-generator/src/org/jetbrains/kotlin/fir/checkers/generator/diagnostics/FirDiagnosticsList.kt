@@ -146,6 +146,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
         val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by error<FirSourceElement, KtTypeReference>()
         val VAR_ANNOTATION_PARAMETER by error<FirSourceElement, KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE)
+        val SUPERTYPES_FOR_ANNOTATION_CLASS by error<FirSourceElement, KtClass>(PositioningStrategy.SUPERTYPES_LIST)
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

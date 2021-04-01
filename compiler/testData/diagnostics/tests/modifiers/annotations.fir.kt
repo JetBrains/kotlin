@@ -9,4 +9,4 @@ open class Your {
     open val x: Int = 0
 }
 
-annotation class His(override val x: Int): Your()
+annotation class His(override val x: Int): <!SUPERTYPES_FOR_ANNOTATION_CLASS!>Your()<!>

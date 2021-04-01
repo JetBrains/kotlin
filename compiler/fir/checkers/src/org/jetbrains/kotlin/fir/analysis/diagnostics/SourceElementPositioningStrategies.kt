@@ -128,6 +128,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.VALUE_ARGUMENTS
     )
 
+    val SUPERTYPES_LIST = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.SUPERTYPES_LIST,
+        PositioningStrategies.SUPERTYPES_LIST
+    )
+
     val DOT_BY_QUALIFIED = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DOT_BY_QUALIFIED,
         PositioningStrategies.DOT_BY_QUALIFIED
