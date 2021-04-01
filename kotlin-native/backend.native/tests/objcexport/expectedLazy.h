@@ -125,14 +125,8 @@ __attribute__((swift_name("CoroutineException")))
 @interface KtCoroutineException : KtKotlinThrowable
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-
-
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-
-
 - (instancetype)initWithCause:(KtKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-
-
 - (instancetype)initWithMessage:(NSString * _Nullable)message cause:(KtKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @end;
 
@@ -342,8 +336,6 @@ __attribute__((swift_name("EnumLeftRightUpDown")))
 @interface KtEnumLeftRightUpDown : KtKotlinEnum<KtEnumLeftRightUpDown *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-
-
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) KtEnumLeftRightUpDown *left __attribute__((swift_name("left")));
 @property (class, readonly) KtEnumLeftRightUpDown *right __attribute__((swift_name("right")));
@@ -357,8 +349,6 @@ __attribute__((swift_name("EnumOneTwoThreeValues")))
 @interface KtEnumOneTwoThreeValues : KtKotlinEnum<KtEnumOneTwoThreeValues *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-
-
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) KtEnumOneTwoThreeValues *one __attribute__((swift_name("one")));
 @property (class, readonly) KtEnumOneTwoThreeValues *two __attribute__((swift_name("two")));
@@ -372,8 +362,6 @@ __attribute__((swift_name("EnumValuesValues_")))
 @interface KtEnumValuesValues_ : KtKotlinEnum<KtEnumValuesValues_ *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-
-
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) KtEnumValuesValues_ *values __attribute__((swift_name("values")));
 @property (class, readonly) KtEnumValuesValues_ *values __attribute__((swift_name("values")));
@@ -385,8 +373,6 @@ __attribute__((swift_name("EmptyEnum")))
 @interface KtEmptyEnum : KtKotlinEnum<KtEmptyEnum *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-
-
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (KtKotlinArray<KtEmptyEnum *> *)values __attribute__((swift_name("values()")));
 @end;
@@ -534,7 +520,8 @@ __attribute__((swift_name("TestGH3992.B")))
 
 
 /**
- * Summary class [KDocExport]
+ * Summary class [KDocExport].
+ *
  * @property xyzzy Doc for property xyzzy
  * @property zzz See below.
  */
@@ -543,23 +530,41 @@ __attribute__((swift_name("KDocExport")))
 @interface KtKDocExport : KtBase
 
 /** Non-primary ctor KDoc: */
+- (instancetype)initWithName:(NSString *)name __attribute__((swift_name("init(name:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-
-/** Non-primary ctor KDoc: */
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (instancetype)initWithXyzzy:(NSString *)xyzzy __attribute__((swift_name("init(xyzzy:)"))) __attribute__((objc_designated_initializer));
+
+/**
+ * @param xyzzy is documented.
+ *
+ * This is multi-line KDoc. See a blank line above.
+ */
+@property (readonly) NSString *xyzzy __attribute__((swift_name("xyzzy")));
 
 /** @property xyzzy KDoc for foo? */
 @property (readonly) NSString *foo __attribute__((swift_name("foo")));
 
 /** @property foo KDoc for yxxyz? */
 @property int32_t yxxyz __attribute__((swift_name("yxxyz")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KdocExportKt")))
+@interface KtKdocExportKt : KtBase
 
 /**
-     * @param xyzzy is documented.
-     * This is multi-line KDoc
-     */
-@property (readonly) NSString *xyzzy __attribute__((swift_name("xyzzy")));
+ * Useless function [whatever]
+ *
+ * This kdoc has some additional formatting.
+ * @param a keep intact and return
+ * @return value of [a]
+ * Check for additional comment (note) below
+ */
+/**
+ @note This method converts instances of IllegalArgumentException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
++ (NSString * _Nullable)whateverA:(NSString *)a error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("whatever(a:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -895,8 +900,6 @@ __attribute__((swift_name("Enumeration")))
 @interface KtEnumeration : KtKotlinEnum<KtEnumeration *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-
-
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) KtEnumeration *answer __attribute__((swift_name("answer")));
 @property (class, readonly) KtEnumeration *year __attribute__((swift_name("year")));
@@ -969,14 +972,8 @@ __attribute__((swift_name("MyException")))
 @interface KtMyException : KtKotlinException
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-
-
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-
-
 - (instancetype)initWithMessage:(NSString * _Nullable)message cause:(KtKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-
-
 - (instancetype)initWithCause:(KtKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @end;
 
@@ -985,14 +982,8 @@ __attribute__((swift_name("MyError")))
 @interface KtMyError : KtKotlinError
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-
-
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-
-
 - (instancetype)initWithMessage:(NSString * _Nullable)message cause:(KtKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-
-
 - (instancetype)initWithCause:(KtKotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @end;
 
@@ -1620,8 +1611,6 @@ __attribute__((swift_name("TestInvalidIdentifiers.E")))
 @interface KtTestInvalidIdentifiersE : KtKotlinEnum<KtTestInvalidIdentifiersE *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-
-
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) KtTestInvalidIdentifiersE *_4_ __attribute__((swift_name("_4_")));
 @property (class, readonly) KtTestInvalidIdentifiersE *_5_ __attribute__((swift_name("_5_")));

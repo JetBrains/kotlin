@@ -6,7 +6,8 @@
 package kdocExport
 
 /**
- * Summary class [KDocExport]
+ * Summary class [KDocExport].
+ *
  * @property xyzzy Doc for property xyzzy
  * @property zzz See below.
  */
@@ -15,7 +16,8 @@ package kdocExport
 class KDocExport() {
     /**
      * @param xyzzy is documented.
-     * This is multi-line KDoc
+     *
+     * This is multi-line KDoc. See a blank line above.
      */
     val xyzzy: String = "String example"
 
@@ -24,8 +26,20 @@ class KDocExport() {
         println(name)
     }
 
-    /** @property xyzzy KDoc for foo? */
+            /** @property xyzzy KDoc for foo? */
     val foo = "foo"
     /** @property foo KDoc for yxxyz? */
     var yxxyz = 0;
 }
+
+
+/**
+ * Useless function [whatever]
+ *
+ * This kdoc has some additional formatting.
+ * @param a keep intact and return
+ * @return value of [a]
+ * Check for additional comment (note) below
+ */
+@Throws(IllegalArgumentException::class)
+fun whatever(a:String) = a
