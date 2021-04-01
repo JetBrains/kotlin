@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.idea.api.applicator.applicator
 import org.jetbrains.kotlin.idea.fir.api.fixes.HLQuickFix
 import org.jetbrains.kotlin.idea.fir.api.fixes.diagnosticFixFactory
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
-import org.jetbrains.kotlin.idea.frontend.api.types.defaultInitializer
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
