@@ -360,7 +360,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     }
 
     private fun detectCompilerClasspath(): List<String>? =
-        System.getProperty("java.class.path")
+        CompilerSystemProperties.JAVA_CLASS_PATH.value
             ?.split(File.pathSeparator)
             ?.map { File(it).parentFile }
             ?.distinct()
@@ -454,7 +454,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets
     ): Boolean {
-        val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+        val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
         val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value ?: error("${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property} is not set!")
         val platformSpecificOptions = listOf(
             // hide daemon window

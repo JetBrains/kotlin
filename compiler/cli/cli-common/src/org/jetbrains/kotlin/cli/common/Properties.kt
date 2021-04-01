@@ -36,7 +36,12 @@ enum class CompilerSystemProperties(val property: String) {
     KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
-    OS_NAME("os.name")
+    OS_NAME("os.name"),
+    TMP_DIR("java.io.tmpdir"),
+    USER_HOME("user.home"),
+    JAVA_VERSION("java.specification.version"),
+    JAVA_HOME("java.home"),
+    JAVA_CLASS_PATH("java.class.path"),
     ;
 
     var value
@@ -44,6 +49,9 @@ enum class CompilerSystemProperties(val property: String) {
         set(value) {
             (systemPropertySetter ?: System::setProperty)(property, value!!)
         }
+
+    val safeValue
+        get() = value ?: error("No value for $property system property")
 
     fun clear(): String? = (systemPropertyCleaner ?: System::clearProperty)(property)
 
