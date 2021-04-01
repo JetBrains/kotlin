@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -46,4 +47,8 @@ internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularF
             set(project.layout.file(project.provider(initialize)))
         }
     }
+}
+
+internal fun Project.fileProvider(provider: () -> Any) : FileCollection {
+    return project.files(project.provider(provider))
 }

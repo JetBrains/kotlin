@@ -8,6 +8,7 @@ repositories {
 }
 
 kotlin {
+    jvm() // https://youtrack.jetbrains.com/issue/KT-45832
     val targetA = <targetA>("targetA")
     val targetB = <targetB>("targetB")
 
