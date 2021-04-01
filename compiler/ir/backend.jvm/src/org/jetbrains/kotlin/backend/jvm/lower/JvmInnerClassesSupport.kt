@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -36,7 +33,7 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
             irFactory.buildField {
                 name = Name.identifier("this$0")
                 type = innerClass.parentAsClass.defaultType
-                origin = InnerClassesSupport.FIELD_FOR_OUTER_THIS
+                origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
                 visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 isFinal = true
             }.apply {

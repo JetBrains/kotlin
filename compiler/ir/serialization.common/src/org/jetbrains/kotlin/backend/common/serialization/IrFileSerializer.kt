@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -965,7 +964,7 @@ open class IrFileSerializer(
             is IrErrorCallExpression -> operationProto.errorCallExpression = serializeErrorCallExpression(expression)
             is IrErrorExpression -> operationProto.errorExpression = serializeErrorExpression(expression)
             else -> {
-                TODO("Expression serialization not implemented yet: ${ir2string(expression)}.")
+                TODO("Expression serialization not implemented yet: ${expression.render()}.")
             }
         }
         proto.setOperation(operationProto)
@@ -999,7 +998,7 @@ open class IrFileSerializer(
                 proto.syntheticBody = serializeSyntheticBody(statement)
             }
             else -> {
-                TODO("Statement not implemented yet: ${ir2string(statement)}")
+                TODO("Statement not implemented yet: ${statement.render()}")
             }
         }
         return proto.build()
