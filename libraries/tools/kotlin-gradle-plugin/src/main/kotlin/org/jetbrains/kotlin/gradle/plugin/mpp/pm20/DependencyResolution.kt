@@ -60,90 +60,6 @@ class GradleModuleDependencyResolver(
     }
 }
 
-class GradleProjectDependencyDiscovery(
-    private val project: Project,
-    private val variantDependencyDiscovery: VariantDependencyDiscovery,
-    private val fragmentDependenciesDiscovery: FragmentDependenciesDiscovery
-) : DependencyDiscovery {
-    override fun discoverDependencies(fragment: KotlinModuleFragment): Iterable<KotlinModuleDependency> {
-        require(fragment.containingModule.representsProject(project))
-        return when (fragment) {
-            is KotlinModuleVariant -> variantDependencyDiscovery.discoverDependencies(fragment)
-            else -> fragmentDependenciesDiscovery.discoverDependencies(fragment)
-        }
-    }
-}
-
-class FragmentDependenciesDiscovery(
-    private val project: Project,
-    private val moduleResolver: ModuleDependencyResolver,
-    private val fragmentsResolver: ModuleFragmentsResolver
-) : DependencyDiscovery {
-    private val dependencyScopes = listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
-
-    private fun KotlinModuleFragment.toSourceSet(): KotlinSourceSet = project.kotlinExtension.sourceSets.getByName(fragmentName)
-
-    // TODO: use the dependency graph resolution implementation?
-    override fun discoverDependencies(fragment: KotlinModuleFragment): Iterable<KotlinModuleDependency> {
-        require(fragment.containingModule.representsProject(project))
-
-        val fragmentsWhoseDependenciesAreVisible = fragment.refinesClosure
-
-        // FIXME use dependencyScopes, not just sets of declared module dependencies
-        val requestedDependencies = fragmentsWhoseDependenciesAreVisible.flatMap { it.declaredModuleDependencies }.toSet()
-
-        val configurationToResolve = resolvableMetadataConfiguration(
-            project,
-            fragmentsWhoseDependenciesAreVisible.map { it.toSourceSet() },
-            KotlinDependencyScope.compileScopes
-        )
-        val allComponents = configurationToResolve.incoming.resolutionResult.allComponents
-
-        val componentsByRequestedDependency =
-            allComponents.flatMap { component -> component.dependents.map { it to component } }.toMap()
-                .mapKeys { it.key.requested.toModuleDependency() }
-
-        val resolvedComponentQueue = ArrayDeque<ResolvedComponentResult>().apply {
-            addAll(componentsByRequestedDependency.filterKeys { it in requestedDependencies }.values)
-        }
-
-        val visited = mutableSetOf<ResolvedComponentResult>()
-        val excludeLegacyMetadataModulesFromResult = mutableSetOf<ResolvedComponentResult>()
-
-        while (resolvedComponentQueue.isNotEmpty()) {
-            val component = resolvedComponentQueue.removeFirst()
-            visited.add(component)
-
-            val module = moduleResolver.resolveDependency(fragment.containingModule, component.toModuleDependency())
-                .takeIf { component !in excludeLegacyMetadataModulesFromResult }
-                ?: buildSyntheticModule(component, component.variants.singleOrNull()?.displayName ?: "default")
-
-            val transitiveDepsToVisit = when (val fragmentsResolution = fragmentsResolver.getChosenFragments(fragment, module)) {
-                is FragmentResolution.ChosenFragments ->
-                    fragmentsResolution.visibleFragments.flatMap { it.declaredModuleDependencies }.mapNotNull { dependency ->
-                        componentsByRequestedDependency[dependency]
-                    }
-                else -> emptyList()
-            }
-
-            val newTransitiveDeps = transitiveDepsToVisit.filterTo(mutableListOf()) { it !in visited }
-
-            // With legacy publication scheme, the root MPP module may have a single 'dependency' (available-at) to the metadata module
-            val isMetadataModulePublishedSeparately =
-                (module is ExternalImportedKotlinModule) && module.hasLegacyMetadataModule
-            val singleDependencyComponentOrNull = (component.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected
-            if (isMetadataModulePublishedSeparately && singleDependencyComponentOrNull != null) {
-                newTransitiveDeps.add(singleDependencyComponentOrNull)
-                excludeLegacyMetadataModulesFromResult.add(singleDependencyComponentOrNull)
-            }
-
-            resolvedComponentQueue.addAll(newTransitiveDeps)
-        }
-
-        return (visited - excludeLegacyMetadataModulesFromResult).map { it.toModuleDependency() }
-    }
-}
-
 // refactor extract to a separate class/interface
 // TODO think about multi-variant stub modules for non-Kotlin modules which got more than one chosen variant
 internal fun buildSyntheticModule(resolvedComponentResult: ResolvedComponentResult, singleVariantName: String): ExternalSyntheticKotlinModule {
@@ -172,44 +88,6 @@ internal class ExternalImportedKotlinModule(
     val hasLegacyMetadataModule = !projectStructureMetadata.isPublishedAsRoot
 
     override fun toString(): String = "imported $moduleData"
-}
-
-class VariantDependencyDiscovery(
-    val project: Project
-) : DependencyDiscovery {
-
-    private val kotlinExtension
-        get() = project.kotlinExtension
-
-    private fun resolvedComponentResults(fragment: KotlinModuleFragment): Iterable<ResolvedComponentResult> {
-        val compilation = kotlinExtension.targets.asSequence()
-            .flatMap { it.compilations.asSequence() }
-            .find { it.defaultSourceSetName == fragment.fragmentName }
-        requireNotNull(compilation)
-
-        // TODO distinguish between compile and runtime dependencies?
-        val configuration = project.configurations.getByName(compilation.compileDependencyConfigurationName)
-        return configuration.incoming.resolutionResult.allComponents
-    }
-
-    override fun discoverDependencies(fragment: KotlinModuleFragment): Iterable<KotlinModuleDependency> {
-        require(fragment is KotlinModuleVariant)
-        require(fragment.containingModule.representsProject(project))
-
-        val components = resolvedComponentResults(fragment)
-        return components.flatMap { component ->
-            val classifiers = moduleClassifiersFromCapabilities(component.variants.flatMap { it.capabilities })
-            when (val id = component.id) {
-                is ProjectComponentIdentifier -> {
-                    classifiers.map { LocalModuleIdentifier(id.build.name, id.projectPath, it) }
-                }
-                is ModuleComponentIdentifier -> {
-                    classifiers.map { id.toSingleModuleIdentifier(it) }
-                }
-                else -> return@flatMap emptyList<KotlinModuleIdentifier>() // TODO check that no other options are possible, throw errors?
-            }
-        }.map(::KotlinModuleDependency)
-    }
 }
 
 private fun ModuleComponentIdentifier.toSingleModuleIdentifier(classifier: String? = null): MavenModuleIdentifier =
