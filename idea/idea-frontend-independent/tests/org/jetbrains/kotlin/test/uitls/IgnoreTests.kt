@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.test.uitls
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.KtAssert
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
 object IgnoreTests {
-    private val isTeamCityBuild: Boolean = System.getProperty("TEAMCITY_VERSION") != null
     private const val INSERT_DIRECTIVE_AUTOMATICALLY = false // TODO use environment variable instead
     private const val ALWAYS_CONSIDER_TEST_AS_PASSING = false // TODO use environment variable instead
 
@@ -187,6 +187,11 @@ object IgnoreTests {
         FIRST_LINE_IN_FILE, LAST_LINE_IN_FILE
     }
 
+    private val isTeamCityBuild: Boolean
+        get() = System.getProperty("TEAMCITY_VERSION") != null
+                || KtUsefulTestCase.IS_UNDER_TEAMCITY
+
+
     fun getFirTestFile(originalTestFile: File): File {
         if (originalTestFile.readText().startsWith(DIRECTIVES.FIR_IDENTICAL)) {
             return originalTestFile
@@ -228,5 +233,4 @@ object IgnoreTests {
 
     private fun deriveFirTestFile(originalTestFile: File) =
         originalTestFile.parentFile.resolve(originalTestFile.name.removeSuffix(".kt") + ".fir.kt")
-
 }
