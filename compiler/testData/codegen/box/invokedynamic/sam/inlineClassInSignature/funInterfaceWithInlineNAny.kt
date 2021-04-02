@@ -4,6 +4,11 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 0 java/lang/invoke/LambdaMetafactory
+// 1 class FunInterfaceWithInlineNAnyKt\$box\$t\$1
+
 inline class Z(val value: Any?)
 
 fun interface IFooZ {

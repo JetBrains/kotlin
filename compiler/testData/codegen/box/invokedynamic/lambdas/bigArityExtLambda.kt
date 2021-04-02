@@ -4,6 +4,11 @@
 // JVM_TARGET: 1.8
 // LAMBDAS: INDY
 
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 0 java/lang/invoke/LambdaMetafactory
+// 1 class BigArityExtLambdaKt\$box\$1
+
 fun test(
     extFn: Int.(
         p0: String, p1: String,

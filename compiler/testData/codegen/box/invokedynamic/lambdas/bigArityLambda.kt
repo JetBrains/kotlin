@@ -2,6 +2,11 @@
 // JVM_TARGET: 1.8
 // LAMBDAS: INDY
 
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 0 java/lang/invoke/LambdaMetafactory\.metafactory
+// 1 final class BigArityLambdaKt\$box\$1
+
 fun box() =
     { p0: String, p1: String, p2: Int, p3: Int, p4: Int, p5: Int, p6: Int, p7: Int, p8: Int, p9: Int,
       p10: Int, p11: Int, p12: Int, p13: Int, p14: Int, p15: Int, p16: Int, p17: Int, p18: Int, p19: Int,

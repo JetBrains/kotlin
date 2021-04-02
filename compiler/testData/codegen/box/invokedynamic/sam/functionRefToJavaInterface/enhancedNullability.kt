@@ -2,6 +2,11 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
+
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 1 java/lang/invoke/LambdaMetafactory
+
 // FILE: enhancedNullability.kt
 fun mul2(x: Int) = x * 2
 

@@ -2,6 +2,11 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_RUNTIME
+
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 1 java/lang/invoke/LambdaMetafactory
+
 // FILE: JavaRunner.java
 public class JavaRunner {
     public static void runTwice(Runnable runnable) {

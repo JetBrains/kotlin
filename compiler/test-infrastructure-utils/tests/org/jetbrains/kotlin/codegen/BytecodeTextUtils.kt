@@ -55,9 +55,10 @@ fun readExpectedOccurrences(lines: List<String>): List<OccurrenceInfo> {
 fun readExpectedOccurrencesForMultiFileTest(
     fileName: String,
     fileContent: String,
-    destination: MutableMap<String, List<OccurrenceInfo>>
+    withGeneratedFile: MutableMap<String, List<OccurrenceInfo>>,
+    global: MutableList<OccurrenceInfo>
 ) {
-    var currentOccurrenceInfos: MutableList<OccurrenceInfo>? = null
+    var currentOccurrenceInfos: MutableList<OccurrenceInfo> = global
     var backend = TargetBackend.ANY
     for (line in fileContent.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
         if (line.contains(JVM_TEMPLATES)) backend = TargetBackend.JVM
@@ -66,18 +67,15 @@ fun readExpectedOccurrencesForMultiFileTest(
         val atOutputFileMatcher = AT_OUTPUT_FILE_PATTERN.matcher(line)
         if (atOutputFileMatcher.matches()) {
             val outputFileName = atOutputFileMatcher.group(1)
-            if (destination.containsKey(outputFileName)) {
+            if (withGeneratedFile.containsKey(outputFileName)) {
                 throw AssertionError("${fileName}: Expected occurrences for output file $outputFileName were already provided")
             }
             currentOccurrenceInfos = ArrayList()
-            destination[outputFileName] = currentOccurrenceInfos
+            withGeneratedFile[outputFileName] = currentOccurrenceInfos
         }
 
         val expectedOccurrencesMatcher = EXPECTED_OCCURRENCES_PATTERN.matcher(line)
         if (expectedOccurrencesMatcher.matches()) {
-            if (currentOccurrenceInfos == null) {
-                throw AssertionError("${fileName}: Should specify output file with '// @<OUTPUT_FILE_NAME>:' before expectations")
-            }
             val occurrenceInfo = parseOccurrenceInfo(expectedOccurrencesMatcher, backend)
             currentOccurrenceInfos.add(occurrenceInfo)
         }
