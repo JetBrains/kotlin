@@ -31,6 +31,7 @@ const val NOPACK = "nopack"
 const val COMPILE_SOURCES = "Xcompile-source"
 const val SHORT_MODULE_NAME = "Xshort-module-name"
 const val FOREIGN_EXCEPTION_MODE = "Xforeign-exception-mode"
+const val DUMP_BRIDGES = "Xdump-bridges"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -121,6 +122,9 @@ open class CInteropArguments(argParser: ArgParser =
 
     val foreignExceptionMode by argParser.option(ArgType.String, FOREIGN_EXCEPTION_MODE,
             description = "Handle native exception in Kotlin: <terminate|objc-wrap>")
+
+    val dumpBridges by argParser.option(ArgType.Boolean, DUMP_BRIDGES,
+            description = "Dump generated bridges")
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",

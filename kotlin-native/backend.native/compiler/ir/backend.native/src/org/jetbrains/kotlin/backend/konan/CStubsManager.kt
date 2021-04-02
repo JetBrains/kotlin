@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
+private const val dumpBridges = false
+
 class CStubsManager(private val target: KonanTarget) {
 
     fun getUniqueName(prefix: String) = "$prefix${counter++}"
@@ -37,12 +39,6 @@ class CStubsManager(private val target: KonanTarget) {
             val cSource = createTempFile("cstubs", sourceFileExtension)//.deleteOnExit()
             cSource.writeLines(klibStubs.flatMap { it.lines })
 
-            println("CSTUBS for ${language}")
-            klibStubs.flatMap { it.lines }.forEach {
-                println(it)
-            }
-            println("CSTUBS in ${cSource.absolutePath}")
-
             val bitcode = createTempFile("cstubs", ".bc").deleteOnExit()
 
             val cSourcePath = cSource.absolutePath
@@ -51,8 +47,15 @@ class CStubsManager(private val target: KonanTarget) {
                 *compilerOptions.toTypedArray(), "-O2",
                 cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath
             )
-            println("CSTUBS CLANG COMMAND:")
-            println(clangCommand.joinToString(" "))
+            if (dumpBridges) {
+                println("CSTUBS for ${language}")
+                klibStubs.flatMap { it.lines }.forEach {
+                    println(it)
+                }
+                println("CSTUBS in ${cSource.absolutePath}")
+                println("CSTUBS CLANG COMMAND:")
+                println(clangCommand.joinToString(" "))
+            }
 
             val result = Command(clangCommand).getResult(withErrors = true)
             if (result.exitCode != 0) {

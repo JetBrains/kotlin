@@ -315,7 +315,13 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             file.parentFile.mkdirs()
             file
         }
-        val driverOptions = StubIrDriver.DriverOptions(entryPoint, moduleName, File(outCFile.absolutePath), outKtFileCreator)
+        val driverOptions = StubIrDriver.DriverOptions(
+                entryPoint,
+                moduleName,
+                File(outCFile.absolutePath),
+                outKtFileCreator,
+                cinteropArguments.dumpBridges ?: false
+        )
         val stubIrDriver = StubIrDriver(stubIrContext, driverOptions)
         stubIrDriver.run()
     }
