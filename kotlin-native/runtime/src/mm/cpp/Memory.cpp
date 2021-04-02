@@ -92,7 +92,12 @@ extern "C" MemoryState* InitMemory(bool firstRuntime) {
 }
 
 extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
-    mm::ThreadRegistry::Instance().Unregister(mm::FromMemoryState(state));
+    auto* node = mm::FromMemoryState(state);
+    if (destroyRuntime) {
+        node->Get()->gc().PerformFullGC();
+        // TODO: Also make sure that finalizers are run.
+    }
+    mm::ThreadRegistry::Instance().Unregister(node);
 }
 
 extern "C" void RestoreMemory(MemoryState*) {

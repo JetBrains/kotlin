@@ -43,6 +43,8 @@ public:
     // much of a problem is it.
     Iterable Iter() noexcept { return globals_.Iter(); }
 
+    void ClearForTests() { globals_.ClearForTests(); }
+
 private:
     // TODO: Add-only MultiSourceQueue can be made more efficient. Measure, if it's a problem.
     MultiSourceQueue<ObjHeader**> globals_;

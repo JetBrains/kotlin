@@ -13,6 +13,7 @@
 
 #include "Alignment.hpp"
 #include "Alloc.h"
+#include "FinalizerHooks.hpp"
 #include "Memory.h"
 #include "Mutex.hpp"
 #include "Types.h"
@@ -101,6 +102,26 @@ public:
 
     class Producer : private MoveOnly {
     public:
+        class Iterator {
+        public:
+            Node& operator*() noexcept { return *node_; }
+            Node* operator->() noexcept { return node_; }
+
+            Iterator& operator++() noexcept {
+                node_ = node_->next_.get();
+                return *this;
+            }
+
+            bool operator==(const Iterator& rhs) const noexcept { return node_ == rhs.node_; }
+            bool operator!=(const Iterator& rhs) const noexcept { return node_ != rhs.node_; }
+
+        private:
+            friend class Producer;
+            explicit Iterator(Node* node) noexcept : node_(node) {}
+
+            Node* node_;
+        };
+
         Producer(ObjectFactoryStorage& owner, Allocator allocator) noexcept : owner_(owner), allocator_(std::move(allocator)) {}
 
         ~Producer() { Publish(); }
@@ -157,6 +178,9 @@ public:
             RuntimeAssert(owner_.root_ != nullptr, "Must not be empty");
             owner_.AssertCorrectUnsafe();
         }
+
+        Iterator begin() noexcept { return Iterator(root_.get()); }
+        Iterator end() noexcept { return Iterator(nullptr); }
 
         void ClearForTests() noexcept {
             // Since it's only for tests, no need to worry about stack overflows.
@@ -301,6 +325,11 @@ public:
 
     // Lock `ObjectFactoryStorage` for safe iteration.
     Iterable Iter() noexcept { return Iterable(*this); }
+
+    void ClearForTests() {
+        root_.reset();
+        last_ = nullptr;
+    }
 
 private:
     // Expects `mutex_` to be held by the current thread.
@@ -454,6 +483,27 @@ public:
 
     class ThreadQueue : private MoveOnly {
     public:
+        class Iterator {
+        public:
+            NodeRef operator*() noexcept { return NodeRef(*iterator_); }
+            NodeRef operator->() noexcept { return NodeRef(*iterator_); }
+
+            Iterator& operator++() noexcept {
+                ++iterator_;
+                return *this;
+            }
+
+            bool operator==(const Iterator& rhs) const noexcept { return iterator_ == rhs.iterator_; }
+            bool operator!=(const Iterator& rhs) const noexcept { return iterator_ != rhs.iterator_; }
+
+        private:
+            friend class ObjectFactory;
+
+            explicit Iterator(typename Storage::Producer::Iterator iterator) noexcept : iterator_(std::move(iterator)) {}
+
+            typename Storage::Producer::Iterator iterator_;
+        };
+
         ThreadQueue(ObjectFactory& owner, GCThreadData& gc) noexcept :
             producer_(owner.storage_, internal::AllocatorWithGC(internal::SimpleAllocator(), gc)) {}
 
@@ -482,6 +532,9 @@ public:
         }
 
         void Publish() noexcept { producer_.Publish(); }
+
+        Iterator begin() noexcept { return Iterator(producer_.begin()); }
+        Iterator end() noexcept { return Iterator(producer_.end()); }
 
         void ClearForTests() noexcept { producer_.ClearForTests(); }
 
@@ -534,8 +587,27 @@ public:
             typename Storage::Consumer::Iterator iterator_;
         };
 
-        Iterator begin() noexcept { return Iterator(consumer_.begin()); }
-        Iterator end() noexcept { return Iterator(consumer_.end()); }
+        class Iterable {
+        public:
+            Iterator begin() noexcept { return Iterator(owner_.consumer_.begin()); }
+            Iterator end() noexcept { return Iterator(owner_.consumer_.end()); }
+
+        private:
+            friend class FinalizerQueue;
+
+            explicit Iterable(FinalizerQueue& owner) : owner_(owner) {}
+
+            FinalizerQueue& owner_;
+        };
+
+        // TODO: Consider running it in the destructor instead.
+        void Finalize() noexcept {
+            for (auto node : Iterable(*this)) {
+                RunFinalizers(node->IsArray() ? node->GetArrayHeader()->obj() : node->GetObjHeader());
+            }
+        }
+
+        Iterable IterForTests() noexcept { return Iterable(*this); }
 
     private:
         friend class ObjectFactory;
@@ -564,6 +636,8 @@ public:
     ~ObjectFactory() = default;
 
     Iterable Iter() noexcept { return Iterable(*this); }
+
+    void ClearForTests() { storage_.ClearForTests(); }
 
 private:
     Storage storage_;

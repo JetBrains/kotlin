@@ -209,66 +209,110 @@ private:
 template <size_t ElementCount>
 class ObjectArray : public internal::Array<ObjHeader*, ElementCount> {
 public:
+    static ObjectArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<ObjectArray<ElementCount>&>(internal::Array<ObjHeader*, ElementCount>::FromArrayHeader(arr));
+    }
+
     ObjectArray() noexcept : internal::Array<ObjHeader*, ElementCount>(theArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class BooleanArray : public internal::Array<KBoolean, ElementCount> {
 public:
+    static BooleanArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<BooleanArray<ElementCount>&>(internal::Array<KBoolean, ElementCount>::FromArrayHeader(arr));
+    }
+
     BooleanArray() noexcept : internal::Array<KBoolean, ElementCount>(theBooleanArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class ByteArray : public internal::Array<KByte, ElementCount> {
 public:
+    static ByteArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<ByteArray<ElementCount>&>(internal::Array<KByte, ElementCount>::FromArrayHeader(arr));
+    }
+
     ByteArray() noexcept : internal::Array<KByte, ElementCount>(theByteArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class CharArray : public internal::Array<KChar, ElementCount> {
 public:
+    static CharArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<CharArray<ElementCount>&>(internal::Array<KChar, ElementCount>::FromArrayHeader(arr));
+    }
+
     CharArray() noexcept : internal::Array<KChar, ElementCount>(theCharArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class DoubleArray : public internal::Array<KDouble, ElementCount> {
 public:
+    static DoubleArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<DoubleArray<ElementCount>&>(internal::Array<KDouble, ElementCount>::FromArrayHeader(arr));
+    }
+
     DoubleArray() noexcept : internal::Array<KDouble, ElementCount>(theDoubleArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class FloatArray : public internal::Array<KFloat, ElementCount> {
 public:
+    static FloatArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<FloatArray<ElementCount>&>(internal::Array<KFloat, ElementCount>::FromArrayHeader(arr));
+    }
+
     FloatArray() noexcept : internal::Array<KFloat, ElementCount>(theFloatArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class IntArray : public internal::Array<KInt, ElementCount> {
 public:
+    static IntArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<IntArray<ElementCount>&>(internal::Array<KInt, ElementCount>::FromArrayHeader(arr));
+    }
+
     IntArray() noexcept : internal::Array<KInt, ElementCount>(theIntArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class LongArray : public internal::Array<KLong, ElementCount> {
 public:
+    static LongArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<LongArray<ElementCount>&>(internal::Array<KLong, ElementCount>::FromArrayHeader(arr));
+    }
+
     LongArray() noexcept : internal::Array<KLong, ElementCount>(theLongArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class NativePtrArray : public internal::Array<KNativePtr, ElementCount> {
 public:
+    static NativePtrArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<NativePtrArray<ElementCount>&>(internal::Array<KNativePtr, ElementCount>::FromArrayHeader(arr));
+    }
+
     NativePtrArray() noexcept : internal::Array<KNativePtr, ElementCount>(theNativePtrArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class ShortArray : public internal::Array<KShort, ElementCount> {
 public:
+    static ShortArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<ShortArray<ElementCount>&>(internal::Array<KShort, ElementCount>::FromArrayHeader(arr));
+    }
+
     ShortArray() noexcept : internal::Array<KShort, ElementCount>(theShortArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
 class String : public internal::Array<KChar, ElementCount> {
 public:
+    static String<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
+        return static_cast<String<ElementCount>&>(internal::Array<KChar, ElementCount>::FromArrayHeader(arr));
+    }
+
     String() noexcept : internal::Array<KChar, ElementCount>(theStringTypeInfo) {}
 };
 

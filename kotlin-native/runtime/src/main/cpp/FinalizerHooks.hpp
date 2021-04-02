@@ -10,6 +10,9 @@ struct ObjHeader;
 
 namespace kotlin {
 
+// Note: when finalizer is run, object's `ObjHeader*` fields might already be freed,
+// finalizer must never try to reference them.
+
 bool HasFinalizers(ObjHeader* object) noexcept;
 void RunFinalizers(ObjHeader* object) noexcept;
 

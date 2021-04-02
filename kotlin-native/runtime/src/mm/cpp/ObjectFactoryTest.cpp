@@ -12,6 +12,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "FinalizerHooksTestSupport.hpp"
 #include "GC.hpp"
 #include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
@@ -889,11 +890,43 @@ TEST(ObjectFactoryTest, Move) {
 
     {
         int count = 0;
-        for (auto it = finalizerQueue.begin(); it != finalizerQueue.end(); ++it, ++count) {
+        auto iter = finalizerQueue.IterForTests();
+        for (auto it = iter.begin(); it != iter.end(); ++it, ++count) {
             EXPECT_TRUE(it->IsArray());
         }
         EXPECT_THAT(count, 10);
     }
+}
+
+TEST(ObjectFactoryTest, RunFinalizers) {
+    FinalizerHooksTestSupport finalizerHooks;
+
+    test_support::TypeInfoHolder objectType{test_support::TypeInfoHolder::ObjectBuilder<Payload>().addFlag(TF_HAS_FINALIZER)};
+    GC::ThreadData gc;
+    ObjectFactory objectFactory;
+    ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
+    ObjectFactory::FinalizerQueue finalizerQueue;
+
+    KStdVector<ObjHeader*> objects;
+    for (int i = 0; i < 10; ++i) {
+        objects.push_back(threadQueue.CreateObject(objectType.typeInfo()));
+    }
+
+    threadQueue.Publish();
+
+    {
+        auto iter = objectFactory.Iter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            iter.MoveAndAdvance(finalizerQueue, it);
+        }
+    }
+
+    for (auto& object : objects) {
+        EXPECT_CALL(finalizerHooks.finalizerHook(), Call(object));
+    }
+    finalizerQueue.Finalize();
+    // Hooks called before `FinalizerQueue` destructor.
+    testing::Mock::VerifyAndClearExpectations(&finalizerHooks.finalizerHook());
 }
 
 TEST(ObjectFactoryTest, ConcurrentPublish) {

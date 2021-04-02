@@ -47,6 +47,9 @@ public:
 
     std::atomic<Flags>& flags() noexcept { return flags_; }
 
+    bool HasWeakReferenceCounter() noexcept;
+    void ClearWeakReferenceCounter() noexcept;
+
 private:
     explicit ExtraObjectData(const TypeInfo* typeInfo) noexcept : typeInfo_(typeInfo) {}
     ~ExtraObjectData();
@@ -60,7 +63,6 @@ private:
     void* associatedObject_ = nullptr;
 #endif
 
-    // TODO: Need to respect when marking.
     ObjHeader* weakReferenceCounter_ = nullptr;
 };
 
