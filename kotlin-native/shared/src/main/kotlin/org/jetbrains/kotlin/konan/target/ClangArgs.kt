@@ -33,10 +33,6 @@ internal object Android {
 
 class ClangArgs(private val configurables: Configurables) : Configurables by configurables {
 
-    private val targetArg = if (configurables is TargetableConfigurables)
-        configurables.targetArg
-    else null
-
     private val clangArgsSpecificForKonanSources
         get() = runtimeDefinitions.map { "-D$it" }
 
@@ -53,8 +49,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         if (configurables is GccConfigurables) {
             add(listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}"))
         }
-        if (configurables is TargetableConfigurables) {
-            add(listOf("-target", configurables.targetArg!!))
+        if (configurables !is AppleConfigurables) {
+            add(listOf("-target", configurables.targetTriple.toString()))
         }
         if (configurables is AppleConfigurables) {
             val arch = when (target) {
@@ -101,7 +97,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
-            val clangTarget = targetArg!!
+            val clangTarget = targetTriple.toString()
             val architectureDir = Android.architectureDirForTarget(target)
             val toolchainSysroot = "$absoluteTargetToolchain/sysroot"
             listOf(

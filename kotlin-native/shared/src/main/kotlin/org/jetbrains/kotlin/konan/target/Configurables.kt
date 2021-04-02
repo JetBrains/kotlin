@@ -52,6 +52,10 @@ interface LldFlags : TargetableExternalStorage {
 interface Configurables : TargetableExternalStorage, RelocationModeFlags {
 
     val target: KonanTarget
+    val targetTriple: TargetTriple
+        get() = targetString("targetTriple")
+                ?.let(TargetTriple.Companion::fromString)
+                ?: error("quadruple for $target is not set.")
 
     val llvmHome get() = hostString("llvmHome")
     val llvmVersion get() = hostString("llvmVersion")
@@ -91,12 +95,8 @@ interface ConfigurablesWithEmulator : Configurables {
     val absoluteEmulatorExecutable get() = absolute(emulatorExecutable)
 }
 
-interface TargetableConfigurables : Configurables {
-    val targetArg get() = targetString("quadruple")
-}
-
 interface AppleConfigurables : Configurables, ClangFlags {
-    val arch get() = targetString("arch")!!
+    val arch get() = targetTriple.architecture
     val osVersionMin get() = targetString("osVersionMin")!!
     val osVersionMinFlagLd get() = targetString("osVersionMinFlagLd")!!
     val osVersionMinFlagClang get() = targetString("osVersionMinFlagClang")!!
@@ -105,9 +105,9 @@ interface AppleConfigurables : Configurables, ClangFlags {
     val absoluteAdditionalToolsDir get() = absolute(additionalToolsDir)
 }
 
-interface MingwConfigurables : TargetableConfigurables, ClangFlags
+interface MingwConfigurables : Configurables, ClangFlags
 
-interface GccConfigurables : TargetableConfigurables, ClangFlags {
+interface GccConfigurables : Configurables, ClangFlags {
     val gccToolchain get() = targetString("gccToolchain")
     val absoluteGccToolchain get() = absolute(gccToolchain)
 
@@ -123,11 +123,11 @@ interface GccConfigurables : TargetableConfigurables, ClangFlags {
     val linkerGccFlags get() = targetList("linkerGccFlags")
 }
 
-interface AndroidConfigurables : TargetableConfigurables, ClangFlags
+interface AndroidConfigurables : Configurables, ClangFlags
 
-interface WasmConfigurables : TargetableConfigurables, ClangFlags, LldFlags
+interface WasmConfigurables : Configurables, ClangFlags, LldFlags
 
-interface ZephyrConfigurables : TargetableConfigurables, ClangFlags {
+interface ZephyrConfigurables : Configurables, ClangFlags {
     val boardSpecificClangFlags get() = targetList("boardSpecificClangFlags")
     val targetAbi get() = targetString("targetAbi")
 }

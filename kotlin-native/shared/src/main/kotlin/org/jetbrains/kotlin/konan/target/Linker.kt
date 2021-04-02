@@ -108,13 +108,13 @@ abstract class LinkerFlags(val configurables: Configurables) {
 class AndroidLinker(targetProperties: AndroidConfigurables)
     : LinkerFlags(targetProperties), AndroidConfigurables by targetProperties {
 
-    private val clangQuad = when (targetProperties.targetArg) {
-        "arm-linux-androideabi" -> "armv7a-linux-androideabi"
-        else -> targetProperties.targetArg
+    private val clangTarget = when (val targetString = targetProperties.targetTriple.toString()) {
+        "arm-unknown-linux-androideabi" -> "armv7a-unknown-linux-androideabi"
+        else -> targetString
     }
-    private val prefix = "$absoluteTargetToolchain/bin/${clangQuad}${Android.API}"
+    private val prefix = "$absoluteTargetToolchain/bin/${clangTarget}${Android.API}"
     private val clang = if (HostManager.hostIsMingw) "$prefix-clang.cmd" else "$prefix-clang"
-    private val ar = "$absoluteTargetToolchain/${targetProperties.targetArg}/bin/ar"
+    private val ar = "$absoluteTargetToolchain/${targetProperties.targetTriple}/bin/ar"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
@@ -136,7 +136,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
         val toolchainSysroot = "${absoluteTargetToolchain}/sysroot"
         val architectureDir = Android.architectureDirForTarget(target)
         val apiSysroot = "$absoluteTargetSysRoot/$architectureDir"
-        val clangTarget = targetArg!!
+        val clangTarget = targetTriple.toString()
         val libDirs = listOf(
                 "--sysroot=$apiSysroot",
                 if (target == KonanTarget.ANDROID_X64) "-L$apiSysroot/usr/lib64" else "-L$apiSysroot/usr/lib",
@@ -148,7 +148,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
             +"-fPIC"
             +"-shared"
             +"-target"
-            +targetArg!!
+            +clangTarget
             +libDirs
             +objectFiles
             if (optimize) +linkerOptimizationFlags
