@@ -3827,6 +3827,10 @@ createInterop("cppTypes") {
     it.defFile 'interop/cpp/types.def'
 }
 
+createInterop("cppSkia") {
+    it.defFile 'interop/cpp/skia.def'
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4196,6 +4200,13 @@ interopTest("interop_cppTypes") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/cpp/types.kt"
     interop = 'cppTypes'
+}
+
+interopTest("interop_cppSkia") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/cpp/skia.kt"
+    interop = 'cppSkia'
+    goldValue = "17 17\n"
 }
 
 /*
