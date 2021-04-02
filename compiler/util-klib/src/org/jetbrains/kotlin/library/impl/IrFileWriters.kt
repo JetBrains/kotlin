@@ -74,6 +74,22 @@ class IrMemoryStringWriter(private val data: List<String>) : IrMemoryWriter() {
     }
 }
 
+class IrMemoryIntArrayWriter(private val data: List<Int>) : IrMemoryWriter() {
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(data.size)
+
+        data.forEach { dataOutput.writeInt(it) }
+    }
+}
+
+class IrMemoryLongArrayWriter(private val data: List<Long>) : IrMemoryWriter() {
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(data.size)
+
+        data.forEach { dataOutput.writeLong(it) }
+    }
+}
+
 class IrByteArrayWriter(private val data: List<ByteArray>) : IrFileWriter() {
     override fun writeData(dataOutput: DataOutput) {
         dataOutput.writeInt(data.size)
