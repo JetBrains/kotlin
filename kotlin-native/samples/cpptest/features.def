@@ -1,6 +1,0 @@
-headers = src/native/features.h
-headerFilter = src/native/features.h
-package = test
-language = C++
-#compilerOpts = -std=c++14
-
