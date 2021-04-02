@@ -1,5 +1,5 @@
-@kotlin.ExperimentalStdlibApi
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public val kotlin.Char.code: kotlin.Int { get; }
 
@@ -10,13 +10,13 @@ public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
 @kotlin.SinceKotlin(version = "1.4")
 public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin.Throwable> { get; }
 
-@kotlin.ExperimentalStdlibApi
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun Char(code: kotlin.Int): kotlin.Char
 
-/*∆*/ @kotlin.ExperimentalStdlibApi
-/*∆*/ @kotlin.SinceKotlin(version = "1.4")
+/*∆*/ @kotlin.SinceKotlin(version = "1.5")
+/*∆*/ @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 /*∆*/ public inline fun Char(code: kotlin.UShort): kotlin.Char
 /*∆*/ 

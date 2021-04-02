@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,9 +17,10 @@ package kotlin.text
  *
  * @sample samples.text.Chars.digitToInt
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToInt(): Int {
+    // TODO: needs to support all digits in JVM
     if (this in '0'..'9') {
         return this - '0'
     }
@@ -37,8 +38,8 @@ public fun Char.digitToInt(): Int {
  *
  * @sample samples.text.Chars.digitToInt
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToInt(radix: Int): Int {
     return digitToIntOrNull(radix) ?: throw IllegalArgumentException("Char $this is not a digit in the given radix=$radix")
 }
@@ -52,9 +53,10 @@ public fun Char.digitToInt(radix: Int): Int {
  *
  * @sample samples.text.Chars.digitToIntOrNull
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToIntOrNull(): Int? {
+    // TODO: needs to support all digits in JVM
     if (this in '0'..'9') {
         return this - '0'
     }
@@ -72,9 +74,10 @@ public fun Char.digitToIntOrNull(): Int? {
  *
  * @sample samples.text.Chars.digitToIntOrNull
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToIntOrNull(radix: Int): Int? {
+    // TODO: needs to support all digits in JVM
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
     }
@@ -95,8 +98,8 @@ public fun Char.digitToIntOrNull(radix: Int): Int? {
  *
  * @sample samples.text.Chars.digitToChar
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Int.digitToChar(): Char {
     if (this in 0..9) {
         return '0' + this
@@ -113,8 +116,8 @@ public fun Int.digitToChar(): Char {
  *
  * @sample samples.text.Chars.digitToChar
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun Int.digitToChar(radix: Int): Char {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
