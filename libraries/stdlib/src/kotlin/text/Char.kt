@@ -20,11 +20,9 @@ package kotlin.text
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToInt(): Int {
-    // TODO: needs to support all digits in JVM
-    if (this in '0'..'9') {
-        return this - '0'
+    return digitOf(this, 10).also {
+        if (it < 0) throw IllegalArgumentException("Char $this is not a decimal digit")
     }
-    throw IllegalArgumentException("Char $this is not a decimal digit")
 }
 
 /**
@@ -56,11 +54,7 @@ public fun Char.digitToInt(radix: Int): Int {
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToIntOrNull(): Int? {
-    // TODO: needs to support all digits in JVM
-    if (this in '0'..'9') {
-        return this - '0'
-    }
-    return null
+    return digitOf(this, 10).takeIf { it >= 0 }
 }
 
 /**
@@ -77,17 +71,8 @@ public fun Char.digitToIntOrNull(): Int? {
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalStdlibApi::class)
 public fun Char.digitToIntOrNull(radix: Int): Int? {
-    // TODO: needs to support all digits in JVM
-    if (radix !in 2..36) {
-        throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
-    }
-    if (this in '0'..'9') {
-        val digit = this - '0'
-        return if (digit < radix) digit else null
-    }
-    val a = if (this <= 'Z') 'A' else 'a'
-    val digit = 10 + (this - a)
-    return if (digit in 10 until radix) digit else null
+    checkRadix(radix)
+    return digitOf(this, radix).takeIf { it >= 0 }
 }
 
 /**
