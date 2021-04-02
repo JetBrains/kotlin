@@ -202,6 +202,9 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
     fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
         type != null && AbstractTypeChecker.isSubtypeOf(context, type, this)
 
+    fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
+        type != null && AbstractTypeChecker.isSubtypeOf(context, this, type)
+
     private fun simpleTypeStatement(realVar: RealVariable, exactType: Boolean, type: ConeKotlinType): MutableTypeStatement {
         return MutableTypeStatement(
             realVar,

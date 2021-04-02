@@ -97,8 +97,8 @@ fun case_9() {
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-22175
  */
-fun <T : String> T?.case_10() = this
-fun <T : Int> T?.case_10() = this
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_10() = this
+fun <T : <!FINAL_UPPER_BOUND!>Int<!>> T?.case_10() = this
 fun case_10() {
     var x: Int? = 10
     x = null
@@ -106,7 +106,7 @@ fun case_10() {
 }
 
 // TESTCASE NUMBER: 11
-fun <T : String> T?.case_11() = this
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_11() = this
 fun case_11() {
     var x: Int? = 10
     x = null

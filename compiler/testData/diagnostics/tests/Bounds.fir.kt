@@ -40,4 +40,4 @@ fun test() {
 
 fun <T : Any> foo() {}
 fun <T : Int?> bar() {}
-fun <T : Int> Int.buzz() : Unit {}
+fun <T : <!FINAL_UPPER_BOUND!>Int<!>> Int.buzz() : Unit {}

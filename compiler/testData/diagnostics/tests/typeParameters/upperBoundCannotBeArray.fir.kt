@@ -2,7 +2,7 @@ fun <A : Array<Any>> f1() {}
 fun <T, A : Array<out T>> f2() {}
 fun <S, T : S, A> f3() where A : Array<out S>, A : Array<out T> {}
 
-fun <T : IntArray> f4() {}
+fun <T : <!FINAL_UPPER_BOUND!>IntArray<!>> f4() {}
 
 fun <T> f5() where T : Array<Any> {}
 

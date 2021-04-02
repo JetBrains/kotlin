@@ -15,4 +15,4 @@ enum class E1
 class A5<T> where T : C1, T : E1
 
 object O1
-class A6<T> where T : O1, T : C2
+class A6<T> where T : <!FINAL_UPPER_BOUND!>O1<!>, T : C2

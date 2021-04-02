@@ -9,7 +9,7 @@ fun Boolean?.case_1(): Boolean {
 }
 
 // TESTCASE NUMBER: 2
-fun <T : Boolean>T?.case_2(): Boolean {
+fun <T : <!FINAL_UPPER_BOUND!>Boolean<!>>T?.case_2(): Boolean {
     contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this@case_2 != null && this@case_2 !is Nothing && this@case_2)<!> }
     return this != null && this !is Nothing && this
 }
