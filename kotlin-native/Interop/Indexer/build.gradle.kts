@@ -144,9 +144,10 @@ dependencies {
 }
 
 val nativelibs = project.tasks.create<Copy>("nativelibs") {
-    dependsOn(solib("clangstubs"))
+    val clangstubsSolib = solib("clangstubs")
+    dependsOn(clangstubsSolib)
 
-    from("$buildDir/")
+    from("$buildDir/$clangstubsSolib")
     into("$buildDir/nativelibs/")
 }
 

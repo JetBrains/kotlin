@@ -86,8 +86,9 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 
 val nativelibs = project.tasks.create<Copy>("nativelibs") {
-    dependsOn(solib("callbacks"))
+    val callbacksSolib = solib("callbacks")
+    dependsOn(callbacksSolib)
 
-    from("$buildDir/")
+    from("$buildDir/$callbacksSolib")
     into("$buildDir/nativelibs/")
 }
