@@ -74,12 +74,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             renderAnnotation = true,
         )
 
-        object WithFqNamesExceptAnnotation : RenderMode(
+        object WithFqNamesExceptAnnotationAndBody : RenderMode(
             renderLambdaBodies = true,
             renderCallArguments = true,
             renderCallableFqNames = true,
             renderDeclarationResolvePhase = false,
             renderAnnotation = false,
+            renderBodies = false,
         )
 
         object WithResolvePhases : RenderMode(
