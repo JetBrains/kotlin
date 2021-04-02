@@ -518,6 +518,55 @@ __attribute__((swift_name("TestGH3992.B")))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
+
+/**
+ * Summary class [KDocExport].
+ *
+ * @property xyzzy Doc for property xyzzy
+ * @property zzz See below.
+ */
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KDocExport")))
+@interface KtKDocExport : KtBase
+
+/** Non-primary ctor KDoc: */
+- (instancetype)initWithName:(NSString *)name __attribute__((swift_name("init(name:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+
+/**
+ * @param xyzzy is documented.
+ *
+ * This is multi-line KDoc. See a blank line above.
+ */
+@property (readonly) NSString *xyzzy __attribute__((swift_name("xyzzy")));
+
+/** @property xyzzy KDoc for foo? */
+@property (readonly) NSString *foo __attribute__((swift_name("foo")));
+
+/** @property foo KDoc for yxxyz? */
+@property int32_t yxxyz __attribute__((swift_name("yxxyz")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KdocExportKt")))
+@interface KtKdocExportKt : KtBase
+
+/**
+ * Useless function [whatever]
+ *
+ * This kdoc has some additional formatting.
+ * @param a keep intact and return
+ * @return value of [a]
+ * Check for additional comment (note) below
+ */
+/**
+ @note This method converts instances of IllegalArgumentException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
++ (NSString * _Nullable)whateverA:(NSString *)a error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("whatever(a:)")));
+@end;
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kt35940Kt")))
 @interface KtKt35940Kt : KtBase
