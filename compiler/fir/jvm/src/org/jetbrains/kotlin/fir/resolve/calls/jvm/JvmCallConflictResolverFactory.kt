@@ -22,7 +22,8 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         val specificityComparator = JvmTypeSpecificityComparator(components.ctx)
         return ConeCompositeConflictResolver(
             ConeOverloadConflictResolver(specificityComparator, components),
-            ConeEquivalentCallConflictResolver(specificityComparator, components)
+            ConeEquivalentCallConflictResolver(specificityComparator, components),
+            JvmPlatformOverloadsConflictResolver(specificityComparator, components)
         )
     }
 }

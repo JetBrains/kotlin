@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +PreferJavaFieldOverload
 
 // FILE: B.java
