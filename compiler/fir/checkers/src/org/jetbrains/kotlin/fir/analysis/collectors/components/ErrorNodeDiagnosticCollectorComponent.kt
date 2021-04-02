@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -92,7 +90,8 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
             return
         }
-        if (source.kind == FirFakeSourceElementKind.ImplicitConstructor) {
+        if (source.kind == FirFakeSourceElementKind.ImplicitConstructor || source.kind == FirFakeSourceElementKind.DesugaredForLoop) {
+            // See FirForLoopChecker
             return
         }
         for (coneDiagnostic in diagnostic.toFirDiagnostics(source, qualifiedAccessSource)) {

@@ -60,4 +60,9 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirReturnAllowedChecker,
             FirFunctionReturnTypeMismatchChecker
         )
+
+    override val blockCheckers: Set<FirBlockChecker>
+        get() = setOf(
+            FirForLoopChecker
+        )
 }

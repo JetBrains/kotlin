@@ -1708,16 +1708,17 @@ open class RawFirBuilder(
             val ktParameter = expression.loopParameter
             val fakeSource = expression.toFirPsiSourceElement(FirFakeSourceElementKind.DesugaredForLoop)
             val target: FirLoopTarget
+            // NB: FirForLoopChecker relies on this block existence and structure
             return buildBlock {
                 source = fakeSource
                 val rangeSource = expression.loopRange?.toFirSourceElement(FirFakeSourceElementKind.DesugaredForLoop)
                 val iteratorVal = generateTemporaryVariable(
-                    baseSession, rangeSource, Name.special("<iterator>"),
+                    baseSession, rangeSource, ITERATOR_NAME,
                     buildFunctionCall {
                         source = fakeSource
                         calleeReference = buildSimpleNamedReference {
                             source = fakeSource
-                            name = Name.identifier("iterator")
+                            name = OperatorNameConventions.ITERATOR
                         }
                         explicitReceiver = rangeExpression
                     },
@@ -1729,7 +1730,7 @@ open class RawFirBuilder(
                         source = fakeSource
                         calleeReference = buildSimpleNamedReference {
                             source = fakeSource
-                            name = Name.identifier("hasNext")
+                            name = OperatorNameConventions.HAS_NEXT
                         }
                         explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
                     }
@@ -1755,7 +1756,7 @@ open class RawFirBuilder(
                                 source = fakeSource
                                 calleeReference = buildSimpleNamedReference {
                                     source = fakeSource
-                                    name = Name.identifier("next")
+                                    name = OperatorNameConventions.NEXT
                                 }
                                 explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
                             },

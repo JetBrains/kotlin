@@ -256,6 +256,15 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val ASSIGN_OPERATOR_AMBIGUITY by error<PsiElement> {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
+        val ITERATOR_AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
+        val HAS_NEXT_FUNCTION_AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
+        val NEXT_AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
     }
 
     val TYPES_AND_TYPE_PARAMETERS by object : DiagnosticGroup("Types & type parameters") {
@@ -612,6 +621,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("operator")
             parameter<FirExpression>("rhs")
         }
+        val ITERATOR_ON_NULLABLE by error<FirSourceElement, KtExpression>()
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {
             parameter<ConeKotlinType>("receiverType")
         }
@@ -648,6 +658,15 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val CONVENTIONS by object : DiagnosticGroup("Conventions") {
         val NO_GET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
         val NO_SET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
+        val ITERATOR_MISSING by error<FirSourceElement, KtExpression>()
+        val HAS_NEXT_MISSING by error<FirSourceElement, KtExpression>()
+        val NEXT_MISSING by error<FirSourceElement, KtExpression>()
+        val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
+        val NEXT_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {

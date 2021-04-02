@@ -23,5 +23,5 @@ typealias C2<T> = JHost.Consumer2<T, T>
 val test1 = R { }
 val test2 = C<String> { s -> println(s.length) }
 val test3 = CStr { s -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(s.<!UNRESOLVED_REFERENCE!>length<!>) }
-val test4 = CStrList { ss -> <!OVERLOAD_RESOLUTION_AMBIGUITY, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (s in ss) { <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(s.<!UNRESOLVED_REFERENCE!>length<!>) }<!> }
+val test4 = CStrList { ss -> for (s in <!ITERATOR_AMBIGUITY!>ss<!>) { <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(s.<!UNRESOLVED_REFERENCE!>length<!>) } }
 val test5 = <!INAPPLICABLE_CANDIDATE!>C2<!><Int> { a, b -> val x: Int = a <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> b; println(x)}

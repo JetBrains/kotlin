@@ -1207,5 +1207,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         val ANONYMOUS_OBJECT_NAME = Name.special("<anonymous>")
 
         val DESTRUCTURING_NAME = Name.special("<destruct>")
+
+        val ITERATOR_NAME = Name.special("<iterator>")
     }
 }

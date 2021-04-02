@@ -588,6 +588,21 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtSymbol>
     }
 
+    abstract class IteratorAmbiguity : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = IteratorAmbiguity::class
+        abstract val candidates: List<KtSymbol>
+    }
+
+    abstract class HasNextFunctionAmbiguity : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = HasNextFunctionAmbiguity::class
+        abstract val candidates: List<KtSymbol>
+    }
+
+    abstract class NextAmbiguity : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = NextAmbiguity::class
+        abstract val candidates: List<KtSymbol>
+    }
+
     abstract class TypeMismatch : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = TypeMismatch::class
         abstract val expectedType: KtType
@@ -1203,6 +1218,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val rhs: KtExpression
     }
 
+    abstract class IteratorOnNullable : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = IteratorOnNullable::class
+    }
+
     abstract class UnnecessarySafeCall : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = UnnecessarySafeCall::class
         abstract val receiverType: KtType
@@ -1255,6 +1274,28 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class NoSetMethod : KtFirDiagnostic<KtArrayAccessExpression>() {
         override val diagnosticClass get() = NoSetMethod::class
+    }
+
+    abstract class IteratorMissing : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = IteratorMissing::class
+    }
+
+    abstract class HasNextMissing : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = HasNextMissing::class
+    }
+
+    abstract class NextMissing : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = NextMissing::class
+    }
+
+    abstract class HasNextFunctionNoneApplicable : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = HasNextFunctionNoneApplicable::class
+        abstract val candidates: List<KtSymbol>
+    }
+
+    abstract class NextNoneApplicable : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = NextNoneApplicable::class
+        abstract val candidates: List<KtSymbol>
     }
 
     abstract class ToplevelTypealiasesOnly : KtFirDiagnostic<KtTypeAlias>() {

@@ -4827,6 +4827,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
+            @Test
+            @TestMetadata("forLoopChecker.kt")
+            public void testForLoopChecker() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/forLoopChecker.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker")
             @TestDataPath("$PROJECT_ROOT")

@@ -7,7 +7,7 @@
  * NOTE: right-hand side of an assignment must be expression
  */
 fun case1() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY, UNRESOLVED_REFERENCE!>for (<!SYNTAX!><!>) { }<!>
+    val x = for (<!SYNTAX!><!>) { }
     val y = for (x in 1..2) { }
 
     val a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
@@ -20,7 +20,7 @@ fun case1() {
  * NOTE: right-hand side of an assignment must be expression
  */
 fun case2() {
-    var x = <!OVERLOAD_RESOLUTION_AMBIGUITY, UNRESOLVED_REFERENCE!>for (<!SYNTAX!><!>) { }<!>
+    var x = for (<!SYNTAX!><!>) { }
     var y = for (x in 1..2) { }
 
     var a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
@@ -40,7 +40,7 @@ fun case3() {
     var b :Any?
     var c :Any?
 
-    x = <!OVERLOAD_RESOLUTION_AMBIGUITY, UNRESOLVED_REFERENCE!>for (<!SYNTAX!><!>) { }<!>
+    x = for (<!SYNTAX!><!>) { }
     y = for (x in 1..2) { }
 
     a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>

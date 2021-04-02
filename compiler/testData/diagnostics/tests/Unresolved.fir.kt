@@ -22,11 +22,11 @@ fun testUnresolved() {
         is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
-    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
+    for (j in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>collection<!>) {
        var i: Int = j
        i += 1
        foo1(j)
-    }<!>
+    }
 }
 
 fun foo1(i: Int) {}

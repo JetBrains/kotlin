@@ -208,6 +208,9 @@ object FirErrors {
     // Ambiguity
     val OVERLOAD_RESOLUTION_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val ASSIGN_OPERATOR_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>()
+    val ITERATOR_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val HAS_NEXT_FUNCTION_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val NEXT_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
     // Types & type parameters
     val TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
@@ -362,6 +365,7 @@ object FirErrors {
     val UNSAFE_IMPLICIT_INVOKE_CALL by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNSAFE_INFIX_CALL by error3<KtExpression, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNSAFE_OPERATOR_CALL by error3<KtExpression, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val ITERATOR_ON_NULLABLE by error0<FirSourceElement, KtExpression>()
     val UNNECESSARY_SAFE_CALL by warning1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.SAFE_ACCESS)
     val UNEXPECTED_SAFE_CALL by error0<PsiElement>(SourceElementPositioningStrategies.SAFE_ACCESS)
     val UNNECESSARY_NOT_NULL_ASSERTION by warning1<KtExpression, ConeKotlinType>(SourceElementPositioningStrategies.OPERATOR)
@@ -382,6 +386,11 @@ object FirErrors {
     // Conventions
     val NO_GET_METHOD by error0<KtArrayAccessExpression>(SourceElementPositioningStrategies.ARRAY_ACCESS)
     val NO_SET_METHOD by error0<KtArrayAccessExpression>(SourceElementPositioningStrategies.ARRAY_ACCESS)
+    val ITERATOR_MISSING by error0<FirSourceElement, KtExpression>()
+    val HAS_NEXT_MISSING by error0<FirSourceElement, KtExpression>()
+    val NEXT_MISSING by error0<FirSourceElement, KtExpression>()
+    val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error1<FirSourceElement, KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
+    val NEXT_NONE_APPLICABLE by error1<FirSourceElement, KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
 
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY by error0<KtTypeAlias>()

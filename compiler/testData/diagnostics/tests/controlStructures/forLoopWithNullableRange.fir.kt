@@ -8,7 +8,7 @@ class It {
 }
 
 fun test(c: Coll?) {
-  <!UNSAFE_CALL!>for (x in c) {}<!>
+  for (x in <!ITERATOR_ON_NULLABLE!>c<!>) {}
 
   if (c != null) {
     for(x in c) {}

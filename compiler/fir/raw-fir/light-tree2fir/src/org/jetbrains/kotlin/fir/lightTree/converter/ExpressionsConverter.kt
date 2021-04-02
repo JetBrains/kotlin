@@ -944,13 +944,19 @@ class ExpressionsConverter(
             }
         }
 
+        val fakeSource = forLoop.toFirSourceElement(FirFakeSourceElementKind.DesugaredForLoop)
         val target: FirLoopTarget
+        // NB: FirForLoopChecker relies on this block existence and structure
         return buildBlock {
-            source = forLoop.toFirSourceElement()
+            source = fakeSource
             val iteratorVal = generateTemporaryVariable(
-                this@ExpressionsConverter.baseSession, null, Name.special("<iterator>"),
+                this@ExpressionsConverter.baseSession, fakeSource, ITERATOR_NAME,
                 buildFunctionCall {
-                    calleeReference = buildSimpleNamedReference { name = Name.identifier("iterator") }
+                    source = fakeSource
+                    calleeReference = buildSimpleNamedReference {
+                        source = fakeSource
+                        name = OperatorNameConventions.ITERATOR
+                    }
                     explicitReceiver = rangeExpression
                 }
             )
@@ -958,8 +964,12 @@ class ExpressionsConverter(
             statements += FirWhileLoopBuilder().apply {
                 source = forLoop.toFirSourceElement()
                 condition = buildFunctionCall {
-                    calleeReference = buildSimpleNamedReference { name = Name.identifier("hasNext") }
-                    explicitReceiver = generateResolvedAccessExpression(null, iteratorVal)
+                    source = fakeSource
+                    calleeReference = buildSimpleNamedReference {
+                        source = fakeSource
+                        name = OperatorNameConventions.HAS_NEXT
+                    }
+                    explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
                 }
                 // break/continue in the for loop condition will refer to an outer loop if any.
                 // So, prepare the loop target after building the condition.
@@ -975,8 +985,12 @@ class ExpressionsConverter(
                         this@ExpressionsConverter.baseSession, null,
                         if (multiDeclaration != null) DESTRUCTURING_NAME else parameter!!.firValueParameter.name,
                         buildFunctionCall {
-                            calleeReference = buildSimpleNamedReference { name = Name.identifier("next") }
-                            explicitReceiver = generateResolvedAccessExpression(null, iteratorVal)
+                            source = fakeSource
+                            calleeReference = buildSimpleNamedReference {
+                                source = fakeSource
+                                name = OperatorNameConventions.NEXT
+                            }
+                            explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
                         },
                         parameter!!.firValueParameter.returnTypeRef
                     )

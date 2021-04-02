@@ -8,5 +8,5 @@ class It {
 }
 
 fun test() {
-  <!UNSAFE_CALL, UNSAFE_CALL!>for (x in Coll()) {}<!>
+  for (x in <!HAS_NEXT_FUNCTION_NONE_APPLICABLE!>Coll()<!>) {}
 }

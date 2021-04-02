@@ -25,7 +25,7 @@ fun whenInContract(x: Any?, boolean: Boolean) {
 
 fun forInContract(x: Any?) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION, UNRESOLVED_REFERENCE!>for (i in 0..1) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>for (i in 0..1) {
             returns() implies (x is String)
         }<!>
     }
