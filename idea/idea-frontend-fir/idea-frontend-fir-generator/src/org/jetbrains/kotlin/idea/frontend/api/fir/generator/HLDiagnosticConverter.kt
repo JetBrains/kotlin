@@ -9,10 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticParameter
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.psi.KtParameter
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -165,10 +165,6 @@ private object FirToKtConversionCreator {
             KtTypeParameterSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirTypeParameter")
         ),
-        FirEffectiveVisibility::class to HLFunctionCallConversion(
-            "{0}.toVisibility()",
-            Visibility::class.createType()
-        ),
         ConeKotlinType::class to HLFunctionCallConversion(
             "firSymbolBuilder.typeBuilder.buildKtType({0})",
             KtType::class.createType()
@@ -196,6 +192,7 @@ private object FirToKtConversionCreator {
         EventOccurrencesRange::class,
         KtModifierKeywordToken::class,
         Visibility::class,
+        EffectiveVisibility::class,
         WhenMissingCase::class,
         ForbiddenNamedArgumentsTarget::class,
         LanguageFeature::class,

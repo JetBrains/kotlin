@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -37,6 +38,7 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isFromSealedClass: Boolean
     override val isFromEnumClass: Boolean
     override val isFun: Boolean
+    val effectiveVisibility: EffectiveVisibility
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedDeclarationStatus(this, data)
 }

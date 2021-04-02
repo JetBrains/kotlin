@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -43,6 +44,7 @@ class FirDeserializationContext(
     val annotationDeserializer: AbstractAnnotationDeserializer,
     val constDeserializer: FirConstDeserializer,
     val containerSource: DeserializedContainerSource?,
+    val outerClassSymbol: FirRegularClassSymbol?,
     outerTypeParameters: List<FirTypeParameterSymbol>
 ) {
     val allTypeParameters: List<FirTypeParameterSymbol> =
@@ -54,14 +56,21 @@ class FirDeserializationContext(
         typeTable: TypeTable = this.typeTable,
         relativeClassName: FqName? = this.relativeClassName,
         containerSource: DeserializedContainerSource? = this.containerSource,
+        outerClassSymbol: FirRegularClassSymbol? = this.outerClassSymbol,
         annotationDeserializer: AbstractAnnotationDeserializer = this.annotationDeserializer,
         capturesTypeParameters: Boolean = true
     ): FirDeserializationContext = FirDeserializationContext(
-        nameResolver, typeTable, versionRequirementTable, session, packageFqName, relativeClassName,
-        FirTypeDeserializer(
-            session, nameResolver, typeTable, annotationDeserializer, typeParameterProtos, typeDeserializer
-        ),
-        annotationDeserializer, constDeserializer, containerSource,
+        nameResolver,
+        typeTable,
+        versionRequirementTable,
+        session,
+        packageFqName,
+        relativeClassName,
+        FirTypeDeserializer(session, nameResolver, typeTable, annotationDeserializer, typeParameterProtos, typeDeserializer),
+        annotationDeserializer,
+        constDeserializer,
+        containerSource,
+        outerClassSymbol,
         if (capturesTypeParameters) allTypeParameters else emptyList()
     )
 
@@ -87,7 +96,8 @@ class FirDeserializationContext(
             fqName,
             relativeClassName = null,
             typeParameterProtos = emptyList(),
-            containerSource
+            containerSource,
+            outerClassSymbol = null
         )
 
         fun createForClass(
@@ -97,7 +107,8 @@ class FirDeserializationContext(
             session: FirSession,
             annotationDeserializer: AbstractAnnotationDeserializer,
             constDeserializer: FirConstDeserializer,
-            containerSource: DeserializedContainerSource?
+            containerSource: DeserializedContainerSource?,
+            outerClassSymbol: FirRegularClassSymbol
         ): FirDeserializationContext = createRootContext(
             nameResolver,
             TypeTable(classProto.typeTable),
@@ -108,7 +119,8 @@ class FirDeserializationContext(
             classId.packageFqName,
             classId.relativeClassName,
             classProto.typeParameterList,
-            containerSource
+            containerSource,
+            outerClassSymbol
         )
 
         private fun createRootContext(
@@ -121,7 +133,8 @@ class FirDeserializationContext(
             packageFqName: FqName,
             relativeClassName: FqName?,
             typeParameterProtos: List<ProtoBuf.TypeParameter>,
-            containerSource: DeserializedContainerSource?
+            containerSource: DeserializedContainerSource?,
+            outerClassSymbol: FirRegularClassSymbol?,
         ): FirDeserializationContext {
             return FirDeserializationContext(
                 nameResolver, typeTable,
@@ -140,6 +153,7 @@ class FirDeserializationContext(
                 annotationDeserializer,
                 constDeserializer,
                 containerSource,
+                outerClassSymbol,
                 emptyList()
             )
         }
@@ -164,9 +178,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             session = c.session
             origin = FirDeclarationOrigin.Library
             this.name = name
+            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusImpl(
-                ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-                Modality.FINAL
+                visibility,
+                Modality.FINAL,
+                visibility.toEffectiveVisibility(owner = null)
             ).apply {
                 isExpect = Flags.IS_EXPECT_CLASS.get(flags)
                 isActual = false
@@ -185,7 +201,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
     fun loadProperty(
         proto: ProtoBuf.Property,
-        classProto: ProtoBuf.Class? = null
+        classProto: ProtoBuf.Class? = null,
+        classSymbol: FirClassSymbol<*>? = null
     ): FirProperty {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
         val callableName = c.nameResolver.getName(proto.name)
@@ -224,7 +241,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     this.returnTypeRef = returnTypeRef
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     isGetter = true
-                    status = FirResolvedDeclarationStatusImpl(visibility, modality).apply {
+                    status = FirResolvedDeclarationStatusImpl(
+                        visibility,
+                        modality,
+                        visibility.toEffectiveVisibility(classSymbol)
+                    ).apply {
                         isInline = Flags.IS_INLINE_ACCESSOR.get(getterFlags)
                         isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
                     }
@@ -256,7 +277,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     this.returnTypeRef = FirImplicitUnitTypeRef(source)
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     isGetter = false
-                    status = FirResolvedDeclarationStatusImpl(visibility, modality).apply {
+                    status = FirResolvedDeclarationStatusImpl(
+                        visibility,
+                        modality,
+                        visibility.toEffectiveVisibility(classSymbol)
+                    ).apply {
                         isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
                         isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
                     }
@@ -296,9 +321,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
             isLocal = false
+            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusImpl(
-                ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-                ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
+                visibility,
+                ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
+                visibility.toEffectiveVisibility(classSymbol)
             ).apply {
                 isExpect = Flags.IS_EXPECT_PROPERTY.get(flags)
                 isActual = false
@@ -332,7 +359,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
     fun loadFunction(
         proto: ProtoBuf.Function,
-        classProto: ProtoBuf.Class? = null
+        classProto: ProtoBuf.Class? = null,
+        classSymbol: FirClassSymbol<*>? = null
     ): FirSimpleFunction {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
@@ -357,9 +385,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 annotations += receiverAnnotations
             }
             name = callableName
+            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusImpl(
-                ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-                ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
+                visibility,
+                ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
+                visibility.toEffectiveVisibility(classSymbol)
             ).apply {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
                 isActual = false
@@ -429,7 +459,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
-                Modality.FINAL
+                Modality.FINAL,
+                visibility.toEffectiveVisibility(classBuilder.symbol)
             ).apply {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
                 isActual = false

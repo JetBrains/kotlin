@@ -91,7 +91,6 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
     register(FirModuleVisibilityChecker::class, FirJvmModuleVisibilityChecker(this))
     register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
-    register(FirEffectiveVisibilityResolver::class, FirJvmEffectiveVisibilityResolver(this))
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirJsr305StateContainer::class, FirJsr305StateContainer.Default)

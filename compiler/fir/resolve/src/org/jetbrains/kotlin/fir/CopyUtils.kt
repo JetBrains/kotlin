@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
@@ -171,12 +172,17 @@ fun FirDeclarationStatus.copy(
     isExpect: Boolean = this.isExpect,
     newModality: Modality? = null,
     newVisibility: Visibility? = null,
+    newEffectiveVisibility: EffectiveVisibility? = null
 ): FirDeclarationStatus {
     return if (this.isExpect == isExpect && newModality == null && newVisibility == null) {
         this
     } else {
         require(this is FirDeclarationStatusImpl) { "Unexpected class ${this::class}" }
-        this.resolved(newVisibility ?: visibility, newModality ?: modality!!).apply {
+        this.resolved(
+            newVisibility ?: visibility,
+            newModality ?: modality!!,
+            newEffectiveVisibility ?: EffectiveVisibility.Public
+        ).apply {
             this.isExpect = isExpect
         }
     }

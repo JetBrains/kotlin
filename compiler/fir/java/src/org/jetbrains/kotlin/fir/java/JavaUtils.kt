@@ -25,11 +25,12 @@ import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolv
 import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -79,13 +80,16 @@ internal val JavaClass.classKind: ClassKind
         else -> ClassKind.CLASS
     }
 
+internal fun ClassId.toLookupTag(): ConeClassLikeLookupTag {
+    return ConeClassLikeLookupTagImpl(this)
+}
+
 internal fun ClassId.toConeKotlinType(
     typeArguments: Array<ConeTypeProjection>,
     isNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
-    val lookupTag = ConeClassLikeLookupTagImpl(this)
-    return ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable, attributes)
+    return ConeClassLikeTypeImpl(toLookupTag(), typeArguments, isNullable, attributes)
 }
 
 internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(

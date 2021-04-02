@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -249,12 +249,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         popIndent()
     }
 
-    private fun Visibility.asString(effectiveVisibility: FirEffectiveVisibility? = null): String {
+    private fun Visibility.asString(effectiveVisibility: EffectiveVisibility? = null): String {
         val itself = when (this) {
             Visibilities.Unknown -> return "public?"
             else -> toString()
         }
-        if (effectiveVisibility == null || effectiveVisibility == FirEffectiveVisibility.Default) return itself
+        if (effectiveVisibility == null) return itself
         val effectiveAsVisibility = effectiveVisibility.toVisibility()
         if (effectiveAsVisibility == this) return itself
         if (effectiveAsVisibility == Visibilities.Private && this == Visibilities.PrivateToThis) return itself

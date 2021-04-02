@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -59,7 +58,11 @@ inline val FirMemberDeclaration.modality get() = status.modality
 inline val FirMemberDeclaration.isAbstract get() = status.modality == Modality.ABSTRACT
 inline val FirMemberDeclaration.isOpen get() = status.modality == Modality.OPEN
 
-inline val FirMemberDeclaration.visibility get() = status.visibility
+inline val FirMemberDeclaration.visibility: Visibility get() = status.visibility
+inline val FirMemberDeclaration.effectiveVisibility: EffectiveVisibility
+    get() = (status as? FirResolvedDeclarationStatus)?.effectiveVisibility
+        ?: error("Effective visibility for ${render(FirRenderer.RenderMode.NoBodies)} must be resolved")
+
 inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 

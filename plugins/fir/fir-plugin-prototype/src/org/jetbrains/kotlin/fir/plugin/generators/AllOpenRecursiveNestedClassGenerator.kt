@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -39,7 +40,8 @@ class AllOpenRecursiveNestedClassGenerator(session: FirSession) : FirDeclaration
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
-                Modality.FINAL
+                Modality.FINAL,
+                EffectiveVisibility.Public
             )
             classKind = ClassKind.CLASS
             name = Name.identifier("Nested")

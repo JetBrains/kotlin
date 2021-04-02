@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -17,6 +14,8 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
+import org.jetbrains.kotlin.fir.typeContext
 
 class FirStatusResolver(
     val session: FirSession,
@@ -162,7 +161,16 @@ class FirStatusResolver(
                 }
             }
         }
-        return status.resolved(visibility, modality)
+
+        val parentEffectiveVisibility = when {
+            containingProperty != null -> containingProperty.effectiveVisibility
+            containingClass is FirRegularClass -> containingClass.effectiveVisibility
+            containingClass is FirAnonymousObject -> EffectiveVisibility.Local
+            else -> EffectiveVisibility.Public
+        }
+        val selfEffectiveVisibility = visibility.toEffectiveVisibility(containingClass?.symbol?.toLookupTag())
+        val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
+        return status.resolved(visibility, modality, effectiveVisibility)
     }
 
     private fun resolveVisibility(
