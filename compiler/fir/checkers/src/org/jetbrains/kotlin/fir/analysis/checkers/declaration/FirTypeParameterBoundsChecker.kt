@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.coneType
 
-object FirTypeParameterChecker : FirBasicDeclarationChecker() {
+object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirTypeParameter) return
-
+    override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         val containingDeclaration = context.containingDeclarations.lastOrNull()
         if (containingDeclaration is FirConstructor) return
         if (containingDeclaration is FirSimpleFunction && containingDeclaration.isOverride) return

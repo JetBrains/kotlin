@@ -18,7 +18,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirModifierChecker,
         FirConflictsChecker,
         FirConflictingProjectionChecker,
-        FirTypeParameterChecker,
     )
 
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(
@@ -87,5 +86,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = setOf(
         FirPropertyInitializationAnalyzer,
+    )
+
+    override val typeParameterCheckers: Set<FirTypeParameterChecker> = setOf(
+        FirTypeParameterBoundsChecker,
     )
 }

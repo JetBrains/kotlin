@@ -28,6 +28,7 @@ abstract class DeclarationCheckers {
     open val regularClassCheckers: Set<FirRegularClassChecker> = emptySet()
     open val constructorCheckers: Set<FirConstructorChecker> = emptySet()
     open val fileCheckers: Set<FirFileChecker> = emptySet()
+    open val typeParameterCheckers: Set<FirTypeParameterChecker> = emptySet()
 
     open val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = emptySet()
     open val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = emptySet()
@@ -41,4 +42,5 @@ abstract class DeclarationCheckers {
     @CheckersComponentInternal internal val allRegularClassCheckers: Set<FirRegularClassChecker> get() = regularClassCheckers + memberDeclarationCheckers + basicDeclarationCheckers + classCheckers
     @CheckersComponentInternal internal val allConstructorCheckers: Set<FirConstructorChecker> get() = constructorCheckers + functionCheckers + basicDeclarationCheckers + memberDeclarationCheckers
     @CheckersComponentInternal internal val allFileCheckers: Set<FirFileChecker> get() = fileCheckers + basicDeclarationCheckers
+    @CheckersComponentInternal internal val allTypeParameterCheckers: Set<FirTypeParameterChecker> get() = typeParameterCheckers + basicDeclarationCheckers
 }

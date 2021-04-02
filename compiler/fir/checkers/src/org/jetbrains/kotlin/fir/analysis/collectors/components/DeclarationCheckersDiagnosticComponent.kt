@@ -61,7 +61,7 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitTypeParameter(typeParameter: FirTypeParameter, data: CheckerContext) {
-        checkers.allBasicDeclarationCheckers.check(typeParameter, data, reporter)
+        checkers.allTypeParameterCheckers.check(typeParameter, data, reporter)
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: CheckerContext) {
