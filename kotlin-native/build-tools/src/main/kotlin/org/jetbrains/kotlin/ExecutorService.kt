@@ -46,39 +46,29 @@ interface ExecutorService {
  * Creates an ExecutorService depending on a test target -Ptest_target
  */
 fun create(project: Project): ExecutorService {
-    val platformManager = project.platformManager
     val testTarget = project.testTarget
-    val platform = platformManager.platform(testTarget)
-    val absoluteTargetToolchain = platform.absoluteTargetToolchain
+    val configurables = project.testTargetConfigurables
 
-    return if (project.hasProperty("remote")) {
-        sshExecutor(project)
-    } else when (testTarget) {
-        KonanTarget.WASM32 -> object : ExecutorService {
-            override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
-                action.execute(this)
-                val exe = executable
-                val d8 = "$absoluteTargetToolchain/bin/d8"
-                val launcherJs = "$executable.js"
-                this.executable = d8
-                this.args = listOf("--expose-wasm", launcherJs, "--", exe) + args
-            }
-        }
-
-        KonanTarget.LINUX_MIPS32,
-        KonanTarget.LINUX_MIPSEL32,
-        KonanTarget.LINUX_ARM32_HFP,
-        KonanTarget.LINUX_ARM64 -> emulatorExecutor(project, testTarget)
-
-        KonanTarget.IOS_X64,
-        KonanTarget.TVOS_X64,
-        KonanTarget.WATCHOS_X86,
-        KonanTarget.WATCHOS_X64 -> simulator(project)
-
-        KonanTarget.IOS_ARM32,
-        KonanTarget.IOS_ARM64 -> deviceLauncher(project)
-
+    return when {
+        project.hasProperty("remote") -> sshExecutor(project)
+        configurables is WasmConfigurables -> wasmExecutor(project)
+        configurables is ConfigurablesWithEmulator && testTarget != HostManager.host -> emulatorExecutor(project, testTarget)
+        configurables.targetTriple.isSimulator -> simulator(project)
+        testTarget == KonanTarget.IOS_ARM32 || testTarget == KonanTarget.IOS_ARM64 -> deviceLauncher(project)
         else -> localExecutorService(project)
+    }
+}
+
+private fun wasmExecutor(project: Project) = object : ExecutorService {
+    val absoluteTargetToolchain = project.testTargetConfigurables.absoluteTargetToolchain
+
+    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
+        action.execute(this)
+        val exe = executable
+        val d8 = "$absoluteTargetToolchain/bin/d8"
+        val launcherJs = "$executable.js"
+        this.executable = d8
+        this.args = listOf("--expose-wasm", launcherJs, "--", exe) + args
     }
 }
 
@@ -196,8 +186,7 @@ fun localExecutorService(project: Project): ExecutorService = object : ExecutorS
 }
 
 private fun emulatorExecutor(project: Project, target: KonanTarget) = object : ExecutorService {
-    val platformManager = project.platformManager
-    val configurables = platformManager.platform(target).configurables as? ConfigurablesWithEmulator
+    val configurables = project.testTargetConfigurables as? ConfigurablesWithEmulator
             ?: error("$target does not support emulation!")
     val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
 
@@ -234,15 +223,19 @@ private fun emulatorExecutor(project: Project, target: KonanTarget) = object : E
 private fun simulator(project: Project): ExecutorService = object : ExecutorService {
 
     private val target = project.testTarget
+    val configurables = project.testTargetConfigurables as AppleConfigurables
+
+    init {
+        require(configurables.targetTriple.isSimulator) {
+            "${configurables.target} is not a simulator."
+        }
+        require(HostManager.host.architecture == configurables.target.architecture) {
+            "Can't run simulator with ${configurables.target.architecture} architecture."
+        }
+    }
 
     private val simctl by lazy {
-        val sdk = when (target) {
-            KonanTarget.TVOS_X64 -> Xcode.current.appletvsimulatorSdk
-            KonanTarget.IOS_X64 -> Xcode.current.iphonesimulatorSdk
-            KonanTarget.WATCHOS_X64,
-            KonanTarget.WATCHOS_X86 -> Xcode.current.watchsimulatorSdk
-            else -> error("Unexpected simulation target: $target")
-        }
+        val sdk = Xcode.current.pathToPlatformSdk(configurables.platformName())
         val out = ByteArrayOutputStream()
         val result = project.exec {
             commandLine("/usr/bin/xcrun", "--find", "simctl", "--sdk", sdk)
@@ -282,7 +275,8 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
 
     private val archSpecification = when (target.architecture) {
         Architecture.X86 -> listOf("-a", "i386")
-        Architecture.X64 -> listOf() // x86-64 is used by default.
+        Architecture.X64 -> listOf() // x86-64 is used by default on Intel Macs.
+        Architecture.ARM64 -> listOf() // arm64 is used by default on Apple Silicon.
         else -> error("${target.architecture} can't be used in simulator.")
     }.toTypedArray()
 

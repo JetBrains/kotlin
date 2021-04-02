@@ -292,18 +292,7 @@ fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, o
     val configs = platform.configurables as AppleConfigurables
     val compiler = configs.absoluteTargetToolchain + "/usr/bin/swiftc"
 
-    val swiftTarget = when (target) {
-        KonanTarget.IOS_X64   -> "x86_64-apple-ios" + configs.osVersionMin
-        KonanTarget.IOS_ARM32 -> "armv7-apple-ios" + configs.osVersionMin
-        KonanTarget.IOS_ARM64 -> "arm64-apple-ios" + configs.osVersionMin
-        KonanTarget.TVOS_X64   -> "x86_64-apple-tvos" + configs.osVersionMin
-        KonanTarget.TVOS_ARM64 -> "arm64-apple-tvos" + configs.osVersionMin
-        KonanTarget.MACOS_X64 -> "x86_64-apple-macosx" + configs.osVersionMin
-        KonanTarget.MACOS_ARM64 -> "arm64-apple-macos" + configs.osVersionMin
-        KonanTarget.WATCHOS_X86 -> "i386-apple-watchos" + configs.osVersionMin
-        KonanTarget.WATCHOS_X64 -> "x86_64-apple-watchos" + configs.osVersionMin
-        else -> throw IllegalStateException("Test target $target is not supported")
-    }
+    val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
     val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
             options + "-o" + output.toString() + sources +
@@ -411,3 +400,10 @@ internal fun StringBuilder.appendln(o: Any?) {
     append(o)
     append('\n')
 }
+
+internal val Project.testTargetConfigurables: Configurables
+    get() {
+        val platformManager = project.platformManager
+        val testTarget = project.testTarget
+        return platformManager.platform(testTarget).configurables
+    }

@@ -178,26 +178,12 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
      * test target.
      */
     private fun getSwiftLibsPathForTestTarget(): String {
-        val target = project.testTarget
-        val platform = project.platformManager.platform(target)
-        val configs = platform.configurables as AppleConfigurables
-        val swiftPlatform = when (target) {
-            KonanTarget.IOS_X64 -> "iphonesimulator"
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iphoneos"
-            KonanTarget.TVOS_X64 -> "appletvsimulator"
-            KonanTarget.TVOS_ARM64 -> "appletvos"
-            KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> "macosx"
-            KonanTarget.WATCHOS_ARM64 -> "watchos"
-            KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 -> "watchsimulator"
-            else -> throw IllegalStateException("Test target $target is not supported")
-        }
-        val simulatorPath = when (target) {
-            KonanTarget.TVOS_X64,
-            KonanTarget.IOS_X64,
-            KonanTarget.WATCHOS_X86,
-            KonanTarget.WATCHOS_X64 -> Xcode.current.getLatestSimulatorRuntimeFor(target, configs.osVersionMin)?.bundlePath?.let {
-                "$it/Contents/Resources/RuntimeRoot/usr/lib/swift"
-            }
+        val configs = project.testTargetConfigurables as AppleConfigurables
+        val swiftPlatform = configs.platformName().toLowerCase()
+        val simulatorPath = when (configs.targetTriple.isSimulator) {
+            true -> Xcode.current.getLatestSimulatorRuntimeFor(configs.target.family, configs.osVersionMin)
+                    ?.bundlePath
+                    ?.let { "$it/Contents/Resources/RuntimeRoot/usr/lib/swift" }
             else -> null
         }
         // Use default path from toolchain if we cannot get `bundlePath` for target.
@@ -206,18 +192,16 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     }
 
     private fun buildEnvironment(): Map<String, String> {
-        val target = project.testTarget
+        val configs = project.testTargetConfigurables
         // Hopefully, lexicographical comparison will work.
         val newMacos = System.getProperty("os.version").compareTo("10.14.4") >= 0
-        val dyldLibraryPathKey = when (target) {
-            KonanTarget.IOS_X64,
-            KonanTarget.WATCHOS_X86,
-            KonanTarget.WATCHOS_X64,
-            KonanTarget.TVOS_X64 -> "SIMCTL_CHILD_DYLD_LIBRARY_PATH"
-            else -> "DYLD_LIBRARY_PATH"
+        val dyldLibraryPathKey = if (configs.targetTriple.isSimulator) {
+            "SIMCTL_CHILD_DYLD_LIBRARY_PATH"
+        } else {
+            "DYLD_LIBRARY_PATH"
         }
         // TODO: macos_arm64?
-        return if (newMacos && target == KonanTarget.MACOS_X64) emptyMap() else mapOf(
+        return if (newMacos && configs.target == KonanTarget.MACOS_X64) emptyMap() else mapOf(
                 dyldLibraryPathKey to getSwiftLibsPathForTestTarget()
         )
     }
@@ -245,25 +229,14 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         if (!fullBitcode) {
             return
         }
-        val testTarget = project.testTarget
-        val configurables = project.platformManager.platform(testTarget).configurables as AppleConfigurables
+        val configurables = project.testTargetConfigurables as AppleConfigurables
 
         val bitcodeBuildTool = "${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool"
         val toolPath = "${configurables.absoluteTargetToolchain}/usr/bin/"
-        val sdk = when (testTarget) {
-            KonanTarget.IOS_X64,
-            KonanTarget.TVOS_X64,
-            KonanTarget.WATCHOS_X86,
-            KonanTarget.WATCHOS_X64 -> return // bitcode-build-tool doesn't support simulators.
-            KonanTarget.IOS_ARM64,
-            KonanTarget.IOS_ARM32 -> Xcode.current.iphoneosSdk
-            KonanTarget.MACOS_X64,
-            KonanTarget.MACOS_ARM64 -> Xcode.current.macosxSdk
-            KonanTarget.TVOS_ARM64 -> Xcode.current.appletvosSdk
-            KonanTarget.WATCHOS_ARM32,
-            KonanTarget.WATCHOS_ARM64 -> Xcode.current.watchosSdk
-            else -> error("Cannot validate bitcode for test target $testTarget")
+        if (configurables.targetTriple.isSimulator) {
+            return // bitcode-build-tool doesn't support simulators.
         }
+        val sdk = Xcode.current.pathToPlatformSdk(configurables.platformName())
 
         val python3 = listOf("/usr/bin/python3", "/usr/local/bin/python3")
                 .map { Paths.get(it) }.firstOrNull { Files.exists(it) }

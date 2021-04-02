@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin
 
 import com.google.gson.annotations.Expose
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.Xcode
 import kotlin.math.min
 
@@ -28,12 +28,12 @@ private fun Xcode.getSimulatorRuntimeDescriptors(): List<SimulatorRuntimeDescrip
 /**
  * Returns first available simulator runtime for [target] with at least [osMinVersion] OS version.
  * */
-fun Xcode.getLatestSimulatorRuntimeFor(target: KonanTarget, osMinVersion: String): SimulatorRuntimeDescriptor? {
-    val osName = when (target) {
-        KonanTarget.IOS_X64 -> "iOS"
-        KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 -> "watchOS"
-        KonanTarget.TVOS_X64 -> "tvOS"
-        else -> error("Unexpected simulator target: $target")
+fun Xcode.getLatestSimulatorRuntimeFor(family: Family, osMinVersion: String): SimulatorRuntimeDescriptor? {
+    val osName = when (family) {
+        Family.IOS -> "iOS"
+        Family.WATCHOS -> "watchOS"
+        Family.TVOS -> "tvOS"
+        else -> error("Unexpected simulator OS: $family")
     }
     return getSimulatorRuntimeDescriptors().firstOrNull {
         it.checkAvailability() && it.name.startsWith(osName) && compareStringsAsVersions(it.version, osMinVersion) >= 0

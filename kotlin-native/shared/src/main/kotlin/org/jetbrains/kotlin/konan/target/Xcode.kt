@@ -35,6 +35,17 @@ interface Xcode {
     val additionalTools: String
     val simulatorRuntimes: String
 
+    fun pathToPlatformSdk(platformName: String): String = when (platformName.toLowerCase()) {
+        "macosx" -> macosxSdk
+        "iphoneos" -> iphoneosSdk
+        "iphonesimulator" -> iphonesimulatorSdk
+        "appletvos" -> appletvosSdk
+        "appletvsimulator" -> appletvsimulatorSdk
+        "watchos" -> watchosSdk
+        "watchsimulator" -> watchsimulatorSdk
+        else -> error("Unknown Apple platform: $platformName")
+    }
+
     companion object {
         val current: Xcode by lazy {
             CurrentXcode

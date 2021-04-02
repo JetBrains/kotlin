@@ -51,3 +51,17 @@ data class TargetTriple(
         return "$architecture-$vendor-$os$envSuffix"
     }
 }
+
+/**
+ * Check that given target is Apple simulator.
+ */
+val TargetTriple.isSimulator: Boolean
+    get() = environment == "simulator"
+
+/**
+ * Appends version to OS part of triple.
+ *
+ * Useful for precise target specification in Clang and Swift.
+ */
+fun TargetTriple.withOSVersion(osVersion: String): TargetTriple =
+        copy(os = "${os}${osVersion}")
