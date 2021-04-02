@@ -80,6 +80,6 @@ public class CollectionStringImpl implements Collection<String> {
 // FILE: main.kt
 
 fun test(x: CollectionStringImpl) {
-    x.<!AMBIGUITY!>contains<!>("")
+    x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>contains<!>("")
     (x as Collection<String>).contains("")
 }

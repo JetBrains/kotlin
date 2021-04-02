@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: kotlin.kt
 fun main(j : C, s : Array<String?>) {
     j.from()

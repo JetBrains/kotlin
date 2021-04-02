@@ -17,5 +17,5 @@ class C : B() {
 }
 
 fun foo() {
-    C().<!AMBIGUITY!>size<!>
+    C().<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!>
 }

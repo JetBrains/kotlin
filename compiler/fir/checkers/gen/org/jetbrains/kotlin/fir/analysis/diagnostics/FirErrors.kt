@@ -189,7 +189,7 @@ object FirErrors {
     val NO_VALUE_FOR_PARAMETER by error1<FirSourceElement, KtElement, FirValueParameter>(SourceElementPositioningStrategies.VALUE_ARGUMENTS)
 
     // Ambiguity
-    val AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val OVERLOAD_RESOLUTION_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val ASSIGN_OPERATOR_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>()
 
     // Types & type parameters

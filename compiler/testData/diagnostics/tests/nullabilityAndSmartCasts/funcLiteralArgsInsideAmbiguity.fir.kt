@@ -4,7 +4,7 @@ package d
 fun bar() {
     val i: Int? = 42
     if (i != null) {
-        <!AMBIGUITY!>doSmth1<!> {
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>doSmth1<!> {
         val x = i + 1
     }
 }

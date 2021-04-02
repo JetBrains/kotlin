@@ -35,6 +35,6 @@ import libPackageCase1Explicit.emptyArray
 class Case1(){
 
     fun case1() {
-        <!AMBIGUITY!>emptyArray<!><Int>()
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>emptyArray<!><Int>()
     }
 }

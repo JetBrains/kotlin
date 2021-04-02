@@ -22,5 +22,5 @@ import a.*
 import b.*
 
 fun test() {
-    <!AMBIGUITY!>foo<!><A> { }
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!><A> { }
 }

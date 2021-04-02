@@ -23,7 +23,7 @@ fun g(x: B<Int>) {
     }
 
     if (y is Nothing?) {
-        <!AMBIGUITY!>f<!>(y)
-        <!AMBIGUITY!>g<!>(y)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>(y)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>g<!>(y)
     }
 }

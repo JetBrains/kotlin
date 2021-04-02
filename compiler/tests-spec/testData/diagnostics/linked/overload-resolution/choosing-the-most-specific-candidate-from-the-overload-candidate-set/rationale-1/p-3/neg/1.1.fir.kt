@@ -10,6 +10,6 @@ class Case1 {
     fun <T : Any> List<Any>.foo(x: T) {}
 
     fun <T : Number> case(x: List<T>, y: T) {
-        x.<!AMBIGUITY!>foo<!>(y)
+        x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(y)
     }
 }

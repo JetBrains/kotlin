@@ -15,7 +15,7 @@ import testPackCase1.I4.Companion.foo
 class Case1() : I2, I1, I3, I4  {
 
     fun test() {
-       <!AMBIGUITY!>foo<!>(1)
+       <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1)
     }
 }
 

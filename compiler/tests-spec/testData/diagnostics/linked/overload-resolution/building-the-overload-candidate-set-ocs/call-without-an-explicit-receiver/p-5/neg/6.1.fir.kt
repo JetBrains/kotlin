@@ -13,7 +13,7 @@ import libCase1.*
 import kotlin.text.*
 
 fun case1() {
-    <!AMBIGUITY!>Regex<!>("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>Regex<!>("")
 }
 
 // FILE: Lib1.kt
@@ -33,7 +33,7 @@ import kotlin.text.*
 
 
 fun case2() {
-    <!AMBIGUITY!>Regex<!>("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>Regex<!>("")
 }
 
 // FILE: Lib2.kt
@@ -80,7 +80,7 @@ import libCase5.a.*
 import libCase5.b.*
 
 fun case5() {
-    <!AMBIGUITY!>Regex<!>("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>Regex<!>("")
 }
 
 // FILE: Lib6.kt
@@ -101,7 +101,7 @@ import libCase6.a.*
 import libCase6.b.*
 
 fun case6() {
-    <!AMBIGUITY!>MyRegex<!>("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>MyRegex<!>("")
 }
 
 // FILE: Lib8.kt

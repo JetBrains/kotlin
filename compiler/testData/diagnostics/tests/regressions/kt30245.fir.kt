@@ -83,8 +83,8 @@ fun test2() { // to extension lambda 1
     val i27: E1 = when (e) { E.VALUE ->  { s: String -> <!NO_THIS!>this<!> + s.length } } // oi+ ni+
     val i27a: E1 = when (e) { E.VALUE ->  { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> } } // oi+ ni+
 
-    val w28 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
-    val i28: E1 = id { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
+    val w28 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
+    val i28: E1 = id { i: Int, s -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
     val w29 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s: String -> i + s.length } // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 
@@ -130,7 +130,7 @@ fun test4() { // to non-extension lambda 2
 }
 
 open class A(a: () -> Unit) {
-    constructor(f: (String) -> Unit) : <!AMBIGUITY!>this<!>({ -> f("") })
+    constructor(f: (String) -> Unit) : <!OVERLOAD_RESOLUTION_AMBIGUITY!>this<!>({ -> f("") })
 }
 
 class B: A({ s -> "1" })

@@ -28,7 +28,7 @@ fun test_2(a: A<C>) {
 }
 
 fun test_3(a: A<D>) {
-    a[0] <!AMBIGUITY!>+=<!> D() // ambiguity
+    a[0] <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> D() // ambiguity
 }
 
 fun test_4(b: B) {

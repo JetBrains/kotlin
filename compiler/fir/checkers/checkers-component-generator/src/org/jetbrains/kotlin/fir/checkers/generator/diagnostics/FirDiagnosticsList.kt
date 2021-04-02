@@ -236,7 +236,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
-        val AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val OVERLOAD_RESOLUTION_AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
         val ASSIGN_OPERATOR_AMBIGUITY by error<FirSourceElement, PsiElement> {

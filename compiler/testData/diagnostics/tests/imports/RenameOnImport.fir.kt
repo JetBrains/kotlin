@@ -18,5 +18,5 @@ import b.*
 import a.y as AY
 
 val v1: Int = AX
-val v2: String = <!AMBIGUITY!>x<!>
+val v2: String = <!OVERLOAD_RESOLUTION_AMBIGUITY!>x<!>
 val v3 = y

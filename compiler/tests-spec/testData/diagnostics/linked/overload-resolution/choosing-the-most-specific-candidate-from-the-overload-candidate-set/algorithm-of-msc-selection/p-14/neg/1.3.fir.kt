@@ -13,7 +13,7 @@ import testPackCase1.I1.Companion.foo
 class Case2() : I2, I1{
 
     fun test(){
-       <!AMBIGUITY!>foo<!>(1)
+       <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1)
     }
 }
 
@@ -39,7 +39,7 @@ import testPackCase2.I1.Companion.foo
 class Case2() : I2, I1{
 
     fun test(){
-       <!AMBIGUITY!>foo<!>(1)
+       <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1)
     }
 }
 

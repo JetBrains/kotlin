@@ -15,9 +15,9 @@ interface I2
 operator fun <R>I2.invoke(): String = TODO()
 
 fun case1(a: A) {
-    a.<!AMBIGUITY!>invoke<!>()
-    <!AMBIGUITY!>a<!>()
-    <!AMBIGUITY!>A()<!>()
+    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>invoke<!>()
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>a<!>()
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>A()<!>()
 }
 
 // FILE: TestCase2.kt
@@ -33,10 +33,10 @@ interface Interface2
 operator fun <R>Interface2.invoke(): String = TODO()
 
 fun case1(a: I) {
-    a.<!AMBIGUITY!>invoke<!>()
-    <!AMBIGUITY!>a<!>()
+    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>invoke<!>()
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>a<!>()
 
-    val x  = <!AMBIGUITY!>object : I {}<!> ()
+    val x  = <!OVERLOAD_RESOLUTION_AMBIGUITY!>object : I {}<!> ()
 }
 
 // FILE: TestCase3.kt
@@ -53,8 +53,8 @@ interface Interface2
 operator fun <T>Interface2.invoke(x :() -> Unit): String = TODO()
 
 fun case1(a: I) {
-    a.<!AMBIGUITY!>invoke<!>{}
-    <!AMBIGUITY!>a<!>{}
+    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>invoke<!>{}
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>a<!>{}
 
-    val x  = <!AMBIGUITY!>object : I {}<!> {}
+    val x  = <!OVERLOAD_RESOLUTION_AMBIGUITY!>object : I {}<!> {}
 }

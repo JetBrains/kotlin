@@ -184,7 +184,7 @@ fun case_13(x: <!UNRESOLVED_REFERENCE!>otherpackage.Case13?<!>) =
         throw Exception()
     } else {
         <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>.<!AMBIGUITY!>equals<!>(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>.<!OVERLOAD_RESOLUTION_AMBIGUITY!>equals<!>(x)
     }<!>
 
 // TESTCASE NUMBER: 14

@@ -726,8 +726,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.AMBIGUITY) { firDiagnostic ->
-        AmbiguityImpl(
+    add(FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY) { firDiagnostic ->
+        OverloadResolutionAmbiguityImpl(
             firDiagnostic.a.map { abstractFirBasedSymbol ->
                 firSymbolBuilder.buildSymbol(abstractFirBasedSymbol.fir as FirDeclaration)
             },

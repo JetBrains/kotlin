@@ -10,7 +10,7 @@ fun <T> foo(a: A, f: () -> T): T = f()
 fun <T> foo(b: B, f: () -> T): T = f()
 
 fun test(c: C) {
-    <!AMBIGUITY!>foo<!>(c) f@ {
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(c) f@ {
         c!!
     }
 }

@@ -27,7 +27,7 @@ fun x(r: Runnable) {
 
     A.bar(r) checkType { _<Int>() }
 
-    A.<!AMBIGUITY!>bar<!>(null)
+    A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(null)
 
     A.bar(null as Runnable?) checkType { _<Int>() }
     A.bar(null as CharSequence?) checkType { _<String>() }

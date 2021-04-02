@@ -8,8 +8,8 @@ suspend fun suspendCall(): Int = 42
 
 // it's important to have ambiguity in these cases to introduce overload resolution by suspend modifier in future
 fun test1() {
-    <!AMBIGUITY!>foo<!> { usualCall() }
-    <!AMBIGUITY!>foo<!> { suspendCall() }
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { usualCall() }
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { suspendCall() }
 }
 
 // candidate without suspend conversions is more specific

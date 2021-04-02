@@ -24,7 +24,7 @@ abstract class D : AbstractList<Int>() {
 
 fun main(a: A, b: B, c: ArrayList<Int>) {
     a.remove(1)
-    a.<!AMBIGUITY!>removeAt<!>(0)
+    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>removeAt<!>(0)
     b.remove(1)
     b.removeAt(0)
     c.remove(1)

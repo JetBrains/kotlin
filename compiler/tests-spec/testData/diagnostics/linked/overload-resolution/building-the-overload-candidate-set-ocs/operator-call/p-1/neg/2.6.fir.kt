@@ -15,9 +15,9 @@ import LibPackCase1.b.*
 
 fun case1 (){
     var b: B? = B()
-    b <!AMBIGUITY!>+=<!> { C() }
+    b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> { C() }
 
-    b <!AMBIGUITY!>+=<!> {1}
+    b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> {1}
 }
 
 class B {

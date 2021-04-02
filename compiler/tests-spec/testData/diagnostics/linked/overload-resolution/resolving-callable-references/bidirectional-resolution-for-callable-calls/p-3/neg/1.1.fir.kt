@@ -54,8 +54,8 @@ class Case3() : I {
     fun x() = "" as CharSequence
 
     fun case() {
-        I.<!AMBIGUITY!>invoke<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
-        <!AMBIGUITY!>I<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
-        <!AMBIGUITY!>Case3<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
+        I.<!OVERLOAD_RESOLUTION_AMBIGUITY!>invoke<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>I<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>Case3<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
     }
 }

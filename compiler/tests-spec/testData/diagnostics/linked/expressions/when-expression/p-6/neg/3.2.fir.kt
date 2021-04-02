@@ -19,8 +19,8 @@ fun case_1(value_1: Int, value_2: EmptyClass, value_3: Int, value_4: Any): Strin
  */
 fun case_2(value_1: Int, value_3: Nothing) {
     when (value_1) {
-        <!AMBIGUITY!>in<!> value_3 -> {}
-        <!AMBIGUITY!>in<!> throw Exception() -> {}
-        <!AMBIGUITY!>in<!> return -> {}
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>in<!> value_3 -> {}
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>in<!> throw Exception() -> {}
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>in<!> return -> {}
     }
 }

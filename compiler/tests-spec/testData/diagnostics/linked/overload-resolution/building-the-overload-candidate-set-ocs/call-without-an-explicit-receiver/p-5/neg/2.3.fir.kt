@@ -40,6 +40,6 @@ import libPackageCase1ExplicitDuplicate.emptyArray
 class Case1(){
 
     fun case1() {
-        <!AMBIGUITY!>emptyArray<!><Int>()
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>emptyArray<!><Int>()
     }
 }

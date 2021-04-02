@@ -25,7 +25,7 @@ fun foo() : Int {
       is Any -> 1
       s -> 1
       1 -> 1
-      1 <!AMBIGUITY!>+<!> <!UNRESOLVED_REFERENCE!>a<!> -> 1
+      1 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!UNRESOLVED_REFERENCE!>a<!> -> 1
       in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
       !in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
       else -> 1

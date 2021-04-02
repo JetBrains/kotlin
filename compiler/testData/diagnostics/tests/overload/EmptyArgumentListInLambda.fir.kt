@@ -4,5 +4,5 @@ fun foo(g: () -> Int) {}
 fun foo(f: (Int) -> Int) {}
 
 fun test() {
-    <!AMBIGUITY!>foo<!> { -> 42 }
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { -> 42 }
 }

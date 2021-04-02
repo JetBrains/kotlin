@@ -14,6 +14,6 @@ fun case1(x: Any) {
     x.<!DEBUG_INFO_CALL("fqName: case1.foo; typeCall: extension function")!>foo()<!> // to (3)
     x.foo()
     if (x is B1 && x is A1) {
-        x.<!AMBIGUITY!>foo<!>()
+        x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>()
     }
 }

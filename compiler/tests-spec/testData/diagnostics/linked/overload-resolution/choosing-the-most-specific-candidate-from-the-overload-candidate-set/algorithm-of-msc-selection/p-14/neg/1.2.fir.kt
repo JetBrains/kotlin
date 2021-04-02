@@ -11,5 +11,5 @@ interface C
 fun foo(x: B) {} //(1)
 fun foo(y: C, z: String = "foo") {} //2
 fun bar() {
-    <!AMBIGUITY!>foo<!>(A()) //OVERLOAD_RESOLUTION_AMBIGUITY
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(A()) //OVERLOAD_RESOLUTION_AMBIGUITY
 }

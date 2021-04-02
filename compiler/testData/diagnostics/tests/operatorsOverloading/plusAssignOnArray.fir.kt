@@ -16,5 +16,5 @@ fun test() {
     val c = C()
     c[0] += ""
     var c1 = C1()
-    c1[0] <!AMBIGUITY!>+=<!> ""
+    c1[0] <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> ""
 }

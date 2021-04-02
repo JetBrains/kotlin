@@ -16,5 +16,5 @@ class C: A, B
 fun main() {
     AImpl().f()
     BImpl().f()
-    C().<!AMBIGUITY!>f<!>()
+    C().<!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>()
 }

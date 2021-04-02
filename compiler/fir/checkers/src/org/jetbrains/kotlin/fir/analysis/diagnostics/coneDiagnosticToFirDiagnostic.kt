@@ -33,7 +33,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeAmbiguityError -> if (!this.applicability.isSuccess) {
         FirErrors.NONE_APPLICABLE.on(source, this.candidates)
     } else {
-        FirErrors.AMBIGUITY.on(source, this.candidates)
+        FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.on(source, this.candidates)
     }
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, this.candidates)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)

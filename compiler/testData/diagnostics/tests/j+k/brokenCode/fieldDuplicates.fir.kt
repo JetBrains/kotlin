@@ -9,5 +9,5 @@ public class A {
 
 fun foo() {
     // no exception is thrown (see KT-3898)
-    A().<!AMBIGUITY!>foo<!>
+    A().<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 }

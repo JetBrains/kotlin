@@ -12,5 +12,5 @@ fun <T> B<T>.foo(block: (T) -> Unit) {
 }
 
 fun main() {
-    B("string").<!AMBIGUITY!>foo<!> {  }
+    B("string").<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {  }
 }

@@ -55,5 +55,5 @@ fun test() {
 
     withGenericDefaults("")
 
-    <!AMBIGUITY!>wrong<!>(null!!)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(null!!)
 }

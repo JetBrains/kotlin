@@ -12,7 +12,7 @@ fun test(c: C) {
     <!INAPPLICABLE_CANDIDATE!>foo<!>("")
 
     // Ambiguity
-    <!AMBIGUITY!>bar<!>(c)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(c)
 
     // Unresolved reference
     <!UNRESOLVED_REFERENCE!>baz<!>()

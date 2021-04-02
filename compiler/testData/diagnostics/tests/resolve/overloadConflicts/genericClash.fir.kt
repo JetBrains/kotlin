@@ -13,8 +13,8 @@ fun <E> baz(x: E, y: String) {}
 fun <E> baz(x: String, y: E) {}
 
 fun bar(x: A<String>) {
-    x.<!AMBIGUITY!>foo<!>("")
+    x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>("")
 
-    x.<!AMBIGUITY!>baz<!>("", "")
-    <!AMBIGUITY!>baz<!>("", "")
+    x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>("", "")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>("", "")
 }

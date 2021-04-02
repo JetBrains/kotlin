@@ -65,7 +65,7 @@ fun test_2(x: B) {
 }
 
 fun test_3(x: C) {
-    val error = x.<!AMBIGUITY!>vmParameters<!> // should be error
+    val error = x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>vmParameters<!> // should be error
     val int = x.<!UNRESOLVED_REFERENCE!>vMParameters<!> // should be error
 }
 

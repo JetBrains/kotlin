@@ -14,7 +14,7 @@ fun case_2(x: Any = null) {
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Nothing = null) {
-    <!AMBIGUITY!>println<!>(x)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(x)
 }
 
 // TESTCASE NUMBER: 4

@@ -26,9 +26,9 @@ import LibPackCase1.b.*
 
 fun case1 (){
     var b: B? = B()
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!AMBIGUITY!>+=<!> { C() }<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> { C() }<!>
 
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!AMBIGUITY!>+=<!> {1}<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> {1}<!>
 }
 
 class B {
@@ -63,9 +63,9 @@ import LibPackCase2.b.*
 
 fun case2 (){
     var b: B = B()
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!AMBIGUITY!>+=<!> { C() }<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> { C() }<!>
 
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!AMBIGUITY!>+=<!> {1}<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> {1}<!>
 }
 
 class B {

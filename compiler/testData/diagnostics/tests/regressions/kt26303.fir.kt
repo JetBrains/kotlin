@@ -14,5 +14,5 @@ import foo.foo as invoke
 import foo.invoke
 
 fun main(args: Array<String>) {
-    <!AMBIGUITY!>42<!>()
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>42<!>()
 }
