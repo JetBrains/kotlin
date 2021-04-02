@@ -6,11 +6,25 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
-    val typeField = Field("type", IrType)
-    val delegateField = Field("delegate", irDeclaration("IrVariable"), lateinit = true)
-    val getterField = Field("getter", irDeclaration("IrSimpleFunction"), lateinit = true)
-    val setterField = Field("setter", irDeclaration("IrSimpleFunction") + "?")
-    val metadataField = Field("metadata", MetadataSource + "?")
+    val typeField = Field("type", IrType, typeProto)
+    val delegateField = Field("delegate", IrVariable, variableProto, lateinit = true)
+    val getterField = Field(
+        "getter",
+        IrSimpleFunction,
+        simpleFunctionProto,
+        lateinit = true,
+        propSymbolType = IrSimpleFunctionSymbol,
+        symbolToDeclaration = +".owner",
+        declarationToSymbol = +".symbol"
+    )
+    val setterField = Field(
+        "setter",
+        IrSimpleFunction + "?",
+        simpleFunctionProto,
+        propSymbolType = IrSimpleFunctionSymbol + "?",
+        symbolToDeclaration = +"?.owner",
+        declarationToSymbol = +"?.symbol"
+    )
 
     writeFile("PersistentIrLocalDelegatedProperty.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -35,7 +49,7 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
                 delegateField.toPersistentField(+"null"),
                 getterField.toPersistentField(+"null"),
                 setterField.toPersistentField(+"null"),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
             ),
             id,
         )()
@@ -48,7 +62,14 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
             delegateField,
             getterField,
             setterField,
-            metadataField,
         )()
     })
+
+    addCarrierProtoMessage(
+        "LocalDelegatedProperty",
+        typeField,
+        delegateField,
+        getterField,
+        setterField,
+    )
 }

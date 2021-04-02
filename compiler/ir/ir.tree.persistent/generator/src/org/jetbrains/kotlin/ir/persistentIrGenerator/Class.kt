@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateClass() {
-    val visibilityField = Field("visibility", descriptorType("DescriptorVisibility"))
-    val thisReceiverField = Field("thisReceiver", irDeclaration("IrValueParameter") + "?")
-    val typeParametersField = Field("typeParameters", +"List<" + irDeclaration("IrTypeParameter") + ">")
-    val superTypesField = Field("superTypes", +"List<" + import("IrType", "org.jetbrains.kotlin.ir.types") + ">")
-    val metadataField = Field("metadata", irDeclaration("MetadataSource") + "?")
-    val modalityField = Field("modality", descriptorType("Modality"))
-    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
+    val visibilityField = Field("visibility", DescriptorVisibility, visibilityProto)
+    val thisReceiverField = Field(
+        "thisReceiver",
+        IrValueParameter + "?",
+        valueParameterProto,
+        propSymbolType = IrValueParameterSymbol + "?",
+        symbolToDeclaration = +"?.owner",
+        declarationToSymbol = +"?.symbol"
+    )
+    val superTypesField = Field("superTypes", +"List<" + import("IrType", "org.jetbrains.kotlin.ir.types") + ">", superTypeListProto)
+    val modalityField = Field("modality", descriptorType("Modality"), modalityProto)
 
     writeFile("PersistentIrClass.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -66,9 +70,9 @@ internal fun PersistentIrGenerator.generateClass() {
                 ),
                 typeParametersField.toPersistentField(+"emptyList()"),
                 superTypesField.toPersistentField(+"emptyList()"),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
                 modalityField.toPersistentField(+"modality"),
-                attributeOwnerIdField.toPersistentField(+"this"),
+                +"override var attributeOwnerId: " + IrAttributeContainer + " = this",
             ),
             id,
         )()
@@ -78,12 +82,19 @@ internal fun PersistentIrGenerator.generateClass() {
         carriers(
             "Class",
             thisReceiverField,
-            metadataField,
             visibilityField,
             modalityField,
-            attributeOwnerIdField,
             typeParametersField,
             superTypesField,
         )()
     })
+
+    addCarrierProtoMessage(
+        "Class",
+        thisReceiverField,
+        visibilityField,
+        modalityField,
+        typeParametersField,
+        superTypesField,
+    )
 }

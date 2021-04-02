@@ -6,14 +6,9 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateConstructor() {
-    val returnTypeFieldField = Field("returnTypeField", IrType)
-    val typeParametersField = Field("typeParameters", +"List<" + IrTypeParameter + ">")
-    val dispatchReceiverParameterField = Field("dispatchReceiverParameter", IrValueParameter + "?")
-    val extensionReceiverParameterField = Field("extensionReceiverParameter", IrValueParameter + "?")
-    val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">")
-    val bodyField = Field("body", IrBody + "?")
-    val metadataField = Field("metadata", MetadataSource + "?")
-    val visibilityField = Field("visibility", DescriptorVisibility)
+    val returnTypeFieldField = Field("returnTypeField", IrType, typeProto)
+    val bodyField = Field("body", IrBody + "?", bodyProto)
+    val visibilityField = Field("visibility", DescriptorVisibility, visibilityProto)
 
     writeFile("PersistentIrConstructor.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -42,7 +37,13 @@ internal fun PersistentIrGenerator.generateConstructor() {
                     +"override var returnType: IrType",
                     lines(
                         +"get() = returnTypeField.let " + block(
-                            +"if (it !== " + import("IrUninitializedType", "org.jetbrains.kotlin.ir.types.impl") + ") it else throw " + import("ReturnTypeIsNotInitializedException", "org.jetbrains.kotlin.ir.types.impl") + "(this)"
+                            +"if (it !== " + import(
+                                "IrUninitializedType",
+                                "org.jetbrains.kotlin.ir.types.impl"
+                            ) + ") it else throw " + import(
+                                "ReturnTypeIsNotInitializedException",
+                                "org.jetbrains.kotlin.ir.types.impl"
+                            ) + "(this)"
                         ),
                         +"set(c) " + block(
                             +"returnTypeField = c"
@@ -54,9 +55,9 @@ internal fun PersistentIrGenerator.generateConstructor() {
                 extensionReceiverParameterField.toPersistentField(+"null"),
                 valueParametersField.toPersistentField(+"emptyList()"),
                 bodyField.toBody(),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
                 visibilityField.toPersistentField(+"visibility"),
-                descriptor(ClassConstructorDescriptor)
+                descriptor(ClassConstructorDescriptor),
             ),
             id,
         )()
@@ -69,10 +70,20 @@ internal fun PersistentIrGenerator.generateConstructor() {
             dispatchReceiverParameterField,
             extensionReceiverParameterField,
             bodyField,
-            metadataField,
             visibilityField,
             typeParametersField,
             valueParametersField,
         )()
     })
+
+    addCarrierProtoMessage(
+        "Constructor",
+        returnTypeFieldField,
+        dispatchReceiverParameterField,
+        extensionReceiverParameterField,
+        bodyField,
+        visibilityField,
+        typeParametersField,
+        valueParametersField,
+    )
 }

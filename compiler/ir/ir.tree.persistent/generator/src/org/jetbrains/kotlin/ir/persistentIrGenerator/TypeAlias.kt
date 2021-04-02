@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateTypeAlias() {
-    val typeParametersField = Field("typeParameters", +"List<" + IrTypeParameter + ">")
-    val expandedTypeField = Field("expandedType", IrType)
+    val expandedTypeField = Field("expandedType", IrType, typeProto)
 
     writeFile("PersistentIrTypeAlias.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -43,4 +42,6 @@ internal fun PersistentIrGenerator.generateTypeAlias() {
             expandedTypeField,
         )()
     })
+
+    addCarrierProtoMessage("TypeAlias", typeParametersField, expandedTypeField)
 }

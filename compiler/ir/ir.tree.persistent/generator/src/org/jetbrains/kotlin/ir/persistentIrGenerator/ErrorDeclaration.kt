@@ -43,4 +43,6 @@ internal fun PersistentIrGenerator.generateErrorDeclaration() {
             "ErrorDeclaration",
         )()
     })
+
+    addCarrierProtoMessage("ErrorDeclaration")
 }
