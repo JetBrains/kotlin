@@ -447,18 +447,18 @@ public fun kotlin.CharSequence.lineSequence(): kotlin.sequences.Sequence<kotlin.
 
 public fun kotlin.CharSequence.lines(): kotlin.collections.List<kotlin.String>
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Char.lowercase(): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.lowercase(): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Char.lowercaseChar(): kotlin.Char
 
@@ -739,15 +739,15 @@ public fun kotlin.String.replaceFirst(oldChar: kotlin.Char, newChar: kotlin.Char
 
 public fun kotlin.String.replaceFirst(oldValue: kotlin.String, newValue: kotlin.String, ignoreCase: kotlin.Boolean = ...): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "replaceFirstCharWithChar")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.replaceFirstChar(transform: (kotlin.Char) -> kotlin.Char): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "replaceFirstCharWithCharSequence")
 @kotlin.internal.InlineOnly
@@ -936,11 +936,9 @@ public inline fun kotlin.CharSequence.takeWhile(predicate: (kotlin.Char) -> kotl
 public inline fun kotlin.String.takeWhile(predicate: (kotlin.Char) -> kotlin.Boolean): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.5")
-@kotlin.ExperimentalStdlibApi
 public fun kotlin.Char.titlecase(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.5")
-@kotlin.ExperimentalStdlibApi
 public fun kotlin.Char.titlecaseChar(): kotlin.Char
 
 @kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
@@ -1187,18 +1185,18 @@ public inline fun kotlin.String.trimStart(predicate: (kotlin.Char) -> kotlin.Boo
 
 public fun kotlin.String.trimStart(vararg chars: kotlin.Char): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Char.uppercase(): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.uppercase(): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.Char.uppercaseChar(): kotlin.Char
 
 @kotlin.SinceKotlin(version = "1.2")

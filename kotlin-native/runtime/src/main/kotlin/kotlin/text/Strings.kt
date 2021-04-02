@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.text
@@ -62,7 +62,6 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
 @SymbolName("Kotlin_String_replace")
 private external fun String.replace(oldChar: Char, newChar: Char): String
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun String.replaceIgnoreCase(oldChar: Char, newChar: Char): String {
     val charArray = CharArray(length)
     val oldCharLower = oldChar.lowercaseChar()
@@ -185,7 +184,6 @@ public fun String.regionMatches(
 private external fun String.unsafeRangeEquals(thisOffset: Int, other: String, otherOffset: Int, length: Int): Boolean
 
 // Bounds must be checked before calling this method
-@OptIn(ExperimentalStdlibApi::class)
 private fun String.unsafeRangeEqualsIgnoreCase(thisOffset: Int, other: String, otherOffset: Int, length: Int): Boolean {
     for (index in 0 until length) {
         val thisCharLower = this[thisOffset + index].lowercaseChar()
@@ -210,8 +208,8 @@ public actual fun String.toUpperCase(): String = uppercaseImpl()
  *
  * @sample samples.text.Strings.uppercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.uppercase(): String = uppercaseImpl()
 
 /**
@@ -227,8 +225,8 @@ public actual fun String.toLowerCase(): String = lowercaseImpl()
  *
  * @sample samples.text.Strings.lowercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.lowercase(): String = lowercaseImpl()
 
 /**
@@ -401,7 +399,6 @@ public actual fun String.encodeToByteArray(startIndex: Int, endIndex: Int, throw
         unsafeStringToUtf8(startIndex, endIndex - startIndex)
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 internal fun compareToIgnoreCase(thiz: String, other: String): Int {
     val length = minOf(thiz.length, other.length)
 

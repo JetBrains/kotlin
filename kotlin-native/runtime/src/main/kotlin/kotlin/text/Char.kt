@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.text
@@ -161,8 +161,8 @@ public actual fun Char.toUpperCase(): Char = uppercaseCharImpl()
  *
  * @sample samples.text.Chars.uppercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.uppercaseChar(): Char = uppercaseCharImpl()
 
 /**
@@ -175,8 +175,8 @@ public actual fun Char.uppercaseChar(): Char = uppercaseCharImpl()
  *
  * @sample samples.text.Chars.uppercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.uppercase(): String = uppercaseImpl()
 
 /**
@@ -193,8 +193,8 @@ public actual fun Char.toLowerCase(): Char = lowercaseCharImpl()
  *
  * @sample samples.text.Chars.lowercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.lowercaseChar(): Char = lowercaseCharImpl()
 
 /**
@@ -207,8 +207,8 @@ public actual fun Char.lowercaseChar(): Char = lowercaseCharImpl()
  *
  * @sample samples.text.Chars.lowercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Char.lowercase(): String = lowercaseImpl()
 
 /**
