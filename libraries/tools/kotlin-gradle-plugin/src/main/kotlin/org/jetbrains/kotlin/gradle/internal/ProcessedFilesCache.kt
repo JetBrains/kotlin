@@ -9,9 +9,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import org.gradle.api.logging.Logger
+import org.gradle.internal.hash.FileHasher
 import java.io.File
-import java.security.MessageDigest
 
 /**
  * Cache for preventing processing some files twice.
@@ -24,6 +23,7 @@ import java.security.MessageDigest
  * @param version When updating logic in `compute`, `version` should be increased to invalidate cache
  */
 internal open class ProcessedFilesCache(
+    val fileHasher: FileHasher,
     val projectDir: File,
     val targetDir: File,
     stateFileName: String,
@@ -192,19 +192,7 @@ internal open class ProcessedFilesCache(
         file: File,
         compute: () -> File?
     ): String? {
-        val md = MessageDigest.getInstance("MD5")
-        val buffer = ByteArray(4048)
-        file.inputStream().use { input ->
-            while (true) {
-                val len = input.read(buffer)
-                if (len < 0) {
-                    break
-                }
-                md.update(buffer, 0, len)
-            }
-        }
-
-        val hash = md.digest()
+        val hash = fileHasher.hash(file).toByteArray()
         val old = state[hash]
 
         if (old != null) {

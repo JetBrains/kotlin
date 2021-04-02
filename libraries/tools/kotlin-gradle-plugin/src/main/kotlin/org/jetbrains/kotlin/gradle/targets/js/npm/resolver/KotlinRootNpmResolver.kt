@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
@@ -69,7 +68,7 @@ internal class KotlinRootNpmResolver internal constructor(
     private val archiveOperations by lazy { ArchiveOperationsCompat(rootProject) }
     private val fs by lazy { FileSystemOperationsCompat(rootProject) }
 
-    private val gradleNodeModulesProvider: Provider<GradleNodeModulesCache> =
+    internal val gradleNodeModulesProvider: Provider<GradleNodeModulesCache> =
         rootProject.gradle.sharedServices.registerIfAbsent("gradle-node-modules", GradleNodeModulesCache::class.java) {
             it.parameters.cacheDir.set(nodeJs.nodeModulesGradleCacheDir)
             it.parameters.rootProjectDir.set(rootProject.projectDir)
@@ -81,7 +80,7 @@ internal class KotlinRootNpmResolver internal constructor(
             it.fs = fs
         }
 
-    private val compositeNodeModulesProvider: Provider<CompositeNodeModulesCache> =
+    internal val compositeNodeModulesProvider: Provider<CompositeNodeModulesCache> =
         rootProject.gradle.sharedServices.registerIfAbsent("composite-node-modules", CompositeNodeModulesCache::class.java) {
             it.parameters.cacheDir.set(nodeJs.nodeModulesGradleCacheDir)
             it.parameters.rootProjectDir.set(rootProject.projectDir)

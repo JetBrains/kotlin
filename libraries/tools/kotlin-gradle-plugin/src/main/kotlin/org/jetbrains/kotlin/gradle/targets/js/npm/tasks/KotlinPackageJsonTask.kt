@@ -96,6 +96,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
 
             val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
             val npmInstallTask = nodeJs.npmInstallTaskProvider
+            val npmCachesSetupTask = nodeJs.npmCachesSetupTaskProvider
             val packageJsonTaskName = npmProject.packageJsonTaskName
             val packageJsonUmbrella = nodeJs.packageJsonUmbrellaTaskProvider
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
@@ -105,6 +106,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
 
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
+                task.dependsOn(npmCachesSetupTask)
                 task.mustRunAfter(rootClean)
             }
             packageJsonUmbrella.configure { task ->
