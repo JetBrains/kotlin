@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
+import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.state.Complex
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.isSubclassOf
@@ -17,6 +18,10 @@ internal class IrInterpreterEnvironment(val irBuiltIns: IrBuiltIns, val callStac
     val irExceptions = mutableListOf<IrClass>()
     var mapOfEnums = mutableMapOf<IrSymbol, Complex>()
     var mapOfObjects = mutableMapOf<IrSymbol, Complex>()
+
+    init {
+        mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)
+    }
 
     private constructor(environment: IrInterpreterEnvironment) : this(environment.irBuiltIns, CallStack()) {
         irExceptions.addAll(environment.irExceptions)

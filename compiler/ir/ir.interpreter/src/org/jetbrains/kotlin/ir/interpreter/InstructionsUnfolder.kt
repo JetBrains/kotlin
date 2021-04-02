@@ -192,11 +192,18 @@ private fun unfoldBlock(block: IrBlock, callStack: CallStack) {
 }
 
 private fun unfoldStatements(statements: List<IrStatement>, callStack: CallStack) {
+    fun dropUnitResult() {
+        if (callStack.peekState().isUnit()) callStack.popState()
+    }
+
     for (i in statements.indices.reversed()) {
         when (val statement = statements[i]) {
             is IrClass -> if (!statement.isLocal) TODO("Only local classes are supported")
             is IrFunction -> if (!statement.isLocal) TODO("Only local functions are supported")
-            else -> callStack.addInstruction(CompoundInstruction(statement))
+            else -> {
+                callStack.addInstruction(CustomInstruction(::dropUnitResult))
+                callStack.addInstruction(CompoundInstruction(statement))
+            }
         }
     }
 }

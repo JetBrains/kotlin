@@ -34,6 +34,7 @@ internal interface State {
 }
 
 internal fun State.isNull() = this is Primitive<*> && this.value == null
+internal fun State?.isUnit() = this is Common && this.irClassFqName() == "kotlin.Unit"
 
 internal fun State.asInt() = (this as Primitive<*>).value as Int
 internal fun State.asBoolean() = (this as Primitive<*>).value as Boolean

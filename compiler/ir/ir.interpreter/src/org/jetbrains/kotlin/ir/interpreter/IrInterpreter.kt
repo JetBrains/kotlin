@@ -57,9 +57,7 @@ class IrInterpreter private constructor(
         if (commandCount >= IrInterpreterEnvironment.MAX_COMMANDS) InterpreterTimeOutError().handleUserException(environment)
     }
 
-    private fun getUnitState(): State {
-        return environment.mapOfObjects.getOrPut(irBuiltIns.unitClass) { Common(irBuiltIns.unitClass.owner) }
-    }
+    private fun getUnitState(): State = environment.mapOfObjects[irBuiltIns.unitClass]!!
 
     private fun Instruction.handle() {
         when (this) {
@@ -91,7 +89,7 @@ class IrInterpreter private constructor(
                 incrementAndCheckCommands()
             }
 
-            if (callStack.peekState() == null) callStack.pushState(getUnitState()) // TODO maybe move this logic to body/block
+            if (callStack.peekState() == null) callStack.pushState(getUnitState())
             callStack.popState().apply { callStack.dropFrame() }
         }
     }
@@ -141,9 +139,8 @@ class IrInterpreter private constructor(
 
     private fun interpretFunction(function: IrSimpleFunction) {
         function.tryResetFunctionBody()
-        if (function.checkCast(environment)) {
-            callStack.dropFrameAndCopyResult()
-        }
+        if (callStack.peekState() == null) callStack.pushState(getUnitState()) // implicit Unit return
+        if (function.checkCast(environment)) callStack.dropFrameAndCopyResult()
     }
 
     private fun interpretValueParameter(valueParameter: IrValueParameter) {
@@ -251,7 +248,7 @@ class IrInterpreter private constructor(
         if (irClass.isLocal) callStack.storeUpValues(objectVar.state as StateWithClosure)
         val outerClass = if (irClass.isInner) callStack.popState() else null
 
-        callStack.dropSubFrame() // TODO check that data stack is empty
+        callStack.dropSubFrame()
         callStack.newFrame(constructor, listOf(SimpleInstruction(constructor)))
         callStack.addVariable(objectVar)
         constructor.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
