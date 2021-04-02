@@ -112,7 +112,8 @@ class StubIrDriver(
             val entryPoint: String?,
             val moduleName: String,
             val outCFile: File,
-            val outKtFileCreator: () -> File
+            val outKtFileCreator: () -> File,
+            val dumpBridges: Boolean
     )
 
     sealed class Result {
@@ -131,10 +132,12 @@ class StubIrDriver(
             emitCFile(context, it, entryPoint, bridgeBuilderResult.nativeBridges)
         }
 
-        println("GENERATED KOTLIN: ${bridgeBuilderResult.nativeBridges.kotlinLines.toList().size}")
-        bridgeBuilderResult.nativeBridges.kotlinLines.forEach { println(it) }
-        println("GENERATED NATIVE: ${bridgeBuilderResult.nativeBridges.nativeLines.toList().size}")
-        bridgeBuilderResult.nativeBridges.nativeLines.forEach { println(it) }
+        if (options.dumpBridges) {
+            context.log("GENERATED KOTLIN: ${bridgeBuilderResult.nativeBridges.kotlinLines.toList().size}")
+            bridgeBuilderResult.nativeBridges.kotlinLines.forEach { context.log(it) }
+            context.log("GENERATED NATIVE: ${bridgeBuilderResult.nativeBridges.nativeLines.toList().size}")
+            bridgeBuilderResult.nativeBridges.nativeLines.forEach { context.log(it) }
+        }
 
         return when (context.generationMode) {
             GenerationMode.SOURCE_CODE -> {
