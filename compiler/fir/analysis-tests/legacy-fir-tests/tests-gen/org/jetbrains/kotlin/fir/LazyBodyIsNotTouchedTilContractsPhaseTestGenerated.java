@@ -571,6 +571,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/namedArrayInAnnotation.kt");
         }
 
+        @TestMetadata("noParameterForName.kt")
+        public void testNoParameterForName() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/noParameterForName.kt");
+        }
+
         @TestMetadata("operatorsOverLiterals.kt")
         public void testOperatorsOverLiterals() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/operatorsOverLiterals.kt");

@@ -21,7 +21,7 @@ fun test() {
     bar(1, z = "")
     bar(1, z = "", y = 2)
     <!INAPPLICABLE_CANDIDATE!>bar<!>(z = "", 1)
-    bar(1, zz = "",
+    bar(1, <!NAMED_PARAMETER_NOT_FOUND!>zz<!> = "",
            <!UNRESOLVED_REFERENCE!>zz<!>.foo
            <!NO_VALUE_FOR_PARAMETER!>)<!>
 }

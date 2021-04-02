@@ -726,6 +726,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NAMED_PARAMETER_NOT_FOUND) { firDiagnostic ->
+        NamedParameterNotFoundImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY) { firDiagnostic ->
         OverloadResolutionAmbiguityImpl(
             firDiagnostic.a.map { abstractFirBasedSymbol ->

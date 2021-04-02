@@ -120,10 +120,8 @@ private class FirCallArgumentsProcessor(
 
     fun processArgumentsInParenthesis(arguments: List<FirExpression>) {
         for (argument in arguments) {
-            val argumentName = argument.argumentName
-
             // process position argument
-            if (argumentName == null) {
+            if (argument !is FirNamedArgumentExpression) {
                 if (processPositionArgument(argument)) {
                     state = State.VARARG_POSITION
                 }
@@ -134,7 +132,7 @@ private class FirCallArgumentsProcessor(
                     completeVarargPositionArguments()
                 }
 
-                processNamedArgument(argument, argumentName)
+                processNamedArgument(argument)
             }
         }
         if (state == State.VARARG_POSITION) {
@@ -168,14 +166,14 @@ private class FirCallArgumentsProcessor(
         }
     }
 
-    private fun processNamedArgument(argument: FirExpression, name: Name) {
+    private fun processNamedArgument(argument: FirNamedArgumentExpression) {
         forbiddenNamedArgumentsTarget?.let {
             addDiagnostic(NamedArgumentNotAllowed(argument, function, it))
         }
 
         val stateAllowsMixedNamedAndPositionArguments = state != State.NAMED_ONLY_ARGUMENTS
         state = State.NAMED_ONLY_ARGUMENTS
-        val parameter = findParameterByName(argument, name) ?: return
+        val parameter = findParameterByName(argument) ?: return
 
         result[parameter]?.let {
             addDiagnostic(ArgumentPassedTwice(argument, parameter, it))
@@ -257,8 +255,8 @@ private class FirCallArgumentsProcessor(
         return nameToParameter!![name]
     }
 
-    private fun findParameterByName(argument: FirExpression, name: Name): FirValueParameter? {
-        val parameter = getParameterByName(name)
+    private fun findParameterByName(argument: FirNamedArgumentExpression): FirValueParameter? {
+        val parameter = getParameterByName(argument.name)
 
         // TODO
 //        if (descriptor is CallableMemberDescriptor && descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {

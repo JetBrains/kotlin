@@ -11,5 +11,5 @@ interface C : A, B { // Warning here, this is correct
 
 fun test(c: C) {
     c.foo(a = 1)
-    c.foo(b = 1<!NO_VALUE_FOR_PARAMETER!>)<!>
+    c.foo(<!NAMED_PARAMETER_NOT_FOUND!>b<!> = 1<!NO_VALUE_FOR_PARAMETER!>)<!>
 }

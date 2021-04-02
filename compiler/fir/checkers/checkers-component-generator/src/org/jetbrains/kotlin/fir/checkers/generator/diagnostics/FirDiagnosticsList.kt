@@ -233,6 +233,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val NO_VALUE_FOR_PARAMETER by error<FirSourceElement, KtElement>(PositioningStrategy.VALUE_ARGUMENTS) {
             parameter<FirValueParameter>("violatedParameter")
         }
+
+        val NAMED_PARAMETER_NOT_FOUND by error<FirSourceElement, KtValueArgument>(PositioningStrategy.NAME_OF_NAMED_ARGUMENT) {
+            parameter<String>("name")
+        }
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {

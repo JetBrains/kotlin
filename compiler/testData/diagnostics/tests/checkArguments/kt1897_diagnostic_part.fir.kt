@@ -15,7 +15,7 @@ fun test() {
 
     foo("", 1, <!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(r = <!UNRESOLVED_REFERENCE!>xx<!>, i = "", s = "")
+    foo(<!NAMED_PARAMETER_NOT_FOUND!>r<!> = <!UNRESOLVED_REFERENCE!>xx<!>, i = "", s = "")
 
     foo(i = 1, <!ARGUMENT_PASSED_TWICE!>i<!> = 1, s = 11)
 

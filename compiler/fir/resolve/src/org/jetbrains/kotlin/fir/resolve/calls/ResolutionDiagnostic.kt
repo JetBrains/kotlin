@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
@@ -51,9 +52,9 @@ class NoValueForParameter(
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NameNotFound(
-    override val argument: FirExpression,
+    val argument: FirNamedArgumentExpression,
     val function: FirFunction<*>
-) : InapplicableArgumentDiagnostic()
+) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
 

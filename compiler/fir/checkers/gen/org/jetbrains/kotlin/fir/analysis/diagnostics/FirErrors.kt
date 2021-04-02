@@ -187,6 +187,7 @@ object FirErrors {
     val ARGUMENT_PASSED_TWICE by error0<FirSourceElement, KtValueArgument>(SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT)
     val TOO_MANY_ARGUMENTS by error1<FirSourceElement, PsiElement, FirCallableDeclaration<*>>()
     val NO_VALUE_FOR_PARAMETER by error1<FirSourceElement, KtElement, FirValueParameter>(SourceElementPositioningStrategies.VALUE_ARGUMENTS)
+    val NAMED_PARAMETER_NOT_FOUND by error1<FirSourceElement, KtValueArgument, String>(SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT)
 
     // Ambiguity
     val OVERLOAD_RESOLUTION_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

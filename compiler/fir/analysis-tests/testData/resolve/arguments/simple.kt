@@ -13,5 +13,5 @@ fun test() {
     foo(second = 0.0, first = 0, fourth = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
     <!INAPPLICABLE_CANDIDATE!>foo<!>(first = 0.0, second = 0, third = "", fourth = false)
     foo(first = 0, second = 0.0, third = false, fourth = "", <!ARGUMENT_PASSED_TWICE!>first<!> = 1)
-    foo(0, 0.0, false, foth = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
+    foo(0, 0.0, false, <!NAMED_PARAMETER_NOT_FOUND!>foth<!> = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
 }

@@ -836,6 +836,14 @@ internal class NoValueForParameterImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class NamedParameterNotFoundImpl(
+    override val name: String,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NamedParameterNotFound(), KtAbstractFirDiagnostic<KtValueArgument> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class OverloadResolutionAmbiguityImpl(
     override val candidates: List<KtSymbol>,
     firDiagnostic: FirPsiDiagnostic<*>,

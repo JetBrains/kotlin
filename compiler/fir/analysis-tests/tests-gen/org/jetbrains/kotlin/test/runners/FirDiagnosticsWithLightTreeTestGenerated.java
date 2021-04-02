@@ -676,6 +676,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("noParameterForName.kt")
+            public void testNoParameterForName() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/arguments/noParameterForName.kt");
+            }
+
+            @Test
             @TestMetadata("operatorsOverLiterals.kt")
             public void testOperatorsOverLiterals() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/arguments/operatorsOverLiterals.kt");

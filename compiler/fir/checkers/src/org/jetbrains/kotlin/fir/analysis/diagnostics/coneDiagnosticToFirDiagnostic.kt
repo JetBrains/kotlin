@@ -141,6 +141,10 @@ private fun mapInapplicableCandidateError(
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.on(rootCause.argument.source)
             is TooManyArguments -> FirErrors.TOO_MANY_ARGUMENTS.on(rootCause.argument.source ?: source, rootCause.function)
             is NoValueForParameter -> FirErrors.NO_VALUE_FOR_PARAMETER.on(qualifiedAccessSource ?: source, rootCause.valueParameter)
+            is NameNotFound -> FirErrors.NAMED_PARAMETER_NOT_FOUND.on(
+                rootCause.argument.source ?: source,
+                rootCause.argument.name.asString()
+            )
             else -> null
         }
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }

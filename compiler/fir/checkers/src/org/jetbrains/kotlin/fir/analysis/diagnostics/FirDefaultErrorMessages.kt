@@ -131,6 +131,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_P
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_PARAMETER_NOT_FOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
@@ -394,6 +395,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES)
             map.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter")
             map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''", NAME)
+            map.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", TO_STRING)
 
             // Ambiguity
             map.put(OVERLOAD_RESOLUTION_AMBIGUITY, "Overload resolution ambiguity between candidates: {0}", SYMBOLS)
