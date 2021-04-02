@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_LAZY_DELEGATE_FIELD_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.CACHED_SERIALIZER_PROPERTY
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_PUBLICATION_MODE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getKSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
 import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
-import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationBodyCodegen) :
@@ -42,11 +43,13 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
     }
 
     override fun generateLazySerializerGetter(methodDescriptor: FunctionDescriptor) {
+        val fieldName = "$CACHED_SERIALIZER_PROPERTY\$delegate"
+
         // Create field for lazy delegate
         classCodegen.v.newField(
             OtherOrigin(classCodegen.myClass.psiOrParent),
             Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_STATIC,
-            SERIALIZER_LAZY_DELEGATE_FIELD_NAME,
+            fieldName,
             kotlinLazyType.descriptor,
             "L${kotlinLazyType.internalName}<L${kSerializerType.internalName}<*>;>;",
             null
@@ -75,7 +78,7 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
         // initialize lazy delegate
         val clInit = classCodegen.createOrGetClInitCodegen()
         with(clInit.v) {
-            getstatic(threadSafeModeType.internalName, "PUBLICATION", threadSafeModeType.descriptor)
+            getstatic(threadSafeModeType.internalName, LAZY_PUBLICATION_MODE_NAME.identifier, threadSafeModeType.descriptor)
             getstatic(lambdaType.internalName, JvmAbi.INSTANCE_FIELD, lambdaType.descriptor)
             checkcast(function0Type)
             invokestatic(
@@ -84,12 +87,12 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
                 "(${threadSafeModeType.descriptor}${function0Type.descriptor})${kotlinLazyType.descriptor}",
                 false
             )
-            putstatic(classCodegen.className, SERIALIZER_LAZY_DELEGATE_FIELD_NAME, kotlinLazyType.descriptor)
+            putstatic(classCodegen.className, fieldName, kotlinLazyType.descriptor)
         }
 
         // create serializer getter
         classCodegen.generateMethod(methodDescriptor) { _, _ ->
-            getstatic(classCodegen.className, SERIALIZER_LAZY_DELEGATE_FIELD_NAME, kotlinLazyType.descriptor)
+            getstatic(classCodegen.className, fieldName, kotlinLazyType.descriptor)
             invokeinterface(kotlinLazyType.internalName, getLazyValueName, "()Ljava/lang/Object;")
             checkcast(kSerializerType)
             areturn(kSerializerType)
