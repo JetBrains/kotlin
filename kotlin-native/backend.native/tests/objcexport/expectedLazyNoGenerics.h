@@ -519,6 +519,28 @@ __attribute__((swift_name("TestGH3992.B")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KDocExport")))
+@interface KtKDocExport : KtBase
+- (instancetype)initWithName:(NSString *)name __attribute__((swift_name("init(name:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) NSString *xyzzy __attribute__((swift_name("xyzzy")));
+@property (readonly) NSString *foo __attribute__((swift_name("foo")));
+@property int32_t yxxyz __attribute__((swift_name("yxxyz")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KdocExportKt")))
+@interface KtKdocExportKt : KtBase
+
+/**
+ @note This method converts instances of IllegalArgumentException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
++ (NSString * _Nullable)whateverA:(NSString *)a error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("whatever(a:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kt35940Kt")))
 @interface KtKt35940Kt : KtBase
 + (NSString *)testKt35940 __attribute__((swift_name("testKt35940()")));
