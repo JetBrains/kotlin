@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -46,6 +47,11 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.description = "Find, download and link NPM dependencies and projects"
 
             it.mustRunAfter(rootClean)
+        }
+
+        registerTask<KotlinNpmCachesSetup>(KotlinNpmCachesSetup.NAME) {
+            it.group = TASKS_GROUP_NAME
+            it.description = "Setup file hasher for caches"
         }
 
         registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)

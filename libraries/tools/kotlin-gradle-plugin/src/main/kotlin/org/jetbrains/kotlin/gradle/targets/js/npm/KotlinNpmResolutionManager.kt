@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Incubating
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.Logger

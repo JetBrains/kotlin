@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.GsonBuilder
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
 import java.io.File
 
@@ -26,12 +26,17 @@ internal abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<A
         const val STATE_FILE_NAME = ".visited"
     }
 
-    private val cache = ProcessedFilesCache(
-        parameters.rootProjectDir.get().asFile,
-        parameters.cacheDir.get().asFile,
-        STATE_FILE_NAME,
-        "9"
-    )
+    lateinit var fileHasher: FileHasher
+
+    private val cache by lazy {
+        ProcessedFilesCache(
+            fileHasher,
+            parameters.rootProjectDir.get().asFile,
+            parameters.cacheDir.get().asFile,
+            STATE_FILE_NAME,
+            "9"
+        )
+    }
 
     @Synchronized
     fun get(
