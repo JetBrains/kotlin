@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -51,6 +53,12 @@ internal abstract class PersistentIrPropertyCommon(
 
     override var backingFieldField: IrField? = null
 
+    override var backingFieldSymbolField: IrFieldSymbol?
+        get() = backingFieldField?.symbol
+        set(v) {
+            backingFieldField = v?.owner
+        }
+
     override var backingField: IrField?
         get() = getCarrier().backingFieldField
         set(v) {
@@ -61,6 +69,12 @@ internal abstract class PersistentIrPropertyCommon(
         }
 
     override var getterField: IrSimpleFunction? = null
+
+    override var getterSymbolField: IrSimpleFunctionSymbol?
+        get() = getterField?.symbol
+        set(v) {
+            getterField = v?.owner
+        }
 
     override var getter: IrSimpleFunction?
         get() = getCarrier().getterField
@@ -73,6 +87,12 @@ internal abstract class PersistentIrPropertyCommon(
 
     override var setterField: IrSimpleFunction? = null
 
+    override var setterSymbolField: IrSimpleFunctionSymbol?
+        get() = setterField?.symbol
+        set(v) {
+            setterField = v?.owner
+        }
+
     override var setter: IrSimpleFunction?
         get() = getCarrier().setterField
         set(v) {
@@ -82,26 +102,8 @@ internal abstract class PersistentIrPropertyCommon(
             }
         }
 
-    override var metadataField: MetadataSource? = null
-
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier()
-                metadataField = v
-            }
-        }
+    override var metadata: MetadataSource? = null
 
     @Suppress("LeakingThis")
-    override var attributeOwnerIdField: IrAttributeContainer = this
-
-    override var attributeOwnerId: IrAttributeContainer
-        get() = getCarrier().attributeOwnerIdField
-        set(v) {
-            if (attributeOwnerId !== v) {
-                setCarrier()
-                attributeOwnerIdField = v
-            }
-        }
+    override var attributeOwnerId: IrAttributeContainer = this
 }

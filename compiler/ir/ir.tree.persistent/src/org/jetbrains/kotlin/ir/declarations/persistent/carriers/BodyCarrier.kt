@@ -6,16 +6,25 @@
 package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 interface BodyCarrier : Carrier {
+    var containerFieldSymbol: IrSymbol?
+
     var containerField: IrDeclaration?
+        get() = containerFieldSymbol?.owner?.cast()
+        set(v) {
+            containerFieldSymbol = v?.symbol
+        }
+
 
     override fun clone(): BodyCarrier {
-        return BodyCarrierImpl(lastModified, containerField)
+        return BodyCarrierImpl(lastModified, containerFieldSymbol)
     }
 }
 
 internal class BodyCarrierImpl(
     override val lastModified: Int,
-    override var containerField: IrDeclaration?
+    override var containerFieldSymbol: IrSymbol?
 ) : BodyCarrier
