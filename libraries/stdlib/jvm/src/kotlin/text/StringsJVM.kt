@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -132,8 +132,8 @@ public actual inline fun String.toUpperCase(): String = (this as java.lang.Strin
  *
  * @sample samples.text.Strings.uppercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun String.uppercase(): String = (this as java.lang.String).toUpperCase(Locale.ROOT)
 
@@ -151,8 +151,8 @@ public actual inline fun String.toLowerCase(): String = (this as java.lang.Strin
  *
  * @sample samples.text.Strings.lowercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun String.lowercase(): String = (this as java.lang.String).toLowerCase(Locale.ROOT)
 
@@ -657,8 +657,8 @@ public inline fun String.toLowerCase(locale: java.util.Locale): String = lowerca
  *
  * @sample samples.text.Strings.lowercaseLocale
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun String.lowercase(locale: Locale): String = (this as java.lang.String).toLowerCase(locale)
 
@@ -677,8 +677,8 @@ public inline fun String.toUpperCase(locale: java.util.Locale): String = upperca
  *
  * @sample samples.text.Strings.uppercaseLocale
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun String.uppercase(locale: Locale): String = (this as java.lang.String).toUpperCase(locale)
 

@@ -131,8 +131,8 @@ public expect fun Char.toLowerCase(): Char
  *
  * @sample samples.text.Chars.lowercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.lowercaseChar(): Char
 
 /**
@@ -145,8 +145,8 @@ public expect fun Char.lowercaseChar(): Char
  *
  * @sample samples.text.Chars.lowercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.lowercase(): String
 
 /**
@@ -163,8 +163,8 @@ public expect fun Char.toUpperCase(): Char
  *
  * @sample samples.text.Chars.uppercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.uppercaseChar(): Char
 
 /**
@@ -177,8 +177,8 @@ public expect fun Char.uppercaseChar(): Char
  *
  * @sample samples.text.Chars.uppercase
  */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun Char.uppercase(): String
 
 /**
@@ -191,7 +191,6 @@ public expect fun Char.uppercase(): String
  * @sample samples.text.Chars.titlecase
  */
 @SinceKotlin("1.5")
-@ExperimentalStdlibApi
 public expect fun Char.titlecaseChar(): Char
 
 /**
@@ -205,7 +204,6 @@ public expect fun Char.titlecaseChar(): Char
  * @sample samples.text.Chars.titlecase
  */
 @SinceKotlin("1.5")
-@ExperimentalStdlibApi
 public fun Char.titlecase(): String = titlecaseImpl()
 
 /**
@@ -228,7 +226,6 @@ public inline operator fun Char.plus(other: String): String = this.toString() + 
  *
  * @sample samples.text.Chars.equals
  */
-@OptIn(ExperimentalStdlibApi::class)
 public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
     if (this == other) return true
     if (!ignoreCase) return false
