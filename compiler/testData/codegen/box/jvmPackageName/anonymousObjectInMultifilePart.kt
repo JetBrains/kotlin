@@ -2,9 +2,6 @@
 // WITH_RUNTIME
 // IGNORE_FIR_DIAGNOSTICS
 
-//  Duplicate JVM class name 'xx/ZKt'
-// IGNORE_BACKEND: ANDROID
-
 // FILE: anonymousObject.kt
 import x.*
 
@@ -12,10 +9,10 @@ fun box(): String =
     "O".z().toString() +
             "K".iz().toString()
 
-// FILE: z.kt
+// FILE: z11.kt
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("ZKt")
+@file:kotlin.jvm.JvmName("Z1")
 @file:kotlin.jvm.JvmPackageName("xx")
 package x
 
@@ -26,10 +23,10 @@ fun String.z(): Any {
     }
 }
 
-// FILE: z2.kt
+// FILE: z12.kt
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("ZKt")
+@file:kotlin.jvm.JvmName("Z1")
 @file:kotlin.jvm.JvmPackageName("xx")
 package x
 
