@@ -27,6 +27,7 @@ enum class Fruit(personal: Int) {
     }
 
     val score = personal + <!UNINITIALIZED_VARIABLE!>common<!>
+    val score2 = { personal + common }()
 }
 
 // Another example from KT-11769
@@ -52,4 +53,29 @@ enum class EnumCompanion3(val x: Int) {
     ANOTHER(EnumCompanion2.foo());
 
     companion object
+}
+
+interface ExtractableCodeDescriptor {
+    fun isInterface(): Boolean
+}
+
+enum class ExtractionTarget(val targetName: String) {
+    FUNCTION("function") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true
+    },
+
+    LAZY_PROPERTY("lazy property") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
+            // Should not report UNINITIALIZED_ENUM_COMPANION
+            return checkNotTrait(descriptor)
+        }
+    };
+
+    abstract fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean
+
+    companion object {
+        fun checkNotTrait(descriptor: ExtractableCodeDescriptor): Boolean {
+            return !descriptor.isInterface()
+        }
+    }
 }

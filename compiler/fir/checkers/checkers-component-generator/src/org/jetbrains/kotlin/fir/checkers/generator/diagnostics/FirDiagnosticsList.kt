@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
@@ -523,6 +520,12 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val CONTROL_FLOW by object : DiagnosticGroup("Control flow diagnostics") {
         val UNINITIALIZED_VARIABLE by error<FirSourceElement, KtSimpleNameExpression> {
             parameter<FirPropertySymbol>("variable")
+        }
+        val UNINITIALIZED_ENUM_ENTRY by error<FirSourceElement, KtSimpleNameExpression> {
+            parameter<FirVariableSymbol<FirEnumEntry>>("enumEntry")
+        }
+        val UNINITIALIZED_ENUM_COMPANION by error<FirSourceElement, KtSimpleNameExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<FirRegularClassSymbol>("enumClass")
         }
         val VAL_REASSIGNMENT by error<FirSourceElement, KtExpression> {
             parameter<FirVariableSymbol<*>>("variable")
