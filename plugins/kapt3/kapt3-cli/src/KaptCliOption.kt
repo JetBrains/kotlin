@@ -181,6 +181,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-show-processor-timings", FLAG)
     ),
 
+    DUMP_PROCESSOR_TIMINGS(
+        "dumpProcessorTimings",
+        "<path>",
+        "Dump processor performance statistics to the specified file",
+        cliToolOption = CliToolOption("-Kapt-dump-processor-timings", VALUE)
+    ),
+
     STRICT_MODE_OPTION(
         "strict",
         "true | false",
