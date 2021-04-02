@@ -10,5 +10,6 @@ public/*package*/ open class J {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    @org.jetbrains.annotations.NotNull public/*package*/ open fun bar(): kotlin.collections.(Mutable)List<kotlin.String!>
     public/*package*/ open fun foo(): kotlin.String!
 }
