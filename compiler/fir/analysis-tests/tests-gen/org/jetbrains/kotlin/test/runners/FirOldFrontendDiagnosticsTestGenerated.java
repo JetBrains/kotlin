@@ -30901,6 +30901,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("enumEntryInitialization.kt")
+        public void testEnumEntryInitialization() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/enumEntryInitialization.kt");
+        }
+
+        @Test
         @TestMetadata("exitProcess.kt")
         public void testExitProcess() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/exitProcess.kt");

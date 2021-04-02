@@ -1044,6 +1044,16 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val variable: KtVariableSymbol
     }
 
+    abstract class UninitializedEnumEntry : KtFirDiagnostic<KtSimpleNameExpression>() {
+        override val diagnosticClass get() = UninitializedEnumEntry::class
+        abstract val enumEntry: KtVariableLikeSymbol
+    }
+
+    abstract class UninitializedEnumCompanion : KtFirDiagnostic<KtSimpleNameExpression>() {
+        override val diagnosticClass get() = UninitializedEnumCompanion::class
+        abstract val enumClass: KtClassLikeSymbol
+    }
+
     abstract class ValReassignment : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ValReassignment::class
         abstract val variable: KtVariableLikeSymbol
