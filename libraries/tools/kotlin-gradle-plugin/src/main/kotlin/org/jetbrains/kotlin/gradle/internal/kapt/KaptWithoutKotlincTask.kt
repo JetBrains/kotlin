@@ -320,7 +320,8 @@ private class KaptExecution @Inject constructor(
             detectMemoryLeaksMode,
 
             processingClassLoader,
-            disableClassloaderCacheForProcessors
+            disableClassloaderCacheForProcessors,
+            /*processorsPerfReportFile=*/null
         )
     }
 

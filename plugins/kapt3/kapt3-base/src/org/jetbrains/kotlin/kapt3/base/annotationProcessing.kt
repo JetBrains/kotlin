@@ -122,6 +122,8 @@ fun KaptContext.doAnnotationProcessing(
             showProcessorTimings(wrappedProcessors, loggerFun)
         }
 
+        options.processorsPerfReportFile?.let { dumpProcessorTiming(wrappedProcessors, options.processorsPerfReportFile, logger::info) }
+
         if (logger.isVerbose) {
             filer.displayState()
         }
@@ -140,6 +142,17 @@ private fun showProcessorTimings(wrappedProcessors: List<ProcessorWrapper>, logg
     wrappedProcessors.forEach { processor ->
         logger(processor.renderSpentTime())
     }
+}
+
+private fun dumpProcessorTiming(wrappedProcessors: List<ProcessorWrapper>, apReportFile: File, logger: (String) -> Unit) {
+    logger("Dumping Kapt Annotation Processing performance report to ${apReportFile.absolutePath}")
+
+    apReportFile.writeText(buildString {
+        appendLine("Kapt Annotation Processing performance report:")
+        wrappedProcessors.forEach { processor ->
+            appendLine(processor.renderSpentTime())
+        }
+    })
 }
 
 private fun reportIfRunningNonIncrementally(
