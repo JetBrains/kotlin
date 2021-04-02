@@ -321,7 +321,7 @@ val FirValueParameter.hasValOrVar: Boolean
     }
 
 fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
-    if (this.canBeNull) {
+    if (this.isMarkedNullable) {
         return true
     }
     val clazz = toRegularClass(session) ?: return true
