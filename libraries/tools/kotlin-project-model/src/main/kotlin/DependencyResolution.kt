@@ -12,14 +12,6 @@ interface ModuleDependencyResolver {
     fun resolveDependency(requestingModule: KotlinModule, moduleDependency: KotlinModuleDependency): KotlinModule?
 }
 
-// TODO merge with ModuleDependencyResolver?
-//  Semantically, they are close and may use shared caches and other shared state in the implementations
-interface DependencyDiscovery {
-    // TODO return dependency graph rather than just iterable?
-    // TODO make this a partial function, too
-    fun discoverDependencies(fragment: KotlinModuleFragment): Iterable<KotlinModuleDependency>
-}
-
 interface KotlinDependencyGraphResolver {
     // TODO add explicit dependency consistency scopes if we decide to keep non-production code in the same variant
     fun resolveDependencyGraph(requestingModule: KotlinModule): DependencyGraphResolution

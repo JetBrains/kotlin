@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.ArrayDeque
 
 internal class FragmentGranularMetadataResolver(
-    val requestingFragment: KotlinGradleFragment,
-    val refinesParentResolvers: Lazy<Iterable<FragmentGranularMetadataResolver>>
+    private val requestingFragment: KotlinGradleFragment,
+    private val refinesParentResolvers: Lazy<Iterable<FragmentGranularMetadataResolver>>
 ) {
     val resolutions: Iterable<MetadataDependencyResolution> by lazy {
         doResolveMetadataDependencies()
