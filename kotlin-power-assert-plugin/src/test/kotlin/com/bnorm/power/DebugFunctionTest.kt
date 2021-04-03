@@ -71,7 +71,7 @@ fun main() {
     val out = ByteArrayOutputStream()
     System.setOut(PrintStream(out))
     main.invoke(null)
-    return out.toString(Charsets.UTF_8)
+    return out.toString("UTF-8")
   } catch (t: InvocationTargetException) {
     throw t.cause!!
   } finally {
