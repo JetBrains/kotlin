@@ -11,7 +11,7 @@ fun test(
     val ui = ui1 === ui2 || ui1 !== ui2
     val ul = ul1 === ul2 || ul1 !== ul2
 
-    val u = ub1 === ul1
+    val u = <!EQUALITY_NOT_APPLICABLE!>ub1 === ul1<!>
 
     val a1 = 1u === 2u || 1u !== 2u
     val a2 = 0xFFFF_FFFF_FFFF_FFFFu === 0xFFFF_FFFF_FFFF_FFFFu

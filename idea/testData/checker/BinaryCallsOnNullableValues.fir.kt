@@ -13,10 +13,10 @@ fun f(): Unit {
   x == 1
   x != 1
 
-  A() == 1
+  <error descr="[EQUALITY_NOT_APPLICABLE] Operator '==' cannot be applied to 'A' and 'kotlin/Int'">A() == 1</error>
 
-  x === "1"
-  x !== "1"
+  <error descr="[EQUALITY_NOT_APPLICABLE] Operator '===' cannot be applied to 'kotlin/Int' and 'kotlin/String'">x === "1"</error>
+  <error descr="[EQUALITY_NOT_APPLICABLE] Operator '!==' cannot be applied to 'kotlin/Int' and 'kotlin/String'">x !== "1"</error>
 
   x === 1
   x !== 1

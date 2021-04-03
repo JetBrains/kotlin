@@ -55,7 +55,7 @@ fun case_4(x: Char?) {
 fun case_5() {
     val x: Unit? = null
 
-    if (x !== null is Boolean?) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>
+    if (<!EQUALITY_NOT_APPLICABLE!>x !== null is Boolean?<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>
     if (x !== null == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
     if (x !== null == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.propT
     if (x !== null == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>propAny
@@ -87,7 +87,7 @@ fun case_6(x: EmptyClass?) {
 
 // TESTCASE NUMBER: 7
 fun case_7() {
-    if (nullableNumberProperty != null || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!> != null is Boolean) {
+    if (nullableNumberProperty != null || <!EQUALITY_NOT_APPLICABLE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!> != null is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!>.propT
@@ -141,12 +141,12 @@ fun case_10() {
 fun case_11(x: TypealiasNullableStringIndirect?, y: TypealiasNullableStringIndirect) {
     val t: TypealiasNullableStringIndirect = null
 
-    if (x == null is Boolean) {
+    if (<!EQUALITY_NOT_APPLICABLE!>x == null is Boolean<!>) {
 
     } else {
-        if (y != null is Boolean == true) {
+        if (<!EQUALITY_NOT_APPLICABLE!>y != null is Boolean<!> == true) {
             if ((nullableStringProperty == null) !is Boolean) {
-                if (t != null is Boolean) {
+                if (<!EQUALITY_NOT_APPLICABLE!>t != null is Boolean<!>) {
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.equals(null)
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.propT
@@ -236,7 +236,7 @@ fun case_14() {
 
 // TESTCASE NUMBER: 15
 fun case_15(x: EmptyObject) {
-    val t = if (x === null is Boolean is Boolean is Boolean) "" else {
+    val t = if (<!EQUALITY_NOT_APPLICABLE!>x === null is Boolean is Boolean is Boolean<!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.propT
@@ -254,7 +254,7 @@ fun case_15(x: EmptyObject) {
 fun case_16() {
     val x: TypealiasNullableNothing = null
 
-    if (x != null !is Boolean !is Boolean !is Boolean !is Boolean !is Boolean) {
+    if (<!EQUALITY_NOT_APPLICABLE!>x != null !is Boolean !is Boolean !is Boolean !is Boolean !is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!><!UNSAFE_CALL!>.<!>java
     }
@@ -302,7 +302,7 @@ fun case_19(b: Boolean) {
         }
     } else null
 
-    if (a != null !is Boolean && a<!UNSAFE_CALL!>.<!>B19 != null is Boolean && a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19 != null is Boolean && a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19 != null == null && a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x != null !== null) {
+    if (<!EQUALITY_NOT_APPLICABLE!>a != null !is Boolean<!> && <!EQUALITY_NOT_APPLICABLE!>a<!UNSAFE_CALL!>.<!>B19 != null is Boolean<!> && <!EQUALITY_NOT_APPLICABLE!>a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19 != null is Boolean<!> && a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19 != null == null && a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x != null !== null) {
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x<!UNSAFE_CALL!>.<!>equals(null)
         a<!UNSAFE_CALL!>.<!>B19<!UNSAFE_CALL!>.<!>C19<!UNSAFE_CALL!>.<!>D19<!UNSAFE_CALL!>.<!>x.propT
@@ -328,7 +328,7 @@ fun case_20(b: Boolean) {
         }
     }
 
-    if (a.B19.C19.D19 !== null !is Boolean) {
+    if (<!EQUALITY_NOT_APPLICABLE!>a.B19.C19.D19 !== null !is Boolean<!>) {
         a.B19.C19.D19
         a.B19.C19.D19<!UNSAFE_CALL!>.<!>equals(null)
         a.B19.C19.D19.propT
@@ -344,7 +344,7 @@ fun case_20(b: Boolean) {
 
 // TESTCASE NUMBER: 21
 fun case_21() {
-    if (EnumClassWithNullableProperty.B.prop_1 !== null is Boolean == true !is Boolean != true) {
+    if (<!EQUALITY_NOT_APPLICABLE!>EnumClassWithNullableProperty.B.prop_1 !== null is Boolean<!> == true !is Boolean != true) {
         EnumClassWithNullableProperty.B.prop_1
         EnumClassWithNullableProperty.B.prop_1<!UNSAFE_CALL!>.<!>equals(null)
         EnumClassWithNullableProperty.B.prop_1.propT
@@ -360,7 +360,7 @@ fun case_21() {
 
 // TESTCASE NUMBER: 22
 fun case_22(a: (() -> Unit)?) {
-    if (a != null !is Boolean) {
+    if (<!EQUALITY_NOT_APPLICABLE!>a != null !is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>.propT
@@ -376,7 +376,7 @@ fun case_22(a: (() -> Unit)?) {
 
 // TESTCASE NUMBER: 23
 fun case_23(a: ((Float) -> Int?)?, b: Float?) {
-    if (a != null !is Boolean && b !== null is Boolean) {
+    if (<!EQUALITY_NOT_APPLICABLE!>a != null !is Boolean<!> && <!EQUALITY_NOT_APPLICABLE!>b !== null is Boolean<!>) {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         if (x != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
@@ -395,7 +395,7 @@ fun case_23(a: ((Float) -> Int?)?, b: Float?) {
 
 // TESTCASE NUMBER: 24
 fun case_24(a: ((() -> Unit) -> Unit)?, b: (() -> Unit)?) =
-    if (a !== null is Boolean && b !== null !is Boolean) {
+    if (<!EQUALITY_NOT_APPLICABLE!>a !== null is Boolean<!> && <!EQUALITY_NOT_APPLICABLE!>b !== null !is Boolean<!>) {
         <!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>)
         <!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(b)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!><!UNSAFE_CALL!>.<!>equals(null)

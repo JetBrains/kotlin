@@ -9072,6 +9072,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("typeCompatibility.kt")
+            public void testTypeCompatibility() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/typeCompatibility.kt");
+            }
+
+            @Test
             @TestMetadata("typeParametersInEnum.kt")
             public void testTypeParametersInEnum() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/typeParametersInEnum.kt");

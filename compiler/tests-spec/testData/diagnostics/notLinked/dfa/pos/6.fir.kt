@@ -577,7 +577,7 @@ fun case_29(x: Boolean) {
     if (false || false || false || false || y !== v) {
         val t = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
 
-        if (z !== t || false) {
+        if (<!EQUALITY_NOT_APPLICABLE_WARNING!>z !== t<!> || false) {
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!><!UNSAFE_CALL!>.<!>a
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!><!UNSAFE_CALL!>.<!>equals(null)
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.propT

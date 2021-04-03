@@ -23,7 +23,7 @@ fun foo() : Int {
       !is Int -> 1
       is Any? -> 1
       is Any -> 1
-      s -> 1
+      <!INCOMPATIBLE_TYPES!>s<!> -> 1
       1 -> 1
       1 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!UNRESOLVED_REFERENCE!>a<!> -> 1
       in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
@@ -41,8 +41,8 @@ fun test() {
   val s = "";
 
   when (x) {
-    s -> 1
-    "" -> 1
+    <!INCOMPATIBLE_TYPES!>s<!> -> 1
+    <!INCOMPATIBLE_TYPES!>""<!> -> 1
     x -> 1
     1 -> 1
   }

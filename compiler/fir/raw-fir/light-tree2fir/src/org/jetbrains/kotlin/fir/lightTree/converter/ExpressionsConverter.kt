@@ -735,7 +735,7 @@ class ExpressionsConverter(
         }
         return if (whenRefWithSubject != null) {
             buildEqualityOperatorCall {
-                source = whenCondition.toFirSourceElement()
+                source = whenCondition.toFirSourceElement(FirFakeSourceElementKind.WhenCondition)
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
                     buildWhenSubjectExpression {

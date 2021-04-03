@@ -32,7 +32,7 @@ val test_dd = d === d || d !== d
 val test_cc = c === c || c !== c
 
 // Identity for primitive values of different types (no extra error)
-val test_zb = z === b || z !== b
+val test_zb = <!EQUALITY_NOT_APPLICABLE!>z === b<!> || <!EQUALITY_NOT_APPLICABLE!>z !== b<!>
 
 // Primitive vs nullable
 val test_znz = z === nz || nz === z || z !== nz || nz !== z

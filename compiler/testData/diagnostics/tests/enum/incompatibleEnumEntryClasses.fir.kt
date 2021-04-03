@@ -7,15 +7,15 @@ interface I {
 enum class E1 : I {
     A {
         override fun foo() {
-            this == E2.A
+            <!EQUALITY_NOT_APPLICABLE_WARNING!>this == E2.A<!>
 
             val q = this
             when (q) {
                 this -> {}
                 E1.A -> {}
                 E1.B -> {}
-                E2.A -> {}
-                E2.B -> {}
+                <!INCOMPATIBLE_TYPES_WARNING!>E2.A<!> -> {}
+                <!INCOMPATIBLE_TYPES_WARNING!>E2.B<!> -> {}
                 else -> {}
             }
         }
@@ -41,13 +41,13 @@ enum class E2 : I {
 }
 
 fun foo1(e1: E1, e2: E2) {
-    e1 == e2
-    e1 != e2
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == e2<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 != e2<!>
 
-    e1 == E2.A
-    E1.B == e2
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == E2.A<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>E1.B == e2<!>
 
-    E1.A == E2.B
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>E1.A == E2.B<!>
 
     e1 == E1.A
     E1.A == e1
@@ -58,27 +58,27 @@ fun foo1(e1: E1, e2: E2) {
 fun foo2(e1: E1, e2: E2) {
     when (e1) {
         E1.A -> {}
-        E2.A -> {}
-        E2.B -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>E2.A<!> -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>E2.B<!> -> {}
         e1 -> {}
-        e2 -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>e2<!> -> {}
         else -> {}
     }
 }
 
 fun foo3(e1: Enum<E1>, e2: Enum<E2>, e: Enum<*>) {
     e1 == e
-    e1 == e2
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == e2<!>
 
     e1 == E1.A
-    e1 == E2.A
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == E2.A<!>
 
     when (e1) {
         e1 -> {}
-        e2 -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>e2<!> -> {}
         e -> {}
         E1.A -> {}
-        E2.A -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>E2.A<!> -> {}
         else -> {}
     }
 

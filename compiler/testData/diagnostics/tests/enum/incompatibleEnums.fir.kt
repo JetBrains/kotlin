@@ -9,13 +9,13 @@ enum class E2 {
 }
 
 fun foo1(e1: E1, e2: E2) {
-    e1 == e2
-    e1 != e2
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == e2<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 != e2<!>
 
-    e1 == E2.A
-    E1.B == e2
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == E2.A<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>E1.B == e2<!>
 
-    E1.A == E2.B
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>E1.A == E2.B<!>
 
     e1 == E1.A
     E1.A == e1
@@ -26,27 +26,27 @@ fun foo1(e1: E1, e2: E2) {
 fun foo2(e1: E1, e2: E2) {
     when (e1) {
         E1.A -> {}
-        E2.A -> {}
-        E2.B -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>E2.A<!> -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>E2.B<!> -> {}
         e1 -> {}
-        e2 -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>e2<!> -> {}
         else -> {}
     }
 }
 
 fun foo3(e1: Enum<E1>, e2: Enum<E2>, e: Enum<*>) {
     e1 == e
-    e1 == e2
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == e2<!>
 
     e1 == E1.A
-    e1 == E2.A
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == E2.A<!>
 
     when (e1) {
         e1 -> {}
-        e2 -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>e2<!> -> {}
         e -> {}
         E1.A -> {}
-        E2.A -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>E2.A<!> -> {}
         else -> {}
     }
 
@@ -63,15 +63,15 @@ interface MyInterface
 open class MyOpenClass
 
 fun foo4(e1: E1, i: MyInterface, c: MyOpenClass) {
-    e1 == i
-    i == e1
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == i<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>i == e1<!>
 
-    e1 == c
-    c == e1
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == c<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>c == e1<!>
 
     when (e1) {
-        i -> {}
-        c -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>i<!> -> {}
+        <!INCOMPATIBLE_TYPES_WARNING!>c<!> -> {}
         else -> {}
     }
 }
@@ -90,10 +90,10 @@ fun foo6(e1: E1?, e2: E2) {
     e1 == null
     null == e1
 
-    e1 == E2.A
-    E2.A == e1
-    e1 == e2
-    e2 == e1
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == E2.A<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>E2.A == e1<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == e2<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e2 == e1<!>
 
     e2 == null
     null == e2
@@ -117,16 +117,16 @@ fun <T> foo8(e1: E1?, e2: E2, t: T) {
 }
 
 fun <T, K> foo9(e1: E1?, e2: E2, t: T, k: K) where T : MyInterface, T : MyOpenClass, K : MyInterface {
-    e1 == t
-    t == e1
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e1 == t<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>t == e1<!>
 
-    e2 == t
-    t == e2
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e2 == t<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>t == e2<!>
 
-    E1.A == t
-    t == E1.A
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>E1.A == t<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>t == E1.A<!>
 
-    E3.X == t
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>E3.X == t<!>
 
     E3.X == k
     k == E3.X
@@ -137,9 +137,9 @@ interface Inv<T>
 enum class E4 : Inv<Int> { A }
 
 fun foo10(e4: E4, invString: Inv<String>) {
-    e4 == invString
-    invString == e4
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>e4 == invString<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>invString == e4<!>
 
-    E4.A == invString
-    invString == E4.A
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>E4.A == invString<!>
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>invString == E4.A<!>
 }

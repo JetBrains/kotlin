@@ -35,10 +35,10 @@ fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = fal
     }
 }
 
-inline val FirRegularClass.isInterface: Boolean
+inline val FirClass<*>.isInterface: Boolean
     get() = classKind == ClassKind.INTERFACE
 
-inline val FirRegularClass.isEnumClass: Boolean
+inline val FirClass<*>.isEnumClass: Boolean
     get() = classKind == ClassKind.ENUM_CLASS
 
 inline val FirRegularClass.modality get() = status.modality

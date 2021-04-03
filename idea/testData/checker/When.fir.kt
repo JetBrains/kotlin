@@ -7,7 +7,7 @@ fun foo() : Int {
       is String -> 1
       !is Int -> 1
       is Any? -> 1
-      s -> 1
+      <error descr="[INCOMPATIBLE_TYPES] Incompatible types: kotlin/Int and kotlin/String">s</error> -> 1
       1 -> 1
       1 <error descr="[OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity between candidates: [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, ...]">+</error> <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: a">a</error> -> 1
       in 1..<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: a">a</error> -> 1
@@ -25,8 +25,8 @@ fun test() {
   val s = "";
 
   when (x) {
-    s -> 1
-    "" -> 1
+    <error descr="[INCOMPATIBLE_TYPES] Incompatible types: kotlin/Int and kotlin/String">s</error> -> 1
+    <error descr="[INCOMPATIBLE_TYPES] Incompatible types: kotlin/Int and kotlin/String">""</error> -> 1
     x -> 1
     1 -> 1
     else -> 1
