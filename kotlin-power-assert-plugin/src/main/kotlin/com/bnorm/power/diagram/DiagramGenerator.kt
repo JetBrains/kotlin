@@ -16,45 +16,50 @@
 
 package com.bnorm.power.diagram
 
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irFalse
+import org.jetbrains.kotlin.ir.builders.irIfThenElse
+import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 abstract class DiagramGenerator {
-  abstract fun IrBuilderWithScope.buildAssertThrow(variables: List<IrTemporaryVariable>): IrExpression
+  abstract fun IrBuilderWithScope.buildCall(
+    argument: IrExpression,
+    variables: List<IrTemporaryVariable>
+  ): IrExpression
 
-  fun buildAssert(
+  fun buildExpression(
     builder: IrBuilderWithScope,
     root: Node
   ): IrExpression {
     return builder.irBlock {
-      buildAssert(root, listOf()) { subStack ->
-        buildAssertThrow(subStack)
+      buildExpression(root, listOf()) { argument, subStack ->
+        buildCall(argument, subStack)
       }
     }
   }
 
-  private fun IrStatementsBuilder<*>.buildAssert(
+  private fun IrStatementsBuilder<*>.buildExpression(
     node: Node,
     variables: List<IrTemporaryVariable>,
-    thenPart: IrStatementsBuilder<*>.(List<IrTemporaryVariable>) -> IrExpression
-  ): List<IrTemporaryVariable> = when (node) {
-    is ExpressionNode -> add(node, variables, thenPart)
-    is AndNode -> chain(node, variables, thenPart)
-    is OrNode -> nest(node, 0, variables)
-    else -> TODO("Unknown node type=$node")
+    call: IrStatementsBuilder<*>.(IrExpression, List<IrTemporaryVariable>) -> IrExpression
+  ) {
+    when (node) {
+      is ExpressionNode -> add(node, variables, call)
+      is AndNode -> nest(node, 0, variables, call)
+      is OrNode -> nest(node, 0, variables, call)
+      else -> TODO("Unknown node type=$node")
+    }
   }
 
   /**
-   * TODO - this is how the following function should behave
    * ```
    * val result = call(1 + 2 + 3)
    * ```
-   * Transformed to
+   * Transforms to
    * ```
    * val result = run {
    *   val tmp0 = 1 + 2
@@ -66,67 +71,63 @@ abstract class DiagramGenerator {
   private fun IrStatementsBuilder<*>.add(
     node: ExpressionNode,
     variables: List<IrTemporaryVariable>,
-    thenPart: IrStatementsBuilder<*>.(List<IrTemporaryVariable>) -> IrExpression
-  ): List<IrTemporaryVariable> {
+    call: IrStatementsBuilder<*>.(IrExpression, List<IrTemporaryVariable>) -> IrExpression
+  ) {
     val head = node.expressions.first().deepCopyWithSymbols(scope.getLocalDeclarationParent())
     val expressions = (buildTree(head) as ExpressionNode).expressions
     val transformer = IrTemporaryExtractionTransformer(this, expressions.toSet())
     val transformed = expressions.first().transform(transformer, null)
 
-    if (transformed.type == context.irBuiltIns.booleanType) {
-      // TODO irIfThenElse to support property nesting of ANDs & ORs
-      +irIfThen(irNot(transformed), thenPart(variables + transformer.variables))
-    } else {
-      +thenPart(variables + transformer.variables)
-    }
-
-    return transformer.variables
+    +call(transformed, variables + transformer.variables)
   }
 
   /**
-   * TODO - this is how the following function should behave
    * ```
    * val result = call(1 == 1 && 2 == 2)
    * ```
-   * Transformed to
+   * Transforms to
    * ```
    * val result = run {
    *   val tmp0 = 1 == 1
    *   if (tmp0) {
    *     val tmp1 = 2 == 2
-   *     if (tmp1) call(true, <diagram>)
-   *     else call(false, <diagram>)
+   *     call(tmp1, <diagram>)
    *   }
    *   else call(false, <diagram>)
    * }
    * ```
    */
-  private fun IrStatementsBuilder<*>.chain(
+  private fun IrStatementsBuilder<*>.nest(
     node: AndNode,
+    index: Int,
     variables: List<IrTemporaryVariable>,
-    thenPart: IrStatementsBuilder<*>.(List<IrTemporaryVariable>) -> IrExpression
-  ): List<IrTemporaryVariable> {
-    val newVariables = mutableListOf<IrTemporaryVariable>()
-    for (child in node.children) {
-      newVariables.addAll(buildAssert(child, variables + newVariables, thenPart))
+    call: IrStatementsBuilder<*>.(IrExpression, List<IrTemporaryVariable>) -> IrExpression
+  ) {
+    val children = node.children
+    val child = children[index]
+    buildExpression(child, variables) { argument, newVariables ->
+      if (index + 1 == children.size) call(argument, newVariables) // last expression, result is false
+      else irIfThenElse(
+        context.irBuiltIns.anyType,
+        argument,
+        irBlock { nest(node, index + 1, newVariables, call) }, // more expressions, continue nesting
+        call(irFalse(), newVariables), // short-circuit result to false
+      )
     }
-    return newVariables
   }
 
   /**
-   * TODO - this is how the following function should behave
    * ```
    * val result = call(1 == 1 || 2 == 2)
    * ```
-   * Transformed to
+   * Transforms to
    * ```
    * val result = run {
    *   val tmp0 = 1 == 1
    *   if (tmp0) call(true, <diagram>)
    *   else {
    *     val tmp1 = 2 == 2
-   *     if (tmp1) call(true, <diagram>)
-   *     else call(false, <diagram>)
+   *     call(tmp1, <diagram>)
    *   }
    * }
    * ```
@@ -134,14 +135,19 @@ abstract class DiagramGenerator {
   private fun IrStatementsBuilder<*>.nest(
     node: OrNode,
     index: Int,
-    variables: List<IrTemporaryVariable>
-  ): List<IrTemporaryVariable> {
+    variables: List<IrTemporaryVariable>,
+    call: IrStatementsBuilder<*>.(IrExpression, List<IrTemporaryVariable>) -> IrExpression
+  ) {
     val children = node.children
     val child = children[index]
-    buildAssert(child, variables) { newVariables ->
-      if (index + 1 == children.size) buildAssertThrow(newVariables)
-      else irBlock { nest(node, index + 1, newVariables) }
+    buildExpression(child, variables) { argument, newVariables ->
+      if (index + 1 == children.size) call(argument, newVariables) // last expression, result is false
+      else irIfThenElse(
+        context.irBuiltIns.anyType,
+        argument,
+        call(irTrue(), newVariables), // short-circuit result to true
+        irBlock { nest(node, index + 1, newVariables, call) }, // more expressions, continue nesting
+      )
     }
-    return emptyList()
   }
 }

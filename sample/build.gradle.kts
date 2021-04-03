@@ -62,6 +62,7 @@ configure<com.bnorm.power.PowerAssertGradleExtension> {
     "kotlin.test.assertTrue",
     "kotlin.require",
     "com.bnorm.power.AssertScope.assert",
-    "com.bnorm.power.assert"
+    "com.bnorm.power.assert",
+    "com.bnorm.power.dbg"
   )
 }

@@ -35,17 +35,18 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.utils.asString
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irCallOp
-import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -53,10 +54,12 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isSubtypeOf
@@ -99,23 +102,25 @@ class PowerAssertCallTransformer(
       .replace("\r\n", "\n") // https://youtrack.jetbrains.com/issue/KT-41888
 
     irFile.transformChildrenVoid()
+//    println(irFile.dumpKotlinLike())
   }
 
   override fun visitCall(expression: IrCall): IrExpression {
-    val fqName = expression.symbol.owner.kotlinFqName
-    if (functions.none { fqName == it })
+    val function = expression.symbol.owner
+    val fqName = function.kotlinFqName
+    if (function.valueParameters.isEmpty() || functions.none { fqName == it })
       return super.visitCall(expression)
 
     // Find a valid delegate function or do not translate
-    val delegate = findDelegate(fqName) ?: run {
+    val delegate = findDelegate(function) ?: run {
+      val valueType = function.valueParameters[0].type.asString()
       messageCollector.warn(
         expression,
-        "Unable to find overload for function $fqName callable as $fqName(Boolean, String) or $fqName(Boolean, () -> String) for power-assert transformation"
+        "Unable to find overload for function $fqName callable as $fqName($valueType, String) or $fqName($valueType, () -> String) for power-assert transformation"
       )
       return super.visitCall(expression)
     }
 
-    val function = expression.symbol.owner
     val assertionArgument = expression.getValueArgument(0)!!
     val messageArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
 
@@ -130,7 +135,7 @@ class PowerAssertCallTransformer(
       at(expression)
 
       val generator = object : DiagramGenerator() {
-        override fun IrBuilderWithScope.buildAssertThrow(variables: List<IrTemporaryVariable>): IrExpression {
+        override fun IrBuilderWithScope.buildCall(argument: IrExpression, variables: List<IrTemporaryVariable>): IrExpression {
 
           val lambda = messageArgument?.asSimpleLambda()
           val title = when {
@@ -142,18 +147,18 @@ class PowerAssertCallTransformer(
               irCallOp(invoke.symbol, invoke.returnType, messageArgument)
             }
             // TODO what should the default message be?
-            else -> irString("Assertion failed")
+            assertionArgument.type.isBoolean() -> irString("Assertion failed")
+            else -> null
           }
 
-          val prefix = title.deepCopyWithSymbols(parent)
+          val prefix = title?.deepCopyWithSymbols(parent)
           val diagram = irDiagram(file, fileSource, prefix, expression, variables)
-          return delegate.buildCall(this, expression, irFalse(), diagram)
+          return delegate.buildCall(this, expression, argument, diagram)
         }
       }
 
 //      println(root.dump())
-
-      return generator.buildAssert(this, root)
+      return generator.buildExpression(this, root)
 //        .also { println(expression.dump()) }
 //        .also { println(it.dump()) }
 //        .also { println(expression.dumpKotlinLike()) }
@@ -165,20 +170,22 @@ class PowerAssertCallTransformer(
     fun buildCall(builder: IrBuilderWithScope, original: IrCall, argument: IrExpression, message: IrExpression): IrExpression
   }
 
-  private fun findDelegate(fqName: FqName): FunctionDelegate? {
-    return context.referenceFunctions(fqName)
+  private fun findDelegate(function: IrFunction): FunctionDelegate? {
+    if (function.valueParameters.isEmpty()) return null
+
+    return context.referenceFunctions(function.kotlinFqName)
       .mapNotNull { overload ->
         // TODO allow other signatures than (Boolean, String) and (Boolean, () -> String)
         val parameters = overload.owner.valueParameters
         if (parameters.size != 2) return@mapNotNull null
-        if (!parameters[0].type.isBoolean()) return@mapNotNull null
+        if (!function.valueParameters[0].type.isAssignableTo(parameters[0].type)) return@mapNotNull null
 
         val messageParameter = parameters.last()
         return@mapNotNull when {
           isStringSupertype(messageParameter.type) -> {
             object : FunctionDelegate {
               override fun buildCall(builder: IrBuilderWithScope, original: IrCall, argument: IrExpression, message: IrExpression): IrExpression = with(builder) {
-                irCall(overload, type = overload.owner.returnType).apply {
+                irCall(overload, type = original.type).apply {
                   dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
                   extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
                   for (i in 0 until original.typeArgumentsCount) {
@@ -207,7 +214,7 @@ class PowerAssertCallTransformer(
                   parent = scope.parent
                 }
                 val expression = IrFunctionExpressionImpl(original.startOffset, original.endOffset, messageParameter.type, lambda, IrStatementOrigin.LAMBDA)
-                irCall(overload, type = overload.owner.returnType).apply {
+                irCall(overload, type = original.type).apply {
                   dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
                   extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
                   for (i in 0 until original.typeArgumentsCount) {
@@ -235,6 +242,12 @@ class PowerAssertCallTransformer(
 
   private fun isStringSupertype(type: IrType): Boolean =
     context.irBuiltIns.stringType.isSubtypeOf(type, context.irBuiltIns)
+
+  private fun IrType.isAssignableTo(type: IrType): Boolean =
+    isSubtypeOf(type, context.irBuiltIns) ||
+      ((type.classifierOrNull as? IrTypeParameterSymbol)?.owner?.superTypes?.all {
+        isSubtypeOf(it, context.irBuiltIns)
+      } ?: false)
 
   private fun MessageCollector.info(expression: IrElement, message: String) {
     report(expression, CompilerMessageSeverity.INFO, message)
