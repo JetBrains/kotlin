@@ -34,21 +34,25 @@ abstract class AbstractKotlinCompilerTest {
         val defaultPreprocessors: List<Constructor<SourceFilePreprocessor>> = listOf(
             ::MetaInfosCleanupPreprocessor
         )
+
+        private fun configureDebugFlags() {
+            AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
+            FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true
+        }
+
+        val defaultConfiguration: TestConfigurationBuilder.() -> Unit = {
+            useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+            useAdditionalService<BackendKindExtractor>(::BackendKindExtractorImpl)
+            useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
+            useDirectives(*defaultDirectiveContainers.toTypedArray())
+            configureDebugFlags()
+        }
     }
 
     private val configuration: TestConfigurationBuilder.() -> Unit = {
         assertions = JUnit5Assertions
-        useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
-        useAdditionalService<BackendKindExtractor>(::BackendKindExtractorImpl)
-        useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
-        useDirectives(*defaultDirectiveContainers.toTypedArray())
-        configureDebugFlags()
+        defaultConfiguration()
         configure(this)
-    }
-
-    private fun configureDebugFlags() {
-        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
-        FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true
     }
 
     abstract fun TestConfigurationBuilder.configuration()

@@ -78,7 +78,7 @@ class FirFrontendFacade(
             testFile to firFile
         }.toMap()
 
-        return FirOutputArtifact(session, filesMap, firAnalyzerFacade)
+        return FirOutputArtifactImpl(session, filesMap, firAnalyzerFacade)
     }
 
     private fun createSessionForBuiltins(

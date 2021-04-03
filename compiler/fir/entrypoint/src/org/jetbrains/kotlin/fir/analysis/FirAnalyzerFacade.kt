@@ -29,16 +29,25 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import java.io.File
 
+abstract class AbstractFirAnalyzerFacade {
+    abstract val scopeSession: ScopeSession
+    abstract fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>>
+
+    abstract fun runResolution(): List<FirFile>
+
+    abstract fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult
+}
+
 class FirAnalyzerFacade(
     val session: FirSession,
     val languageVersionSettings: LanguageVersionSettings,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val originalFiles: Collection<File> = emptyList(), // may be empty if light tree mode disabled
     val useLightTree: Boolean = false
-) {
+) : AbstractFirAnalyzerFacade() {
     private var firFiles: List<FirFile>? = null
     private var _scopeSession: ScopeSession? = null
-    val scopeSession: ScopeSession
+    override val scopeSession: ScopeSession
         get() = _scopeSession!!
 
     private var collectedDiagnostics: Map<FirFile, List<FirDiagnostic<*>>>? = null
@@ -63,7 +72,7 @@ class FirAnalyzerFacade(
         }
     }
 
-    fun runResolution(): List<FirFile> {
+    override fun runResolution(): List<FirFile> {
         if (firFiles == null) buildRawFir()
         if (_scopeSession != null) return firFiles!!
         val resolveProcessor = FirTotalResolveProcessor(session)
@@ -73,7 +82,7 @@ class FirAnalyzerFacade(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>> {
+    override fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>> {
         if (_scopeSession == null) runResolution()
         if (collectedDiagnostics != null) return collectedDiagnostics!!
         val collector = FirDiagnosticsCollector.create(session, scopeSession)
@@ -87,7 +96,7 @@ class FirAnalyzerFacade(
         return collectedDiagnostics!!
     }
 
-    fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
+    override fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
         if (_scopeSession == null) runResolution()
         val signaturer = JvmIdSignatureDescriptor(JvmManglerDesc())
 

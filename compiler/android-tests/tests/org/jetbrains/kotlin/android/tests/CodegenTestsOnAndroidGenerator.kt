@@ -354,8 +354,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                         extractor.provideConfigurationKeys()
                         extractor.configure(keyConfiguration, module.directives)
                     }
-                    val kind = configuratorForFlags.extractConfigurationKind(module.directives)
-                    val jdkKind = configuratorForFlags.extractJdkKind(module.directives)
+                    val kind = JvmEnvironmentConfigurator.extractConfigurationKind(module.directives)
+                    val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(module.directives)
 
                     keyConfiguration.languageVersionSettings = module.languageVersionSettings
 

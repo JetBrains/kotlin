@@ -65,6 +65,61 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         private val DEFAULT_JVM_TARGET_FROM_PROPERTY: String? = System.getProperty("kotlin.test.default.jvm.target")
 
         private const val JAVA_BINARIES_JAR_NAME = "java-binaries"
+
+        fun extractConfigurationKind(registeredDirectives: RegisteredDirectives): ConfigurationKind {
+            val withRuntime = JvmEnvironmentConfigurationDirectives.WITH_RUNTIME in registeredDirectives ||
+                    JvmEnvironmentConfigurationDirectives.WITH_STDLIB in registeredDirectives
+            val withReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in registeredDirectives
+            val noRuntime = JvmEnvironmentConfigurationDirectives.NO_RUNTIME in registeredDirectives
+            if (noRuntime && withRuntime) {
+                error("NO_RUNTIME and WITH_RUNTIME can not be used together")
+            }
+            return when {
+                withRuntime && !withReflect -> ConfigurationKind.NO_KOTLIN_REFLECT
+                withRuntime || withReflect -> ConfigurationKind.ALL
+                noRuntime -> ConfigurationKind.JDK_NO_RUNTIME
+                else -> ConfigurationKind.JDK_ONLY
+            }
+        }
+
+        fun extractJdkKind(registeredDirectives: RegisteredDirectives): TestJdkKind {
+            val fullJdkEnabled = JvmEnvironmentConfigurationDirectives.FULL_JDK in registeredDirectives
+            val jdkKinds = registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND]
+
+            if (fullJdkEnabled) {
+                if (jdkKinds.isNotEmpty()) {
+                    error("FULL_JDK and JDK_KIND can not be used together")
+                }
+                return TestJdkKind.FULL_JDK
+            }
+
+            return when (jdkKinds.size) {
+                0 -> TestJdkKind.MOCK_JDK
+                1 -> jdkKinds.single()
+                else -> error("Too many jdk kinds passed: ${jdkKinds.joinToArrayString()}")
+            }
+        }
+
+        fun getLibraryFiles(configurationKind: ConfigurationKind, directives: RegisteredDirectives): List<File> {
+            val files = mutableListOf<File>()
+            if (configurationKind.withRuntime) {
+                files.add(ForTestCompileRuntime.runtimeJarForTests())
+                files.add(ForTestCompileRuntime.scriptRuntimeJarForTests())
+                files.add(ForTestCompileRuntime.kotlinTestJarForTests())
+            } else if (configurationKind.withMockRuntime) {
+                files.add(ForTestCompileRuntime.minimalRuntimeJarForTests())
+                files.add(ForTestCompileRuntime.scriptRuntimeJarForTests())
+            }
+            if (configurationKind.withReflection) {
+                files.add(ForTestCompileRuntime.reflectJarForTests())
+            }
+            files.add(KtTestUtil.getAnnotationsJar())
+
+            if (JvmEnvironmentConfigurationDirectives.STDLIB_JDK8 in directives) {
+                files.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
+            }
+            return files
+        }
     }
 
     override val directivesContainers: List<DirectivesContainer>
@@ -130,27 +185,8 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             configuration.put(TEST_CONFIGURATION_KIND_KEY, it)
         }
 
-        val javaVersionToCompile = registeredDirectives[COMPILE_JAVA_USING].singleOrNull()
-        val javaBinaryFiles = if (ALL_JAVA_AS_BINARY !in registeredDirectives) {
-            module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY in it.directives }
-        } else module.javaFiles
+        configuration.addJvmClasspathRoots(getLibraryFiles(configurationKind, module.directives))
 
-        val useJava9ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_9
-
-        if (configurationKind.withRuntime) {
-            configuration.configureStandardLibs(PathUtil.kotlinPathsForDistDirectory, K2JVMCompilerArguments().also { it.noReflect = true })
-            configuration.addJvmClasspathRoot(ForTestCompileRuntime.kotlinTestJarForTests())
-        } else if (configurationKind.withMockRuntime) {
-            configuration.addJvmClasspathRoot(ForTestCompileRuntime.minimalRuntimeJarForTests())
-            configuration.addJvmClasspathRoot(ForTestCompileRuntime.scriptRuntimeJarForTests())
-        }
-        if (configurationKind.withReflection) {
-            configuration.addJvmClasspathRoot(ForTestCompileRuntime.reflectJarForTests())
-        }
-
-        if (JvmEnvironmentConfigurationDirectives.STDLIB_JDK8 in module.directives) {
-            configuration.addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
-        }
 
         configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
 
@@ -309,39 +345,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         }
     }
 
-    fun extractJdkKind(registeredDirectives: RegisteredDirectives): TestJdkKind {
-        val fullJdkEnabled = JvmEnvironmentConfigurationDirectives.FULL_JDK in registeredDirectives
-        val jdkKinds = registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND]
-
-        if (fullJdkEnabled) {
-            if (jdkKinds.isNotEmpty()) {
-                error("FULL_JDK and JDK_KIND can not be used together")
-            }
-            return TestJdkKind.FULL_JDK
-        }
-
-        return when (jdkKinds.size) {
-            0 -> TestJdkKind.MOCK_JDK
-            1 -> jdkKinds.single()
-            else -> error("Too many jdk kinds passed: ${jdkKinds.joinToArrayString()}")
-        }
-    }
-
-    fun extractConfigurationKind(registeredDirectives: RegisteredDirectives): ConfigurationKind {
-        val withRuntime = JvmEnvironmentConfigurationDirectives.WITH_RUNTIME in registeredDirectives ||
-                JvmEnvironmentConfigurationDirectives.WITH_STDLIB in registeredDirectives
-        val withReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in registeredDirectives
-        val noRuntime = JvmEnvironmentConfigurationDirectives.NO_RUNTIME in registeredDirectives
-        if (noRuntime && withRuntime) {
-            error("NO_RUNTIME and WITH_RUNTIME can not be used together")
-        }
-        return when {
-            withRuntime && !withReflect -> ConfigurationKind.NO_KOTLIN_REFLECT
-            withRuntime || withReflect -> ConfigurationKind.ALL
-            noRuntime -> ConfigurationKind.JDK_NO_RUNTIME
-            else -> ConfigurationKind.JDK_ONLY
-        }
-    }
 
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
         val dependencyProvider = testServices.dependencyProvider
