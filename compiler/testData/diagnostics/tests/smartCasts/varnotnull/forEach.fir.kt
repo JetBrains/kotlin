@@ -13,5 +13,5 @@ fun list(start: SomeObject): SomeObject {
         e = e<!UNSAFE_CALL!>.<!>next()
     }
     // Smart cast is not possible here due to next()
-    return e
+    return <!RETURN_TYPE_MISMATCH!>e<!>
 }

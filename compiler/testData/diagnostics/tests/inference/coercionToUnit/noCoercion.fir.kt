@@ -23,4 +23,4 @@ fun noCoercionBlockHasExplicitReturn() {
     }
 }
 
-fun noCoercionInExpressionBody(): Unit = "hello"
+fun noCoercionInExpressionBody(): Unit = <!RETURN_TYPE_MISMATCH!>"hello"<!>

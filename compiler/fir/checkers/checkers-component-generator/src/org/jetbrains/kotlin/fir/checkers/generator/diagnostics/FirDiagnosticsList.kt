@@ -317,6 +317,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<Name>("typeParameterName")
             parameter<FirDeclaration>("typeParametersOwner")
         }
+
+        val RETURN_TYPE_MISMATCH by error<FirSourceElement, KtExpression>(PositioningStrategy.WHOLE_ELEMENT) {
+            parameter<ConeKotlinType>("expected")
+            parameter<ConeKotlinType>("actual")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

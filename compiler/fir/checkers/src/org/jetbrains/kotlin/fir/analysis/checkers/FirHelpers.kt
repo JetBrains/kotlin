@@ -16,11 +16,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
@@ -416,3 +419,38 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
 }
 
 fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
+
+val FirProperty.isDestructuringDeclaration
+    get() = name.asString() == "<destruct>"
+
+val FirExpression.isComponentCall
+    get() = this is FirComponentCall
+
+fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
+    return AbstractTypeChecker.isSubtypeOf(context, subtype, supertype)
+            || isSubtypeOfForFunctionalTypeReturningUnit(context.session.typeContext, subtype, supertype)
+}
+
+fun isSubtypeOfForFunctionalTypeReturningUnit(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
+    if (!supertype.isBuiltinFunctionalType(context.session)) return false
+    val functionalTypeReturnType = supertype.typeArguments.lastOrNull()
+    if ((functionalTypeReturnType as? ConeClassLikeType)?.isUnit == true) {
+        // We don't try to match return type for this case
+        // Dropping the return type (getting only the lambda args)
+        val superTypeArgs = supertype.typeArguments.dropLast(1)
+        val subTypeArgs = subtype.typeArguments.dropLast(1)
+        if (superTypeArgs.size != subTypeArgs.size) return false
+
+        for (i in superTypeArgs.indices) {
+            val subTypeArg = subTypeArgs[i].type ?: return false
+            val superTypeArg = superTypeArgs[i].type ?: return false
+
+            if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, subTypeArg, superTypeArg)) {
+                return false
+            }
+        }
+
+        return true
+    }
+    return false
+}

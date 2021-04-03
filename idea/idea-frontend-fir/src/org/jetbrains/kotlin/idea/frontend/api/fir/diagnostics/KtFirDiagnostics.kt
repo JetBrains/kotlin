@@ -701,6 +701,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeParametersOwner: KtSymbol
     }
 
+    abstract class ReturnTypeMismatch : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ReturnTypeMismatch::class
+        abstract val expected: KtType
+        abstract val actual: KtType
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol

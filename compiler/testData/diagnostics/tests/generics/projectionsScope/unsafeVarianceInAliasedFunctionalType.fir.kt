@@ -4,7 +4,7 @@ class Bar {
     val foo: Foo<*> = TODO()
 
     fun <T> bar(): Baz<T> {
-        return foo.baz
+        return <!RETURN_TYPE_MISMATCH!>foo.baz<!>
     }
 }
 

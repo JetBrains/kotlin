@@ -33,15 +33,15 @@ fun testReturnFromAnonFun() =
 
 fun testReturn1() =
         run {
-            return if (true) 42
-                   else println()
+            return <!RETURN_TYPE_MISMATCH!>if (true) 42
+                   else println()<!>
         }
 
 fun testReturn2() =
         run {
-            return if (true) 42
+            return <!RETURN_TYPE_MISMATCH!>if (true) 42
                    else if (true) 42
-                   else println()
+                   else println()<!>
         }
 
 fun testUsage1() =

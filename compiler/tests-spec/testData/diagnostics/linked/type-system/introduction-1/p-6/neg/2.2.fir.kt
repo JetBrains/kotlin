@@ -43,13 +43,13 @@ class Case8 {
 }
 
 // TESTCASE NUMBER: 9
-fun case_9(): Any = null
+fun case_9(): Any = <!RETURN_TYPE_MISMATCH!>null<!>
 
 // TESTCASE NUMBER: 10
-fun case_10(x: Int, y: Boolean): Any = if (y) x else null
+fun case_10(x: Int, y: Boolean): Any = <!RETURN_TYPE_MISMATCH!>if (y) x else null<!>
 
 // TESTCASE NUMBER: 11
-fun case_11(x: Int, y: Boolean): Any = if (y) x else null
+fun case_11(x: Int, y: Boolean): Any = <!RETURN_TYPE_MISMATCH!>if (y) x else null<!>
 
 // TESTCASE NUMBER: 12
 class Case12 {

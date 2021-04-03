@@ -782,23 +782,12 @@ object PositioningStrategies {
 
     val ASSIGNMENT_VALUE: PositioningStrategy<KtProperty> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
-            return if (element is KtProperty) {
-                mark(element.initializer ?: element)
-            } else {
-                super.mark(element)
-            }
+            return markElement(if (element is KtProperty) element.initializer ?: element else element)
         }
     }
 
-    val RETURN_EXPRESSION: PositioningStrategy<KtReturnExpression> = object : PositioningStrategy<PsiElement>() {
-        override fun mark(element: PsiElement): List<TextRange> {
-            return if (element is KtReturnExpression) {
-                markElement(element.returnedExpression ?: element)
-            } else {
-                markElement(element)
-            }
-        }
-    }
+    val WHOLE_ELEMENT: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {}
+
 
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for

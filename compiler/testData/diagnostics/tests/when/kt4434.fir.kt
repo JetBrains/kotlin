@@ -14,14 +14,14 @@ package test
 
 fun foo(): Int {
     val a = "a"
-    return if (a.length > 0) {
+    return <!RETURN_TYPE_MISMATCH!>if (a.length > 0) {
         when (a) {
             "a" -> 1
         }
     }
     else {
         3
-    }
+    }<!>
 }
 
 fun bar(): Int {

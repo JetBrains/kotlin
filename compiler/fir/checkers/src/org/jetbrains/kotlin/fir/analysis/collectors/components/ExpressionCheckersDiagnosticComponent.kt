@@ -102,7 +102,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: CheckerContext) {
-        checkers.returnExpressionCheckers.check(returnExpression, data, reporter)
+        checkers.allReturnExpressionCheckers.check(returnExpression, data, reporter)
     }
 
     private fun <E : FirStatement> Collection<FirExpressionChecker<E>>.check(

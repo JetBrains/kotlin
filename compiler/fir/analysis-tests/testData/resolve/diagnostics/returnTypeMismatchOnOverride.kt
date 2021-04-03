@@ -57,7 +57,7 @@ open class J() : S() {
 }
 
 open class Base<T : X, Z : T> {
-    open fun kek(): Z = Z()
+    open fun kek(): Z = <!RETURN_TYPE_MISMATCH!>Z()<!>
 }
 
 open class GoodDerrived : Base<Y, W>() {

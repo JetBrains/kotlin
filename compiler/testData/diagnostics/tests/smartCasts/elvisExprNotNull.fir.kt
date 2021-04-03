@@ -33,5 +33,5 @@ fun baz(s: String?, r: String?): String {
 fun withNull(s: String?): String {
     val t = s ?: null
     // Error: nullable
-    return t
+    return <!RETURN_TYPE_MISMATCH!>t<!>
 }

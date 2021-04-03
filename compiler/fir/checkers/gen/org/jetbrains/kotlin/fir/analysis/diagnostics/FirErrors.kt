@@ -235,6 +235,7 @@ object FirErrors {
     val REPEATED_BOUND by error0<FirSourceElement, KtTypeReference>()
     val CONFLICTING_UPPER_BOUNDS by error1<FirSourceElement, KtNamedDeclaration, FirTypeParameterSymbol>()
     val NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER by error2<FirSourceElement, KtSimpleNameExpression, Name, FirDeclaration>()
+    val RETURN_TYPE_MISMATCH by error2<FirSourceElement, KtExpression, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<FirSourceElement, KtExpression, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

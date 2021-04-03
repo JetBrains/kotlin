@@ -161,7 +161,7 @@ fun illegalWhenBody(a: Any): Int = when(a) {
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
         is Int -> return a
-        is String -> return a
+        is String -> return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/Int, actual kotlin/String">a</error>
         else -> return 1
     }
 }
@@ -218,11 +218,11 @@ fun f(): String {
     if (a is String) {
         val i: String = a
         a.compareTo("f")
-        val f: Function0<String> = {
+        val f: Function0<String> = <error descr="[INITIALIZER_TYPE_MISMATCH] Initializer type mismatch: expected kotlin/Function0<kotlin/String>, actual kotlin/Function0<kotlin/Int>">{
             a = 42
             a
-        }
-        return a
+        }</error>
+        return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/Int">a</error>
     }
     return ""
 }
@@ -234,13 +234,13 @@ class Mutable(var x: String?) {
 
     fun foo(): String {
         if (x is String) {
-            return x
+            return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/String?">x</error>
         }
         if (x != null) {
-            return x
+            return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/String?">x</error>
         }
         if (xx is String) {
-            return xx
+            return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/String?">xx</error>
         }
         return ""
     }
@@ -248,7 +248,7 @@ class Mutable(var x: String?) {
     fun bar(other: Mutable): String {
         var y = other
         if (y.x is String) {
-            return y.x
+            return <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/String, actual kotlin/String?">y.x</error>
         }
         return ""
     }

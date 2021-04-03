@@ -35,7 +35,7 @@ fun t3() : String {
             <!RETURN_NOT_ALLOWED!>return@t3<!> "1"
         }
         else {
-            <!RETURN_NOT_ALLOWED!>return<!> 2
+            <!RETURN_NOT_ALLOWED!>return<!> <!RETURN_TYPE_MISMATCH!>2<!>
         }
         return@l 0
     }
