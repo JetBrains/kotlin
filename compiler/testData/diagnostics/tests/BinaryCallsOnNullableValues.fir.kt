@@ -14,10 +14,10 @@ fun f(): Unit {
     x == 1
     x != 1
 
-    A() == 1
+    <!EQUALITY_NOT_APPLICABLE!>A() == 1<!>
 
-    x === "1"
-    x !== "1"
+    <!EQUALITY_NOT_APPLICABLE!>x === "1"<!>
+    <!EQUALITY_NOT_APPLICABLE!>x !== "1"<!>
 
     x === 1
     x !== 1

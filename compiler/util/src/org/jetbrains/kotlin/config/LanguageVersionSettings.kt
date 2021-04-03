@@ -221,6 +221,7 @@ enum class LanguageFeature(
     ),
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
     InlineClasses(KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
+    ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, kind = BUG_FIX, defaultState = State.DISABLED),
 
     ;
 

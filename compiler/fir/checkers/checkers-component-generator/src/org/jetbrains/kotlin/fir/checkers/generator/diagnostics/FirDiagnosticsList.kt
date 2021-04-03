@@ -360,6 +360,16 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning<KtTypeParameter>()
 
         val DYNAMIC_UPPER_BOUND by error<KtTypeReference>()
+
+        val INCOMPATIBLE_TYPES by error<KtElement> {
+            parameter<ConeKotlinType>("typeA")
+            parameter<ConeKotlinType>("typeB")
+        }
+
+        val INCOMPATIBLE_TYPES_WARNING by warning<KtElement> {
+            parameter<ConeKotlinType>("typeA")
+            parameter<ConeKotlinType>("typeB")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {
@@ -721,6 +731,21 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val UNDERSCORE_IS_RESERVED by error<KtExpression>(PositioningStrategy.RESERVED_UNDERSCORE)
         val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error<KtExpression>(PositioningStrategy.RESERVED_UNDERSCORE)
+
+        val EQUALITY_NOT_APPLICABLE by error<KtBinaryExpression> {
+            parameter<String>("operator")
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val EQUALITY_NOT_APPLICABLE_WARNING by warning<KtBinaryExpression> {
+            parameter<String>("operator")
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val INCOMPATIBLE_ENUM_COMPARISON_ERROR by error<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {

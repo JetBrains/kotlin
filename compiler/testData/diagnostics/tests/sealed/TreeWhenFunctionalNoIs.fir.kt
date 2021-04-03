@@ -11,7 +11,7 @@ sealed class Tree {
 
     fun maxIsClass(): Int = <!NO_ELSE_IN_WHEN!>when<!>(this) {
         Empty -> -1
-        <!NO_COMPANION_OBJECT!>Leaf<!>  -> 0
+        <!INCOMPATIBLE_TYPES, NO_COMPANION_OBJECT!>Leaf<!>  -> 0
         is Node  -> this.left.max()
     }
 

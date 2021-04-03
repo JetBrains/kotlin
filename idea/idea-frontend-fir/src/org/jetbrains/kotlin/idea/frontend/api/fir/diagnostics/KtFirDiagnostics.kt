@@ -785,6 +785,18 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DynamicUpperBound::class
     }
 
+    abstract class IncompatibleTypes : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = IncompatibleTypes::class
+        abstract val typeA: KtType
+        abstract val typeB: KtType
+    }
+
+    abstract class IncompatibleTypesWarning : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = IncompatibleTypesWarning::class
+        abstract val typeA: KtType
+        abstract val typeB: KtType
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol
@@ -1411,6 +1423,26 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class UnderscoreUsageWithoutBackticks : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = UnderscoreUsageWithoutBackticks::class
+    }
+
+    abstract class EqualityNotApplicable : KtFirDiagnostic<KtBinaryExpression>() {
+        override val diagnosticClass get() = EqualityNotApplicable::class
+        abstract val operator: String
+        abstract val leftType: KtType
+        abstract val rightType: KtType
+    }
+
+    abstract class EqualityNotApplicableWarning : KtFirDiagnostic<KtBinaryExpression>() {
+        override val diagnosticClass get() = EqualityNotApplicableWarning::class
+        abstract val operator: String
+        abstract val leftType: KtType
+        abstract val rightType: KtType
+    }
+
+    abstract class IncompatibleEnumComparisonError : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = IncompatibleEnumComparisonError::class
+        abstract val leftType: KtType
+        abstract val rightType: KtType
     }
 
     abstract class ToplevelTypealiasesOnly : KtFirDiagnostic<KtTypeAlias>() {
