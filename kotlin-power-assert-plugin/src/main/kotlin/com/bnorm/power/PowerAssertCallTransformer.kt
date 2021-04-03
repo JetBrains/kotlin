@@ -16,15 +16,23 @@
 
 package com.bnorm.power
 
+import com.bnorm.power.diagram.IrTemporaryVariable
+import com.bnorm.power.diagram.DiagramGenerator
+import com.bnorm.power.diagram.buildTree
+import com.bnorm.power.diagram.info
+import com.bnorm.power.diagram.irDiagram
+import com.bnorm.power.diagram.substring
 import com.bnorm.power.internal.ReturnableBlockTransformer
-import java.io.File
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -39,16 +47,30 @@ import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isSubtypeOf
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import java.io.File
 
 fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
   irFile.acceptVoid(object : IrElementVisitorVoid {
@@ -98,8 +120,7 @@ class PowerAssertCallTransformer(
     val messageArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
 
     // If the tree does not contain any children, the expression is not transformable
-    val tree = buildAssertTree(assertionArgument)
-    val root = tree.children.singleOrNull() ?: run {
+    val root = buildTree(assertionArgument) ?: run {
       messageCollector.info(expression, "Expression is constant and will not be power-assert transformed")
       return super.visitCall(expression)
     }
@@ -108,8 +129,8 @@ class PowerAssertCallTransformer(
     DeclarationIrBuilder(context, symbol).run {
       at(expression)
 
-      val generator = object : PowerAssertGenerator() {
-        override fun IrBuilderWithScope.buildAssertThrow(subStack: List<IrStackVariable>): IrExpression {
+      val generator = object : DiagramGenerator() {
+        override fun IrBuilderWithScope.buildAssertThrow(variables: List<IrTemporaryVariable>): IrExpression {
 
           val lambda = messageArgument?.asSimpleLambda()
           val title = when {
@@ -124,20 +145,24 @@ class PowerAssertCallTransformer(
             else -> irString("Assertion failed")
           }
 
-          return delegate.buildCall(this, expression, buildMessage(file, fileSource, title.deepCopyWithSymbols(parent), expression, subStack))
+          val prefix = title.deepCopyWithSymbols(parent)
+          val diagram = irDiagram(file, fileSource, prefix, expression, variables)
+          return delegate.buildCall(this, expression, irFalse(), diagram)
         }
       }
 
-//      println(expression.dump())
-//      println(tree.dump())
+//      println(root.dump())
 
       return generator.buildAssert(this, root)
+//        .also { println(expression.dump()) }
 //        .also { println(it.dump()) }
+//        .also { println(expression.dumpKotlinLike()) }
+//        .also { println(it.dumpKotlinLike()) }
     }
   }
 
   private interface FunctionDelegate {
-    fun buildCall(builder: IrBuilderWithScope, original: IrCall, message: IrExpression): IrExpression
+    fun buildCall(builder: IrBuilderWithScope, original: IrCall, argument: IrExpression, message: IrExpression): IrExpression
   }
 
   private fun findDelegate(fqName: FqName): FunctionDelegate? {
@@ -148,25 +173,26 @@ class PowerAssertCallTransformer(
         if (parameters.size != 2) return@mapNotNull null
         if (!parameters[0].type.isBoolean()) return@mapNotNull null
 
+        val messageParameter = parameters.last()
         return@mapNotNull when {
-          isStringSupertype(parameters[1].type) -> {
+          isStringSupertype(messageParameter.type) -> {
             object : FunctionDelegate {
-              override fun buildCall(builder: IrBuilderWithScope, original: IrCall, message: IrExpression): IrExpression = with(builder) {
+              override fun buildCall(builder: IrBuilderWithScope, original: IrCall, argument: IrExpression, message: IrExpression): IrExpression = with(builder) {
                 irCall(overload, type = overload.owner.returnType).apply {
                   dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
                   extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
                   for (i in 0 until original.typeArgumentsCount) {
                     putTypeArgument(i, original.getTypeArgument(i))
                   }
-                  putValueArgument(0, irFalse())
+                  putValueArgument(0, argument)
                   putValueArgument(1, message)
                 }
               }
             }
           }
-          isStringFunction(parameters[1].type) -> {
+          isStringFunction(messageParameter.type) -> {
             object : FunctionDelegate {
-              override fun buildCall(builder: IrBuilderWithScope, original: IrCall, message: IrExpression): IrExpression = with(builder) {
+              override fun buildCall(builder: IrBuilderWithScope, original: IrCall, argument: IrExpression, message: IrExpression): IrExpression = with(builder) {
                 val scope = this
                 val lambda = builder.context.irFactory.buildFun {
                   name = Name.special("<anonymous>")
@@ -180,14 +206,14 @@ class PowerAssertCallTransformer(
                   }
                   parent = scope.parent
                 }
-                val expression = IrFunctionExpressionImpl(original.startOffset, original.endOffset, parameters[1].type, lambda, IrStatementOrigin.LAMBDA)
+                val expression = IrFunctionExpressionImpl(original.startOffset, original.endOffset, messageParameter.type, lambda, IrStatementOrigin.LAMBDA)
                 irCall(overload, type = overload.owner.returnType).apply {
                   dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
                   extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
                   for (i in 0 until original.typeArgumentsCount) {
                     putTypeArgument(i, original.getTypeArgument(i))
                   }
-                  putValueArgument(0, irFalse())
+                  putValueArgument(0, argument)
                   putValueArgument(1, expression)
                 }
               }

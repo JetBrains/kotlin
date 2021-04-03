@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.bnorm.power
+package com.bnorm.power.diagram
 
+import com.bnorm.power.irString
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -31,38 +32,26 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-data class IrStackVariable(
-  val temporary: IrVariable,
-  val original: IrExpression
-)
-
-data class ValueDisplay(
-  val value: IrVariable,
-  val indent: Int,
-  val row: Int,
-  val source: String
-)
-
-fun IrBuilderWithScope.buildMessage(
+fun IrBuilderWithScope.irDiagram(
   file: IrFile,
   fileSource: String,
-  title: IrExpression,
-  expression: IrExpression,
-  stack: List<IrStackVariable>
+  prefix: IrExpression? = null,
+  original: IrExpression,
+  variables: List<IrTemporaryVariable>
 ): IrExpression {
 
-  val originalInfo = file.info(expression)
+  val originalInfo = file.info(original)
   val callIndent = originalInfo.startColumnNumber
 
-  val stackValues = stack.map { it.toValueDisplay(fileSource, callIndent, file, originalInfo) }
+  val stackValues = variables.map { it.toValueDisplay(fileSource, callIndent, file, originalInfo) }
 
   val valuesByRow = stackValues.groupBy { it.row }
-  val rows = fileSource.substring(expression)
+  val rows = fileSource.substring(original)
     .replace("\n" + " ".repeat(callIndent), "\n") // Remove additional indentation
     .split("\n")
 
   return irConcat().apply {
-    addArgument(title)
+    if (prefix != null) addArgument(prefix)
 
     for ((row, rowSource) in rows.withIndex()) {
       val rowValues = valuesByRow[row]?.let { values -> values.sortedBy { it.indent } } ?: emptyList()
@@ -102,7 +91,14 @@ fun IrBuilderWithScope.buildMessage(
   }
 }
 
-private fun IrStackVariable.toValueDisplay(
+private data class ValueDisplay(
+  val value: IrVariable,
+  val indent: Int,
+  val row: Int,
+  val source: String
+)
+
+private fun IrTemporaryVariable.toValueDisplay(
   fileSource: String,
   callIndent: Int,
   file: IrFile,
