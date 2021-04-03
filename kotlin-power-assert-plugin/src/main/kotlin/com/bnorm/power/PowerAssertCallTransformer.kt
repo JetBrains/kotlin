@@ -16,11 +16,10 @@
 
 package com.bnorm.power
 
-import com.bnorm.power.diagram.IrTemporaryVariable
-import com.bnorm.power.diagram.DiagramGenerator
+import com.bnorm.power.diagram.buildDiagramNesting
 import com.bnorm.power.diagram.buildTree
 import com.bnorm.power.diagram.info
-import com.bnorm.power.diagram.irDiagram
+import com.bnorm.power.diagram.irDiagramString
 import com.bnorm.power.diagram.substring
 import com.bnorm.power.internal.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
@@ -121,6 +120,7 @@ class PowerAssertCallTransformer(
       return super.visitCall(expression)
     }
 
+    // TODO - support more arguments by currying?
     val assertionArgument = expression.getValueArgument(0)!!
     val messageArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
 
@@ -129,45 +129,44 @@ class PowerAssertCallTransformer(
       messageCollector.info(expression, "Expression is constant and will not be power-assert transformed")
       return super.visitCall(expression)
     }
+//      println(root.dump())
 
     val symbol = currentScope!!.scope.scopeOwnerSymbol
-    DeclarationIrBuilder(context, symbol).run {
-      at(expression)
-
-      val generator = object : DiagramGenerator() {
-        override fun IrBuilderWithScope.buildCall(argument: IrExpression, variables: List<IrTemporaryVariable>): IrExpression {
-
-          val lambda = messageArgument?.asSimpleLambda()
-          val title = when {
-            messageArgument is IrConst<*> -> messageArgument
-            messageArgument is IrStringConcatenation -> messageArgument
-            lambda != null -> lambda.deepCopyWithSymbols(parent).inline(parent).transform(ReturnableBlockTransformer(context, symbol), null)
-            messageArgument != null -> {
-              val invoke = messageArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
-              irCallOp(invoke.symbol, invoke.returnType, messageArgument)
-            }
-            // TODO what should the default message be?
-            assertionArgument.type.isBoolean() -> irString("Assertion failed")
-            else -> null
-          }
-
-          val prefix = title?.deepCopyWithSymbols(parent)
-          val diagram = irDiagram(file, fileSource, prefix, expression, variables)
-          return delegate.buildCall(this, expression, argument, diagram)
+    val builder = DeclarationIrBuilder(context, symbol, expression.startOffset, expression.endOffset)
+    return builder.buildDiagramNesting(root) { argument, variables ->
+      val lambda = messageArgument?.asSimpleLambda()
+      val title = when {
+        messageArgument is IrConst<*> -> messageArgument
+        messageArgument is IrStringConcatenation -> messageArgument
+        lambda != null -> lambda.deepCopyWithSymbols(parent).inline(parent)
+          .transform(ReturnableBlockTransformer(context, symbol), null)
+        messageArgument != null -> {
+          val invoke =
+            messageArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
+          irCallOp(invoke.symbol, invoke.returnType, messageArgument)
         }
+        // TODO what should the default message be?
+        assertionArgument.type.isBoolean() -> irString("Assertion failed")
+        else -> null
       }
 
-//      println(root.dump())
-      return generator.buildExpression(this, root)
+      val prefix = title?.deepCopyWithSymbols(parent)
+      val diagram = irDiagramString(file, fileSource, prefix, expression, variables)
+      delegate.buildCall(this, expression, argument, diagram)
+    }
 //        .also { println(expression.dump()) }
 //        .also { println(it.dump()) }
 //        .also { println(expression.dumpKotlinLike()) }
 //        .also { println(it.dumpKotlinLike()) }
-    }
   }
 
   private interface FunctionDelegate {
-    fun buildCall(builder: IrBuilderWithScope, original: IrCall, argument: IrExpression, message: IrExpression): IrExpression
+    fun buildCall(
+      builder: IrBuilderWithScope,
+      original: IrCall,
+      argument: IrExpression,
+      message: IrExpression
+    ): IrExpression
   }
 
   private fun findDelegate(function: IrFunction): FunctionDelegate? {
@@ -184,7 +183,12 @@ class PowerAssertCallTransformer(
         return@mapNotNull when {
           isStringSupertype(messageParameter.type) -> {
             object : FunctionDelegate {
-              override fun buildCall(builder: IrBuilderWithScope, original: IrCall, argument: IrExpression, message: IrExpression): IrExpression = with(builder) {
+              override fun buildCall(
+                builder: IrBuilderWithScope,
+                original: IrCall,
+                argument: IrExpression,
+                message: IrExpression
+              ): IrExpression = with(builder) {
                 irCall(overload, type = original.type).apply {
                   dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
                   extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
@@ -199,7 +203,12 @@ class PowerAssertCallTransformer(
           }
           isStringFunction(messageParameter.type) -> {
             object : FunctionDelegate {
-              override fun buildCall(builder: IrBuilderWithScope, original: IrCall, argument: IrExpression, message: IrExpression): IrExpression = with(builder) {
+              override fun buildCall(
+                builder: IrBuilderWithScope,
+                original: IrCall,
+                argument: IrExpression,
+                message: IrExpression
+              ): IrExpression = with(builder) {
                 val scope = this
                 val lambda = builder.context.irFactory.buildFun {
                   name = Name.special("<anonymous>")
@@ -213,7 +222,13 @@ class PowerAssertCallTransformer(
                   }
                   parent = scope.parent
                 }
-                val expression = IrFunctionExpressionImpl(original.startOffset, original.endOffset, messageParameter.type, lambda, IrStatementOrigin.LAMBDA)
+                val expression = IrFunctionExpressionImpl(
+                  original.startOffset,
+                  original.endOffset,
+                  messageParameter.type,
+                  lambda,
+                  IrStatementOrigin.LAMBDA
+                )
                 irCall(overload, type = original.type).apply {
                   dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
                   extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)

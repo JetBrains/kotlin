@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
-fun IrBuilderWithScope.irDiagram(
+fun IrBuilderWithScope.irDiagramString(
   file: IrFile,
   fileSource: String,
   prefix: IrExpression? = null,
