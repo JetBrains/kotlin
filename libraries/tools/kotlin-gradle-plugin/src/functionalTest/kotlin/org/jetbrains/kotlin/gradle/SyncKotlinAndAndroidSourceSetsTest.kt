@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryExtension
+import org.gradle.api.Action
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -91,12 +92,14 @@ class SyncKotlinAndAndroidSourceSetsTest {
     @Test
     fun `two product flavor dimensions`() {
         android.flavorDimensions("pricing", "releaseType")
-        android.productFlavors {
-            it.create("beta").dimension = "releaseType"
-            it.create("production").dimension = "releaseType"
-            it.create("free").dimension = "pricing"
-            it.create("paid").dimension = "pricing"
-        }
+        android.productFlavors(
+            Action {
+                it.create("beta").dimension = "releaseType"
+                it.create("production").dimension = "releaseType"
+                it.create("free").dimension = "pricing"
+                it.create("paid").dimension = "pricing"
+            }
+        )
         kotlin.android()
         project.evaluate()
 
@@ -123,12 +126,14 @@ class SyncKotlinAndAndroidSourceSetsTest {
     @Test
     fun `all source directories are disjoint in source sets`() {
         android.flavorDimensions("pricing", "releaseType")
-        android.productFlavors {
-            it.create("beta").dimension = "releaseType"
-            it.create("production").dimension = "releaseType"
-            it.create("free").dimension = "pricing"
-            it.create("paid").dimension = "pricing"
-        }
+        android.productFlavors(
+            Action {
+                it.create("beta").dimension = "releaseType"
+                it.create("production").dimension = "releaseType"
+                it.create("free").dimension = "pricing"
+                it.create("paid").dimension = "pricing"
+            }
+        )
         kotlin.android()
         project.evaluate()
 
