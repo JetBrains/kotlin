@@ -13,9 +13,9 @@ enum class MyEnum {
 }
 
 fun foo(x: MyEnum): Int {
-    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    return <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> (x) {
         MyEnum.A -> 1
         is <!UNRESOLVED_REFERENCE!>MyEnum.B<!> -> 2
         is <!UNRESOLVED_REFERENCE!>MyEnum.C<!> -> 3
-    }
+    }<!>
 }

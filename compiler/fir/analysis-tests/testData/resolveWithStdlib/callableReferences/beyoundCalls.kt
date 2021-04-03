@@ -1,5 +1,5 @@
 <!CONFLICTING_OVERLOADS!>fun bar(x: String): Int<!> = 1
-<!CONFLICTING_OVERLOADS!>fun bar(x: String): Double<!> = 1
+<!CONFLICTING_OVERLOADS!>fun bar(x: String): Double<!> = <!RETURN_TYPE_MISMATCH!>1<!>
 
 fun baz(x: String): Int = 1
 fun <T, R> foobaz(x: T): R = TODO()

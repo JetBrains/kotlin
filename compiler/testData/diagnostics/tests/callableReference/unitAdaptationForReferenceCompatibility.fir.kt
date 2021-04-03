@@ -20,6 +20,10 @@ public interface Executor {
 fun f(): String = "test"
 
 class A {
-    fun schedule1(e: Executor): Future<String> = e.submit(::f)
-    fun schedule2(e: Executor): Future<String> = e.submit { f() }
+    // bug: type(e.submit(::f)) = ft<Future<*>, Future<*>?>,
+    // it isn't subtype of Future<String>
+    fun schedule1(e: Executor): Future<String> = <!RETURN_TYPE_MISMATCH!>e.submit(::f)<!>
+
+    // this behaviour is OK
+    fun schedule2(e: Executor): Future<String> = <!RETURN_TYPE_MISMATCH!>e.submit { f() }<!>
 }

@@ -13,9 +13,9 @@
 enum class X { A, B }
 fun foo(arg: X?): Int {
     if (arg != null) {
-        return <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+        return <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> (arg) {
             X.B -> 2
-        }
+        }<!>
     } 
     else {
         return 0

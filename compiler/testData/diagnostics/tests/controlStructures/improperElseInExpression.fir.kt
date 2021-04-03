@@ -27,7 +27,7 @@ fun example() {
     }()
 
     fun t(): Boolean {
-        return <!INVALID_IF_AS_EXPRESSION!>if<!> (true) true
+        return <!RETURN_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (true) true<!>
     }
 
     return if (true) true else {}

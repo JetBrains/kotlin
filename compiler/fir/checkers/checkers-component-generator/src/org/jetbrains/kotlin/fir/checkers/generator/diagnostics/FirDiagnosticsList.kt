@@ -303,6 +303,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER by error<FirSourceElement, PsiElement>()
 
         val ONLY_ONE_CLASS_BOUND_ALLOWED by error<FirSourceElement, PsiElement>()
+
+        val RETURN_TYPE_MISMATCH by error<FirSourceElement, KtReturnExpression>(PositioningStrategy.RETURN_EXPRESSION) {
+            parameter<ConeKotlinType>("expected")
+            parameter<ConeKotlinType>("actual")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

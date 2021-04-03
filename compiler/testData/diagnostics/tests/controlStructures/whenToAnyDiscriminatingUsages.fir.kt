@@ -26,22 +26,22 @@ fun testResultOfLambda2() =
 
 fun testReturn1() =
         run {
-            return when {
+            return <!RETURN_TYPE_MISMATCH!>when {
                 true -> 42
                 else -> println()
-            }
+            }<!>
         }
 
 fun testReturn2() =
         run {
-            return when {
+            return <!RETURN_TYPE_MISMATCH!>when {
                 true -> 42
                 else ->
                     when {
                         true -> 42
                         else -> println()
                     }
-            }
+            }<!>
         }
 
 fun testUsage1() =

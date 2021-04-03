@@ -14,5 +14,5 @@ fun list(start: SomeObject): SomeObject {
         e.doSomething()
         e = e.next()
     }
-    return e
+    return <!RETURN_TYPE_MISMATCH!>e<!>
 }

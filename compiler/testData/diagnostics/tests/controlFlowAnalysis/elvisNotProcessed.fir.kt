@@ -35,5 +35,5 @@ val bbbb = ( l() ?: null) ?: ( l() ?: null)
 
 fun f(x : Long?): Long {
     var a = x ?: (fun() {} ?: fun() {})
-    return a
+    return <!RETURN_TYPE_MISMATCH!>a<!>
 }

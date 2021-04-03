@@ -14,5 +14,5 @@ fun foo(): Int {
     val z: Int? = null
     if (z != null) return if (z == null) z else z
     
-    return z
+    return <!RETURN_TYPE_MISMATCH!>z<!>
 }

@@ -174,7 +174,12 @@ object SourceElementPositioningStrategies {
     )
 
     val ASSIGNMENT_VALUE = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.ASSIGNMENT_VALUE,
+        LightTreePositioningStrategies.LAST_CHILD,
         PositioningStrategies.ASSIGNMENT_VALUE
+    )
+
+    val RETURN_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.LAST_CHILD,
+        PositioningStrategies.RETURN_EXPRESSION
     )
 }

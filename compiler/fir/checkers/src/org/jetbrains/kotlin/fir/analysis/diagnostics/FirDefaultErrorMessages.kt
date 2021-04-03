@@ -189,6 +189,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
@@ -459,6 +460,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             )
 
             map.put(ONLY_ONE_CLASS_BOUND_ALLOWED,"Only one of the upper bounds can be a class")
+
+            map.put(RETURN_TYPE_MISMATCH, "Return type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
 
             // Reflection
             map.put(

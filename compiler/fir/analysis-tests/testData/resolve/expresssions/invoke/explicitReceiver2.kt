@@ -1,6 +1,6 @@
 
 class Bar {
-    operator fun invoke(): Foo { return this } // (1)
+    operator fun invoke(): Foo { return <!RETURN_TYPE_MISMATCH!>this<!> } // (1)
 
 }
 
@@ -11,7 +11,7 @@ fun x() {
 class Foo {
 
 
-    operator fun Bar.invoke(): Foo { return this } // (2)
+    operator fun Bar.invoke(): Foo { return <!RETURN_TYPE_MISMATCH!>this<!> } // (2)
 
     val x: Bar = Bar()
 

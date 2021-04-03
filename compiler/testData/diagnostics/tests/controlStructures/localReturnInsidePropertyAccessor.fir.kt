@@ -10,7 +10,8 @@ fun f() = object : ClassData {
 fun g() = object : ClassData {
     init {
         if (true) {
-            <!RETURN_NOT_ALLOWED!>return<!> 0
+            // bug: return's target is the function g
+            return <!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>0<!>
         }
     }
 

@@ -15,31 +15,31 @@ class SomeClass {
     val e = E.VALUE
 
     val withoutType: LambdaWithReceiver
-        get() = when (e) {
+        get() = <!RETURN_TYPE_MISMATCH!>when (e) {
             E.VALUE -> { param ->
                 <!INAPPLICABLE_CANDIDATE!>method<!>(param)
             }
-        }
+        }<!>
 
     val withExplicitType: LambdaWithReceiver
-        get() = when (e) {
+        get() = <!RETURN_TYPE_MISMATCH!>when (e) {
             E.VALUE -> { param: Parameter ->
                 <!INAPPLICABLE_CANDIDATE!>method<!>(param)
             }
-        }
+        }<!>
 }
 
 class OtherClass {
     val ok: LambdaWithReceiver
-        get() = { param: Parameter ->
+        get() = <!RETURN_TYPE_MISMATCH!>{ param: Parameter ->
             method(param)
-        }
+        }<!>
 }
 
 val e2 = E.VALUE
 val staticWithExplicitType: LambdaWithReceiver
-    get() = when (e2) {
+    get() = <!RETURN_TYPE_MISMATCH!>when (e2) {
         E.VALUE -> { param: Parameter ->
             <!UNRESOLVED_REFERENCE!>method<!>(param)
         }
-    }
+    }<!>

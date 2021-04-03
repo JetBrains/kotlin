@@ -13,9 +13,9 @@ fun test(x: Stmt): String =
         }
 
 fun test2(x: Stmt): String =
-        <!NO_ELSE_IN_WHEN!>when<!> (x) {
+        <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> (x) {
             is Expr -> "expr"
-        }
+        }<!>
 
 fun test3(x: Expr): String =
         when (x) {

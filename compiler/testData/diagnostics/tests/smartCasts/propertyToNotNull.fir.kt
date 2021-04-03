@@ -8,7 +8,7 @@ class Immutable(val x: String?) {
 
 class Mutable(var y: String?) {
     fun foo(): String {
-        if (y != null) return y
+        if (y != null) return <!RETURN_TYPE_MISMATCH!>y<!>
         return ""
     }
 }

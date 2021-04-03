@@ -17,7 +17,7 @@ fun check() {
     val x = null!!
 }
 
-fun nonLocalReturn() = run { return }
+fun nonLocalReturn() = run { <!RETURN_TYPE_MISMATCH!>return<!> }
 
 class Klass {
     fun bar() = null!!

@@ -907,6 +907,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.RETURN_TYPE_MISMATCH) { firDiagnostic ->
+        ReturnTypeMismatchImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.FINAL_UPPER_BOUND) { firDiagnostic ->
         FinalUpperBoundImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

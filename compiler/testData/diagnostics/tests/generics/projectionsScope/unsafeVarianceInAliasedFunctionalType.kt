@@ -6,7 +6,9 @@ class Bar {
     val foo: Foo<*> = TODO()
 
     fun <T> bar(): Baz<T> {
-        return foo.baz
+        // behaviour different from FE1.0:
+        // type(foo.baz) != Baz<T>
+        return <!RETURN_TYPE_MISMATCH!>foo.baz<!>
     }
 }
 

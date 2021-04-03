@@ -5,7 +5,7 @@ fun checkNotNull(x: Any?) {
         returns(true) implies (x != null)
         returns(false) implies (x == null)
     }
-    return x != null
+    return <!RETURN_TYPE_MISMATCH!>x != null<!>
 }
 
 fun trickyRequireNotNull(x: Any?) {

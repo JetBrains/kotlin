@@ -776,9 +776,9 @@ object PositioningStrategies {
     val ASSIGNMENT_VALUE: PositioningStrategy<KtProperty> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return if (element is KtProperty) {
-                mark(element.initializer ?: element)
+                markElement(element.initializer ?: element)
             } else {
-                super.mark(element)
+                markElement(element)
             }
         }
     }

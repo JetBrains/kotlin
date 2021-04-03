@@ -9,11 +9,11 @@ sealed class Tree {
         is Node  -> this.left.max()
     }
 
-    fun maxIsClass(): Int = <!NO_ELSE_IN_WHEN!>when<!>(this) {
+    fun maxIsClass(): Int = <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(this) {
         Empty -> -1
         Leaf  -> 0
         is Node  -> this.left.max()
-    }
+    }<!>
 
     fun maxWithElse(): Int = when(this) {
         is Leaf  -> this.x

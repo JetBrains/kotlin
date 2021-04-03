@@ -1,7 +1,7 @@
 
 
 class Bar {
-    fun FooBar.invoke(): Bar = this
+    fun FooBar.invoke(): Bar = <!RETURN_TYPE_MISMATCH!>this<!>
 }
 
 class Buz

@@ -12,6 +12,7 @@ import com.intellij.psi.impl.source.tree.ElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
@@ -242,7 +243,7 @@ object LightTreePositioningStrategies {
             }
     }
 
-    val ASSIGNMENT_VALUE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+    val LAST_CHILD: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,

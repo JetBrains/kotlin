@@ -30,5 +30,5 @@ import p2.*
 
 fun test2(): Int {
     val r = foo(42)
-    return r
+    return <!RETURN_TYPE_MISMATCH!>r<!>
 }

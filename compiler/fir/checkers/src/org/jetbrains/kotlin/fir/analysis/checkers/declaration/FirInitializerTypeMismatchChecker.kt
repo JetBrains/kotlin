@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.analysis.checkers.compareTypesList
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_TYPE_MISMATCH
@@ -50,23 +51,4 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
         get() = name.asString() == "<destruct>"
     private val FirExpression.isComponent
         get() = this is FirComponentCall
-
-    private fun compareTypesList(
-        expressionTypes: List<ConeTypeProjection>,
-        propertyTypes: List<ConeTypeProjection>,
-        context: ConeInferenceContext
-    ): Boolean {
-        if (expressionTypes.size != propertyTypes.size) return false
-
-        for (i in expressionTypes.indices) {
-            val expressionType = expressionTypes[i].type ?: return false
-            val propertyType = propertyTypes[i].type ?: return false
-
-            if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, expressionType, propertyType)) {
-                return false
-            }
-        }
-
-        return true
-    }
 }

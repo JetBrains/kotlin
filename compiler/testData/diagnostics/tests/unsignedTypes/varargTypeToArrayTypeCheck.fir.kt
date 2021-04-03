@@ -4,4 +4,4 @@ fun ushort(vararg a: UShort): UShortArray = a
 fun uint(vararg a: UInt): UIntArray = a
 fun ulong(vararg a: ULong): ULongArray = a
 
-fun rawUInt(vararg a: UInt): IntArray = a
+fun rawUInt(vararg a: UInt): IntArray = <!RETURN_TYPE_MISMATCH!>a<!>

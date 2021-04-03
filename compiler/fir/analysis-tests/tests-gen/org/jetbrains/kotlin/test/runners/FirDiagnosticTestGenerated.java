@@ -4764,6 +4764,22 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker")
+            @TestDataPath("$PROJECT_ROOT")
+            public class FunctionReturnTypeMismatchChecker {
+                @Test
+                public void testAllFilesPresentInFunctionReturnTypeMismatchChecker() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("basic.kt")
+                public void testBasic() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker/basic.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker")
             @TestDataPath("$PROJECT_ROOT")
             public class InitializerTypeMismatchChecker {

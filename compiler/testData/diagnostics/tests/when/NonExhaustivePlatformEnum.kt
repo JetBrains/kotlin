@@ -24,7 +24,7 @@ public enum J {
 
 fun foo(): Int {
     // When is not-exhaustive
-    return <!NO_ELSE_IN_WHEN!>when<!> (J.create()) {
+    return <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> (J.create()) {
         J.A -> 1
-    }
+    }<!>
 }

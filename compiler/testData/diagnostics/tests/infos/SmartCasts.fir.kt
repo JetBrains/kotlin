@@ -142,14 +142,14 @@ fun getStringLength(obj : Any) : Char? {
 }
 
 fun toInt(i: Int?): Int = if (i != null) i else 0
-fun illegalWhenBody(a: Any): Int = <!NO_ELSE_IN_WHEN!>when<!>(a) {
+fun illegalWhenBody(a: Any): Int = <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(a) {
     is Int -> a
     is String -> a
-}
+}<!>
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
         is Int -> return a
-        is String -> return a
+        is String -> return <!RETURN_TYPE_MISMATCH!>a<!>
     }
 }
 fun declarations(a: Any?) {
@@ -222,7 +222,7 @@ fun f(): String {
 fun foo(aa: Any?): Int {
     var a = aa
     if (a is Int?) {
-        return a
+        return <!RETURN_TYPE_MISMATCH!>a<!>
     }
     return 1
 }

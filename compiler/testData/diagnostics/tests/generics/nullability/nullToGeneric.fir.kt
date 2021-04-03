@@ -9,12 +9,12 @@ fun <T> foo(): T {
     <!INAPPLICABLE_CANDIDATE!>bar<!><T>(null)
     bar<T?>(null)
 
-    return null
+    return <!RETURN_TYPE_MISMATCH!>null<!>
 }
 
 fun <T> baz(): T? = null
 
-fun <T> foobar(): T = null
+fun <T> foobar(): T = <!RETURN_TYPE_MISMATCH!>null<!>
 
 class A<F> {
     fun xyz(x: F) {}
@@ -26,10 +26,10 @@ class A<F> {
         <!INAPPLICABLE_CANDIDATE!>xyz<!>(null)
         bar<F?>(null)
 
-        return null
+        return <!RETURN_TYPE_MISMATCH!>null<!>
     }
 
     fun baz(): F? = null
 
-    fun foobar(): F = null
+    fun foobar(): F = <!RETURN_TYPE_MISMATCH!>null<!>
 }

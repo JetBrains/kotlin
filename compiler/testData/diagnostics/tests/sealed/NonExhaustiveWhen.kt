@@ -8,8 +8,8 @@ sealed class Sealed(val x: Int) {
 }
 
 fun foo(s: Sealed): Int {
-    return <!NO_ELSE_IN_WHEN!>when<!>(s) {
+    return <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(s) {
         is Sealed.NonFirst -> 0
-    }
+    }<!>
 }
 
