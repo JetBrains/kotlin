@@ -52,11 +52,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <args>
-                        <arg>-Xskip-prerelease-check</arg>
-                    </args>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

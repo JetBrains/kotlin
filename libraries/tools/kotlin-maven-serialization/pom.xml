@@ -77,7 +77,6 @@
                     <args>
                         <arg>-Xjvm-default=enable</arg>
                         <arg>-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI</arg>
-                        <arg>-Xskip-prerelease-check</arg>
                     </args>
                 </configuration>
             </plugin>
