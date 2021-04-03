@@ -22,13 +22,11 @@ import com.bnorm.power.diagram.info
 import com.bnorm.power.diagram.irDiagramString
 import com.bnorm.power.diagram.substring
 import com.bnorm.power.internal.ReturnableBlockTransformer
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -66,44 +64,17 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.io.File
-
-fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
-  irFile.acceptVoid(object : IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-      element.acceptChildrenVoid(this)
-    }
-
-    override fun visitFile(declaration: IrFile) {
-      lower(declaration)
-      super.visitFile(declaration)
-    }
-  })
-}
 
 class PowerAssertCallTransformer(
+  private val file: IrFile,
+  private val fileSource: String,
   private val context: IrPluginContext,
   private val messageCollector: MessageCollector,
   private val functions: Set<FqName>
-) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-  private lateinit var file: IrFile
-  private lateinit var fileSource: String
-
-  override fun lower(irFile: IrFile) {
-    file = irFile
-    fileSource = File(irFile.path).readText()
-      .replace("\r\n", "\n") // https://youtrack.jetbrains.com/issue/KT-41888
-
-    irFile.transformChildrenVoid()
-//    println(irFile.dumpKotlinLike())
-  }
-
+) : IrElementTransformerVoidWithContext() {
   override fun visitCall(expression: IrCall): IrExpression {
     val function = expression.symbol.owner
     val fqName = function.kotlinFqName
