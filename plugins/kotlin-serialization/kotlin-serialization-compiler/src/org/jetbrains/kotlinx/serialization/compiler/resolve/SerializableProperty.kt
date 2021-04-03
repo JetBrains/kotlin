@@ -37,6 +37,7 @@ class SerializableProperty(
     val module = descriptor.module
     val serializableWith = descriptor.serializableWith ?: analyzeSpecialSerializers(module, descriptor.annotations)?.defaultType
     val optional = !descriptor.annotations.serialRequired && descriptor.declaresDefaultValue
+    val encodeDefaultMode = descriptor.annotations.encodeDefaultMode
     val transient = descriptor.annotations.serialTransient || !hasBackingField
     val annotationsWithArguments: List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
         descriptor.annotationsWithArguments()

@@ -27,6 +27,7 @@ object SerializationAnnotations {
     val serializerAnnotationFqName = FqName("kotlinx.serialization.Serializer")
     internal val serialNameAnnotationFqName = FqName("kotlinx.serialization.SerialName")
     internal val requiredAnnotationFqName = FqName("kotlinx.serialization.Required")
+    internal val encodeDefaultModeAnnotationFqName = FqName("kotlinx.serialization.EncodeDefault")
     val serialTransientFqName = FqName("kotlinx.serialization.Transient")
     internal val serialInfoFqName = FqName("kotlinx.serialization.SerialInfo")
 

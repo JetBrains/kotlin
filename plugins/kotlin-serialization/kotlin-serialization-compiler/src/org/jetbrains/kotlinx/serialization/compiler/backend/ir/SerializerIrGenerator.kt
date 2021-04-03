@@ -304,7 +304,7 @@ open class SerializerIrGenerator(
             })
 
             // check for call to .shouldEncodeElementDefault
-            if (!property.optional || index < ignoreIndexTo) {
+            if (!property.optional || property.encodeDefaultMode == EncodeDefaultMode.ALWAYS || index < ignoreIndexTo) {
                 // emit call right away
                 +elementCall
             } else {
@@ -317,7 +317,11 @@ open class SerializerIrGenerator(
                 val partB = irNotEquals(property.irGet(), initializerAdapter(property.irField.initializer!!))
                 // Ir infrastructure does not have dedicated symbol for ||, so
                 //  `a || b == if (a) true else b`, see org.jetbrains.kotlin.ir.builders.PrimitivesKt.oror
-                val condition = irIfThenElse(compilerContext.irBuiltIns.booleanType, partA, irTrue(), partB)
+                val condition =
+                    if (property.encodeDefaultMode == EncodeDefaultMode.NEVER)
+                        partA
+                    else
+                        irIfThenElse(compilerContext.irBuiltIns.booleanType, partA, irTrue(), partB)
                 +irIfThen(condition, elementCall)
             }
         }

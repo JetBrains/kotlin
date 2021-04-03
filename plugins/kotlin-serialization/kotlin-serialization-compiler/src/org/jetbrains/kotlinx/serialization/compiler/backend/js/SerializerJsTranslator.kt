@@ -208,7 +208,7 @@ open class SerializerJsTranslator(
                 ).makeStmt()
             }
 
-            if (!property.optional) {
+            if (!property.optional || property.encodeDefaultMode == EncodeDefaultMode.ALWAYS) {
                 +invocation
             } else {
                 val shouldEncodeFunc = ctx.referenceMethod(kOutputClass, CallingConventions.shouldEncodeDefault)
@@ -218,7 +218,11 @@ open class SerializerJsTranslator(
                 val partA = JsAstUtils.not(KOTLIN_EQUALS.apply(property.jsNameRef(), listOf(defaultValue), ctx))
                 val partB =
                     JsInvocation(JsNameRef(shouldEncodeFunc, localOutputRef), serialClassDescRef, JsIntLiteral(index))
-                val cond = JsBinaryOperation(JsBinaryOperator.OR, partA, partB)
+                val cond =
+                    if (property.encodeDefaultMode == EncodeDefaultMode.NEVER)
+                        partA
+                    else
+                        JsBinaryOperation(JsBinaryOperator.OR, partA, partB)
                 +JsIf(cond, invocation)
             }
         }
