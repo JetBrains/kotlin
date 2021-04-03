@@ -29,33 +29,30 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ACC_TRANSITIVE
 import java.io.IOException
 
 class JavaModuleInfo(
-        val moduleName: String,
-        val requires: List<Requires>,
-        val exports: List<Exports>
+    val moduleName: String,
+    val requires: List<Requires>,
+    val exports: List<Exports>
 ) {
     data class Requires(val moduleName: String, val isTransitive: Boolean)
 
     data class Exports(val packageFqName: FqName, val toModules: List<String>)
 
-    override fun toString(): String =
-            "Module $moduleName (${requires.size} requires, ${exports.size} exports)"
+    override fun toString() = "Module $moduleName (${requires.size} requires, ${exports.size} exports)"
 
     companion object {
-        fun create(psiJavaModule: PsiJavaModule): JavaModuleInfo {
-            return JavaModuleInfo(
-                    psiJavaModule.name,
-                    psiJavaModule.requires.mapNotNull { statement ->
-                        statement.moduleName?.let { moduleName ->
-                            JavaModuleInfo.Requires(moduleName, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
-                        }
-                    },
-                    psiJavaModule.exports.mapNotNull { statement ->
-                        statement.packageName?.let { packageName ->
-                            JavaModuleInfo.Exports(FqName(packageName), statement.moduleNames)
-                        }
-                    }
-            )
-        }
+        fun create(psiJavaModule: PsiJavaModule) = JavaModuleInfo(
+            psiJavaModule.name,
+            psiJavaModule.requires.mapNotNull { statement ->
+                statement.moduleName?.let { moduleName ->
+                    Requires(moduleName, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
+                }
+            },
+            psiJavaModule.exports.mapNotNull { statement ->
+                statement.packageName?.let { packageName ->
+                    Exports(FqName(packageName), statement.moduleNames)
+                }
+            }
+        )
 
         fun read(file: VirtualFile): JavaModuleInfo? {
             val contents = try { file.contentsToByteArray() } catch (e: IOException) { return null }
