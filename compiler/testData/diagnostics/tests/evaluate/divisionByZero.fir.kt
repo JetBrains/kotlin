@@ -13,6 +13,6 @@ val a8 = 1.div(a2)
 val a9 = 2 * (1.div(0))
 
 val b1: Byte = 1 / 0
-@Ann(1 / 0) val b2 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>1 / 0<!>) val b2 = 1
 
 annotation class Ann(val i : Int)

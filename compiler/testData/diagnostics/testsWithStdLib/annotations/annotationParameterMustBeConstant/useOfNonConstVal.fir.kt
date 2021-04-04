@@ -1,6 +1,6 @@
 val nonConst = 1
 
-const val constConst = nonConst * nonConst + 2
+const val constConst = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>nonConst * nonConst + 2<!>
 
 annotation class Ann(val x: Int, val y: String)
 

@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.checkers.ConstAndAnnotationErrorTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.canBeUsedForConstVal
-import org.jetbrains.kotlin.fir.analysis.checkers.checkConstInitializerAndAnnotationArguments
+import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isConst
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -37,12 +37,15 @@ object FirConstPropertyChecker : FirPropertyChecker() {
             return
         }
 
-        if (declaration.getter?.source?.kind !is FirFakeSourceElementKind) {
-            reporter.reportOn(declaration.getter?.source, FirErrors.CONST_VAL_WITH_GETTER, context)
+        val source = declaration.getter?.source
+        if (source != null && source.kind !is FirFakeSourceElementKind) {
+            reporter.reportOn(source, FirErrors.CONST_VAL_WITH_GETTER, context)
+            return
         }
 
         if (declaration.delegate != null) {
             reporter.reportOn(declaration.delegate?.source, FirErrors.CONST_VAL_WITH_DELEGATE, context)
+            return
         }
 
         val initializer = declaration.initializer
@@ -51,12 +54,13 @@ object FirConstPropertyChecker : FirPropertyChecker() {
             return
         }
 
-        if (!declaration.returnTypeRef.coneType.canBeUsedForConstVal()) {
+        val type = declaration.returnTypeRef.coneType
+        if ((type !is ConeClassErrorType) && !type.canBeUsedForConstVal()) {
             reporter.reportOn(declaration.source, FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL, declaration.returnTypeRef.coneType, context)
             return
         }
 
-        if (checkConstInitializerAndAnnotationArguments(initializer, context.session) == ConstAndAnnotationErrorTypes.NOT_CONST) {
+        if (checkConstantArguments(initializer, context.session) != null) {
             reporter.reportOn(initializer.source, FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER, context)
         }
     }

@@ -26,7 +26,7 @@ expect var customAccessorVar: String
     get() = "no"
     set(value) {}
 
-expect const val constVal: Int
+expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 
 expect <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 
