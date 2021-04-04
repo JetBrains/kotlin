@@ -130,7 +130,8 @@ class PowerAssertTest {
             |        |
             |        Jane
             Hello, Jane
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 
   @Test
@@ -146,6 +147,7 @@ class PowerAssertTest {
             |        |
             |        Jane
             Hello, Jane
-      """.trimIndent())
+      """.trimIndent()
+    )
   }
 }

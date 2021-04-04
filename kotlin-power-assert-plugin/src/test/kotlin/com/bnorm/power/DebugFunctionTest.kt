@@ -12,9 +12,11 @@ import kotlin.test.assertEquals
 class DebugFunctionTest {
   @Test
   fun `debug function transformation`() {
-    val actual = executeMainDebug("""
+    val actual = executeMainDebug(
+      """
       dbg(1 + 2 + 3)
-    """.trimIndent())
+      """.trimIndent()
+    )
     assertEquals(
       """
       dbg(1 + 2 + 3)
@@ -27,9 +29,11 @@ class DebugFunctionTest {
   }
   @Test
   fun `debug function transformation with message`() {
-    val actual = executeMainDebug("""
+    val actual = executeMainDebug(
+      """
       dbg(1 + 2 + 3, "Message:")
-    """.trimIndent())
+      """.trimIndent()
+    )
     assertEquals(
       """
       Message:

@@ -229,11 +229,11 @@ class PowerAssertCallTransformer(
   private fun isStringSupertype(type: IrType): Boolean =
     context.irBuiltIns.stringType.isSubtypeOf(type, context.irBuiltIns)
 
-  private fun IrType.isAssignableTo(type: IrType): Boolean =
-    isSubtypeOf(type, context.irBuiltIns) ||
-      ((type.classifierOrNull as? IrTypeParameterSymbol)?.owner?.superTypes?.all {
-        isSubtypeOf(it, context.irBuiltIns)
-      } ?: false)
+  private fun IrType.isAssignableTo(type: IrType): Boolean {
+    if (isSubtypeOf(type, context.irBuiltIns)) return true
+    val superTypes = (type.classifierOrNull as? IrTypeParameterSymbol)?.owner?.superTypes
+    return superTypes != null && superTypes.all { isSubtypeOf(it, context.irBuiltIns) }
+  }
 
   private fun MessageCollector.info(expression: IrElement, message: String) {
     report(expression, CompilerMessageSeverity.INFO, message)
