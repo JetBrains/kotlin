@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.name.FqName
+import java.io.File
 
 class PowerAssertIrGenerationExtension(
   private val messageCollector: MessageCollector,
@@ -28,7 +30,11 @@ class PowerAssertIrGenerationExtension(
 ) : IrGenerationExtension {
   override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
     for (file in moduleFragment.files) {
-      PowerAssertCallTransformer(pluginContext, messageCollector, functions).runOnFileInOrder(file)
+      val fileSource = File(file.path).readText()
+        .replace("\r\n", "\n") // https://youtrack.jetbrains.com/issue/KT-41888
+
+      PowerAssertCallTransformer(file, fileSource, pluginContext, messageCollector, functions)
+        .visitFile(file)
     }
   }
 }

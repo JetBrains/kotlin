@@ -14,25 +14,31 @@
  * limitations under the License.
  */
 
-package com.bnorm.power
+package com.bnorm.power.diagram
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-sealed class Node {
-  abstract val parent: Node?
-  val mutableChildren: MutableList<Node> = mutableListOf()
-  val children: List<Node> get() = mutableChildren
+abstract class Node {
+  private val _children = mutableListOf<Node>()
+  val children: List<Node> get() = _children
 
-  protected fun dump(builder: StringBuilder, indent: Int) {
+  fun addChild(node: Node) {
+    _children.add(node)
+  }
+
+  fun dump(): String = buildString {
+    dump(this, 0)
+  }
+
+  private fun dump(builder: StringBuilder, indent: Int) {
     builder.append("  ".repeat(indent)).append(this).appendLine()
     for (child in children) {
       child.dump(builder, indent + 1)
@@ -40,56 +46,30 @@ sealed class Node {
   }
 }
 
-class AndNode(override val parent: Node) : Node() {
-  init {
-    parent.mutableChildren.add(this)
-  }
-
+class AndNode : Node() {
   override fun toString() = "AndNode"
 }
 
-class OrNode(override val parent: Node) : Node() {
-  init {
-    parent.mutableChildren.add(this)
-  }
-
+class OrNode : Node() {
   override fun toString() = "OrNode"
 }
 
-class ExpressionNode(
-  override val parent: Node
-) : Node() {
-  init {
-    parent.mutableChildren.add(this)
-  }
-
-  private val _expressions: MutableList<IrExpression> = mutableListOf()
+class ExpressionNode : Node() {
+  private val _expressions = mutableListOf<IrExpression>()
+  val expressions: List<IrExpression> = _expressions
 
   fun add(expression: IrExpression) {
     _expressions.add(expression)
   }
 
-  fun getExpressionsCopy(initialParent: IrDeclarationParent?): List<IrExpression> {
-    // Return a copy of all the expression by creating a deep copy of the head
-    // expression and running back through the assertion tree builder
-    val headCopy = _expressions.first().deepCopyWithSymbols(initialParent)
-    return (buildAssertTree(headCopy).children.single() as ExpressionNode)._expressions
-  }
-
-  override fun toString() = "ExpressionNode($_expressions)"
+  override fun toString() = "ExpressionNode(${_expressions.map { it.dumpKotlinLike() }})"
 }
 
-class RootNode : Node() {
-  override val parent: Node? = null
-
-  fun dump(): String = buildString {
-    dump(this, 0)
+fun buildTree(expression: IrExpression): Node? {
+  class RootNode : Node() {
+    override fun toString() = "RootNode"
   }
 
-  override fun toString() = "RootNode"
-}
-
-fun buildAssertTree(expression: IrExpression): RootNode {
   val tree = RootNode()
   expression.accept(object : IrElementVisitor<Unit, Node> {
     val INCREMENT_DECREMENT_OPERATORS = setOf(
@@ -104,14 +84,14 @@ fun buildAssertTree(expression: IrExpression): RootNode {
     }
 
     override fun visitExpression(expression: IrExpression, data: Node) {
-      val node = data as? ExpressionNode ?: ExpressionNode(data)
+      val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
       node.add(expression)
       expression.acceptChildren(this, node)
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: Node) {
       if (expression.origin in INCREMENT_DECREMENT_OPERATORS) {
-        val node = data as? ExpressionNode ?: ExpressionNode(data)
+        val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
         node.add(expression)
         return // Skip the internals of increment/decrement operations
       }
@@ -136,7 +116,7 @@ fun buildAssertTree(expression: IrExpression): RootNode {
       when (expression.origin) {
         IrStatementOrigin.ANDAND -> {
           // flatten `&&` expressions to be at the same level
-          val node = data as? AndNode ?: AndNode(data)
+          val node = data as? AndNode ?: AndNode().also { data.addChild(it) }
 
           require(expression.branches.size == 2)
           val thenBranch = expression.branches[0]
@@ -157,7 +137,7 @@ fun buildAssertTree(expression: IrExpression): RootNode {
         }
         IrStatementOrigin.OROR -> {
           // flatten `||` expressions to be at the same level
-          val node = data as? OrNode ?: OrNode(data)
+          val node = data as? OrNode ?: OrNode().also { data.addChild(it) }
 
           require(expression.branches.size == 2)
           val thenBranchCondition = expression.branches[0].condition
@@ -182,11 +162,11 @@ fun buildAssertTree(expression: IrExpression): RootNode {
         else -> {
           // Add as basic expression and terminate
           // TODO this has to be broken and not work in all cases...
-          ExpressionNode(data)
+          ExpressionNode().also { data.addChild(it) }
         }
       }
     }
   }, tree)
 
-  return tree
+  return tree.children.singleOrNull()
 }

@@ -16,12 +16,18 @@
 
 package com.bnorm.power
 
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class PowerAssertTest {
+
+  @AfterTest
+  fun cleanup() {
+    debugLog.clear()
+  }
 
   @Test
   fun assertTrue() {
@@ -109,6 +115,39 @@ class PowerAssertTest {
                |    Doe
                Person(firstName=Jane, lastName=Doe)
       """.trimIndent(),
+    )
+  }
+
+  @Test
+  fun dbgTest() {
+    val name = "Jane"
+    val greeting = dbg("Hello, $name")
+    assert(greeting == "Hello, Jane")
+    assertEquals(
+      actual = debugLog.toString().trim(),
+      expected = """
+        dbg("Hello, ${"$"}name")
+            |        |
+            |        Jane
+            Hello, Jane
+      """.trimIndent()
+    )
+  }
+
+  @Test
+  fun dbgMessageTest() {
+    val name = "Jane"
+    val greeting = dbg("Hello, $name", "Greeting:")
+    assert(greeting == "Hello, Jane")
+    assertEquals(
+      actual = debugLog.toString().trim(),
+      expected = """
+        Greeting:
+        dbg("Hello, ${"$"}name", "Greeting:")
+            |        |
+            |        Jane
+            Hello, Jane
+      """.trimIndent()
     )
   }
 }
