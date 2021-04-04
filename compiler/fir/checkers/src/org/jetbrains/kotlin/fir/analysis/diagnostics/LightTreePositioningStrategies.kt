@@ -526,6 +526,8 @@ object LightTreePositioningStrategies {
             return markElement(tree.returnKeyword(node) ?: node, startOffset, endOffset, tree)
         }
     }
+
+    val WHOLE_ELEMENT = object : LightTreePositioningStrategy() { }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =

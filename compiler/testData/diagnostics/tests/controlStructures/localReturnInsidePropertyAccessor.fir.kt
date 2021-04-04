@@ -11,7 +11,7 @@ fun g() = object : ClassData {
     init {
         if (true) {
             // bug: return's target is the function g
-            return <!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>0<!>
+            <!RETURN_NOT_ALLOWED!>return<!> <!RETURN_TYPE_MISMATCH!>0<!>
         }
     }
 

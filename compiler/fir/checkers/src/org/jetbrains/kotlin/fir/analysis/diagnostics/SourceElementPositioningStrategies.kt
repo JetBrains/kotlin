@@ -178,8 +178,8 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.ASSIGNMENT_VALUE
     )
 
-    val RETURN_EXPRESSION = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.LAST_CHILD,
-        PositioningStrategies.RETURN_EXPRESSION
+    val WHOLE_ELEMENT = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.WHOLE_ELEMENT,
+        PositioningStrategies.WHOLE_ELEMENT
     )
 }

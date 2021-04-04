@@ -304,7 +304,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val ONLY_ONE_CLASS_BOUND_ALLOWED by error<FirSourceElement, PsiElement>()
 
-        val RETURN_TYPE_MISMATCH by error<FirSourceElement, KtReturnExpression>(PositioningStrategy.RETURN_EXPRESSION) {
+        val RETURN_TYPE_MISMATCH by error<FirSourceElement, KtReturnExpression>(PositioningStrategy.WHOLE_ELEMENT) {
             parameter<ConeKotlinType>("expected")
             parameter<ConeKotlinType>("actual")
         }

@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInitializerTypeMismatchChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
@@ -406,21 +406,36 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
 
 fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
 
-fun compareTypesList(
-    expressionTypes: List<ConeTypeProjection>,
-    propertyTypes: List<ConeTypeProjection>,
-    context: ConeInferenceContext
-): Boolean {
-    if (expressionTypes.size != propertyTypes.size) return false
+val FirProperty.isDestructuringDeclaration
+    get() = name.asString() == "<destruct>"
 
-    for (i in expressionTypes.indices) {
-        val expressionType = expressionTypes[i].type ?: return false
-        val propertyType = propertyTypes[i].type ?: return false
+val FirExpression.isComponentCall
+    get() = this is FirComponentCall
 
-        if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, expressionType, propertyType)) {
-            return false
+fun smartIsSubtype(subtype: ConeKotlinType, type: ConeKotlinType, context: ConeInferenceContext): Boolean {
+    return AbstractTypeChecker.isSubtypeOf(context, subtype, type)
+            || isFunctionalTypeSubtypeOf(subtype, type, context.session.typeContext)
+}
+
+fun isFunctionalTypeSubtypeOf(subtype: ConeKotlinType, type: ConeKotlinType, context: ConeInferenceContext): Boolean {
+    // getting property's expected return type
+    val functionalTypeReturnType = type.typeArguments.lastOrNull()
+    if ((functionalTypeReturnType as? ConeClassLikeType)?.isUnit == true) {
+        // dropping the return type (getting only the lambda args)
+        val expectedTypeArgs = type.typeArguments.dropLast(1)
+        val actualTypeArgs = subtype.typeArguments.dropLast(1)
+        if (expectedTypeArgs.size != actualTypeArgs.size) return false
+
+        for (i in expectedTypeArgs.indices) {
+            val actualType = actualTypeArgs[i].type ?: return false
+            val expectedType = expectedTypeArgs[i].type ?: return false
+
+            if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, actualType, expectedType)) {
+                return false
+            }
         }
-    }
 
-    return true
+        return true
+    }
+    return false
 }
