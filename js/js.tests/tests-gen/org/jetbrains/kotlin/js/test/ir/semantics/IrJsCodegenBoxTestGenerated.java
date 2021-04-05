@@ -18634,6 +18634,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/ranges/forInCustomIterable.kt");
         }
 
+        @TestMetadata("forInDoubleRangeWithCustomIterator.kt")
+        public void testForInDoubleRangeWithCustomIterator() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInDoubleRangeWithCustomIterator.kt");
+        }
+
+        @TestMetadata("forInFloatRangeWithCustomIterator.kt")
+        public void testForInFloatRangeWithCustomIterator() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInFloatRangeWithCustomIterator.kt");
+        }
+
         @TestMetadata("forInRangeLiteralWithMixedTypeBounds.kt")
         public void testForInRangeLiteralWithMixedTypeBounds() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/forInRangeLiteralWithMixedTypeBounds.kt");

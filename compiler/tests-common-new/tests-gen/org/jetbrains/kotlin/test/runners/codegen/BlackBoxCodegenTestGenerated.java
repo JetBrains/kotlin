@@ -28373,6 +28373,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("forInDoubleRangeWithCustomIterator.kt")
+        public void testForInDoubleRangeWithCustomIterator() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInDoubleRangeWithCustomIterator.kt");
+        }
+
+        @Test
+        @TestMetadata("forInFloatRangeWithCustomIterator.kt")
+        public void testForInFloatRangeWithCustomIterator() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInFloatRangeWithCustomIterator.kt");
+        }
+
+        @Test
         @TestMetadata("forInRangeLiteralWithMixedTypeBounds.kt")
         public void testForInRangeLiteralWithMixedTypeBounds() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/forInRangeLiteralWithMixedTypeBounds.kt");
