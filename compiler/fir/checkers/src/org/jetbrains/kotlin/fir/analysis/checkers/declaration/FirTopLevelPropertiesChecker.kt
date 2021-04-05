@@ -36,7 +36,6 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
             reporter,
             context
         )
-        checkPropertyAccessors(property, reporter, context)
         checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
     }
 }
