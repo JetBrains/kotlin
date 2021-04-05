@@ -33,12 +33,12 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
         get() = _constructorCheckers
     override val fileCheckers: Set<FirFileChecker>
         get() = _fileCheckers
+    override val typeParameterCheckers: Set<FirTypeParameterChecker>
+        get() = _typeParameterCheckers
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = _controlFlowAnalyserCheckers
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker>
         get() = _variableAssignmentCfaBasedCheckers
-    override val typeParameterCheckers: Set<FirTypeParameterChecker>
-        get() = _typeParameterCheckers
 
     private val _basicDeclarationCheckers: MutableSet<FirBasicDeclarationChecker> = mutableSetOf()
     private val _memberDeclarationCheckers: MutableSet<FirMemberDeclarationChecker> = mutableSetOf()
@@ -49,9 +49,9 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
     private val _regularClassCheckers: MutableSet<FirRegularClassChecker> = mutableSetOf()
     private val _constructorCheckers: MutableSet<FirConstructorChecker> = mutableSetOf()
     private val _fileCheckers: MutableSet<FirFileChecker> = mutableSetOf()
+    private val _typeParameterCheckers: MutableSet<FirTypeParameterChecker> = mutableSetOf()
     private val _controlFlowAnalyserCheckers: MutableSet<FirControlFlowChecker> = mutableSetOf()
     private val _variableAssignmentCfaBasedCheckers: MutableSet<AbstractFirPropertyInitializationChecker> = mutableSetOf()
-    private val _typeParameterCheckers: MutableSet<FirTypeParameterChecker> = mutableSetOf()
 
     @CheckersComponentInternal
     internal fun register(checkers: DeclarationCheckers) {
@@ -64,8 +64,8 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
         _regularClassCheckers += checkers.regularClassCheckers
         _constructorCheckers += checkers.constructorCheckers
         _fileCheckers += checkers.fileCheckers
+        _typeParameterCheckers += checkers.typeParameterCheckers
         _controlFlowAnalyserCheckers += checkers.controlFlowAnalyserCheckers
         _variableAssignmentCfaBasedCheckers += checkers.variableAssignmentCfaBasedCheckers
-        _typeParameterCheckers += checkers.typeParameterCheckers
     }
 }

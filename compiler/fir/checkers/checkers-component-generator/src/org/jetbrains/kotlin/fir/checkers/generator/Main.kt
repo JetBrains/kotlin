@@ -35,6 +35,7 @@ fun main(args: Array<String>) {
         alias<FirRegularClass>("RegularClassChecker")
         alias<FirConstructor>("ConstructorChecker")
         alias<FirFile>("FileChecker")
+        alias<FirTypeParameter>("FirTypeParameterChecker")
 
         additional(
             fieldName = "controlFlowAnalyserCheckers",
