@@ -2731,6 +2731,24 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
                 runTest("compiler/testData/ir/irText/types/nullChecks/platformTypeReceiver.kt");
             }
 
+            @Test
+            @TestMetadata("typeParameterWithMixedNullableAndNotNullableBounds.kt")
+            public void testTypeParameterWithMixedNullableAndNotNullableBounds() throws Exception {
+                runTest("compiler/testData/ir/irText/types/nullChecks/typeParameterWithMixedNullableAndNotNullableBounds.kt");
+            }
+
+            @Test
+            @TestMetadata("typeParameterWithMultipleNotNullableBounds.kt")
+            public void testTypeParameterWithMultipleNotNullableBounds() throws Exception {
+                runTest("compiler/testData/ir/irText/types/nullChecks/typeParameterWithMultipleNotNullableBounds.kt");
+            }
+
+            @Test
+            @TestMetadata("typeParameterWithMultipleNullableBounds.kt")
+            public void testTypeParameterWithMultipleNullableBounds() throws Exception {
+                runTest("compiler/testData/ir/irText/types/nullChecks/typeParameterWithMultipleNullableBounds.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult")
             @TestDataPath("$PROJECT_ROOT")

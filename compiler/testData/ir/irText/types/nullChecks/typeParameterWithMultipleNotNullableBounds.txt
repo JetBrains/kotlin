@@ -1,0 +1,19 @@
+FILE fqName:<root> fileName:/typeParameterWithMultipleNotNullableBounds.kt
+  FUN name:f visibility:public modality:FINAL <T> (x:T of <root>.f) returnType:kotlin.Int
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence; kotlin.Comparable<T of <root>.f>]
+    VALUE_PARAMETER name:x index:0 type:T of <root>.f
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun f <T> (x: T of <root>.f): kotlin.Int declared in <root>'
+        CALL 'public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int [operator] declared in kotlin.Comparable' type=kotlin.Int origin=null
+          $this: GET_VAR 'x: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
+          other: GET_VAR 'x: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun f <T> (x: T of <root>.f): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          <T>: @[FlexibleNullability] kotlin.String?
+          x: CALL 'public open fun s (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun f <T> (x: T of <root>.f): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+          <T>: @[FlexibleNullability] kotlin.String?
+          x: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static]' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
