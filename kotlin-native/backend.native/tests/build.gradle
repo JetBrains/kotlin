@@ -5251,7 +5251,7 @@ project.tasks.register("debugger_test", Test.class) {
 }
 
 // Configure build for iOS device targets.
-if (target.family == Family.IOS && (target.architecture == ARM32 || target.architecture == ARM64)) {
+if (UtilsKt.supportsRunningTestsOnDevice(target)) {
     project.tasks
             .withType(KonanTestExecutable.class)
             .configureEach {

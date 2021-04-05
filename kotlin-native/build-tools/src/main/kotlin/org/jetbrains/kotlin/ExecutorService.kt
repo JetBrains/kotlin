@@ -54,7 +54,7 @@ fun create(project: Project): ExecutorService {
         configurables is WasmConfigurables -> wasmExecutor(project)
         configurables is ConfigurablesWithEmulator && testTarget != HostManager.host -> emulatorExecutor(project, testTarget)
         configurables.targetTriple.isSimulator -> simulator(project)
-        testTarget == KonanTarget.IOS_ARM32 || testTarget == KonanTarget.IOS_ARM64 -> deviceLauncher(project)
+        supportsRunningTestsOnDevice(testTarget) -> deviceLauncher(project)
         else -> localExecutorService(project)
     }
 }

@@ -104,7 +104,7 @@ class ExecClang(private val project: Project) {
      * 2. We call Clang from toolchain in case of Apple target.
      */
     fun execClangForCompilerTests(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
-        val defaultArgs = platformManager.platform(target).clang.clangArgs
+        val defaultArgs = platformManager.platform(target).clang.clangArgs.toList()
         return project.exec(Action<ExecSpec> {
             action.execute(this)
             executable = if (target.family.isAppleFamily) {
