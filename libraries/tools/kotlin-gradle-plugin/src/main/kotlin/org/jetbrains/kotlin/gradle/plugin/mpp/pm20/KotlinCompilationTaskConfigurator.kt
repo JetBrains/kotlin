@@ -22,10 +22,10 @@ open class KotlinCompilationTaskConfigurator(
 ) {
     open val fragmentSourcesProvider: FragmentSourcesProvider = FragmentSourcesProvider()
 
-    open fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment) =
+    open fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider =
         fragmentSourcesProvider.getSourcesFromRefinesClosure(fragment)
 
-    open fun getCommonSourcesForFragmentCompilation(fragment: KotlinGradleFragment) =
+    open fun getCommonSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider =
         fragmentSourcesProvider.getCommonSourcesFromRefinesClosure(fragment)
 
     fun createKotlinJvmCompilationTask(

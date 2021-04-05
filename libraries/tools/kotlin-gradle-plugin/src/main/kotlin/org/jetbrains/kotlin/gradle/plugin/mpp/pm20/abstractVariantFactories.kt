@@ -51,7 +51,7 @@ abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
         sourcesJarTaskNamed(
             fragment.sourceArchiveTaskName,
             project,
-            lazy { FragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(fragment).mapKeys { it.key.fragmentName } },
+            lazy { FragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(fragment).entries.associate { it.key.fragmentName to it.value.get() } },
             fragment.name
         )
     }

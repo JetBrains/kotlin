@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import java.io.File
 import java.util.concurrent.Callable
 
 internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
@@ -65,7 +67,7 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
     val sourcesArtifact = sourcesJarTaskNamed(
         module.disambiguateName("allSourcesJar"),
         project,
-        lazy { FragmentSourcesProvider().getAllFragmentSourcesAsMap(module).mapKeys { it.key.fragmentName } },
+        lazy { FragmentSourcesProvider().getAllFragmentSourcesAsMap(module).entries.associate { it.key.fragmentName to it.value.get() } },
         sourcesArtifactAppendix
     )
     DocumentationVariantConfigurator().createSourcesElementsConfiguration(
@@ -222,12 +224,12 @@ private class MetadataCompilationTasksConfigurator(project: Project) : KotlinCom
         addCommonSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { commonSources }
     }
 
-    override fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment): FileCollection {
-        return fragmentSourcesProvider.getFragmentOwnSources(fragment)
+    override fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider {
+        return project.provider { listOf(fragmentSourcesProvider.getFragmentOwnSources(fragment)) }
     }
 
-    override fun getCommonSourcesForFragmentCompilation(fragment: KotlinGradleFragment): FileCollection {
-        return fragmentSourcesProvider.getFragmentOwnSources(fragment)
+    override fun getCommonSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider {
+        return project.provider { listOf(fragmentSourcesProvider.getFragmentOwnSources(fragment)) }
     }
 }
 

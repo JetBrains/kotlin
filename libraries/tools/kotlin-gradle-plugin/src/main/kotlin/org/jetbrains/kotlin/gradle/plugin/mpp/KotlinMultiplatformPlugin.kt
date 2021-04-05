@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import java.io.File
 
 class KotlinMultiplatformPlugin : Plugin<Project> {
 
@@ -274,7 +275,7 @@ internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: St
 
 internal fun sourcesJarTask(
     project: Project,
-    sourceSets: Lazy<Map<String, FileCollection>>,
+    sourceSets: Lazy<Map<String, Iterable<File>>>,
     componentName: String?,
     artifactNameAppendix: String
 ): TaskProvider<Jar> = sourcesJarTaskNamed(lowerCamelCaseName(componentName, "sourcesJar"), project, sourceSets, artifactNameAppendix)
@@ -282,7 +283,7 @@ internal fun sourcesJarTask(
 internal fun sourcesJarTaskNamed(
     taskName: String,
     project: Project,
-    sourceSets: Lazy<Map<String, FileCollection>>,
+    sourceSets: Lazy<Map<String, Iterable<File>>>,
     artifactNameAppendix: String
 ): TaskProvider<Jar> {
     project.locateTask<Jar>(taskName)?.let {

@@ -103,7 +103,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             compileKotlinTaskName,
             sourceSet.customSourceFilesExtensions,
             addAsCommonSources
-        ) { sourceSet.kotlin.sourceDirectories }
+        ) { sourceSet.kotlin }
 
     internal fun addExactSourceSetsEagerly(sourceSets: Set<KotlinSourceSet>) {
         with(target.project) {
@@ -276,7 +276,7 @@ internal fun addCommonSourcesToKotlinCompileTask(
     project: Project,
     taskName: String,
     sourceFileExtensions: Iterable<String>,
-    sources: () -> Iterable<File>
+    sources: () -> Any
 ) = addSourcesToKotlinCompileTask(project, taskName, sourceFileExtensions, lazyOf(true), sources)
 
 // FIXME this function dangerously ignores an incorrect type of the task (e.g. if the actual task is a K/N one); consider reporting a failure
@@ -285,20 +285,19 @@ internal fun addSourcesToKotlinCompileTask(
     taskName: String,
     sourceFileExtensions: Iterable<String>,
     addAsCommonSources: Lazy<Boolean> = lazyOf(false),
-    /** Expected to return paths of the source root directories. */
-    sources: () -> Iterable<File>
+    /** Evaluated as project.files(...) */
+    sources: () -> Any
 ) {
     fun AbstractKotlinCompile<*>.configureAction() {
         // In this call, the super-implementation of `source` adds the directories files to the roots of the union file tree,
         // so it's OK to pass just the source roots.
-        source(project.files(Callable { sources() }))
+        source(Callable(sources))
         sourceFilesExtensions(sourceFileExtensions)
 
-        // The `commonSourceSet` is passed to the compiler as-is, so we have to expand the source roots to get all the
-        // nested files from the file tree.
-        commonSourceSet += project.files(Callable {
-            if (addAsCommonSources.value) sources() else emptyList<Any>()
-        }).asFileTree
+        // The `commonSourceSet` is passed to the compiler as-is, converted with toList
+        commonSourceSet += project.files(Callable<Any> {
+            if (addAsCommonSources.value) sources else emptyList<Any>()
+        })
     }
 
     project.tasks

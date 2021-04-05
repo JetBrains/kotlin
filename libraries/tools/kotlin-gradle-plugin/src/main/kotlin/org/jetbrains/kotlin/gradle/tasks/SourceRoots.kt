@@ -1,16 +1,18 @@
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
 import org.jetbrains.kotlin.gradle.utils.isKotlinFile
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.File
 import java.util.*
+import java.util.concurrent.Callable
 
 internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
     private companion object {
@@ -66,23 +68,39 @@ internal class FilteringSourceRootsContainer(
     private val objectFactory: ObjectFactory,
     val filter: (File) -> Boolean = { true }
 ) {
-    private val resultFilesUnfiltered: ConfigurableFileCollection = objectFactory.fileCollection()
-    private val result = resultFilesUnfiltered.filter(filter)
+    private val sourceContainers: MutableList<Any> = mutableListOf()
 
-    val sourceRoots: List<File>
-        get() = result.toList()
+    private fun getFilteredSourceRootsFrom(any: Any) = objectFactory.fileCollection().from(Callable {
+        val resultItems = mutableListOf<Any>()
+        fun getRootsFrom(item: Any?) {
+            when (item) {
+                is SourceDirectorySet -> resultItems.add(item.sourceDirectories)
+                is Callable<*> -> getRootsFrom(item.call())
+                is Provider<*> -> if (item.isPresent) getRootsFrom(item.get())
+                is FileCollection -> resultItems.add(item)
+                is Iterable<*> -> item.forEach { getRootsFrom(it) }
+                is Array<*> -> item.forEach { getRootsFrom(it) }
+                is Any /* not null */ -> resultItems.add(item)
+            }
+        }
+        getRootsFrom(any)
+        resultItems
+    }).filter(filter)
+
+    val sourceRoots: FileCollection
+        get() = getFilteredSourceRootsFrom(sourceContainers)
 
     fun clear() {
-        resultFilesUnfiltered.setFrom()
+        sourceContainers.clear()
     }
 
-    fun set(source: Any?): FileCollection {
+    fun set(source: Any): FileCollection {
         clear()
         return add(source)
     }
 
-    fun add(vararg sources: Any?): FileCollection {
-        resultFilesUnfiltered.from(sources)
-        return objectFactory.fileCollection().from(sources).filter(filter)
+    fun add(vararg sources: Any): FileCollection {
+        sourceContainers.addAll(sources.toList())
+        return getFilteredSourceRootsFrom(sources)
     }
 }
