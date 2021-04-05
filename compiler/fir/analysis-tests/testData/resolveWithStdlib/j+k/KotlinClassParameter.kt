@@ -9,5 +9,5 @@ public class JavaClass {
 // FILE: K2.kt
 fun main() {
     JavaClass.baz(KotlinClass())
-    JavaClass.<!INAPPLICABLE_CANDIDATE!>baz<!>("")
+    JavaClass.baz(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }

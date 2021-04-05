@@ -18,7 +18,7 @@ fun foo(a: A, ka: KA) {
     1 <!NONE_APPLICABLE!>in<!> a
 
     ka.contains("")
-    ka.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
+    ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in ka
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> ka
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ka
 }

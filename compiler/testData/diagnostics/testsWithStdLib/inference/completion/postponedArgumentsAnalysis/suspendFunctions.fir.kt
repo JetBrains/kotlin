@@ -21,5 +21,5 @@ fun main() {
     // Here, the error should be
     val x2: (Int) -> Unit = takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id { it }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)
     val x3: suspend (Int) -> Unit = takeSimpleFunction(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id { it }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)
-    val x4: (Int) -> Unit = <!INAPPLICABLE_CANDIDATE!>takeSimpleFunction<!>(id<suspend (Int) -> Unit> {}, <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>{}<!>)
+    val x4: (Int) -> Unit = takeSimpleFunction(<!ARGUMENT_TYPE_MISMATCH!>id<suspend (Int) -> Unit> {}<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Unit>")!>{}<!>)
 }

@@ -56,8 +56,8 @@ fun <T> test2(t : T)
   t.bar()
 }
 
-val t1 = <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): Jet87/test2">test2</error><A>(A())
-val t2 = <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): Jet87/test2">test2</error><B>(C())
+val t1 = test2<A>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is Jet87/A but T was expected">A()</error>)
+val t2 = test2<B>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is Jet87/C but T was expected">C()</error>)
 val t3 = test2<C>(C())
 
 val <T, B: T> Pair<T, B>.x : Int get() = 0

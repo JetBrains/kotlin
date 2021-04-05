@@ -36,6 +36,6 @@ fun foo(x: B<*>) {
     // FIR doesn't work here, because
     // field has a type of just 'A' and it's not clear why should it accept 'String' at consume
     // NB: some kind of BareTypeScope should be in use here
-    Test.rawB.field.<!INAPPLICABLE_CANDIDATE!>consume<!>("")
+    Test.rawB.field.consume(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     val y: Any = Test.rawB.field.produce()
 }

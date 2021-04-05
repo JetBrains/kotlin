@@ -62,8 +62,8 @@ fun <T> test2(t : T)
   t.bar()
 }
 
-val t1 = <!INAPPLICABLE_CANDIDATE!>test2<!><A>(A())
-val t2 = <!INAPPLICABLE_CANDIDATE!>test2<!><B>(C())
+val t1 = test2<A>(<!ARGUMENT_TYPE_MISMATCH!>A()<!>)
+val t2 = test2<B>(<!ARGUMENT_TYPE_MISMATCH!>C()<!>)
 val t3 = test2<C>(C())
 
 val <T, B : T> x : Int = 0

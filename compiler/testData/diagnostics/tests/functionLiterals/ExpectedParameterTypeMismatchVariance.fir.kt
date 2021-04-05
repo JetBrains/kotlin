@@ -16,6 +16,6 @@ fun test(s: Sub) {
         t: Trait -> s
     }
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(fun(t: Sub) = s)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(fun(t): Super = s)
+    foo(fun(t: Sub) = <!ARGUMENT_TYPE_MISMATCH!>s<!>)
+    foo(fun(t): Super = <!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }

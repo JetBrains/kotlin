@@ -26,6 +26,6 @@ open class B<V> : A<Any, V>() {
 
 fun test_1(b: B<Int>, x: Int, inv: Inv<Int>) {
     b.take(x)
-    b.<!INAPPLICABLE_CANDIDATE!>take<!>(null)
+    b.take(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
     b.takeInv(inv)
 }

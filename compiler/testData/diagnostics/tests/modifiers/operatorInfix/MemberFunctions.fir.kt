@@ -30,12 +30,12 @@ fun a() {
 
     with (Example()) {
         consumeInt(this + a)
-        <!INAPPLICABLE_CANDIDATE!>consumeString<!>(this - b)
+        consumeString(<!ARGUMENT_TYPE_MISMATCH!>this - b<!>)
         consumeInt(this * a)
         consumeInt(this / b)
 
         consumeInt(this plus a)
-        <!INAPPLICABLE_CANDIDATE!>consumeString<!>(this minus b)
+        consumeString(<!ARGUMENT_TYPE_MISMATCH!>this minus b<!>)
         consumeInt(this times a)
         consumeInt(this div b)
     }

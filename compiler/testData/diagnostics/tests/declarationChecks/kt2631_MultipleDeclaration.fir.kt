@@ -23,7 +23,7 @@ fun test(mc1: MyClass, mc2: MyClass2) {
     checkSubtype<Double>(c)
 
     //check no error types
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Boolean>(a)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Boolean>(b)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Boolean>(c)
+    checkSubtype<Boolean>(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    checkSubtype<Boolean>(<!ARGUMENT_TYPE_MISMATCH!>b<!>)
+    checkSubtype<Boolean>(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
 }

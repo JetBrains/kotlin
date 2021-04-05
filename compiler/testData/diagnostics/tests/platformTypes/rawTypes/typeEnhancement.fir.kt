@@ -21,7 +21,7 @@ class Test {
 val doubleList: List<Double?> = null!!
 
 fun main() {
-    Test.rawField.<!INAPPLICABLE_CANDIDATE!>foo<!>("", doubleList)
-    Test.rawField.<!INAPPLICABLE_CANDIDATE!>foo<!>(null, doubleList)
-    Test.DerivedRawA().<!INAPPLICABLE_CANDIDATE!>foo<!>(null, doubleList)
+    Test.rawField.foo("", <!ARGUMENT_TYPE_MISMATCH!>doubleList<!>)
+    Test.rawField.foo(<!ARGUMENT_TYPE_MISMATCH!>null<!>, <!ARGUMENT_TYPE_MISMATCH!>doubleList<!>)
+    Test.DerivedRawA().foo(<!ARGUMENT_TYPE_MISMATCH!>null<!>, <!ARGUMENT_TYPE_MISMATCH!>doubleList<!>)
 }

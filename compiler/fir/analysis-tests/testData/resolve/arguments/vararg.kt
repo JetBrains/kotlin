@@ -7,8 +7,8 @@ fun test() {
     foo(1, "my", "yours")
     foo(1, *arrayOf("my", "yours"))
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("")
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(1, 2)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+    foo(1, <!ARGUMENT_TYPE_MISMATCH!>2<!>)
 
     bar(1, z = true, y = *arrayOf("my", "yours"))
 

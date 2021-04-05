@@ -1,9 +1,9 @@
 fun foo(u : Unit) : Int = 1
 
 fun test() : Int {
-    <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): /foo">foo</error>(1)
+    foo(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/Int but kotlin/Unit was expected">1</error>)
     val a : () -> Unit = {
-        <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): /foo">foo</error>(1)
+        foo(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/Int but kotlin/Unit was expected">1</error>)
     }
     return 1
 }

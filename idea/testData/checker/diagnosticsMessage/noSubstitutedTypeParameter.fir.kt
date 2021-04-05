@@ -1,6 +1,6 @@
 // COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
-val f = listOf("").<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): /firstOrNull">firstOrNull</error>(1)
+val f = listOf("").firstOrNull(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/Int but kotlin/Function1<TypeVariable(T), kotlin/Boolean> was expected">1</error>)
 
 fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
-fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? = null
+fun <T> Iterable<T>.firstOrNull(<warning>predicate</warning>: (T) -> Boolean): T? = null

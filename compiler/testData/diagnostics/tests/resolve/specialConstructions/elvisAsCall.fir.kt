@@ -33,5 +33,5 @@ fun testDataFlowInfo2(a: Int?, b: Int?) {
 }
 
 fun testTypeMismatch(a: String?, b: Any) {
-    <!INAPPLICABLE_CANDIDATE!>doInt<!>(a ?: b)
+    doInt(<!ARGUMENT_TYPE_MISMATCH!>a ?: b<!>)
 }

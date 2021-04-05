@@ -24,7 +24,7 @@ fun test_1_3(resolvedCall: ResolvedCall<CallableDescriptor>) {
 }
 
 fun test_2_1(resolvedCall: ResolvedCall<out CallableDescriptor>, d: CallableDescriptor) {
-    val x = resolvedCall.<!INAPPLICABLE_CANDIDATE!>updateD<!>(d) // should fail
+    val x = resolvedCall.updateD(<!ARGUMENT_TYPE_MISMATCH!>d<!>) // should fail
 }
 
 fun test_2_2(resolvedCall: ResolvedCall<in CallableDescriptor>, d: CallableDescriptor) {

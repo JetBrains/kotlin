@@ -6,8 +6,8 @@ public @interface A {
 }
 
 // FILE: b.kt
-<!INAPPLICABLE_CANDIDATE!>@A(false,
+@A(<!ARGUMENT_TYPE_MISMATCH!>false<!>,
 1.0,
-false)<!> fun foo1() {}
+false) fun foo1() {}
 
-<!INAPPLICABLE_CANDIDATE!>@A(2.0, x = true, b = 2.0)<!> fun foo2() {}
+@A(<!ARGUMENT_TYPE_MISMATCH!>2.0<!>, x = true, b = 2.0) fun foo2() {}

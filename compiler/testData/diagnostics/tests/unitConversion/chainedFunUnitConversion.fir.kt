@@ -10,6 +10,6 @@ fun foo(r: KRunnable) {}
 abstract class SubInt : () -> Int
 
 fun test(f: () -> Int, s: SubInt) {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(f)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(s)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }

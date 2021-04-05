@@ -105,11 +105,11 @@ fun testImplicitCoercion() {
     val g = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 4
     val h = if (false) 4 else {}
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(if (true) {
+    bar(<!ARGUMENT_TYPE_MISMATCH!>if (true) {
         4
     } else {
         z = 342
-    })
+    }<!>)
 }
 
 fun fooWithAnyArg(arg: Any) {}

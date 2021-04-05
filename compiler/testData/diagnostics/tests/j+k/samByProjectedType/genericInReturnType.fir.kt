@@ -48,6 +48,6 @@ fun main() {
         x -> x.toString()
     }
 
-    A.<!INAPPLICABLE_CANDIDATE!>baz<!>(block)
+    A.baz(<!ARGUMENT_TYPE_MISMATCH!>block<!>)
     A.baz(block2)
 }

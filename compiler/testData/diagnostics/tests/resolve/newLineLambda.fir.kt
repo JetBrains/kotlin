@@ -83,9 +83,9 @@ fun testVararg() {
     varargFn(1,2,3) // comment
     // comment
     <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    varargFn(1,2,3) {} <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    varargFn(1,2,3) {}
-    <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) <!ARGUMENT_TYPE_MISMATCH!>{}<!> <!ARGUMENT_TYPE_MISMATCH, VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) <!ARGUMENT_TYPE_MISMATCH!>{}<!>
+    <!ARGUMENT_TYPE_MISMATCH, VARARG_OUTSIDE_PARENTHESES!>{}<!>
 }
 
 fun testTwoLambdas() {

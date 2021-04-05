@@ -10,5 +10,5 @@ object T2 {
     operator fun <T> Foo<T>.getValue(receiver: String, p: Any?): T = TODO()
 
     val String.test1: String by delegate()
-    val test2: String by <!INAPPLICABLE_CANDIDATE!>delegate<!>()
+    val test2: String by <!ARGUMENT_TYPE_MISMATCH!>delegate()<!>
 }

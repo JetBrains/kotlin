@@ -5,5 +5,5 @@ fun foo() {
 
     bar(x ?: 0)
     if (x != null) bar(x ?: x)
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
+    bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }

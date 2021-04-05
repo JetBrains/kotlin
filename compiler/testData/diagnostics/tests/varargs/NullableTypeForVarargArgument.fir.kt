@@ -31,8 +31,8 @@ fun getArr(): Array<String>? = null
 
 fun f() {
     A().foo(1, *args)
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(2, *args)
-    baz(<!NON_VARARG_SPREAD!>*<!>args)
+    bar(2, *<!ARGUMENT_TYPE_MISMATCH!>args<!>)
+    baz(<!NON_VARARG_SPREAD!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
 }
 
 fun g(args: Array<String>?) {
@@ -55,8 +55,8 @@ fun h(b: B) {
 
 fun k() {
     A().foo(1, *getArr())
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(2, *getArr())
-    baz(<!NON_VARARG_SPREAD!>*<!>getArr())
+    bar(2, *<!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
+    baz(<!NON_VARARG_SPREAD!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
 }
 
 fun invokeTest(goodArgs: Array<String>) {

@@ -8,5 +8,5 @@ fun foo(i: Int) = i
 
 fun test(a: A?) {
     a?.b(1) //should be no warning
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(a?.b(1)) //no warning, only error
+    foo(a?.<!ARGUMENT_TYPE_MISMATCH!>b(1)<!>) //no warning, only error
 }

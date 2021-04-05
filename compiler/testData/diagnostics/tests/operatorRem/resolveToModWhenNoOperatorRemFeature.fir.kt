@@ -22,10 +22,10 @@ object OnlyRem {
 }
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>takeInt<!>(ModAndRem % 1)
+    takeInt(<!ARGUMENT_TYPE_MISMATCH!>ModAndRem % 1<!>)
 
     val c = ModAssignAndRemAssign
-    c <!INAPPLICABLE_CANDIDATE!>%=<!> ""
+    c %= <!ARGUMENT_TYPE_MISMATCH!>""<!>
 
     var c1 = RemAndModAssign
     c1 %= 1

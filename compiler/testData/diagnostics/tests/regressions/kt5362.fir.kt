@@ -25,7 +25,7 @@ public class Manager {
 
     class Task(val callback: Manager.() -> Unit) : Runnable {
         override public fun run() {
-            <!INAPPLICABLE_CANDIDATE!>callback<!>() // Manager is not accessible here, but no error is shown
+            <!ARGUMENT_TYPE_MISMATCH!>callback<!>() // Manager is not accessible here, but no error is shown
         }
     }
 }

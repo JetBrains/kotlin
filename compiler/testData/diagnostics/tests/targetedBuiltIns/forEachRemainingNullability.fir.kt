@@ -32,7 +32,7 @@ abstract class MyIt7 : Iterator<String> {
 
 
 fun foo(x: Iterator<String>, y: Iterator<String?>) {
-    x.<!INAPPLICABLE_CANDIDATE!>forEachRemaining<!>(null)
+    x.forEachRemaining(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
 
     x.forEachRemaining { it -> it.length }
     x.forEachRemaining { it -> it?.length }

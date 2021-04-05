@@ -53,8 +53,8 @@ fun testMany(a: Any) {
     manyFoo(s = "")
 
     <!NONE_APPLICABLE!>manyFoo<!>(a)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(v = a)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(s = a)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(v = a as Int)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(s = a as String)
+    manyFoo(v = <!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    manyFoo(s = <!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    manyFoo(v = <!ARGUMENT_TYPE_MISMATCH!>a as Int<!>)
+    manyFoo(s = <!ARGUMENT_TYPE_MISMATCH!>a as String<!>)
 }

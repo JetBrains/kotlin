@@ -196,11 +196,11 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> =
 
 fun mergeSmartCasts(a: Any?) {
   if (a is String || a is Int) {
-    a.<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): kotlin/Comparable.compareTo">compareTo</error>("")
+    a.compareTo(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/String but it(kotlin/String & kotlin/Int) was expected">""</error>)
     a.toString()
   }
   if (a is Int || a is String) {
-    a.<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): kotlin/Comparable.compareTo">compareTo</error>("")
+    a.compareTo(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/String but it(kotlin/Int & kotlin/String) was expected">""</error>)
   }
   when (a) {
     is String, is Any -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("")

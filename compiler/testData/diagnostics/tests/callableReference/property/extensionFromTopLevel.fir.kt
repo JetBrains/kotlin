@@ -13,7 +13,7 @@ fun test() {
     val f = String::countCharacters
 
     checkSubtype<KProperty1<String, Int>>(f)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KMutableProperty1<String, Int>>(f)
+    checkSubtype<KMutableProperty1<String, Int>>(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
     checkSubtype<Int>(f.get("abc"))
     f.<!UNRESOLVED_REFERENCE!>set<!>("abc", 0)
 

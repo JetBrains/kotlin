@@ -5,9 +5,9 @@ fun <K> id2(x: K, s: String): K = x
 fun <K> ret(s: String): K = TODO()
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>id2<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>, "foo")
-    <!INAPPLICABLE_CANDIDATE!>id2<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>, 42)
+    id2(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>unresolved<!>, "foo")
+    id2(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>unresolved<!>, <!ARGUMENT_TYPE_MISMATCH!>42<!>)
 
     ret("foo")
-    <!INAPPLICABLE_CANDIDATE!>ret<!>(42)
+    ret(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
 }

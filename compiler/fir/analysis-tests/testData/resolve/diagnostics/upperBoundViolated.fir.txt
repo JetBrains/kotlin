@@ -22,7 +22,7 @@ FILE: upperBoundViolated.kt
         lval b1: R|B<kotlin/Int>| = R|/B.B|<R|kotlin/Int|>()
         lval b2: R|B<C>| = R|/B.B|<R|C|>()
         lval b3: R|B<kotlin/Any?>| = R|/B.B|<R|kotlin/Any?|>()
-        lval b4: R|B<A>| = R|/B.B|<<ERROR TYPE REF: Symbol not found for UnexistingType>>()
+        lval b4: R|ERROR CLASS: Unresolved name: NumberPhile| = R|/B.B|<<ERROR TYPE REF: Symbol not found for UnexistingType>>().<Unresolved name: NL>#(ERROR_EXPR(No right operand)).<Unresolved name: Int>#(<Call has no callee>#()).<Unresolved name: NumberPhile>#(ERROR_EXPR(No right operand))
         lval b5: R|B<B<ERROR CLASS: Symbol not found for UnexistingType>>| = R|/B.B|<R|B<ERROR CLASS: Symbol not found for UnexistingType>|>()
         R|/fest|<R|kotlin/Boolean|>()
         R|/fest|<R|C|>()
@@ -58,8 +58,8 @@ FILE: upperBoundViolated.kt
 
     }
     public final typealias NL<K> = R|NumColl<kotlin/collections/List<K>>|
-    public final val test7: R|NumColl<kotlin/collections/List<kotlin/Int>>| = R|/NumColl.NumColl|<R|kotlin/Int|>()
-        public get(): R|NumColl<kotlin/collections/List<kotlin/Int>>|
+    public final val test7: R|ERROR CLASS: Unresolved name: NumberPhile| = R|/NumColl.NumColl|<R|kotlin/Int|>().<Unresolved name: NumberPhile>#(ERROR_EXPR(No right operand))
+        public get(): R|ERROR CLASS: Unresolved name: NumberPhile|
     public final val test8: R|NumColl<kotlin/collections/List<kotlin/String>>| = R|/NumColl.NumColl|<R|kotlin/String|>()
         public get(): R|NumColl<kotlin/collections/List<kotlin/String>>|
     public final class NumberPhile<T : R|kotlin/Number|> : R|kotlin/Any| {
@@ -70,5 +70,5 @@ FILE: upperBoundViolated.kt
     }
     public final val np1: R|NumberPhile<kotlin/Int>| = R|/NumberPhile.NumberPhile|<R|kotlin/Int|>(Int(10))
         public get(): R|NumberPhile<kotlin/Int>|
-    public final val np2: R|NumberPhile<kotlin/String>| = <Inapplicable(INAPPLICABLE): /NumberPhile.NumberPhile>#<R|kotlin/String|>(String(Test))
-        public get(): R|NumberPhile<kotlin/String>|
+    public final val np2: R|NumberPhile<kotlin/Number>| = <Inapplicable(INAPPLICABLE): /NumberPhile.NumberPhile>#<R|kotlin/Number|>(String(Test))
+        public get(): R|NumberPhile<kotlin/Number>|

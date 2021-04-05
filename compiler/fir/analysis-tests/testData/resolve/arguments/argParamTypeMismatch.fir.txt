@@ -7,7 +7,7 @@ FILE: argParamTypeMismatch.kt
         lval int: R|kotlin/Int| = Int(1)
         <Inapplicable(INAPPLICABLE): /foo>#(R|<local>/int|)
         <Inapplicable(INAPPLICABLE): /foo>#(Int(2))
-        <Inapplicable(INAPPLICABLE): /foo>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): /foo>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ Int(20)
         }
         ))

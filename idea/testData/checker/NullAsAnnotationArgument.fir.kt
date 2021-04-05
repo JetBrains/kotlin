@@ -3,8 +3,8 @@ package test
 
 annotation class A(val value: String)
 
-<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): test/A.A">@A(null)</error>
+@A(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/Nothing? but kotlin/String was expected">null</error>)
 fun foo() {}
 
-<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): test/A.A">@A(null)</error>
+@A(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/Nothing? but kotlin/String was expected">null</error>)
 class B
