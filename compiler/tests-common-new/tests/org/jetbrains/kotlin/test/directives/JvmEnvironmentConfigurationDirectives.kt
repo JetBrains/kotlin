@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
@@ -33,6 +34,11 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val USE_PSI_CLASS_FILES_READING by directive("Use a slower (PSI-based) class files reading implementation")
     val USE_JAVAC by directive("Enable javac integration")
     val SKIP_JAVA_SOURCES by directive("Don't add java sources to compile classpath")
+
+    val JSPECIFY_MUTE by directive(
+        "Skip jspecify checks for compliance Kotlin diagnostics to jspecify marks",
+        applicability = DirectiveApplicability.Global
+    )
 
     @Suppress("RemoveExplicitTypeArguments")
     val STRING_CONCAT by enumDirective<JvmStringConcat>(

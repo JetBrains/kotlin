@@ -28,10 +28,6 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("compiler/tests-java8/tests", "compiler/testData") {
-            testClass<AbstractJspecifyAnnotationsTest> {
-                model("foreignAnnotations/java8Tests/jspecify/kotlin")
-            }
-
             testClass<AbstractForeignAnnotationsCompiledJavaDiagnosticTest> {
                 model("foreignAnnotations/java8Tests/typeEnhancementOnCompiledJava")
             }
