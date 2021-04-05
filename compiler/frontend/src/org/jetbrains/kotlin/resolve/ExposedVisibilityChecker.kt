@@ -35,7 +35,14 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
         elementVisibility: EffectiveVisibility,
         restrictingDescriptor: DescriptorWithRelation
     ) {
-        trace?.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingDescriptor.effectiveVisibility()))
+        val trace = trace ?: return
+        val restrictingVisibility = restrictingDescriptor.effectiveVisibility()
+        if (elementVisibility == EffectiveVisibility.PrivateInFile) {
+            // Deprecation: condition ^ should be changed to false after 1.6
+            trace.report(EXPOSED_FROM_PRIVATE_IN_FILE.on(element, restrictingDescriptor, restrictingVisibility))
+        } else {
+            trace.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingVisibility))
+        }
     }
 
     // NB: does not check any members
