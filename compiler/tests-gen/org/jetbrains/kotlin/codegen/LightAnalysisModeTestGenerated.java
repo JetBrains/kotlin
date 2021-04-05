@@ -18025,6 +18025,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/kt24258.kt");
             }
 
+            @TestMetadata("typeParameterWithMixedNullableAndNotNullableBounds.kt")
+            public void ignoreTypeParameterWithMixedNullableAndNotNullableBounds() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/typeParameterWithMixedNullableAndNotNullableBounds.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -18131,6 +18136,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("staticCallErrorMessage.kt")
             public void testStaticCallErrorMessage() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/staticCallErrorMessage.kt");
+            }
+
+            @TestMetadata("typeParameterWithMultipleNotNullableBounds.kt")
+            public void testTypeParameterWithMultipleNotNullableBounds() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/typeParameterWithMultipleNotNullableBounds.kt");
+            }
+
+            @TestMetadata("typeParameterWithMultipleNullableBounds.kt")
+            public void testTypeParameterWithMultipleNullableBounds() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/typeParameterWithMultipleNullableBounds.kt");
             }
 
             @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")

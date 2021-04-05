@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -165,8 +166,8 @@ val ConeKotlinType.canBeNull: Boolean
         return when (this) {
             is ConeFlexibleType -> upperBound.canBeNull
             is ConeDefinitelyNotNullType -> false
-            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.fir.bounds.any { it.canBeNull }
-            is ConeIntersectionType -> intersectedTypes.any { it.canBeNull }
+            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.fir.bounds.all { it.coneType.canBeNull }
+            is ConeIntersectionType -> intersectedTypes.all { it.canBeNull }
             else -> isNullable
         }
     }
