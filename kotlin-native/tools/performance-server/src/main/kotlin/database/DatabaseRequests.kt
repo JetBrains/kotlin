@@ -39,7 +39,7 @@ internal fun getBuildsDescription(type: String?, branch: String?, agentInfo: Str
                                   onlyNumbers: Boolean = false): Promise<JsonArray> {
     val queryDescription = """
             {   "size": $buildsCountToShow,
-                ${if (onlyNumbers) """"_source": ["buildNumber"],""" else ""}
+                ${if (onlyNumbers) """"_source": ["buildNumber", "buildType"],""" else ""}
                 "sort": {"startTime": "desc" },
                 "query": {
                     "bool": {
