@@ -2618,17 +2618,17 @@ public final class KlibMetadataProtoBuf {
    * <code>extend .org.jetbrains.kotlin.metadata.Constructor { ... }</code>
    */
   public static final
-  org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
-          org.jetbrains.kotlin.metadata.ProtoBuf.Constructor,
-          java.lang.String> constructorKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Constructor,
+      java.lang.String> constructorKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
-                  org.jetbrains.kotlin.metadata.ProtoBuf.Constructor.getDefaultInstance(),
-                  "",
-                  null,
-                  null,
-                  173,
-                  org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
-                  java.lang.String.class);
+        org.jetbrains.kotlin.metadata.ProtoBuf.Constructor.getDefaultInstance(),
+        "",
+        null,
+        null,
+        173,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+        java.lang.String.class);
   public static final int CONSTRUCTOR_UNIQ_ID_FIELD_NUMBER = 172;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Constructor { ... }</code>
@@ -2794,17 +2794,17 @@ public final class KlibMetadataProtoBuf {
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
   public static final
-  org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
-          org.jetbrains.kotlin.metadata.ProtoBuf.Property,
-          java.lang.String> propertyKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+      java.lang.String> propertyKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
-                  org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
-                  "",
-                  null,
-                  null,
-                  180,
-                  org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
-                  java.lang.String.class);
+        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+        "",
+        null,
+        null,
+        180,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+        java.lang.String.class);
   public static final int PROPERTY_UNIQ_ID_FIELD_NUMBER = 179;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
