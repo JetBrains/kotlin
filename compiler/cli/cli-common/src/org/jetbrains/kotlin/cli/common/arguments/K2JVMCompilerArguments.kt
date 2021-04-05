@@ -27,7 +27,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
-    @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting JAR")
+    @Argument(value = "-include-runtime", description = "(DEPRECATED) Include Kotlin runtime into the resulting JAR")
     var includeRuntime: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.StringNullDefault::class)
@@ -44,12 +44,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-stdlib", description = "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath")
+    @Argument(value = "-no-stdlib", description = "(DEPRECATED) Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath")
     var noStdlib: Boolean by FreezableVar(false)
 
     @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-reflect", description = "Don't automatically include Kotlin reflection into the classpath")
+    @Argument(value = "-no-reflect", description = "(DEPRECATED) Don't automatically include Kotlin reflection into the classpath")
     var noReflect: Boolean by FreezableVar(false)
 
     @Argument(
