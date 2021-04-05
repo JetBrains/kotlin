@@ -65,7 +65,7 @@ open class GenerateCompilationDatabase @Inject constructor(@Input val target: St
     fun run() {
         val plugin = project.convention.getPlugin(ExecClang::class.java)
         val executable = plugin.resolveExecutable(executable)
-        val args = listOf(executable) + compilerFlags + plugin.konanArgs(target)
+        val args = listOf(executable) + compilerFlags + plugin.clangArgsForCppRuntime(target)
         val entries: List<Entry> = files.map { Entry.create(srcRoot, it, args, outputDir) }
         Entry.writeListTo(outputFile, entries)
     }
