@@ -47,10 +47,6 @@ kotlin {
     }
 }
 
-tasks.named("linkBenchmarksAnalyzerDebugFrameworkOsxFat") {
-    enabled = false
-}
-
 MPPTools.addTimeListener(project)
 
 task konanRun {
