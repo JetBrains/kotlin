@@ -355,6 +355,12 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-reflect"
 )
 
+val projectsWithDisabledFirBootstrap = coreLibProjects + listOf(
+    ":kotlin-gradle-plugin",
+    ":kotlinx-metadata",
+    ":kotlinx-metadata-jvm"
+)
+
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
     ":kotlin-gradle-plugin-api",
@@ -469,7 +475,7 @@ allprojects {
                 useIR = true
             }
 
-            if (useJvmFir) {
+            if (useJvmFir && this@allprojects.name !in projectsWithDisabledFirBootstrap) {
                 freeCompilerArgs += "-Xuse-fir"
                 freeCompilerArgs += "-Xabi-stability=stable"
             }
