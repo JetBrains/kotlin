@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.isSealed
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -22,8 +23,16 @@ object SealedInheritorInSameModuleChecker : DeclarationChecker {
             val typeReference = superTypeListEntry.typeReference ?: continue
             val superType = typeReference.getAbbreviatedTypeOrType(context.trace.bindingContext)?.unwrap() ?: continue
             val superClass = superType.constructor.declarationDescriptor ?: continue
-            if (superClass.isSealed() && superClass.module != currentModule) {
-                context.trace.report(Errors.SEALED_INHERITOR_IN_DIFFERENT_MODULE.on(typeReference))
+            if (superClass.isSealed()) {
+                /*
+                 * It's allowed to declare inheritors of expect sealed class in any dependent module until actual
+                 *   counterpart for this class will be declared. So if super class is resolved to expect sealed
+                 *   class then its allowed to declare inheritor
+                 */
+                val inheritorAllowed = superClass.isExpect || superClass.module == currentModule
+                if (!inheritorAllowed) {
+                    context.trace.report(Errors.SEALED_INHERITOR_IN_DIFFERENT_MODULE.on(typeReference))
+                }
             }
         }
     }
