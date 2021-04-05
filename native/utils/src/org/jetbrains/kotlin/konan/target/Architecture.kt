@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.konan.target
 
-enum class Architecture(val bitness: Int) {
-    X64(64),
-    X86(32),
-    ARM64(64),
-    ARM32(32),
-    MIPS32(32),
-    MIPSEL32(32),
-    WASM32(32);
+enum class Architecture {
+    X64,
+    X86,
+    ARM64,
+    ARM32,
+    MIPS32,
+    MIPSEL32,
+    WASM32;
 }
