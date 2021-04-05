@@ -20,7 +20,7 @@ fun main() {
         generateTypeParameter()
         generateValueParameter()
 
-        updateKotlinIrProto()
+        generateKotlinPirCarriersProto()
         generateCarrierDeserializer()
         generateCarrierSerializer()
     }
