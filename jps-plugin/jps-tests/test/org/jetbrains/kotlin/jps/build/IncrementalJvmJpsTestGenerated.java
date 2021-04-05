@@ -786,6 +786,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("jps-plugin/testData/incremental/pureKotlin/classSignatureUnchanged/");
         }
 
+        @TestMetadata("companionConstantChanged")
+        public void testCompanionConstantChanged() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
+        }
+
         @TestMetadata("compilationErrorThenFixedOtherPackage")
         public void testCompilationErrorThenFixedOtherPackage() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixedOtherPackage/");
