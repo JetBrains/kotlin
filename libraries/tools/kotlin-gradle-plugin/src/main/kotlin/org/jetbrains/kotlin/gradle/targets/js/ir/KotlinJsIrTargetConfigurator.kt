@@ -126,7 +126,6 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
     private fun KotlinJsOptions.configureOptions() {
         moduleKind = "umd"
-        sourceMap = true
     }
 
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
