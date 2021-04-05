@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class SealedClassInheritorsProvider {
     /**
@@ -48,9 +46,15 @@ object CliSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
                  *   of theirs actuals, so we need to lookup for descriptor once again via
                  *   scope.getContributedClassifier() to match expects (if possible)
                  */
-                val refinedDescriptor = runIf(descriptor.isExpect) {
-                    scope.getContributedClassifier(descriptor.name, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) as? ClassDescriptor
-                } ?: descriptor
+                val refinedDescriptor = if (descriptor.isExpect) {
+                    when (val actualDescriptor = scope.getContributedClassifier(descriptor.name, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)) {
+                        is ClassDescriptor -> actualDescriptor
+                        is TypeAliasDescriptor -> actualDescriptor.classDescriptor
+                        else -> null
+                    }
+                } else {
+                    descriptor
+                } ?: continue
 
                 if (DescriptorUtils.isDirectSubclass(refinedDescriptor, sealedClass)) {
                     result.add(refinedDescriptor)

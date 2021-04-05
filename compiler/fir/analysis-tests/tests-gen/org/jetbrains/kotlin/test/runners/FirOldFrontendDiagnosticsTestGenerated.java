@@ -18007,6 +18007,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("expectSealedClassWithActualTypealias.kt")
+                public void testExpectSealedClassWithActualTypealias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClassWithActualTypealias.kt");
+                }
+
+                @Test
                 @TestMetadata("expectSealedInterface.kt")
                 public void testExpectSealedInterface() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedInterface.kt");
