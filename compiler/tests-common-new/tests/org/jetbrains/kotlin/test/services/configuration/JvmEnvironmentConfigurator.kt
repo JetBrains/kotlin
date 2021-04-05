@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.CONSTRUCTOR_CALL_NORMALIZATION_MODE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.INCLUDE_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LAMBDAS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
@@ -36,12 +39,17 @@ import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.configuration.JdkForeignAnnotationType.Companion.FOREIGN_ANNOTATIONS_SOURCES_PATH
+import org.jetbrains.kotlin.test.services.configuration.JdkForeignAnnotationType.Companion.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH
+import org.jetbrains.kotlin.test.services.configuration.JdkForeignAnnotationType.Companion.JSR_305_TEST_ANNOTATIONS_PATH
 import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
 
 class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
@@ -129,14 +137,57 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             configuration.addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
         }
 
+        if (JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS in registeredDirectives) {
+            val annotationPath = registeredDirectives[ForeignAnnotationsDirectives.ANNOTATIONS_PATH].singleOrNull()
+                ?: JdkForeignAnnotationType.Jdk8Annotations
+            val javaFilesDir = createTempDirectory().toFile().also {
+                File(annotationPath.path).copyRecursively(it)
+            }
+            val jar = compileJavaFilesLibraryToJar(
+                javaFilesDir.path,
+                "foreign-annotations",
+                assertions = JUnit5Assertions,
+                extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath }
+            )
+            configuration.addJvmClasspathRoot(jar)
+            configuration.addJvmClasspathRoot(ForTestCompileRuntime.jvmAnnotationsForTests())
+        }
+
+        if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {
+            val javaFilesDir = createTempDirectory().toFile().also {
+                File(JSR_305_TEST_ANNOTATIONS_PATH).copyRecursively(it)
+            }
+            val jar = compileJavaFilesLibraryToJar(
+                javaFilesDir.path,
+                "jsr-305-test-annotations",
+                assertions = JUnit5Assertions,
+                extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath }
+            )
+            configuration.addJvmClasspathRoot(jar)
+        }
+
         val isIr = module.targetBackend?.isIR == true
         configuration.put(JVMConfigurationKeys.IR, isIr)
 
         if (JvmEnvironmentConfigurationDirectives.SKIP_JAVA_SOURCES !in module.directives) {
-            module.javaFiles.takeIf { it.isNotEmpty() }?.let { javaFiles ->
+            val javaSourceFiles = module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY !in it.directives }
+            javaSourceFiles.takeIf { it.isNotEmpty() }?.let { javaFiles ->
                 javaFiles.forEach { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
                 configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
             }
+        }
+
+        val javaBinaryFiles = module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY in it.directives }
+
+        javaBinaryFiles.takeIf { it.isNotEmpty() }?.let { javaFiles ->
+            javaFiles.forEach { testServices.sourceFileProvider.getRealFileForBinaryFile(it) }
+            val jar = compileJavaFilesLibraryToJar(
+                testServices.sourceFileProvider.javaBinaryDirectory.path,
+                "java-binaries",
+                extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
+                assertions = JUnit5Assertions
+            )
+            configuration.addJvmClasspathRoot(jar)
         }
 
         configuration.registerModuleDependencies(module)

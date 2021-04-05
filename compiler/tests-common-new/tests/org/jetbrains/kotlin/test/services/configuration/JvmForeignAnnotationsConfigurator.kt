@@ -30,53 +30,21 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
     companion object {
         val FOREIGN_ANNOTATIONS_SOURCES_PATH = Annotations.path
         val FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH = Jdk8Annotations.path
+        val JSR_305_TEST_ANNOTATIONS_PATH = "compiler/testData/diagnostics/helpers/jsr305_test_annotations"
     }
 
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(ForeignAnnotationsDirectives)
 
-    @OptIn(ExperimentalStdlibApi::class)
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        val extraClassPath = buildList {
-            val foreignAnnotations = createJarWithForeignAnnotations(module)
-            addAll(foreignAnnotations)
-            addAll(compileTestAnnotations(foreignAnnotations))
-        }
-        configuration.addJvmClasspathRoots(extraClassPath)
-    }
-
-    protected fun createJarWithForeignAnnotations(module: TestModule): List<File> {
-        val directive = ForeignAnnotationsDirectives.ANNOTATIONS_PATH
-        val annotationsPath = module.directives.singleOrZeroValue(directive)
-            ?.path
-            ?: error("${directive.name} should be specified in test or test runner")
-
-        return listOf(
-            MockLibraryUtil.compileJavaFilesLibraryToJar(annotationsPath, "foreign-annotations", assertions = JUnit5Assertions),
-            ForTestCompileRuntime.jvmAnnotationsForTests()
-        )
-    }
-
-    protected fun compileTestAnnotations(extraClassPath: List<File>): List<File> =
-        listOf(
-            MockLibraryUtil.compileJavaFilesLibraryToJar(
-                TEST_ANNOTATIONS_SOURCE_PATH,
-                "test-foreign-annotations",
-                extraOptions = listOf("-Xallow-kotlin-package"),
-                extraClasspath = extraClassPath.map { it.path },
-                assertions = JUnit5Assertions
-            )
-        )
-
     override fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives): Map<AnalysisFlag<*>, Any?> {
-        val globalState = directives.singleOrZeroValue(JSR305_GLOBAL_REPORT) ?: ReportLevel.STRICT
+        val globalState = directives.singleOrZeroValue(JSR305_GLOBAL_REPORT) ?: ReportLevel.WARN
         val migrationState = directives.singleOrZeroValue(JSR305_MIGRATION_REPORT)
         val userAnnotationsState = directives[JSR305_SPECIAL_REPORT].mapNotNull {
             val (name, stateDescription) = it.split(":").takeIf { it.size == 2 } ?: return@mapNotNull null
             val state = ReportLevel.findByDescription(stateDescription) ?: return@mapNotNull null
             name to state
         }.toMap()
-        val jSpecifyReportLevel = directives.singleOrZeroValue(JSPECIFY_STATE) ?: ReportLevel.STRICT
+        val jSpecifyReportLevel = directives.singleOrZeroValue(JSPECIFY_STATE) ?: ReportLevel.WARN
         return mapOf(
             JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(
                 globalState,
