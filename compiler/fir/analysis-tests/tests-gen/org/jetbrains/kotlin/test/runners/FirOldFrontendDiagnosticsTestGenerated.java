@@ -7120,6 +7120,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("useTypeParameterOfExtensionProperty.kt")
+            public void testUseTypeParameterOfExtensionProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/useTypeParameterOfExtensionProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("useTypeParameterOfExtensionProperty_Disabled.kt")
+            public void testUseTypeParameterOfExtensionProperty_Disabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/useTypeParameterOfExtensionProperty_Disabled.kt");
+            }
+
+            @Test
             @TestMetadata("wrongCountOfParametersInGet.kt")
             public void testWrongCountOfParametersInGet() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/wrongCountOfParametersInGet.kt");
