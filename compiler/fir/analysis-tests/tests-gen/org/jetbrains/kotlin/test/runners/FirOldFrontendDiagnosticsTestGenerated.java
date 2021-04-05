@@ -34414,6 +34414,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("inlineConstructorOfArray.kt")
+            public void testInlineConstructorOfArray() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inline/inlineConstructorOfArray.kt");
+            }
+
+            @Test
             @TestMetadata("inlineOnlySuppressesNothingToInline.kt")
             public void testInlineOnlySuppressesNothingToInline() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inline/inlineOnlySuppressesNothingToInline.kt");

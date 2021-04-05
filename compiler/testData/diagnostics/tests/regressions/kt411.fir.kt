@@ -23,7 +23,7 @@ fun t2() : String {
         if (true) {
             return@l 1
         }
-        return "s"
+        <!RETURN_NOT_ALLOWED!>return<!> "s"
     }
     return "s"
 }
@@ -32,10 +32,10 @@ fun t3() : String {
     invoker(
     l@{
         if (true) {
-            return@t3 "1"
+            <!RETURN_NOT_ALLOWED!>return@t3<!> "1"
         }
         else {
-            return 2
+            <!RETURN_NOT_ALLOWED!>return<!> 2
         }
         return@l 0
     }
@@ -47,7 +47,7 @@ fun t3() : String {
     )
     invoker(
     {
-        return "0"
+        <!RETURN_NOT_ALLOWED!>return<!> "0"
     }
     )
     return "2"

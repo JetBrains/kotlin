@@ -184,6 +184,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_VISIBIL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
@@ -274,7 +275,6 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP, "'break' and 'continue' are only allowed inside a loop")
             map.put(NOT_A_LOOP_LABEL, "The label does not denote a loop") // *
             map.put(VARIABLE_EXPECTED, "Variable expected")
-            map.put(RETURN_NOT_ALLOWED, "'return' is not allowed here")
             map.put(DELEGATION_IN_INTERFACE, "Interfaces cannot use delegation")
             map.put(NESTED_CLASS_NOT_ALLOWED, "{0} is not allowed here", TO_STRING)
 
@@ -741,6 +741,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             // Type alias
             map.put(TOPLEVEL_TYPEALIASES_ONLY, "Nested and local type aliases are not supported")
+
+            // Returns
+            map.put(RETURN_NOT_ALLOWED, "'return' is not allowed here")
+            map.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY, "Returns are not allowed for functions with expression body. Use block body in '{...}'")
 
             // Extended checkers group
             map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")

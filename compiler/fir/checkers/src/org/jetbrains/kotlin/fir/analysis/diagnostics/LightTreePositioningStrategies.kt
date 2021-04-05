@@ -497,13 +497,17 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val RETURN_KEYWORD = object : LightTreePositioningStrategy() {
+    val RETURN_WITH_LABEL = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
+            val labeledExpression = tree.findChildByType(node, KtNodeTypes.LABEL_QUALIFIER)
+            if (labeledExpression != null) {
+                return markRange(node, labeledExpression, startOffset, endOffset, tree, node)
+            }
             return markElement(tree.returnKeyword(node) ?: node, startOffset, endOffset, tree)
         }
     }

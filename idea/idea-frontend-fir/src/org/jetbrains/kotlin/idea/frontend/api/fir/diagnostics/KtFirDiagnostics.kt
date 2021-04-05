@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
+import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -95,10 +96,6 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class VariableExpected : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = VariableExpected::class
-    }
-
-    abstract class ReturnNotAllowed : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = ReturnNotAllowed::class
     }
 
     abstract class DelegationInInterface : KtFirDiagnostic<PsiElement>() {
@@ -1147,6 +1144,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class UselessCallOnNotNull : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = UselessCallOnNotNull::class
+    }
+
+    abstract class ReturnNotAllowed : KtFirDiagnostic<KtReturnExpression>() {
+        override val diagnosticClass get() = ReturnNotAllowed::class
+    }
+
+    abstract class ReturnInFunctionWithExpressionBody : KtFirDiagnostic<KtReturnExpression>() {
+        override val diagnosticClass get() = ReturnInFunctionWithExpressionBody::class
     }
 
 }

@@ -59,7 +59,6 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error<FirSourceElement, PsiElement>()
         val NOT_A_LOOP_LABEL by error<FirSourceElement, PsiElement>()
         val VARIABLE_EXPECTED by error<FirSourceElement, PsiElement>()
-        val RETURN_NOT_ALLOWED by error<FirSourceElement, PsiElement>()
         val DELEGATION_IN_INTERFACE by error<FirSourceElement, PsiElement>()
         val NESTED_CLASS_NOT_ALLOWED by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("declaration")
@@ -595,6 +594,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val VARIABLE_INITIALIZER_IS_REDUNDANT by warning<FirSourceElement, PsiElement>()
         val VARIABLE_NEVER_READ by warning<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val USELESS_CALL_ON_NOT_NULL by warning<FirSourceElement, PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
+    }
+
+    val RETURNS by object : DiagnosticGroup("Returns") {
+        val RETURN_NOT_ALLOWED by error<FirSourceElement, KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
+        val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY by error<FirSourceElement, KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
     }
 }
 

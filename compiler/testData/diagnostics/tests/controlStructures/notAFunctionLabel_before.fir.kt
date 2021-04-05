@@ -31,7 +31,7 @@ fun testAnnotatedLambdaLabel() =
 
 fun testLambdaMultipleLabels1() =
     lambda1@ lambda2@ {
-        return@lambda1
+        <!RETURN_NOT_ALLOWED!>return@lambda1<!>
     }
 
 fun testLambdaMultipleLabels2() =
@@ -46,7 +46,7 @@ fun testAnonymousFunctionLabel() =
 
 fun testLoopLabelInReturn(xs: List<Int>) {
     L@ for (x in xs) {
-        if (x > 0) return@L
+        if (x > 0) <!RETURN_NOT_ALLOWED!>return@L<!>
     }
 }
 

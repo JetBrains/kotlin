@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
+import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -76,7 +77,6 @@ object FirErrors {
     val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error0<FirSourceElement, PsiElement>()
     val NOT_A_LOOP_LABEL by error0<FirSourceElement, PsiElement>()
     val VARIABLE_EXPECTED by error0<FirSourceElement, PsiElement>()
-    val RETURN_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
     val DELEGATION_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
     val NESTED_CLASS_NOT_ALLOWED by error1<FirSourceElement, KtNamedDeclaration, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
@@ -358,5 +358,9 @@ object FirErrors {
     val VARIABLE_INITIALIZER_IS_REDUNDANT by warning0<FirSourceElement, PsiElement>()
     val VARIABLE_NEVER_READ by warning0<FirSourceElement, KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val USELESS_CALL_ON_NOT_NULL by warning0<FirSourceElement, PsiElement>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
+
+    // Returns
+    val RETURN_NOT_ALLOWED by error0<FirSourceElement, KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
+    val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY by error0<FirSourceElement, KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
 
 }

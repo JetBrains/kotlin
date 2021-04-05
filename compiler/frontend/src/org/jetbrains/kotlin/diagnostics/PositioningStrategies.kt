@@ -421,12 +421,6 @@ object PositioningStrategies {
         }
     }
 
-    val RETURN_KEYWORD: PositioningStrategy<KtReturnExpression> = object : PositioningStrategy<KtReturnExpression>() {
-        override fun mark(element: KtReturnExpression): List<TextRange> {
-            return markElement(element.returnKeyword)
-        }
-    }
-
     private class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PositioningStrategy<KtModifierListOwner>() {
         override fun mark(element: KtModifierListOwner): List<TextRange> {
             val modifierList = element.modifierList

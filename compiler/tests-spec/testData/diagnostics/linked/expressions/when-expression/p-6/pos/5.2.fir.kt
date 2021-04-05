@@ -225,8 +225,8 @@ fun case_23(value_1: Nothing) {
 
 // TESTCASE NUMBER: 24
 fun case_24(value_1: Nothing?) = when (value_1) {
-    throw Exception(), return "" -> ""
-    null, return return return "", throw throw throw Exception() -> ""
+    throw Exception(), <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> "" -> ""
+    null, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> "", throw throw throw Exception() -> ""
     else -> ""
 }
 
@@ -237,8 +237,8 @@ fun case_24(value_1: Nothing?) = when (value_1) {
  */
 fun case_25(value_1: Boolean) = when (value_1) {
     true -> {}
-    throw Exception(), return -> {}
-    false, return return return, throw throw throw Exception() -> {}
+    throw Exception(), <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> -> {}
+    false, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!>, throw throw throw Exception() -> {}
 }
 
 /*

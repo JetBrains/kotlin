@@ -8,12 +8,12 @@ fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return 1}
 fun unitUnitReturn() : Unit {return Unit}
-fun test1() : Any = {return}
+fun test1() : Any = {<!RETURN_NOT_ALLOWED!>return<!>}
 fun test2() : Any = a@ {return@a 1}
 fun test3() : Any { return }
-fun test4(): ()-> Unit = { return@test4 }
+fun test4(): ()-> Unit = { <!RETURN_NOT_ALLOWED!>return@test4<!> }
 fun test5(): Any = l@{ return@l }
-fun test6(): Any = {return 1}
+fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return<!> 1}
 
 fun bbb() {
     return 1
@@ -137,7 +137,7 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
 fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) {} else {}
 fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) {} else 2
 
-val a = return 1
+val a = <!RETURN_NOT_ALLOWED!>return<!> 1
 
 class A() {
 }

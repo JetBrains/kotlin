@@ -259,6 +259,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");
     }
 
+    @TestMetadata("labeledReturnFromNotLabeledUnnamedFunction.kt")
+    public void testLabeledReturnFromNotLabeledUnnamedFunction() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/labeledReturnFromNotLabeledUnnamedFunction.kt");
+    }
+
     @TestMetadata("lambdaArgInScopeFunction.kt")
     public void testLambdaArgInScopeFunction() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/lambdaArgInScopeFunction.kt");

@@ -168,8 +168,8 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.ARRAY_ACCESS
     )
 
-    val RETURN_KEYWORD = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.RETURN_KEYWORD,
-        PositioningStrategies.RETURN_KEYWORD
+    val RETURN_WITH_LABEL = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.RETURN_WITH_LABEL,
+        PositioningStrategies.RETURN_WITH_LABEL
     )
 }

@@ -8,7 +8,7 @@ fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return 1}
 fun unitUnitReturn() : Unit {return Unit}
-fun test1() : Any = { return }
+fun test1() : Any = { <error descr="[RETURN_NOT_ALLOWED] 'return' is not allowed here">return</error> }
 fun test2() : Any = a@ {return@a 1}
 fun test3() : Any { return }
 
@@ -133,7 +133,7 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
 fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) {} else {}
 fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) {} else 2
 
-val a = return 1
+val a = <error descr="[RETURN_NOT_ALLOWED] 'return' is not allowed here">return</error> 1
 
 class A() {
 }

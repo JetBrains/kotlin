@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 inline fun <R> doCall(p: () -> R) {
     p()
 }

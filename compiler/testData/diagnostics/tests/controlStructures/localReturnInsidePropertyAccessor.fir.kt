@@ -10,7 +10,7 @@ fun f() = object : ClassData {
 fun g() = object : ClassData {
     init {
         if (true) {
-            return 0
+            <!RETURN_NOT_ALLOWED!>return<!> 0
         }
     }
 
