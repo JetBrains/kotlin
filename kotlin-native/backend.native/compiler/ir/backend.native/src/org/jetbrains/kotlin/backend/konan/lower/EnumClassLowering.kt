@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENUM
+import org.jetbrains.kotlin.backend.konan.MemoryModel
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -301,6 +302,12 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                         }
 
                         else -> error("Unexpected initializer: $initializer")
+                    }
+                }
+                // Needed for legacy MM targets that do not support threads.
+                if (this@EnumClassLowering.context.memoryModel != MemoryModel.EXPERIMENTAL) {
+                    +irCall(this@EnumClassLowering.context.ir.symbols.freeze, listOf(arrayType)).apply {
+                        extensionReceiver = irGet(receiver)
                     }
                 }
             }
