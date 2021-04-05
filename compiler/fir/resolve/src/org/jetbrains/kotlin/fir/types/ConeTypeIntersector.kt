@@ -74,7 +74,20 @@ object ConeTypeIntersector {
         // TODO
         // IntegerLiteralTypeConstructor.findIntersectionType(filteredEqualTypes)?.let { return it }
 
-        val filteredSuperAndEqualTypes = filterTypes(filteredEqualTypes) { a, b ->
+        /*
+         * For the case like it(ft(String..String?), String?), where ft(String..String?) == String?, we prefer to _keep_ flexible type.
+         * When a == b, the former, i.e., the one in the list will be filtered out, and the other one will remain.
+         * So, here, we sort the interim list such that flexible types appear later.
+         */
+        val sortedEqualTypes = filteredEqualTypes.sortedWith { p0, p1 ->
+            when {
+                p0 is ConeFlexibleType && p1 is ConeFlexibleType -> 0
+                p0 is ConeFlexibleType -> 1
+                p1 is ConeFlexibleType -> -1
+                else -> 0
+            }
+        }
+        val filteredSuperAndEqualTypes = filterTypes(sortedEqualTypes) { a, b ->
             AbstractTypeChecker.equalTypes(context, a, b)
         }
         assert(filteredSuperAndEqualTypes.isNotEmpty(), errorMessage)

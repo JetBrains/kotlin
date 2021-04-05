@@ -14,8 +14,8 @@ class J {
 fun bar() {
     var v: String?
     v = J.foo()
-    v<!UNSAFE_CALL!>.<!>length
-    <!INAPPLICABLE_CANDIDATE!>gav<!>(v)
+    v.length
+    gav(v)
 
     var l: List<String>?
     l = J.bar()
