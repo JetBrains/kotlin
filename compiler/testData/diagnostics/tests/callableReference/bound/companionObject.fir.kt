@@ -28,10 +28,10 @@ fun test() {
     checkSubtype<() -> String>(r4)
 
     val r5 = (C)::foo
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><() -> String>(r5)
+    checkSubtype<() -> String>(<!ARGUMENT_TYPE_MISMATCH!>r5<!>)
 
     val r6 = (test.C)::foo
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><() -> String>(r6)
+    checkSubtype<() -> String>(<!ARGUMENT_TYPE_MISMATCH!>r6<!>)
 
     val c = C.Companion
     val r7 = c::foo

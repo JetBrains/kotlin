@@ -38,5 +38,5 @@ class W: B(), Z
 
 fun test2(w: W) {
     eatAString(w)
-    <!INAPPLICABLE_CANDIDATE!>eatAStringN<!>(w)
+    eatAStringN(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
 }

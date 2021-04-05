@@ -19,5 +19,5 @@ public class Y extends X<A> {
 
 fun main() {
     checkSubtype<Any>(Y().fooN())
-    Y().<!INAPPLICABLE_CANDIDATE!>barN<!>(null);
+    Y().barN(<!ARGUMENT_TYPE_MISMATCH!>null<!>);
 }

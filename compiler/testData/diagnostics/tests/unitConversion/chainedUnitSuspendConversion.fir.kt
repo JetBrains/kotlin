@@ -9,6 +9,6 @@ abstract class SubInt : () -> Int
 
 fun test(g: () -> Double, s: SubInt) {
     foo(::bar)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(g)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(s)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }

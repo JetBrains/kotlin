@@ -33,9 +33,9 @@ fun test1(outA: Out<A>, inB: In<B>) {
 fun <T> bar(o: Out<T>, i: In<T>): Two<T, T> = throw Exception("$o $i")
 
 fun test2(outA: Out<A>, inC: In<C>) {
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(outA, inC)
+    bar(outA, <!ARGUMENT_TYPE_MISMATCH!>inC<!>)
 
-    val b: Two<A, B> = <!INAPPLICABLE_CANDIDATE!>bar<!>(outA, inC)
+    val b: Two<A, B> = bar(outA, <!ARGUMENT_TYPE_MISMATCH!>inC<!>)
     use(b)
 }
 

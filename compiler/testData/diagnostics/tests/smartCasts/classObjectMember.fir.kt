@@ -15,7 +15,7 @@ class B {
 fun test() {
     if (A.x != null) {
         useInt(A.x)
-        <!INAPPLICABLE_CANDIDATE!>useInt<!>(B.x)
+        useInt(<!ARGUMENT_TYPE_MISMATCH!>B.x<!>)
     }
 }
 

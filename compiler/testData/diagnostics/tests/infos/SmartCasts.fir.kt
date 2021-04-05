@@ -189,11 +189,11 @@ fun returnFunctionLiteralExpressionBody(a: Any?): Function0<Int> =
 
 fun mergeSmartCasts(a: Any?) {
   if (a is String || a is Int) {
-    a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("")
+    a.compareTo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     a.toString()
   }
   if (a is Int || a is String) {
-    a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("")
+    a.compareTo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
   }
   when (a) {
     is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")

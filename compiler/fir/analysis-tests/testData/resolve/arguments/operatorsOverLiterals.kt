@@ -31,33 +31,33 @@ fun test_3() {
 fun takeByte(b: Byte) {}
 
 fun test_4() {
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1 + 1)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1 + 127)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1 - 1)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(-100 - 100)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(10 * 10)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(100 * 100)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1 + 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1 + 127<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1 - 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>-100 - 100<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>10 * 10<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>100 * 100<!>)
     <!UNRESOLVED_REFERENCE!>taleByte<!>(10 / 10)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(100 % 10)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1000 % 10)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1000 and 100)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(128 and 511)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(100 or 100)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1000 or 0)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(511 xor 511)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(512 xor 511)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>100 % 10<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1000 % 10<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1000 and 100<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>128 and 511<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>100 or 100<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1000 or 0<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>511 xor 511<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>512 xor 511<!>)
 }
 
 fun test_5() {
     takeByte(-1)
     takeByte(+1)
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1.inv())
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1.inv()<!>)
 }
 
 fun test_6() {
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(run { 127 + 1 })
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1 + run { 1 })
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(run { 1 + 1 })
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>run { 127 + 1 }<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1 + run { 1 }<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>run { 1 + 1 }<!>)
     1 + 1
     run { 1 }
     1 + run { 1 }

@@ -43,7 +43,7 @@ fun test() {
 
     val (_, `_`) = A()
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(_, y)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>_<!>, y)
 
     val (unused, _) = A()
 }

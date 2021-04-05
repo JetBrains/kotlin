@@ -31,9 +31,9 @@ fun test() {
 
     val g: Byte = either(1, 300)
 
-    <!INAPPLICABLE_CANDIDATE!>other<!>(11)
+    other(<!ARGUMENT_TYPE_MISMATCH!>11<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>otherGeneric<!>(1)
+    otherGeneric(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 
     val r = either(1, "")
     r checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }
@@ -48,7 +48,7 @@ interface Inv<T>
 fun <T> exactBound(t: T, l: Inv<T>): T = throw Exception("$t $l")
 
 fun testExactBound(invS: Inv<String>, invI: Inv<Int>, invB: Inv<Byte>) {
-    <!INAPPLICABLE_CANDIDATE!>exactBound<!>(1, invS)
+    exactBound(1, <!ARGUMENT_TYPE_MISMATCH!>invS<!>)
     exactBound(1, invI)
 
     val b = exactBound(1, invB)
@@ -72,7 +72,7 @@ interface Contr<in T>
 fun <T> upperBound(t: T, l: Contr<T>): T = throw Exception("$t $l")
 
 fun testUpperBound(contrS: Contr<String>, contrB: Contr<Byte>, contrN: Contr<Number>) {
-    <!INAPPLICABLE_CANDIDATE!>upperBound<!>(1, contrS)
+    upperBound(1, <!ARGUMENT_TYPE_MISMATCH!>contrS<!>)
 
     val n = upperBound(1, contrN)
     n checkType { _<Int>() }

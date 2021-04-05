@@ -7,7 +7,7 @@ fun foo1() {}
 @Anno(x = ["a", "b"], y = "a")
 fun foo2() {}
 
-<!INAPPLICABLE_CANDIDATE!>@Anno(x = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>arrayOf("a")<!>, <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>arrayOf("b")<!>)<!>, y = "a")<!>
+@Anno(x = <!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>arrayOf("a")<!>, <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>arrayOf("b")<!>)<!>, y = "a")
 fun foo3() {}
 
 @Anno(x = arrayOf("a", "b"), y = "a")

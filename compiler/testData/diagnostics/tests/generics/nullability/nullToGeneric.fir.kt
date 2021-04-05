@@ -6,7 +6,7 @@ fun <T> foo(): T {
     val x1: T = null
     val x2: T? = null
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!><T>(null)
+    bar<T>(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
     bar<T?>(null)
 
     return null
@@ -23,7 +23,7 @@ class A<F> {
         val x1: F = null
         val x2: F? = null
 
-        <!INAPPLICABLE_CANDIDATE!>xyz<!>(null)
+        xyz(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
         bar<F?>(null)
 
         return null

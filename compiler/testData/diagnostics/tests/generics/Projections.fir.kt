@@ -37,16 +37,16 @@ fun testInOut() {
 
     Inv<Int>().f(1)
     (null as Inv<in Int>).f(1)
-    (null as Inv<out Int>).<!INAPPLICABLE_CANDIDATE!>f<!>(1) // !!
-    (null as Inv<*>).<!INAPPLICABLE_CANDIDATE!>f<!>(1) // !!
+    (null as Inv<out Int>).f(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
+    (null as Inv<*>).f(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().inf(1)
     (null as Inv<in Int>).inf(1)
-    (null as Inv<out Int>).<!INAPPLICABLE_CANDIDATE!>inf<!>(1) // !!
-    (null as Inv<*>).<!INAPPLICABLE_CANDIDATE!>inf<!>(1) // !!
+    (null as Inv<out Int>).inf(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
+    (null as Inv<*>).inf(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().outf()
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>((null as Inv<in Int>).outf()) // Type mismatch
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>(null as Inv<in Int>).outf()<!>) // Type mismatch
     (null as Inv<out Int>).outf()
     (null as Inv<*>).outf()
 

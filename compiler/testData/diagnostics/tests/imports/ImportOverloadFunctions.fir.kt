@@ -37,7 +37,7 @@ fun test() {
 
     two()
     two(1)
-    <!INAPPLICABLE_CANDIDATE!>two<!>("")
+    two(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
     all()
     all(1)

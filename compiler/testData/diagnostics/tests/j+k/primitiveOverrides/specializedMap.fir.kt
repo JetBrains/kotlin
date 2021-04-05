@@ -100,7 +100,7 @@ public class SpecializedMap extends AbstractSpecializedMap {
 // FILE: main.kt
 fun foo(x: SpecializedMap) {
     x.containsKey(1)
-    x.<!INAPPLICABLE_CANDIDATE!>containsKey<!>(null)
+    x.containsKey(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
 
     x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>get<!>(2)
     x.<!NONE_APPLICABLE!>get<!>(null)

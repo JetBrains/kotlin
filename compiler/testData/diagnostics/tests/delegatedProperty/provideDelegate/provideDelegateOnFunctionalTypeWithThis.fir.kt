@@ -13,7 +13,7 @@ fun wrong(arg: Wrong) {}
 class Wrong
 
 class Right {
-    val prop: () -> Unit by ::<!UNRESOLVED_REFERENCE!>wrong<!>
+    val prop: () -> Unit by <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>::wrong<!>
 }
 
 fun box(): String {

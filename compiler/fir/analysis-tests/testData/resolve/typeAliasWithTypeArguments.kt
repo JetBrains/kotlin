@@ -90,5 +90,5 @@ fun test_7(a: A, inv1: Invariant1<A>, inv2: Invariant1<in A>, inv3: Invariant1<o
 
     inv1.take(a)
     inv2.take(a)
-    inv3.<!INAPPLICABLE_CANDIDATE!>take<!>(a)
+    inv3.take(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 }

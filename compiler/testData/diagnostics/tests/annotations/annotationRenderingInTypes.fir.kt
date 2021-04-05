@@ -13,7 +13,7 @@ annotation class Ann
 fun <@Ann R : @Ann Any> f3(a: Array<@Ann R>): Array<@Ann R?> =  null!!
 
 fun test2(a: @Ann Array<in @Ann Int>) {
-    val r: Array<in Int?> = <!INAPPLICABLE_CANDIDATE!>f3<!>(a)
+    val r: Array<in Int?> = f3(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 }
 
 

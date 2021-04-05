@@ -13,7 +13,7 @@ fun case_2() {
     127 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     127 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(128)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>128<!>)
     128 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     128 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     128 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
@@ -22,7 +22,7 @@ fun case_2() {
     -128 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     -128 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(-129)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>-129<!>)
     -129 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     -129 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     -129 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
@@ -30,24 +30,24 @@ fun case_2() {
 
 // TESTCASE NUMBER: 3
 fun case_3() {
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(32767)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>32767<!>)
     32767 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     32767 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     32767 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(32768)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(32768)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>32768<!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!>32768<!>)
     32768 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     32768 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     32768 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(-32768)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>-32768<!>)
     -32768 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     -32768 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     -32768 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(-32769)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(-32769)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>-32769<!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!>-32769<!>)
     -32769 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     -32769 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     -32769 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
@@ -55,28 +55,28 @@ fun case_3() {
 
 // TESTCASE NUMBER: 4
 fun case_4() {
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(2147483647)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(2147483647)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>2147483647<!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!>2147483647<!>)
     2147483647 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     2147483647 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     2147483647 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(2147483648)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(2147483648)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(2147483648)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>2147483648<!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!>2147483648<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>2147483648<!>)
     2147483648 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     2147483648 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     2147483648 checkType { <!NONE_APPLICABLE!>check<!><Int>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(-2147483648)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(-2147483648)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>-2147483648<!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!>-2147483648<!>)
     -2147483648 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     -2147483648 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     -2147483648 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(-2147483649)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(-2147483649)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(-2147483649)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>-2147483649<!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!>-2147483649<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>-2147483649<!>)
     -2147483649 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     -2147483649 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     -2147483649 checkType { <!NONE_APPLICABLE!>check<!><Int>() }
@@ -84,16 +84,16 @@ fun case_4() {
 
 // TESTCASE NUMBER: 5
 fun case_5() {
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(9223372036854775807)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(9223372036854775807)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(9223372036854775807)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>9223372036854775807<!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!>9223372036854775807<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>9223372036854775807<!>)
     9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Int>() }
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(-9223372036854775807)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(-9223372036854775807)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(-9223372036854775807)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!>-9223372036854775807<!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!>-9223372036854775807<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>-9223372036854775807<!>)
     -9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     -9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
     -9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Int>() }
@@ -101,10 +101,10 @@ fun case_5() {
 
 // TESTCASE NUMBER: 6
 fun case_6() {
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Byte>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!>)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Short>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!>)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!>)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Long>(<!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!>)
+    checkSubtype<Byte>(<!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!><!>)
+    checkSubtype<Short>(<!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!><!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!><!>)
+    checkSubtype<Long>(<!ARGUMENT_TYPE_MISMATCH!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!><!>)
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!NONE_APPLICABLE!>check<!><Byte>() }
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!NONE_APPLICABLE!>check<!><Short>() }
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!><!ILLEGAL_CONST_EXPRESSION!>100000000000000000000000000000000<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!NONE_APPLICABLE!>check<!><Int>() }

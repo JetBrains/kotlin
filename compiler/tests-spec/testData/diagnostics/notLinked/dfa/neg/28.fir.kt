@@ -6,6 +6,6 @@
 fun <T : List<T>> Inv<out T>.case_1() {
     if (this is MutableList<*>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T> & kotlin.collections.MutableList<*> & Inv<out T>")!>this<!>
-        <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T> & kotlin.collections.MutableList<*> & Inv<out T>")!>this<!>[0]<!> = <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T> & kotlin.collections.MutableList<*> & Inv<out T>")!>this<!>[1]
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T> & kotlin.collections.MutableList<*> & Inv<out T>")!>this<!>[0] = <!ARGUMENT_TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T> & kotlin.collections.MutableList<*> & Inv<out T>")!>this<!>[1]<!>
     }
 }

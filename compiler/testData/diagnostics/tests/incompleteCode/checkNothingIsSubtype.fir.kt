@@ -7,7 +7,7 @@ interface A<T>
 fun <T> infer(a: A<T>) : T {}
 
 fun test(nothing: Nothing?) {
-    val i = <!INAPPLICABLE_CANDIDATE!>infer<!>(nothing)
+    val i = infer(<!ARGUMENT_TYPE_MISMATCH!>nothing<!>)
 }
 
 fun sum(a : IntArray) : Int {

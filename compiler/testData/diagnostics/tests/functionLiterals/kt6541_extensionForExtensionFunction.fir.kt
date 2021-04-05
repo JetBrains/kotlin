@@ -7,4 +7,4 @@ object Z {
     infix fun add(b : Foo.() -> Unit) : Z = Z
 }
 
-val t2 = Z <!INAPPLICABLE_CANDIDATE!>add<!> { } <!TOO_MANY_ARGUMENTS!>{ }<!>
+val t2 = Z add <!ARGUMENT_TYPE_MISMATCH!>{ } <!TOO_MANY_ARGUMENTS!>{ }<!><!>

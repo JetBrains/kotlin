@@ -15,8 +15,8 @@ fun test(f: () -> String, g: () -> Nothing, h: () -> Nothing?, s: SubInt) {
     foo({ TODO() }.freeze())
     foo(g)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(h)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>h<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(f)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(s)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }

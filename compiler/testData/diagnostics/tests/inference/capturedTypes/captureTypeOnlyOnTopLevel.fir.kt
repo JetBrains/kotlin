@@ -4,7 +4,7 @@
 fun <T> foo(array: Array<Array<T>>): Array<Array<T>> = array
 
 fun test(array: Array<Array<out Int>>) {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(array)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>array<!>)
 
-    val f: Array<out Array<out Int>> = <!INAPPLICABLE_CANDIDATE!>foo<!>(array)
+    val f: Array<out Array<out Int>> = foo(<!ARGUMENT_TYPE_MISMATCH!>array<!>)
 }

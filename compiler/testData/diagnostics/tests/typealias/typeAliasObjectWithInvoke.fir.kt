@@ -20,5 +20,5 @@ val test2 = WI(<!TOO_MANY_ARGUMENTS!>null<!>)
 
 val test3 = CWI()
 val test4 = CWI("")
-val test5 = <!INAPPLICABLE_CANDIDATE!>CWI<!>(null)
-val test5a = <!INAPPLICABLE_CANDIDATE!>ClassWithCompanionObjectWithInvoke<!>(null)
+val test5 = CWI(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
+val test5a = ClassWithCompanionObjectWithInvoke(<!ARGUMENT_TYPE_MISMATCH!>null<!>)

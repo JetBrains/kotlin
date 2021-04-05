@@ -9,5 +9,5 @@ fun cr() {}
 
 fun test() {
     <!INAPPLICABLE_CANDIDATE!>takeIt<!>(42, ::<!UNRESOLVED_REFERENCE!>cr<!>)
-    <!INAPPLICABLE_CANDIDATE!>takeIt<!>(42, { })
+    takeIt(42, <!ARGUMENT_TYPE_MISMATCH!>{ }<!>)
 }

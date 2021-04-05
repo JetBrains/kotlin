@@ -10,9 +10,9 @@ compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:74: error: unresolv
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:7:20: error: 'this' is not defined in this context
 class B(other: B = this)
                    ^
-compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:10:27: error: inapplicable candidate(s): /C.C
-    constructor(x: Int) : this({
-                          ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:12:9: error: argument type mismatch: actual type is ERROR CLASS: Cannot access ''<this>'' before superclass constructor has been called but TypeVariable(_L) was expected
+        this
+        ^
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:12:9: error: cannot access '<this>' before superclass constructor has been called
         this
         ^

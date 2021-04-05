@@ -126,7 +126,7 @@ fun testMembersFromSupertypes() {
     fromI()
 
     genericFromI(3)
-    <!INAPPLICABLE_CANDIDATE!>genericFromI<!>("a")
+    genericFromI(<!ARGUMENT_TYPE_MISMATCH!>"a"<!>)
 
     own
 }

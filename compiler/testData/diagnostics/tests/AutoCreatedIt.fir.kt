@@ -13,7 +13,7 @@ fun text() {
     <!INAPPLICABLE_CANDIDATE!>bar2<!> {}
     bar2 {1}
     bar2 {<!UNRESOLVED_REFERENCE!>it<!>}
-    <!INAPPLICABLE_CANDIDATE!>bar2<!> {it -> it}
+    bar2 {it -> <!ARGUMENT_TYPE_MISMATCH!>it<!>}
 }
 
 fun bar(f :  (Int, Int) -> Int) {}

@@ -2,7 +2,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test(a: Int, b: Boolean) {
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(a.<!INAPPLICABLE_CANDIDATE!>foo<!>(b))
+    bar(a.foo(<!ARGUMENT_TYPE_MISMATCH!>b<!>))
 }
 
 fun <T, R> T.foo(l: (T) -> R): R = TODO()

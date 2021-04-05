@@ -16,11 +16,11 @@ fun <K> id(arg: K): K = arg
 
 fun test1(arg: Derived) {
     id<Inv<Base>>(Inv(arg))
-    <!INAPPLICABLE_CANDIDATE!>id<!><Inv<Base>>(InvExact(arg))
+    id<Inv<Base>>(<!ARGUMENT_TYPE_MISMATCH!>InvExact(arg)<!>)
 }
 
 fun <R> Inv<@Exact R>.select(first: R, second: R): R = TODO()
 
 fun test2(derived: Derived, other: Other) {
-    Inv(derived).<!INAPPLICABLE_CANDIDATE!>select<!>(derived, other)
+    Inv(derived).select(derived, <!ARGUMENT_TYPE_MISMATCH!>other<!>)
 }

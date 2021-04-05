@@ -10,5 +10,5 @@ fun test(identifier: SomeClass, fn: String.() -> Unit) {
     <!NONE_APPLICABLE!>identifier<!>()
     identifier(123<!NO_VALUE_FOR_PARAMETER!>)<!>
     identifier(1, <!TOO_MANY_ARGUMENTS!>2<!>)
-    1.<!INAPPLICABLE_CANDIDATE!>fn<!>()
+    <!ARGUMENT_TYPE_MISMATCH!>1<!>.fn()
 }

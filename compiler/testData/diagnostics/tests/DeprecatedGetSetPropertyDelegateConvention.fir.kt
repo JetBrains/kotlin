@@ -40,8 +40,8 @@ class Example {
     var d by CustomDelegate3()
 
     fun test() {
-        <!INAPPLICABLE_CANDIDATE!>requireString<!>(a)
-        <!INAPPLICABLE_CANDIDATE!>requireString<!>(aval)
+        requireString(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+        requireString(<!ARGUMENT_TYPE_MISMATCH!>aval<!>)
         requireString(b)
         requireInt(c)
         requireInt(d)

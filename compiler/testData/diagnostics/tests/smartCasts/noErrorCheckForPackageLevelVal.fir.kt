@@ -11,14 +11,14 @@ val i: Int? = 1
 class A(val i: Int?) {
     fun testUseFromClass() {
         if (foo.i != null) {
-            <!INAPPLICABLE_CANDIDATE!>useInt<!>(i)
+            useInt(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
         }
     }
 }
 
 fun testUseFromOtherPackage() {
     if (bar.i != null) {
-        <!INAPPLICABLE_CANDIDATE!>useInt<!>(i)
+        useInt(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
     }
 }
 

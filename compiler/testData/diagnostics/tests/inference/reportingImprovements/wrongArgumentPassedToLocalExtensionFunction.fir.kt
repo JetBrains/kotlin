@@ -2,20 +2,20 @@
 // WITH_RUNTIME
 
 fun Runnable.test(f: Runnable.(Int) -> Unit) {
-    <!INAPPLICABLE_CANDIDATE!>f<!>("")
+    f(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }
 
 fun test(f: Runnable.(Int) -> Unit, runnable: Runnable) {
     with (runnable) {
-        <!INAPPLICABLE_CANDIDATE!>f<!>("")
+        f(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     }
 }
 
 fun Int.test(f: String.(Int) -> Unit) {
     f("", 0)
-    <!INAPPLICABLE_CANDIDATE!>f<!>("")
+    <!ARGUMENT_TYPE_MISMATCH!>f<!>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     with("") {
         f(0)
-        <!INAPPLICABLE_CANDIDATE!>f<!>(0.0)
+        f(<!ARGUMENT_TYPE_MISMATCH!>0.0<!>)
     }
 }

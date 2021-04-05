@@ -1,6 +1,6 @@
 // KT-45010
 fun foo(map: MutableMap<Int, String>) {
-    map.<!INAPPLICABLE_CANDIDATE!>getOrPut<!>("Not an Int") {
+    map.getOrPut(<!ARGUMENT_TYPE_MISMATCH!>"Not an Int"<!>) {
         "Hello" + " world"
     }
 }

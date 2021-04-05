@@ -15,7 +15,7 @@ public class J {
 
 fun test() {
     val n = J.staticN
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(n)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>n<!>)
     J.staticNN = n
     if (n != null) {
         foo(n)

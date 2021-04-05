@@ -9,7 +9,7 @@ class GenericController<T> {
 fun <S> generate(g: suspend GenericController<S>.(S) -> Unit): S = TODO()
 
 val test1 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(4)
+    yield(<!ARGUMENT_TYPE_MISMATCH!>4<!>)
 }
 
 val test2 = generate<Int> {

@@ -10,11 +10,11 @@ class X {
 
 
 fun testStar(y: X.Y<*>, t: Any) {
-    X().<!INAPPLICABLE_CANDIDATE!>foo<!>(y, t)
+    X().foo(y, <!ARGUMENT_TYPE_MISMATCH!>t<!>)
 }
 
 fun testOut(y: X.Y<out Any>, t: Any) {
-    X().<!INAPPLICABLE_CANDIDATE!>foo<!>(y, t)
+    X().foo(y, <!ARGUMENT_TYPE_MISMATCH!>t<!>)
 }
 
 fun testIn(y: X.Y<in Any>, t: Any) {
@@ -22,9 +22,9 @@ fun testIn(y: X.Y<in Any>, t: Any) {
 }
 
 fun <T : Any> testWithParameter(y: X.Y<T>, t: Any) {
-    X().<!INAPPLICABLE_CANDIDATE!>foo<!>(y, t)
+    X().foo(y, <!ARGUMENT_TYPE_MISMATCH!>t<!>)
 }
 
 fun <T : Any> testWithCapturedParameter(y: X.Y<out T>, t: Any) {
-    X().<!INAPPLICABLE_CANDIDATE!>foo<!>(y, t)
+    X().foo(y, <!ARGUMENT_TYPE_MISMATCH!>t<!>)
 }

@@ -32,9 +32,9 @@ fun <T> copy3(from : Array<out T>, to : Array<in T>) {}
 fun copy4(from : Array<out Number>, to : Array<in Int>) {}
 
 fun f(ints: Array<Int>, any: Array<Any>, numbers: Array<Number>) {
-    <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): variance/copy1">copy1</error>(ints, any)
+    copy1(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is variance/Array<kotlin/Int> but variance/Array<kotlin/Any> was expected">ints</error>, any)
     copy2(ints, any) //ok
-    <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): variance/copy2">copy2</error>(ints, numbers)
+    copy2(ints, <error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is variance/Array<kotlin/Number> but variance/Array<in kotlin/Any> was expected">numbers</error>)
     copy3<Int>(ints, numbers)
     copy4(ints, numbers) //ok
 }

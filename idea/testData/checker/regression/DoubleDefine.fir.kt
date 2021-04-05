@@ -11,7 +11,7 @@ fun takeFirst(expr: StringBuilder): Char {
 
 fun evaluateArg(expr: CharSequence, numbers: ArrayList<Int>): Int {
   if (expr.length == 0) throw Exception("Syntax error: Character expected");
-  val c = <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): /takeFirst">takeFirst</error>(expr)
+  val c = takeFirst(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/CharSequence but kotlin/text/StringBuilder was expected">expr</error>)
   if (c >= '0' && c <= '9') {
     val n = c - '0'
     if (!numbers.contains(n)) throw Exception("You used incorrect number: " + n)

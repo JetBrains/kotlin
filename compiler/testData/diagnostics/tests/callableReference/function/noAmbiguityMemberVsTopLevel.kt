@@ -12,7 +12,7 @@ fun foo(): String = ""
 
 class A {
     fun foo() {}
-    
+
     fun main() {
         val x = ::foo
 
