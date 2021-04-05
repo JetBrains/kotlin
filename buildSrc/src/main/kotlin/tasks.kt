@@ -35,6 +35,7 @@ fun Task.dependsOnKotlinPluginInstall() {
         ":kotlin-compiler-runner:install",
         ":kotlin-daemon-embeddable:install",
         ":kotlin-daemon-client:install",
+        ":kotlin-project-model:install",
         ":kotlin-gradle-plugin-api:install",
         ":kotlin-gradle-plugin:install",
         ":kotlin-gradle-plugin-model:install",
