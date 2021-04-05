@@ -386,6 +386,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean {
         require(this is ConeKotlinType)
+        if (this is ConeIntegerLiteralType) return true
         if (this !is ConeClassLikeType) return false
         return isPrimitiveNumberOrUnsignedNumberType()
     }

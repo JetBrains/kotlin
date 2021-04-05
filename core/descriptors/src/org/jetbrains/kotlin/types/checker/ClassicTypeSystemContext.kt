@@ -556,7 +556,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean {
         require(this is KotlinType)
-        return classicIsSignedOrUnsignedNumberType()
+        return classicIsSignedOrUnsignedNumberType() || constructor is IntegerLiteralTypeConstructor
     }
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {

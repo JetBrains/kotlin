@@ -18958,6 +18958,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("kt41679.kt")
+            public void testKt41679() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/kt41679.kt");
+            }
+
+            @Test
             @TestMetadata("literalReceiverWithIntegerValueType.kt")
             public void testLiteralReceiverWithIntegerValueType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/literalReceiverWithIntegerValueType.kt");
