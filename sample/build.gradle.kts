@@ -1,5 +1,5 @@
 plugins {
-  kotlin("multiplatform") version "1.4.30"
+  kotlin("multiplatform") version "1.5.0-M2"
   id("com.bnorm.power.kotlin-power-assert") version "0.7.0"
 }
 
