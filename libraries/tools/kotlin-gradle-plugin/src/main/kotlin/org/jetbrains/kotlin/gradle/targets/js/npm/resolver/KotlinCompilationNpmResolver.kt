@@ -176,15 +176,12 @@ internal class KotlinCompilationNpmResolver(
         // We don't have `kotlin-js-test-runner` in NPM yet
         all.dependencies.add(nodeJs.versions.kotlinJsTestRunner.createDependency(project))
 
-        npmProject.externalsDir
-            .listFiles()
-            ?.filter { it.isCompatibleArchive }
-            ?.forEach {
-                project.dependencies.add(
-                    all.name,
-                    project.files(it)
-                )
+        project.dependencies.add(
+            all.name,
+            project.fileTree(npmProject.externalsDir).include {
+                it.file.isCompatibleArchive
             }
+        )
 
         return all
     }

@@ -49,7 +49,7 @@ class DukatExecutor(
 
             npmProject.externalsDir.deleteRecursively()
             DukatRunner(
-                npmProject.compilation,
+                npmProject,
                 typeDefinitions.map { it.file },
                 externalsOutputFormat,
                 npmProject.externalsDir,
@@ -60,7 +60,5 @@ class DukatExecutor(
         }
 
         versionFile.writeText(version)
-
-        gradleModelPostProcess(externalsOutputFormat, npmProject)
     }
 }
