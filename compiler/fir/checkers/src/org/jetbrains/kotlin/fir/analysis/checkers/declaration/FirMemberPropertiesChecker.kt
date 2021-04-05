@@ -156,7 +156,6 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
             reporter,
             context
         )
-        checkPropertyAccessors(property, reporter, context)
         checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
 
         val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList

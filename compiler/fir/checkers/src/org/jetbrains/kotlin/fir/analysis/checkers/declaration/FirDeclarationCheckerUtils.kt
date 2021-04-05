@@ -163,18 +163,6 @@ internal fun checkPropertyInitializer(
     }
 }
 
-internal fun checkPropertyAccessors(
-    property: FirProperty,
-    reporter: DiagnosticReporter,
-    context: CheckerContext
-) {
-    if (property.isVal) {
-        property.setter?.source?.let {
-            reporter.reportOn(it, FirErrors.VAL_WITH_SETTER, context)
-        }
-    }
-}
-
 private val FirProperty.hasAccessorImplementation: Boolean
     get() = (getter !is FirDefaultPropertyAccessor && getter?.hasBody == true) ||
             (setter !is FirDefaultPropertyAccessor && setter?.hasBody == true)
