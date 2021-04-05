@@ -188,7 +188,7 @@ object IgnoreTests {
     }
 
     private val isTeamCityBuild: Boolean
-        get() = System.getProperty("TEAMCITY_VERSION") != null
+        get() = System.getenv("TEAMCITY_VERSION") != null
                 || KtUsefulTestCase.IS_UNDER_TEAMCITY
 
 
