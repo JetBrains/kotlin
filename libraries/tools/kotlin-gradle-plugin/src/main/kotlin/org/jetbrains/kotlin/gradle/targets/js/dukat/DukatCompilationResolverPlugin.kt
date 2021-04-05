@@ -147,16 +147,12 @@ internal fun gradleModelPostProcess(
     when (externalsOutputFormat) {
         ExternalsOutputFormat.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
         ExternalsOutputFormat.BINARY -> {
-            npmProject.externalsDir
-                .listFiles()
-                ?.filter { it.isCompatibleArchive }
-                ?.forEach {
-                    project.dependencies.add(
-                        compilation.compileDependencyConfigurationName,
-                        project.files(it)
-                    )
+            project.dependencies.add(
+                compilation.compileDependencyConfigurationName,
+                project.fileTree(npmProject.externalsDir).include {
+                    it.file.isCompatibleArchive
                 }
-
+            )
         }
     }
 }

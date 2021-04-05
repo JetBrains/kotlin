@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.findFileByName
+import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.util.createTempDir
+import org.jetbrains.kotlin.gradle.util.findFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
@@ -85,6 +86,31 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             )
         )
     }
+
+    @Test
+    fun testConfigurationCacheDukatSrc() = testConfigurationCacheDukat()
+
+    @Test
+    fun testConfigurationCacheDukatBinaries() = testConfigurationCacheDukat {
+        gradleProperties().modify {
+            """
+                ${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.BINARY}
+            """.trimIndent()
+        }
+    }
+
+    private fun testConfigurationCacheDukat(configure: Project.() -> Unit = {}) =
+        with(Project("both", directoryPrefix = "dukat-integration")) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+            configure(this)
+            testConfigurationCacheOf(
+                "irGenerateExternalsIntegrated", executedTaskNames = listOf(
+                    ":irGenerateExternalsIntegrated"
+                )
+            )
+        }
 }
 
 abstract class AbstractConfigurationCacheIT : BaseGradleIT() {

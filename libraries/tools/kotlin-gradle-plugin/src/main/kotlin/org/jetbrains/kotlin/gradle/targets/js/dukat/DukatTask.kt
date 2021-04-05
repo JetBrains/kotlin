@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import java.io.File
 
 abstract class DukatTask(
@@ -28,6 +29,8 @@ abstract class DukatTask(
     val compilationName by lazy {
         compilation.disambiguatedName
     }
+
+    private val npmProject by lazy { compilation.npmProject }
 
     @get:Internal
     override val nodeModulesRequired: Boolean
@@ -103,7 +106,7 @@ abstract class DukatTask(
         }
 
         DukatRunner(
-            compilation,
+            npmProject,
             dTsFiles,
             externalsOutputFormat,
             destinationDir,
