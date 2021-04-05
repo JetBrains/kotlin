@@ -9,7 +9,7 @@ fun test() {
     <!INAPPLICABLE_CANDIDATE!>a<!> {}
 }
 
-class Ext : String.() -> Unit {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Ext<!> : String.() -> Unit {
 }
 
 fun test2() {

@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.HASHCODE_NAME
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
@@ -25,9 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
@@ -69,7 +66,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         fun FirCallableMemberDeclaration<*>.shouldBeImplemented(): Boolean {
             if (!isAbstract) return false
             val containingClass = getContainingClass(context)
-            if (containingClass === declaration) return false
+            if (containingClass === declaration && origin == FirDeclarationOrigin.Source) return false
             if (containingClass is FirRegularClass && containingClass.isExpect) return false
             return true
         }
@@ -121,7 +118,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         }
 
         if (notImplementedSymbols.isNotEmpty()) {
-            val notImplemented = notImplementedSymbols.first().fir
+            val notImplemented = notImplementedSymbols.first().unwrapFakeOverrides().fir
             if (notImplemented.isFromInterfaceOrEnum(context)) {
                 reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
             } else {

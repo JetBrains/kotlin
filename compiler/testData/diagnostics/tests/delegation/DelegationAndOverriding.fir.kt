@@ -25,7 +25,7 @@ interface G<T> {
     fun foo(t : T) : T
 }
 
-class GC() : G<Int> {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class GC<!>() : G<Int> {
 
 }
 

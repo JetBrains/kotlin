@@ -23,13 +23,13 @@
         override fun bar(t: String) = t
     }
 
-    class MyIllegalGenericClass1<T> : MyTrait<T>, MyAbstractClass<T>() {}
-    class MyIllegalGenericClass2<T, R> : MyTrait<T>, MyAbstractClass<R>() {
+    <error descr="[ABSTRACT_MEMBER_NOT_IMPLEMENTED] Class MyIllegalGenericClass1 is not abstract and does not implement abstract member foo">class MyIllegalGenericClass1</error><T> : MyTrait<T>, MyAbstractClass<T>() {}
+    <error descr="[ABSTRACT_MEMBER_NOT_IMPLEMENTED] Class MyIllegalGenericClass2 is not abstract and does not implement abstract member foo">class MyIllegalGenericClass2</error><T, R> : MyTrait<T>, MyAbstractClass<R>() {
         override fun foo(r: R) = r
     }
-    class MyIllegalClass1 : MyTrait<Int>, MyAbstractClass<String>() {}
+    <error descr="[ABSTRACT_MEMBER_NOT_IMPLEMENTED] Class MyIllegalClass1 is not abstract and does not implement abstract member foo">class MyIllegalClass1</error> : MyTrait<Int>, MyAbstractClass<String>() {}
 
-    class MyIllegalClass2<T> : MyTrait<Int>, MyAbstractClass<Int>() {
+    <error descr="[ABSTRACT_MEMBER_NOT_IMPLEMENTED] Class MyIllegalClass2 is not abstract and does not implement abstract member foo">class MyIllegalClass2</error><T> : MyTrait<Int>, MyAbstractClass<Int>() {
         fun foo(t: T) = t
         fun bar(t: T) = t
     }

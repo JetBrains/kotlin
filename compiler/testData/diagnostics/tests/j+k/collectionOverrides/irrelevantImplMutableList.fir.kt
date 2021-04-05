@@ -108,7 +108,7 @@ public class A extends AImpl implements List<String> {
 }
 
 // FILE: X.kt
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class X<!> : A()
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class X<!> : A()
 
 fun main() {
     val x = X()

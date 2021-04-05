@@ -97,7 +97,7 @@ abstract class BaseCase4(val a: String) : InterfaceCase4 {}
 * NOTE: abstract class implements java interface
 */
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Case5<!>(a: String) : BaseCase5(a) {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Case5<!>(a: String) : BaseCase5(a) {}
 
 abstract class BaseCase5(val a: String) : java.util.Deque<String> {}
 
