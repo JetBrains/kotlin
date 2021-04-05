@@ -1,0 +1,10 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Enum, fqName=Enum, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=Enum.ENTRY, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=ENTRY, superNames=[]]
+        CLASS_BODY
+          CLASS[classId=null, fqName=Enum.ENTRY.InnerClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InnerClass, superNames=[]]
+            MODIFIER_LIST[inner]

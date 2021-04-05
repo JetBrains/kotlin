@@ -1,16 +1,16 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[fqName=C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=/C, fqName=C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY
-      OBJECT_DECLARATION[fqName=C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/C.Companion, fqName=C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
           FUN[fqName=C.Companion.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST
-  CLASS[fqName=D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+  CLASS[classId=/D, fqName=D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
     CLASS_BODY
-      OBJECT_DECLARATION[fqName=D.Named, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Named, superNames=[]]
+      OBJECT_DECLARATION[classId=/D.Named, fqName=D.Named, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Named, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
           PROPERTY[fqName=D.Named.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]

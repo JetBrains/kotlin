@@ -26,12 +26,15 @@ import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 abstract class KtClassOrObject :
     KtTypeParameterListOwnerStub<KotlinClassOrObjectStub<out KtClassOrObject>>, KtDeclarationContainer, KtNamedDeclaration,
-    KtPureClassOrObject {
+    KtPureClassOrObject, KtClassLikeDeclaration {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinClassOrObjectStub<out KtClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
@@ -88,6 +91,11 @@ abstract class KtClassOrObject :
     }
 
     fun isTopLevel(): Boolean = stub?.isTopLevel() ?: (parent is KtFile)
+
+    override fun getClassId(): ClassId? {
+        stub?.let { return it.getClassId() }
+        return ClassIdCalculator.calculateClassId(this)
+    }
 
     override fun isLocal(): Boolean = stub?.isLocal() ?: KtPsiUtil.isLocal(this)
 
@@ -179,6 +187,7 @@ abstract class KtClassOrObject :
         return parts.joinToString(separator = ".")
     }
 }
+
 
 fun KtClassOrObject.getOrCreateBody(): KtClassBody {
     getBody()?.let { return it }

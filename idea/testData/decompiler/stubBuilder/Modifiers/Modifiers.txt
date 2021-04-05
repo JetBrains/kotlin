@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.Modifiers, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Modifiers, superNames=[]]
+  CLASS[classId=test/Modifiers, fqName=test.Modifiers, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Modifiers, superNames=[]]
     MODIFIER_LIST[public final data]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]
@@ -154,7 +154,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[fqName=test.Modifiers.Ann, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Ann, superNames=[Annotation]]
+      CLASS[classId=test/Modifiers.Ann, fqName=test.Modifiers.Ann, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Ann, superNames=[Annotation]]
         MODIFIER_LIST[public final annotation]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]

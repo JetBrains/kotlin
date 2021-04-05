@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[fqName=Test, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Test, superNames=[]]
+  CLASS[classId=/Test, fqName=Test, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Test, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR
       VALUE_PARAMETER_LIST
@@ -13,7 +13,7 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[fqName=Annotated, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotated, superNames=[]]
+  CLASS[classId=/Annotated, fqName=Annotated, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotated, superNames=[]]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Test]
         CONSTRUCTOR_CALLEE

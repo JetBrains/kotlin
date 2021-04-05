@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.TypeAliases, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliases, superNames=[]]
+  CLASS[classId=test/TypeAliases, fqName=test.TypeAliases, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliases, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]
@@ -95,13 +95,13 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[fqName=test.TypeAliases.OrderA, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderA, superNames=[]]
+      CLASS[classId=test/TypeAliases.OrderA, fqName=test.TypeAliases.OrderA, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderA, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[fqName=test.TypeAliases.OrderB, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
+      CLASS[classId=test/TypeAliases.OrderB, fqName=test.TypeAliases.OrderB, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]

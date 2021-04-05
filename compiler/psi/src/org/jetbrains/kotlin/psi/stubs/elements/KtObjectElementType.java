@@ -23,10 +23,12 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtObjectDeclaration;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
+import org.jetbrains.kotlin.psi.stubs.StubUtils;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.Utils;
 
@@ -45,7 +47,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
         FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
         return new KotlinObjectStubImpl(
-                (StubElement<?>) parentStub, StringRef.fromString(name), fqName, Utils.INSTANCE.wrapStrings(superNames),
+                (StubElement<?>) parentStub, StringRef.fromString(name), fqName, psi.getClassId(), Utils.INSTANCE.wrapStrings(superNames),
                 psi.isTopLevel(), psi.isCompanion(), psi.isLocal(), psi.isObjectLiteral()
         );
     }
@@ -56,6 +58,8 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
 
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.toString() : null);
+
+        StubUtils.serializeClassId(dataStream, stub.getClassId());
 
         dataStream.writeBoolean(stub.isTopLevel());
         dataStream.writeBoolean(stub.isCompanion());
@@ -73,8 +77,11 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
     @Override
     public KotlinObjectStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
+
         StringRef fqNameStr = dataStream.readName();
         FqName fqName = fqNameStr != null ? new FqName(fqNameStr.toString()) : null;
+
+        ClassId classId = StubUtils.deserializeClassId(dataStream);
 
         boolean isTopLevel = dataStream.readBoolean();
         boolean isCompanion = dataStream.readBoolean();
@@ -88,7 +95,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
         }
 
         return new KotlinObjectStubImpl(
-                (StubElement<?>) parentStub, name, fqName, superNames, isTopLevel, isCompanion, isLocal, isObjectLiteral
+                (StubElement<?>) parentStub, name, fqName, classId, superNames, isTopLevel, isCompanion, isLocal, isObjectLiteral
         );
     }
 

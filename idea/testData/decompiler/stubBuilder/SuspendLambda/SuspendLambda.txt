@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.SuspendLambda, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SuspendLambda, superNames=[]]
+  CLASS[classId=test/SuspendLambda, fqName=test.SuspendLambda, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SuspendLambda, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]

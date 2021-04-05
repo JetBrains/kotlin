@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=p]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=p]
   IMPORT_LIST
-  CLASS[fqName=p.PrivateToThis, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateToThis, superNames=[]]
+  CLASS[classId=p/PrivateToThis, fqName=p.PrivateToThis, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateToThis, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=I]

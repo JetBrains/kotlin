@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiEnumConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -49,6 +50,12 @@ public class KtEnumEntry extends KtClass {
 
     public boolean hasInitializer() {
         return !getSuperTypeListEntries().isEmpty();
+    }
+
+    @Nullable
+    @Override
+    public ClassId getClassId() {
+        return null;
     }
 
     @Nullable

@@ -124,14 +124,17 @@ private class ClassClsStubBuilder(
             //TODO: filtering function types should go away
             isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
         }.map { it.shortClassName.ref() }.toTypedArray()
+        val classId = classId.takeUnless { it.isLocal }
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> {
                 KotlinObjectStubImpl(
-                    parentStub, shortName, fqName, superTypeRefs,
-                    isTopLevel = !classId.isNestedClass,
+                    parentStub, shortName, fqName,
+                    classId = classId,
+                    superTypeRefs,
+                    isTopLevel = !this.classId.isNestedClass,
                     isDefault = isCompanionObject,
                     isLocal = false,
-                    isObjectLiteral = false
+                    isObjectLiteral = false,
                 )
             }
             else -> {
@@ -139,12 +142,13 @@ private class ClassClsStubBuilder(
                     KtClassElementType.getStubType(classKind == ProtoBuf.Class.Kind.ENUM_ENTRY),
                     parentStub,
                     fqName.ref(),
+                    classId = classId,
                     shortName,
                     superTypeRefs,
                     isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
                     isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
                     isLocal = false,
-                    isTopLevel = !classId.isNestedClass
+                    isTopLevel = !this.classId.isNestedClass,
                 )
             }
         }
@@ -200,6 +204,7 @@ private class ClassClsStubBuilder(
                 KtStubElementTypes.ENUM_ENTRY,
                 classBody,
                 qualifiedName = c.containerFqName.child(name).ref(),
+                classId = null, // enum entry do not have class id
                 name = name.ref(),
                 superNames = arrayOf(),
                 isInterface = false,

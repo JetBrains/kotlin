@@ -24,11 +24,13 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtEnumEntry;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
+import org.jetbrains.kotlin.psi.stubs.StubUtils;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.Utils;
 
@@ -60,7 +62,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
         List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
         return new KotlinClassStubImpl(
                 getStubType(isEnumEntry), (StubElement<?>) parentStub,
-                StringRef.fromString(fqName != null ? fqName.asString() : null),
+                StringRef.fromString(fqName != null ? fqName.asString() : null), psi.getClassId(),
                 StringRef.fromString(psi.getName()),
                 Utils.INSTANCE.wrapStrings(superNames),
                 psi.isInterface(), isEnumEntry, psi.isLocal(), psi.isTopLevel()
@@ -70,8 +72,12 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
     @Override
     public void serialize(@NotNull KotlinClassStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
+
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName == null ? null : fqName.asString());
+
+        StubUtils.serializeClassId(dataStream, stub.getClassId());
+
         dataStream.writeBoolean(stub.isInterface());
         dataStream.writeBoolean(stub.isEnumEntry());
         dataStream.writeBoolean(stub.isLocal());
@@ -89,6 +95,9 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
     public KotlinClassStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         StringRef qualifiedName = dataStream.readName();
+
+        ClassId classId = StubUtils.deserializeClassId(dataStream);
+
         boolean isTrait = dataStream.readBoolean();
         boolean isEnumEntry = dataStream.readBoolean();
         boolean isLocal = dataStream.readBoolean();
@@ -101,7 +110,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
         }
 
         return new KotlinClassStubImpl(
-                getStubType(isEnumEntry), (StubElement<?>) parentStub, qualifiedName, name, superNames,
+                getStubType(isEnumEntry), (StubElement<?>) parentStub, qualifiedName,classId, name, superNames,
                 isTrait, isEnumEntry, isLocal, isTopLevel
         );
     }

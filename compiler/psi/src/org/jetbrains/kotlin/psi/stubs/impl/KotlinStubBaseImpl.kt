@@ -24,6 +24,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.KtElementImplStub
 import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
 import java.lang.reflect.Method
 import java.util.ArrayList
@@ -82,6 +83,7 @@ open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?,
 
         private val BASE_STUB_INTERFACES = listOf(
             KotlinStubWithFqName::class.java,
+            KotlinClassifierStub::class.java,
             KotlinClassOrObjectStub::class.java,
             NamedStub::class.java,
             KotlinCallableStubBase::class.java

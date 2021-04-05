@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[fqName=Annotations, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
+  CLASS[classId=/Annotations, fqName=Annotations, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
         CONSTRUCTOR_CALLEE
@@ -41,7 +41,7 @@ PsiJetFileStubImpl[package=]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
     CLASS_BODY
-      OBJECT_DECLARATION[fqName=Annotations.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/Annotations.Companion, fqName=Annotations.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[private companion]
         CLASS_BODY
           PROPERTY[fqName=Annotations.Companion.field, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
@@ -315,7 +315,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[fqName=Annotations.ClassWithConstructor, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
+      CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
@@ -340,7 +340,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[fqName=Annotations.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
+      CLASS[classId=/Annotations.En, fqName=Annotations.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
         MODIFIER_LIST[enum public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[private]
@@ -360,15 +360,15 @@ PsiJetFileStubImpl[package=]
                           REFERENCE_EXPRESSION[referencedName=Annotations]
                         REFERENCE_EXPRESSION[referencedName=En]
         CLASS_BODY
-          ENUM_ENTRY[fqName=Annotations.En.Entry1, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry1, superNames=[]]
-          ENUM_ENTRY[fqName=Annotations.En.Entry2, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry2, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry1, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry1, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry2, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry2, superNames=[]]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=a]
-          ENUM_ENTRY[fqName=Annotations.En.Entry3, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry3, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry3, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry3, superNames=[]]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
@@ -380,7 +380,7 @@ PsiJetFileStubImpl[package=]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=c]
-      CLASS[fqName=Annotations.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+      CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[private]

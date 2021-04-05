@@ -3,7 +3,7 @@ PsiJetFileStubImpl[package=]
   IMPORT_LIST
   FUN[fqName=f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
     MODIFIER_LIST[public]
-    CLASS[fqName=null, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]
+    CLASS[classId=null, fqName=null, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]
       CLASS_BODY
         FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
           VALUE_PARAMETER_LIST

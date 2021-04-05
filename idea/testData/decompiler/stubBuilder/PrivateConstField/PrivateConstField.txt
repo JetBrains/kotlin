@@ -2,13 +2,13 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.PrivateConstField, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateConstField, superNames=[]]
+  CLASS[classId=test/PrivateConstField, fqName=test.PrivateConstField, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateConstField, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      OBJECT_DECLARATION[fqName=test.PrivateConstField.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=test/PrivateConstField.Companion, fqName=test.PrivateConstField.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[private companion]
         CLASS_BODY
           PROPERTY[fqName=test.PrivateConstField.Companion.CONST, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST]

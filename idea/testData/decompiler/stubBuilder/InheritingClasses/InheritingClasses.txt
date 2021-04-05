@@ -2,13 +2,13 @@ PsiJetFileStubImpl[package=a]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=a]
   IMPORT_LIST
-  CLASS[fqName=a.InheritingClasses, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InheritingClasses, superNames=[]]
+  CLASS[classId=a/InheritingClasses, fqName=a.InheritingClasses, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InheritingClasses, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      CLASS[fqName=a.InheritingClasses.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[C]]
+      CLASS[classId=a/InheritingClasses.A, fqName=a.InheritingClasses.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[C]]
         MODIFIER_LIST[abstract public]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
@@ -66,7 +66,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[fqName=a.InheritingClasses.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[A]]
+      CLASS[classId=a/InheritingClasses.B, fqName=a.InheritingClasses.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[A]]
         MODIFIER_LIST[open public]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
@@ -111,7 +111,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[fqName=a.InheritingClasses.C, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+      CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
         MODIFIER_LIST[public]
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.C.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
@@ -121,7 +121,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[fqName=a.InheritingClasses.D, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
+      CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
@@ -142,10 +142,10 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[fqName=a.InheritingClasses.E, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=E, superNames=[]]
+      CLASS[classId=a/InheritingClasses.E, fqName=a.InheritingClasses.E, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=E, superNames=[]]
         MODIFIER_LIST[public]
         CLASS_BODY
-      CLASS[fqName=a.InheritingClasses.G, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=G, superNames=[B, C, D, E]]
+      CLASS[classId=a/InheritingClasses.G, fqName=a.InheritingClasses.G, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=G, superNames=[B, C, D, E]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
@@ -191,25 +191,25 @@ PsiJetFileStubImpl[package=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION[referencedName=E]
         CLASS_BODY
-      CLASS[fqName=a.InheritingClasses.InheritAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritAny, superNames=[]]
+      CLASS[classId=a/InheritingClasses.InheritAny, fqName=a.InheritingClasses.InheritAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritAny, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-          CLASS[fqName=a.InheritingClasses.InheritAny.ExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ExplicitAny, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.ExplicitAny, fqName=a.InheritingClasses.InheritAny.ExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ExplicitAny, superNames=[]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
-          CLASS[fqName=a.InheritingClasses.InheritAny.ImplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ImplicitAny, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.ImplicitAny, fqName=a.InheritingClasses.InheritAny.ImplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ImplicitAny, superNames=[]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
-          CLASS[fqName=a.InheritingClasses.InheritAny.OnlyTrait, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTrait, superNames=[SomeTrait]]
+          CLASS[classId=a/InheritingClasses.InheritAny.OnlyTrait, fqName=a.InheritingClasses.InheritAny.OnlyTrait, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTrait, superNames=[SomeTrait]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR
               MODIFIER_LIST[public]
@@ -226,7 +226,7 @@ PsiJetFileStubImpl[package=a]
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
             CLASS_BODY
-          CLASS[fqName=a.InheritingClasses.InheritAny.OnlyTraits, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
+          CLASS[classId=a/InheritingClasses.InheritAny.OnlyTraits, fqName=a.InheritingClasses.InheritAny.OnlyTraits, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR
               MODIFIER_LIST[public]
@@ -253,13 +253,13 @@ PsiJetFileStubImpl[package=a]
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
                     REFERENCE_EXPRESSION[referencedName=SomeTrait2]
             CLASS_BODY
-          CLASS[fqName=a.InheritingClasses.InheritAny.SomeTrait, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait, fqName=a.InheritingClasses.InheritAny.SomeTrait, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait, superNames=[]]
             MODIFIER_LIST[public]
             CLASS_BODY
-          CLASS[fqName=a.InheritingClasses.InheritAny.SomeTrait2, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait2, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait2, fqName=a.InheritingClasses.InheritAny.SomeTrait2, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait2, superNames=[]]
             MODIFIER_LIST[public]
             CLASS_BODY
-          CLASS[fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
+          CLASS[classId=a/InheritingClasses.InheritAny.TraitWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR
               MODIFIER_LIST[public]
@@ -282,7 +282,7 @@ PsiJetFileStubImpl[package=a]
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
             CLASS_BODY
-          CLASS[fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
+          CLASS[classId=a/InheritingClasses.InheritAny.TraitsWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR
               MODIFIER_LIST[public]
@@ -315,7 +315,7 @@ PsiJetFileStubImpl[package=a]
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
             CLASS_BODY
-      CLASS[fqName=a.InheritingClasses.InheritFunctionType, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
+      CLASS[classId=a/InheritingClasses.InheritFunctionType, fqName=a.InheritingClasses.InheritFunctionType, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
         MODIFIER_LIST[abstract public]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]

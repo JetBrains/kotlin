@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test.a]
       REFERENCE_EXPRESSION[referencedName=test]
       REFERENCE_EXPRESSION[referencedName=a]
   IMPORT_LIST
-  CLASS[fqName=test.a.AnnotationClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationClass, superNames=[Annotation]]
+  CLASS[classId=test/a/AnnotationClass, fqName=test.a.AnnotationClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationClass, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]

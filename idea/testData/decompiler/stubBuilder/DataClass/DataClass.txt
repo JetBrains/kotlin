@@ -6,7 +6,7 @@ PsiJetFileStubImpl[package=a.b.c]
         REFERENCE_EXPRESSION[referencedName=b]
       REFERENCE_EXPRESSION[referencedName=c]
   IMPORT_LIST
-  CLASS[fqName=a.b.c.DataClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DataClass, superNames=[]]
+  CLASS[classId=a/b/c/DataClass, fqName=a.b.c.DataClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DataClass, superNames=[]]
     MODIFIER_LIST[public final data]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]

@@ -21,6 +21,7 @@ import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
@@ -40,11 +41,15 @@ interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
     fun getFqName(): FqName?
 }
 
+interface KotlinClassifierStub {
+    fun getClassId(): ClassId?
+}
+
 interface KotlinTypeAliasStub : KotlinStubWithFqName<KtTypeAlias> {
     fun isTopLevel(): Boolean
 }
 
-interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinStubWithFqName<T> {
+interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, KotlinStubWithFqName<T> {
     fun isLocal(): Boolean
     fun getSuperNames(): List<String>
     fun isTopLevel(): Boolean

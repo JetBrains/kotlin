@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.InnerTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InnerTypes, superNames=[]]
+  CLASS[classId=test/InnerTypes, fqName=test.InnerTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InnerTypes, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
@@ -57,7 +57,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[fqName=test.InnerTypes.Inner, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+      CLASS[classId=test/InnerTypes.Inner, fqName=test.InnerTypes.Inner, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST[inner public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
@@ -66,7 +66,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-          CLASS[fqName=test.InnerTypes.Inner.Inner3, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner3, superNames=[]]
+          CLASS[classId=test/InnerTypes.Inner.Inner3, fqName=test.InnerTypes.Inner.Inner3, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner3, superNames=[]]
             MODIFIER_LIST[inner public final]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=I]
@@ -209,7 +209,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[fqName=test.InnerTypes.Inner2, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
+      CLASS[classId=test/InnerTypes.Inner2, fqName=test.InnerTypes.Inner2, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
         MODIFIER_LIST[inner public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]

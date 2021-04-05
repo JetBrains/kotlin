@@ -2,13 +2,13 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.Sealed, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sealed, superNames=[]]
+  CLASS[classId=test/Sealed, fqName=test.Sealed, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sealed, superNames=[]]
     MODIFIER_LIST[public sealed]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[protected]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      CLASS[fqName=test.Sealed.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[Sealed]]
+      CLASS[classId=test/Sealed.Nested, fqName=test.Sealed.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[Sealed]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
@@ -21,7 +21,7 @@ PsiJetFileStubImpl[package=test]
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Sealed]
         CLASS_BODY
-      OBJECT_DECLARATION[fqName=test.Sealed.Top, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
+      OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
         MODIFIER_LIST[public]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY

@@ -2,13 +2,13 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.AnnotationValues, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
+  CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      CLASS[fqName=test.AnnotationValues.WithArrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
+      CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
             CONSTRUCTOR_CALLEE
@@ -21,7 +21,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[fqName=test.AnnotationValues.WithClassLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
+      CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
             CONSTRUCTOR_CALLEE
@@ -36,7 +36,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[fqName=test.AnnotationValues.WithEnumLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
+      CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
             CONSTRUCTOR_CALLEE
@@ -49,7 +49,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[fqName=test.AnnotationValues.WithNested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
+      CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
             CONSTRUCTOR_CALLEE
@@ -62,7 +62,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[fqName=test.AnnotationValues.WithSimple, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
+      CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
             CONSTRUCTOR_CALLEE
@@ -75,7 +75,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[fqName=test.AnnotationValues.WithStringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
+      CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
             CONSTRUCTOR_CALLEE
@@ -88,7 +88,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[fqName=test.AnnotationValues.WithVarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
+      CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
             CONSTRUCTOR_CALLEE

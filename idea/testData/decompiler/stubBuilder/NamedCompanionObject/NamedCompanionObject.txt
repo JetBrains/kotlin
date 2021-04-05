@@ -2,13 +2,13 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.NamedCompanionObject, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=NamedCompanionObject, superNames=[]]
+  CLASS[classId=test/NamedCompanionObject, fqName=test.NamedCompanionObject, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=NamedCompanionObject, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      OBJECT_DECLARATION[fqName=test.NamedCompanionObject.Named, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Named, superNames=[]]
+      OBJECT_DECLARATION[classId=test/NamedCompanionObject.Named, fqName=test.NamedCompanionObject.Named, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Named, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=test.NamedCompanionObject.Named.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
@@ -26,13 +26,13 @@ PsiJetFileStubImpl[package=test]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          CLASS[fqName=test.NamedCompanionObject.Named.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+          CLASS[classId=test/NamedCompanionObject.Named.A, fqName=test.NamedCompanionObject.Named.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
-              CLASS[fqName=test.NamedCompanionObject.Named.A.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+              CLASS[classId=test/NamedCompanionObject.Named.A.B, fqName=test.NamedCompanionObject.Named.A.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
                 MODIFIER_LIST[public final]
                 PRIMARY_CONSTRUCTOR
                   MODIFIER_LIST[public]
@@ -68,31 +68,31 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[fqName=test.NamedCompanionObject.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      CLASS[classId=test/NamedCompanionObject.B, fqName=test.NamedCompanionObject.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-          OBJECT_DECLARATION[fqName=test.NamedCompanionObject.B.NamedInB, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NamedInB, superNames=[]]
+          OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB, fqName=test.NamedCompanionObject.B.NamedInB, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NamedInB, superNames=[]]
             MODIFIER_LIST[public companion]
             CLASS_BODY
-              CLASS[fqName=test.NamedCompanionObject.B.NamedInB.C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+              CLASS[classId=test/NamedCompanionObject.B.NamedInB.C, fqName=test.NamedCompanionObject.B.NamedInB.C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
                 MODIFIER_LIST[public final]
                 PRIMARY_CONSTRUCTOR
                   MODIFIER_LIST[public]
                   VALUE_PARAMETER_LIST
                 CLASS_BODY
-                  OBJECT_DECLARATION[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NamedInC, superNames=[]]
+                  OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NamedInC, superNames=[]]
                     MODIFIER_LIST[public companion]
                     CLASS_BODY
-                      CLASS[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
+                      CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
                         MODIFIER_LIST[public final]
                         PRIMARY_CONSTRUCTOR
                           MODIFIER_LIST[public]
                           VALUE_PARAMETER_LIST
                         CLASS_BODY
-                          OBJECT_DECLARATION[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                          OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                             MODIFIER_LIST[public companion]
                             CLASS_BODY
                               PROPERTY[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
@@ -110,7 +110,7 @@ PsiJetFileStubImpl[package=test]
                                     USER_TYPE
                                       REFERENCE_EXPRESSION[referencedName=kotlin]
                                     REFERENCE_EXPRESSION[referencedName=Unit]
-                              CLASS[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
+                              CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.Anno, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
                                 MODIFIER_LIST[public final annotation]
                                 PRIMARY_CONSTRUCTOR
                                   MODIFIER_LIST[public]
@@ -123,7 +123,7 @@ PsiJetFileStubImpl[package=test]
                                           REFERENCE_EXPRESSION[referencedName=kotlin]
                                         REFERENCE_EXPRESSION[referencedName=Annotation]
                                 CLASS_BODY
-                              CLASS[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
+                              CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
                                 MODIFIER_LIST[enum public final]
                                 PRIMARY_CONSTRUCTOR
                                   MODIFIER_LIST[private]
@@ -157,7 +157,7 @@ PsiJetFileStubImpl[package=test]
                                                   REFERENCE_EXPRESSION[referencedName=Companion]
                                                 REFERENCE_EXPRESSION[referencedName=En]
                                 CLASS_BODY
-                                  ENUM_ENTRY[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En.A, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
-                                  OBJECT_DECLARATION[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En.NamedInEn, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NamedInEn, superNames=[]]
+                                  ENUM_ENTRY[classId=null, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En.A, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+                                  OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En.NamedInEn, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En.NamedInEn, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NamedInEn, superNames=[]]
                                     MODIFIER_LIST[public companion]
                                     CLASS_BODY

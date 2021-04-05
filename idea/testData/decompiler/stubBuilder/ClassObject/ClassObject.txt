@@ -4,13 +4,13 @@ PsiJetFileStubImpl[package=test.class_object]
       REFERENCE_EXPRESSION[referencedName=test]
       REFERENCE_EXPRESSION[referencedName=class_object]
   IMPORT_LIST
-  CLASS[fqName=test.class_object.ClassObject, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassObject, superNames=[]]
+  CLASS[classId=test/class_object/ClassObject, fqName=test.class_object.ClassObject, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassObject, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      OBJECT_DECLARATION[fqName=test.class_object.ClassObject.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=test/class_object/ClassObject.Companion, fqName=test.class_object.ClassObject.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=test.class_object.ClassObject.Companion.j, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
@@ -28,13 +28,13 @@ PsiJetFileStubImpl[package=test.class_object]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          CLASS[fqName=test.class_object.ClassObject.Companion.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+          CLASS[classId=test/class_object/ClassObject.Companion.A, fqName=test.class_object.ClassObject.Companion.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
-              CLASS[fqName=test.class_object.ClassObject.Companion.A.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+              CLASS[classId=test/class_object/ClassObject.Companion.A.B, fqName=test.class_object.ClassObject.Companion.A.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
                 MODIFIER_LIST[public final]
                 PRIMARY_CONSTRUCTOR
                   MODIFIER_LIST[public]
@@ -70,31 +70,31 @@ PsiJetFileStubImpl[package=test.class_object]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[fqName=test.class_object.ClassObject.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      CLASS[classId=test/class_object/ClassObject.B, fqName=test.class_object.ClassObject.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-          OBJECT_DECLARATION[fqName=test.class_object.ClassObject.B.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion, fqName=test.class_object.ClassObject.B.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
             MODIFIER_LIST[public companion]
             CLASS_BODY
-              CLASS[fqName=test.class_object.ClassObject.B.Companion.C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+              CLASS[classId=test/class_object/ClassObject.B.Companion.C, fqName=test.class_object.ClassObject.B.Companion.C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
                 MODIFIER_LIST[public final]
                 PRIMARY_CONSTRUCTOR
                   MODIFIER_LIST[public]
                   VALUE_PARAMETER_LIST
                 CLASS_BODY
-                  OBJECT_DECLARATION[fqName=test.class_object.ClassObject.B.Companion.C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                  OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion.C.Companion, fqName=test.class_object.ClassObject.B.Companion.C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                     MODIFIER_LIST[public companion]
                     CLASS_BODY
-                      CLASS[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
+                      CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
                         MODIFIER_LIST[public final]
                         PRIMARY_CONSTRUCTOR
                           MODIFIER_LIST[public]
                           VALUE_PARAMETER_LIST
                         CLASS_BODY
-                          OBJECT_DECLARATION[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                          OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                             MODIFIER_LIST[public companion]
                             CLASS_BODY
                               PROPERTY[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
@@ -112,7 +112,7 @@ PsiJetFileStubImpl[package=test.class_object]
                                     USER_TYPE
                                       REFERENCE_EXPRESSION[referencedName=kotlin]
                                     REFERENCE_EXPRESSION[referencedName=Unit]
-                              CLASS[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
+                              CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion.Anno, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
                                 MODIFIER_LIST[public final annotation]
                                 PRIMARY_CONSTRUCTOR
                                   MODIFIER_LIST[public]
@@ -125,7 +125,7 @@ PsiJetFileStubImpl[package=test.class_object]
                                           REFERENCE_EXPRESSION[referencedName=kotlin]
                                         REFERENCE_EXPRESSION[referencedName=Annotation]
                                 CLASS_BODY
-                              CLASS[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
+                              CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion.En, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
                                 MODIFIER_LIST[enum public final]
                                 PRIMARY_CONSTRUCTOR
                                   MODIFIER_LIST[private]

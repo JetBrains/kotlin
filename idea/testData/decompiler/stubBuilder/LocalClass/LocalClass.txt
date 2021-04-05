@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.LocalClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=LocalClass, superNames=[]]
+  CLASS[classId=test/LocalClass, fqName=test.LocalClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=LocalClass, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[public]

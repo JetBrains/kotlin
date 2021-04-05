@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[fqName=test.AnnotatedParameterInEnumConstructor, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInEnumConstructor, superNames=[Enum]]
+  CLASS[classId=test/AnnotatedParameterInEnumConstructor, fqName=test.AnnotatedParameterInEnumConstructor, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInEnumConstructor, superNames=[Enum]]
     MODIFIER_LIST[enum public final]
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST[private]
@@ -50,4 +50,4 @@ PsiJetFileStubImpl[package=test]
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=AnnotatedParameterInEnumConstructor]
     CLASS_BODY
-      ENUM_ENTRY[fqName=test.AnnotatedParameterInEnumConstructor.A, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=test.AnnotatedParameterInEnumConstructor.A, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
