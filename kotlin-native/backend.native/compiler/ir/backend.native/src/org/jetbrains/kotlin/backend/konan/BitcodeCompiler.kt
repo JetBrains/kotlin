@@ -50,25 +50,15 @@ internal class BitcodeCompiler(val context: Context) {
     private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
         val objectFile = temporary("result", ".o")
 
-        // TODO: fix with LLVM update.
-        val targetTriple = when (context.config.target) {
-            // LLVM we use does not have support for arm64_32.
-            KonanTarget.WATCHOS_ARM64 -> {
-                require(configurables is AppleConfigurables)
-                "arm64_32-apple-watchos${configurables.osVersionMin}"
-            }
-            // Runtime generates bitcode for mythical macos 10.16 because of old Clang.
-            // Let's fix it.
-            KonanTarget.MACOS_ARM64 -> {
-                require(configurables is AppleConfigurables)
-                "arm64-apple-macos${configurables.osVersionMin}"
-            }
-            else -> context.llvm.targetTriple
+        val targetTriple = if (configurables is AppleConfigurables) {
+            platform.targetTriple.withOSVersion(configurables.osVersionMin)
+        } else {
+            platform.targetTriple
         }
         val flags = overrideClangOptions.takeIf(List<String>::isNotEmpty)
                 ?: mutableListOf<String>().apply {
             addNonEmpty(configurables.clangFlags)
-            addNonEmpty(listOf("-triple", targetTriple))
+            addNonEmpty(listOf("-triple", targetTriple.toString()))
             if (configurables is ZephyrConfigurables) {
                 addNonEmpty(configurables.constructClangCC1Args())
             }

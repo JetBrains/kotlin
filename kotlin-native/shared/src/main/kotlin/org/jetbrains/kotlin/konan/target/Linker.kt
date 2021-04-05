@@ -171,10 +171,6 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     private val strip = "$absoluteTargetToolchain/usr/bin/strip"
     private val dsymutil = "$absoluteTargetToolchain/usr/bin/dsymutil"
 
-    private val KonanTarget.isSimulator: Boolean
-        get() = this == KonanTarget.TVOS_X64 || this == KonanTarget.IOS_X64 ||
-                this == KonanTarget.WATCHOS_X86 || this == KonanTarget.WATCHOS_X64
-
     private val compilerRtDir: String? by lazy {
         val dir = File("$absoluteTargetToolchain/usr/lib/clang/").listFiles.firstOrNull()?.absolutePath
         if (dir != null) "$dir/lib/darwin/" else null
@@ -188,7 +184,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             Family.OSX -> "osx"
             else -> error("Target $target is unsupported")
         }
-        val suffix = if (libraryName.isNotEmpty() && target.isSimulator) {
+        val suffix = if (libraryName.isNotEmpty() && targetTriple.isSimulator) {
             "sim"
         } else {
             ""
