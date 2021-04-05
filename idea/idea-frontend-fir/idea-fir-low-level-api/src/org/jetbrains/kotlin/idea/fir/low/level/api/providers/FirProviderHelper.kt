@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeOrReturnDefaultVa
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
@@ -35,10 +36,10 @@ internal class FirProviderHelper(
     fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
         return executeOrReturnDefaultValueOnPCE(null) {
             cache.classifierByClassId.computeIfAbsent(classId) {
-                val ktClass = indexHelper.classFromIndexByClassId(classId)
-                    ?: indexHelper.typeAliasFromIndexByClassId(classId)
-                    ?: return@computeIfAbsent Optional.empty()
-                if (ktClass is KtEnumEntry) return@computeIfAbsent Optional.empty()
+                val ktClass = when (val klass = indexHelper.classFromIndexByClassId(classId)) {
+                    null -> indexHelper.typeAliasFromIndexByClassId(classId)
+                    else -> if (klass.getClassId() == null) null else klass
+                } ?: return@computeIfAbsent Optional.empty()
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile, cache, lazyBodiesMode = true)
                 val classifier = FirElementFinder.findElementIn<FirClassLikeDeclaration<*>>(firFile) { classifier ->
                     classifier.symbol.classId == classId
