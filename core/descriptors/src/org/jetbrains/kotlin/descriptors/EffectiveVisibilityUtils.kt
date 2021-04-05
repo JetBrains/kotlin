@@ -20,7 +20,10 @@ fun DescriptorVisibility.effectiveVisibility(
 
 private fun DescriptorVisibility.forVisibility(descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false): EffectiveVisibility =
     when (this) {
-        DescriptorVisibilities.PRIVATE, DescriptorVisibilities.PRIVATE_TO_THIS, DescriptorVisibilities.INVISIBLE_FAKE -> EffectiveVisibility.Private
+        DescriptorVisibilities.PRIVATE_TO_THIS, DescriptorVisibilities.INVISIBLE_FAKE -> EffectiveVisibility.Private
+        DescriptorVisibilities.PRIVATE -> if (descriptor is ClassDescriptor &&
+            descriptor.containingDeclaration is PackageFragmentDescriptor
+        ) EffectiveVisibility.PrivateInFile else EffectiveVisibility.Private
         DescriptorVisibilities.PROTECTED -> EffectiveVisibility.Protected(
             (descriptor.containingDeclaration as? ClassDescriptor)?.defaultType?.constructor
         )

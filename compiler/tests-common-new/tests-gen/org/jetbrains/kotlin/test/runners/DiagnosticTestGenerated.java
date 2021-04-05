@@ -9282,6 +9282,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("privateInFile.kt")
+            public void testPrivateInFile() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exposed/privateInFile.kt");
+            }
+
+            @Test
             @TestMetadata("privatePropertyInPrivateConstructor.kt")
             public void testPrivatePropertyInPrivateConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/exposed/privatePropertyInPrivateConstructor.kt");
