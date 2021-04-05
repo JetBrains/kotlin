@@ -159,6 +159,12 @@ fun codesign(project: Project, path: String) {
 }
 
 /**
+ * Check that [target] is Apple simulator
+ */
+fun isSimulatorTarget(project: Project, target: KonanTarget): Boolean =
+    project.platformManager.platform(target).targetTriple.isSimulator
+
+/**
  * Creates a list of file paths to be compiled from the given [compile] list with regard to [exclude] list.
  */
 fun Project.getFilesToCompile(compile: List<String>, exclude: List<String>): List<String> {
