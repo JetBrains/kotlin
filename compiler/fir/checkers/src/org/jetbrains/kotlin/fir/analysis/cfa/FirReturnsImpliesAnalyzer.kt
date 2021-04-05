@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
@@ -198,12 +199,6 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         kind == ConstantValueKind.Boolean && operation == Operation.EqFalse -> !(value as Boolean)
         else -> true
     }
-
-    fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
-        type != null && AbstractTypeChecker.isSubtypeOf(context, type, this)
-
-    fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
-        type != null && AbstractTypeChecker.isSubtypeOf(context, this, type)
 
     private fun simpleTypeStatement(realVar: RealVariable, exactType: Boolean, type: ConeKotlinType): MutableTypeStatement {
         return MutableTypeStatement(

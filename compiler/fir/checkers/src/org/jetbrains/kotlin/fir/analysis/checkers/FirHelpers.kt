@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer.isSubtypeOf
-import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
@@ -36,8 +34,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
@@ -319,6 +319,12 @@ val FirValueParameter.hasValOrVar: Boolean
         val source = this.source ?: return false
         return source.getChild(VAL_VAR_TOKEN_SET) != null
     }
+
+fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
+    type != null && AbstractTypeChecker.isSubtypeOf(context, type, this)
+
+fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
+    type != null && AbstractTypeChecker.isSubtypeOf(context, this, type)
 
 fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
     if (this.isMarkedNullable) {
