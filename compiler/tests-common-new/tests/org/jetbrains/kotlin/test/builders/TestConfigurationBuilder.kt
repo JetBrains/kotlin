@@ -111,8 +111,12 @@ class TestConfigurationBuilder {
         handlers += constructor
     }
 
-    fun useSourcePreprocessor(vararg preprocessors: Constructor<SourceFilePreprocessor>) {
-        sourcePreprocessors += preprocessors
+    fun useSourcePreprocessor(vararg preprocessors: Constructor<SourceFilePreprocessor>, needToPrepend: Boolean = false) {
+        if (needToPrepend) {
+            sourcePreprocessors.addAll(0, preprocessors.toList())
+        } else {
+            sourcePreprocessors.addAll(preprocessors)
+        }
     }
 
     fun useDirectives(vararg directives: DirectivesContainer) {

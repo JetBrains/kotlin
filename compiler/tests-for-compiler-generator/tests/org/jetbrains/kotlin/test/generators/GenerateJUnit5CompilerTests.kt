@@ -49,17 +49,17 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractForeignAnnotationsTest> {
                 model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludeDirs = listOf("typeEnhancementOnCompiledJava"))
             }
 
             testClass<AbstractForeignAnnotationsNoAnnotationInClasspathTest> {
                 model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludeDirs = listOf("typeEnhancementOnCompiledJava"))
             }
 
             testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
                 model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludeDirs = listOf("typeEnhancementOnCompiledJava"))
             }
 
             testClass<AbstractBlackBoxCodegenTest> {
