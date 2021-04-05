@@ -49,17 +49,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         if (configurables is GccConfigurables) {
             add(listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}"))
         }
-        if (configurables !is AppleConfigurables) {
-            add(listOf("-target", configurables.targetTriple.toString()))
-        }
         if (configurables is AppleConfigurables) {
-            val arch = when (target) {
-                // TODO: LLVM 8 doesn't support arm64_32.
-                //  We can use armv7k because they are compatible at bitcode level.
-                KonanTarget.WATCHOS_ARM64 -> "armv7k"
-                else -> configurables.arch
-            }
-            add(listOf("-arch", arch))
             add(listOf("-stdlib=libc++"))
             val osVersionMin = when (target) {
                 // Here we workaround Clang 8 limitation: macOS major version should be 10.
@@ -68,7 +58,18 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 KonanTarget.MACOS_ARM64 -> "10.16"
                 else -> configurables.osVersionMin
             }
-            add(listOf("${configurables.osVersionMinFlagClang}=$osVersionMin"))
+            val targetArg = targetTriple.copy(
+                    architecture = when (targetTriple.architecture) {
+                        // TODO: LLVM 8 doesn't support arm64_32.
+                        //  We can use armv7k because they are compatible at bitcode level.
+                        "arm64_32" -> "armv7k"
+                        else -> targetTriple.architecture
+                    },
+                    os = "${targetTriple.os}$osVersionMin"
+            )
+            add(listOf("-target", targetArg.toString()))
+        } else {
+            add(listOf("-target", configurables.targetTriple.toString()))
         }
         val hasCustomSysroot = configurables is ZephyrConfigurables
                 || configurables is WasmConfigurables
