@@ -638,6 +638,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val type: KtType
     }
 
+    abstract class UpperBoundIsExtensionFunctionType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UpperBoundIsExtensionFunctionType::class
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol

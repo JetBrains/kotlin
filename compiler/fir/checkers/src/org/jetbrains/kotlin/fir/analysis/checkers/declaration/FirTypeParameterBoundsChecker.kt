@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
 
 object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
@@ -24,6 +25,9 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         declaration.symbol.fir.bounds.forEach { bound ->
             if (!bound.coneType.canHaveSubtypes(context.session)) {
                 reporter.reportOn(bound.source, FirErrors.FINAL_UPPER_BOUND, bound.coneType, context)
+            }
+            if (bound.isExtensionFunctionType(context.session)) {
+                reporter.reportOn(bound.source, FirErrors.UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, context)
             }
         }
     }

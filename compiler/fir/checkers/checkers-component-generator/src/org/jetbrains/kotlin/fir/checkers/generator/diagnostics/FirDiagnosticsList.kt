@@ -294,6 +294,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val FINAL_UPPER_BOUND by warning<FirSourceElement, PsiElement> {
             parameter<ConeKotlinType>("type")
         }
+
+        val UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE by error<FirSourceElement, PsiElement>()
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

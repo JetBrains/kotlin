@@ -217,6 +217,7 @@ object FirErrors {
     val KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE by error1<FirSourceElement, KtNamedDeclaration, FirTypeParameterSymbol>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val TYPE_PARAMETER_AS_REIFIED by error1<FirSourceElement, PsiElement, FirTypeParameterSymbol>()
     val FINAL_UPPER_BOUND by warning1<FirSourceElement, PsiElement, ConeKotlinType>()
+    val UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE by error0<FirSourceElement, PsiElement>()
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<FirSourceElement, KtExpression, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
