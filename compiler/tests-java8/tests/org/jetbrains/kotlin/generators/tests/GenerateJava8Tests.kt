@@ -28,10 +28,6 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("compiler/tests-java8/tests", "compiler/testData") {
-            testClass<AbstractForeignAnnotationsCompiledJavaDiagnosticTest> {
-                model("foreignAnnotations/java8Tests/typeEnhancementOnCompiledJava")
-            }
-
             testClass<AbstractLoadJava8Test> {
                 model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
                 model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
