@@ -99,3 +99,4 @@ internal fun KtDeclaration.hasFqName(): Boolean =
 internal fun KtDeclaration.isNonAnonymousClassOrObject() =
     this is KtClassOrObject
             && !this.isObjectLiteral()
+            && this !is KtEnumEntry
