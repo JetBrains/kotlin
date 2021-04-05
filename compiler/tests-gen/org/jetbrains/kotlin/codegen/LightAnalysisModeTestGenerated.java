@@ -21301,6 +21301,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testTypeAlias() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
             }
+
+            @TestMetadata("withTypeParameter.kt")
+            public void testWithTypeParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/withTypeParameter.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/multiplatform/exhaustiveness")

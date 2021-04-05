@@ -25182,6 +25182,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testTypeAlias() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
             }
+
+            @Test
+            @TestMetadata("withTypeParameter.kt")
+            public void testWithTypeParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/withTypeParameter.kt");
+            }
         }
 
         @Nested

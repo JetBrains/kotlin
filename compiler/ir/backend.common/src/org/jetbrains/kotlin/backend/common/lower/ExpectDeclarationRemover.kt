@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 // `doRemove` means should expect-declaration be removed from IR
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : IrElementVisitorVoid {
+    private val typeParameterSubstitutionMap = mutableMapOf<Pair<IrFunction, IrFunction>, Map<IrTypeParameter, IrTypeParameter>>()
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -97,13 +99,29 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         // the `actual fun` or `actual constructor` for this may be in a different module.
         // Nothing we can do with those.
         // TODO they may not actually have the defaults though -- may be a frontend bug.
-        val expectParameter = function.findExpectForActual()?.valueParameters?.get(index) ?: return
+        val expectFunction = function.findExpectForActual()
+        val expectParameter = expectFunction?.valueParameters?.get(index) ?: return
 
         val defaultValue = expectParameter.defaultValue ?: return
 
+        val expectToActual = expectFunction to function
+        if (expectToActual !in typeParameterSubstitutionMap) {
+            val functionTypeParameters = collectTypeParameters(function)
+            val expectFunctionTypeParameters = collectTypeParameters(expectFunction)
+
+            expectFunctionTypeParameters.zip(functionTypeParameters).let { typeParametersMapping ->
+                typeParameterSubstitutionMap[expectToActual] = typeParametersMapping.toMap()
+            }
+        }
+
         defaultValue.let { originalDefault ->
             declaration.defaultValue = declaration.factory.createExpressionBody(originalDefault.startOffset, originalDefault.endOffset) {
-                expression = originalDefault.expression.deepCopyWithSymbols(function).remapExpectValueSymbols()
+                expression = originalDefault.expression
+                    .deepCopyWithSymbols(function)
+                    .remapExpectValueSymbols()
+                    .apply {
+                        remapTypes(IrTypeParameterRemapper(typeParameterSubstitutionMap.getValue(expectToActual)))
+                    }
             }
         }
     }

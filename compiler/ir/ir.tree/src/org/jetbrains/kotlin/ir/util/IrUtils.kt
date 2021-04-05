@@ -603,3 +603,19 @@ internal fun <T> IrConst<T>.shallowCopy() = IrConstImpl(
     kind,
     value
 )
+
+fun collectTypeParameters(declaration: IrTypeParametersContainer): List<IrTypeParameter> {
+    val result = mutableListOf<IrTypeParameter>()
+
+    fun collectImpl(declaration: IrDeclaration) {
+        if (declaration is IrTypeParametersContainer) {
+            result.addAll(declaration.typeParameters)
+            declaration.parentClassOrNull?.let { collectImpl(it) }
+        }
+        if (declaration is IrClass && declaration.isInner) collectImpl(declaration.parent as IrDeclaration)
+    }
+
+    collectImpl(declaration)
+
+    return result
+}
