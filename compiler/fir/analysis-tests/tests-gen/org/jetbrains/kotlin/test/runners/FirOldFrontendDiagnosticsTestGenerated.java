@@ -18041,6 +18041,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 public void testExpectSealedInterface() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedInterface.kt");
                 }
+
+                @Test
+                @TestMetadata("kt45796.kt")
+                public void testKt45796() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/kt45796.kt");
+                }
             }
 
             @Nested

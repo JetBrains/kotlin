@@ -8,9 +8,14 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class SealedClassInheritorsProvider {
     /**
@@ -26,6 +31,7 @@ object CliSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
     // Note this is a generic and slow implementation which would work almost for any subclass of ClassDescriptor.
     // Please avoid using it in new code.
     // TODO: do something more clever instead at call sites of this function
+    @OptIn(TypeRefinement::class)
     override fun computeSealedSubclasses(
         sealedClass: ClassDescriptor,
         allowSealedInheritorsInDifferentFilesOfSamePackage: Boolean
@@ -37,13 +43,21 @@ object CliSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
         fun collectSubclasses(scope: MemberScope, collectNested: Boolean) {
             for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)) {
                 if (descriptor !is ClassDescriptor) continue
+                /*
+                 * scope.getContributedDescriptors() doesn't discriminate expect classes in presence
+                 *   of theirs actuals, so we need to lookup for descriptor once again via
+                 *   scope.getContributedClassifier() to match expects (if possible)
+                 */
+                val refinedDescriptor = runIf(descriptor.isExpect) {
+                    scope.getContributedClassifier(descriptor.name, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) as? ClassDescriptor
+                } ?: descriptor
 
-                if (DescriptorUtils.isDirectSubclass(descriptor, sealedClass)) {
-                    result.add(descriptor)
+                if (DescriptorUtils.isDirectSubclass(refinedDescriptor, sealedClass)) {
+                    result.add(refinedDescriptor)
                 }
 
                 if (collectNested) {
-                    collectSubclasses(descriptor.unsubstitutedInnerClassesScope, collectNested)
+                    collectSubclasses(refinedDescriptor.unsubstitutedInnerClassesScope, collectNested)
                 }
             }
         }
