@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
@@ -30,16 +28,16 @@ import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
@@ -321,3 +319,81 @@ val FirValueParameter.hasValOrVar: Boolean
         val source = this.source ?: return false
         return source.getChild(VAL_VAR_TOKEN_SET) != null
     }
+
+fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
+    type != null && AbstractTypeChecker.isSubtypeOf(context, type, this)
+
+fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?) =
+    type != null && AbstractTypeChecker.isSubtypeOf(context, this, type)
+
+fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
+    if (this.isMarkedNullable) {
+        return true
+    }
+    val clazz = toRegularClass(session) ?: return true
+    if (clazz.isEnumClass || clazz.isExpect || clazz.modality != Modality.FINAL) {
+        return true
+    }
+
+    clazz.typeParameters.forEachIndexed { idx, typeParameterRef ->
+        val typeParameter = typeParameterRef.symbol.fir
+        val typeProjection = typeArguments[idx]
+
+        if (typeProjection.isStarProjection) {
+            return true
+        }
+
+        val argument = typeProjection.type!! //safe because it is not a star
+
+        when (typeParameter.variance) {
+            Variance.INVARIANT ->
+                when (typeProjection.kind) {
+                    ProjectionKind.INVARIANT ->
+                        if (lowerThanBound(session.typeContext, argument, typeParameter) || argument.canHaveSubtypes(session)) {
+                            return true
+                        }
+                    ProjectionKind.IN ->
+                        if (lowerThanBound(session.typeContext, argument, typeParameter)) {
+                            return true
+                        }
+                    ProjectionKind.OUT ->
+                        if (argument.canHaveSubtypes(session)) {
+                            return true
+                        }
+                    ProjectionKind.STAR ->
+                        return true
+                }
+            Variance.IN_VARIANCE ->
+                if (typeProjection.kind != ProjectionKind.OUT) {
+                    if (lowerThanBound(session.typeContext, argument, typeParameter)) {
+                        return true
+                    }
+                } else {
+                    if (argument.canHaveSubtypes(session)) {
+                        return true
+                    }
+                }
+            Variance.OUT_VARIANCE ->
+                if (typeProjection.kind != ProjectionKind.IN) {
+                    if (argument.canHaveSubtypes(session)) {
+                        return true
+                    }
+                } else {
+                    if (lowerThanBound(session.typeContext, argument, typeParameter)) {
+                        return true
+                    }
+                }
+        }
+    }
+
+    return false
+}
+
+private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinType, typeParameter: FirTypeParameter): Boolean {
+    typeParameter.bounds.forEach { boundTypeRef ->
+        if (argument != boundTypeRef.coneType && argument.isSubtypeOf(context, boundTypeRef.coneType)) {
+            return true
+        }
+    }
+    return false
+}

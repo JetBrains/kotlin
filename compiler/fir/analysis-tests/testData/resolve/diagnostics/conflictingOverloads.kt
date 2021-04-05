@@ -38,15 +38,15 @@ fun test(z: Int, c: Char) {}
 
 typealias BA = A
 
-fun <T> kek(t: T) where T : (String) -> Any?, T : Char {}
-fun <T> kek(t: T) where T : () -> Boolean, T : String {}
-fun <T : Int> kek(t: T) {}
+fun <T> kek(t: T) where T : (String) -> Any?, T : <!FINAL_UPPER_BOUND!>Char<!> {}
+fun <T> kek(t: T) where T : () -> Boolean, T : <!FINAL_UPPER_BOUND!>String<!> {}
+fun <T : <!FINAL_UPPER_BOUND!>Int<!>> kek(t: T) {}
 
 fun lol(a: Array<Int>) {}
 fun lol(a: Array<Boolean>) {}
 
-<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T)<!> where T : () -> Boolean, T : String {}
-<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T)<!> where T : String, T : () -> Boolean {}
+<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T)<!> where T : () -> Boolean, T : <!FINAL_UPPER_BOUND!>String<!> {}
+<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T)<!> where T : <!FINAL_UPPER_BOUND!>String<!>, T : () -> Boolean {}
 
 class M {
     companion <!REDECLARATION!>object<!> {}

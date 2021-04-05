@@ -36,7 +36,7 @@ class case_4 : ClassLevel3() {
         return this == null
     }
 
-    fun <T : Boolean>T.case_4_2() {
+    fun <T : <!FINAL_UPPER_BOUND!>Boolean<!>>T.case_4_2() {
         contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (!this@case_4_2)<!> }
         if (this) throw Exception()
     }

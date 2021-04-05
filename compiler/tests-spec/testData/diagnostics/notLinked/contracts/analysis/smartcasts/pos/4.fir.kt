@@ -20,11 +20,11 @@ fun <T : Number> T.case_2() {
 }
 
 // TESTCASE NUMBER: 3
-fun <T : String> T?.case_3_1() {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_3_1() {
     contract { returns() implies (this@case_3_1 != null) }
     if (!(this@case_3_1 != null)) throw Exception()
 }
-fun <T : String> T?.case_3_2() {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_3_2() {
     contract { returns() implies (this@case_3_2 == null) }
     if (!(this@case_3_2 == null)) throw Exception()
 }
@@ -76,47 +76,47 @@ fun <T : Number> T.case_6_4(): Boolean? {
 }
 
 // TESTCASE NUMBER: 7
-fun <T : String> T?.case_7_1(): Boolean {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_1(): Boolean {
     contract { returns(true) implies (this@case_7_1 != null) }
     return this@case_7_1 != null
 }
-fun <T : String> T?.case_7_2(): Boolean {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_2(): Boolean {
     contract { returns(true) implies (this@case_7_2 == null) }
     return this@case_7_2 == null
 }
-fun <T : String> T?.case_7_3(): Boolean? {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_3(): Boolean? {
     contract { returnsNotNull() implies (this@case_7_3 == null) }
     return if (this@case_7_3 == null) true else null
 }
-fun <T : String> T?.case_7_4(): Boolean? {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_4(): Boolean? {
     contract { returns(null) implies (this@case_7_4 == null) }
     return if (this@case_7_4 == null) null else true
 }
-fun <T : String> T?.case_7_5(): Boolean {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_5(): Boolean {
     contract { returns(false) implies (this@case_7_5 == null) }
     return !(this@case_7_5 == null)
 }
-fun <T : String> T?.case_7_6(): Boolean? {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_6(): Boolean? {
     contract { returnsNotNull() implies (this@case_7_6 != null) }
     return if (this@case_7_6 != null) true else null
 }
-fun <T : String> T?.case_7_7(): Boolean? {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_7(): Boolean? {
     contract { returns(null) implies (this@case_7_7 != null) }
     return if (this@case_7_7 != null) null else true
 }
-fun <T : String> T?.case_7_8(): Boolean {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_8(): Boolean {
     contract { returns(false) implies (this@case_7_8 != null) }
     return !(this@case_7_8 != null)
 }
-fun <T : String> T?.case_7_9(): Boolean {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_9(): Boolean {
     contract { returns(false) implies (this@case_7_9 == null) }
     return !(this@case_7_9 == null)
 }
-fun <T : String> T?.case_7_10(): Boolean? {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_10(): Boolean? {
     contract { returnsNotNull() implies (this@case_7_10 == null) }
     return if (this@case_7_10 == null) true else null
 }
-fun <T : String> T?.case_7_11(): Boolean? {
+fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_7_11(): Boolean? {
     contract { returns(null) implies (this@case_7_11 == null) }
     return if (this@case_7_11 == null) null else true
 }

@@ -35,7 +35,7 @@ inline fun <reified T>case_3(x: Any?) {
 }
 
 // TESTCASE NUMBER: 4
-inline fun <reified T : Boolean>case_4(x: Any?) {
+inline fun <reified T : <!FINAL_UPPER_BOUND!>Boolean<!>>case_4(x: Any?) {
     if (x is Int is T == null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()

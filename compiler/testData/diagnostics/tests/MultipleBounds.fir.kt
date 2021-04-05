@@ -43,12 +43,12 @@ fun test() {
 
 class Foo() {}
 
-class Bar<T : Foo>
+class Bar<T : <!FINAL_UPPER_BOUND!>Foo<!>>
 
-class Buzz<T> where T : Bar<Int>, T : <!UNRESOLVED_REFERENCE!>nioho<!>
+class Buzz<T> where T : <!FINAL_UPPER_BOUND!>Bar<Int><!>, T : <!UNRESOLVED_REFERENCE!>nioho<!>
 
-class X<T : Foo>
-class Y<T> where T : Foo, T : Bar<Foo>
+class X<T : <!FINAL_UPPER_BOUND!>Foo<!>>
+class Y<T> where T : <!FINAL_UPPER_BOUND!>Foo<!>, T : <!FINAL_UPPER_BOUND!>Bar<Foo><!>
 
 fun <T> test2(t : T)
   where

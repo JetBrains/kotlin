@@ -53,7 +53,7 @@ fun testCaptured(cSub: SubInv<out Number>, cInv: Inv<out Number>) {
 
 fun testVariableWithBound() {
     fun <K : Number> createWithNumberBound(): Inv<K> = TODO()
-    fun <K : Int> createWithIntBound(): Inv<K> = TODO()
+    fun <K : <!FINAL_UPPER_BOUND!>Int<!>> createWithIntBound(): Inv<K> = TODO()
 
     val c1 = select(SubInv<Int>(), createWithNumberBound())
 

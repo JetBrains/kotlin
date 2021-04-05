@@ -214,6 +214,7 @@ object FirErrors {
     val INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS by error0<FirSourceElement, KtClassOrObject>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE by error1<FirSourceElement, KtNamedDeclaration, FirTypeParameterSymbol>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val TYPE_PARAMETER_AS_REIFIED by error1<FirSourceElement, PsiElement, FirTypeParameterSymbol>()
+    val FINAL_UPPER_BOUND by warning1<FirSourceElement, PsiElement, ConeKotlinType>()
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<FirSourceElement, KtExpression, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

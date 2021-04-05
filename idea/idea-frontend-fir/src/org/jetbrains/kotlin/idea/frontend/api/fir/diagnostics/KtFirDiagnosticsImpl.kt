@@ -1010,6 +1010,14 @@ internal class TypeParameterAsReifiedImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class FinalUpperBoundImpl(
+    override val type: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.FinalUpperBound(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KtCallableSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,

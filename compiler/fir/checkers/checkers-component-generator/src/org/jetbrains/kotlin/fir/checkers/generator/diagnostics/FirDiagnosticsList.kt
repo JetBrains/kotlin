@@ -289,6 +289,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val TYPE_PARAMETER_AS_REIFIED by error<FirSourceElement, PsiElement> {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
+
+        val FINAL_UPPER_BOUND by warning<FirSourceElement, PsiElement> {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {
