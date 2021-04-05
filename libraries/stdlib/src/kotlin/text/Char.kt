@@ -230,9 +230,10 @@ public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
     if (this == other) return true
     if (!ignoreCase) return false
 
-    if (this.uppercaseChar() == other.uppercaseChar()) return true
-    if (this.lowercaseChar() == other.lowercaseChar()) return true
-    return false
+    val thisUpper = this.uppercaseChar()
+    val otherUpper = other.uppercaseChar()
+
+    return thisUpper == otherUpper || thisUpper.lowercaseChar() == otherUpper.lowercaseChar()
 }
 
 /**
