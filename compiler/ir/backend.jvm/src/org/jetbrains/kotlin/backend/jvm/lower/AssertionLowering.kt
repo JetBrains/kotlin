@@ -49,7 +49,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
 {
     // Keeps track of the $assertionsDisabled field, which we generate lazily for classes containing
     // assertions when compiled with -Xassertions=jvm.
-    private class ClassInfo(val irClass: IrClass, val topLevelClass: IrClass, var assertionsDisabledField: IrField? = null)
+    class ClassInfo(val irClass: IrClass, val topLevelClass: IrClass, var assertionsDisabledField: IrField? = null)
 
     override fun lower(irFile: IrFile) {
         // In legacy mode we treat assertions as inline function calls
