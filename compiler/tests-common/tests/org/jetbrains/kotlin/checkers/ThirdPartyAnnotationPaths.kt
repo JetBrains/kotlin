@@ -17,4 +17,4 @@
 package org.jetbrains.kotlin.checkers
 
 const val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/annotations"
-const val FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH = "third-party/jdk8-annotations"
+const val FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH = "third-party/java8-annotations"

@@ -122,7 +122,7 @@ any distributions of the compiler, libraries or plugin:
       - License: LGPL 2.1 ([license/third_party/testdata/findbugs_license.txt][findbugs])
       - Origin: Bytecode Analysis Framework, Copyright (C) 2005 University of Maryland
 
- - Path: third-party/jdk8-annotations/org/eclipse
+ - Path: third-party/java8-annotations/org/eclipse
       - License: Eclipse Public License v1.0 ([license/third_party/testdata/eclipse_license.txt][eclipse])
       - Origin: Eclipse JDT, Copyright (c) 2011, 2013 Stephan Herrmann and others.
 

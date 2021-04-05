@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.services.configuration.JdkForeignAnnotationType
+import org.jetbrains.kotlin.test.services.configuration.JavaForeignAnnotationType
 import org.jetbrains.kotlin.utils.ReportLevel
 
 @Suppress("RemoveExplicitTypeArguments")
@@ -30,7 +30,7 @@ object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {
         additionalParser = ReportLevel.Companion::findByDescription
     )
 
-    val ANNOTATIONS_PATH by enumDirective<JdkForeignAnnotationType>(
+    val ANNOTATIONS_PATH by enumDirective<JavaForeignAnnotationType>(
         description = "Path to foreign annotations"
     )
 
