@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.codegen.CodegenTestUtil
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.JSPECIFY_STATE
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.JSR305_GLOBAL_REPORT
@@ -26,19 +21,15 @@ import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
 import java.io.File
 
-enum class JdkForeignAnnotationType(val path: String) {
+enum class JavaForeignAnnotationType(val path: String) {
     Annotations("third-party/annotations"),
-    Jdk8Annotations("third-party/jdk8-annotations");
-
-    companion object {
-        val FOREIGN_ANNOTATIONS_SOURCES_PATH = Annotations.path
-        val FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH = Jdk8Annotations.path
-    }
+    Java8Annotations("third-party/java8-annotations");
 }
 
 open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        private const val TEST_ANNOTATIONS_SOURCE_PATH = "compiler/testData/foreignAnnotations/testAnnotations"
+        val FOREIGN_ANNOTATIONS_SOURCES_PATH = Annotations.path
+        val FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH = Jdk8Annotations.path
     }
 
     override val directivesContainers: List<DirectivesContainer>
