@@ -1613,7 +1613,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             IrConstKind.Null -> true
             IrConstKind.Boolean -> (value.value as Boolean) == false
             IrConstKind.Byte -> (value.value as Byte) == 0.toByte()
-            IrConstKind.Char -> (value.value as Char) == 0.toChar()
+            IrConstKind.Char -> (value.value as Char) == Char(0)
             IrConstKind.Short -> (value.value as Short) == 0.toShort()
             IrConstKind.Int -> (value.value as Int) == 0
             IrConstKind.Long -> (value.value as Long) == 0L

@@ -23,7 +23,7 @@ internal class KonanDefaultParameterInjector(private val konanContext: KonanBack
             PrimitiveBinaryType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, type, false)
             PrimitiveBinaryType.BYTE -> IrConstImpl.byte(startOffset, endOffset, type, 0)
             PrimitiveBinaryType.SHORT -> when (type.getInlinedClassNative()) {
-                context.irBuiltIns.char -> IrConstImpl.char(startOffset, endOffset, type, 0.toChar())
+                context.irBuiltIns.char -> IrConstImpl.char(startOffset, endOffset, type, Char(0))
                 else -> IrConstImpl.short(startOffset, endOffset, type, 0)
             }
             PrimitiveBinaryType.INT -> IrConstImpl.int(startOffset, endOffset, type, 0)

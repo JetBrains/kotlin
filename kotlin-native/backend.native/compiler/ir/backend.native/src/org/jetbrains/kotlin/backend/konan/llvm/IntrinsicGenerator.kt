@@ -735,7 +735,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun makeConstOfType(type: LLVMTypeRef, value: Int): LLVMValueRef = when (type) {
         int8Type -> Int8(value.toByte()).llvm
-        int16Type -> Char16(value.toChar()).llvm
+        int16Type -> Char16(value.toUShort().let(::Char)).llvm
         int32Type -> Int32(value).llvm
         int64Type -> Int64(value.toLong()).llvm
         floatType -> Float32(value.toFloat()).llvm

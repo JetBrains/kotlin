@@ -479,12 +479,12 @@ private class U32CString(val chars: CharArray): CValues<IntVar>() {
         var indexIn = 0
         var indexOut = 0
         while (indexIn < chars.size) {
-            var value = chars[indexIn++].toInt()
+            var value = chars[indexIn++].code
             if (value >= 0xd800 && value < 0xdc00) {
                 // Surrogate pair.
                 if (indexIn >= chars.size - 1) throw IllegalArgumentException()
                 indexIn++
-                val next = chars[indexIn].toInt()
+                val next = chars[indexIn].code
                 if (next < 0xdc00 || next >= 0xe000) throw IllegalArgumentException()
                 value = 0x10000 + ((value and 0x3ff) shl 10) + (next and 0x3ff)
             }
@@ -527,7 +527,7 @@ public fun CPointer<ShortVar>.toKStringFromUtf16(): String {
     val chars = CharArray(length)
     var index = 0
     while (index < length) {
-        chars[index] = nativeBytes[index].toChar()
+        chars[index] = nativeBytes[index].toUShort().let(::Char)
         ++index
     }
     return chars.concatToString()
@@ -556,10 +556,10 @@ public fun CPointer<IntVar>.toKStringFromUtf32(): String {
     while (toIndex < length) {
         var value = nativeBytes[fromIndex++]
         if (value >= 0x10000 && value <= 0x10ffff) {
-            chars[toIndex++] = (((value - 0x10000) shr 10) or 0xd800).toChar()
-            chars[toIndex++] = (((value - 0x10000) and 0x3ff) or 0xdc00).toChar()
+            chars[toIndex++] = (((value - 0x10000) shr 10) or 0xd800).toUShort().let(::Char)
+            chars[toIndex++] = (((value - 0x10000) and 0x3ff) or 0xdc00).toUShort().let(::Char)
         } else {
-            chars[toIndex++] = value.toChar()
+            chars[toIndex++] = value.toUShort().let(::Char)
         }
     }
     return chars.concatToString()
