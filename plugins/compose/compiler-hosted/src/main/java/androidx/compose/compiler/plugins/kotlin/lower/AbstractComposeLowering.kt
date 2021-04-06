@@ -1214,7 +1214,6 @@ abstract class AbstractComposeLowering(
     }
 
     protected fun dexSafeName(name: Name): Name {
-        val unsafeSymbolsRegex = "[ <>]".toRegex()
         return if (
             name.isSpecial || name.asString().contains(unsafeSymbolsRegex)
         ) {
@@ -1225,6 +1224,8 @@ abstract class AbstractComposeLowering(
         } else name
     }
 }
+
+private val unsafeSymbolsRegex = "[ <>]".toRegex()
 
 fun IrFunction.composerParam(): IrValueParameter? {
     for (param in valueParameters.asReversed()) {
