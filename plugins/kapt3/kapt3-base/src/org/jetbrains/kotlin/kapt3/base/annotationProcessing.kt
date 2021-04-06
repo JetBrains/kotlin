@@ -144,15 +144,15 @@ private fun showProcessorTimings(wrappedProcessors: List<ProcessorWrapper>, logg
     }
 }
 
-private fun dumpProcessorTiming(wrappedProcessors: List<ProcessorWrapper>, apReportFile: File?, logger: (String) -> Unit) {
-    logger("Dumping Kapt Annotation Processing performance report to ${apReportFile?.absolutePath}")
+private fun dumpProcessorTiming(wrappedProcessors: List<ProcessorWrapper>, apReportFile: File, logger: (String) -> Unit) {
+    logger("Dumping Kapt Annotation Processing performance report to ${apReportFile.absolutePath}")
 
-    apReportFile?.writeBytes(buildString {
+    apReportFile.writeText(buildString {
         appendLine("Kapt Annotation Processing performance report:")
         wrappedProcessors.forEach { processor ->
             appendLine(processor.renderSpentTime())
         }
-    }.toByteArray())
+    })
 }
 
 private fun reportIfRunningNonIncrementally(
