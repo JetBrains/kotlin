@@ -182,23 +182,22 @@ object ComparableOps : TemplateGroupBase() {
             inlineOnly()
             var convertBack = "to$primitive()"
             on(Platform.JS) {
-                suppress("DEPRECATION_ERROR")
                 convertBack = "unsafeCast<$primitive>()"
             }
             on(Platform.JVM) {
                 body { "return Math.min(a, b)" }
             }
             on(Platform.JS) {
-                body { "return Math.min(a, b)" }
+                body { "return JsMath.min(a, b)" }
                 if (primitive == PrimitiveType.Long) {
                     inline(suppressWarning = true)
                     body { "return $defaultImpl" }
                 }
             }
             if (primitive in shortIntPrimitives) {
-                body { "return Math.min(a.toInt(), b.toInt()).$convertBack" }
-                on(Platform.Native) {
-                    body { "return minOf(a.toInt(), b.toInt()).$convertBack" }
+                body { "return minOf(a.toInt(), b.toInt()).$convertBack" }
+                on(Platform.JVM) {
+                    body { "return Math.min(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
             if (isFloat) {
@@ -254,14 +253,12 @@ object ComparableOps : TemplateGroupBase() {
                     body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
                 }
                 on(Platform.JS) {
-                    suppress("DEPRECATION_ERROR")
-                    body { "return Math.min(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
+                    body { "return JsMath.min(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
                 }
             }
             else if (primitive != PrimitiveType.Long) {
                 on(Platform.JS) {
-                    suppress("DEPRECATION_ERROR")
-                    body { "return Math.min(a, b, c)" }
+                    body { "return JsMath.min(a, b, c)" }
                 }
             }
         }
@@ -386,23 +383,22 @@ object ComparableOps : TemplateGroupBase() {
             inlineOnly()
             var convertBack = "to$primitive()"
             on(Platform.JS) {
-                suppress("DEPRECATION_ERROR")
                 convertBack = "unsafeCast<$primitive>()"
             }
             on(Platform.JVM) {
                 body { "return Math.max(a, b)" }
             }
             on(Platform.JS) {
-                body { "return Math.max(a, b)" }
+                body { "return JsMath.max(a, b)" }
                 if (primitive == PrimitiveType.Long) {
                     inline(suppressWarning = true)
                     body { "return $defaultImpl" }
                 }
             }
             if (primitive in shortIntPrimitives) {
-                body { "return Math.max(a.toInt(), b.toInt()).$convertBack" }
-                on(Platform.Native) {
-                    body { "return maxOf(a.toInt(), b.toInt()).$convertBack" }
+                body { "return maxOf(a.toInt(), b.toInt()).$convertBack" }
+                on(Platform.JVM) {
+                    body { "return Math.max(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
             if (isFloat) {
@@ -454,14 +450,12 @@ object ComparableOps : TemplateGroupBase() {
                     body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }
                 }
                 on(Platform.JS) {
-                    suppress("DEPRECATION_ERROR")
-                    body { "return Math.max(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
+                    body { "return JsMath.max(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
                 }
             }
             else if (primitive != PrimitiveType.Long) {
                 on(Platform.JS) {
-                    suppress("DEPRECATION_ERROR")
-                    body { "return Math.max(a, b, c)" }
+                    body { "return JsMath.max(a, b, c)" }
                 }
             }
         }
