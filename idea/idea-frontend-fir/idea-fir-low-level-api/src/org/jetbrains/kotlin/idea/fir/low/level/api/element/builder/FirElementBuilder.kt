@@ -10,6 +10,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -60,6 +61,7 @@ internal class FirElementBuilder {
             ktFile,
             moduleFileCache,
             FirResolvePhase.BODY_RESOLVE,
+            scopeSession = ScopeSession(),
             checkPCE = true
         )
 

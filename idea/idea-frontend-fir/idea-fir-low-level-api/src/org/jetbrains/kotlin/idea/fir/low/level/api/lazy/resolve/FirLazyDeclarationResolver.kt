@@ -31,7 +31,7 @@ internal class FirLazyDeclarationResolver(
     fun resolveFileAnnotations(
         firFile: FirFile,
         moduleFileCache: ModuleFileCache,
-        scopeSession: ScopeSession = ScopeSession()
+        scopeSession: ScopeSession,
     ) {
         firFileBuilder.runCustomResolveUnderLock(firFile, moduleFileCache) {
             val transformer = FirFileAnnotationsResolveTransformer(firFile.session, scopeSession)
@@ -118,16 +118,19 @@ internal class FirLazyDeclarationResolver(
     ) {
         if (fromPhase >= toPhase) return
         val nonLazyPhase = minOf(toPhase, LAST_NON_LAZY_PHASE)
+
+        val scopeSession = ScopeSession()
         if (fromPhase < nonLazyPhase) {
             firFileBuilder.runResolveWithoutLock(
                 containerFirFile,
                 fromPhase = fromPhase,
                 toPhase = nonLazyPhase,
+                scopeSession = scopeSession,
                 checkPCE = checkPCE
             )
         }
         if (toPhase <= nonLazyPhase) return
-        resolveFileAnnotations(containerFirFile, moduleFileCache)
+        resolveFileAnnotations(containerFirFile, moduleFileCache, scopeSession)
 
         val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider, moduleFileCache)
         val designation = nonLocalDeclarationToResolve.getDesignation(containerFirFile, provider, moduleFileCache)
@@ -137,7 +140,6 @@ internal class FirLazyDeclarationResolver(
         }
 
         var currentPhase = nonLazyPhase
-        val scopeSession = ScopeSession()
 
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next

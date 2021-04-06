@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
@@ -120,13 +121,15 @@ internal class FileStructure(
 
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
         is KtFile -> {
+            val scopeSession = ScopeSession()
             val firFile = firFileBuilder.getFirFileResolvedToPhaseWithCaching(
                 container,
                 moduleFileCache,
                 FirResolvePhase.IMPORTS,
+                scopeSession,
                 checkPCE = true
             )
-            firLazyDeclarationResolver.resolveFileAnnotations(firFile, moduleFileCache)
+            firLazyDeclarationResolver.resolveFileAnnotations(firFile, moduleFileCache, scopeSession)
             RootStructureElement(
                 firFile,
                 container,
