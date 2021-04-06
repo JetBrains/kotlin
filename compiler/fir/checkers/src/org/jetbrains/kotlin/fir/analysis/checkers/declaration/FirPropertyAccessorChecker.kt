@@ -16,25 +16,29 @@ import org.jetbrains.kotlin.fir.types.coneType
 
 object FirPropertyAccessorChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val setter = declaration.setter ?: return
+        checkSetter(declaration, context, reporter)
+    }
 
-        if (declaration.isVal) {
-            reporter.reportOn(setter.source, FirErrors.VAL_WITH_SETTER, context)
-        }
+    private fun checkSetter(property: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+        val setter = property.setter ?: return
 
-        val valueSetterParameter = setter.valueParameters.first()
-        if (valueSetterParameter.isVararg) {
-            return
-        }
-        val valueSetterType = valueSetterParameter.returnTypeRef.coneType
-        val valueSetterTypeSource = valueSetterParameter.returnTypeRef.source
-        val propertyType = declaration.returnTypeRef.coneType
-        if (propertyType is ConeClassErrorType || valueSetterType is ConeClassErrorType) {
-            return
-        }
+        withSuppressedDiagnostics(setter, context) {
+            if (property.isVal) {
+                reporter.reportOn(setter.source, FirErrors.VAL_WITH_SETTER, context)
+            }
 
-        if (valueSetterType != propertyType) {
-            withSuppressedDiagnostics(setter, context) {
+            val valueSetterParameter = setter.valueParameters.first()
+            if (valueSetterParameter.isVararg) {
+                return
+            }
+            val valueSetterType = valueSetterParameter.returnTypeRef.coneType
+            val valueSetterTypeSource = valueSetterParameter.returnTypeRef.source
+            val propertyType = property.returnTypeRef.coneType
+            if (propertyType is ConeClassErrorType || valueSetterType is ConeClassErrorType) {
+                return
+            }
+
+            if (valueSetterType != propertyType) {
                 withSuppressedDiagnostics(valueSetterParameter, context) {
                     reporter.reportOn(valueSetterTypeSource, FirErrors.WRONG_SETTER_PARAMETER_TYPE, propertyType, valueSetterType, context)
                 }
