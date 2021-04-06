@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypeParams
@@ -102,8 +103,9 @@ class ComposerParamTransformer(
     symbolRemapper: DeepCopySymbolRemapper,
     bindingTrace: BindingTrace,
     private val decoysEnabled: Boolean,
+    metrics: ModuleMetrics,
 ) :
-    AbstractComposeLowering(context, symbolRemapper, bindingTrace),
+    AbstractComposeLowering(context, symbolRemapper, bindingTrace, metrics),
     ModuleLoweringPass {
 
     /**

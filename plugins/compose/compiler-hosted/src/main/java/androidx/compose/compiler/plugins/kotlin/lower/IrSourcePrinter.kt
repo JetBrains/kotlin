@@ -115,7 +115,7 @@ import kotlin.math.abs
 
 fun IrElement.dumpSrc(): String {
     val sb = StringBuilder()
-    accept(IrSourcePrinterVisitor(sb), null)
+    accept(IrSourcePrinterVisitor(sb, "%tab%"), null)
     return sb
         .toString()
         // replace tabs at beginning of line with white space
@@ -132,10 +132,11 @@ fun IrElement.dumpSrc(): String {
 }
 
 @Suppress("DEPRECATION")
-private class IrSourcePrinterVisitor(
-    out: Appendable
+class IrSourcePrinterVisitor(
+    out: Appendable,
+    indentUnit: String = "  ",
 ) : IrElementVisitorVoid {
-    private val printer = Printer(out, "%tab%")
+    private val printer = Printer(out, indentUnit)
 
     private fun IrElement.print() {
         accept(this@IrSourcePrinterVisitor, null)
@@ -143,6 +144,8 @@ private class IrSourcePrinterVisitor(
     private fun print(obj: Any?) = printer.print(obj)
     private fun println(obj: Any?) = printer.println(obj)
     private fun println() = printer.println()
+
+    fun printType(type: IrType) = type.renderSrc()
 
     private inline fun indented(body: () -> Unit) {
         printer.pushIndent()
