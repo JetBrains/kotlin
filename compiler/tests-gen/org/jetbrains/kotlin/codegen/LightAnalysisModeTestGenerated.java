@@ -3565,6 +3565,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/casts/javaInterop/castWithWrongType.kt");
             }
 
+            @TestMetadata("enhancedNullabilityConstant.kt")
+            public void testEnhancedNullabilityConstant() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/enhancedNullabilityConstant.kt");
+            }
+
             @TestMetadata("implicitNotNullWithWrongType.kt")
             public void testImplicitNotNullWithWrongType() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/javaInterop/implicitNotNullWithWrongType.kt");

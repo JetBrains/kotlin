@@ -4078,6 +4078,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("enhancedNullabilityConstant.kt")
+            public void testEnhancedNullabilityConstant() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/enhancedNullabilityConstant.kt");
+            }
+
+            @Test
             @TestMetadata("implicitNotNullWithWrongType.kt")
             public void testImplicitNotNullWithWrongType() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/javaInterop/implicitNotNullWithWrongType.kt");
