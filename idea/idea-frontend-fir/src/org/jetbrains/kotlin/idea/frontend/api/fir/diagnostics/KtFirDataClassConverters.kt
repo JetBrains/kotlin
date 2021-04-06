@@ -1444,6 +1444,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH) { firDiagnostic ->
+        ComponentFunctionReturnTypeMismatchImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.UNINITIALIZED_VARIABLE) { firDiagnostic ->
         UninitializedVariableImpl(
             firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firDiagnostic.a.fir as FirProperty),

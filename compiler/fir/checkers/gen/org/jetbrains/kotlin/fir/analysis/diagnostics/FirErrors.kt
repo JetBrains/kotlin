@@ -315,6 +315,7 @@ object FirErrors {
     val COMPONENT_FUNCTION_MISSING by error2<FirSourceElement, PsiElement, Name, ConeKotlinType>()
     val COMPONENT_FUNCTION_AMBIGUITY by error2<FirSourceElement, PsiElement, Name, Collection<AbstractFirBasedSymbol<*>>>()
     val COMPONENT_FUNCTION_ON_NULLABLE by error1<FirSourceElement, KtExpression, Name>()
+    val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by error3<FirSourceElement, KtExpression, Name, ConeKotlinType, ConeKotlinType>()
 
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, KtSimpleNameExpression, FirPropertySymbol>()

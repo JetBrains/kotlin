@@ -82,15 +82,8 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     ) {
         // Will be handled by [FirDestructuringDeclarationChecker]
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
-            // TODO: if all diagnostics are supported, we don't need the following check, and will bail out based on element type.
-            if (diagnostic is ConeUnresolvedNameError ||
-                diagnostic is ConeAmbiguityError ||
-                diagnostic is ConeInapplicableCandidateError
-            ) {
-                return
-            }
+            return
         }
-
         if (source.kind == FirFakeSourceElementKind.ImplicitConstructor) {
             return
         }

@@ -22,7 +22,7 @@ fun bar(aList: List<A>) {
         b checkType { _<String>() }
     }
 
-    aList.foo { (a: String, b) ->
+    aList.foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b) ->
         a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
         b checkType { _<String>() }
     }

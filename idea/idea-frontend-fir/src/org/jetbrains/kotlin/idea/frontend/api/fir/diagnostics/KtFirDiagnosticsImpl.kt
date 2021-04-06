@@ -1651,6 +1651,16 @@ internal class ComponentFunctionOnNullableImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class ComponentFunctionReturnTypeMismatchImpl(
+    override val componentFunctionName: Name,
+    override val destructingType: KtType,
+    override val expectedType: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ComponentFunctionReturnTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class UninitializedVariableImpl(
     override val variable: KtVariableSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,

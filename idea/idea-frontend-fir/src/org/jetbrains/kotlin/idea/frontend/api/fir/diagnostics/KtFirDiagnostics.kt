@@ -1020,6 +1020,13 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val componentFunctionName: Name
     }
 
+    abstract class ComponentFunctionReturnTypeMismatch : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ComponentFunctionReturnTypeMismatch::class
+        abstract val componentFunctionName: Name
+        abstract val destructingType: KtType
+        abstract val expectedType: KtType
+    }
+
     abstract class UninitializedVariable : KtFirDiagnostic<KtSimpleNameExpression>() {
         override val diagnosticClass get() = UninitializedVariable::class
         abstract val variable: KtVariableSymbol
