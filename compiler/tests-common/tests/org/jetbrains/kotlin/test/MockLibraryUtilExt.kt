@@ -18,7 +18,15 @@ object MockLibraryUtilExt {
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
     ): File {
-        return MockLibraryUtil.compileJavaFilesLibraryToJar(sourcesPath, jarName, addSources, extraOptions, extraClasspath, JUnit4Assertions)
+        return MockLibraryUtil.compileJavaFilesLibraryToJar(
+            sourcesPath,
+            jarName,
+            addSources,
+            extraOptions,
+            extraClasspath,
+            extraModulepath = listOf(),
+            JUnit4Assertions
+        )
     }
 
     @JvmStatic
@@ -39,6 +47,7 @@ object MockLibraryUtilExt {
             allowKotlinSources,
             extraOptions,
             extraClasspath,
+            extraModulepath = listOf(),
             useJava9,
             JUnit4Assertions
         )
@@ -64,6 +73,7 @@ object MockLibraryUtilExt {
             allowKotlinSources,
             extraOptions,
             extraClasspath,
+            extraModulepath = listOf(),
             useJava9,
             JUnit4Assertions
         )

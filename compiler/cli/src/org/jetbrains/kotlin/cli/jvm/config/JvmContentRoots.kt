@@ -49,6 +49,9 @@ fun CompilerConfiguration.addJvmSdkRoots(files: List<File>) {
 val CompilerConfiguration.jvmClasspathRoots: List<File>
     get() = getList(CLIConfigurationKeys.CONTENT_ROOTS).filterIsInstance<JvmClasspathRoot>().map(JvmContentRoot::file)
 
+val CompilerConfiguration.jvmModularRoots: List<File>
+    get() = getList(CLIConfigurationKeys.CONTENT_ROOTS).filterIsInstance<JvmModulePathRoot>().map(JvmContentRoot::file)
+
 @JvmOverloads
 fun CompilerConfiguration.addJavaSourceRoot(file: File, packagePrefix: String? = null) {
     add(CLIConfigurationKeys.CONTENT_ROOTS, JavaSourceRoot(file, packagePrefix))

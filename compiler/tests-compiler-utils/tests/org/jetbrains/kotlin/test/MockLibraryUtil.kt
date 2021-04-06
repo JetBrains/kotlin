@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
+import org.jetbrains.kotlin.test.KtAssert.assertTrue
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.ByteArrayOutputStream
@@ -36,6 +37,7 @@ object MockLibraryUtil {
         allowKotlinSources: Boolean = true,
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
+        extraModulepath: List<String> = emptyList(),
         useJava9: Boolean = false,
         assertions: Assertions
     ): File {
@@ -47,6 +49,7 @@ object MockLibraryUtil {
             allowKotlinSources,
             extraOptions,
             extraClasspath,
+            extraModulepath,
             useJava9,
             assertions
         )
@@ -59,16 +62,22 @@ object MockLibraryUtil {
         addSources: Boolean = false,
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
-        assertions: Assertions
+        extraModulepath: List<String> = emptyList(),
+        assertions: Assertions,
+        useJava9: Boolean = false
     ): File {
         return compileJvmLibraryToJar(
             sourcesPath, jarName, addSources,
             allowKotlinSources = false,
-            extraClasspath = extraClasspath, extraOptions = extraOptions,
-            assertions = assertions
+            extraOptions,
+            extraClasspath,
+            extraModulepath,
+            useJava9,
+            assertions
         )
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     @JvmStatic
     fun compileLibraryToJar(
         sourcesPath: String,
@@ -78,15 +87,18 @@ object MockLibraryUtil {
         allowKotlinSources: Boolean = true,
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
+        extraModulepath: List<String> = emptyList(),
         useJava9: Boolean = false,
         assertions: Assertions
     ): File {
+        assertTrue("Module path can be used only for compilation using javac 9 and higher", useJava9 || extraModulepath.isEmpty())
+
         val classesDir = File(contentDir, "classes")
 
         val srcFile = File(sourcesPath)
         val kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile)
         if (srcFile.isFile || kotlinFiles.isNotEmpty()) {
-            KtAssert.assertTrue("Only java files are expected", allowKotlinSources)
+            assertTrue("Only java files are expected", allowKotlinSources)
             compileKotlin(sourcesPath, classesDir, extraOptions, *extraClasspath.toTypedArray())
         }
 
@@ -94,7 +106,6 @@ object MockLibraryUtil {
         if (javaFiles.isNotEmpty()) {
             val classpath = mutableListOf<String>()
             classpath += ForTestCompileRuntime.runtimeJarForTests().path
-            classpath += KtTestUtil.getAnnotationsJar().path
             classpath += extraClasspath
 
             // Probably no kotlin files were present, so dir might not have been created after kotlin compiler
@@ -104,10 +115,17 @@ object MockLibraryUtil {
                 FileUtil.createDirectory(classesDir)
             }
 
-            val options = listOf(
-                "-classpath", classpath.joinToString(File.pathSeparator),
-                "-d", classesDir.path
-            )
+            val options = buildList {
+                add("-classpath")
+                add(classpath.joinToString(File.pathSeparator))
+                add("-d")
+                add(classesDir.path)
+
+                if (useJava9) {
+                    add("--module-path")
+                    add(extraModulepath.joinToString(File.pathSeparator))
+                }
+            }
 
             val compile =
                 if (useJava9) ::compileJavaFilesExternallyWithJava9
