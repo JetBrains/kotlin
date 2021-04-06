@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class VersionChecker(val context: IrPluginContext) {
 
@@ -58,6 +59,9 @@ class VersionChecker(val context: IrPluginContext) {
     }
 
     fun check() {
+        // version checker accesses bodies of the functions that are not deserialized in KLIB
+        if (!context.platform.isJvm()) return
+
         val versionClass = context.referenceClass(ComposeFqNames.ComposeVersion)
         if (versionClass == null) {
             // If the version class isn't present, it likely means that compose runtime isn't on the
