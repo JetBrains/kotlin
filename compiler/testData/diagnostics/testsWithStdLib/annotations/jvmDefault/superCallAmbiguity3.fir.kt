@@ -24,7 +24,7 @@ class D : B, A {
     }
 }
 
-class E: B, A {
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class E<!>: B, A {
     fun foo() {
         super<A>.test()
     }

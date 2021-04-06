@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: JavaInterface.java
 
 interface JavaInterface {

@@ -63,11 +63,58 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             return false
         }
 
+        fun FirIntersectionCallableSymbol.subjectToManyNotImplemented(): Boolean {
+            var nonAbstractCountInClass = 0
+            var nonAbstractCountInInterface = 0
+            var abstractCountInInterface = 0
+            for (intersectionSymbol in intersections) {
+                val intersection = intersectionSymbol.fir as FirCallableMemberDeclaration
+                val containingClass = intersection.getContainingClass(context) as? FirRegularClass
+                val hasInterfaceContainer = containingClass?.classKind == ClassKind.INTERFACE
+                if (intersection.modality != Modality.ABSTRACT) {
+                    if (hasInterfaceContainer) {
+                        nonAbstractCountInInterface++
+                    } else {
+                        nonAbstractCountInClass++
+                    }
+                } else if (hasInterfaceContainer) {
+                    abstractCountInInterface++
+                }
+                if (nonAbstractCountInClass + nonAbstractCountInInterface > 1) {
+                    return true
+                }
+                if (nonAbstractCountInInterface > 0 && abstractCountInInterface > 0) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        fun FirIntersectionCallableSymbol.shouldBeImplemented(): Boolean {
+            // In Java 8, non-abstract intersection overrides having abstract symbol from base class
+            // still should be implemented in current class (even when they have default interface implementation)
+            if (intersections.none {
+                    val fir = (it.fir as FirCallableMemberDeclaration).unwrapFakeOverrides()
+                    fir.isAbstract && (fir.getContainingClass(context) as? FirRegularClass)?.classKind == ClassKind.CLASS
+                }
+            ) return false
+            // Exception from the rule above: interface implementation via delegation
+            if (intersections.any {
+                    val fir = (it.fir as FirCallableMemberDeclaration)
+                    fir.origin == FirDeclarationOrigin.Delegated && !fir.isAbstract
+                }
+            ) return false
+            return true
+        }
+
         fun FirCallableMemberDeclaration<*>.shouldBeImplemented(): Boolean {
-            if (!isAbstract) return false
             val containingClass = getContainingClass(context)
-            if (containingClass === declaration && origin == FirDeclarationOrigin.Source) return false
             if (containingClass is FirRegularClass && containingClass.isExpect) return false
+            if (!isAbstract) {
+                val symbol = symbol as? FirIntersectionCallableSymbol ?: return false
+                return symbol.shouldBeImplemented()
+            }
+            if (containingClass === declaration && origin == FirDeclarationOrigin.Source) return false
             return true
         }
 
@@ -75,9 +122,8 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             classScope.processFunctionsByName(name) { namedFunctionSymbol ->
                 val simpleFunction = namedFunctionSymbol.fir
                 if (namedFunctionSymbol is FirIntersectionOverrideFunctionSymbol) {
-                    if (namedFunctionSymbol.intersections.count {
-                            (it.fir as FirCallableMemberDeclaration).modality != Modality.ABSTRACT
-                        } > 1 && simpleFunction.getContainingClass(context) === declaration
+                    if (simpleFunction.getContainingClass(context) === declaration &&
+                        namedFunctionSymbol.subjectToManyNotImplemented()
                     ) {
                         notImplementedIntersectionSymbols += namedFunctionSymbol
                         return@processFunctionsByName
@@ -99,9 +145,8 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             classScope.processPropertiesByName(name) { propertySymbol ->
                 val property = propertySymbol.fir as? FirProperty ?: return@processPropertiesByName
                 if (propertySymbol is FirIntersectionOverridePropertySymbol) {
-                    if (propertySymbol.intersections.count {
-                            (it.fir as FirCallableMemberDeclaration).modality != Modality.ABSTRACT
-                        } > 1 && property.getContainingClass(context) === declaration
+                    if (property.getContainingClass(context) === declaration &&
+                        propertySymbol.subjectToManyNotImplemented()
                     ) {
                         notImplementedIntersectionSymbols += propertySymbol
                         return@processPropertiesByName

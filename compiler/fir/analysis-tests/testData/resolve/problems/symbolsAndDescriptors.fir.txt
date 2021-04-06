@@ -1,0 +1,46 @@
+FILE: symbolsAndDescriptors.kt
+    public final class IrClassSymbolImpl : R|IrBindableSymbolBase<kotlin/String>|, R|IrClassSymbol| {
+        public constructor(descriptor: R|kotlin/String?| = Null(null)): R|IrClassSymbolImpl| {
+            super<R|IrBindableSymbolBase<kotlin/String>|>(R|<local>/descriptor|)
+        }
+
+    }
+    public abstract interface IrClassSymbol : R|IrClassifierSymbol|, R|IrBindableSymbol<kotlin/String>| {
+    }
+    public abstract interface IrClassifierSymbol : R|IrSymbol|, R|TypeConstructorMarker| {
+        public abstract override val descriptor: R|kotlin/CharSequence|
+            public get(): R|kotlin/CharSequence|
+
+    }
+    public abstract interface IrSymbol : R|kotlin/Any| {
+        public abstract val descriptor: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+
+    }
+    public abstract interface TypeConstructorMarker : R|kotlin/Any| {
+    }
+    public abstract interface IrBindableSymbol<out D : R|kotlin/Any|> : R|IrSymbol| {
+        public abstract override val descriptor: R|D|
+            public get(): R|D|
+
+    }
+    public abstract class IrBindableSymbolBase<out D : R|kotlin/Any|> : R|IrBindableSymbol<D>|, R|IrSymbolBase<D>| {
+        public constructor<out D : R|kotlin/Any|>(descriptor: R|D?|): R|IrBindableSymbolBase<D>| {
+            super<R|IrSymbolBase<D>|>(R|<local>/descriptor|)
+        }
+
+    }
+    public abstract class IrSymbolBase<out D : R|kotlin/Any|> : R|IrSymbol| {
+        public constructor<out D : R|kotlin/Any|>(_descriptor: R|D?|): R|IrSymbolBase<D>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val _descriptor: R|D?| = R|<local>/_descriptor|
+            private get(): R|D?|
+
+        public open override val descriptor: R|D|
+            public get(): R|D| {
+                ^ this@R|/IrSymbolBase|.R|/IrSymbolBase._descriptor|!!
+            }
+
+    }

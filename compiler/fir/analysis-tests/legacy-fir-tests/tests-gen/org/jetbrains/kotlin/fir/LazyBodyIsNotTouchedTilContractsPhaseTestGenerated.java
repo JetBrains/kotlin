@@ -2789,6 +2789,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/secondaryConstructorCfg.kt");
         }
 
+        @TestMetadata("symbolsAndDescriptors.kt")
+        public void testSymbolsAndDescriptors() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/symbolsAndDescriptors.kt");
+        }
+
         @TestMetadata("transform.kt")
         public void testTransform() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/transform.kt");

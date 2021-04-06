@@ -8,11 +8,11 @@ interface IRight {
     fun foo() {}
 }
 
-class CDerived : ALeft(), IRight
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class CDerived<!> : ALeft(), IRight
 
 abstract class CAbstract : ALeft(), IRight
 
-class CDerivedFromAbstract : CAbstract()
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class CDerivedFromAbstract<!> : CAbstract()
 
 interface ILeft {
     fun foo()
@@ -21,10 +21,10 @@ interface ILeft {
 abstract class AILeft : ILeft
 
 // Should be ERROR
-class AILeftImpl : AILeft(), IRight
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class AILeftImpl<!> : AILeft(), IRight
 
 // Should be ERROR
-class RightLeft : ILeft, IRight
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class RightLeft<!> : ILeft, IRight
 
 interface IBase {
     fun foo()

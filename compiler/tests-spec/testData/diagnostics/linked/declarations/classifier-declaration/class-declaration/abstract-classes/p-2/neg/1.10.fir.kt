@@ -4,7 +4,7 @@
 // FULL_JDK
 
 // TESTCASE NUMBER: 1
-class Case1() : BaseCase1(), InterfaceCase1 {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Case1<!>() : BaseCase1(), InterfaceCase1 {}
 
 abstract class BaseCase1() {
     abstract fun foo(): String

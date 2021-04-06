@@ -8,6 +8,6 @@ interface IRight {
 
 interface IDerived : ILeft, IRight
 
-class CDerived : ILeft, IRight
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class CDerived<!> : ILeft, IRight
 
 abstract class ADerived : ILeft, IRight
