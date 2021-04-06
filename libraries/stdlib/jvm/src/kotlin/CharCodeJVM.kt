@@ -13,6 +13,7 @@ package kotlin
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
+@Suppress("DEPRECATION")
 public actual inline fun Char(code: UShort): Char {
     return code.toInt().toChar()
 }

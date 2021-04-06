@@ -43,6 +43,7 @@ public abstract class Number {
     /**
      * Returns the [Char] with the numeric value equal to this number, truncated to 16 bits if appropriate.
      */
+    @Deprecated("Conversion to Char is deprecated. Use Char constructor instead.", ReplaceWith("Char(this.toInt().toUShort())"))
     public abstract fun toChar(): Char
 
     /**

@@ -47,18 +47,24 @@ public class Char private constructor() : Comparable<Char> {
     public operator fun rangeTo(other: Char): CharRange
 
     /** Returns the value of this character as a `Byte`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code instead.", ReplaceWith("TODO"))
     public fun toByte(): Byte
     /** Returns the value of this character as a `Char`. */
     public fun toChar(): Char
     /** Returns the value of this character as a `Short`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code instead.", ReplaceWith("TODO"))
     public fun toShort(): Short
     /** Returns the value of this character as a `Int`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code instead.", ReplaceWith("TODO"))
     public fun toInt(): Int
     /** Returns the value of this character as a `Long`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code instead.", ReplaceWith("TODO"))
     public fun toLong(): Long
     /** Returns the value of this character as a `Float`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code instead.", ReplaceWith("TODO"))
     public fun toFloat(): Float
     /** Returns the value of this character as a `Double`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code instead.", ReplaceWith("TODO"))
     public fun toDouble(): Double
 
     companion object {

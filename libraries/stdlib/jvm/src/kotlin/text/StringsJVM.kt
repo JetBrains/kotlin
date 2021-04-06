@@ -21,7 +21,7 @@ import java.util.regex.Pattern
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
 @kotlin.internal.InlineOnly
-internal actual inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toInt(), fromIndex)
+internal actual inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.code, fromIndex)
 
 /**
  * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
@@ -33,7 +33,7 @@ internal actual inline fun String.nativeIndexOf(str: String, fromIndex: Int): In
  * Returns the index within this string of the last occurrence of the specified character.
  */
 @kotlin.internal.InlineOnly
-internal actual inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toInt(), fromIndex)
+internal actual inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.code, fromIndex)
 
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
