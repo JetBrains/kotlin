@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -33,6 +34,8 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val WITH_FOREIGN_ANNOTATIONS by directive("Add foreign nullability annotations to classpath")
 
+    val ALLOW_KOTLIN_PACKAGE by directive("Don't require stdlib as a java 9 module")
+
     val WITH_JSR305_TEST_ANNOTATIONS by directive(
         description = """
             Add test nullability annotations based on JSR-305 annotations
@@ -46,6 +49,14 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val INCLUDE_JAVA_AS_BINARY by directive(
         "Compile this java file into jar and add it to classpath instead of compiling Kotlin with Java sources",
         applicability = DirectiveApplicability.File
+    )
+    val ALL_JAVA_AS_BINARY by directive(
+        "Compile all java files into jar and add it to classpath instead of compiling Kotlin with Java sources",
+        applicability = DirectiveApplicability.Global
+    )
+    val COMPILE_JAVA_USING by enumDirective<TestJavacVersion>(
+        "Compile all including java files using javac of specific version",
+        applicability = DirectiveApplicability.Global
     )
 
     val JSPECIFY_MUTE by directive(
