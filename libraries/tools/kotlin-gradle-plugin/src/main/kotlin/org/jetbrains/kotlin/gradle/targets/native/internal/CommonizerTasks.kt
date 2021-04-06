@@ -49,7 +49,8 @@ internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
                 "commonizeCInterop",
                 invokeWhenRegistered = {
                     commonizeTask.dependsOn(this)
-                    commonizeNativeDistributionHierarchicalTask?.let(this::dependsOn) ?: dependsOn(commonizeNativeDistributionTask)
+                    commonizeNativeDistributionHierarchicallyTask?.let(this::dependsOn)
+                    commonizeNativeDistributionTask?.let(this::dependsOn)
                 },
                 configureTask = {
                     group = "interop"
@@ -76,21 +77,24 @@ internal val Project.copyCommonizeCInteropForIdeTask: TaskProvider<CopyCommonize
         return null
     }
 
-internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>
-    get() = locateOrRegisterTask(
-        "commonizeNativeDistribution",
-        invokeWhenRegistered = { commonizeTask.dependsOn(this) },
-        configureTask = {
-            group = "interop"
-            description = "Invokes the commonizer on the platform libraries provided by the Kotlin/Native distribution"
-        }
-    )
+internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
+    get() {
+        if (isHierarchicalCommonizationEnabled) return null
+        return locateOrRegisterTask(
+            "commonizeNativeDistribution",
+            invokeWhenRegistered = { commonizeTask.dependsOn(this) },
+            configureTask = {
+                group = "interop"
+                description = "Invokes the commonizer on the platform libraries provided by the Kotlin/Native distribution"
+            }
+        )
+    }
 
-internal val Project.commonizeNativeDistributionHierarchicalTask: TaskProvider<HierarchicalNativeDistributionCommonizerTask>?
+internal val Project.commonizeNativeDistributionHierarchicallyTask: TaskProvider<HierarchicalNativeDistributionCommonizerTask>?
     get() {
         if (!isHierarchicalCommonizationEnabled) return null
         return locateOrRegisterTask(
-            "commonizeNativeDistributionHierarchically",
+            "commonizeNativeDistribution",
             invokeWhenRegistered = { commonizeTask.dependsOn(this) },
             configureTask = {
                 group = "interop"

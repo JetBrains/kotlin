@@ -228,7 +228,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Enables experimental commonization of 'higher level' shared native source sets
      */
     val enableHierarchicalCommonization: Boolean
-        get() = booleanProperty("kotlin.mpp.enableHierarchicalCommonization") ?: false
+        get() = booleanProperty("kotlin.mpp.enableHierarchicalCommonization") ?: true
 
     /**
      * Dependencies caching strategy for all targets that support caches.

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSou
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal fun Project.setUpHierarchicalKotlinNativePlatformDependencies() {
-    val task = commonizeNativeDistributionHierarchicalTask?.get() ?: return
+    val task = commonizeNativeDistributionHierarchicallyTask?.get() ?: return
     val kotlin = multiplatformExtensionOrNull ?: return
     kotlin.sourceSets.forEach { sourceSet ->
         val target = getCommonizerTarget(sourceSet) ?: return@forEach
@@ -31,15 +31,22 @@ private fun HierarchicalNativeDistributionCommonizerTask.dependenciesFor(target:
     val targetOutputDirectory = HierarchicalCommonizerOutputLayout.getTargetDirectory(getRootOutputDirectory(rootTarget), target)
     val targetDependencies = project.filesProvider { targetOutputDirectory.listFiles().orEmpty().toList() }.builtBy(this)
 
-    if (target is LeafCommonizerTarget) {
-        val expectTarget = rootTarget.withAllAncestors()
-            .firstOrNull { (it as? SharedCommonizerTarget)?.targets?.contains(target) == true }
-            ?: return targetDependencies
+    /*
+    LeafCommonizerTargets will still analyze against 'new' 'commonized' platform dependencies.
+    This means, that some parts of the API might get lifted to the direct parent dependency.
+     */
+    val necessaryParentTargetDependencies: FileCollection = rootTarget.takeIf { target is LeafCommonizerTarget }
+        ?.findParentOf(target)
+        ?.let { parentTarget -> dependenciesFor(parentTarget) }
+        ?: project.files()
 
-        return targetDependencies + dependenciesFor(expectTarget)
-    }
+    return targetDependencies + necessaryParentTargetDependencies
+}
 
-    return targetDependencies
+private fun CommonizerTarget.findParentOf(target: CommonizerTarget): CommonizerTarget? {
+    return withAllAncestors()
+        .filterIsInstance<SharedCommonizerTarget>()
+        .firstOrNull { target in it.targets }
 }
 
 private fun Project.addDependencies(sourceSet: KotlinSourceSet, libraries: FileCollection) {

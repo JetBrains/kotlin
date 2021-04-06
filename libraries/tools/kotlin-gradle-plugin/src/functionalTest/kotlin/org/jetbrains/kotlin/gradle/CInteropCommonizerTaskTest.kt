@@ -12,6 +12,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
@@ -114,41 +115,25 @@ class CInteropCommonizerTaskTest {
 
         project.evaluate()
 
-        /*
-        //https://youtrack.jetbrains.com/issue/KT-39324
         assertEquals(
             CInteropCommonizationParameters(
                 SharedCommonizerTarget(CommonizerTarget(IOS_X64, IOS_ARM64), CommonizerTarget(MACOS_X64), CommonizerTarget(LINUX_X64)),
                 setOf(linuxInterop, macosInterop, iosX64Interop, iosArm64Interop)
             ), task.getCommonizationParameters(sharedNativeCompilation(nativeMain))
         )
-         */
-        assertNull(
-            task.getCommonizationParameters(sharedNativeCompilation(nativeMain))
-        )
 
-        /*
-        //https://youtrack.jetbrains.com/issue/KT-39324
         assertEquals(
             CInteropCommonizationParameters(
                 SharedCommonizerTarget(CommonizerTarget(IOS_X64, IOS_ARM64), CommonizerTarget(MACOS_X64), CommonizerTarget(LINUX_X64)),
                 setOf(linuxInterop, macosInterop, iosX64Interop, iosArm64Interop)
             ), task.getCommonizationParameters(sharedNativeCompilation(iosMain))
         )
-         */
-        assertEquals(
-            CInteropCommonizationParameters(CommonizerTarget(IOS_X64, IOS_ARM64), setOf(iosX64Interop, iosArm64Interop)),
-            task.getCommonizationParameters(sharedNativeCompilation(iosMain))
-        )
 
-        /*
-        //https://youtrack.jetbrains.com/issue/KT-39324
         assertTrue(
             task.getCommonizationParameters(sharedNativeCompilation(iosMain))!! in
                     task.getCommonizationParameters(sharedNativeCompilation(nativeMain))!!,
             "Expected CInteropCommonizerTarget of iosMain to be fully contained in nativeMain"
         )
-         */
     }
 
     private fun sharedNativeCompilation(sourceSet: KotlinSourceSet): KotlinSharedNativeCompilation {

@@ -101,7 +101,7 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
         check(!alreadyResolved)
         alreadyResolved = true
 
-        project.commonizeNativeDistributionTask.configure { commonizerTask ->
+        project.commonizeNativeDistributionTask?.configure { commonizerTask ->
             commonizerTask.targetGroups = dependencies.keys.filterIsInstance<CommonizedCommon>().map { it.targets }.toSet()
         }
 

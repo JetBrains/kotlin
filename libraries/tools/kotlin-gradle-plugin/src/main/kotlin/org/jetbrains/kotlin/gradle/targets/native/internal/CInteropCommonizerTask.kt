@@ -48,7 +48,6 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     internal var cinterops = setOf<CInteropGist>()
         private set
 
-
     @OutputDirectories
     fun getAllOutputDirectories(): Set<File> {
         return getCommonizationParameters().map { outputDirectory(it) }.toSet()
@@ -101,7 +100,7 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     }
 
     private fun nativeDistributionDependencies(parameters: CInteropCommonizationParameters): Set<CommonizerDependency> {
-        val task = project.commonizeNativeDistributionHierarchicalTask?.get() ?: return emptySet()
+        val task = project.commonizeNativeDistributionHierarchicallyTask?.get() ?: return emptySet()
 
         val rootTarget = task.rootCommonizerTargets
             .firstOrNull { rootTarget -> parameters.commonizerTarget in rootTarget } ?: return emptySet()
