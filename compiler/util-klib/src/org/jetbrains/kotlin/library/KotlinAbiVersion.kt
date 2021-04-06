@@ -38,7 +38,7 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
     private fun isCompatibleTo(ourVersion: KotlinAbiVersion): Boolean {
         // Versions before 1.4.1 were the active development phase.
         // Starting with 1.4.1 we are trying to maintain some backward compatibility.
-        return if (this.isAtLeast(1, 4, 1))
+        return if (this.isAtLeast(1, 5, 0))
             major == ourVersion.major && minor <= ourVersion.minor
         else
             this == ourVersion
