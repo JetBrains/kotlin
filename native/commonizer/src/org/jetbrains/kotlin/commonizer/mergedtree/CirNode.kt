@@ -22,6 +22,8 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     companion object {
         inline val CirNode<*, *>.indices: IntRange get() = 0..targetDeclarations.size
 
+        inline val CirNode<*, *>.targetIndices: List<Int> get() = indices - indexOfCommon
+
         inline val CirNode<*, *>.indexOfCommon: Int
             get() = targetDeclarations.size
 

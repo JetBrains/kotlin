@@ -9,6 +9,14 @@ import org.jetbrains.kotlin.commonizer.IdentityStringSyntaxNode.LeafTargetSyntax
 import org.jetbrains.kotlin.commonizer.IdentityStringSyntaxNode.SharedTargetSyntaxNode
 import org.jetbrains.kotlin.commonizer.IdentityStringToken.*
 
+public fun parseCommonizerTargetOrNull(identityString: String): CommonizerTarget? {
+    return try {
+        parseCommonizerTarget(identityString)
+    } catch (t: IllegalArgumentException) {
+        null
+    }
+}
+
 public fun parseCommonizerTarget(identityString: String): CommonizerTarget {
     try {
         val tokens = tokenizeIdentityString(identityString)

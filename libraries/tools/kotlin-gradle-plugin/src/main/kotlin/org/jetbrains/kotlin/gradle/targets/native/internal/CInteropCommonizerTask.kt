@@ -48,22 +48,6 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     internal var cinterops = setOf<CInteropGist>()
         private set
 
-    /**
-     * All library files produced by the [Project.commonizeNativeDistributionTask] that are relevant for commonization
-     */
-    @get:Classpath
-    internal val nonHierarchicalNativeDistributionLibraries: Set<File>
-        get() {
-            val commonizeNativeDistribution = project.commonizeNativeDistributionTask.get()
-            return getCommonizationParameters().flatMapTo(mutableSetOf()) { parameters ->
-                parameters.commonizerTarget.withAllAncestors().flatMap { target ->
-                    commonizeNativeDistribution.commonizerTargetOutputDirectories.flatMap { outputDirectory ->
-                        NativeDistributionCommonizerOutputLayout.getTargetDirectory(outputDirectory, target)
-                            .listFiles().orEmpty().toList()
-                    }
-                }
-            }
-        }
 
     @OutputDirectories
     fun getAllOutputDirectories(): Set<File> {
@@ -109,23 +93,29 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         GradleCliCommonizer(project).commonizeLibraries(
             konanHome = project.file(project.konanHome),
             outputCommonizerTarget = parameters.commonizerTarget,
-            inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.toSet(),
-            dependencyLibraries = cinteropsForTarget.flatMap { it.dependencies.files }.toSet() + nativeDistributionLibraries(parameters),
+            inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
+            dependencyLibraries = cinteropsForTarget.flatMap { it.dependencies.files }.map(::NonTargetedCommonizerDependency).toSet()
+                    + nativeDistributionDependencies(parameters),
             outputDirectory = outputDirectory(parameters)
         )
     }
 
-    private fun nativeDistributionLibraries(parameters: CInteropCommonizationParameters): Set<File> {
-        val task = project.commonizeNativeDistributionHierarchicalTask?.get() ?: return nonHierarchicalNativeDistributionLibraries
+    private fun nativeDistributionDependencies(parameters: CInteropCommonizationParameters): Set<CommonizerDependency> {
+        val task = project.commonizeNativeDistributionHierarchicalTask?.get() ?: return emptySet()
 
         val rootTarget = task.rootCommonizerTargets
             .firstOrNull { rootTarget -> parameters.commonizerTarget in rootTarget } ?: return emptySet()
 
         val rootTargetOutput = task.getRootOutputDirectory(rootTarget)
 
-        return parameters.commonizerTarget.withAllAncestors().flatMap { target ->
-            HierarchicalCommonizerOutputLayout.getTargetDirectory(rootTargetOutput, target).listFiles().orEmpty().toList()
-        }.toSet()
+        return parameters.commonizerTarget.withAllAncestors()
+            .flatMap { target -> createCommonizerDependencies(rootTargetOutput, target) }
+            .toSet()
+    }
+
+    private fun createCommonizerDependencies(rootOutput: File, target: CommonizerTarget): List<TargetedCommonizerDependency> {
+        return HierarchicalCommonizerOutputLayout.getTargetDirectory(rootOutput, target).listFiles().orEmpty()
+            .map { file -> TargetedCommonizerDependency(target, file) }
     }
 
     @Nested

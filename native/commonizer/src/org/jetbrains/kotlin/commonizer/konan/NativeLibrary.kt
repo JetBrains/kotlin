@@ -8,9 +8,6 @@
 package org.jetbrains.kotlin.commonizer.konan
 
 import gnu.trove.THashMap
-import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 interface NativeManifestDataProvider {

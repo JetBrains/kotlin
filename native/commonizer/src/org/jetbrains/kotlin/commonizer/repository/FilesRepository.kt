@@ -17,7 +17,7 @@ internal class FilesRepository(
     private val libraryLoader: NativeLibraryLoader
 ) : Repository {
 
-    private val librariesByTarget: Map<Set<KonanTarget>, Set<NativeLibrary>> by lazy {
+    private val librariesByKonanTargets: Map<Set<KonanTarget>, Set<NativeLibrary>> by lazy {
         libraryFiles
             .map(libraryLoader::invoke)
             .groupBy { library -> library.manifestData.nativeTargets.map(::konanTargetOrThrow).toSet() }
@@ -25,10 +25,11 @@ internal class FilesRepository(
     }
 
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {
-        return librariesByTarget[target.konanTargets].orEmpty()
+        return librariesByKonanTargets[target.konanTargets].orEmpty()
+    }
+
+    private fun konanTargetOrThrow(value: String): KonanTarget {
+        return KonanTarget.predefinedTargets[value] ?: error("Unexpected KonanTarget $value")
     }
 }
 
-private fun konanTargetOrThrow(value: String): KonanTarget {
-    return KonanTarget.predefinedTargets[value] ?: error("Unexpected KonanTarget $value")
-}

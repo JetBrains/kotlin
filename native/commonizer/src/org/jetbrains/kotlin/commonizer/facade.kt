@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.commonizer
 
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
+import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult.Missing
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonizedClassifierNodes
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
-import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indices
+import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.targetIndices
 import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
-import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
+import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer.serializeSingleTarget
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.tree.assembleCirTree
 import org.jetbrains.kotlin.commonizer.tree.deserializeCirTree
@@ -38,7 +39,7 @@ private fun commonize(
     parameters: CommonizerParameters,
     storageManager: StorageManager,
     target: SharedCommonizerTarget,
-): CirRootNode {
+): CirRootNode? {
     val cirTrees = getCirTree(parameters, storageManager, target)
     parameters.progressLogger?.invoke("Build cir tree for $target")
 
@@ -48,11 +49,11 @@ private fun commonize(
         commonDependencies = parameters.dependencyClassifiers(target)
     )
 
-    val mergedTree = mergeCirTree(storageManager, classifiers, cirTrees)
+    val mergedTree = merge(storageManager, classifiers, cirTrees) ?: return null
     mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
     parameters.progressLogger?.invoke("Commonized declarations for $target")
 
-    serialize(mergedTree, parameters)
+    serialize(parameters, mergedTree, target)
     parameters.progressLogger?.invoke("Commonized target $target")
 
     return mergedTree
@@ -60,40 +61,61 @@ private fun commonize(
 
 private fun getCirTree(
     parameters: CommonizerParameters, storageManager: StorageManager, target: SharedCommonizerTarget
-): TargetDependent<CirTreeRoot> {
+): TargetDependent<CirTreeRoot?> {
     return EagerTargetDependent(target.targets) { childTarget ->
         when (childTarget) {
-            is LeafCommonizerTarget -> deserializeCirTree(parameters, parameters.targetProviders[childTarget])
-            is SharedCommonizerTarget -> commonize(parameters, storageManager, childTarget).assembleCirTree()
+            is LeafCommonizerTarget -> deserialize(parameters, childTarget)
+            is SharedCommonizerTarget -> commonize(parameters, storageManager, childTarget)?.assembleCirTree()
         }
     }
 }
 
-private fun serialize(mergedTree: CirRootNode, parameters: CommonizerParameters) {
-    for (targetIndex in mergedTree.indices) {
-        serializeTarget(mergedTree, targetIndex, parameters)
-    }
+private fun deserialize(parameters: CommonizerParameters, target: CommonizerTarget): CirTreeRoot? {
+    val targetProvider = parameters.targetProviders[target] ?: return null
+    return deserializeCirTree(parameters, targetProvider)
 }
 
-private fun serializeTarget(mergedTree: CirRootNode, targetIndex: Int, parameters: CommonizerParameters) {
-    val target = mergedTree.getTarget(targetIndex)
+private fun merge(
+    storageManager: StorageManager, classifiers: CirKnownClassifiers, cirTrees: TargetDependent<CirTreeRoot?>,
+): CirRootNode? {
+    val availableTrees = cirTrees.filterNonNull()
+    /* Nothing to merge */
+    if (availableTrees.size == 0) return null
 
-    if (target in parameters.targetProviders.targets) {
-        parameters.targetProviders[target].modulesProvider.loadModuleInfos()
+    /* No propagation from leaves */
+    if (availableTrees.size == 1 && availableTrees.targets.single() is LeafCommonizerTarget) return null
+
+    return mergeCirTree(storageManager, classifiers, availableTrees)
+}
+
+private fun serialize(parameters: CommonizerParameters, mergedTree: CirRootNode, commonTarget: CommonizerTarget) {
+    for (targetIndex in mergedTree.targetIndices) {
+        val target = mergedTree.targetDeclarations[targetIndex]?.target ?: continue
+        serializeMissingModules(parameters, target)
+        if (target is LeafCommonizerTarget) {
+            serialize(parameters, mergedTree, target, targetIndex)
+        }
+    }
+    serialize(parameters, mergedTree, commonTarget, mergedTree.indexOfCommon)
+}
+
+private fun serialize(parameters: CommonizerParameters, mergedTree: CirRootNode, target: CommonizerTarget, targetIndex: Int) {
+    serializeSingleTarget(mergedTree, targetIndex, parameters.statsCollector) { metadataModule ->
+        val libraryName = metadataModule.name
+        val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
+            SerializedMetadata(header, fragments, fragmentNames)
+        }
+        val manifestData = parameters.manifestProvider[target].getManifest(libraryName)
+        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
+    }
+    parameters.resultsConsumer.targetConsumed(target)
+}
+
+private fun serializeMissingModules(parameters: CommonizerParameters, requestedTarget: CommonizerTarget) {
+    if (requestedTarget in parameters.targetProviders.targets) {
+        parameters.targetProviders[requestedTarget]?.modulesProvider?.loadModuleInfos().orEmpty()
             .filter { it.name !in parameters.getCommonModuleNames() }
-            .forEach { missingModule -> parameters.resultsConsumer.consume(target, ModuleResult.Missing(missingModule.originalLocation)) }
-    }
-
-    if (targetIndex == mergedTree.indexOfCommon || target is LeafCommonizerTarget) {
-        CirTreeSerializer.serializeSingleTarget(mergedTree, targetIndex, parameters.statsCollector) { metadataModule ->
-            val libraryName = metadataModule.name
-            val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
-                SerializedMetadata(header, fragments, fragmentNames)
-            }
-            val manifestData = parameters.manifestProvider[target].getManifest(libraryName)
-            parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
-        }
-        parameters.resultsConsumer.targetConsumed(target)
+            .forEach { missingModule -> parameters.resultsConsumer.consume(requestedTarget, Missing(missingModule.originalLocation)) }
     }
 }
 

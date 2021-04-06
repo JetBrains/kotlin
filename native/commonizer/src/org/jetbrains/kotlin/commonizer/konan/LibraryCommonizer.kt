@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.repository.Repository
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.utils.ProgressLogger
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal class LibraryCommonizer internal constructor(
     private val outputTarget: SharedCommonizerTarget,
@@ -26,26 +27,27 @@ internal class LibraryCommonizer internal constructor(
         progressLogger.logTotal()
     }
 
-    private fun loadLibraries(): TargetDependent<NativeLibrariesToCommonize> {
-        val librariesByTargets = outputTarget.allLeaves().associateWith { target ->
-            NativeLibrariesToCommonize(repository.getLibraries(target).toList())
+    private fun loadLibraries(): TargetDependent<NativeLibrariesToCommonize?> {
+        val libraries = EagerTargetDependent(outputTarget.allLeaves()) { target ->
+            repository.getLibraries(target).toList().ifNotEmpty(::NativeLibrariesToCommonize)
         }
 
-        librariesByTargets.forEach { (target, librariesToCommonize) ->
-            if (librariesToCommonize.libraries.isEmpty()) {
-                progressLogger.warning("No platform libraries found for target ${target.prettyName}. This target will be excluded from commonization.")
-            }
+        libraries.forEachWithTarget { target, librariesOrNull ->
+            if (librariesOrNull == null)
+                progressLogger.warning(
+                    "No libraries found for target ${target.prettyName}. This target will be excluded from commonization."
+                )
         }
+
         progressLogger.log("Resolved libraries to be commonized")
-        return TargetDependent(librariesByTargets)
+        return libraries
     }
 
-    private fun commonizeAndSaveResults(allLibraries: TargetDependent<NativeLibrariesToCommonize>) {
+    private fun commonizeAndSaveResults(libraries: TargetDependent<NativeLibrariesToCommonize?>) {
         val parameters = CommonizerParameters(
             outputTarget = outputTarget,
-            targetProviders = TargetDependent(outputTarget.allLeaves()) { target -> createTargetProvider(target, allLibraries[target]) }
-                .filterNonNull(),
-            manifestProvider = createManifestProvider(allLibraries),
+            targetProviders = libraries.map { target, targetLibraries -> createTargetProvider(target, targetLibraries) },
+            manifestProvider = createManifestProvider(libraries),
             dependenciesProvider = createDependenciesProvider(),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
@@ -54,8 +56,8 @@ internal class LibraryCommonizer internal constructor(
         runCommonization(parameters)
     }
 
-    private fun createTargetProvider(target: CommonizerTarget, libraries: NativeLibrariesToCommonize): TargetProvider? {
-        if (libraries.libraries.isEmpty()) return null
+    private fun createTargetProvider(target: CommonizerTarget, libraries: NativeLibrariesToCommonize?): TargetProvider? {
+        if (libraries == null) return null
         return TargetProvider(
             target = target,
             modulesProvider = DefaultModulesProvider.create(libraries)
@@ -69,13 +71,13 @@ internal class LibraryCommonizer internal constructor(
     }
 
     private fun createManifestProvider(
-        libraries: TargetDependent<NativeLibrariesToCommonize>
+        libraries: TargetDependent<NativeLibrariesToCommonize?>
     ): TargetDependent<NativeManifestDataProvider> {
         return TargetDependent(outputTarget.withAllAncestors()) { target ->
             when (target) {
-                is LeafCommonizerTarget -> libraries[target]
+                is LeafCommonizerTarget -> libraries[target] ?: error("Can't provide manifest for missing target $target")
                 is SharedCommonizerTarget -> CommonNativeManifestDataProvider(
-                    target.allLeaves().map { leafTarget -> libraries[leafTarget] }
+                    target.allLeaves().mapNotNull { leafTarget -> libraries.getOrNull(leafTarget) }
                 )
             }
         }

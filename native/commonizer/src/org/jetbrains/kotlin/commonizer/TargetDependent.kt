@@ -12,7 +12,7 @@ sealed interface TargetDependent<T> : Iterable<T> {
     val targets: List<CommonizerTarget>
     fun indexOf(target: CommonizerTarget): Int = targets.indexOf(target)
 
-    fun <R : Any> map(mapper: (target: CommonizerTarget, T) -> R): TargetDependent<R> {
+    fun <R> map(mapper: (target: CommonizerTarget, T) -> R): TargetDependent<R> {
         return TargetDependent(targets) { target ->
             mapper(target, get(target))
         }
@@ -54,6 +54,9 @@ internal fun <T, R> TargetDependent<T>.mapTargets(mapper: (CommonizerTarget) -> 
     return TargetDependent(targets) { target -> mapper(target) }
 }
 
+internal inline fun <T> TargetDependent<T>.forEachWithTarget(action: (target: CommonizerTarget, T) -> Unit) {
+    targets.forEach { target -> action(target, this[target]) }
+}
 
 internal fun <T> TargetDependent(map: Map<out CommonizerTarget, T>): TargetDependent<T> {
     return MapBasedTargetDependent(map.toMap())
@@ -66,6 +69,7 @@ internal fun <T> TargetDependent(keys: Iterable<CommonizerTarget>, factory: (tar
 internal fun <T> EagerTargetDependent(keys: Iterable<CommonizerTarget>, factory: (target: CommonizerTarget) -> T): TargetDependent<T> {
     return keys.associateWith(factory).toTargetDependent()
 }
+
 private class MapBasedTargetDependent<T>(private val map: Map<CommonizerTarget, T>) : TargetDependent<T> {
     override val targets: List<CommonizerTarget> = map.keys.toList()
     override fun get(target: CommonizerTarget): T = map.getValue(target)

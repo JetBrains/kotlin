@@ -19,9 +19,6 @@ class CirRootNode(
 ) : CirNode<CirRoot, CirRoot> {
     val modules: MutableMap<CirName, CirModuleNode> = THashMap()
 
-    fun getTarget(targetIndex: Int): CommonizerTarget =
-        (if (targetIndex == indexOfCommon) commonDeclaration() else targetDeclarations[targetIndex])!!.target
-
     override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitRootNode(this, data)
 

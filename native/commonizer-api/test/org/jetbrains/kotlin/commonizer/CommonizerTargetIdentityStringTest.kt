@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class CommonizerTargetIdentityStringTest {
 
@@ -133,5 +132,21 @@ class CommonizerTargetIdentityStringTest {
     @Test(expected = IllegalArgumentException::class)
     fun `fail parsing CommonizerTarget 10`() {
         parseCommonizerTarget("(x, (x, y)")
+    }
+
+    @Test
+    fun isCommonizerIdentityString() {
+        assertFalse(isCommonizerTargetIdentityString(""))
+        assertTrue(isCommonizerTargetIdentityString("()"))
+        assertTrue(isCommonizerTargetIdentityString("(a,b)"))
+        assertFalse(isCommonizerTargetIdentityString("..."))
+        assertTrue(isCommonizerTargetIdentityString("x"))
+        assertFalse(isCommonizerTargetIdentityString("((a)"))
+    }
+
+    @Test
+    fun parseCommonizerTargetOrNull() {
+        assertEquals(parseCommonizerTarget("((a,b),c)"), parseCommonizerTargetOrNull("((a,b),c)"))
+        assertNull(parseCommonizerTargetOrNull(""))
     }
 }

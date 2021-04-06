@@ -293,7 +293,6 @@ private class CirTreeSerializationVisitor(
 
 internal data class CirTreeSerializationContext(
     val targetIndex: Int,
-    val target: CommonizerTarget,
     val isCommon: Boolean,
     val typeParameterIndexOffset: Int,
     val currentPath: Path
@@ -332,7 +331,6 @@ internal data class CirTreeSerializationContext(
 
         return CirTreeSerializationContext(
             targetIndex = targetIndex,
-            target = target,
             isCommon = isCommon,
             typeParameterIndexOffset = 0,
             currentPath = Path.Module(moduleName)
@@ -344,7 +342,6 @@ internal data class CirTreeSerializationContext(
 
         return CirTreeSerializationContext(
             targetIndex = targetIndex,
-            target = target,
             isCommon = isCommon,
             typeParameterIndexOffset = 0,
             currentPath = Path.Package(packageName)
@@ -369,7 +366,6 @@ internal data class CirTreeSerializationContext(
 
         return CirTreeSerializationContext(
             targetIndex = targetIndex,
-            target = target,
             isCommon = isCommon,
             typeParameterIndexOffset = typeParameterIndexOffset + outerClassTypeParametersCount,
             currentPath = newPath
@@ -394,7 +390,6 @@ internal data class CirTreeSerializationContext(
 
         return CirTreeSerializationContext(
             targetIndex = targetIndex,
-            target = target,
             isCommon = isCommon,
             typeParameterIndexOffset = typeParameterIndexOffset + ownerClassTypeParametersCount,
             currentPath = newPath
@@ -417,7 +412,6 @@ internal data class CirTreeSerializationContext(
         fun rootContext(rootNode: CirRootNode, targetIndex: Int): CirTreeSerializationContext =
             CirTreeSerializationContext(
                 targetIndex = targetIndex,
-                target = rootNode.getTarget(targetIndex),
                 isCommon = rootNode.indexOfCommon == targetIndex,
                 typeParameterIndexOffset = 0,
                 currentPath = Path.Empty

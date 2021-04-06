@@ -23,7 +23,7 @@ internal class RootMerger(
         val commonModuleNames = parameters.getCommonModuleNames()
         val missingModuleInfosByTargets = mutableMapOf<CommonizerTarget, Collection<ModulesProvider.ModuleInfo>>()
 
-        parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
+        parameters.targetProviders.filterNotNull().forEachIndexed { targetIndex, targetProvider ->
             val allModuleInfos = targetProvider.modulesProvider.loadModuleInfos()
 
             val (commonModuleInfos, missingModuleInfos) = allModuleInfos.partition { it.name in commonModuleNames }

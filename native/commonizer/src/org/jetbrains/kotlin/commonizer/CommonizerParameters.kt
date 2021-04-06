@@ -14,16 +14,17 @@ class CommonizerParameters(
     val outputTarget: SharedCommonizerTarget,
     val manifestProvider: TargetDependent<NativeManifestDataProvider>,
     val dependenciesProvider: TargetDependent<ModulesProvider?>,
-    val targetProviders: TargetDependent<TargetProvider>,
+    val targetProviders: TargetDependent<TargetProvider?>,
     val resultsConsumer: ResultsConsumer,
     val statsCollector: StatsCollector? = null,
-    val progressLogger: ((String) -> Unit)? = null
+    val progressLogger: ((String) -> Unit)? = null,
 )
 
 fun CommonizerParameters.getCommonModuleNames(): Set<String> {
-    if (targetProviders.size < 2) return emptySet() // too few targets
+    val supportedTargets = targetProviders.filterNonNull()
+    if (supportedTargets.size < 2) return emptySet() // too few targets
 
-    val allModuleNames: List<Set<String>> = targetProviders.toList().map { targetProvider ->
+    val allModuleNames: List<Set<String>> = supportedTargets.toList().map { targetProvider ->
         targetProvider.modulesProvider.loadModuleInfos().mapTo(HashSet()) { it.name }
     }
 
