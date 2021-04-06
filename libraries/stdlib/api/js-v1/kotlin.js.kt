@@ -43,12 +43,6 @@ public inline operator fun kotlin.js.RegExpMatch.get(index: kotlin.Int): kotlin.
 @kotlin.internal.DynamicExtension
 public operator fun dynamic.iterator(): kotlin.collections.Iterator<dynamic>
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use maxOf or kotlin.math.max instead", replaceWith = kotlin.ReplaceWith(expression = "maxOf(a, b)", imports = {}))
-public fun kotlin.js.Math.max(a: kotlin.Long, b: kotlin.Long): kotlin.Long
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use minOf or kotlin.math.min instead", replaceWith = kotlin.ReplaceWith(expression = "minOf(a, b)", imports = {}))
-public fun kotlin.js.Math.min(a: kotlin.Long, b: kotlin.Long): kotlin.Long
-
 public fun kotlin.js.RegExp.reset(): kotlin.Unit
 
 public inline fun <T, S> kotlin.js.Promise<kotlin.js.Promise<T>>.then(noinline onFulfilled: ((T) -> S)?): kotlin.js.Promise<S>
@@ -274,78 +268,6 @@ public external interface Json {
     public abstract operator fun get(propertyName: kotlin.String): kotlin.Any?
 
     public abstract operator fun set(propertyName: kotlin.String, value: kotlin.Any?): kotlin.Unit
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use top-level functions from kotlin.math package instead.")
-public external object Math {
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.PI instead.", replaceWith = kotlin.ReplaceWith(expression = "PI", imports = {"kotlin.math.PI"}))
-    public final val PI: kotlin.Double { get; }
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.abs instead.", replaceWith = kotlin.ReplaceWith(expression = "abs(value)", imports = {"kotlin.math.abs"}))
-    public final fun abs(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.acos instead.", replaceWith = kotlin.ReplaceWith(expression = "acos(value)", imports = {"kotlin.math.acos"}))
-    public final fun acos(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.asin instead.", replaceWith = kotlin.ReplaceWith(expression = "asin(value)", imports = {"kotlin.math.asin"}))
-    public final fun asin(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.atan instead.", replaceWith = kotlin.ReplaceWith(expression = "atan(value)", imports = {"kotlin.math.atan"}))
-    public final fun atan(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.atan2 instead.", replaceWith = kotlin.ReplaceWith(expression = "atan2(y, x)", imports = {"kotlin.math.atan2"}))
-    public final fun atan2(y: kotlin.Double, x: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.ceil instead.", replaceWith = kotlin.ReplaceWith(expression = "ceil(value)", imports = {"kotlin.math.ceil"}))
-    public final fun ceil(value: kotlin.Number): kotlin.Int
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.cos instead.", replaceWith = kotlin.ReplaceWith(expression = "cos(value)", imports = {"kotlin.math.cos"}))
-    public final fun cos(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.exp instead.", replaceWith = kotlin.ReplaceWith(expression = "exp(value)", imports = {"kotlin.math.exp"}))
-    public final fun exp(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.floor instead.", replaceWith = kotlin.ReplaceWith(expression = "floor(value)", imports = {"kotlin.math.floor"}))
-    public final fun floor(value: kotlin.Number): kotlin.Int
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.ln instead.", replaceWith = kotlin.ReplaceWith(expression = "ln(value)", imports = {"kotlin.math.ln"}))
-    public final fun log(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use maxOf or kotlin.math.max instead")
-    public final fun max(vararg values: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use maxOf or kotlin.math.max instead")
-    public final fun max(vararg values: kotlin.Float): kotlin.Float
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use maxOf or kotlin.math.max instead")
-    public final fun max(vararg values: kotlin.Int): kotlin.Int
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use minOf or kotlin.math.min instead")
-    public final fun min(vararg values: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use minOf or kotlin.math.min instead")
-    public final fun min(vararg values: kotlin.Float): kotlin.Float
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use minOf or kotlin.math.min instead")
-    public final fun min(vararg values: kotlin.Int): kotlin.Int
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.pow instead.", replaceWith = kotlin.ReplaceWith(expression = "base.pow(exp)", imports = {"kotlin.math.pow"}))
-    public final fun pow(base: kotlin.Double, exp: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use Random.nextDouble instead", replaceWith = kotlin.ReplaceWith(expression = "kotlin.random.Random.nextDouble()", imports = {"kotlin.random.Random"}))
-    public final fun random(): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.round instead.", replaceWith = kotlin.ReplaceWith(expression = "round(value)", imports = {"kotlin.math.round"}))
-    public final fun round(value: kotlin.Number): kotlin.Int
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.sin instead.", replaceWith = kotlin.ReplaceWith(expression = "sin(value)", imports = {"kotlin.math.sin"}))
-    public final fun sin(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.sqrt instead.", replaceWith = kotlin.ReplaceWith(expression = "sqrt(value)", imports = {"kotlin.math.sqrt"}))
-    public final fun sqrt(value: kotlin.Double): kotlin.Double
-
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.tan instead.", replaceWith = kotlin.ReplaceWith(expression = "tan(value)", imports = {"kotlin.math.tan"}))
-    public final fun tan(value: kotlin.Double): kotlin.Double
 }
 
 public open external class Promise<out T> {
