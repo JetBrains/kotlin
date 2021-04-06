@@ -847,10 +847,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (value !is Char) {
             print(value.toString())
         } else {
-            if (value.toInt() in 32..127) {
+            if (value.code in 32..127) {
                 print(value)
             } else {
-                print(value.toInt())
+                print(value.code)
             }
         }
         print(")")

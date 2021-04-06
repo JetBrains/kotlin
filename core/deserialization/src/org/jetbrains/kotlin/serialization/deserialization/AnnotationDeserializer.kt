@@ -73,7 +73,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
 
         return when (value.type) {
             Type.BYTE -> value.intValue.toByte().letIf(isUnsigned, ::UByteValue, ::ByteValue)
-            Type.CHAR -> CharValue(value.intValue.toChar())
+            Type.CHAR -> CharValue(value.intValue.toInt().toChar())
             Type.SHORT -> value.intValue.toShort().letIf(isUnsigned, ::UShortValue, ::ShortValue)
             Type.INT -> value.intValue.toInt().letIf(isUnsigned, ::UIntValue, ::IntValue)
             Type.LONG -> value.intValue.letIf(isUnsigned, ::ULongValue, ::LongValue)

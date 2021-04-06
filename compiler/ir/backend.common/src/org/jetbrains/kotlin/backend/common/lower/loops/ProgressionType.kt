@@ -82,8 +82,8 @@ internal class CharProgressionType(symbols: Symbols<CommonBackendContext>) :
     ProgressionType(
         elementClass = symbols.char.owner,
         stepClass = symbols.int.owner,
-        minValueAsLong = Char.MIN_VALUE.toLong(),
-        maxValueAsLong = Char.MAX_VALUE.toLong(),
+        minValueAsLong = Char.MIN_VALUE.code.toLong(),
+        maxValueAsLong = Char.MAX_VALUE.code.toLong(),
         // Uses `getProgressionLastElement(Int, Int, Int): Int`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.int]
     ) {

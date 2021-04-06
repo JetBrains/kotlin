@@ -736,7 +736,7 @@ class ExpressionCodegen(
     private fun isDefaultValueForType(type: Type, value: Any?): Boolean =
         when (type) {
             Type.BOOLEAN_TYPE -> value is Boolean && !value
-            Type.CHAR_TYPE -> value is Char && value.toInt() == 0
+            Type.CHAR_TYPE -> value is Char && value.code == 0
             Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE, Type.LONG_TYPE -> value is Number && value.toLong() == 0L
             // Must use `equals` for these two to differentiate between +0.0 and -0.0:
             Type.FLOAT_TYPE -> value is Number && value.toFloat().equals(0.0f)
@@ -836,7 +836,7 @@ class ExpressionCodegen(
                 mv.nop()
                 return BooleanConstant(this, value)
             }
-            is Char -> mv.iconst(value.toInt())
+            is Char -> mv.iconst(value.code)
             is Long -> mv.lconst(value)
             is Float -> mv.fconst(value)
             is Double -> mv.dconst(value)

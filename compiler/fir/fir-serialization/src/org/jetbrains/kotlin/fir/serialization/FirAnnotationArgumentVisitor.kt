@@ -35,7 +35,7 @@ internal object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, F
 
     override fun visitCharValue(value: CharValue, data: FirAnnotationArgumentVisitorData) {
         data.builder.type = ProtoBuf.Annotation.Argument.Value.Type.CHAR
-        data.builder.intValue = value.value.toLong()
+        data.builder.intValue = value.value.code.toLong()
     }
 
     override fun visitDoubleValue(value: DoubleValue, data: FirAnnotationArgumentVisitorData) {

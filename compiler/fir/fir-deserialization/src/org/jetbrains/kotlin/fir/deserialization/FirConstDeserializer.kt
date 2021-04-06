@@ -54,7 +54,7 @@ class FirConstDeserializer(
     ): FirExpression? {
         return when (constKind) {
             "BYTE", "B" -> buildConstExpression(null, ConstantValueKind.Byte, ((protoValue?.intValue ?: sourceValue) as Number).toByte())
-            "CHAR", "C" -> buildConstExpression(null, ConstantValueKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toChar())
+            "CHAR", "C" -> buildConstExpression(null, ConstantValueKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toInt().toChar())
             "SHORT", "S" -> buildConstExpression(null, ConstantValueKind.Short, ((protoValue?.intValue ?: sourceValue) as Number).toShort())
             "INT", "I" -> buildConstExpression(null, ConstantValueKind.Int, protoValue?.intValue?.toInt() ?: sourceValue as Int)
             "LONG", "J" -> buildConstExpression(null, ConstantValueKind.Long, protoValue?.intValue ?: sourceValue as Long)

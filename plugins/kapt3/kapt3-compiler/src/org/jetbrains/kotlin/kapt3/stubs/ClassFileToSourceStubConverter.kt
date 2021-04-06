@@ -1330,7 +1330,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private fun convertValueOfPrimitiveTypeOrString(value: Any?): JCExpression? {
         fun specialFpValueNumerator(value: Double): Double = if (value.isNaN()) 0.0 else 1.0 * value.sign
         return when (value) {
-            is Char -> treeMaker.Literal(TypeTag.CHAR, value.toInt())
+            is Char -> treeMaker.Literal(TypeTag.CHAR, value.code)
             is Byte -> treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.BYTE), treeMaker.Literal(TypeTag.INT, value.toInt()))
             is Short -> treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.SHORT), treeMaker.Literal(TypeTag.INT, value.toInt()))
             is Boolean, is Int, is Long, is String -> treeMaker.Literal(value)

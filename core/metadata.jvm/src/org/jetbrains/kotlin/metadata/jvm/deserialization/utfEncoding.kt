@@ -62,7 +62,7 @@ fun stringsToBytes(strings: Array<String>): ByteArray {
     var i = 0
     for (s in strings) {
         for (si in 0..s.length - 1) {
-            result[i++] = s[si].toByte()
+            result[i++] = s[si].code.toByte()
         }
     }
 
