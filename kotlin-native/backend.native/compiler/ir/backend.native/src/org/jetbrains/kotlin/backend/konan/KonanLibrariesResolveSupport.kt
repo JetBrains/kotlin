@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.util.Logger
-import kotlin.system.exitProcess
 
 class KonanLibrariesResolveSupport(
         configuration: CompilerConfiguration,
@@ -48,8 +46,7 @@ class KonanLibrariesResolveSupport(
                 override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
                 override fun fatal(message: String): Nothing {
                     collector.report(CompilerMessageSeverity.ERROR, message)
-                    (collector as? GroupingMessageCollector)?.flush()
-                    exitProcess(1)
+                    throw KonanCompilationException()
                 }
             }
 
