@@ -36,6 +36,7 @@ class TestDokkaConfigurationBuilder {
     var modules: List<DokkaModuleDescriptionImpl> = emptyList()
     var suppressObviousFunctions: Boolean = DokkaDefaults.suppressObviousFunctions
     var includes: List<File> = emptyList()
+    var suppressInheritedMembers: Boolean = DokkaDefaults.suppressInheritedMembers
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
 
     fun build() = DokkaConfigurationImpl(
@@ -51,6 +52,7 @@ class TestDokkaConfigurationBuilder {
         failOnWarning = failOnWarning,
         suppressObviousFunctions = suppressObviousFunctions,
         includes = includes.toSet(),
+        suppressInheritedMembers = suppressInheritedMembers,
     )
 
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
@@ -194,6 +196,8 @@ fun dPackage(
 )
 
 fun documentationNode(vararg texts: String): DocumentationNode {
-    return DocumentationNode(texts.toList().map { Description(CustomDocTag(listOf(Text(it)), name = MarkdownElementTypes.MARKDOWN_FILE.name)) })
+    return DocumentationNode(
+        texts.toList()
+            .map { Description(CustomDocTag(listOf(Text(it)), name = MarkdownElementTypes.MARKDOWN_FILE.name)) })
 }
 

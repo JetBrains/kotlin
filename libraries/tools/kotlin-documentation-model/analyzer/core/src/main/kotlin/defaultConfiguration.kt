@@ -18,6 +18,7 @@ data class DokkaConfigurationImpl(
     override val delayTemplateSubstitution: Boolean = false,
     override val suppressObviousFunctions: Boolean = DokkaDefaults.suppressObviousFunctions,
     override val includes: Set<File> = emptySet(),
+    override val suppressInheritedMembers: Boolean = DokkaDefaults.suppressInheritedMembers,
 ) : DokkaConfiguration
 
 data class PluginConfigurationImpl(
