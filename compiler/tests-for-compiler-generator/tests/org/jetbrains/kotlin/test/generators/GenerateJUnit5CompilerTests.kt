@@ -47,19 +47,19 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/nativeTests")
             }
 
-            testClass<AbstractForeignAnnotationsTest> {
+            testClass<AbstractForeignAnnotationsSourceJavaTest> {
                 model("diagnostics/foreignAnnotationsTests/tests")
                 model("diagnostics/foreignAnnotationsTests/java8Tests")
                 model("diagnostics/foreignAnnotationsTests/java9Tests")
             }
 
-            testClass<AbstractForeignAnnotationsNoAnnotationInClasspathTest> {
+            testClass<AbstractForeignAnnotationsCompiledJavaTest> {
                 model("diagnostics/foreignAnnotationsTests/tests")
                 model("diagnostics/foreignAnnotationsTests/java8Tests")
                 model("diagnostics/foreignAnnotationsTests/java9Tests")
             }
 
-            testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
+            testClass<AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest> {
                 model("diagnostics/foreignAnnotationsTests/tests")
                 model("diagnostics/foreignAnnotationsTests/java8Tests")
                 model("diagnostics/foreignAnnotationsTests/java9Tests")
