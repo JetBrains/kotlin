@@ -9,18 +9,18 @@ import java.util.function.BiConsumer
 fun parsePerPackageOptions(args: List<String>): List<PackageOptions> = args.map { it.split(",") }.map {
     val matchingRegex = it.first()
 
-    val args = it.subList(1, it.size)
+    val options = it.subList(1, it.size)
 
-    val deprecated = args.find { it.endsWith("skipDeprecated") }?.startsWith("+")
+    val deprecated = options.find { it.endsWith("skipDeprecated") }?.startsWith("+")
         ?: DokkaDefaults.skipDeprecated
 
-    val reportUndocumented = args.find { it.endsWith("reportUndocumented") }?.startsWith("+")
+    val reportUndocumented = options.find { it.endsWith("reportUndocumented") }?.startsWith("+")
         ?: DokkaDefaults.reportUndocumented
 
-    val privateApi = args.find { it.endsWith("includeNonPublic") }?.startsWith("+")
+    val privateApi = options.find { it.endsWith("includeNonPublic") }?.startsWith("+")
         ?: DokkaDefaults.includeNonPublic
 
-    val suppress = args.find { it.endsWith("suppress") }?.startsWith("+")
+    val suppress = options.find { it.endsWith("suppress") }?.startsWith("+")
         ?: DokkaDefaults.suppress
 
     PackageOptionsImpl(

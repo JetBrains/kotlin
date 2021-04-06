@@ -86,7 +86,7 @@ class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
     var documentablesTransformationStage: (DModule) -> Unit = {}
     var pagesGenerationStage: (RootPageNode) -> Unit = {}
     var pagesTransformationStage: (RootPageNode) -> Unit = {}
-    var renderingStage: (RootPageNode, DokkaContext) -> Unit = { a, b -> }
+    var renderingStage: (RootPageNode, DokkaContext) -> Unit = { _, _ -> }
 
     override fun build() = BaseTestMethods(
         pluginsSetupStage,
