@@ -372,7 +372,7 @@ class FilesTest {
     @Test fun writeReadText() {
         val file = @Suppress("DEPRECATION") createTempFile()
         try {
-            val expected = String(CharArray(DEFAULT_BUFFER_SIZE * 2) { Random.nextInt(0, 1024).toChar() })
+            val expected = String(CharArray(DEFAULT_BUFFER_SIZE * 2) { Random.nextInt(0, 1024).let(::Char) })
             file.writeText(expected)
             run {
                 val actual1 = file.readText()
@@ -675,9 +675,9 @@ class FilesTest {
         val reader = System.`in`.bufferedReader()
         assertEquals("123456789", reader.readLine())
         val stringReader = str.reader()
-        assertEquals('1', stringReader.read().toChar())
-        assertEquals('2', stringReader.read().toChar())
-        assertEquals('3', stringReader.read().toChar())
+        assertEquals('1', stringReader.read().let(::Char))
+        assertEquals('2', stringReader.read().let(::Char))
+        assertEquals('3', stringReader.read().let(::Char))
     }
 
     @Test fun helpers2() {

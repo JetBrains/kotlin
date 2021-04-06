@@ -87,7 +87,7 @@ public open class RangeIterationTestBase {
 }
 
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
-@Suppress("EmptyRange")
+@Suppress("EmptyRange", "DEPRECATION")
 public class RangeIterationTest : RangeIterationTestBase() {
 
     @Test fun emptyConstant() {
