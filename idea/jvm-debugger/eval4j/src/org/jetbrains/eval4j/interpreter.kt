@@ -107,7 +107,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             F2I -> int(value.float.toInt())
             D2I -> int(value.double.toInt())
             I2B -> byte(value.int.toByte())
-            I2C -> char(value.int.toChar())
+            I2C -> char(value.int.toUShort().let(::Char))
             I2S -> short(value.int.toShort())
 
             FNEG -> float(-value.float)

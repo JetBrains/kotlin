@@ -84,7 +84,7 @@ fun escapedStringToCharacter(text: String): Char? {
             if (escape[0] == 'u') {
                 try {
                     val intValue = Integer.valueOf(escape.substring(1), 16)
-                    return intValue.toInt().toChar()
+                    return Char(intValue.toUShort())
                 } catch (e: NumberFormatException) {
                     // Will be reported below
                 }

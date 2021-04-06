@@ -740,7 +740,7 @@ class IrBodyDeserializer(
             BYTE
             -> IrConstImpl.byte(start, end, type, proto.byte.toByte())
             CHAR
-            -> IrConstImpl.char(start, end, type, proto.char.toChar())
+            -> IrConstImpl.char(start, end, type, proto.char.toUShort().let(::Char))
             SHORT
             -> IrConstImpl.short(start, end, type, proto.short.toShort())
             INT

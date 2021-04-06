@@ -18,7 +18,7 @@ fun mangleNameIfNeeded(name: String): String {
             if (c.isValidCharacter()) {
                 append(c)
             } else {
-                val hexString = Integer.toHexString(c.toInt())
+                val hexString = Integer.toHexString(c.code)
                 assert(hexString.length <= 4)
                 append("_u").append(hexString)
             }

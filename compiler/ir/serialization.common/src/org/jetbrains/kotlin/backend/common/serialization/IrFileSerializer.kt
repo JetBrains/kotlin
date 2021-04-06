@@ -580,7 +580,7 @@ open class IrFileSerializer(
             IrConstKind.Null -> proto.`null` = true
             IrConstKind.Boolean -> proto.boolean = value.value as Boolean
             IrConstKind.Byte -> proto.byte = (value.value as Byte).toInt()
-            IrConstKind.Char -> proto.char = (value.value as Char).toInt()
+            IrConstKind.Char -> proto.char = (value.value as Char).code
             IrConstKind.Short -> proto.short = (value.value as Short).toInt()
             IrConstKind.Int -> proto.int = value.value as Int
             IrConstKind.Long -> proto.long = value.value as Long

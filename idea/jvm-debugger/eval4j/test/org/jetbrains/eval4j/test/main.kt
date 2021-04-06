@@ -166,7 +166,7 @@ object REFLECTION_EVAL : Eval {
                 Type.BOOLEAN -> JArray.setBoolean(arr, ind, newValue.boolean)
                 Type.BYTE -> JArray.setByte(arr, ind, newValue.int.toByte())
                 Type.SHORT -> JArray.setShort(arr, ind, newValue.int.toShort())
-                Type.CHAR -> JArray.setChar(arr, ind, newValue.int.toChar())
+                Type.CHAR -> JArray.setChar(arr, ind, newValue.int.toUShort().let(::Char))
                 Type.INT -> JArray.setInt(arr, ind, newValue.int)
                 Type.LONG -> JArray.setLong(arr, ind, newValue.long)
                 Type.FLOAT -> JArray.setFloat(arr, ind, newValue.float)

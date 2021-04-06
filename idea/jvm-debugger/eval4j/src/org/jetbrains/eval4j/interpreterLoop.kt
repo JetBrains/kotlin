@@ -181,7 +181,7 @@ fun interpreterLoop(
                                     Type.BOOLEAN -> boolean(value.boolean)
                                     Type.BYTE -> byte(value.int.toByte())
                                     Type.SHORT -> short(value.int.toShort())
-                                    Type.CHAR -> char(value.int.toChar())
+                                    Type.CHAR -> char(value.int.toUShort().let(::Char))
                                     Type.INT -> int(value.int)
                                     else -> throw UnsupportedByteCodeException("Should not be coerced: $expectedType")
                                 }

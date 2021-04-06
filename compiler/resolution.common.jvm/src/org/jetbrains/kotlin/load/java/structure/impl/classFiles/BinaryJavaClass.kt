@@ -234,7 +234,7 @@ class BinaryJavaClass(
                     else -> value
                 }
             }
-            PrimitiveType.CHAR -> value.toChar()
+            PrimitiveType.CHAR -> value.toUShort().let(::Char)
             else -> value
         }
     }

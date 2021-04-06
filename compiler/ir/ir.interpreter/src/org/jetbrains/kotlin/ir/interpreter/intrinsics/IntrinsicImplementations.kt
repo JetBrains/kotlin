@@ -152,7 +152,7 @@ internal object JsPrimitives : IntrinsicBase() {
             }
             "kotlin.Char.<init>" -> {
                 val value = stack.getVariable(irFunction.valueParameters[0].symbol).state.asInt()
-                stack.pushReturnValue(value.toChar().toState(irFunction.returnType))
+                stack.pushReturnValue(Char(value.toUShort()).toState(irFunction.returnType))
             }
         }
         return Next

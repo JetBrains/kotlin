@@ -140,8 +140,8 @@ private fun jsonEscape(value: String): String = buildString {
             '\r' -> append("\\r")
             '\"' -> append("\\\"")
             '\\' -> append("\\\\")
-            else -> if (ch.toInt() < 32) {
-                append("\\u" + Integer.toHexString(ch.toInt()).padStart(4, '0'))
+            else -> if (ch.code < 32) {
+                append("\\u" + Integer.toHexString(ch.code).padStart(4, '0'))
             }
             else {
                 append(ch)

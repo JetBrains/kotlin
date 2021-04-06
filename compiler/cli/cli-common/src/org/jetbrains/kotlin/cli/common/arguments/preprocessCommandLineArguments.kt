@@ -89,7 +89,7 @@ private fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
 }
 
 private fun Reader.nextChar(): Char? =
-    read().takeUnless { it == -1 }?.toChar()
+    read().takeUnless { it == -1 }?.let(::Char)
 
 private val String.argfilePath: String
     get() = removePrefix(ARGFILE_ARGUMENT)

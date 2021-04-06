@@ -94,7 +94,7 @@ class LabelValue(value: LabelNode) : AbstractValue<LabelNode>(value, Type.VOID_T
 fun boolean(v: Boolean) = IntValue(if (v) 1 else 0, Type.BOOLEAN_TYPE)
 fun byte(v: Byte) = IntValue(v.toInt(), Type.BYTE_TYPE)
 fun short(v: Short) = IntValue(v.toInt(), Type.SHORT_TYPE)
-fun char(v: Char) = IntValue(v.toInt(), Type.CHAR_TYPE)
+fun char(v: Char) = IntValue(v.code, Type.CHAR_TYPE)
 fun int(v: Int) = IntValue(v, Type.INT_TYPE)
 fun long(v: Long) = LongValue(v)
 fun float(v: Float) = FloatValue(v)
@@ -113,7 +113,7 @@ fun Value.obj(expectedType: Type = asmType): Any? {
         Type.BOOLEAN_TYPE -> this.boolean
         Type.SHORT_TYPE -> (this as IntValue).int.toShort()
         Type.BYTE_TYPE -> (this as IntValue).int.toByte()
-        Type.CHAR_TYPE -> (this as IntValue).int.toChar()
+        Type.CHAR_TYPE -> (this as IntValue).int.toUShort().let(::Char)
         else -> (this as AbstractValue<*>).value
     }
 }

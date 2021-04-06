@@ -76,7 +76,7 @@ class IrConstImpl<T>(
             if (type.isMarkedNullable()) return constNull(startOffset, endOffset, type)
             return when (type.getPrimitiveType()) {
                 PrimitiveType.BOOLEAN -> boolean(startOffset, endOffset, type, false)
-                PrimitiveType.CHAR -> char(startOffset, endOffset, type, 0.toChar())
+                PrimitiveType.CHAR -> char(startOffset, endOffset, type, '\u0000')
                 PrimitiveType.BYTE -> byte(startOffset, endOffset, type, 0)
                 PrimitiveType.SHORT -> short(startOffset, endOffset, type, 0)
                 PrimitiveType.INT -> int(startOffset, endOffset, type, 0)

@@ -48,7 +48,7 @@ open class KtLightMethodImpl protected constructor(
 ) : KtLightMemberImpl<PsiMethod>(computeRealDelegate, lightMemberOrigin, containingClass, dummyDelegate), KtLightMethod {
     private val returnTypeElem by lazyPub {
         val delegateTypeElement = clsDelegate.returnTypeElement as? ClsTypeElementImpl
-        delegateTypeElement?.let { ClsTypeElementImpl(this, it.canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar()) }
+        delegateTypeElement?.let { ClsTypeElementImpl(this, it.canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ Char(0)) }
     }
 
     private val calculatingReturnType = ThreadLocal<Boolean>()

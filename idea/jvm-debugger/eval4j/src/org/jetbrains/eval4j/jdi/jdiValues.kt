@@ -104,7 +104,7 @@ fun Value.asJdiValue(vm: VirtualMachine, expectedType: Type): jdi_Value? {
             Type.BOOLEAN_TYPE -> vm.mirrorOf(boolean)
             Type.BYTE_TYPE -> vm.mirrorOf(int.toByte())
             Type.SHORT_TYPE -> vm.mirrorOf(int.toShort())
-            Type.CHAR_TYPE -> vm.mirrorOf(int.toChar())
+            Type.CHAR_TYPE -> vm.mirrorOf(int.toUShort().let(::Char))
             Type.INT_TYPE -> vm.mirrorOf(int)
             else -> throw JDIFailureException("Unknown value type: $this")
         }

@@ -47,8 +47,8 @@ class LogStream(name: String) : OutputStream() {
     val lineBuf = StringBuilder()
 
     override fun write(byte: Int) {
-        if (byte.toChar() == '\n') flush()
-        else lineBuf.append(byte.toChar())
+        if (byte == '\n'.code) flush()
+        else lineBuf.append(byte.toUShort().let(::Char))
     }
 
     override fun flush() {

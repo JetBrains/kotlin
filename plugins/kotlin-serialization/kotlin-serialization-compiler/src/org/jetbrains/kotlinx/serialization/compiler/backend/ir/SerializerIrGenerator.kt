@@ -330,7 +330,7 @@ open class SerializerIrGenerator(
             if (T.isMarkedNullable()) null
             else when (T.getPrimitiveType()) {
                 PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, T, false)
-                PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, T, 0.toChar())
+                PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, T, Char(0))
                 PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, T, 0)
                 PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, T, 0)
                 PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, T, 0)
