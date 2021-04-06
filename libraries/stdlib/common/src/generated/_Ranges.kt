@@ -84,7 +84,7 @@ public fun LongRange.random(random: Random): Long {
 @SinceKotlin("1.3")
 public fun CharRange.random(random: Random): Char {
     try {
-        return random.nextInt(first.toInt(), last.toInt() + 1).toChar()
+        return random.nextInt(first.code, last.code + 1).toChar()
     } catch(e: IllegalArgumentException) {
         throw NoSuchElementException(e.message)
     }
@@ -150,7 +150,7 @@ public fun LongRange.randomOrNull(random: Random): Long? {
 public fun CharRange.randomOrNull(random: Random): Char? {
     if (isEmpty())
         return null
-    return random.nextInt(first.toInt(), last.toInt() + 1).toChar()
+    return random.nextInt(first.code, last.code + 1).toChar()
 }
 
 /**

@@ -23,7 +23,7 @@ private fun codePointFromSurrogate(string: String, high: Int, index: Int, endInd
     if (high !in 0xD800..0xDBFF || index >= endIndex) {
         return malformed(0, index, throwOnMalformed)
     }
-    val low = string[index].toInt()
+    val low = string[index].code
     if (low !in 0xDC00..0xDFFF) {
         return malformed(0, index, throwOnMalformed)
     }
@@ -169,7 +169,7 @@ internal fun encodeUtf8(string: String, startIndex: Int, endIndex: Int, throwOnM
     var charIndex = startIndex
 
     while (charIndex < endIndex) {
-        val code = string[charIndex++].toInt()
+        val code = string[charIndex++].code
         when {
             code < 0x80 ->
                 bytes[byteIndex++] = code.toByte()

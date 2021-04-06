@@ -149,16 +149,16 @@ class AbstractCollectionsTest {
     @Test
     fun abstractMutableMap() {
         val map = MutMap()
-        for (e in 'a'..'z') map[e.toString()] = e.toInt()
+        for (e in 'a'..'z') map[e.toString()] = e.code
         assertEquals(26, map.size)
 
         map.remove("a")
         map.keys.remove("b")
         map.keys.removeAll { it == "c" }
 
-        map.values.remove('d'.toInt())
+        map.values.remove('d'.code)
         assertTrue(map.containsKey("e"))
-        assertTrue(map.containsValue('f'.toInt()))
+        assertTrue(map.containsValue('f'.code))
 
         compare(map.storage, map) {
             mapBehavior()

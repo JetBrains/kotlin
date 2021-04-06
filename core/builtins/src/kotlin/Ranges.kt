@@ -28,7 +28,7 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
         first == other.first && last == other.last)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * first.toInt() + last.toInt())
+        if (isEmpty()) -1 else (31 * first.code + last.code)
 
     override fun toString(): String = "$first..$last"
 

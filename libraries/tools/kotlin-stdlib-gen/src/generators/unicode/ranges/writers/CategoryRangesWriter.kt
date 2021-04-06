@@ -69,7 +69,7 @@ internal open class CategoryRangesWriter(protected val strategy: RangesWritingSt
          * Returns the Unicode general category of this character as an Int.
          */
         internal fun Char.getCategoryValue(): Int {
-            val ch = this.toInt()
+            val ch = this.code
 
             val index = ${indexOf("ch")}
             val start = ${startAt("index")}
@@ -116,7 +116,7 @@ internal class VarLenBase64CategoryRangesWriter(strategy: RangesWritingStrategy)
                 val toBase64 = "$TO_BASE64"
                 val fromBase64 = IntArray(128)
                 for (i in toBase64.indices) {
-                    fromBase64[toBase64[i].toInt()] = i
+                    fromBase64[toBase64[i].code] = i
                 }
                 
                 // rangeStartDiff.length = ${base64RangeLength.length}
@@ -147,7 +147,7 @@ internal class VarLenBase64CategoryRangesWriter(strategy: RangesWritingStrategy)
             var int = 0
             var shift = 0
             for (char in base64) {
-                val sixBit = fromBase64[char.toInt()]
+                val sixBit = fromBase64[char.code]
                 int = int or ((sixBit and 0x1f) shl shift)
                 if (sixBit < 0x20) {
                     result[index++] = int

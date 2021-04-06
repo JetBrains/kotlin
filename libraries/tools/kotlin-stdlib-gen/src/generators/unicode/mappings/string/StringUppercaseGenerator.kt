@@ -51,7 +51,7 @@ internal class StringUppercaseGenerator(
                     return Char.toCodePoint(high, low)
                 }
             }
-            return high.toInt()
+            return high.code
         }
     """.trimIndent()
 

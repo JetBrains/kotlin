@@ -288,7 +288,7 @@ public actual inline fun Char.isLowSurrogate(): Boolean = Character.isLowSurroga
 
 
 
-internal actual fun digitOf(char: Char, radix: Int): Int = Character.digit(char.toInt(), radix)
+internal actual fun digitOf(char: Char, radix: Int): Int = Character.digit(char.code, radix)
 
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
