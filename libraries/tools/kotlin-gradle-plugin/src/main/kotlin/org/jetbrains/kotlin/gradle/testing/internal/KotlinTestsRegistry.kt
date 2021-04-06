@@ -14,6 +14,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
 /**
  * Internal service for creating aggregated test tasks and registering all test tasks.
@@ -71,7 +72,13 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
 
             aggregate.destinationDir = project.testReportsDir.resolve(reportName)
 
-            if (System.getProperty("idea.active") != null) {
+            val isIdeaActive = if (isConfigurationCacheAvailable(project.gradle)) {
+                project.providers.systemProperty("idea.active").forUseAtConfigurationTime().isPresent
+            } else {
+                System.getProperty("idea.active") != null
+            }
+
+            if (isIdeaActive) {
                 aggregate.extensions.extraProperties.set("idea.internal.test", true)
             }
 
