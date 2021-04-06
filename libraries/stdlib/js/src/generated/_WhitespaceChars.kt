@@ -15,7 +15,7 @@ package kotlin.text
  * Returns `true` if this character is a whitespace.
  */
 internal fun Char.isWhitespaceImpl(): Boolean {
-    val ch = this.toInt()
+    val ch = this.code
     return ch in 0x0009..0x000d
             || ch in 0x001c..0x0020
             || ch == 0x00a0

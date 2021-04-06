@@ -200,7 +200,7 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R
 
     public open fun toByte(): R|kotlin/Byte|
 
-    public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
 
     public open fun toDouble(): R|kotlin/Double|
 
@@ -288,19 +288,19 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializa
 
     public final operator fun rangeTo(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
 
-    public final fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toByte(): R|kotlin/Byte|
 
     public final fun toChar(): R|kotlin/Char|
 
-    public final fun toDouble(): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toDouble())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toDouble(): R|kotlin/Double|
 
-    public final fun toFloat(): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toFloat())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toFloat(): R|kotlin/Float|
 
-    public final fun toInt(): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code)) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toInt(): R|kotlin/Int|
 
-    public final fun toLong(): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toLong())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toLong(): R|kotlin/Long|
 
-    public final fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.code.toShort())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public final fun toShort(): R|kotlin/Short|
 
     private constructor(): R|kotlin/Char|
 
@@ -486,7 +486,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) public open fun toByte(): R|kotlin/Byte|
 
-    public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
 
     public open fun toDouble(): R|kotlin/Double|
 
@@ -665,7 +665,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) public open fun toByte(): R|kotlin/Byte|
 
-    public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
 
     public open fun toDouble(): R|kotlin/Double|
 
@@ -976,7 +976,7 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
 
     public open fun toByte(): R|kotlin/Byte|
 
-    public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
 
     public open fun toDouble(): R|kotlin/Double|
 
@@ -1170,7 +1170,7 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|,
 
     public open fun toByte(): R|kotlin/Byte|
 
-    public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) public open fun toChar(): R|kotlin/Char|
 
     public open fun toDouble(): R|kotlin/Double|
 

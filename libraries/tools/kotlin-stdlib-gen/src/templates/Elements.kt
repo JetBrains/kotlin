@@ -988,7 +988,7 @@ object Elements : TemplateGroupBase() {
         specialFor(RangesOfPrimitives) {
             body {
                 val expr = when (primitive) {
-                    PrimitiveType.Char -> "nextInt(first.toInt(), last.toInt() + 1).toChar()"
+                    PrimitiveType.Char -> "nextInt(first.code, last.code + 1).toChar()"
                     else -> "next$primitive(this)"
                 }
                 """
@@ -1033,7 +1033,7 @@ object Elements : TemplateGroupBase() {
         specialFor(RangesOfPrimitives) {
             body {
                 val expr = when (primitive) {
-                    PrimitiveType.Char -> "nextInt(first.toInt(), last.toInt() + 1).toChar()"
+                    PrimitiveType.Char -> "nextInt(first.code, last.code + 1).toChar()"
                     else -> "next$primitive(this)"
                 }
                 """

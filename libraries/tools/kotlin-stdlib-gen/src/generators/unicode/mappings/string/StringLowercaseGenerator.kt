@@ -94,7 +94,7 @@ internal class StringLowercaseGenerator(
         // Lu + Ll + Lt + Other_Lowercase + Other_Uppercase (PropList.txt of Unicode Character Database files)
         // Declared internal for testing
         internal fun Int.isCased(): Boolean {
-            if (this <= Char.MAX_VALUE.toInt()) {
+            if (this <= Char.MAX_VALUE.code) {
                 when (toChar().getCategoryValue()) {
                     CharCategory.UPPERCASE_LETTER.value,
                     CharCategory.LOWERCASE_LETTER.value,
@@ -110,7 +110,7 @@ internal class StringLowercaseGenerator(
         // Mn + Me + Cf + Lm + Sk + Word_Break=MidLetter + Word_Break=MidNumLet + Word_Break=Single_Quote (WordBreakProperty.txt of Unicode Character Database files)
         // Declared internal for testing
         internal fun Int.isCaseIgnorable(): Boolean {
-            if (this <= Char.MAX_VALUE.toInt()) {
+            if (this <= Char.MAX_VALUE.code) {
                 when (toChar().getCategoryValue()) {
                     CharCategory.NON_SPACING_MARK.value,
                     CharCategory.ENCLOSING_MARK.value,
@@ -133,7 +133,7 @@ internal class StringLowercaseGenerator(
                     return Char.toCodePoint(high, low)
                 }
             }
-            return low.toInt()
+            return low.code
         }
     """.trimIndent()
 

@@ -13,7 +13,7 @@ package kotlin.text
 // 4 ranges totally
 @OptIn(ExperimentalStdlibApi::class)
 internal fun Char.titlecaseCharImpl(): Char {
-    val code = this.toInt()
+    val code = this.code
     // Letters repeating <Lu, Lt, Ll> sequence and code of the Lt is a multiple of 3, e.g. <Ǆ, ǅ, ǆ>
     if (code in 0x01c4..0x01cc || code in 0x01f1..0x01f3) {
         return (3 * ((code + 1) / 3)).toChar()

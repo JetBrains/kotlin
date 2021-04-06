@@ -1021,6 +1021,8 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -1079,18 +1081,30 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 
     public final operator fun rangeTo(other: kotlin.Char): kotlin.ranges.CharRange
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toByte()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toByte(): kotlin.Byte
 
     public final fun toChar(): kotlin.Char
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toDouble()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toDouble(): kotlin.Double
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toFloat()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toFloat(): kotlin.Float
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toInt(): kotlin.Int
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toLong()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toLong(): kotlin.Long
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toShort()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toShort(): kotlin.Short
 
     public companion object of Char {
@@ -1315,6 +1329,8 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -1552,6 +1568,8 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -1933,6 +1951,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -2254,6 +2274,8 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+/*∆*/     @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double

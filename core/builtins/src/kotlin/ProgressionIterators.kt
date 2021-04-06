@@ -12,9 +12,9 @@ package kotlin.ranges
  * @property step the number by which the value is incremented on each step.
  */
 internal class CharProgressionIterator(first: Char, last: Char, val step: Int) : CharIterator() {
-    private val finalElement = last.toInt()
+    private val finalElement: Int = last.code
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last
-    private var next = if (hasNext) first.toInt() else finalElement
+    private var next: Int = if (hasNext) first.code else finalElement
 
     override fun hasNext(): Boolean = hasNext
 
@@ -36,9 +36,9 @@ internal class CharProgressionIterator(first: Char, last: Char, val step: Int) :
  * @property step the number by which the value is incremented on each step.
  */
 internal class IntProgressionIterator(first: Int, last: Int, val step: Int) : IntIterator() {
-    private val finalElement = last
+    private val finalElement: Int = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last
-    private var next = if (hasNext) first else finalElement
+    private var next: Int = if (hasNext) first else finalElement
 
     override fun hasNext(): Boolean = hasNext
 
@@ -60,9 +60,9 @@ internal class IntProgressionIterator(first: Int, last: Int, val step: Int) : In
  * @property step the number by which the value is incremented on each step.
  */
 internal class LongProgressionIterator(first: Long, last: Long, val step: Long) : LongIterator() {
-    private val finalElement = last
+    private val finalElement: Long = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last
-    private var next = if (hasNext) first else finalElement
+    private var next: Long = if (hasNext) first else finalElement
 
     override fun hasNext(): Boolean = hasNext
 

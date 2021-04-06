@@ -42,11 +42,19 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
         val hashCode = "=\n" + when (kind) {
             CHAR ->
-                "        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step)"
+                "        if (isEmpty()) -1 else (31 * (31 * first.code + last.code) + step)"
             INT ->
                 "        if (isEmpty()) -1 else (31 * (31 * first + last) + step)"
             LONG ->
                 "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("first")} + ${hashLong("last")}) + ${hashLong("step")}).toInt()"
+        }
+        val elementToIncrement = when (kind) {
+            CHAR -> ".code"
+            else -> ""
+        }
+        val incrementToElement = when (kind) {
+            CHAR -> ".toChar()"
+            else -> ""
         }
 
         out.println(
@@ -73,7 +81,7 @@ public open class $progression
     /**
      * The last element in the progression.
      */
-    public val last: $t = getProgressionLastElement(start.to$incrementType(), endInclusive.to$incrementType(), step).to$t()
+    public val last: $t = getProgressionLastElement(start$elementToIncrement, endInclusive$elementToIncrement, step)$incrementToElement
 
     /**
      * The step of the progression.

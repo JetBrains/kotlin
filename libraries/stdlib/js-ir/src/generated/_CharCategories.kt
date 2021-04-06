@@ -19,7 +19,7 @@ private object Category {
         val toBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
         val fromBase64 = IntArray(128)
         for (i in toBase64.indices) {
-            fromBase64[toBase64[i].toInt()] = i
+            fromBase64[toBase64[i].code] = i
         }
         
         // rangeStartDiff.length = 1482
@@ -54,7 +54,7 @@ private fun categoryValueFrom(code: Int, ch: Int): Int {
  * Returns the Unicode general category of this character as an Int.
  */
 internal fun Char.getCategoryValue(): Int {
-    val ch = this.toInt()
+    val ch = this.code
 
     val index = binarySearchRange(Category.decodedRangeStart, ch)
     val start = Category.decodedRangeStart[index]
@@ -70,7 +70,7 @@ internal fun decodeVarLenBase64(base64: String, fromBase64: IntArray, resultLeng
     var int = 0
     var shift = 0
     for (char in base64) {
-        val sixBit = fromBase64[char.toInt()]
+        val sixBit = fromBase64[char.code]
         int = int or ((sixBit and 0x1f) shl shift)
         if (sixBit < 0x20) {
             result[index++] = int

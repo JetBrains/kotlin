@@ -394,8 +394,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateConversions(kind: PrimitiveType) {
-        fun isConversionDeprecated(otherKind: PrimitiveType): Boolean {
+        fun isFpToIntConversionDeprecated(otherKind: PrimitiveType): Boolean {
             return kind in PrimitiveType.floatingPoint && otherKind in listOf(PrimitiveType.BYTE, PrimitiveType.SHORT)
+        }
+
+        fun isCharConversionDeprecated(otherKind: PrimitiveType): Boolean {
+            return kind != PrimitiveType.INT && otherKind == PrimitiveType.CHAR
         }
 
         val thisName = kind.capitalized
@@ -422,9 +426,13 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
             out.println(doc)
 
-            if (isConversionDeprecated(otherKind)) {
+            if (isFpToIntConversionDeprecated(otherKind)) {
                 out.println("    @Deprecated(\"Unclear conversion. To achieve the same result convert to Int explicitly and then to $otherName.\", ReplaceWith(\"toInt().to$otherName()\"))")
                 out.println("    @DeprecatedSinceKotlin(warningSince = \"1.3\", errorSince = \"1.5\")")
+            }
+            if (isCharConversionDeprecated(otherKind)) {
+                out.println("    @Deprecated(\"Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.\", ReplaceWith(\"this.toInt().toChar()\"))")
+                out.println("    @DeprecatedSinceKotlin(warningSince = \"1.5\")")
             }
 
             out.println("    public override fun to$otherName(): $otherName")

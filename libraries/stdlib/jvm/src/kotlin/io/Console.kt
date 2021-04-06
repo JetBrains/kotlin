@@ -183,7 +183,7 @@ internal object LineReader {
                 bytes[nBytes++] = readByte.toByte()
             }
             // With "directEOL" encoding bytes are batched before being decoded all at once
-            if (readByte == '\n'.toInt() || nBytes == BUFFER_SIZE || !directEOL) {
+            if (readByte == '\n'.code || nBytes == BUFFER_SIZE || !directEOL) {
                 // Decode the bytes that were read
                 byteBuf.limit(nBytes) // byteBuf position is always zero
                 charBuf.position(nChars) // charBuf limit is always BUFFER_SIZE
@@ -254,7 +254,7 @@ internal object LineReader {
         // try decoding ASCII line separator to see if this charset (like UTF-8) encodes it directly
         byteBuf.clear()
         charBuf.clear()
-        byteBuf.put('\n'.toByte())
+        byteBuf.put('\n'.code.toByte())
         byteBuf.flip()
         decoder.decode(byteBuf, charBuf, false)
         directEOL = charBuf.position() == 1 && charBuf.get(0) == '\n'

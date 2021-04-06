@@ -32,7 +32,7 @@ public open class CharProgression
     /**
      * The last element in the progression.
      */
-    public val last: Char = getProgressionLastElement(start.toInt(), endInclusive.toInt(), step).toChar()
+    public val last: Char = getProgressionLastElement(start.code, endInclusive.code, step).toChar()
 
     /**
      * The step of the progression.
@@ -49,7 +49,7 @@ public open class CharProgression
         first == other.first && last == other.last && step == other.step)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step)
+        if (isEmpty()) -1 else (31 * (31 * first.code + last.code) + step)
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
@@ -89,7 +89,7 @@ public open class IntProgression
     /**
      * The last element in the progression.
      */
-    public val last: Int = getProgressionLastElement(start.toInt(), endInclusive.toInt(), step).toInt()
+    public val last: Int = getProgressionLastElement(start, endInclusive, step)
 
     /**
      * The step of the progression.
@@ -146,7 +146,7 @@ public open class LongProgression
     /**
      * The last element in the progression.
      */
-    public val last: Long = getProgressionLastElement(start.toLong(), endInclusive.toLong(), step).toLong()
+    public val last: Long = getProgressionLastElement(start, endInclusive, step)
 
     /**
      * The step of the progression.
