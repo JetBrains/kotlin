@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.SKIP_TXT
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ANNOTATIONS_PATH
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SKIP_JAVA_SOURCES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS
@@ -94,17 +94,20 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
     }
 }
 
-abstract class AbstractForeignAnnotationsTest : AbstractForeignAnnotationsTestBase() {
+abstract class AbstractForeignAnnotationsSourceJavaTest : AbstractForeignAnnotationsTestBase() {
     override val foreignAnnotationsConfigurator: Constructor<JvmForeignAnnotationsConfigurator>
         get() = ::JvmForeignAnnotationsConfigurator
 }
 
-abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractForeignAnnotationsTestBase() {
+abstract class AbstractForeignAnnotationsCompiledJavaTest : AbstractForeignAnnotationsTestBase() {
+    override val foreignAnnotationsConfigurator: Constructor<JvmForeignAnnotationsConfigurator>
+        get() = ::JvmForeignAnnotationsConfigurator
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                +SKIP_JAVA_SOURCES
+                +ALL_JAVA_AS_BINARY
                 +SKIP_TXT
             }
 
@@ -113,7 +116,7 @@ abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractF
     }
 }
 
-abstract class AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest : AbstractForeignAnnotationsNoAnnotationInClasspathTest() {
+abstract class AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest : AbstractForeignAnnotationsCompiledJavaTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

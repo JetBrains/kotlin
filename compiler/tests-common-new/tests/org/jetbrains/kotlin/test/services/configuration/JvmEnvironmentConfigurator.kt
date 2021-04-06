@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_USING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.CONSTRUCTOR_CALL_NORMALIZATION_MODE
@@ -130,7 +131,9 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         }
 
         val javaVersionToCompile = registeredDirectives[COMPILE_JAVA_USING].singleOrNull()
-        val javaBinaryFiles = module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY in it.directives }
+        val javaBinaryFiles = if (ALL_JAVA_AS_BINARY !in registeredDirectives) {
+            module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY in it.directives }
+        } else module.javaFiles
         val withForeignAnnotations = JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS in registeredDirectives
 
         assertTrue(javaVersionToCompile == null || javaBinaryFiles.isNotEmpty() || withForeignAnnotations) {
