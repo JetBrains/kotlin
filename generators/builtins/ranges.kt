@@ -31,7 +31,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val increment = "1"
 
             val emptyBounds = when (kind) {
-                CHAR -> "1.toChar(), 0.toChar()"
+                CHAR -> "Char(1u), Char(0u)"
                 else -> "1, 0"
             }
 
@@ -39,7 +39,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             val hashCode = when (kind) {
                 CHAR -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * first.toInt() + last.toInt())"
+                "        if (isEmpty()) -1 else (31 * first.code + last.code)"
                 INT -> "=\n" +
                 "        if (isEmpty()) -1 else (31 * first + last)"
                 LONG -> "=\n" +

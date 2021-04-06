@@ -28,13 +28,13 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
         first == other.first && last == other.last)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * first.toInt() + last.toInt())
+        if (isEmpty()) -1 else (31 * first.code + last.code)
 
     override fun toString(): String = "$first..$last"
 
     companion object {
         /** An empty range of values of type Char. */
-        public val EMPTY: CharRange = CharRange(1.toChar(), 0.toChar())
+        public val EMPTY: CharRange = CharRange(Char(1u), Char(0u))
     }
 }
 

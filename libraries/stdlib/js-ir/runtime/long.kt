@@ -262,6 +262,7 @@ public class Long internal constructor(
     public fun inv(): Long = Long(low.inv(), high.inv())
 
     public override fun toByte(): Byte = low.toByte()
+    @Suppress("DEPRECATION")
     public override fun toChar(): Char = low.toChar()
     public override fun toShort(): Short = low.toShort()
     public override fun toInt(): Int = low
