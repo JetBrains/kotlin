@@ -63,6 +63,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val NESTED_CLASS_NOT_ALLOWED by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("declaration")
         }
+        val INCORRECT_CHARACTER_LITERAL by error<FirSourceElement, PsiElement>()
+        val EMPTY_CHARACTER_LITERAL by error<FirSourceElement, PsiElement>()
+        val TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL by error<FirSourceElement, PsiElement>()
+        val ILLEGAL_ESCAPE by error<FirSourceElement, PsiElement>()
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {

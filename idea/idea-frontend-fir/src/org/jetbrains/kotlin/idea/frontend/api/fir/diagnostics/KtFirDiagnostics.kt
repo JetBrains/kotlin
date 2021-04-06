@@ -108,6 +108,22 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val declaration: String
     }
 
+    abstract class IncorrectCharacterLiteral : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = IncorrectCharacterLiteral::class
+    }
+
+    abstract class EmptyCharacterLiteral : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = EmptyCharacterLiteral::class
+    }
+
+    abstract class TooManyCharactersInCharacterLiteral : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TooManyCharactersInCharacterLiteral::class
+    }
+
+    abstract class IllegalEscape : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = IllegalEscape::class
+    }
+
     abstract class Hidden : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Hidden::class
         abstract val hidden: KtSymbol

@@ -30,5 +30,11 @@ enum class DiagnosticKind {
     UnknownCallableKind,
     IllegalProjectionUsage,
     MissingStdlibClass,
+
+    IncorrectCharacterLiteral,
+    EmptyCharacterLiteral,
+    TooManyCharactersInCharacterLiteral,
+    IllegalEscape,
+
     Other
 }
