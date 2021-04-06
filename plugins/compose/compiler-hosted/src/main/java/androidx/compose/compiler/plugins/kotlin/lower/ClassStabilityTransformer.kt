@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.normalize
@@ -57,8 +58,9 @@ enum class StabilityBits(val bits: Int) {
 class ClassStabilityTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace
-) : AbstractComposeLowering(context, symbolRemapper, bindingTrace),
+    bindingTrace: BindingTrace,
+    metrics: ModuleMetrics,
+) : AbstractComposeLowering(context, symbolRemapper, bindingTrace, metrics),
     ClassLoweringPass,
     ModuleLoweringPass {
 
@@ -95,7 +97,14 @@ class ClassStabilityTransformer(
             cls.isInline
         ) return cls
 
-        if (declaration.hasStableMarker()) return cls
+        if (declaration.hasStableMarker()) {
+            metrics.recordClass(
+                declaration,
+                marked = true,
+                stability = Stability.Stable,
+            )
+            return cls
+        }
 
         val stability = stabilityOf(declaration.defaultType).normalize()
 
@@ -129,6 +138,11 @@ class ClassStabilityTransformer(
         } else {
             stableExpr = stability.irStableExpression() ?: irConst(UNSTABLE)
         }
+        metrics.recordClass(
+            declaration,
+            marked = false,
+            stability = stability
+        )
 
         cls.annotations = cls.annotations + IrConstructorCallImpl(
             UNDEFINED_OFFSET,

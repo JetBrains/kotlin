@@ -16,7 +16,9 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
+import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
@@ -445,10 +447,11 @@ class ComposableFunctionBodyTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     bindingTrace: BindingTrace,
+    metrics: ModuleMetrics,
     sourceInformationEnabled: Boolean,
     private val intrinsicRememberEnabled: Boolean
 ) :
-    AbstractComposeLowering(context, symbolRemapper, bindingTrace),
+    AbstractComposeLowering(context, symbolRemapper, bindingTrace, metrics),
     FileLoweringPass,
     ModuleLoweringPass {
 
@@ -670,6 +673,7 @@ class ComposableFunctionBodyTransformer(
             if (scope.isInlinedLambda && !scope.isComposable && scope.hasComposableCalls) {
                 encounteredCapturedComposableCall()
             }
+            metrics.recordFunction(scope.metrics)
         }
     }
 
@@ -857,6 +861,17 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
+        scope.metrics.recordFunction(
+            composable = true,
+            restartable = false,
+            skippable = false,
+            isLambda = declaration.isLambda(),
+            inline = declaration.isInline,
+            hasDefaults = false,
+            readonly = elideGroups,
+        )
+
+        scope.metrics.recordGroup()
         return declaration
     }
 
@@ -981,6 +996,18 @@ class ComposableFunctionBodyTransformer(
                 )
             )
         }
+        scope.metrics.recordFunction(
+            composable = true,
+            restartable = true,
+            skippable = canSkipExecution,
+            isLambda = true,
+            inline = false,
+            hasDefaults = false,
+            readonly = false,
+        )
+        // composable lambdas all have a root group, but we don't generate them as the source
+        // code itself has the start/end call.
+        scope.metrics.recordGroup()
 
         return declaration
     }
@@ -1125,6 +1152,18 @@ class ComposableFunctionBodyTransformer(
             )
         )
 
+        scope.metrics.recordFunction(
+            composable = true,
+            restartable = true,
+            skippable = canSkipExecution,
+            isLambda = false,
+            inline = false,
+            hasDefaults = scope.hasDefaultsGroup,
+            readonly = false,
+        )
+
+        scope.metrics.recordGroup()
+
         return declaration
     }
 
@@ -1252,6 +1291,15 @@ class ComposableFunctionBodyTransformer(
             val isRequired = param.defaultValue == null
             val isUnstable = stability.knownUnstable()
             val isUsed = scope.usedParams[slotIndex]
+
+            scope.metrics.recordParameter(
+                declaration = param,
+                type = param.type,
+                stability = stability,
+                default = defaultExpr[slotIndex],
+                defaultStatic = defaultExprIsStatic[slotIndex],
+                used = isUsed
+            )
 
             if (isUsed && isUnstable && isRequired) {
                 // if it is a used + unstable parameter with no default expression, the fn
@@ -1427,6 +1475,7 @@ class ComposableFunctionBodyTransformer(
         } else if (setDefaults.statements.isNotEmpty()) {
             // otherwise, we wrap the whole thing in an if expression with a skip
             scope.hasDefaultsGroup = true
+            scope.metrics.recordGroup()
             bodyPreamble.statements.add(
                 irIfThenElse(
                     // this prevents us from re-executing the defaults if this function is getting
@@ -2057,6 +2106,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun IrExpression.asReplaceableGroup(scope: Scope.BlockScope): IrExpression {
+        currentFunctionScope.metrics.recordGroup()
         // if the scope has no composable calls, then the only important thing is that a
         // start/end call gets executed. as a result, we can just put them both at the top of
         // the group, and we don't have to deal with any of the complicated jump logic that
@@ -2147,6 +2197,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun IrExpression.asCoalescableGroup(scope: Scope.BlockScope): IrExpression {
+        val metrics = currentFunctionScope.metrics
         val before = mutableStatementContainer()
         val after = mutableStatementContainer()
 
@@ -2157,6 +2208,7 @@ class ComposableFunctionBodyTransformer(
             scope,
             realizeGroup = {
                 if (before.statements.isEmpty()) {
+                    metrics.recordGroup()
                     before.statements.add(irStartReplaceableGroup(this, scope))
                     after.statements.add(irEndReplaceableGroup())
                 }
@@ -2602,6 +2654,14 @@ class ComposableFunctionBodyTransformer(
             expression.putValueArgument(changedArgIndex + i, param)
         }
 
+        currentFunctionScope.metrics.recordComposableCall(
+            expression,
+            paramMeta
+        )
+        metrics.recordComposableCall(
+            expression,
+            paramMeta
+        )
         recordCallInSource(call = expression)
 
         return expression
@@ -3280,6 +3340,8 @@ class ComposableFunctionBodyTransformer(
             private val transformer: ComposableFunctionBodyTransformer
         ) : BlockScope("fun ${function.name.asString()}") {
             val isInlinedLambda = with(transformer) { function.isInlinedLambda() }
+
+            val metrics: FunctionMetrics = transformer.metrics.makeFunctionMetrics(function)
 
             private var lastTemporaryIndex: Int = 0
 
