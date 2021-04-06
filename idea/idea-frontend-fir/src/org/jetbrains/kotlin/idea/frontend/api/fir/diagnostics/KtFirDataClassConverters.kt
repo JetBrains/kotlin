@@ -124,6 +124,30 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INCORRECT_CHARACTER_LITERAL) { firDiagnostic ->
+        IncorrectCharacterLiteralImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EMPTY_CHARACTER_LITERAL) { firDiagnostic ->
+        EmptyCharacterLiteralImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL) { firDiagnostic ->
+        TooManyCharactersInCharacterLiteralImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.ILLEGAL_ESCAPE) { firDiagnostic ->
+        IllegalEscapeImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.HIDDEN) { firDiagnostic ->
         HiddenImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),

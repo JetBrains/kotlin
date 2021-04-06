@@ -46,7 +46,7 @@ abstract class BaseConverter(
     override val LighterASTNode.unescapedValue: String
         get() {
             val escape = this.asText
-            return escapedStringToCharacter(escape)?.toString()
+            return escapedStringToCharacter(escape).value?.toString()
                 ?: escape.replace("\\", "").replace("u", "\\u")
         }
 

@@ -175,6 +175,10 @@ private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceEl
         DiagnosticKind.IllegalProjectionUsage -> FirErrors.ILLEGAL_PROJECTION_USAGE
         DiagnosticKind.MissingStdlibClass -> FirErrors.MISSING_STDLIB_CLASS
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
+        DiagnosticKind.IncorrectCharacterLiteral -> FirErrors.INCORRECT_CHARACTER_LITERAL
+        DiagnosticKind.EmptyCharacterLiteral -> FirErrors.EMPTY_CHARACTER_LITERAL
+        DiagnosticKind.TooManyCharactersInCharacterLiteral -> FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL
+        DiagnosticKind.IllegalEscape -> FirErrors.ILLEGAL_ESCAPE
         else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
     }
 }
