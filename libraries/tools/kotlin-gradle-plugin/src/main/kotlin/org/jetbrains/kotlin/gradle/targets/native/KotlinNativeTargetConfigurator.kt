@@ -130,10 +130,9 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
     // region Task creation.
     private fun Project.createLinkTask(binary: NativeBinary) {
         val result = registerTask<KotlinNativeLink>(
-            binary.linkTaskName
+            binary.linkTaskName, listOf(binary)
         ) {
             val target = binary.target
-            it.binary = binary
             it.group = BasePlugin.BUILD_GROUP
             it.description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
             it.enabled = binary.konanTarget.enabledOnCurrentHost
@@ -261,9 +260,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
 
     internal fun Project.createKlibCompilationTask(compilation: AbstractKotlinNativeCompilation): TaskProvider<KotlinNativeCompile> {
         val compileTaskProvider = registerTask<KotlinNativeCompile>(
-            compilation.compileKotlinTaskName
+            compilation.compileKotlinTaskName, listOf(compilation)
         ) {
-            it.compilation.set(compilation)
             it.group = BasePlugin.BUILD_GROUP
             it.description = "Compiles a klibrary from the '${compilation.name}' " +
                     "compilation for target '${compilation.platformType.name}'."

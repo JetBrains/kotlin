@@ -56,7 +56,6 @@ abstract class AbstractKotlinNativeCompilation(
     override val compileKotlinTask: KotlinNativeCompile
         get() = super.compileKotlinTask as KotlinNativeCompile
 
-    // A collection containing all source sets used by this compilation
     @Suppress("UNCHECKED_CAST")
     override val compileKotlinTaskProvider: TaskProvider<out KotlinNativeCompile>
         get() = super.compileKotlinTaskProvider as TaskProvider<out KotlinNativeCompile>
