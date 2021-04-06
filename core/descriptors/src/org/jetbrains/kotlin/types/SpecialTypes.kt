@@ -97,7 +97,7 @@ class DefinitelyNotNullType private constructor(
     DefinitelyNotNullTypeMarker {
 
     companion object {
-        internal fun makeDefinitelyNotNull(
+        fun makeDefinitelyNotNull(
             type: UnwrappedType,
             useCorrectedNullabilityForTypeParameters: Boolean = false
         ): DefinitelyNotNullType? {

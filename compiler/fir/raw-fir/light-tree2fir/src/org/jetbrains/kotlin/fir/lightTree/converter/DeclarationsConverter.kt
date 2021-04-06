@@ -1637,6 +1637,7 @@ class DeclarationsConverter(
                 TYPE_REFERENCE -> firType = convertType(it)
                 MODIFIER_LIST -> if (!afterLPar || typeModifiers.hasNoAnnotations()) typeModifiers = convertTypeModifierList(it)
                 USER_TYPE -> firType = convertUserType(it)
+                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it)
                 NULLABLE_TYPE -> firType = convertNullableType(it)
                 FUNCTION_TYPE -> firType = convertFunctionType(it, isSuspend = typeModifiers.hasSuspend)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
@@ -1676,9 +1677,30 @@ class DeclarationsConverter(
                     convertUserType(it, true)
                 FUNCTION_TYPE -> firType = convertFunctionType(it, true)
                 NULLABLE_TYPE -> firType = convertNullableType(it)
+                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, nullable = true)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
                     source = nullableType.toFirSourceElement()
                     isMarkedNullable = true
+                }
+            }
+        }
+
+        return firType
+    }
+
+    private fun unwrapDefinitelyNotNullableType(definitelyNotNullType: LighterASTNode, nullable: Boolean = false): FirTypeRef {
+        lateinit var firType: FirTypeRef
+        // TODO: Support proper DefinitelyNotNullableType
+        definitelyNotNullType.forEachChildren {
+            when (it.tokenType) {
+                USER_TYPE -> firType =
+                    convertUserType(it, nullable)
+                FUNCTION_TYPE -> firType = convertFunctionType(it, nullable)
+                NULLABLE_TYPE -> firType = convertNullableType(it)
+                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, nullable)
+                DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
+                    source = definitelyNotNullType.toFirSourceElement()
+                    isMarkedNullable = false
                 }
             }
         }

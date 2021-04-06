@@ -1330,7 +1330,12 @@ open class RawFirBuilder(
             val isNullable = typeElement is KtNullableType
 
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
-                if (this is KtNullableType) this.innerType.unwrapNullable() else this
+                when (this) {
+                    is KtNullableType -> this.innerType.unwrapNullable()
+                    // TODO: Support explicit definitely not null type
+                    is KtDefinitelyNotNullType -> this.innerType.unwrapNullable()
+                    else -> this
+                }
 
             val firTypeBuilder = when (val unwrappedElement = typeElement.unwrapNullable()) {
                 is KtDynamicType -> FirDynamicTypeRefBuilder().apply {

@@ -2220,6 +2220,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         userType.done(USER_TYPE);
+
+        if (at(EXCLEXCL)) {
+            PsiBuilder.Marker definitelyNotNull = userType.precede();
+            advance(); // !!
+            definitelyNotNull.done(DEFINITELY_NOT_NULL_TYPE);
+        }
     }
 
     private boolean atParenthesizedMutableForPlatformTypes(int offset) {
