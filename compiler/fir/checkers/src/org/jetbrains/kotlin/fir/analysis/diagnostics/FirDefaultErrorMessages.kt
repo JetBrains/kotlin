@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_ON_NULLABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_INTERFACE
@@ -685,6 +686,13 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 COMPONENT_FUNCTION_ON_NULLABLE,
                 "Not nullable value required to call ''{0}()'' function of destructuring declaration initializer",
                 TO_STRING
+            )
+            map.put(
+                COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
+                "''{0}()'' function returns ''{1}'', but ''{2}'' is expected",
+                TO_STRING,
+                RENDER_TYPE,
+                RENDER_TYPE
             )
 
             // Control flow diagnostics

@@ -33,5 +33,5 @@ fun <T> test(x: T) {
     val s4: Pair<Int?, String> = bar(null, null, ::foo)
 
     val s5: Pair<Int, String> = bar(1, "", ::foo)
-    val (a1: Int, b1: String) = bar(1, "", ::foo)
+    val (a1: Int, b1: String) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>bar(1, "", ::foo)<!>
 }

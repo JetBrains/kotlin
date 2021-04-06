@@ -502,12 +502,14 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<Name>("functionWithAmbiguityName")
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
-
         val COMPONENT_FUNCTION_ON_NULLABLE by error<FirSourceElement, KtExpression> {
             parameter<Name>("componentFunctionName")
         }
-
-        // TODO: val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by ...
+        val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by error<FirSourceElement, KtExpression> {
+            parameter<Name>("componentFunctionName")
+            parameter<ConeKotlinType>("destructingType")
+            parameter<ConeKotlinType>("expectedType")
+        }
     }
 
     val CONTROL_FLOW by object : DiagnosticGroup("Control flow diagnostics") {

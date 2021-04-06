@@ -28896,6 +28896,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("destructuringDeclarations.kt")
+            public void testDestructuringDeclarations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/destructuringDeclarations.kt");
+            }
+
+            @Test
             @TestMetadata("dontIntersectUpperBoundWithExpectedType.kt")
             public void testDontIntersectUpperBoundWithExpectedType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/dontIntersectUpperBoundWithExpectedType.kt");
