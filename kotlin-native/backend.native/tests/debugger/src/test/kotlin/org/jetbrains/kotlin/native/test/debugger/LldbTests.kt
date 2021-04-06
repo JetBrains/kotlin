@@ -147,4 +147,25 @@ class LldbTests {
             Breakpoint 2: where = [..]`kfun:#a(){}kotlin.String [..] at a.kt:1:1, [..]
         """.trimIndent().lldb(application)
     }
+
+    @Test
+    fun `kt33055`() = lldbComplexTest {
+        val kt33055 = """
+            |fun question(subject: String, names: Array<String> = emptyArray()): String {
+            |    return buildString { // breakpoint here
+            |        append("${"$"}subject?") // actual stop
+            |        for (name in names)
+            |            append(" ${"$"}name?")
+            |    }
+            |}
+            |
+            |fun main(args: Array<String>) {
+            |    println(question("Subject", args))
+            |}
+        """.trimMargin().binary("kt33055", "-g", "-Xg-generate-inline-function-body-marker=enable")
+        """
+            > b 2
+            Breakpoint 1: where = [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [..] at kt33055.kt:2:12, [..]
+        """.trimIndent().lldb(kt33055)
+    }
 }
