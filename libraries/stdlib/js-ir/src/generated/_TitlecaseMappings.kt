@@ -16,7 +16,7 @@ internal fun Char.titlecaseCharImpl(): Char {
     val code = this.toInt()
     // Letters repeating <Lu, Lt, Ll> sequence and code of the Lt is a multiple of 3, e.g. <Ǆ, ǅ, ǆ>
     if (code in 0x01c4..0x01cc || code in 0x01f1..0x01f3) {
-        return (3 * ((code + 1) / 3)).toChar()
+        return Char(3 * ((code + 1) / 3))
     }
     // Lower case letters whose title case mapping equivalent is equal to the original letter
     if (code in 0x10d0..0x10fa || code in 0x10fd..0x10ff) {

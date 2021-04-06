@@ -169,7 +169,7 @@ internal fun encodeUtf8(string: String, startIndex: Int, endIndex: Int, throwOnM
     var charIndex = startIndex
 
     while (charIndex < endIndex) {
-        val code = string[charIndex++].toInt()
+        val code = string[charIndex++].code
         when {
             code < 0x80 ->
                 bytes[byteIndex++] = code.toByte()
@@ -227,6 +227,7 @@ internal fun decodeUtf8(bytes: ByteArray, startIndex: Int, endIndex: Int, throwO
         val byte = bytes[byteIndex++].toInt()
         when {
             byte >= 0 ->
+                @Suppress("DEPRECATION") // TODO: ensure replacement doesn't cause significant overhead
                 stringBuilder.append(byte.toChar())
             byte shr 5 == -2 -> {
                 val code = codePointFrom2(bytes, byte, byteIndex, endIndex, throwOnMalformed)
@@ -234,6 +235,7 @@ internal fun decodeUtf8(bytes: ByteArray, startIndex: Int, endIndex: Int, throwO
                     stringBuilder.append(REPLACEMENT_CHAR)
                     byteIndex += -code
                 } else {
+                    @Suppress("DEPRECATION") // TODO: ensure replacement doesn't cause significant overhead
                     stringBuilder.append(code.toChar())
                     byteIndex += 1
                 }
@@ -244,6 +246,7 @@ internal fun decodeUtf8(bytes: ByteArray, startIndex: Int, endIndex: Int, throwO
                     stringBuilder.append(REPLACEMENT_CHAR)
                     byteIndex += -code
                 } else {
+                    @Suppress("DEPRECATION") // TODO: ensure replacement doesn't cause significant overhead
                     stringBuilder.append(code.toChar())
                     byteIndex += 2
                 }
@@ -256,7 +259,9 @@ internal fun decodeUtf8(bytes: ByteArray, startIndex: Int, endIndex: Int, throwO
                 } else {
                     val high = (code - 0x10000) shr 10 or 0xD800
                     val low = (code and 0x3FF) or 0xDC00
+                    @Suppress("DEPRECATION") // TODO: ensure replacement doesn't cause significant overhead
                     stringBuilder.append(high.toChar())
+                    @Suppress("DEPRECATION") // TODO: ensure replacement doesn't cause significant overhead
                     stringBuilder.append(low.toChar())
                     byteIndex += 3
                 }

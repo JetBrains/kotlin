@@ -25,17 +25,17 @@ constructor(code: UShort) : Comparable<Char> {
     public override fun compareTo(other: Char): Int = value - other.value
 
     /** Adds the other Int value to this value resulting a Char. */
-    public operator fun plus(other: Int): Char = (value + other).toChar()
+    public operator fun plus(other: Int): Char = Char((value + other).toUShort())
 
     /** Subtracts the other Char value from this value resulting an Int. */
     public operator fun minus(other: Char): Int = value - other.value
     /** Subtracts the other Int value from this value resulting a Char. */
-    public operator fun minus(other: Int): Char = (value - other).toChar()
+    public operator fun minus(other: Int): Char = Char((value - other).toUShort())
 
     /** Increments this value. */
-    public operator fun inc(): Char = (value + 1).toChar()
+    public operator fun inc(): Char = Char((value + 1).toUShort())
     /** Decrements this value. */
-    public operator fun dec(): Char = (value - 1).toChar()
+    public operator fun dec(): Char = Char((value - 1).toUShort())
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Char): CharRange = CharRange(this, other)

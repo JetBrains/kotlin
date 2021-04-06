@@ -27,7 +27,7 @@ internal class TitlecaseMappingsWriter : MappingsWriter {
                 val code = this.toInt()
                 // Letters repeating <Lu, Lt, Ll> sequence and code of the Lt is a multiple of 3, e.g. <Ǆ, ǅ, ǆ>
                 if (${rangeChecks(LuLtLlMappings, "code")}) {
-                    return (3 * ((code + 1) / 3)).toChar()
+                    return Char(3 * ((code + 1) / 3))
                 }
                 // Lower case letters whose title case mapping equivalent is equal to the original letter
                 if (${rangeChecks(zeroMappings, "code")}) {
