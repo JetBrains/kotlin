@@ -210,7 +210,7 @@ internal fun defaultPrimitiveValue(type: Type): Any? =
     if (type is Class<*> && type.isPrimitive) {
         when (type) {
             Boolean::class.java -> false
-            Char::class.java -> 0.toChar()
+            Char::class.java -> '\u0000'
             Byte::class.java -> 0.toByte()
             Short::class.java -> 0.toShort()
             Int::class.java -> 0

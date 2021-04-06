@@ -50,7 +50,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             when (desc) {
                 "Z" -> intValue != 0
                 "B" -> intValue.toByte()
-                "C" -> intValue.toChar()
+                "C" -> intValue.toUShort().let(::Char)
                 "S" -> intValue.toShort()
                 else -> throw AssertionError(desc)
             }

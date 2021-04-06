@@ -21,7 +21,7 @@ import java.util.*
 // The maximum possible length of the byte array in the CONSTANT_Utf8_info structure in the bytecode, as per JVMS7 4.4.7
 const val MAX_UTF8_INFO_LENGTH = 65535
 
-const val UTF8_MODE_MARKER = 0.toChar()
+const val UTF8_MODE_MARKER = '\u0000'
 
 fun bytesToStrings(bytes: ByteArray): Array<String> {
     val result = ArrayList<String>(1)
@@ -33,8 +33,8 @@ fun bytesToStrings(bytes: ByteArray): Array<String> {
     bytesInBuffer += 2
 
     for (b in bytes) {
-        val c = b.toInt() and 0xFF // 0 <= c <= 255
-        buffer.append(c.toChar())
+        val c = b.toUByte().toUShort() // 0 <= c <= 255
+        buffer.append(Char(c))
         if (b in 1..127) {
             bytesInBuffer++
         } else {
@@ -62,7 +62,7 @@ fun stringsToBytes(strings: Array<String>): ByteArray {
     var i = 0
     for (s in strings) {
         for (si in 0..s.length - 1) {
-            result[i++] = s[si].toByte()
+            result[i++] = s[si].code.toByte()
         }
     }
 

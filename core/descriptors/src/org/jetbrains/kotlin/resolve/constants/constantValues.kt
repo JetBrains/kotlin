@@ -85,14 +85,14 @@ class CharValue(value: Char) : IntegerValueConstant<Char>(value) {
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitCharValue(this, data)
 
-    override fun toString() = "\\u%04X ('%s')".format(value.toInt(), getPrintablePart(value))
+    override fun toString() = "\\u%04X ('%s')".format(value.code, getPrintablePart(value))
 
     private fun getPrintablePart(c: Char): String = when (c) {
         '\b' -> "\\b"
         '\t' -> "\\t"
         '\n' -> "\\n"
         //TODO: KT-8507
-        12.toChar() -> "\\f"
+        '\u000C' -> "\\f"
         '\r' -> "\\r"
         else -> if (isPrintableUnicode(c)) c.toString() else "?"
     }

@@ -49,7 +49,7 @@ class JvmNameResolver(
 
         if (record.replaceCharCount >= 2) {
             val (from, to) = record.replaceCharList
-            string = string.replace(from.toChar(), to.toChar())
+            string = string.replace(Char(from.toUShort()), Char(to.toUShort()))
         }
 
         when (record.operation ?: NONE) {
