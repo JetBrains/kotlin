@@ -63,7 +63,6 @@ val jsMainSources by task<Sync> {
         val fullJsMainSources = tasks.getByPath(":kotlin-stdlib-js-ir:jsMainSources")
         exclude(
             listOf(
-                "libraries/stdlib/js/src/jquery/**",
                 "libraries/stdlib/js/src/org.w3c/**",
                 "libraries/stdlib/js/src/kotlin/char.kt",
                 "libraries/stdlib/js/src/kotlin/collections.kt",
