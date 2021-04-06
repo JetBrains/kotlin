@@ -72,20 +72,26 @@ import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -291,6 +297,12 @@ class ComposerLambdaMemoization(
                             .anyClass
                             .owner
                             .primaryConstructor!!
+                    )
+                    +IrInstanceInitializerCallImpl(
+                        startOffset = this.startOffset,
+                        endOffset = this.endOffset,
+                        classSymbol = it.symbol,
+                        type = it.defaultType
                     )
                 }
             }
@@ -557,7 +569,7 @@ class ComposerLambdaMemoization(
                 name = Name.identifier(lambdaName)
                 type = lambdaType
                 visibility = DescriptorVisibilities.INTERNAL
-                isStatic = true
+                isStatic = context.platform.isJvm()
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
                 f.parent = clazz
@@ -617,7 +629,16 @@ class ComposerLambdaMemoization(
         collector: CaptureCollector
     ): IrExpression {
         val function = expression.function
-        val argumentCount = function.descriptor.valueParameters.size
+        val argumentCount = function.valueParameters.size
+
+        val isJs = context.moduleDescriptor.platform.isJs()
+        if (argumentCount > MAX_RESTART_ARGUMENT_COUNT && isJs) {
+            error(
+                "only $MAX_RESTART_ARGUMENT_COUNT parameters " +
+                    "in @Composable lambda are supported on JS"
+            )
+        }
+
         val useComposableLambdaN = argumentCount > MAX_RESTART_ARGUMENT_COUNT
         val useComposableFactory = collector.hasCaptures && declarationContext.composable
         val restartFunctionFactory =
@@ -638,7 +659,7 @@ class ComposerLambdaMemoization(
         )
 
         (context as IrPluginContextImpl).linker.getDeclaration(restartFactorySymbol)
-        return irBuilder.irCall(restartFactorySymbol).apply {
+        val composableLambdaExpression = irBuilder.irCall(restartFactorySymbol).apply {
             var index = 0
 
             // first parameter is the composer parameter if we are using the composable factory
@@ -682,6 +703,41 @@ class ComposerLambdaMemoization(
 
             // block parameter
             putValueArgument(index, expression)
+        }
+
+        return if (!isJs) {
+            composableLambdaExpression
+        } else {
+            /*
+             * JS doesn't have ability to extend FunctionN types, therefore the lambda call must be
+             * transformed into composableLambda(...)::invoke. It loses some of the optimizations
+             * related to skipping updates that way, but still ensures correct handling of
+             * lambdas.
+             */
+            val realArgumentCount = argumentCount +
+                if (function.extensionReceiverParameter != null) 1 else 0
+
+            val invokeArgumentCount = realArgumentCount +
+                /*composer*/ 1 +
+                changedParamCount(realArgumentCount, 0)
+
+            val invokeSymbol = composableLambdaExpression.type.classOrNull!!
+                .functions
+                .single {
+                    it.owner.name.asString() == "invoke" &&
+                        invokeArgumentCount == it.owner.valueParameters.size
+                }
+
+            IrFunctionReferenceImpl(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                type = expression.type,
+                symbol = invokeSymbol,
+                typeArgumentsCount = invokeSymbol.owner.typeParameters.size,
+                valueArgumentsCount = invokeSymbol.owner.valueParameters.size
+            ).also { reference ->
+                reference.dispatchReceiver = composableLambdaExpression
+            }
         }
     }
 
@@ -759,13 +815,19 @@ class ComposerLambdaMemoization(
                 1
             }
 
+            val substitutedLambdaType = rememberFunction.valueParameters.last().type.substitute(
+                rememberFunction.typeParameters,
+                (0 until typeArgumentsCount).map {
+                    getTypeArgument(it) as IrType
+                }
+            )
             putValueArgument(
                 lambdaArgumentIndex,
                 irBuilder.irLambdaExpression(
                     descriptor = irBuilder.createFunctionDescriptor(
-                        rememberFunction.valueParameters.last().type
+                        substitutedLambdaType
                     ),
-                    type = rememberFunction.valueParameters.last().type,
+                    type = substitutedLambdaType,
                     body = {
                         +irReturn(expression)
                     }

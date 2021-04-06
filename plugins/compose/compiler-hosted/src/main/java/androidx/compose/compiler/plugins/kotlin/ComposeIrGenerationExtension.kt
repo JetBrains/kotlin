@@ -19,28 +19,40 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.ComposableSymbolRemapper
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
+import androidx.compose.compiler.plugins.kotlin.lower.KlibAssignableParamTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.decoys.RecordDecoySignaturesTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.decoys.SubstituteDecoyCallsTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
     private val sourceInformationEnabled: Boolean = true,
     private val intrinsicRememberEnabled: Boolean = true,
+    private val decoysEnabled: Boolean = false,
 ) : IrGenerationExtension {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
+        val isKlibTarget = !pluginContext.platform.isJvm()
         VersionChecker(pluginContext).check()
 
         // TODO: refactor transformers to work with just BackendContext
@@ -51,7 +63,7 @@ class ComposeIrGenerationExtension(
         )
 
         // create a symbol remapper to be used across all transforms
-        val symbolRemapper = DeepCopySymbolRemapper()
+        val symbolRemapper = ComposableSymbolRemapper()
 
         ClassStabilityTransformer(
             pluginContext,
@@ -72,18 +84,40 @@ class ComposeIrGenerationExtension(
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)
 
+        val idSignatureBuilder = when {
+            pluginContext.platform.isJs() -> IdSignatureSerializer(JsManglerIr).also {
+                it.table = DeclarationTable(JsGlobalDeclarationTable(it, pluginContext.irBuiltIns))
+            }
+            else -> null
+        }
+        if (decoysEnabled) {
+            require(idSignatureBuilder != null) {
+                "decoys are not supported for ${pluginContext.platform}"
+            }
+
+            CreateDecoysTransformer(pluginContext, symbolRemapper, bindingTrace, idSignatureBuilder)
+                .lower(moduleFragment)
+            SubstituteDecoyCallsTransformer(
+                pluginContext,
+                symbolRemapper,
+                bindingTrace,
+                idSignatureBuilder
+            ).lower(moduleFragment)
+        }
+
         // transform all composable functions to have an extra synthetic composer
         // parameter. this will also transform all types and calls to include the extra
         // parameter.
         ComposerParamTransformer(
             pluginContext,
             symbolRemapper,
-            bindingTrace
+            bindingTrace,
+            decoysEnabled
         ).lower(moduleFragment)
 
         // transform calls to the currentComposer to just use the local parameter from the
         // previous transform
-        ComposerIntrinsicTransformer(pluginContext).lower(moduleFragment)
+        ComposerIntrinsicTransformer(pluginContext, decoysEnabled).lower(moduleFragment)
 
         ComposableFunctionBodyTransformer(
             pluginContext,
@@ -92,5 +126,26 @@ class ComposeIrGenerationExtension(
             sourceInformationEnabled,
             intrinsicRememberEnabled
         ).lower(moduleFragment)
+
+        if (decoysEnabled) {
+            require(idSignatureBuilder != null) {
+                "decoys are not supported for ${pluginContext.platform}"
+            }
+
+            RecordDecoySignaturesTransformer(
+                pluginContext,
+                symbolRemapper,
+                bindingTrace,
+                idSignatureBuilder
+            ).lower(moduleFragment)
+        }
+
+        if (isKlibTarget) {
+            KlibAssignableParamTransformer(
+                pluginContext,
+                symbolRemapper,
+                bindingTrace
+            ).lower(moduleFragment)
+        }
     }
 }

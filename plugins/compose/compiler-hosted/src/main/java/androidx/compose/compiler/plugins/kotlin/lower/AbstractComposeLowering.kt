@@ -122,6 +122,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -129,12 +130,13 @@ import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isCrossinline
+import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isNoinline
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -142,6 +144,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -799,6 +802,14 @@ abstract class AbstractComposeLowering(
         value
     )
 
+    protected fun irConst(value: Long): IrConst<Long> = IrConstImpl(
+        UNDEFINED_OFFSET,
+        UNDEFINED_OFFSET,
+        context.irBuiltIns.longType,
+        IrConstKind.Long,
+        value
+    )
+
     protected fun irConst(value: String): IrConst<String> = IrConstImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
@@ -1050,7 +1061,7 @@ abstract class AbstractComposeLowering(
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = KtxNameConventions.STABILITY_FLAG
-            isStatic = true
+            isStatic = context.platform.isJvm()
             isFinal = true
             type = context.irBuiltIns.intType
             visibility = DescriptorVisibilities.PUBLIC
@@ -1201,6 +1212,18 @@ abstract class AbstractComposeLowering(
             else -> false
         }
     }
+
+    protected fun dexSafeName(name: Name): Name {
+        val unsafeSymbolsRegex = "[ <>]".toRegex()
+        return if (
+            name.isSpecial || name.asString().contains(unsafeSymbolsRegex)
+        ) {
+            val sanitized = name
+                .asString()
+                .replace(unsafeSymbolsRegex, "\\$")
+            Name.identifier(sanitized)
+        } else name
+    }
 }
 
 fun IrFunction.composerParam(): IrValueParameter? {
@@ -1239,3 +1262,21 @@ val DeclarationDescriptorWithSource.startOffset: Int? get() =
 @ObsoleteDescriptorBasedAPI
 val DeclarationDescriptorWithSource.endOffset: Int? get() =
     (this.source as? PsiSourceElement)?.psi?.endOffset
+
+@ObsoleteDescriptorBasedAPI
+fun IrAnnotationContainer.hasAnnotationSafe(fqName: FqName): Boolean =
+    annotations.any {
+        // compiler helper getAnnotation fails during remapping in [ComposableTypeRemapper], so we
+        // use this impl
+        fqName == it.annotationClass?.descriptor?.fqNameSafe
+    }
+
+// workaround for KT-45361
+val IrConstructorCall.annotationClass get() =
+    if (type.isUnit()) {
+        // in js annotation type is always unit, so we use the constructed class
+        symbol.owner.constructedClass.symbol
+    } else {
+        // on jvm we can rely on type, but the owner can be unbound
+        type.classOrNull
+    }
