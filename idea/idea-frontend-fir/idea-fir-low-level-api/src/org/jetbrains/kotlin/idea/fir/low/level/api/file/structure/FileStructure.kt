@@ -123,10 +123,10 @@ internal class FileStructure(
             val firFile = firFileBuilder.getFirFileResolvedToPhaseWithCaching(
                 container,
                 moduleFileCache,
-                //TODO: Make resolve whole file into TYPES only for top level declarations or annotations with `file` site
-                FirResolvePhase.TYPES,
+                FirResolvePhase.IMPORTS,
                 checkPCE = true
             )
+            firLazyDeclarationResolver.resolveFileAnnotations(firFile, moduleFileCache)
             RootStructureElement(
                 firFile,
                 container,

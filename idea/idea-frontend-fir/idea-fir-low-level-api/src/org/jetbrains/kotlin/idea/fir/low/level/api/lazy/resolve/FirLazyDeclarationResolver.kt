@@ -18,16 +18,27 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalCo
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedBodyResolveTransformerForIDE
+import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedContractsResolveTransformerForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedImplicitTypesTransformerForIDE
-import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirFileAnnotationsResolveTransformer
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
 import org.jetbrains.kotlin.psi.*
 
 internal class FirLazyDeclarationResolver(
     private val firFileBuilder: FirFileBuilder
 ) {
+    fun resolveFileAnnotations(
+        firFile: FirFile,
+        moduleFileCache: ModuleFileCache,
+        scopeSession: ScopeSession = ScopeSession()
+    ) {
+        firFileBuilder.runCustomResolveUnderLock(firFile, moduleFileCache) {
+            val transformer = FirFileAnnotationsResolveTransformer(firFile.session, scopeSession)
+            firFile.accept(transformer, ResolutionMode.ContextDependent)
+        }
+    }
+
     fun lazyResolveDeclaration(
         declaration: FirDeclaration,
         moduleFileCache: ModuleFileCache,
@@ -116,7 +127,7 @@ internal class FirLazyDeclarationResolver(
             )
         }
         if (toPhase <= nonLazyPhase) return
-
+        resolveFileAnnotations(containerFirFile, moduleFileCache)
 
         val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider, moduleFileCache)
         val designation = nonLocalDeclarationToResolve.getDesignation(containerFirFile, provider, moduleFileCache)

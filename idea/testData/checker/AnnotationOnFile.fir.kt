@@ -1,13 +1,13 @@
 @file:kotlin.Deprecated("message")
-@file:Suppress(BAR)
+@file:Suppress(<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: BAR">BAR</error>)
 @file:Suppress(BAZ)
 
 @<error descr="Expecting \"file:\" prefix for file annotations">k</error>otlin.Deprecated("message")
-@<error descr="Expecting \"file:\" prefix for file annotations">S</error>uppress(BAR)
+@<error descr="Expecting \"file:\" prefix for file annotations">S</error>uppress(<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: BAR">BAR</error>)
 @<error descr="Expecting \"file:\" prefix for file annotations">S</error>uppress(BAZ)
 
 @file:myAnnotation(1, "string")
-@file:boo.myAnnotation(1, BAR)
+@file:boo.myAnnotation(1, <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: BAR">BAR</error>)
 @file:myAnnotation(N, BAZ)
 
 @<error descr="Expecting \"file:\" prefix for file annotations">m</error>yAnnotation(1, "string")
