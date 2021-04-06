@@ -82,6 +82,10 @@ class DokkaBase : DokkaPlugin() {
         preMergeDocumentableTransformer providing ::ObviousFunctionsDocumentableFilterTransformer
     }
 
+    val inheritedEntriesVisbilityFilter by extending {
+        preMergeDocumentableTransformer providing ::InheritedEntriesDocumentableFilterTransformer
+    }
+
     val emptyPackagesFilter by extending {
         preMergeDocumentableTransformer providing ::EmptyPackagesFilterTransformer order {
             after(
@@ -89,7 +93,8 @@ class DokkaBase : DokkaPlugin() {
                 suppressedDocumentableFilter,
                 documentableVisibilityFilter,
                 suppressedBySuppressTagDocumentableFilter,
-                obviousFunctionsVisbilityFilter
+                obviousFunctionsVisbilityFilter,
+                inheritedEntriesVisbilityFilter,
             )
         }
     }
@@ -119,7 +124,6 @@ class DokkaBase : DokkaPlugin() {
     val inheritorsExtractor by extending {
         CoreExtensions.documentableTransformer with InheritorsExtractorTransformer()
     }
-
 
     val undocumentedCodeReporter by extending {
         CoreExtensions.documentableTransformer with ReportUndocumentedTransformer()
@@ -162,7 +166,6 @@ class DokkaBase : DokkaPlugin() {
     val htmlRenderer by extending {
         CoreExtensions.renderer providing ::HtmlRenderer
     }
-
 
     val defaultKotlinAnalysis by extending {
         kotlinAnalysis providing { ctx -> KotlinAnalysis(ctx.configuration.sourceSets, ctx.logger) }
