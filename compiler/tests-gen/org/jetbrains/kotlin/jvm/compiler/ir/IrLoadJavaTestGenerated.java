@@ -2117,6 +2117,11 @@ public class IrLoadJavaTestGenerated extends AbstractIrLoadJavaTest {
                     runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/ClassLiteralArgument.kt");
                 }
 
+                @TestMetadata("DefinitelyNotNull.kt")
+                public void testDefinitelyNotNull() throws Exception {
+                    runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/DefinitelyNotNull.kt");
+                }
+
                 @TestMetadata("ReceiverParameter.kt")
                 public void testReceiverParameter() throws Exception {
                     runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/ReceiverParameter.kt");

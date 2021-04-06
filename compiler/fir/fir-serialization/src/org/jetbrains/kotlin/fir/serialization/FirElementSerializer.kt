@@ -598,10 +598,16 @@ class FirElementSerializer private constructor(
         }
     }
 
-    private fun typeProto(type: ConeKotlinType, toSuper: Boolean = false, correspondingTypeRef: FirTypeRef? = null): ProtoBuf.Type.Builder {
+    private fun typeProto(
+        type: ConeKotlinType,
+        toSuper: Boolean = false,
+        correspondingTypeRef: FirTypeRef? = null,
+        isDefinitelyNotNullType: Boolean = false,
+    ): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
 
         when (type) {
+            is ConeDefinitelyNotNullType -> return typeProto(type, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
             is ConeKotlinErrorType -> {
                 extension.serializeErrorType(type, builder)
                 return builder
@@ -623,7 +629,7 @@ class FirElementSerializer private constructor(
                         session, CONTINUATION_INTERFACE_CLASS_ID
                     )
                     val functionType = typeProto(runtimeFunctionType)
-                    functionType.flags = Flags.getTypeFlags(true)
+                    functionType.flags = Flags.getTypeFlags(true, false)
                     return functionType
                 }
                 fillFromPossiblyInnerType(builder, type)
@@ -640,8 +646,11 @@ class FirElementSerializer private constructor(
                 } else {
                     builder.typeParameter = getTypeParameterId(typeParameter)
                 }
+
+                if (isDefinitelyNotNullType) {
+                    builder.flags = Flags.getTypeFlags(false, isDefinitelyNotNullType)
+                }
             }
-            is ConeDefinitelyNotNullType,
             is ConeIntersectionType -> {
                 val approximatedType = if (toSuper) {
                     typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration)

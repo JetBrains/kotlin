@@ -132,9 +132,16 @@ class FirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeLookupTagBasedType? {
+    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeSimpleKotlinType? {
         val constructor = typeSymbol(proto) ?: return null
-        if (constructor is ConeTypeParameterLookupTag) return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable)
+        if (constructor is ConeTypeParameterLookupTag) {
+            return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable).let {
+                if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
+                    ConeDefinitelyNotNullType.create(it)
+                else
+                    it
+            }
+        }
         if (constructor !is ConeClassLikeLookupTag) return null
 
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =

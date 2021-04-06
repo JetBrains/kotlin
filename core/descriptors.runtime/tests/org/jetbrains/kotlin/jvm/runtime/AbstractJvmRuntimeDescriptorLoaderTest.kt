@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -131,6 +132,9 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                 val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                     testRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
+
+                AbstractLoadJavaTest.updateConfigurationWithDirectives(file.readText(), environment.configuration)
+
                 for (root in environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)) {
                     LOG.info("root: $root")
                 }

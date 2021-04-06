@@ -101,7 +101,12 @@ class TypeDeserializer(
             Flags.SUSPEND_TYPE.get(proto.flags) ->
                 createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
             else ->
-                KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable)
+                KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable).let {
+                    if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
+                        DefinitelyNotNullType.makeDefinitelyNotNull(it) ?: error("null DefinitelyNotNullType for '$it'")
+                    else
+                        it
+                }
         }
 
         val computedType = proto.abbreviatedType(c.typeTable)?.let {

@@ -584,7 +584,7 @@ class DescriptorSerializer private constructor(
 
         if (type.isSuspendFunctionType) {
             val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type, extension.releaseCoroutines()))
-            functionType.flags = Flags.getTypeFlags(true)
+            functionType.flags = Flags.getTypeFlags(true, false)
             return functionType
         }
 
@@ -599,6 +599,8 @@ class DescriptorSerializer private constructor(
                 } else {
                     builder.typeParameter = getTypeParameterId(descriptor)
                 }
+
+                builder.flags = Flags.getTypeFlags(false, type is DefinitelyNotNullType)
 
                 assert(type.arguments.isEmpty()) { "Found arguments for type constructor build on type parameter: $descriptor" }
             }
