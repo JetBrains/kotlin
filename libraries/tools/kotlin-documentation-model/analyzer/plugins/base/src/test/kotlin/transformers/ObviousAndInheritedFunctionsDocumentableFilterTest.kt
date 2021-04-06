@@ -1,29 +1,63 @@
 package transformers
 
+import org.jetbrains.dokka.DokkaConfigurationImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import testApi.testRunner.dokkaConfiguration
 import kotlin.test.assertEquals
 
-class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
-    val suppressingConfiguration = dokkaConfiguration {
-        sourceSets {
-            sourceSet {
-                sourceRoots = listOf("src")
+class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
+    companion object {
+        @JvmStatic
+        fun suppressingObviousConfiguration() = listOf(dokkaConfiguration {
+            suppressInheritedMembers = false
+            suppressObviousFunctions = true
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src")
+                }
             }
-        }
+        })
+
+        @JvmStatic
+        fun nonSuppressingObviousConfiguration() = listOf(dokkaConfiguration {
+            suppressObviousFunctions = false
+            suppressInheritedMembers = false
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src")
+                }
+            }
+        })
+
+        @JvmStatic
+        fun suppressingInheritedConfiguration() = listOf(dokkaConfiguration {
+            suppressInheritedMembers = true
+            suppressObviousFunctions = false
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src")
+                }
+            }
+        })
+
+        @JvmStatic
+        fun nonSuppressingInheritedConfiguration() = listOf(dokkaConfiguration {
+            suppressObviousFunctions = false
+            suppressInheritedMembers = false
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src")
+                }
+            }
+        })
     }
 
-    val nonSuppressingConfiguration = dokkaConfiguration {
-        suppressObviousFunctions = false
-        sourceSets {
-            sourceSet {
-                sourceRoots = listOf("src")
-            }
-        }
-    }
 
-    @Test
-    fun `should suppress toString, equals and hashcode`() {
+    @ParameterizedTest
+    @MethodSource(value = ["suppressingObviousConfiguration"])
+    fun `should suppress toString, equals and hashcode`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -39,8 +73,9 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `should suppress toString, equals and hashcode for interface`() {
+    @ParameterizedTest
+    @MethodSource(value = ["suppressingObviousConfiguration", "suppressingInheritedConfiguration"])
+    fun `should suppress toString, equals and hashcode for interface`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -56,8 +91,9 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `should suppress toString, equals and hashcode in Java`() {
+    @ParameterizedTest
+    @MethodSource(value = ["suppressingObviousConfiguration", "suppressingInheritedConfiguration"])
+    fun `should suppress toString, equals and hashcode in Java`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.java
@@ -74,8 +110,9 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `should suppress toString, equals and hashcode but keep custom ones`() {
+    @ParameterizedTest
+    @MethodSource(value = ["suppressingObviousConfiguration"])
+    fun `should suppress toString, equals and hashcode but keep custom ones`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -95,8 +132,9 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `should suppress toString, equals and hashcode but keep custom ones in Java`() {
+    @ParameterizedTest
+    @MethodSource(value = ["suppressingObviousConfiguration", "suppressingInheritedConfiguration"])
+    fun `should suppress toString, equals and hashcode but keep custom ones in Java`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.java
@@ -117,8 +155,9 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `should not suppress toString, equals and hashcode if custom config is provided`() {
+    @ParameterizedTest
+    @MethodSource(value = ["nonSuppressingObviousConfiguration", "nonSuppressingInheritedConfiguration"])
+    fun `should not suppress toString, equals and hashcode if custom config is provided`(nonSuppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -137,8 +176,9 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `not should suppress toString, equals and hashcode for interface if custom config is provided`() {
+    @ParameterizedTest
+    @MethodSource(value = ["nonSuppressingObviousConfiguration", "nonSuppressingInheritedConfiguration"])
+    fun `not should suppress toString, equals and hashcode for interface if custom config is provided`(nonSuppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -154,8 +194,9 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
         }
     }
 
-    @Test
-    fun `should not suppress toString, equals and hashcode if custom config is provided in Java`() {
+    @ParameterizedTest
+    @MethodSource(value = ["nonSuppressingObviousConfiguration", "nonSuppressingInheritedConfiguration"])
+    fun `should not suppress toString, equals and hashcode if custom config is provided in Java`(nonSuppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.java
