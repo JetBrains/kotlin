@@ -28,8 +28,8 @@ data class ExtensionBuilder<T: Any> internal constructor(
     private val name: String,
     private val ext: ExtensionPoint<T>,
     private val action: LazyEvaluated<T>,
-    private val before: List<out Extension<*, *, *>>,
-    private val after: List<out Extension<*, *, *>>,
+    private val before: List<Extension<*, *, *>>,
+    private val after: List<Extension<*, *, *>>,
     private val override: OverrideKind = OverrideKind.None,
     private val conditions: List<(DokkaConfiguration) -> Boolean>
 ){
@@ -62,7 +62,7 @@ data class ExtensionBuilder<T: Any> internal constructor(
 
 abstract class DokkaJavaPlugin: DokkaPlugin() {
 
-    fun <T: DokkaPlugin> plugin(clazz: Class<T>): T? =
+    fun <T: DokkaPlugin> plugin(clazz: Class<T>): T =
         context?.plugin(clazz.kotlin) ?: throwIllegalQuery()
 
 
