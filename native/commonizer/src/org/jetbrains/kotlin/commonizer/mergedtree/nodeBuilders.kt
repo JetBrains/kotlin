@@ -48,9 +48,11 @@ internal fun buildPropertyNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
+    parentCommonDeclaration: NullableLazyValue<*>?
 ): CirPropertyNode = buildNode(
     storageManager = storageManager,
     size = size,
+    parentCommonDeclaration = parentCommonDeclaration,
     commonizerProducer = { PropertyCommonizer(classifiers) },
     nodeProducer = ::CirPropertyNode
 )
@@ -59,9 +61,11 @@ internal fun buildFunctionNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
+    parentCommonDeclaration: NullableLazyValue<*>?
 ): CirFunctionNode = buildNode(
     storageManager = storageManager,
     size = size,
+    parentCommonDeclaration = parentCommonDeclaration,
     commonizerProducer = { FunctionCommonizer(classifiers) },
     nodeProducer = ::CirFunctionNode
 )
@@ -70,10 +74,12 @@ internal fun buildClassNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
+    parentCommonDeclaration: NullableLazyValue<*>?,
     classId: CirEntityId
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     size = size,
+    parentCommonDeclaration = parentCommonDeclaration,
     commonizerProducer = { ClassCommonizer(classifiers) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
@@ -87,9 +93,11 @@ internal fun buildClassConstructorNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
+    parentCommonDeclaration: NullableLazyValue<*>?
 ): CirClassConstructorNode = buildNode(
     storageManager = storageManager,
     size = size,
+    parentCommonDeclaration = parentCommonDeclaration,
     commonizerProducer = { ClassConstructorCommonizer(classifiers) },
     nodeProducer = ::CirClassConstructorNode
 )
@@ -114,13 +122,14 @@ internal fun buildTypeAliasNode(
 private fun <T : CirDeclaration, R : CirDeclaration, N : CirNode<T, R>> buildNode(
     storageManager: StorageManager,
     size: Int,
+    parentCommonDeclaration: NullableLazyValue<*>? = null,
     commonizerProducer: () -> Commonizer<T, R>,
     recursionMarker: R? = null,
     nodeProducer: (CommonizedGroup<T>, NullableLazyValue<R>) -> N
 ): N {
     val targetDeclarations = CommonizedGroup<T>(size)
 
-    val commonComputable = { commonize(targetDeclarations, commonizerProducer()) }
+    val commonComputable = { commonize(parentCommonDeclaration, targetDeclarations, commonizerProducer()) }
 
     val commonLazyValue = if (recursionMarker != null)
         storageManager.createRecursionTolerantNullableLazyValue(commonComputable, recursionMarker)
@@ -140,4 +149,18 @@ internal fun <T : Any, R> commonize(
     }
 
     return commonizer.result
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun <T : Any, R> commonize(
+    parentCommonDeclaration: NullableLazyValue<*>?,
+    targetDeclarations: CommonizedGroup<T>,
+    commonizer: Commonizer<T, R>
+): R? {
+    if (parentCommonDeclaration != null && parentCommonDeclaration.invoke() == null) {
+        // don't commonize declaration if it's parent failed to commonize
+        return null
+    }
+
+    return commonize(targetDeclarations, commonizer)
 }

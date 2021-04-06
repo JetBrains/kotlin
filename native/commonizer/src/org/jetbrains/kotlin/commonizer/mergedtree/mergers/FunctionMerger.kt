@@ -27,14 +27,16 @@ internal object FunctionMerger {
             return
         }
 
+        val maybeClassOwnerNode: CirClassNode? = ownerNode as? CirClassNode
+
         val approximationKey = FunctionApproximationKey(function, context.typeResolver)
         val functionNode: CirFunctionNode = ownerNode.functions.getOrPut(approximationKey) {
-            buildFunctionNode(storageManager, targets, classifiers)
+            buildFunctionNode(storageManager, targets, classifiers, maybeClassOwnerNode?.commonDeclaration)
         }
         functionNode.targetDeclarations[context.targetIndex] = CirDeserializers.function(
             name = approximationKey.name,
             source = function,
-            containingClass = ownerNode.run { this as? CirClassNode }?.targetDeclarations?.get(context.targetIndex),
+            containingClass = maybeClassOwnerNode?.targetDeclarations?.get(context.targetIndex),
             typeResolver = context.typeResolver
         )
     }

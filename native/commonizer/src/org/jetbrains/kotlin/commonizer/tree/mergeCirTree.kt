@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.commonizer.tree
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.commonizer.mergedtree.*
-import org.jetbrains.kotlin.commonizer.tree.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal data class TargetBuildingContext(
@@ -49,34 +48,41 @@ internal fun CirModuleNode.buildPackage(context: TargetBuildingContext, treePack
     treePackage.classes.forEach { clazz -> packageNode.buildClass(context, clazz) }
 }
 
-internal fun CirNodeWithMembers<*, *>.buildClass(context: TargetBuildingContext, treeClass: CirTreeClass) {
+internal fun CirNodeWithMembers<*, *>.buildClass(
+    context: TargetBuildingContext, treeClass: CirTreeClass, parent: CirNode<*, *>? = null
+) {
     val classNode = classes.getOrPut(treeClass.clazz.name) {
-        buildClassNode(context.storageManager, context.targets, context.classifiers, treeClass.id)
+        buildClassNode(context.storageManager, context.targets, context.classifiers, parent?.commonDeclaration, treeClass.id)
     }
     classNode.targetDeclarations[context.targetIndex] = treeClass.clazz
-    treeClass.functions.forEach { function -> classNode.buildFunction(context, function) }
-    treeClass.properties.forEach { property -> classNode.buildProperty(context, property) }
-    treeClass.constructors.forEach { constructor -> classNode.buildConstructor(context, constructor) }
-    treeClass.classes.forEach { clazz -> classNode.buildClass(context, clazz) }
+    treeClass.functions.forEach { function -> classNode.buildFunction(context, function, classNode) }
+    treeClass.properties.forEach { property -> classNode.buildProperty(context, property, classNode) }
+    treeClass.constructors.forEach { constructor -> classNode.buildConstructor(context, constructor, classNode) }
+    treeClass.classes.forEach { clazz -> classNode.buildClass(context, clazz, classNode) }
 }
 
-internal fun CirNodeWithMembers<*, *>.buildFunction(context: TargetBuildingContext, treeFunction: CirTreeFunction) {
+internal fun CirNodeWithMembers<*, *>.buildFunction(
+    context: TargetBuildingContext, treeFunction: CirTreeFunction, parent: CirNode<*, *>? = null
+) {
     val functionNode = functions.getOrPut(treeFunction.approximationKey) {
-        buildFunctionNode(context.storageManager, context.targets, context.classifiers)
+        buildFunctionNode(context.storageManager, context.targets, context.classifiers, parent?.commonDeclaration)
     }
     functionNode.targetDeclarations[context.targetIndex] = treeFunction.function
 }
 
-internal fun CirNodeWithMembers<*, *>.buildProperty(context: TargetBuildingContext, treeProperty: CirTreeProperty) {
+internal fun CirNodeWithMembers<*, *>.buildProperty(
+    context: TargetBuildingContext, treeProperty: CirTreeProperty, parent: CirNode<*, *>? = null) {
     val propertyNode = properties.getOrPut(treeProperty.approximationKey) {
-        buildPropertyNode(context.storageManager, context.targets, context.classifiers)
+        buildPropertyNode(context.storageManager, context.targets, context.classifiers, parent?.commonDeclaration)
     }
     propertyNode.targetDeclarations[context.targetIndex] = treeProperty.property
 }
 
-internal fun CirClassNode.buildConstructor(context: TargetBuildingContext, treeConstructor: CirTreeClassConstructor) {
+internal fun CirClassNode.buildConstructor(
+    context: TargetBuildingContext, treeConstructor: CirTreeClassConstructor, parent: CirNode<*, *>?
+) {
     val constructorNode = constructors.getOrPut(treeConstructor.approximationKey) {
-        buildClassConstructorNode(context.storageManager, context.targets, context.classifiers)
+        buildClassConstructorNode(context.storageManager, context.targets, context.classifiers, parent?.commonDeclaration)
     }
     constructorNode.targetDeclarations[context.targetIndex] = treeConstructor.constructor
 }
