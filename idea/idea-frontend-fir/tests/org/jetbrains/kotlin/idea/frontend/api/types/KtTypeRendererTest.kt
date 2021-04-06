@@ -9,6 +9,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
+import org.jetbrains.kotlin.idea.invalidateCaches
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
@@ -17,6 +18,11 @@ import org.jetbrains.kotlin.psi.KtProperty
 
 class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun isFirPlugin() = true
+
+    override fun tearDown() {
+        project.invalidateCaches(file as? KtFile)
+        super.tearDown()
+    }
 
     private fun doTestByTypeText(
         type: String,
