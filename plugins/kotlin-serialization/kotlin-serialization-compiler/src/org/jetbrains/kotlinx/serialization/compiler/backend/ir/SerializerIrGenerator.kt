@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
@@ -619,7 +620,7 @@ open class SerializerIrGenerator(
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.symbol.descriptor) ?: return
             val generator = when {
                 serializableDesc.isSerializableEnum() -> SerializerForEnumsGenerator(irClass, context, bindingContext, serialInfoJvmGenerator)
-                serializableDesc.isInline -> SerializerForInlineClassGenerator(irClass, context, bindingContext, serialInfoJvmGenerator)
+                serializableDesc.isInlineClass() -> SerializerForInlineClassGenerator(irClass, context, bindingContext, serialInfoJvmGenerator)
                 else -> SerializerIrGenerator(irClass, context, bindingContext, metadataPlugin, serialInfoJvmGenerator)
             }
             generator.generate()

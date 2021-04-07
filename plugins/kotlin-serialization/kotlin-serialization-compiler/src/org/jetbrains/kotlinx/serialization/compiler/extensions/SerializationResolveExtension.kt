@@ -77,7 +77,7 @@ open class SerializationResolveExtension @JvmOverloads constructor(val metadataP
         if (thisDescriptor.isInternalSerializable) {
             // do not add synthetic deserialization constructor if .deserialize method is customized
             if (thisDescriptor.hasCompanionObjectAsSerializer && SerializerCodegen.getSyntheticLoadMember(thisDescriptor.companionObjectDescriptor!!) == null) return
-            if (thisDescriptor.isInline) return
+            if (thisDescriptor.isInlineClass()) return
             result.add(KSerializerDescriptorResolver.createLoadConstructorDescriptor(thisDescriptor, bindingContext, metadataPlugin))
         }
     }
