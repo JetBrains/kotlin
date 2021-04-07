@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.resolve.jvm.modules
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.load.java.lazy.JavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.name.FqName
 
-interface JavaModuleResolver {
+interface JavaModuleResolver : JavaModuleAnnotationsProvider {
     fun checkAccessibility(fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?): AccessError?
 
     sealed class AccessError {
@@ -31,7 +32,6 @@ interface JavaModuleResolver {
     }
 
     companion object SERVICE {
-        fun getInstance(project: Project): JavaModuleResolver =
-                ServiceManager.getService(project, JavaModuleResolver::class.java)
+        fun getInstance(project: Project): JavaModuleResolver = ServiceManager.getService(project, JavaModuleResolver::class.java)
     }
 }

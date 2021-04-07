@@ -45,6 +45,7 @@ data class JavaRoot(val file: VirtualFile, val type: RootType, val prefixFqName:
 
     companion object RootTypes {
         val OnlyBinary: Set<RootType> = EnumSet.of(RootType.BINARY)
+        val OnlySource: Set<RootType> = EnumSet.of(RootType.SOURCE)
         val SourceAndBinary: Set<RootType> = EnumSet.of(RootType.BINARY, RootType.SOURCE)
     }
 }

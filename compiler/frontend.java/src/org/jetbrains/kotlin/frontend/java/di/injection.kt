@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFil
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmDiagnosticComponents
 import org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -147,6 +148,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
             typeEnhancementImprovementsInStrictMode = languageVersionSettings.supportsFeature(LanguageFeature.TypeEnhancementImprovementsInStrictMode)
         )
     )
+    useInstance(JavaModuleResolver.getInstance(moduleContext.project))
 
     useImpl<FilesByFacadeFqNameIndexer>()
     useImpl<JvmDiagnosticComponents>()
