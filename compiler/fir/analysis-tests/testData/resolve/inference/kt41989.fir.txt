@@ -8,8 +8,8 @@ FILE: kt41989.kt
 
     }
     public abstract interface C : R|B| {
-        public open val lineCellStyle: R|A.() -> kotlin/Unit|
-            public get(): R|A.() -> kotlin/Unit| {
+        public open val lineCellStyle: R|(A.() -> kotlin/Unit)?|
+            public get(): R|(A.() -> kotlin/Unit)?| {
                 ^ when () {
                     R|/cond|() ->  {
                         fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {

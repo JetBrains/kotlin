@@ -18,7 +18,7 @@ FILE: kt41982.kt
         }
 
     }
-    public final fun <Type : R|Base|, Base : R|DelegateProvider<Base>|> R|Type|.long(initializer: R|() -> kotlin/Long?| = Null(null)): R|Delegate<Type, kotlin/Long>| {
+    public final fun <Type : R|Base|, Base : R|DelegateProvider<Base>|> R|Type|.long(initializer: R|(() -> kotlin/Long?)?| = Null(null)): R|Delegate<Type, kotlin/Long>| {
         ^long Null(null)!!
     }
     public final class Test : R|DelegateProvider<kotlin/Any>| {
