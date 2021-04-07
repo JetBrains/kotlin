@@ -475,7 +475,7 @@ class Collections {
         fun distinctAndDistinctBy() {
             val list = listOf('a', 'A', 'b', 'B', 'A', 'a')
             assertPrints(list.distinct(), "[a, A, b, B]")
-            assertPrints(list.distinctBy { it.toUpperCase() }, "[a, b]")
+            assertPrints(list.distinctBy { it.uppercaseChar() }, "[a, b]")
         }
 
         @Sample
@@ -523,7 +523,7 @@ class Collections {
             assertPrints(numbers.joinToString(prefix = "<", postfix = ">", separator = "•"), "<1•2•3•4•5•6>")
 
             val chars = charArrayOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q')
-            assertPrints(chars.joinToString(limit = 5, truncated = "...!") { it.toUpperCase().toString() }, "A, B, C, D, E, ...!")
+            assertPrints(chars.joinToString(limit = 5, truncated = "...!") { it.uppercaseChar().toString() }, "A, B, C, D, E, ...!")
         }
 
         @Sample

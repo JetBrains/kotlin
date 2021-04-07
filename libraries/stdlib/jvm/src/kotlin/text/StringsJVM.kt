@@ -717,6 +717,7 @@ public inline fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }", "java.util.Locale"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.capitalize(): String {
+    @Suppress("DEPRECATION")
     return capitalize(Locale.getDefault())
 }
 
@@ -759,6 +760,7 @@ public fun String.capitalize(locale: Locale): String {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase(Locale.getDefault()) }", "java.util.Locale"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
+    @Suppress("DEPRECATION")
     return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 

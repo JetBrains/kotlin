@@ -6,12 +6,14 @@ import kotlin.test.*
 
 class Strings {
 
+    @Suppress("DEPRECATION")
     @Sample
     fun capitalize() {
         assertPrints("abcd".capitalize(), "Abcd")
         assertPrints("Abcd".capitalize(), "Abcd")
     }
 
+    @Suppress("DEPRECATION")
     @Sample
     fun decapitalize() {
         assertPrints("abcd".decapitalize(), "abcd")
