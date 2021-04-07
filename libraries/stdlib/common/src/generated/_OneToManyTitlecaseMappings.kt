@@ -11,7 +11,6 @@ package kotlin.text
 //
 
 // 10 mappings totally
-@OptIn(ExperimentalStdlibApi::class)
 internal fun Char.titlecaseImpl(): String {
     val uppercase = uppercase()
     if (uppercase.length > 1) {

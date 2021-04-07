@@ -23,7 +23,6 @@ internal class OneToManyTitlecaseMappingsWriter : OneToManyMappingsWriter {
     }
 
     private fun titlecaseImpl(apostropheN: String): String = """
-        @OptIn(ExperimentalStdlibApi::class)
         internal fun Char.titlecaseImpl(): String {
             val uppercase = uppercase()
             if (uppercase.length > 1) {

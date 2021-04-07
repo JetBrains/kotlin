@@ -19,7 +19,6 @@ public actual inline fun String.toBoolean(): Boolean = this.toBoolean()
  *
  * There are also strict versions of the function available on non-nullable String, [toBooleanStrict] and [toBooleanStrictOrNull].
  */
-@OptIn(ExperimentalStdlibApi::class)
 @SinceKotlin("1.4")
 public actual fun String?.toBoolean(): Boolean = this != null && this.lowercase() == "true"
 
@@ -133,7 +132,6 @@ public actual inline fun Short.toString(radix: Int): String = this.toInt().toStr
 @SinceKotlin("1.2")
 public actual fun Int.toString(radix: Int): String = asDynamic().toString(checkRadix(radix))
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun String.isNaN(): Boolean = when (this.lowercase()) {
     "nan", "+nan", "-nan" -> true
     else -> false
