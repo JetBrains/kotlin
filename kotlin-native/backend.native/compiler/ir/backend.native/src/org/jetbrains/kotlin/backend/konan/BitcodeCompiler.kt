@@ -50,8 +50,6 @@ internal class BitcodeCompiler(val context: Context) {
     private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
         val objectFile = temporary("result", ".o")
 
-        val profilingFlags = llvmProfilingFlags().map { listOf("-mllvm", it) }.flatten()
-
         // TODO: fix with LLVM update.
         val targetTriple = when (context.config.target) {
             // LLVM we use does not have support for arm64_32.
@@ -81,7 +79,6 @@ internal class BitcodeCompiler(val context: Context) {
             })
             addNonEmpty(BitcodeEmbedding.getClangOptions(context.config))
             addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
-            addNonEmpty(profilingFlags)
         }
         if (configurables is AppleConfigurables) {
             targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
@@ -95,17 +92,6 @@ internal class BitcodeCompiler(val context: Context) {
         RelocationModeFlags.Mode.PIC -> listOf("-mrelocation-model", "pic")
         RelocationModeFlags.Mode.STATIC -> listOf("-mrelocation-model", "static")
         RelocationModeFlags.Mode.DEFAULT -> emptyList()
-    }
-
-    private fun llvmProfilingFlags(): List<String> {
-        val flags = mutableListOf<String>()
-        if (context.shouldProfilePhases()) {
-            flags += "-time-passes"
-        }
-        if (context.inVerbosePhase) {
-            flags += "-debug-pass=Structure"
-        }
-        return flags
     }
 
     fun makeObjectFiles(bitcodeFile: BitcodeFile): List<ObjectFile> =
