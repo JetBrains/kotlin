@@ -1,6 +1,6 @@
 class Foo<T : Cloneable> where T : Comparable<T> {
     fun <U : Cloneable> foo(u: U): U where U: Comparable<U> {
-        fun <T: Any> bar() where T: U {}
+        fun <<!BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER!>T: Any<!>> bar() where T: U {}
         return u
     }
 

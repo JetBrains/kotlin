@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
@@ -39,6 +41,8 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+private val INLINE_ONLY_ANNOTATION_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
 internal fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
     this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
@@ -397,3 +401,5 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
     }
     return false
 }
+
+fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
