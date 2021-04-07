@@ -9186,9 +9186,21 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("approximation.kt")
+            public void testApproximation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/approximation.kt");
+            }
+
+            @Test
             @TestMetadata("disabledFeature.kt")
             public void testDisabledFeature() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/disabledFeature.kt");
+            }
+
+            @Test
+            @TestMetadata("inference.kt")
+            public void testInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNull/inference.kt");
             }
 
             @Test
