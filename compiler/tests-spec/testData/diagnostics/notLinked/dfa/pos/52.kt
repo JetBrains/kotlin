@@ -119,5 +119,5 @@ fun <T : <!FINAL_UPPER_BOUND!>String<!>> T?.case_11() = this
 fun case_11() {
     var x: Int? = 10
     x = null
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.case_11()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>case_11<!>()
 }

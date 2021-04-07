@@ -1079,7 +1079,8 @@ class ExpressionCodegen(
         nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf(),
         stop: (LoopInfo) -> Boolean
     ): LoopInfo? {
-        return data.handleBlock {
+        @Suppress("RemoveExplicitTypeArguments")
+        return data.handleBlock<Nothing> {
             when {
                 it is TryWithFinallyInfo -> {
                     genFinallyBlock(it, null, endLabel, data, nestedTryWithoutFinally)
