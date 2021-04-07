@@ -5,14 +5,14 @@
 
 import kotlin.native.internal.Debugging
 import kotlin.test.*
-import kotlinx.cinterop.COpaquePointer
-import kotlinx.cinterop.staticCFunction
+import kotlinx.cinterop.*
 import threadStates.*
 
 fun main() {
     nativeCall()
     callback()
     nestedCalls()
+    directStaticCFunctionCall()
     // TODO: Support runtime initialization for callbacks
     //       see: https://youtrack.jetbrains.com/issue/KT-44283
     // callbackOnSeparateThread()
@@ -39,6 +39,15 @@ fun nestedCalls() {
         assertRunnableThreadState()
         answer()
     })
+    assertRunnableThreadState()
+}
+
+fun directStaticCFunctionCall() {
+    val funPtr = staticCFunction { ->
+        assertRunnableThreadState()
+    }
+    assertRunnableThreadState()
+    funPtr()
     assertRunnableThreadState()
 }
 
