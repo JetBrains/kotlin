@@ -295,6 +295,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 val number: Long?
 
                 val kind = when {
+                    convertedText == null -> {
+                        number = null
+                        diagnostic = DiagnosticKind.IntLiteralOutOfRange
+                        ConstantValueKind.IntegerLiteral
+                    }
+
                     convertedText !is Long -> return reportIncorrectConstant(DiagnosticKind.IllegalConstExpression)
 
                     hasUnsignedLongSuffix(text) -> {

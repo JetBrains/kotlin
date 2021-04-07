@@ -173,6 +173,13 @@ internal class IllegalEscapeImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class IntLiteralOutOfRangeImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.IntLiteralOutOfRange(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class WrongLongSuffixImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

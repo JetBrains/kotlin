@@ -61,6 +61,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val EMPTY_CHARACTER_LITERAL by error<FirSourceElement, PsiElement>()
         val TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL by error<FirSourceElement, PsiElement>()
         val ILLEGAL_ESCAPE by error<FirSourceElement, PsiElement>()
+        val INT_LITERAL_OUT_OF_RANGE by error<FirSourceElement, PsiElement>()
         val WRONG_LONG_SUFFIX by error<FirSourceElement, KtElement>(PositioningStrategy.LONG_LITERAL_SUFFIX)
     }
 
