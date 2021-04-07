@@ -1,0 +1,13 @@
+package
+
+public fun takeByte(/*0*/ b: kotlin.Byte): kotlin.Unit
+public fun takeInt(/*0*/ b: kotlin.Int): kotlin.Unit
+public fun takeLong(/*0*/ b: kotlin.Long): kotlin.Unit
+public fun testByteBinaryOperators(): kotlin.Unit
+public fun testByteUnaryOperators(): kotlin.Unit
+public fun testIntBinaryOperators(): kotlin.Unit
+public fun testIntUnaryOperators(): kotlin.Unit
+public fun testLongBinaryOperators(): kotlin.Unit
+public fun testLongUnaryOperators(): kotlin.Unit
+public fun testNoOperators(): kotlin.Unit
+

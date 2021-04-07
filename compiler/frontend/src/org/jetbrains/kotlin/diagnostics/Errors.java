@@ -1017,6 +1017,7 @@ public interface Errors {
     DiagnosticFactory0<KtEscapeStringTemplateEntry> ILLEGAL_ESCAPE_SEQUENCE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtConstantExpression> UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> INTEGER_OPERATOR_RESOLVE_WILL_CHANGE = DiagnosticFactory1.create(WARNING);
 
 
     // Casts and is-checks

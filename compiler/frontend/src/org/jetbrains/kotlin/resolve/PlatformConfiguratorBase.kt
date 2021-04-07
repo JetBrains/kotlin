@@ -58,7 +58,8 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(),
     MissingDependencySupertypeChecker.ForCalls, AbstractClassInstantiationChecker, SuspendConversionCallChecker,
     UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker, NullableExtensionOperatorWithSafeCallChecker,
-    ReferencingToUnderscoreNamedParameterOfCatchBlockChecker, VarargWrongExecutionOrderChecker, SelfCallInNestedObjectConstructorChecker
+    ReferencingToUnderscoreNamedParameterOfCatchBlockChecker, VarargWrongExecutionOrderChecker, SelfCallInNestedObjectConstructorChecker,
+    NewSchemeOfIntegerOperatorResolutionChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(

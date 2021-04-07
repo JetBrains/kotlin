@@ -19094,6 +19094,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("newLiteralOperatorsResolution_warning.kt")
+            public void testNewLiteralOperatorsResolution_warning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/newLiteralOperatorsResolution_warning.kt");
+            }
+
+            @Test
             @TestMetadata("numberAsUnionAndIntersection.kt")
             public void testNumberAsUnionAndIntersection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/numberAsUnionAndIntersection.kt");
