@@ -123,6 +123,8 @@ public inline fun <V> kotlin.CharSequence.associateWith(valueSelector: (kotlin.C
 @kotlin.SinceKotlin(version = "1.3")
 public inline fun <V, M : kotlin.collections.MutableMap<in kotlin.Char, in V>> kotlin.CharSequence.associateWithTo(destination: M, valueSelector: (kotlin.Char) -> V): M
 
+@kotlin.Deprecated(message = "Use replaceFirstChar instead.", replaceWith = kotlin.ReplaceWith(expression = "replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public fun kotlin.String.capitalize(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.2")
@@ -176,6 +178,8 @@ public inline fun kotlin.CharSequence.count(): kotlin.Int
 
 public inline fun kotlin.CharSequence.count(predicate: (kotlin.Char) -> kotlin.Boolean): kotlin.Int
 
+@kotlin.Deprecated(message = "Use replaceFirstChar instead.", replaceWith = kotlin.ReplaceWith(expression = "replaceFirstChar { it.lowercase() }", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public fun kotlin.String.decapitalize(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -1005,9 +1009,13 @@ public fun kotlin.String.toLongOrNull(): kotlin.Long?
 @kotlin.SinceKotlin(version = "1.1")
 public fun kotlin.String.toLongOrNull(radix: kotlin.Int): kotlin.Long?
 
+@kotlin.Deprecated(message = "Use lowercaseChar() instead.", replaceWith = kotlin.ReplaceWith(expression = "lowercaseChar()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Char.toLowerCase(): kotlin.Char
 
+@kotlin.Deprecated(message = "Use lowercase() instead.", replaceWith = kotlin.ReplaceWith(expression = "lowercase()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.toLowerCase(): kotlin.String
 
@@ -1128,9 +1136,13 @@ public fun kotlin.String.toUShortOrNull(): kotlin.UShort?
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUShortOrNull(radix: kotlin.Int): kotlin.UShort?
 
+@kotlin.Deprecated(message = "Use uppercaseChar() instead.", replaceWith = kotlin.ReplaceWith(expression = "uppercaseChar()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Char.toUpperCase(): kotlin.Char
 
+@kotlin.Deprecated(message = "Use uppercase() instead.", replaceWith = kotlin.ReplaceWith(expression = "uppercase()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.toUpperCase(): kotlin.String
 

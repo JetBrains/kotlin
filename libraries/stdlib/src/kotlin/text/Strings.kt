@@ -14,6 +14,8 @@ import kotlin.jvm.JvmName
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
+@Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public expect fun String.toUpperCase(): String
 
 /**
@@ -31,6 +33,8 @@ public expect fun String.uppercase(): String
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
+@Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public expect fun String.toLowerCase(): String
 
 /**
@@ -54,6 +58,8 @@ public expect fun String.lowercase(): String
  *
  * @sample samples.text.Strings.capitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public expect fun String.capitalize(): String
 
 /**
@@ -62,6 +68,8 @@ public expect fun String.capitalize(): String
  *
  * @sample samples.text.Strings.decapitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public expect fun String.decapitalize(): String
 
 /**
