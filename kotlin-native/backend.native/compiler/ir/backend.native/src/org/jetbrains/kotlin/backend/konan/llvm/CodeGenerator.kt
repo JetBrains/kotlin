@@ -88,7 +88,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
 internal sealed class ExceptionHandler {
     object None : ExceptionHandler()
-    class Caller(val needThreadStateSwitch: Boolean = false) : ExceptionHandler()
+    object Caller : ExceptionHandler()
     abstract class Local : ExceptionHandler() {
         abstract val unwind: LLVMBasicBlockRef
     }
@@ -380,15 +380,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private val entryBb = basicBlockInFunction("entry", startLocation)
     private val epilogueBb = basicBlockInFunction("epilogue", endLocation)
     private val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
-    private var _cleanupLandingpadExternal: LLVMBasicBlockRef? = null
-    private val cleanupLandingpadExternal: LLVMBasicBlockRef
-        get() = _cleanupLandingpadExternal
-                ?: basicBlockInFunction("cleanup_landingpad_external", endLocation).also {
-                    check(context.memoryModel == MemoryModel.EXPERIMENTAL) {
-                        "An external landingpad can be created for experimental memory model only."
-                    }
-                    _cleanupLandingpadExternal = it
-                }
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
@@ -548,7 +539,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         check(context.memoryModel == MemoryModel.EXPERIMENTAL) {
             "Thread state switching is allowed in the experimental memory model only."
         }
-        check(!forbidRuntime) { "Attempt to switch the thread state when runtime is forbidden" }
+        check(!forbidRuntime) {
+            "Attempt to switch the thread state when runtime is forbidden"
+        }
         when (state) {
             Native -> call(context.llvm.Kotlin_mm_switchThreadStateNative, emptyList())
             Runnable -> call(context.llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
@@ -596,13 +589,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
         } else {
             val unwind = when (exceptionHandler) {
-                is ExceptionHandler.Caller ->
-                    if (exceptionHandler.needThreadStateSwitch) {
-                        cleanupLandingpadExternal
-                    } else {
-                        cleanupLandingpad
-                    }
-
+                ExceptionHandler.Caller -> cleanupLandingpad
                 is ExceptionHandler.Local -> exceptionHandler.unwind
 
                 ExceptionHandler.None -> {
@@ -866,14 +853,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
     }
 
-    fun kotlinExceptionHandler(
-            switchThreadState: Boolean = false,
-            block: FunctionGenerationContext.(exception: LLVMValueRef) -> Unit
-    ): ExceptionHandler {
+    fun kotlinExceptionHandler(block: FunctionGenerationContext.(exception: LLVMValueRef) -> Unit): ExceptionHandler {
         val lpBlock = basicBlock("kotlinExceptionHandler", position()?.end)
 
         appendingTo(lpBlock) {
-            val exception = catchKotlinException(switchThreadState)
+            val exception = catchKotlinException()
             block(exception)
         }
 
@@ -882,14 +866,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
     }
 
-    fun catchKotlinException(switchThreadState: Boolean): LLVMValueRef {
+    fun catchKotlinException(): LLVMValueRef {
         val landingpadResult = gxxLandingpad(numClauses = 1, name = "lp")
 
         LLVMAddClause(landingpadResult, LLVMConstNull(kInt8Ptr))
-
-        if (switchThreadState) {
-            switchThreadState(Runnable)
-        }
 
         // TODO: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
         // bypassing the finally block.
@@ -1293,6 +1273,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         if (context.memoryModel == MemoryModel.EXPERIMENTAL &&
                 irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+            check(!forbidRuntime) { "Attempt to switch the thread state when runtime is forbidden" }
             positionAtEnd(prologueBb)
             switchThreadState(Runnable)
         }
@@ -1360,8 +1341,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         if (!forbidRuntime) {
                             call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
                         }
-                        // Assume that we do not forbid runtime for bridges.
                         if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+                            check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
                             switchThreadState(Native)
                         }
                     }
@@ -1378,8 +1359,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         if (!forbidRuntime) {
                             call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
                         }
-                        // Assume that we do not forbid runtime for bridges.
                         if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+                            check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
                             switchThreadState(Native)
                         }
                     }
@@ -1427,27 +1408,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 if (!forbidRuntime) {
                     call(context.llvm.Kotlin_mm_safePointExceptionUnwind, emptyList())
                 }
-                // Assume that we do not forbid runtime for bridges.
                 if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+                    check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
                     switchThreadState(Native)
                 }
             }
             LLVMBuildResume(builder, landingpad)
-        }
-
-        _cleanupLandingpadExternal?.let {
-            check(context.memoryModel == MemoryModel.EXPERIMENTAL)
-            appendingTo(it) {
-                val landingpad = gxxLandingpad(numClauses = 0)
-                LLVMSetCleanup(landingpad, 1)
-                switchThreadState(Runnable)
-
-                // TODO: Process forwardingForeignExceptionsTerminatedWith
-                //  when thread switching for ObjC calls is supported.
-
-                releaseVars()
-                LLVMBuildResume(builder, landingpad)
-            }
         }
 
         returns.clear()
