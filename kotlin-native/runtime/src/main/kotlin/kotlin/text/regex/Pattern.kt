@@ -20,6 +20,7 @@
  *  limitations under the License.
  */
 
+@file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
 /** Represents a compiled pattern used by [Regex] for matching, searching, or replacing strings. */

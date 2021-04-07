@@ -203,6 +203,8 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      * The least significant 8 bits of the resulting `Char` code are the same as the bits of this `Byte` value,
      * whereas the most significant 8 bits are filled with the sign bit of this value.
      */
+    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.SIGN_EXTEND)
     external public override fun toChar(): Char
     /**
@@ -494,6 +496,8 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      * The resulting `Char` code is equal to this value reinterpreted as an unsigned number,
      * i.e. it has the same binary representation as this `Short`.
      */
+    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     external public override fun toChar(): Char
 
@@ -1080,6 +1084,8 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      *
      * The resulting `Char` code is represented by the least significant 16 bits of this `Long` value.
      */
+    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
     external public override fun toChar(): Char
     /**
@@ -1355,6 +1361,8 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      *
      * The resulting `Char` value is equal to `this.toInt().toChar()`.
      */
+    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public override fun toChar(): Char = this.toInt().toChar()
 
     /**
@@ -1631,6 +1639,8 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      *
      * The resulting `Char` value is equal to `this.toInt().toChar()`.
      */
+    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public override fun toChar(): Char = this.toInt().toChar()
 
     /**

@@ -24,13 +24,13 @@ public class Char private constructor() : Comparable<Char> {
 
     /** Adds the other Int value to this value resulting a Char. */
     public inline operator fun plus(other: Int): Char =
-            (this.toInt() + other).toChar()
+            (this.code + other).toChar()
     /** Subtracts the other Char value from this value resulting an Int. */
     public inline operator fun minus(other: Char): Int =
-            this.toInt() - other.toInt()
+            this.code - other.code
     /** Subtracts the other Int value from this value resulting a Char. */
     public inline operator fun minus(other: Int): Char =
-            (this.toInt() - other).toChar()
+            (this.code - other).toChar()
 
     /** Increments this value. */
     @TypedIntrinsic(IntrinsicType.INC)
@@ -45,23 +45,35 @@ public class Char private constructor() : Comparable<Char> {
     }
 
     /** Returns the value of this character as a `Byte`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
     external public fun toByte(): Byte
     /** Returns the value of this character as a `Char`. */
     public inline fun toChar(): Char = this
     /** Returns the value of this character as a `Short`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     external public fun toShort(): Short
     /** Returns the value of this character as a `Int`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     external public fun toInt(): Int
     /** Returns the value of this character as a `Long`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     external public fun toLong(): Long
     /** Returns the value of this character as a `Float`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.UNSIGNED_TO_FLOAT)
     external public fun toFloat(): Float
     /** Returns the value of this character as a `Double`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     @TypedIntrinsic(IntrinsicType.UNSIGNED_TO_FLOAT)
     external public fun toDouble(): Double
 
@@ -155,7 +167,7 @@ public class Char private constructor() : Comparable<Char> {
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
-        return this.toInt();
+        return this.code
     }
 }
 

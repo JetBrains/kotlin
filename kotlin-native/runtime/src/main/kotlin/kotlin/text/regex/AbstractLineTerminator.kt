@@ -20,6 +20,7 @@
  *  limitations under the License.
  */
 
+@file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
 private object unixLT : AbstractLineTerminator() {

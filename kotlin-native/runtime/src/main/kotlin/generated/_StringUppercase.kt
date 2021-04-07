@@ -18,7 +18,7 @@ internal fun String.codePointAt(index: Int): Int {
             return Char.toCodePoint(high, low)
         }
     }
-    return high.toInt()
+    return high.code
 }
 
 internal fun Int.charCount(): Int = if (this >= Char.MIN_SUPPLEMENTARY_CODE_POINT) 2 else 1 

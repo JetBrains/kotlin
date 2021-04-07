@@ -264,6 +264,7 @@ internal actual fun checkRadix(radix: Int): Int {
 /** Converts a unicode code point to lower case. */
 internal fun Char.Companion.toLowerCase(codePoint: Int): Int =
     if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
+        @Suppress("DEPRECATION")
         codePoint.toChar().toLowerCase().toInt()
     } else {
         codePoint // TODO: Implement this transformation for supplementary codepoints.
@@ -272,19 +273,23 @@ internal fun Char.Companion.toLowerCase(codePoint: Int): Int =
 /** Converts a unicode code point to upper case. */
 internal fun Char.Companion.toUpperCase(codePoint: Int): Int =
     if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
+        @Suppress("DEPRECATION")
         codePoint.toChar().toUpperCase().toInt()
     } else {
         codePoint // TODO: Implement this transformation for supplementary codepoints.
     }
 
 /** Converts a surrogate pair to a unicode code point. Doesn't validate that the characters are a valid surrogate pair. */
+// TODO: Consider removing from public API
 public fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
     (((high - MIN_HIGH_SURROGATE) shl 10) or (low - MIN_LOW_SURROGATE)) + 0x10000
 
 /** Checks if the codepoint specified is a supplementary codepoint or not. */
+// TODO: Consider removing from public API
 public fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
     codepoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT
 
+// TODO: Consider removing from public API
 public fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high.isHighSurrogate() && low.isLowSurrogate()
 
 /**
@@ -292,6 +297,8 @@ public fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high
  * return an array with one element otherwise it will return an array A with a high surrogate in A[0] and
  * a low surrogate in A[1].
  */
+// TODO: Consider removing from public API
+@Suppress("DEPRECATION")
 public fun Char.Companion.toChars(codePoint: Int): CharArray =
     when {
         codePoint in 0 until MIN_SUPPLEMENTARY_CODE_POINT -> charArrayOf(codePoint.toChar())

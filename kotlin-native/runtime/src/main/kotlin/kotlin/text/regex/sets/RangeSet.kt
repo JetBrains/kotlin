@@ -42,6 +42,7 @@ open internal class RangeSet(charClass: AbstractCharClass, val ignoreCase: Boole
         get() = "range:" + (if (chars.alt) "^ " else " ") + chars.toString()
 
     override fun first(set: AbstractSet): Boolean {
+        @Suppress("DEPRECATION")
         return when (set) {
             is CharSet -> AbstractCharClass.intersects(chars, set.char.toInt())
             is RangeSet -> AbstractCharClass.intersects(chars, set.chars)

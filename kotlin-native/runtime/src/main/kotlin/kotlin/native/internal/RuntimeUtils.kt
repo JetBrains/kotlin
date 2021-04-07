@@ -184,7 +184,7 @@ internal fun checkProgressionStep(step: Long) =
 
 @PublishedApi
 internal fun getProgressionLast(start: Char, end: Char, step: Int): Char =
-        getProgressionLast(start.toInt(), end.toInt(), step).toChar()
+        getProgressionLast(start.code, end.code, step).toChar()
 
 @PublishedApi
 internal fun getProgressionLast(start: Int, end: Int, step: Int): Int =

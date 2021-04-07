@@ -56,7 +56,7 @@ class StringNativeTest {
             }
 
             fun Char.hex(): String {
-                return toInt().toString(16).padStart(4, '0')
+                return code.toString(16).padStart(4, '0')
             }
 
             val sigma = '\u03A3'

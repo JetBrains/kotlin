@@ -139,9 +139,11 @@ open internal class DecomposedCharSet(
                 curChar = Char.toCodePoint(high, low)
                 readCharsForCodePoint = 2
             } else {
+                @Suppress("DEPRECATION")
                 curChar = high.toInt()
             }
         } else {
+            @Suppress("DEPRECATION")
             curChar = testString[index].toInt()
         }
 

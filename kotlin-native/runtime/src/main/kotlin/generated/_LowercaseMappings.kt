@@ -49,5 +49,5 @@ internal fun Int.lowercaseCodePoint(): Int {
 }
 
 internal fun Char.lowercaseCharImpl(): Char {
-    return toInt().lowercaseCodePoint().toChar()
+    return code.lowercaseCodePoint().toChar()
 }

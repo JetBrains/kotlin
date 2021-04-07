@@ -173,7 +173,7 @@ private fun categoryValueFrom(code: Int, ch: Int): Int {
  * Returns the Unicode general category of this character as an Int.
  */
 internal fun Char.getCategoryValue(): Int {
-    val ch = this.toInt()
+    val ch = this.code
 
     val index = binarySearchRange(rangeStart, ch)
     val start = rangeStart[index]
