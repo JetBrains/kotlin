@@ -558,7 +558,7 @@ internal class ObjCExportTranslatorImpl(
         // Note: the condition below is similar to "toObjCMethods" logic in [ObjCExportedInterface.createCodeSpec].
         if (propertySetter != null && mapper.shouldBeExposed(propertySetter)) {
             val setterSelector = mapper.getBaseMethods(propertySetter).map { namer.getSelector(it) }.distinct().single()
-            setterName = if (setterSelector != "set" + name.capitalize() + ":") setterSelector else null
+            setterName = if (setterSelector != "set" + name.replaceFirstChar(Char::uppercaseChar) + ":") setterSelector else null
         } else {
             attributes += "readonly"
             setterName = null

@@ -810,8 +810,8 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         val exportedSymbol = "${prefix}_symbols"
         exportedSymbols += exportedSymbol
 
-        output("#ifndef KONAN_${prefix.toUpperCase()}_H")
-        output("#define KONAN_${prefix.toUpperCase()}_H")
+        output("#ifndef KONAN_${prefix.uppercase()}_H")
+        output("#define KONAN_${prefix.uppercase()}_H")
         // TODO: use namespace for C++ case?
         output("""
         #ifdef __cplusplus
@@ -882,7 +882,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         }  /* extern "C" */
         #endif""".trimIndent())
 
-        output("#endif  /* KONAN_${prefix.toUpperCase()}_H */")
+        output("#endif  /* KONAN_${prefix.uppercase()}_H */")
 
         outputStreamWriter.close()
         println("Produced library API in ${prefix}_api.h")

@@ -128,7 +128,7 @@ class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",
     enum class TargetType {
         WASM32;
 
-        override fun toString() = name.toLowerCase()
+        override fun toString() = name.lowercase()
     }
     val target by argParser.option(ArgType.Choice<TargetType>(),
             description = "wasm target to compile to").default(TargetType.WASM32)

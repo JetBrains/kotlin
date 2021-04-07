@@ -23,6 +23,7 @@ interface RelocationModeFlags : TargetableExternalStorage {
     val staticLibraryRelocationMode get()  = targetString("staticLibraryRelocationMode").mode()
     val executableRelocationMode get() = targetString("executableRelocationMode").mode()
 
+    @Suppress("DEPRECATION")
     private fun String?.mode(): Mode = when (this?.toLowerCase()) {
         null -> Mode.DEFAULT
         "pic" -> Mode.PIC

@@ -56,7 +56,7 @@ private fun ObjCMethod.getFirstKotlinParameterNameCandidate(forConstructorOrFact
         val selectorPart = this.selector.takeWhile { it != ':' }.trimStart('_')
         if (selectorPart.startsWith("init")) {
             selectorPart.removePrefix("init").removePrefix("With")
-                    .takeIf { it.isNotEmpty() }?.let { return it.decapitalize() }
+                    .takeIf { it.isNotEmpty() }?.let { return it.replaceFirstChar(Char::lowercaseChar) }
         }
     }
 
@@ -69,7 +69,7 @@ private fun ObjCMethod.getKotlinParameters(
 ): List<FunctionParameterStub> {
     if (this.isInit && this.parameters.isEmpty() && this.selector != "init") {
         // Create synthetic Unit parameter, just like Swift does in this case:
-        val parameterName = this.selector.removePrefix("init").removePrefix("With").decapitalize()
+        val parameterName = this.selector.removePrefix("init").removePrefix("With").replaceFirstChar(Char::lowercaseChar)
         return listOf(FunctionParameterStub(parameterName, KotlinTypes.unit.toStubIrType()))
         // Note: this parameter is explicitly handled in compiler.
     }
