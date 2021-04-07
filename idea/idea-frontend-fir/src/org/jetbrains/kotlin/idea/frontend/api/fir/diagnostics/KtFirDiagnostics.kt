@@ -124,6 +124,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IllegalEscape::class
     }
 
+    abstract class WrongLongSuffix : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongLongSuffix::class
+    }
+
     abstract class Hidden : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Hidden::class
         abstract val hidden: KtSymbol

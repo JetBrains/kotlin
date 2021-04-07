@@ -291,20 +291,37 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
         return when (type) {
             INTEGER_CONSTANT -> {
+                var diagnostic: DiagnosticKind = DiagnosticKind.IllegalConstExpression
+                val number: Long?
+
                 val kind = when {
                     convertedText !is Long -> return reportIncorrectConstant(DiagnosticKind.IllegalConstExpression)
 
                     hasUnsignedLongSuffix(text) -> {
+                        if (text.endsWith("l")) {
+                            diagnostic = DiagnosticKind.WrongLongSuffix
+                            number = null
+                        } else {
+                            number = convertedText
+                        }
                         ConstantValueKind.UnsignedLong
                     }
                     hasLongSuffix(text) -> {
+                        if (text.endsWith("l")) {
+                            diagnostic = DiagnosticKind.WrongLongSuffix
+                            number = null
+                        } else {
+                            number = convertedText
+                        }
                         ConstantValueKind.Long
                     }
                     hasUnsignedSuffix(text) -> {
+                        number = convertedText
                         ConstantValueKind.UnsignedIntegerLiteral
                     }
 
                     else -> {
+                        number = convertedText
                         ConstantValueKind.IntegerLiteral
                     }
                 }
@@ -312,8 +329,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 buildConstOrErrorExpression(
                     sourceElement,
                     kind,
-                    convertedText,
-                    ConeSimpleDiagnostic("Incorrect integer literal: $text", DiagnosticKind.IllegalConstExpression)
+                    number,
+                    ConeSimpleDiagnostic("Incorrect integer literal: $text", diagnostic)
                 )
             }
             FLOAT_CONSTANT ->

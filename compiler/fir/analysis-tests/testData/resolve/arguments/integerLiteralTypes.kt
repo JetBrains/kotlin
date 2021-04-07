@@ -5,7 +5,7 @@ fun takeAny(x: Any) {}
 fun takeString(x: String) {}
 
 fun test_0() {
-    1l
+    1L
     1
     10000000000
 }

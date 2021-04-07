@@ -36,5 +36,7 @@ enum class DiagnosticKind {
     TooManyCharactersInCharacterLiteral,
     IllegalEscape,
 
+    WrongLongSuffix,
+
     Other
 }

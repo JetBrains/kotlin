@@ -522,6 +522,9 @@ object LightTreePositioningStrategies {
             return markElement(tree.returnKeyword(node) ?: node, startOffset, endOffset, tree)
         }
     }
+
+    val LONG_LITERAL_SUFFIX = object : LightTreePositioningStrategy() {
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
