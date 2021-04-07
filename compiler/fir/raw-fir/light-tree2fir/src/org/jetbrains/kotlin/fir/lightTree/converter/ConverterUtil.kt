@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
@@ -106,7 +107,7 @@ fun generateDestructuringBlock(
     multiDeclaration: DestructuringDeclaration,
     container: FirVariable<*>,
     tmpVariable: Boolean
-): FirExpression {
+): FirBlock {
     return buildBlock {
         if (tmpVariable) {
             statements += container

@@ -32,12 +32,12 @@ fun bar() {
     }
 
     foobar { (a, b), (c, d) ->
-        <!UNRESOLVED_REFERENCE!>a<!> checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+        a checkType { _<Int>() }
         d checkType { _<Short>() }
     }
 
     foobar { (a, b), (c, d) ->
-        <!UNRESOLVED_REFERENCE!>b<!> checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        b checkType { _<String>() }
         c checkType { _<Double>() }
     }
 }

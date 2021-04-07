@@ -521,6 +521,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/definetelyNotNullForTypeParameter.kt");
         }
 
+        @TestMetadata("destructuring.kt")
+        public void testDestructuring() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/destructuring.kt");
+        }
+
         @TestMetadata("extensionLambdaInDefaultArgument.kt")
         public void testExtensionLambdaInDefaultArgument() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/extensionLambdaInDefaultArgument.kt");
