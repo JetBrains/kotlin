@@ -10,10 +10,24 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.impl.light.LightJavaModule
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl
+import org.jetbrains.kotlin.load.java.structure.impl.convert
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
+    private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project) }
+
+    override fun getModuleAnnotations(classId: ClassId): List<JavaAnnotation>? {
+        val virtualFile = virtualFileFinder.findVirtualFileWithHeader(classId) ?: return null
+
+        return findJavaModule(virtualFile)?.annotations?.convert(::JavaAnnotationImpl)
+    }
+
     private fun findJavaModule(file: VirtualFile): PsiJavaModule? = ModuleHighlightUtil2.getModuleDescriptor(file, project)
 
     override fun checkAccessibility(

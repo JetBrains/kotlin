@@ -32,6 +32,8 @@ class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileFi
     override fun findBuiltInsData(packageFqName: FqName): InputStream? =
         findVirtualFileWithHeader(packageFqName, KotlinBuiltInsMetadataIndex.KEY)?.inputStream
 
+    override fun findSourceOrBinaryVirtualFile(classId: ClassId) = findVirtualFileWithHeader(classId)
+
     init {
         if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.project == null) {
             LOG.warn("Scope with null project $scope")
