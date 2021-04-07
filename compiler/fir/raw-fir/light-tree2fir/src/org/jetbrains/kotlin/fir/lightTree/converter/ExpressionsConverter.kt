@@ -147,7 +147,7 @@ class ExpressionsConverter(
             }
             target = FirFunctionTarget(labelName = label?.name, isLambda = true)
             context.firFunctionTargets += target
-            var destructuringBlock: FirExpression? = null
+            var destructuringStatements = mutableListOf<FirStatement>()
             for (valueParameter in valueParameterList) {
                 val multiDeclaration = valueParameter.destructuringDeclaration
                 valueParameters += if (multiDeclaration != null) {
@@ -163,12 +163,12 @@ class ExpressionsConverter(
                         isNoinline = false
                         isVararg = false
                     }
-                    destructuringBlock = generateDestructuringBlock(
+                    destructuringStatements += generateDestructuringBlock(
                         this@ExpressionsConverter.baseSession,
                         multiDeclaration,
                         multiParameter,
                         tmpVariable = false
-                    )
+                    ).statements
                     multiParameter
                 } else {
                     valueParameter.firValueParameter
@@ -187,11 +187,7 @@ class ExpressionsConverter(
                                 }
                             )
                         }
-                        if (destructuringBlock is FirBlock) {
-                            for ((index, statement) in destructuringBlock.statements.withIndex()) {
-                                statements.add(index, statement)
-                            }
-                        }
+                        statements.addAll(0, destructuringStatements)
                     }.build()
                 }
             } else {
@@ -989,11 +985,7 @@ class ExpressionsConverter(
                             firLoopParameter,
                             tmpVariable = true
                         )
-                        if (destructuringBlock is FirBlock) {
-                            for ((index, statement) in destructuringBlock.statements.withIndex()) {
-                                statements.add(index, statement)
-                            }
-                        }
+                        statements.addAll(0, destructuringBlock.statements)
                     } else {
                         statements.add(0, firLoopParameter)
                     }

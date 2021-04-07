@@ -88,7 +88,7 @@ internal fun generateDestructuringBlock(
     tmpVariable: Boolean,
     extractAnnotationsTo: KtAnnotated.(FirAnnotationContainerBuilder) -> Unit,
     toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef,
-): FirExpression {
+): FirBlock {
     return buildBlock {
         source = multiDeclaration.toFirPsiSourceElement()
         if (tmpVariable) {

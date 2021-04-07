@@ -616,6 +616,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("destructuring.kt")
+            public void testDestructuring() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/arguments/destructuring.kt");
+            }
+
+            @Test
             @TestMetadata("extensionLambdaInDefaultArgument.kt")
             public void testExtensionLambdaInDefaultArgument() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/arguments/extensionLambdaInDefaultArgument.kt");
