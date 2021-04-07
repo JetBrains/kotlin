@@ -121,6 +121,8 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
+@Deprecated("Use uppercase() instead.", ReplaceWith("uppercase(Locale.getDefault())", "java.util.Locale"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
 
@@ -140,6 +142,8 @@ public actual inline fun String.uppercase(): String = (this as java.lang.String)
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
+@Deprecated("Use lowercase() instead.", ReplaceWith("lowercase(Locale.getDefault())", "java.util.Locale"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
 
@@ -645,7 +649,8 @@ public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int
 /**
  * Returns a copy of this string converted to lower case using the rules of the specified locale.
  */
-@OptIn(ExperimentalStdlibApi::class)
+@Deprecated("Use lowercase() instead.", ReplaceWith("lowercase(locale)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun String.toLowerCase(locale: java.util.Locale): String = lowercase(locale)
 
@@ -665,7 +670,8 @@ public inline fun String.lowercase(locale: Locale): String = (this as java.lang.
 /**
  * Returns a copy of this string converted to upper case using the rules of the specified locale.
  */
-@OptIn(ExperimentalStdlibApi::class)
+@Deprecated("Use uppercase() instead.", ReplaceWith("uppercase(locale)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun String.toUpperCase(locale: java.util.Locale): String = uppercase(locale)
 
@@ -708,6 +714,8 @@ public inline fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
  *
  * @sample samples.text.Strings.capitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }", "java.util.Locale"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.capitalize(): String {
     return capitalize(Locale.getDefault())
 }
@@ -719,7 +727,8 @@ public actual fun String.capitalize(): String {
  * The title case of a character is usually the same as its upper case with several exceptions.
  * The particular list of characters with the special title case form depends on the underlying platform.
  */
-@OptIn(ExperimentalStdlibApi::class)
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.LowPriorityInOverloadResolution // To avoid conflicts in function references, as this function was introduced later than common capitalize()
@@ -747,6 +756,8 @@ public fun String.capitalize(locale: Locale): String {
  *
  * @sample samples.text.Strings.decapitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase(Locale.getDefault()) }", "java.util.Locale"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
     return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
@@ -755,7 +766,8 @@ public actual fun String.decapitalize(): String {
  * Returns a copy of this string having its first letter lowercased using the rules of the specified [locale],
  * or the original string, if it's empty or already starts with a lower case letter.
  */
-@OptIn(ExperimentalStdlibApi::class)
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase(locale) }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.LowPriorityInOverloadResolution // To avoid conflicts in function references, as this function was introduced later than common decapitalize()
