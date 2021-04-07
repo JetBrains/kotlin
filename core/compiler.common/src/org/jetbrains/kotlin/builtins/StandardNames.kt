@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,8 @@ object StandardNames {
     @JvmField val ENUM_VALUES = Name.identifier("values")
 
     @JvmField val ENUM_VALUE_OF = Name.identifier("valueOf")
+
+    @JvmField val CHAR_CODE = Name.identifier("code")
 
     @JvmField val COROUTINES_PACKAGE_FQ_NAME_RELEASE = FqName("kotlin.coroutines")
 

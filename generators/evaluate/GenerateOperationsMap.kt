@@ -68,6 +68,8 @@ fun generate(): String {
         }
     }
 
+    unaryOperationsMap.add(Triple("code", listOf(builtIns.charType), false))
+
     for (type in integerTypes) {
         for (otherType in integerTypes) {
             val parameters = listOf(type, otherType)

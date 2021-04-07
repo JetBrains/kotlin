@@ -1,0 +1,10 @@
+package
+
+public const val e2: kotlin.Long = 10
+public const val e3: kotlin.Byte = 10
+public const val e4: kotlin.Short = 10
+public const val p1: kotlin.Int = 10
+public const val p2: kotlin.Long = 10.toLong()
+public const val p3: kotlin.Byte = 10.toByte()
+public const val p4: kotlin.Short = 10.toShort()
+
