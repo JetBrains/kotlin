@@ -50,7 +50,7 @@ class IncrementalProcessor(private val processor: Processor, private val kind: D
             if (fromOptions == null) {
                 RuntimeProcType.NON_INCREMENTAL
             } else {
-                val declaredType = fromOptions.drop("org.gradle.annotation.processing.".length).toUpperCase(Locale.US)
+                val declaredType = fromOptions.drop("org.gradle.annotation.processing.".length).uppercase()
                 if (ALLOWED_RUNTIME_TYPES.contains(declaredType)) {
                     enumValueOf(declaredType)
                 } else {

@@ -29,7 +29,7 @@ fun actualizeMppJpsIncTestCaseDirs(rootDir: String, dir: String) {
 }
 
 class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (TestCase) -> File) {
-    val ModulesTxt.Module.capitalName get() = name.capitalize()
+    val ModulesTxt.Module.capitalName get() = name.replaceFirstChar(Char::uppercaseChar)
 
     val testCases: List<TestCase>
 
@@ -308,7 +308,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
         protected fun serviceKtFile(module: ModulesTxt.Module, fileNameSuffix: String = ""): File {
             val suffix =
                 if (module.isCommonModule) "${module.serviceName}Header"
-                else "${module.name.capitalize()}${module.contentsSettings.serviceNameSuffix}Impl"
+                else "${module.name.replaceFirstChar(Char::uppercaseChar)}${module.contentsSettings.serviceNameSuffix}Impl"
 
             return File(dir, "${module.indexedName}_service$suffix.kt$fileNameSuffix")
         }

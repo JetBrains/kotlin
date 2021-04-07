@@ -17,7 +17,7 @@ internal object StatsTypeOptionType : OptionType<StatsType>("log-stats", DESCRIP
 
 private val DESCRIPTION = buildString {
     StatsType.values().joinTo(this) {
-        val item = "\"${it.name.toLowerCase()}\""
+        val item = "\"${it.name.lowercase()}\""
         if (it == StatsType.NONE) "$item (default)" else item
     }
     append(";\nlog commonization stats")

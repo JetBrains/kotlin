@@ -827,7 +827,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             val name = arrayOfCall.typeRef.coneType.classId!!.shortClassName.asString()
             val typeArguments = arrayOfCall.typeRef.coneType.typeArguments
             val typeParameters = if (typeArguments.isEmpty()) "" else " <T>"
-            data.append("fun$typeParameters ${name.decapitalize()}Of")
+            data.append("fun$typeParameters ${name.replaceFirstChar(Char::lowercaseChar)}Of")
             typeArguments.firstOrNull()?.let {
                 data.append("<").append(it.tryToRenderConeAsFunctionType()).append(">")
             }

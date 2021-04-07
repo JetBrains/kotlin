@@ -376,7 +376,7 @@ class KotlinBuildScriptManipulator(
         findPlugin(pluginName) ?: addExpressionIfMissing("plugin(\"$pluginName\")") as? KtCallExpression
 
     private fun KtFile.changeCoroutineConfiguration(coroutineOption: String): PsiElement? {
-        val snippet = "experimental.coroutines = Coroutines.${coroutineOption.toUpperCase()}"
+        val snippet = "experimental.coroutines = Coroutines.${coroutineOption.uppercase()}"
         val kotlinBlock = getKotlinBlock() ?: return null
         addImportIfMissing("org.jetbrains.kotlin.gradle.dsl.Coroutines")
         val statement = kotlinBlock.statements.find { it.text.startsWith("experimental.coroutines") }

@@ -37,7 +37,7 @@ fun Location.isInKotlinSources(): Boolean {
 }
 
 fun ReferenceType.isInKotlinSources(): Boolean {
-    val fileExtension = safeSourceName()?.substringAfterLast('.')?.toLowerCase() ?: ""
+    val fileExtension = safeSourceName()?.substringAfterLast('.')?.lowercase() ?: ""
     return fileExtension in KotlinFileTypeFactoryUtils.KOTLIN_EXTENSIONS || containsKotlinStrata()
 }
 

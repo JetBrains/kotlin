@@ -228,7 +228,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
                             field.needsSeparateTransform -> {
                                 if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {
-                                    println("transform${field.name.capitalize()}(transformer, data)")
+                                    println("transform${field.name.replaceFirstChar(Char::uppercaseChar)}(transformer, data)")
                                 }
                             }
 
@@ -297,7 +297,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 field.transform()
                             }
                             if (field.needTransformInOtherChildren) {
-                                println("transform${field.name.capitalize()}(transformer, data)")
+                                println("transform${field.name.replaceFirstChar(Char::uppercaseChar)}(transformer, data)")
                             }
                         }
                         println("return this")
@@ -335,7 +335,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             }
 
             for (field in allFields.filter { it.withReplace }) {
-                val capitalizedFieldName = field.name.capitalize()
+                val capitalizedFieldName = field.name.replaceFirstChar(Char::uppercaseChar)
                 val newValue = "new$capitalizedFieldName"
                 generateReplace(field, forceNullable = field.useNullableForReplace) {
                     when {

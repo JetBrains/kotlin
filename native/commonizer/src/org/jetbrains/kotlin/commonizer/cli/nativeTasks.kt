@@ -77,7 +77,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
             progressLogger = progressLogger
         ).run()
 
-        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
+        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))
     }
 }
 
@@ -127,7 +127,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             progressLogger = progressLogger
         ).run()
 
-        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
+        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))
 
         println("$description: Done")
     }

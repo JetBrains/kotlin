@@ -114,7 +114,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         result: MutableList<UsageInfo>
     ) {
         fun reportAccidentalOverride(candidate: PsiNamedElement) {
-            val what = UsageViewUtil.getType(declaration).capitalize()
+            val what = UsageViewUtil.getType(declaration).replaceFirstChar(Char::uppercaseChar)
             val withWhat = candidate.renderDescription()
             val where = candidate.representativeContainer()?.renderDescription() ?: return
             val message = KotlinBundle.message("text.0.will.clash.with.existing.1.in.2", what, withWhat, where)

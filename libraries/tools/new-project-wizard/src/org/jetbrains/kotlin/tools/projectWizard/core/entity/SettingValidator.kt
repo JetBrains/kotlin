@@ -28,7 +28,7 @@ fun <V> inValidatorContext(validator: Reader.(V) -> SettingValidator<V>) =
 object StringValidators {
     fun shouldNotBeBlank(name: String) = settingValidator { value: String ->
         if (value.isBlank()) ValidationResult.ValidationError(
-            KotlinNewProjectWizardBundle.message("validation.should.not.be.blank", name.capitalize())
+            KotlinNewProjectWizardBundle.message("validation.should.not.be.blank", name.replaceFirstChar(Char::uppercaseChar))
         )
         else ValidationResult.OK
     }
@@ -41,7 +41,11 @@ object StringValidators {
                 ?.let { chars -> KotlinNewProjectWizardBundle.message("validation.identifier.additional.symbols", chars) }
                 .orEmpty()
             ValidationResult.ValidationError(
-                KotlinNewProjectWizardBundle.message("validation.identifier", name.capitalize(), allowedExtraSymbolsStringified)
+                KotlinNewProjectWizardBundle.message(
+                    "validation.identifier",
+                    name.replaceFirstChar(Char::uppercaseChar),
+                    allowedExtraSymbolsStringified
+                )
             )
         } else ValidationResult.OK
     }

@@ -55,7 +55,7 @@ enum class ClassKind(@NonNls val keyword: String, @Nls val description: String) 
     DEFAULT("", "") // Used as a placeholder and must be replaced with one of the kinds above
 }
 
-fun ClassKind.toIdeaClassKind() = IdeaClassKind { this@toIdeaClassKind.description.capitalize() }
+fun ClassKind.toIdeaClassKind() = IdeaClassKind { this@toIdeaClassKind.description.replaceFirstChar(Char::uppercaseChar) }
 
 val ClassKind.actionPriority: IntentionActionPriority
     get() = if (this == ANNOTATION_CLASS) IntentionActionPriority.LOW else IntentionActionPriority.NORMAL
@@ -185,7 +185,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
             val defaultPackageFqName = file.packageFqName
             val dialog = object : CreateKotlinClassDialog(
                 file.project,
-                KotlinBundle.message("create.0", ideaClassKind.description.capitalize()),
+                KotlinBundle.message("create.0", ideaClassKind.description.replaceFirstChar(Char::uppercaseChar)),
                 className,
                 defaultPackageFqName.asString(),
                 ideaClassKind,

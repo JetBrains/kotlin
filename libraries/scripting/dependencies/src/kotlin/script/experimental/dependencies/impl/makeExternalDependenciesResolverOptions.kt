@@ -26,7 +26,7 @@ private class MapExternalDependenciesResolverOptions(
     override fun value(name: String): String? = map[name]
 
     override fun flag(name: String): Boolean? = map[name]?.let { value ->
-        when (value.toLowerCase()) {
+        when (value.lowercase()) {
             "1", "true", "t", "yes", "y" -> true
             "0", "false", "f", "no", "n" -> false
             else -> null

@@ -20,7 +20,7 @@ class TypeProjectionModifier(
     fun addModifier(modifier: LighterASTNode) {
         val tokenType = modifier.tokenType
         when {
-            VARIANCE_MODIFIER.contains(tokenType) -> this.varianceModifiers += VarianceModifier.valueOf(modifier.toString().toUpperCase())
+            VARIANCE_MODIFIER.contains(tokenType) -> this.varianceModifiers += VarianceModifier.valueOf(modifier.toString().uppercase())
         }
     }
 

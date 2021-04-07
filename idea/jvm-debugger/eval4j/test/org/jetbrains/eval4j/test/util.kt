@@ -16,4 +16,5 @@
 
 package org.jetbrains.eval4j.test
 
-fun getTestName(methodName: String) = if (methodName.startsWith("test")) methodName else "test${methodName.capitalize()}"
+fun getTestName(methodName: String) =
+    if (methodName.startsWith("test")) methodName else "test${methodName.replaceFirstChar(Char::uppercaseChar)}"

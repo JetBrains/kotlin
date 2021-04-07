@@ -432,7 +432,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 fun DceRuntimeDiagnostic.Companion.resolve(
     value: String?,
     messageCollector: MessageCollector
-): DceRuntimeDiagnostic? = when (value?.toLowerCase()) {
+): DceRuntimeDiagnostic? = when (value?.lowercase()) {
     DCE_RUNTIME_DIAGNOSTIC_LOG -> DceRuntimeDiagnostic.LOG
     DCE_RUNTIME_DIAGNOSTIC_EXCEPTION -> DceRuntimeDiagnostic.EXCEPTION
     null -> null

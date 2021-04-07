@@ -188,7 +188,7 @@ private fun CallableDescriptor.getParametersTypes(): List<KotlinType> =
     listOf((containingDeclaration as ClassDescriptor).defaultType) +
             valueParameters.map { it.type.makeNotNullable() }
 
-private fun KotlinType.asString(): String = typeName.toUpperCase()
+private fun KotlinType.asString(): String = typeName.uppercase()
 
 private val KotlinType.typeName: String
     get(): String = constructor.declarationDescriptor!!.name.asString()

@@ -100,7 +100,7 @@ class KotlinPushDownProcessor(
         val usages = refUsages.get() ?: UsageInfo.EMPTY_ARRAY
         if (usages.isEmpty()) {
             val message = KotlinBundle.message("text.0.have.no.inheritors.warning", context.sourceClassDescriptor.renderForConflicts())
-            val answer = Messages.showYesNoDialog(message.capitalize(), PUSH_MEMBERS_DOWN, Messages.getWarningIcon())
+            val answer = Messages.showYesNoDialog(message.replaceFirstChar(Char::uppercaseChar), PUSH_MEMBERS_DOWN, Messages.getWarningIcon())
             if (answer == Messages.NO) return false
         }
 

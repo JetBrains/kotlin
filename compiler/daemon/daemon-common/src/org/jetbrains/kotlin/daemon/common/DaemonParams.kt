@@ -352,7 +352,7 @@ private val humanizedMemorySizeRegex = "(\\d+)([kmg]?)".toRegex()
 
 private fun String.memToBytes(): Long? =
         humanizedMemorySizeRegex
-            .matchEntire(this.trim().toLowerCase())
+            .matchEntire(this.trim().lowercase())
             ?.groups?.let { match ->
                 match[1]?.value?.let {
                     it.toLong() *

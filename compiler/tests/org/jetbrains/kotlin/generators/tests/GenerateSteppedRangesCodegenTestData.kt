@@ -242,7 +242,7 @@ object GenerateSteppedRangesCodegenTestData {
 
     private fun PrintWriter.printTestForFunctionAndType(builder: TestBuilder, function: Function, type: Type, asLiteral: Boolean) {
         val shouldFail = (builder.expectedValuesOrFailIfNull == null)
-        val listVarName = type.type.toLowerCase() + "List"
+        val listVarName = type.type.lowercase() + "List"
         if (shouldFail) {
             println("    assertFailsWith<IllegalArgumentException> {")
         } else {
@@ -253,7 +253,7 @@ object GenerateSteppedRangesCodegenTestData {
         if (asLiteral) {
             println("$indent    for (i in ${builder.buildFullLiteral(type, function)}) {")
         } else {
-            val progressionVarName = type.type.toLowerCase() + "Progression"
+            val progressionVarName = type.type.lowercase() + "Progression"
             println("$indent    val $progressionVarName = ${builder.buildRangeOnlyExpression(type, function)}")
             println("$indent    for (i in ${builder.buildOnTopOfRangeOnlyVariable(progressionVarName, type)}) {")
         }

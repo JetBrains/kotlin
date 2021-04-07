@@ -65,7 +65,7 @@ fun makeIncrementally(
     val allExtensions = kotlinExtensions + "java"
     val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
     val files = rootsWalk.filter(File::isFile)
-    val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
+    val sourceFiles = files.filter { it.extension.lowercase() in allExtensions }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
     args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
     val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
@@ -275,7 +275,7 @@ class IncrementalJvmCompilerRunner(
     private fun processLookupSymbolsForAndroidLayouts(changedFiles: ChangedFiles.Known): Collection<LookupSymbol> {
         val result = mutableListOf<LookupSymbol>()
         for (file in changedFiles.modified + changedFiles.removed) {
-            if (file.extension.toLowerCase() != "xml") continue
+            if (file.extension.lowercase() != "xml") continue
             val layoutName = file.name.substringBeforeLast('.')
             result.add(LookupSymbol(ANDROID_LAYOUT_CONTENT_LOOKUP_NAME, layoutName))
         }

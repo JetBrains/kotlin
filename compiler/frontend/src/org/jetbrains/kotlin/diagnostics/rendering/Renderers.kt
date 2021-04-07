@@ -128,7 +128,7 @@ object Renderers {
         else
             declarationWithNameAndKind
 
-        withPlatform.capitalize()
+        withPlatform.replaceFirstChar(Char::uppercaseChar)
     }
 
 

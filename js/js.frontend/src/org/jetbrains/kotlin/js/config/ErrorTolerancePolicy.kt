@@ -18,7 +18,7 @@ enum class ErrorTolerancePolicy(val allowSyntaxErrors: Boolean, val allowSemanti
         val DEFAULT = NONE
 
         fun resolvePolicy(key: String): ErrorTolerancePolicy {
-            return when (key.toUpperCase(Locale.US)) {
+            return when (key.uppercase()) {
                 "NONE" -> NONE
                 "SEMANTIC" -> SEMANTIC
                 "SYNTAX", "ALL" -> ALL

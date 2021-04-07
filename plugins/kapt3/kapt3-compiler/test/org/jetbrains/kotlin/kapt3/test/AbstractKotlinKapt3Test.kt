@@ -161,7 +161,7 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
             )
 
             val javaFiles = files
-                .filter { it.name.toLowerCase().endsWith(".java") }
+                .filter { it.name.lowercase().endsWith(".java") }
                 .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
 
             check(kaptContext, javaFiles, txtFile, wholeFile)
@@ -294,7 +294,7 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
                 .map {
                     // Unfortunately, we can't use the file name as it can contain temporary prefix
                     val name = it.source?.name?.substringAfterLast("/") ?: ""
-                    val kind = when (name.substringAfterLast(".").toLowerCase()) {
+                    val kind = when (name.substringAfterLast(".").lowercase()) {
                         "kt" -> "kotlin"
                         "java" -> "java"
                         else -> "other"

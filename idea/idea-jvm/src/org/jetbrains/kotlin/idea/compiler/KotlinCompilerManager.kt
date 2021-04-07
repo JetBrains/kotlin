@@ -74,7 +74,7 @@ class KotlinCompilerStartupActivity : StartupActivity {
             override fun fileGenerated(outputRoot: String, relativePath: String) {
                 if (isUnitTestMode()) return
 
-                val ext = FileUtilRt.getExtension(relativePath).toLowerCase()
+                val ext = FileUtilRt.getExtension(relativePath).lowercase()
                 if (FILE_EXTS_WHICH_NEEDS_REFRESH.contains(ext)) {
                     val outFile = "$outputRoot/$relativePath"
                     val virtualFile = LocalFileSystem.getInstance().findFileByPath(outFile)

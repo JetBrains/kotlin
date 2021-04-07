@@ -15,7 +15,7 @@ import java.nio.file.Files
 class KaptPathsTest : TestCase() {
     @Test
     fun testSymbolicLinks() {
-        if (System.getProperty("os.name").toLowerCase().contains("win")) return
+        if (System.getProperty("os.name").lowercase().contains("win")) return
         val tempDir = Files.createTempDirectory("kapt-test").toFile()
         try {
             fun File.writeJavaClass() = apply {

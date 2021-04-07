@@ -86,7 +86,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val platformParameters = JvmPlatformParameters(
             packagePartProviderFactory = { PackagePartProvider.Empty },
             moduleByJavaClass = { javaClass ->
-                val moduleName = javaClass.name.asString().toLowerCase().first().toString()
+                val moduleName = javaClass.name.asString().lowercase().first().toString()
                 modules.first { it._name == moduleName }
             },
             useBuiltinsProviderForModule = { false }
@@ -165,8 +165,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             module ->
             val moduleDescriptor = resolverForProject.descriptorForModule(module)
 
-            checkClassInPackage(moduleDescriptor, "test", "Kotlin${module._name.toUpperCase()}")
-            checkClassInPackage(moduleDescriptor, "custom", "${module._name.toUpperCase()}Class")
+            checkClassInPackage(moduleDescriptor, "test", "Kotlin${module._name.uppercase()}")
+            checkClassInPackage(moduleDescriptor, "custom", "${module._name.uppercase()}Class")
         }
     }
 
@@ -229,7 +229,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         assert(!ErrorUtils.isError(referencedDescriptor)) { "Error descriptor: $referencedDescriptor" }
 
         val descriptorName = referencedDescriptor.name.asString()
-        val expectedModuleName = "<${descriptorName.toLowerCase().first()}>"
+        val expectedModuleName = "<${descriptorName.lowercase().first()}>"
         val moduleName = referencedDescriptor.module.name.asString()
         Assert.assertEquals(
                 "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",

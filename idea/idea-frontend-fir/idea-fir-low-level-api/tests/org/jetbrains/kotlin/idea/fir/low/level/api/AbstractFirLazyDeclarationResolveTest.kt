@@ -31,7 +31,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : KotlinLightCodeInsightFix
         val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
         val lazyDeclarations = ktFile.collectDescendantsOfType<KtDeclaration> { ktDeclaration -> !KtPsiUtil.isLocal(ktDeclaration) }
 
-        val declarationToResolve = lazyDeclarations.firstOrNull { it.name?.toLowerCase() == "resolveme" }
+        val declarationToResolve = lazyDeclarations.firstOrNull { it.name?.lowercase() == "resolveme" }
             ?: error("declaration with name `resolveMe` was not found")
         resolveWithClearCaches(ktFile) { firModuleResolveState ->
             val rendered = declarationToResolve.withFirDeclaration(

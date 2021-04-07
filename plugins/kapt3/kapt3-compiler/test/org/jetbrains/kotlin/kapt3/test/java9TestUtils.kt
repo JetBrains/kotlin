@@ -48,7 +48,7 @@ interface CustomJdkTestLauncher {
         val currentJavaHome = System.getProperty("java.home")
 
         val classpath = collectClasspath(AbstractClassFileToSourceStubConverterTest::class.java.classLoader)
-            .filter { it.protocol.toLowerCase() == "file" && it.path != null && !it.path.startsWith(currentJavaHome) }
+            .filter { it.protocol.lowercase() == "file" && it.path != null && !it.path.startsWith(currentJavaHome) }
             .map { it.path }
 
         val command = arrayOf(

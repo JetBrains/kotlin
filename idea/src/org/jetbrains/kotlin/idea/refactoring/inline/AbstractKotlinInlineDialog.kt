@@ -52,7 +52,7 @@ abstract class AbstractKotlinInlineDialog(
 
     override fun getNameLabelText(): String {
         val occurrencesString = occurrencesString?.let { " - $it" } ?: ""
-        return "${kind.capitalize()} ${callable.nameAsSafeName} $occurrencesString"
+        return "${kind.replaceFirstChar(Char::uppercaseChar)} ${callable.nameAsSafeName} $occurrencesString"
     }
 
     private fun getInlineText(verb: String) = KotlinBundle.message(

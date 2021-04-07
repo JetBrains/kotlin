@@ -28,7 +28,7 @@ object ChangeBoxingMethodTransformer : MethodTransformer() {
         val map = hashMapOf<String, String>()
         for (primitiveType in JvmPrimitiveType.values()) {
             val name = primitiveType.wrapperFqName.topLevelClassInternalName()
-            map[name] = "box${primitiveType.javaKeywordName.capitalize(Locale.US)}"
+            map[name] = "box${primitiveType.javaKeywordName.replaceFirstChar(Char::uppercaseChar)}"
         }
         wrapperToInternalBoxing = map
     }

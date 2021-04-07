@@ -41,7 +41,7 @@ class Modifier(
             parameterModifiers += ParameterModifier.CONST
             return
         }
-        val upperCasedModifier = modifier.toString().toUpperCase()
+        val upperCasedModifier = modifier.toString().uppercase()
         when {
             INLINE_MODIFIER.contains(tokenType) -> {
                 if (isInClass)

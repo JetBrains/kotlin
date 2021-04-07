@@ -62,8 +62,8 @@ class ProjectConfigurationCollector : ProjectUsagesCollector() {
         val buildSystem = it.getBuildSystemType()
         return when {
             buildSystem == BuildSystemType.JPS -> "JPS"
-            buildSystem.toString().toLowerCase().contains("maven") -> "Maven"
-            buildSystem.toString().toLowerCase().contains("gradle") -> "Gradle"
+            buildSystem.toString().lowercase().contains("maven") -> "Maven"
+            buildSystem.toString().lowercase().contains("gradle") -> "Gradle"
             else -> "unknown"
         }
     }

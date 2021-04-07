@@ -43,7 +43,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     protected open val statsPrefix = "completion"
 
     private fun stats(): Stats {
-        val suffix = "${defaultCompletionType.toString().toLowerCase()}${if (note.isNotEmpty()) "-$note" else ""}"
+        val suffix = "${defaultCompletionType.toString().lowercase()}${if (note.isNotEmpty()) "-$note" else ""}"
         return statsMap.computeIfAbsent(suffix) {
             Stats("$statsPrefix-$suffix")
         }

@@ -28,7 +28,7 @@ fun String.decapitalizeSmartForCompiler(asciiOnly: Boolean = false): String {
     if (isEmpty() || !isUpperCaseCharAt(0, asciiOnly)) return this
 
     if (length == 1 || !isUpperCaseCharAt(1, asciiOnly)) {
-        return if (asciiOnly) decapitalizeAsciiOnly() else decapitalize()
+        return if (asciiOnly) decapitalizeAsciiOnly() else replaceFirstChar(Char::lowercaseChar)
     }
 
     val secondWordStart = (indices.firstOrNull { !isUpperCaseCharAt(it, asciiOnly) } ?: return toLowerCase(this, asciiOnly)) - 1
@@ -98,18 +98,18 @@ private fun String.isLowerCaseCharAt(index: Int, asciiOnly: Boolean): Boolean {
 }
 
 private fun toLowerCase(string: String, asciiOnly: Boolean): String {
-    return if (asciiOnly) string.toLowerCaseAsciiOnly() else string.toLowerCase()
+    return if (asciiOnly) string.toLowerCaseAsciiOnly() else string.lowercase()
 }
 
 private fun toUpperCase(string: String, asciiOnly: Boolean): String {
-    return if (asciiOnly) string.toUpperCaseAsciiOnly() else string.toUpperCase()
+    return if (asciiOnly) string.toUpperCaseAsciiOnly() else string.uppercase()
 }
 
 fun String.capitalizeAsciiOnly(): String {
     if (isEmpty()) return this
     val c = this[0]
     return if (c in 'a'..'z')
-        c.toUpperCase() + substring(1)
+        c.uppercaseChar() + substring(1)
     else
         this
 }
@@ -118,7 +118,7 @@ fun String.decapitalizeAsciiOnly(): String {
     if (isEmpty()) return this
     val c = this[0]
     return if (c in 'A'..'Z')
-        c.toLowerCase() + substring(1)
+        c.lowercaseChar() + substring(1)
     else
         this
 }
@@ -126,7 +126,7 @@ fun String.decapitalizeAsciiOnly(): String {
 fun String.toLowerCaseAsciiOnly(): String {
     val builder = StringBuilder(length)
     for (c in this) {
-        builder.append(if (c in 'A'..'Z') c.toLowerCase() else c)
+        builder.append(if (c in 'A'..'Z') c.lowercaseChar() else c)
     }
     return builder.toString()
 }
@@ -134,7 +134,7 @@ fun String.toLowerCaseAsciiOnly(): String {
 fun String.toUpperCaseAsciiOnly(): String {
     val builder = StringBuilder(length)
     for (c in this) {
-        builder.append(if (c in 'a'..'z') c.toUpperCase() else c)
+        builder.append(if (c in 'a'..'z') c.uppercaseChar() else c)
     }
     return builder.toString()
 }

@@ -23,7 +23,7 @@ class AddArrayOfTypeFix(expression: KtExpression, expectedType: KotlinType) : Ko
         "arrayOf"
     } else {
         val typeName = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(expectedType)
-        "${typeName.decapitalize(Locale.US)}Of"
+        "${typeName.replaceFirstChar(Char::lowercaseChar)}Of"
 
     }
 

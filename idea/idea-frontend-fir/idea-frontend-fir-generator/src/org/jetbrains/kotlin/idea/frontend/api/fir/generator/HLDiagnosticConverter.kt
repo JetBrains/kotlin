@@ -100,7 +100,7 @@ private object FirToKtConversionCreator {
         if (kClass.isSubclassOf(Collection::class)) {
             val elementType = type.arguments.single().type ?: return HLIdParameterConversion
             return HLMapParameterConversion(
-                parameterName = elementType.kClass.simpleName!!.decapitalize(),
+                parameterName = elementType.kClass.simpleName!!.replaceFirstChar(Char::lowercaseChar),
                 mappingConversion = createConversion(elementType)
             )
         }

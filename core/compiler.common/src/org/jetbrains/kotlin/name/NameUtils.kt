@@ -39,10 +39,10 @@ object NameUtils {
 
     @JvmStatic
     private fun capitalizeAsJavaClassName(str: String): String =
-            // NB use Locale.ENGLISH so that build is locale-independent.
+            // NB `uppercase` uses Locale.ROOT and is locale-independent.
             // See Javadoc on java.lang.String.toUpperCase() for more details.
             if (Character.isJavaIdentifierStart(str[0]))
-                str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1)
+                str.substring(0, 1).uppercase() + str.substring(1)
             else
                 "_$str"
 

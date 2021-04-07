@@ -513,7 +513,7 @@ private fun reportError(codeFragment: KtCodeFragment, position: SourcePosition?,
         )
 
         LOG.error(
-            "Cannot evaluate a code fragment of type " + codeFragment::class.java + ": " + message.decapitalize(),
+            "Cannot evaluate a code fragment of type " + codeFragment::class.java + ": " + message.replaceFirstChar(Char::lowercaseChar),
             throwable,
             mergeAttachments(*attachments)
         )

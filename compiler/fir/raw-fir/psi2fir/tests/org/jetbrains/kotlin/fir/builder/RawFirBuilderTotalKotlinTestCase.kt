@@ -52,7 +52,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $testDataPath")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path.toLowerCase()
+            val path = file.path.lowercase()
             if ("testdata" in path ||
                 "kotlin-native" in path ||
                 "resources" in path ||
@@ -180,7 +180,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         val root = File(testDataPath)
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path.toLowerCase()
+            val path = file.path.lowercase()
             if ("kotlin-native" in path ||
                 "testdata" in path ||
                 "resources" in path ||
@@ -211,7 +211,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var counter = 0
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path.toLowerCase()
+            val path = file.path.lowercase()
             if ("kotlin-native" in path ||
                 "testdata" in path ||
                 "resources" in path ||

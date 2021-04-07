@@ -50,7 +50,7 @@ class KtFirCollectionLiteralReference(
         }.associateWith { it.correspondingArrayOfCallFqName() }
 
         private fun ClassId.correspondingArrayOfCallFqName(): Name =
-            Name.identifier("${shortClassName.identifier.decapitalize()}Of")
+            Name.identifier("${shortClassName.identifier.replaceFirstChar(Char::lowercaseChar)}Of")
 
     }
 }

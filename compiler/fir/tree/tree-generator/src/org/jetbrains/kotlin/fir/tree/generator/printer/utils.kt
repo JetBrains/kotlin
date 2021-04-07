@@ -96,7 +96,7 @@ val Field.isVal: Boolean get() = this is FieldList || (this is FieldWithDefault 
 
 
 fun Field.transformFunctionDeclaration(returnType: String): String {
-    return transformFunctionDeclaration(name.capitalize(), returnType)
+    return transformFunctionDeclaration(name.replaceFirstChar(Char::uppercaseChar), returnType)
 }
 
 fun transformFunctionDeclaration(transformName: String, returnType: String): String {
@@ -104,7 +104,7 @@ fun transformFunctionDeclaration(transformName: String, returnType: String): Str
 }
 
 fun Field.replaceFunctionDeclaration(overridenType: Importable? = null, forceNullable: Boolean = false): String {
-    val capName = name.capitalize()
+    val capName = name.replaceFirstChar(Char::uppercaseChar)
     val type = overridenType?.typeWithArguments ?: typeWithArguments
 
     val typeWithNullable = if (forceNullable && !type.endsWith("?")) "$type?" else type
@@ -136,7 +136,7 @@ fun Implementation.Kind?.braces(): String = when (this) {
     else -> throw IllegalStateException(this.toString())
 }
 
-val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.decapitalize()
+val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)
 
 val Importable.typeWithArguments: String
     get() = when (this) {

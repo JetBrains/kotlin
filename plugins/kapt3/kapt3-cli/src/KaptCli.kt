@@ -170,7 +170,7 @@ private fun argError(text: String): Nothing {
 
 private fun findKaptCompilerPlugin(): File? {
     val pathToThisJar = File(PathUtil.getJarPathForClass(CliToolOption::class.java))
-    if (pathToThisJar.extension.toLowerCase() != "jar") {
+    if (pathToThisJar.extension.lowercase() != "jar") {
         return null
     }
 

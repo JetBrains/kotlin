@@ -50,7 +50,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
                     else -> ValidationResult.ValidationError(
                         KotlinNewProjectWizardBundle.message(
                             "plugin.buildsystem.setting.type.error.wrong.project.kind",
-                            projectKind.shortName.capitalize(),
+                            projectKind.shortName.replaceFirstChar(Char::uppercaseChar),
                             buildSystemType.fullText
                         )
                     )

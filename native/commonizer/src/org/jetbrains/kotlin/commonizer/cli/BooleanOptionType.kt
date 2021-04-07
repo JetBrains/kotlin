@@ -11,7 +11,7 @@ internal class BooleanOptionType(
     mandatory: Boolean
 ) : OptionType<Boolean>(alias, description, mandatory) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<Boolean> {
-        val value = rawValue.toLowerCase().let {
+        val value = rawValue.lowercase().let {
             when (it) {
                 in TRUE_TOKENS -> true
                 in FALSE_TOKENS -> false
