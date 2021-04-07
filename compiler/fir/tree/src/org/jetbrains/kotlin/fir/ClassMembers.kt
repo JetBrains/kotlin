@@ -79,10 +79,14 @@ inline fun <reified D : FirCallableDeclaration<*>> D.unwrapFakeOverrides(): D {
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S
 
 private object SubstitutedOverrideOriginalKey : FirDeclarationDataKey()
+
+@Suppress("DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER")
 var <D : FirCallableDeclaration<*>>
         D.originalForSubstitutionOverrideAttr: D? by FirDeclarationDataRegistry.data(SubstitutedOverrideOriginalKey)
 
 private object IntersectionOverrideOriginalKey : FirDeclarationDataKey()
+
+@Suppress("DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER")
 var <D : FirCallableDeclaration<*>>
         D.originalForIntersectionOverrideAttr: D? by FirDeclarationDataRegistry.data(IntersectionOverrideOriginalKey)
 
