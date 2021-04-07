@@ -32,7 +32,7 @@ open internal class RangeSet(charClass: AbstractCharClass, val ignoreCase: Boole
     override fun accepts(startIndex: Int, testString: CharSequence): Int {
         if (ignoreCase) {
             val char = testString[startIndex]
-            return if (chars.contains(char.toUpperCase()) || chars.contains(char.toLowerCase())) 1 else -1
+            return if (chars.contains(char.uppercaseChar()) || chars.contains(char.lowercaseChar())) 1 else -1
         } else {
             return if (chars.contains(testString[startIndex])) 1 else -1
         }

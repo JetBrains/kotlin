@@ -269,7 +269,7 @@ internal actual fun checkRadix(radix: Int): Int {
 internal fun Char.Companion.toLowerCase(codePoint: Int): Int =
     if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
         @Suppress("DEPRECATION")
-        codePoint.toChar().toLowerCase().toInt()
+        codePoint.toChar().lowercaseChar().toInt()
     } else {
         codePoint // TODO: Implement this transformation for supplementary codepoints.
     }
@@ -278,7 +278,7 @@ internal fun Char.Companion.toLowerCase(codePoint: Int): Int =
 internal fun Char.Companion.toUpperCase(codePoint: Int): Int =
     if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
         @Suppress("DEPRECATION")
-        codePoint.toChar().toUpperCase().toInt()
+        codePoint.toChar().uppercaseChar().toInt()
     } else {
         codePoint // TODO: Implement this transformation for supplementary codepoints.
     }

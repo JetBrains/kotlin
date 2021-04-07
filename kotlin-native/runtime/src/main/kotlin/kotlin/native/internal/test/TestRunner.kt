@@ -174,7 +174,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     }
 
     private fun setLoggerFromArg(logger: String) {
-        when (logger.toUpperCase()) {
+        when (logger.uppercase()) {
             "GTEST" -> this.logger = GTestLogger()
             "TEAMCITY" -> this.logger = TeamCityLogger()
             "SIMPLE" -> this.logger = SimpleTestLogger()
