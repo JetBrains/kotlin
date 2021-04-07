@@ -180,6 +180,13 @@ internal class IntLiteralOutOfRangeImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class FloatLiteralOutOfRangeImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.FloatLiteralOutOfRange(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class WrongLongSuffixImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

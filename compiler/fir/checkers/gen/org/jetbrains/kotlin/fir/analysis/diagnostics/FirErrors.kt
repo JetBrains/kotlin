@@ -87,6 +87,7 @@ object FirErrors {
     val TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL by error0<FirSourceElement, PsiElement>()
     val ILLEGAL_ESCAPE by error0<FirSourceElement, PsiElement>()
     val INT_LITERAL_OUT_OF_RANGE by error0<FirSourceElement, PsiElement>()
+    val FLOAT_LITERAL_OUT_OF_RANGE by error0<FirSourceElement, PsiElement>()
     val WRONG_LONG_SUFFIX by error0<FirSourceElement, KtElement>(SourceElementPositioningStrategies.LONG_LITERAL_SUFFIX)
 
     // Unresolved

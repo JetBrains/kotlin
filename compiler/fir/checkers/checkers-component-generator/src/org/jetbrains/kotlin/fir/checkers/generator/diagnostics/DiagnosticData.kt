@@ -57,6 +57,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     SUPERTYPES_LIST,
     RETURN_WITH_LABEL,
     INT_LITERAL_OUT_OF_RANGE,
+    FLOAT_LITERAL_OUT_OF_RANGE,
     LONG_LITERAL_SUFFIX,
 
     ;

@@ -155,6 +155,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.FLOAT_LITERAL_OUT_OF_RANGE) { firDiagnostic ->
+        FloatLiteralOutOfRangeImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.WRONG_LONG_SUFFIX) { firDiagnostic ->
         WrongLongSuffixImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
