@@ -13,18 +13,21 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 fun Visibility.toEffectiveVisibility(
     ownerSymbol: FirClassLikeSymbol<*>?,
+    forClass: Boolean = false,
     checkPublishedApi: Boolean = false
 ): EffectiveVisibility {
-    return toEffectiveVisibility(ownerSymbol?.toLookupTag(), checkPublishedApi)
+    return toEffectiveVisibility(ownerSymbol?.toLookupTag(), forClass, checkPublishedApi)
 }
 
 fun Visibility.toEffectiveVisibility(
     owner: ConeClassLikeLookupTag?,
+    forClass: Boolean = false,
     checkPublishedApi: Boolean = false
 ): EffectiveVisibility {
     customEffectiveVisibility()?.let { return it }
     return when (this.normalize()) {
-        Visibilities.Private, Visibilities.PrivateToThis, Visibilities.InvisibleFake -> EffectiveVisibility.PrivateInClass
+        Visibilities.PrivateToThis, Visibilities.InvisibleFake -> EffectiveVisibility.PrivateInClass
+        Visibilities.Private -> if (owner == null && forClass) EffectiveVisibility.PrivateInFile else EffectiveVisibility.PrivateInClass
         Visibilities.Protected -> EffectiveVisibility.Protected(owner)
         Visibilities.Internal -> when (!checkPublishedApi /*|| !owner.isPublishedApi()*/) { // TODO
             true -> EffectiveVisibility.Internal

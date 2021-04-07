@@ -248,7 +248,7 @@ class JavaSymbolProvider(
             existingNestedClassifierNames += javaClass.innerClassNames
             scopeProvider = this@JavaSymbolProvider.scopeProvider
 
-            val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentClassSymbol?.toLookupTag())
+            val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentClassSymbol?.toLookupTag(), forClass = true)
             val parentEffectiveVisibility = parentClassSymbol?.let {
                 parentClassEffectiveVisibilityCache[it] ?: it.fir.effectiveVisibility
             } ?: EffectiveVisibility.Public

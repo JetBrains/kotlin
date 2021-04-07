@@ -168,7 +168,9 @@ class FirStatusResolver(
             containingClass is FirAnonymousObject -> EffectiveVisibility.Local
             else -> EffectiveVisibility.Public
         }
-        val selfEffectiveVisibility = visibility.toEffectiveVisibility(containingClass?.symbol?.toLookupTag())
+        val selfEffectiveVisibility = visibility.toEffectiveVisibility(
+            containingClass?.symbol?.toLookupTag(), forClass = declaration is FirClass<*>
+        )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
         return status.resolved(visibility, modality, effectiveVisibility)
     }

@@ -63,7 +63,7 @@ fun deserializeClassToSymbol(
     val status = FirResolvedDeclarationStatusImpl(
         visibility,
         modality,
-        visibility.toEffectiveVisibility(parentContext?.outerClassSymbol)
+        visibility.toEffectiveVisibility(parentContext?.outerClassSymbol, forClass = true)
     ).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)
         isActual = false
