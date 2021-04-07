@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -106,8 +107,8 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
 
         val expectToActual = expectFunction to function
         if (expectToActual !in typeParameterSubstitutionMap) {
-            val functionTypeParameters = collectTypeParameters(function)
-            val expectFunctionTypeParameters = collectTypeParameters(expectFunction)
+            val functionTypeParameters = extractTypeParameters(function)
+            val expectFunctionTypeParameters = extractTypeParameters(expectFunction)
 
             expectFunctionTypeParameters.zip(functionTypeParameters).let { typeParametersMapping ->
                 typeParameterSubstitutionMap[expectToActual] = typeParametersMapping.toMap()
@@ -117,11 +118,13 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         defaultValue.let { originalDefault ->
             declaration.defaultValue = declaration.factory.createExpressionBody(originalDefault.startOffset, originalDefault.endOffset) {
                 expression = originalDefault.expression
-                    .deepCopyWithSymbols(function)
-                    .remapExpectValueSymbols()
-                    .apply {
-                        remapTypes(IrTypeParameterRemapper(typeParameterSubstitutionMap.getValue(expectToActual)))
+                    .deepCopyWithSymbols(function) { symbolRemapper, _ ->
+                        DeepCopyIrTreeWithSymbols(
+                            symbolRemapper,
+                            IrTypeParameterRemapper(typeParameterSubstitutionMap.getValue(expectToActual))
+                        )
                     }
+                    .remapExpectValueSymbols()
             }
         }
     }

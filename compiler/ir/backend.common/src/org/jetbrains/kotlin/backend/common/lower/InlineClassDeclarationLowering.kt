@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -350,6 +351,6 @@ class InlineClassLowering(val context: CommonBackendContext) {
             function.parent,
             function.toInlineClassImplementationName(),
             function,
-            typeParametersFromContext = collectTypeParameters(function.parentAsClass)
+            typeParametersFromContext = extractTypeParameters(function.parentAsClass)
         )
 }
