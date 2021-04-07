@@ -30,7 +30,7 @@ fun KGPBaseTest.project(
     val projectPath = setupProjectFromTestResources(
         projectName,
         gradleVersion,
-        KGPBaseTest.workingDir
+        workingDir
     )
     projectPath.addDefaultBuildFiles()
 
@@ -96,6 +96,7 @@ private fun TestProject.commonBuildSetup(
     println("<=== Test build: ${this.projectName} ===>")
     println("<=== Using Gradle version: ${gradleVersion.version} ===>")
     println("<=== Run arguments: ${allBuildArguments.joinToString()} ===>")
+    println("<=== Project path:  ${projectPath.toAbsolutePath()} ===>")
 
     return allBuildArguments
 }

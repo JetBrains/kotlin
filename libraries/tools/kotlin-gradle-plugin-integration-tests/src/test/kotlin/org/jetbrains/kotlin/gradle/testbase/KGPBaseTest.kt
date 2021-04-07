@@ -29,11 +29,8 @@ import kotlin.streams.asStream
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()
 
-    companion object {
-        @TempDir
-        @JvmStatic
-        lateinit var workingDir: Path
-    }
+    @TempDir
+    lateinit var workingDir: Path
 
     data class BuildOptions(
         val logLevel: LogLevel = LogLevel.INFO,
