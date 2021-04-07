@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.canHaveSubtypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -20,6 +22,12 @@ import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
+
+    private val classKinds = setOf(
+        ClassKind.CLASS,
+        ClassKind.ENUM_CLASS,
+        ClassKind.OBJECT
+    )
 
     override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         val containingDeclaration = context.containingDeclarations.lastOrNull()
@@ -39,6 +47,8 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         if (containingDeclaration.safeAs<FirMemberDeclaration>()?.isInlineOnly() != true) {
             checkOnlyOneTypeParameterBound(declaration, context, reporter)
         }
+
+        checkOnlyOneClassBound(declaration, context, reporter)
     }
 
     private fun checkOnlyOneTypeParameterBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -67,4 +77,16 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         return source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.TYPE_CONSTRAINT
     }
 
+
+    private fun checkOnlyOneClassBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+        val seenClasses = mutableSetOf<FirRegularClass>()
+        val bounds = declaration.bounds.distinctBy { it.coneType }
+        bounds.forEach { bound ->
+            bound.coneType.toRegularClass(context.session)?.let { clazz ->
+                if (classKinds.contains(clazz.classKind) && seenClasses.add(clazz) && seenClasses.size > 1) {
+                    reporter.reportOn(bound.source, FirErrors.ONLY_ONE_CLASS_BOUND_ALLOWED, context)
+                }
+            }
+        }
+    }
 }

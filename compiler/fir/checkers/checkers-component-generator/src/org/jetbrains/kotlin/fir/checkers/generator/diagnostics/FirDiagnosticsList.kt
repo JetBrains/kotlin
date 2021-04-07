@@ -301,6 +301,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE by error<FirSourceElement, PsiElement>()
         
         val BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER by error<FirSourceElement, PsiElement>()
+        
+        val ONLY_ONE_CLASS_BOUND_ALLOWED by error<FirSourceElement, PsiElement>()
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {
