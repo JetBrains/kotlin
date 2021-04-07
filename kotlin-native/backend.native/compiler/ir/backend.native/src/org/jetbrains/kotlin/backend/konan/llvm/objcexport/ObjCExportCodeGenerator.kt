@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
@@ -1669,56 +1669,10 @@ private val TypeBridge.objCEncoding: String get() = when (this) {
     is ValueTypeBridge -> this.objCValueType.encoding
 }
 
-private fun Context.is64BitNSInteger(): Boolean = when (val target = this.config.target) {
-    KonanTarget.IOS_X64,
-    KonanTarget.IOS_ARM64,
-    KonanTarget.TVOS_ARM64,
-    KonanTarget.TVOS_X64,
-    KonanTarget.MACOS_X64,
-    KonanTarget.MACOS_ARM64,
-    KonanTarget.WATCHOS_X64 -> true
-    KonanTarget.WATCHOS_ARM64,
-    KonanTarget.WATCHOS_ARM32,
-    KonanTarget.WATCHOS_X86,
-    KonanTarget.IOS_ARM32 -> false
-    KonanTarget.ANDROID_X64,
-    KonanTarget.ANDROID_X86,
-    KonanTarget.ANDROID_ARM32,
-    KonanTarget.ANDROID_ARM64,
-    KonanTarget.LINUX_X64,
-    KonanTarget.MINGW_X86,
-    KonanTarget.MINGW_X64,
-    KonanTarget.LINUX_ARM64,
-    KonanTarget.LINUX_ARM32_HFP,
-    KonanTarget.LINUX_MIPS32,
-    KonanTarget.LINUX_MIPSEL32,
-    KonanTarget.WASM32,
-    is KonanTarget.ZEPHYR -> error("Target $target has no support for NSInteger type.")
-}
-
-internal fun Context.is64BitLong(): Boolean = when (this.config.target) {
-    KonanTarget.IOS_X64,
-    KonanTarget.IOS_ARM64,
-    KonanTarget.TVOS_ARM64,
-    KonanTarget.TVOS_X64,
-    KonanTarget.ANDROID_X64,
-    KonanTarget.ANDROID_ARM64,
-    KonanTarget.LINUX_ARM64,
-    KonanTarget.MINGW_X64,
-    KonanTarget.LINUX_X64,
-    KonanTarget.MACOS_X64,
-    KonanTarget.MACOS_ARM64,
-    KonanTarget.WATCHOS_X64 -> true
-    KonanTarget.WATCHOS_ARM64,
-    KonanTarget.WATCHOS_ARM32,
-    KonanTarget.ANDROID_X86,
-    KonanTarget.ANDROID_ARM32,
-    KonanTarget.WATCHOS_X86,
-    KonanTarget.MINGW_X86,
-    KonanTarget.LINUX_ARM32_HFP,
-    KonanTarget.LINUX_MIPS32,
-    KonanTarget.LINUX_MIPSEL32,
-    KonanTarget.WASM32,
-    is KonanTarget.ZEPHYR,
-    KonanTarget.IOS_ARM32 -> false
+private fun Context.is64BitNSInteger(): Boolean {
+    val configurables = this.config.platform.configurables
+    require(configurables is AppleConfigurables) {
+        "Target ${configurables.target} has no support for NSInteger type."
+    }
+    return llvm.nsIntegerTypeWidth == 64L
 }

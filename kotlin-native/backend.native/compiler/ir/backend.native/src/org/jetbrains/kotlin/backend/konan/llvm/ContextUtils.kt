@@ -502,6 +502,9 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_ObjCExport_createContinuationArgument by lazyRtFunction
     val Kotlin_ObjCExport_resumeContinuation by lazyRtFunction
 
+    private val Kotlin_ObjCExport_NSIntegerTypeProvider by lazyRtFunction
+    private val Kotlin_longTypeProvider by lazyRtFunction
+
     val Kotlin_mm_safePointFunctionEpilogue by lazyRtFunction
     val Kotlin_mm_safePointWhileLoopBody by lazyRtFunction
     val Kotlin_mm_safePointExceptionUnwind by lazyRtFunction
@@ -593,6 +596,26 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val llvmFloat = floatType
     val llvmDouble = doubleType
     val llvmVector128 = vector128Type
+
+    private fun getSizeOfReturnTypeInBits(functionPointer: LLVMValueRef): Long {
+        // LLVMGetElementType is called because we need to dereference a pointer to function.
+        val nsIntegerType = LLVMGetReturnType(LLVMGetElementType(functionPointer.type))
+        return LLVMSizeOfTypeInBits(runtime.targetData, nsIntegerType)
+    }
+
+    /**
+     * Width of NSInteger in bits.
+     */
+    val nsIntegerTypeWidth: Long by lazy {
+        getSizeOfReturnTypeInBits(Kotlin_ObjCExport_NSIntegerTypeProvider)
+    }
+
+    /**
+     * Width of C long type in bits.
+     */
+    val longTypeWidth: Long by lazy {
+        getSizeOfReturnTypeInBits(Kotlin_longTypeProvider)
+    }
 }
 
 class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LLVMValueRef)

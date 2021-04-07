@@ -39,6 +39,9 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj);
 extern "C" id Kotlin_Interop_CreateNSStringFromKString(KRef str);
 extern "C" OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str);
 
+/// Utility function that is used to determine NSInteger size in compile time.
+extern "C" NSInteger Kotlin_ObjCExport_NSIntegerTypeProvider();
+
 #endif // KONAN_OBJC_INTEROP
 
 #endif // RUNTIME_OBJCEXPORT_H

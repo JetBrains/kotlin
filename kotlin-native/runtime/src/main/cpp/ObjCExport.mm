@@ -1090,6 +1090,10 @@ extern "C" void Kotlin_ObjCExport_AbstractMethodCalled(id self, SEL selector) {
         class_getName(object_getClass(self)), sel_getName(selector)];
 }
 
+extern "C" NSInteger Kotlin_ObjCExport_NSIntegerTypeProvider() {
+    return 0;
+}
+
 #else
 
 extern "C" ALWAYS_INLINE void* Kotlin_Interop_refToObjC(ObjHeader* obj) {

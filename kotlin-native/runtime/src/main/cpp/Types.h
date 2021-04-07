@@ -124,6 +124,9 @@ void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
 KBoolean IsArray(KConstRef obj) RUNTIME_PURE;
 bool IsSubInterface(const TypeInfo* thiz, const TypeInfo* other) RUNTIME_PURE;
 
+/// Utility function that is used to determine long type size in compile time.
+long Kotlin_longTypeProvider();
+
 #ifdef __cplusplus
 }
 #endif
