@@ -1,6 +1,10 @@
 package test
 
 public fun test1(): suspend () -> kotlin.Unit
+public fun test1N(): (suspend () -> kotlin.Unit)?
 public fun test2(): suspend kotlin.Int.() -> kotlin.Int
+public fun test2N(): (suspend kotlin.Int.() -> kotlin.Int)?
 public fun test3(): kotlin.collections.List<suspend () -> kotlin.Unit>
+public fun test3N(): kotlin.collections.List<(suspend () -> kotlin.Unit)?>
 public fun test4(): suspend () -> suspend () -> kotlin.Unit
+public fun test4N(): (suspend () -> (suspend () -> kotlin.Unit)?)?
