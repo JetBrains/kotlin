@@ -16841,6 +16841,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("abstractBaseClassMemberNotImplemented_15.kt")
+            public void testAbstractBaseClassMemberNotImplemented_15() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractBaseClassMemberNotImplemented_15.kt");
+            }
+
+            @Test
             @TestMetadata("abstractVsAbstract.kt")
             public void testAbstractVsAbstract() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractVsAbstract.kt");
@@ -16867,6 +16873,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             @TestMetadata("implementingMethodOfAny.kt")
             public void testImplementingMethodOfAny() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/java8Overrides/implementingMethodOfAny.kt");
+            }
+
+            @Test
+            @TestMetadata("kt45508.kt")
+            public void testKt45508() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/java8Overrides/kt45508.kt");
             }
 
             @Test

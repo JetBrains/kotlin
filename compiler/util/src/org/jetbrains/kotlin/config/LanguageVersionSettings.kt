@@ -204,6 +204,7 @@ enum class LanguageFeature(
 
     DefinitelyNotNullTypeParameters(KOTLIN_1_6),
     ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_6, kind = BUG_FIX),
+    AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_6, kind = BUG_FIX),
 
     SuspendFunctionAsSupertype(KOTLIN_1_6),
 
