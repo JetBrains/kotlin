@@ -1,0 +1,25 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test: Commonizer" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tests">
+    <ExternalSystemSettings>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="--tests &quot;org.jetbrains.kotlin.gradle.CommonizerHierarchicalIT&quot; --tests &quot;org.jetbrains.kotlin.gradle.CommonizerIT&quot; --tests &quot;org.jetbrains.kotlin.commonizer.**&quot;" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value=":native:kotlin-klib-commonizer-api:test" />
+          <option value=":native:kotlin-klib-commonizer:test" />
+          <option value=":kotlin-gradle-plugin-integration-tests:test" />
+        </list>
+      </option>
+      <option name="vmOptions" value="" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+</component>
