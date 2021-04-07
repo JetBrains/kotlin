@@ -2230,10 +2230,9 @@ task hash0(type: KonanLocalTest) {
 }
 
 task ieee754(type: KonanLocalTest) {
-    goldValue = "Infinity 2147483647 -1 -1\n" +
+    goldValue = "Infinity 2147483647 -1\n" +
             "3.4028235E38\n" +
             "NAN2SHORT:: 0\n" +
-            "MAX2SHORT:: -1\n" +
             "2147483647 -1\n" +
             "FLOAT:: Infinity   INT:: 2147483647\n" +
             "FLOAT:: 1.7014117E38   INT:: 2147483647\n" +
