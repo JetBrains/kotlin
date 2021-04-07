@@ -43,7 +43,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Private,
                 Modality.FINAL,
-                EffectiveVisibility.Private
+                EffectiveVisibility.PrivateInClass
             ).apply {
                 isInner = true
             }

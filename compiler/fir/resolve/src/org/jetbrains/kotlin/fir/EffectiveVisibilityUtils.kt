@@ -24,7 +24,7 @@ fun Visibility.toEffectiveVisibility(
 ): EffectiveVisibility {
     customEffectiveVisibility()?.let { return it }
     return when (this.normalize()) {
-        Visibilities.Private, Visibilities.PrivateToThis, Visibilities.InvisibleFake -> EffectiveVisibility.Private
+        Visibilities.Private, Visibilities.PrivateToThis, Visibilities.InvisibleFake -> EffectiveVisibility.PrivateInClass
         Visibilities.Protected -> EffectiveVisibility.Protected(owner)
         Visibilities.Internal -> when (!checkPublishedApi /*|| !owner.isPublishedApi()*/) { // TODO
             true -> EffectiveVisibility.Internal

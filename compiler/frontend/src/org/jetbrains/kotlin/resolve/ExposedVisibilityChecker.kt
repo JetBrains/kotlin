@@ -97,7 +97,7 @@ class ExposedVisibilityChecker(
     ): Boolean {
         var functionVisibility = functionDescriptor.effectiveVisibility(visibility)
         if (functionDescriptor is ConstructorDescriptor && functionDescriptor.constructedClass.isSealed() && function.visibilityModifier() == null) {
-            functionVisibility = EffectiveVisibility.Private
+            functionVisibility = EffectiveVisibility.PrivateInClass
         }
         var result = true
         if (function !is KtConstructor<*>) {
