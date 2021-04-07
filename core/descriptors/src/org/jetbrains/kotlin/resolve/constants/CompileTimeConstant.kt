@@ -46,6 +46,8 @@ interface CompileTimeConstant<out T> {
 
     val isUnsignedNumberLiteral: Boolean get() = parameters.isUnsignedNumberLiteral
 
+    val hasIntegerLiteralType: Boolean
+
     data class Parameters(
         val canBeUsedInAnnotation: Boolean,
         val isPure: Boolean,
@@ -56,7 +58,8 @@ interface CompileTimeConstant<out T> {
         val usesVariableAsConstant: Boolean,
         val usesNonConstValAsConstant: Boolean,
         // `isConvertableConstVal` means that this is `const val` that has `ImplicitIntegerCoercion` annotation
-        val isConvertableConstVal: Boolean
+        val isConvertableConstVal: Boolean,
+        val dontCreateILT: Boolean
     )
 
     override fun equals(other: Any?): Boolean
@@ -90,6 +93,9 @@ class TypedCompileTimeConstant<out T>(
         result = 31 * result + type.hashCode()
         return result
     }
+
+    override val hasIntegerLiteralType: Boolean
+        get() = false
 }
 
 fun createIntegerValueTypeConstant(
@@ -120,6 +126,9 @@ class UnsignedErrorValueTypeConstant(
     override fun equals(other: Any?) = other is UnsignedErrorValueTypeConstant && value == other.value
 
     override fun hashCode() = value.hashCode()
+
+    override val hasIntegerLiteralType: Boolean
+        get() = false
 }
 
 class IntegerValueTypeConstant(
@@ -139,7 +148,8 @@ class IntegerValueTypeConstant(
                 isUnsignedLongNumberLiteral = parameters.isUnsignedLongNumberLiteral,
                 usesVariableAsConstant = parameters.usesVariableAsConstant,
                 usesNonConstValAsConstant = parameters.usesNonConstValAsConstant,
-                isConvertableConstVal = parameters.isConvertableConstVal
+                isConvertableConstVal = parameters.isConvertableConstVal,
+                dontCreateILT = false
             )
 
             return IntegerValueTypeConstant(value, module, newParameters, newInferenceEnabled, convertedFromSigned = true)
@@ -153,7 +163,8 @@ class IntegerValueTypeConstant(
                 isUnsignedLongNumberLiteral = parameters.isUnsignedLongNumberLiteral,
                 usesVariableAsConstant = parameters.usesVariableAsConstant,
                 usesNonConstValAsConstant = parameters.usesNonConstValAsConstant,
-                isConvertableConstVal = parameters.isConvertableConstVal
+                isConvertableConstVal = parameters.isConvertableConstVal,
+                dontCreateILT = false
             )
 
             return IntegerValueTypeConstant(value, module, newParameters, newInferenceEnabled, convertedFromSigned = true)
@@ -202,4 +213,6 @@ class IntegerValueTypeConstant(
 
     override fun hashCode() = 31 * value.hashCode() + parameters.hashCode()
 
+    override val hasIntegerLiteralType: Boolean
+        get() = true
 }
