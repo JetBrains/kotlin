@@ -77,6 +77,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_WITHOUT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_IN_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_PAIR
@@ -846,13 +849,35 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             // Conventions
             map.put(NO_GET_METHOD, "No get method providing array access")
             map.put(NO_SET_METHOD, "No set method providing array access")
+            map.put(
+                DELEGATE_SPECIAL_FUNCTION_MISSING,
+                "Type ''{1}'' has no method ''{0}'' and thus it cannot serve as a {2}",
+                TO_STRING,
+                RENDER_TYPE,
+                TO_STRING
+            )
+            map.put(
+                DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
+                "Overload resolution ambiguity on method ''{0}'': {1}",
+                TO_STRING,
+                SYMBOLS
+            )
+            map.put(
+                DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
+                "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
+                TO_STRING,
+                SYMBOLS
+            )
 
             // Type alias
             map.put(TOPLEVEL_TYPEALIASES_ONLY, "Nested and local type aliases are not supported")
 
             // Returns
             map.put(RETURN_NOT_ALLOWED, "'return' is not allowed here")
-            map.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY, "Returns are not allowed for functions with expression body. Use block body in '{...}'")
+            map.put(
+                RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
+                "Returns are not allowed for functions with expression body. Use block body in '{...}'"
+            )
 
             // Extended checkers group
             map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")

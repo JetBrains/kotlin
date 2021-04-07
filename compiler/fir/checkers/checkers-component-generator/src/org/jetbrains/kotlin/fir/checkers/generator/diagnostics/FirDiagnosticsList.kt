@@ -671,6 +671,19 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val NEXT_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
+        val DELEGATE_SPECIAL_FUNCTION_MISSING by error<FirSourceElement, KtExpression> {
+            parameter<String>("expectedFunctionSignature")
+            parameter<ConeKotlinType>("delegateType")
+            parameter<String>("description")
+        }
+        val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error<FirSourceElement, KtExpression> {
+            parameter<String>("expectedFunctionSignature")
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
+        val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
+            parameter<String>("expectedFunctionSignature")
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {

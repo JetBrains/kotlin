@@ -393,6 +393,9 @@ object FirErrors {
     val NEXT_MISSING by error0<FirSourceElement, KtExpression>()
     val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error1<FirSourceElement, KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
     val NEXT_NONE_APPLICABLE by error1<FirSourceElement, KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
+    val DELEGATE_SPECIAL_FUNCTION_MISSING by error3<FirSourceElement, KtExpression, String, ConeKotlinType, String>()
+    val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error2<FirSourceElement, KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
+    val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error2<FirSourceElement, KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
 
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY by error0<KtTypeAlias>()

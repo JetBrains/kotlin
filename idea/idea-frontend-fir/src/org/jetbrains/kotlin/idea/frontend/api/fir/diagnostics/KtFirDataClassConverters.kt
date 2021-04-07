@@ -1862,6 +1862,35 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING) { firDiagnostic ->
+        DelegateSpecialFunctionMissingImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY) { firDiagnostic ->
+        DelegateSpecialFunctionAmbiguityImpl(
+            firDiagnostic.a,
+            firDiagnostic.b.map { abstractFirBasedSymbol ->
+                firSymbolBuilder.buildSymbol(abstractFirBasedSymbol.fir as FirDeclaration)
+            },
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE) { firDiagnostic ->
+        DelegateSpecialFunctionNoneApplicableImpl(
+            firDiagnostic.a,
+            firDiagnostic.b.map { abstractFirBasedSymbol ->
+                firSymbolBuilder.buildSymbol(abstractFirBasedSymbol.fir as FirDeclaration)
+            },
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.TOPLEVEL_TYPEALIASES_ONLY) { firDiagnostic ->
         ToplevelTypealiasesOnlyImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

@@ -4,12 +4,12 @@
 
 import kotlin.reflect.KProperty
 
-val a by <!UNRESOLVED_REFERENCE!>a<!>
+val a by <!RECURSION_IN_IMPLICIT_TYPES!>a<!>
 
 val b by Delegate(b)
 
-val c by <!UNRESOLVED_REFERENCE!>d<!>
-val d by <!UNRESOLVED_REFERENCE!>c<!>
+val c by d
+val d by <!RECURSION_IN_IMPLICIT_TYPES!>c<!>
 
 class Delegate(i: Int) {
   operator fun getValue(t: Any?, p: KProperty<*>): Int {

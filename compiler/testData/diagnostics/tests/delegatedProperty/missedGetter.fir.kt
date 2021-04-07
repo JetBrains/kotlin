@@ -1,3 +1,3 @@
-val a: Int by <!UNRESOLVED_REFERENCE!>A<!>()
+val a: Int by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>A()<!>
 
 class A

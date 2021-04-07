@@ -1305,6 +1305,25 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtSymbol>
     }
 
+    abstract class DelegateSpecialFunctionMissing : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = DelegateSpecialFunctionMissing::class
+        abstract val expectedFunctionSignature: String
+        abstract val delegateType: KtType
+        abstract val description: String
+    }
+
+    abstract class DelegateSpecialFunctionAmbiguity : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = DelegateSpecialFunctionAmbiguity::class
+        abstract val expectedFunctionSignature: String
+        abstract val candidates: List<KtSymbol>
+    }
+
+    abstract class DelegateSpecialFunctionNoneApplicable : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = DelegateSpecialFunctionNoneApplicable::class
+        abstract val expectedFunctionSignature: String
+        abstract val candidates: List<KtSymbol>
+    }
+
     abstract class ToplevelTypealiasesOnly : KtFirDiagnostic<KtTypeAlias>() {
         override val diagnosticClass get() = ToplevelTypealiasesOnly::class
     }

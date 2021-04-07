@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -314,7 +313,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         else -> null
     }
     val isMember = ownerSymbol != null
-    val fakeSource = delegateBuilder.source?.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
+    val fakeSource = delegateBuilder.source?.fakeElement(FirFakeSourceElementKind.DelegatedPropertyAccessor)
 
     /*
      * If we have delegation with provide delegate then we generate call like
@@ -458,6 +457,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     source = fakeSource
                     explicitReceiver = delegateAccess()
                     calleeReference = buildSimpleNamedReference {
+                        source = fakeSource
                         name = SET_VALUE
                     }
                     argumentList = buildArgumentList {

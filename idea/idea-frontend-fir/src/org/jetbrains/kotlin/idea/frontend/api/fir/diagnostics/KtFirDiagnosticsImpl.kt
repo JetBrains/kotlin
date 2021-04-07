@@ -2116,6 +2116,34 @@ internal class NextNoneApplicableImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class DelegateSpecialFunctionMissingImpl(
+    override val expectedFunctionSignature: String,
+    override val delegateType: KtType,
+    override val description: String,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DelegateSpecialFunctionMissing(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class DelegateSpecialFunctionAmbiguityImpl(
+    override val expectedFunctionSignature: String,
+    override val candidates: List<KtSymbol>,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DelegateSpecialFunctionAmbiguity(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class DelegateSpecialFunctionNoneApplicableImpl(
+    override val expectedFunctionSignature: String,
+    override val candidates: List<KtSymbol>,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DelegateSpecialFunctionNoneApplicable(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ToplevelTypealiasesOnlyImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
