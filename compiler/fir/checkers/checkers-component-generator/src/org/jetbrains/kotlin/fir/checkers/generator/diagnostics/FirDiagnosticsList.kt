@@ -644,6 +644,19 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val CONVENTIONS by object : DiagnosticGroup("Conventions") {
         val NO_GET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
         val NO_SET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
+        val DELEGATE_SPECIAL_FUNCTION_MISSING by error<KtExpression> {
+            parameter<String>("expectedFunctionSignature")
+            parameter<ConeKotlinType>("delegateType")
+            parameter<String>("description")
+        }
+        val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error<KtExpression> {
+            parameter<String>("expectedFunctionSignature")
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
+        val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error<KtExpression> {
+            parameter<String>("expectedFunctionSignature")
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {

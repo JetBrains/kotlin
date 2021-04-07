@@ -37,6 +37,10 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // they have a fake source which refers to property
     object DefaultAccessor : FirFakeSourceElementKind()
 
+    // for delegated properties, getter & setter calls to the delegate
+    // they have a fake source which refers to the call that creates the delegate
+    object DelegatedPropertyAccessor : FirFakeSourceElementKind()
+
     // for kt classes without implicit primary constructor one is generated
     // with a fake source which refers to containing class
     object ImplicitConstructor : FirFakeSourceElementKind()

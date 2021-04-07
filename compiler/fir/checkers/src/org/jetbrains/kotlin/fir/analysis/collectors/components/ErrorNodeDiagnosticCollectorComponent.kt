@@ -92,6 +92,14 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
             return
         }
+
+        // Will be handled by [FirDelegatedPropertyChecker]
+        if (source.kind == FirFakeSourceElementKind.DelegatedPropertyAccessor &&
+            (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableCandidateError)
+        ) {
+            return
+        }
+
         if (source.kind == FirFakeSourceElementKind.ImplicitConstructor) {
             return
         }

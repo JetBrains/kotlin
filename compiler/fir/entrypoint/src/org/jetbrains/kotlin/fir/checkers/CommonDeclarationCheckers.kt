@@ -50,7 +50,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirConstPropertyChecker,
             FirPropertyAccessorChecker,
             FirPropertyTypeParametersChecker,
-        FirPropertyAccessorChecker,FirInitializerTypeMismatchChecker
+            FirPropertyAccessorChecker,
+            FirInitializerTypeMismatchChecker,
+            FirDelegatedPropertyChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>
