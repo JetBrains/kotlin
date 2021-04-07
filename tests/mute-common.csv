@@ -107,3 +107,4 @@ org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedI
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAddedSamAdapter, KT-44844 fixed in IDEA 212,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodSignatureChanged, KT-44844 fixed in IDEA 212,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodSignatureChangedSamAdapter, KT-44844 fixed in IDEA 212,,
+org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.MethodCallExpression.testSpecialBuiltinMembers, Mute old J2K failing test that is removed in master,,
