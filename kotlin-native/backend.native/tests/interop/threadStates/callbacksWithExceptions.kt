@@ -11,6 +11,7 @@ import threadStates.*
 fun main() {
     callbackWithException()
     callbackWithFinally()
+    callbackWithFinallyNoCatch()
     nestedCallbackWithException()
     nestedCallbackWithFinally()
 }
@@ -21,14 +22,14 @@ fun assertRunnableThreadState() {
 
 class CustomException() : Exception()
 
-fun throwExcetion() {
+fun throwException() {
     assertRunnableThreadState()
     throw CustomException()
 }
 
 fun callbackWithException() {
     try {
-        runCallback(staticCFunction(::throwExcetion))
+        runCallback(staticCFunction(::throwException))
     } catch (e: CustomException) {
         assertRunnableThreadState()
         return
@@ -41,7 +42,7 @@ fun callbackWithException() {
 
 fun callbackWithFinally() {
     try {
-        runCallback(staticCFunction(::throwExcetion))
+        runCallback(staticCFunction(::throwException))
     } catch (e: CustomException) {
         assertRunnableThreadState()
         return
@@ -51,11 +52,22 @@ fun callbackWithFinally() {
     assertRunnableThreadState()
 }
 
+fun callbackWithFinallyNoCatch() {
+    try {
+        try {
+            runCallback(staticCFunction(::throwException))
+        } finally {
+            assertRunnableThreadState()
+        }
+        assertRunnableThreadState()
+    } catch (_: CustomException) {}
+}
+
 fun nestedCallbackWithException() {
     try {
         runCallback(staticCFunction { ->
             assertRunnableThreadState()
-            runCallback(staticCFunction(::throwExcetion))
+            runCallback(staticCFunction(::throwException))
         })
     } catch (e: CustomException) {
         assertRunnableThreadState()
@@ -71,7 +83,7 @@ fun nestedCallbackWithFinally() {
     try {
         runCallback(staticCFunction { ->
             assertRunnableThreadState()
-            runCallback(staticCFunction(::throwExcetion))
+            runCallback(staticCFunction(::throwException))
         })
     } catch (e: CustomException) {
         assertRunnableThreadState()
