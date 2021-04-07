@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -27,7 +29,10 @@ import org.jetbrains.kotlin.types.isError
 
 // Checker for all seven EXPOSED_* errors
 // All functions return true if everything is OK, or false in case of any errors
-class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
+class ExposedVisibilityChecker(
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val trace: BindingTrace? = null
+) {
 
     private fun <E : PsiElement> reportExposure(
         diagnostic: DiagnosticFactory3<E, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>,
@@ -37,8 +42,10 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
     ) {
         val trace = trace ?: return
         val restrictingVisibility = restrictingDescriptor.effectiveVisibility()
-        if (elementVisibility == EffectiveVisibility.PrivateInFile) {
-            // Deprecation: condition ^ should be changed to false after 1.6
+
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.PrivateInFileEffectiveVisibility) &&
+            elementVisibility == EffectiveVisibility.PrivateInFile
+        ) {
             trace.report(EXPOSED_FROM_PRIVATE_IN_FILE.on(element, restrictingDescriptor, restrictingVisibility))
         } else {
             trace.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingVisibility))

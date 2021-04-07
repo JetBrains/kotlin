@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.RemoveRedundantSetterFix
 import org.jetbrains.kotlin.idea.inspections.isRedundantSetter
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -106,7 +107,10 @@ open class ChangeVisibilityFix(
             descriptor: DeclarationDescriptorWithVisibility,
             targetVisibility: DescriptorVisibility
         ): IntentionAction? {
-            if (!ExposedVisibilityChecker().checkDeclarationWithVisibility(declaration, descriptor, targetVisibility)) return null
+            if (!ExposedVisibilityChecker(declaration.languageVersionSettings).checkDeclarationWithVisibility(
+                    declaration, descriptor, targetVisibility
+                )
+            ) return null
 
             val name = descriptor.name.asString()
 
