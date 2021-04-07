@@ -45,6 +45,7 @@ abstract class KGPBaseTest {
         val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
         val parallel: Boolean = true,
         val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
+        val fileSystemWatchEnabled: Boolean = false,
     ) {
         fun toArguments(
             gradleVersion: GradleVersion
@@ -74,6 +75,14 @@ abstract class KGPBaseTest {
                 arguments.add("--max-workers=$maxWorkers")
             } else {
                 arguments.add("--no-parallel")
+            }
+
+            if (gradleVersion >= GradleVersion.version("6.5")) {
+                if (fileSystemWatchEnabled) {
+                    arguments.add("--watch-fs")
+                } else {
+                    arguments.add("--no-watch-fs")
+                }
             }
 
             return arguments.toList()
