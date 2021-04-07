@@ -218,7 +218,7 @@ class ResolvedAtomCompleter(
         return FunctionLiteralTypes.ProcessedType(
             substitutedType,
             approximatedType = typeApproximator.approximateDeclarationType(
-                substitutedType, local = true, languageVersionSettings = topLevelCallContext.languageVersionSettings
+                substitutedType, local = true
             )
         )
     }

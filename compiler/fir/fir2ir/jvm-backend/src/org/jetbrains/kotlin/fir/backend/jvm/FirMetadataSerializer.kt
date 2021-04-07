@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
@@ -43,7 +44,7 @@ class FirMetadataSerializer(
     components: Fir2IrComponents,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
-    private val approximator = object : AbstractTypeApproximator(session.typeContext) {
+    private val approximator = object : AbstractTypeApproximator(session.typeContext, session.languageVersionSettings) {
         override fun createErrorType(debugName: String): SimpleTypeMarker {
             return ConeKotlinErrorType(ConeIntermediateDiagnostic(debugName))
         }

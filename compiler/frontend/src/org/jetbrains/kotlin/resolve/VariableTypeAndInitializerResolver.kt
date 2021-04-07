@@ -180,5 +180,5 @@ class VariableTypeAndInitializerResolver(
     }
 
     private fun approximateType(type: KotlinType, local: Boolean): UnwrappedType =
-        typeApproximator.approximateDeclarationType(type, local, expressionTypingServices.languageVersionSettings)
+        typeApproximator.approximateDeclarationType(type, local)
 }

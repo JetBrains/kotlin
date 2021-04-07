@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.classId
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -63,7 +64,7 @@ class Fir2IrTypeConverter(
     private val capturedTypeCache = mutableMapOf<ConeCapturedType, IrType>()
     private val errorTypeForCapturedTypeStub by lazy { createErrorType() }
 
-    private val typeApproximator = ConeTypeApproximator(session.typeContext)
+    private val typeApproximator = ConeTypeApproximator(session.typeContext, session.languageVersionSettings)
 
     fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
         capturedTypeCache.clear()

@@ -23,10 +23,10 @@ class TypeTranslatorImpl(
     override val constantValueGenerator: ConstantValueGenerator =
         ConstantValueGeneratorImpl(moduleDescriptor, symbolTable, this)
 
-    private val typeApproximatorForNI = TypeApproximator(moduleDescriptor.builtIns)
+    private val typeApproximatorForNI = TypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 
     override fun approximateType(type: KotlinType): KotlinType =
-        typeApproximatorForNI.approximateDeclarationType(type, local = false, languageVersionSettings)
+        typeApproximatorForNI.approximateDeclarationType(type, local = false)
 
     override fun commonSupertype(types: Collection<KotlinType>): KotlinType =
         CommonSupertypes.commonSupertype(types)
