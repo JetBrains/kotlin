@@ -19,9 +19,24 @@ class CommonizerIT : BaseGradleIT() {
     @Test
     fun `test commonizeNativeDistributionWithIosLinuxWindows`() {
         with(Project("commonizeNativeDistributionWithIosLinuxWindows")) {
-            build(":p1:commonize") {
+            build(":p1:commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
                 assertTasksExecuted(":p1:commonizeNativeDistribution")
                 assertContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
+                assertContains("Kotlin KLIB commonizer:")
+                assertSuccessful()
+            }
+
+            build(":p1:commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
+                assertTasksExecuted(":p1:commonizeNativeDistribution")
+                assertContains("Native Distribution Commonization: Cache hit")
+                assertNotContains("Kotlin KLIB commonizer:")
+                assertSuccessful()
+            }
+
+            build(":p1:commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
+                assertTasksExecuted(":p1:commonizeNativeDistribution")
+                assertContains("Native Distribution Commonization: Cache disabled")
+                assertContains("Kotlin KLIB commonizer:")
                 assertSuccessful()
             }
         }

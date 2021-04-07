@@ -81,8 +81,8 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
     @TaskAction
     protected fun run() {
         for (target in rootCommonizerTargets) {
-            getRootOutputDirectory(target).deleteRecursively()
-            commonizerRunner.run(getCommandLineArguments(target))
+            NativeDistributionCommonizationCache(commonizerRunner, getRootOutputDirectory(target))
+                .runIfNecessary(getCommandLineArguments(target))
         }
     }
 
@@ -111,3 +111,4 @@ private val String.base64
     get() = base64Encoder.encodeToString(toByteArray(StandardCharsets.UTF_8))
 
 private val base64Encoder = Base64.getEncoder().withoutPadding()
+

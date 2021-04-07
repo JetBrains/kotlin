@@ -230,6 +230,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableHierarchicalCommonization: Boolean
         get() = booleanProperty("kotlin.mpp.enableHierarchicalCommonization") ?: true
 
+    val enableNativeDistributionCommonizationCache: Boolean
+        get() = booleanProperty("kotlin.mpp.enableNativeDistributionCommonizationCache") ?: true
+
     /**
      * Dependencies caching strategy for all targets that support caches.
      */
