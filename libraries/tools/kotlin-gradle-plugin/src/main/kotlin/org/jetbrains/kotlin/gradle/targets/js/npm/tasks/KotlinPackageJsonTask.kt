@@ -62,7 +62,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
         producer.internalDependencies.map { dependency ->
             npmResolutionManager.resolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
         } + producer.internalCompositeDependencies.map { dependency ->
-            dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME") ?: "includedBuild instance is not available"
+            dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME") ?: error("includedBuild instance is not available")
         }
 
     @get:Input
