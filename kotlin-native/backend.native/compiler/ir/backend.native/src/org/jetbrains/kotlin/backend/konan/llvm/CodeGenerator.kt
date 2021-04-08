@@ -775,7 +775,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBuildExtractElement(builder, vector, index, name)!!
     }
 
-    fun filteringExceptionHandler(codeContext: CodeContext, foreignExceptionMode: ForeignExceptionMode.Mode): ExceptionHandler {
+    fun filteringExceptionHandler(codeContext: CodeContext, foreignExceptionMode: ForeignExceptionMode.Mode, switchThreadState: Boolean): ExceptionHandler {
         val lpBlock = basicBlockInFunction("filteringExceptionHandler", position()?.start)
 
         val wrapExceptionMode = context.config.target.family.isAppleFamily &&
@@ -789,7 +789,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
             LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
 
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
+            if (switchThreadState) {
                 switchThreadState(Runnable)
             }
 
