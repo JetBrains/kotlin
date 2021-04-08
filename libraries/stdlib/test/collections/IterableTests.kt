@@ -417,6 +417,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
         expect(0) { empty.count { it.startsWith("x") } }
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun sumBy() {
         expect(6) { data.sumBy { it.length } }

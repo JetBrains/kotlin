@@ -2003,6 +2003,8 @@ public inline fun <R> CharSequence.scanIndexed(initial: R, operation: (index: In
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
@@ -2014,6 +2016,8 @@ public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
