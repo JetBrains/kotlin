@@ -50,6 +50,17 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
     val outputDirectories: Set<File>
         get() = rootCommonizerTargets.map(::getRootOutputDirectory).toSet()
 
+    /*
+    Ensures that only one CommonizerTask can run at a time.
+    This is necessary because of the success-marker mechanism of this task.
+    This is a phantom file: No one has the intention to actually create this output file.
+    However, telling Gradle that all those tasks rely on the same output file will enforce
+    non-parallel execution.
+    */
+    @get:OutputFile
+    @Suppress("unused")
+    val taskMutex: File = project.rootProject.file(".commonizer-phantom-output")
+
     @get:Internal
     internal val commonizerRunner = KotlinNativeCommonizerToolRunner(project)
 
