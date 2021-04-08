@@ -426,6 +426,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION by error<FirSourceElement, KtParameter>()
     }
 
+    val FUN_INTERFACES by object : DiagnosticGroup("Fun interfaces") {
+        val FUN_INTERFACE_CONSTRUCTOR_REFERENCE by error<FirSourceElement, KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
+    }
+
     val PROPERTIES_AND_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {
         val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER) {
             parameter<FirMemberDeclaration>("property")

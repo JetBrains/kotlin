@@ -25,6 +25,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirTypeArgumentsNotAllowedExpressionChecker,
         FirTypeParameterInQualifiedAccessChecker,
         FirSealedClassConstructorCallChecker,
+        FirFunInterfaceConstructorReferenceChecker,
     )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
