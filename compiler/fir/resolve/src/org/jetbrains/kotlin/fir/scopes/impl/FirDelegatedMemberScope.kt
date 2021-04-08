@@ -162,8 +162,6 @@ class DelegatedWrapperData<D : FirCallableDeclaration<*>>(
     val containingClass: ConeClassLikeLookupTag,
     val delegateField: FirField,
 )
-
-@Suppress("DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER")
 var <D : FirCallableDeclaration<*>>
         D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
 

@@ -63,6 +63,5 @@ class ImportedFromObjectData<D : FirCallableDeclaration<*>>(
     val original: D,
 )
 
-@Suppress("DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER")
 var <D : FirCallableDeclaration<*>>
         D.importedFromObjectData: ImportedFromObjectData<D>? by FirDeclarationDataRegistry.data(ImportedFromObjectClassIdKey)
