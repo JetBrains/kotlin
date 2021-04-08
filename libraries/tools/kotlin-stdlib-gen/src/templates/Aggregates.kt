@@ -221,6 +221,8 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
     } builder {
+        deprecate(Deprecation("Use sumOf instead.", "this.sumOf(selector)", DeprecationLevel.WARNING, warningSince = "1.5"))
+
         inline()
         doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
         returns("Int")
@@ -291,6 +293,8 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
     } builder {
+        deprecate(Deprecation("Use sumOf instead.", "this.sumOf(selector)", DeprecationLevel.WARNING, warningSince = "1.5"))
+
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 

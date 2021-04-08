@@ -8853,84 +8853,140 @@ public fun kotlin.collections.Iterable<kotlin.ULong>.sum(): kotlin.ULong
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.collections.Iterable<kotlin.UShort>.sum(): kotlin.UInt
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> kotlin.Array<out T>.sumBy(selector: (T) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.BooleanArray.sumBy(selector: (kotlin.Boolean) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.ByteArray.sumBy(selector: (kotlin.Byte) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.CharArray.sumBy(selector: (kotlin.Char) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.DoubleArray.sumBy(selector: (kotlin.Double) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.FloatArray.sumBy(selector: (kotlin.Float) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.IntArray.sumBy(selector: (kotlin.Int) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.LongArray.sumBy(selector: (kotlin.Long) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.ShortArray.sumBy(selector: (kotlin.Short) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.sumBy(selector: (kotlin.UByte) -> kotlin.UInt): kotlin.UInt
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.sumBy(selector: (kotlin.UInt) -> kotlin.UInt): kotlin.UInt
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.sumBy(selector: (kotlin.ULong) -> kotlin.UInt): kotlin.UInt
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.sumBy(selector: (kotlin.UShort) -> kotlin.UInt): kotlin.UInt
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> kotlin.collections.Iterable<T>.sumBy(selector: (T) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> kotlin.Array<out T>.sumByDouble(selector: (T) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.BooleanArray.sumByDouble(selector: (kotlin.Boolean) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.ByteArray.sumByDouble(selector: (kotlin.Byte) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.CharArray.sumByDouble(selector: (kotlin.Char) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.DoubleArray.sumByDouble(selector: (kotlin.Double) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.FloatArray.sumByDouble(selector: (kotlin.Float) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.IntArray.sumByDouble(selector: (kotlin.Int) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.LongArray.sumByDouble(selector: (kotlin.Long) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.ShortArray.sumByDouble(selector: (kotlin.Short) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.sumByDouble(selector: (kotlin.UByte) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.sumByDouble(selector: (kotlin.UInt) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.sumByDouble(selector: (kotlin.ULong) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.sumByDouble(selector: (kotlin.UShort) -> kotlin.Double): kotlin.Double
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> kotlin.collections.Iterable<T>.sumByDouble(selector: (T) -> kotlin.Double): kotlin.Double
 
 @kotlin.SinceKotlin(version = "1.4")

@@ -2814,6 +2814,8 @@ public inline fun <T, R> Iterable<T>.scanIndexed(initial: R, operation: (index: 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
@@ -2825,6 +2827,8 @@ public inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> Iterable<T>.sumByDouble(selector: (T) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {

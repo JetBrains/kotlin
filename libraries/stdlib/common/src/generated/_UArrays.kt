@@ -9549,6 +9549,8 @@ public inline fun <R> UShortArray.scanIndexed(initial: R, operation: (index: Int
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -9563,6 +9565,8 @@ public inline fun UIntArray.sumBy(selector: (UInt) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -9577,6 +9581,8 @@ public inline fun ULongArray.sumBy(selector: (ULong) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -9591,6 +9597,8 @@ public inline fun UByteArray.sumBy(selector: (UByte) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -9605,6 +9613,8 @@ public inline fun UShortArray.sumBy(selector: (UShort) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -9619,6 +9629,8 @@ public inline fun UIntArray.sumByDouble(selector: (UInt) -> Double): Double {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -9633,6 +9645,8 @@ public inline fun ULongArray.sumByDouble(selector: (ULong) -> Double): Double {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -9647,6 +9661,8 @@ public inline fun UByteArray.sumByDouble(selector: (UByte) -> Double): Double {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -10489,7 +10505,7 @@ public inline fun ULongArray.sum(): ULong {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.sum(): UInt {
-    return sumBy { it.toUInt() }
+    return sumOf { it.toUInt() }
 }
 
 /**
@@ -10499,6 +10515,6 @@ public inline fun UByteArray.sum(): UInt {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.sum(): UInt {
-    return sumBy { it.toUInt() }
+    return sumOf { it.toUInt() }
 }
 

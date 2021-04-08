@@ -875,8 +875,12 @@ public fun kotlin.String.substringBeforeLast(delimiter: kotlin.Char, missingDeli
 
 public fun kotlin.String.substringBeforeLast(delimiter: kotlin.String, missingDelimiterValue: kotlin.String = ...): kotlin.String
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.CharSequence.sumBy(selector: (kotlin.Char) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.CharSequence.sumByDouble(selector: (kotlin.Char) -> kotlin.Double): kotlin.Double
 
 @kotlin.SinceKotlin(version = "1.4")

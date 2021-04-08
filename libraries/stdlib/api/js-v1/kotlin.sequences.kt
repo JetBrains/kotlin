@@ -541,8 +541,12 @@ public fun kotlin.sequences.Sequence<kotlin.ULong>.sum(): kotlin.ULong
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.sequences.Sequence<kotlin.UShort>.sum(): kotlin.UInt
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> kotlin.sequences.Sequence<T>.sumBy(selector: (T) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> kotlin.sequences.Sequence<T>.sumByDouble(selector: (T) -> kotlin.Double): kotlin.Double
 
 @kotlin.SinceKotlin(version = "1.4")
