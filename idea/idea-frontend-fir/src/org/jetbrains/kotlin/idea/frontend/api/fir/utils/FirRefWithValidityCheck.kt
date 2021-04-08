@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclarationInWriteLock
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.tokens.assertIsValidAndAccessible
@@ -51,6 +52,19 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
         val fir = firWeakRef.get()
             ?: throw EntityWasGarbageCollectedException("FirElement")
         return action(fir)
+    }
+
+    /**
+     * Runs [action] with fir element with write action hold
+     * Consider using this then [action] may call some resolve
+     */
+    inline fun <R> withFirWithPossibleResolveInside(crossinline action: (fir: D) -> R): R {
+        token.assertIsValidAndAccessible()
+        val fir = firWeakRef.get()
+            ?: throw EntityWasGarbageCollectedException("FirElement")
+        val resolveState = resolveStateWeakRef.get()
+            ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
+        return fir.withFirDeclarationInWriteLock(resolveState) { action(it) }
     }
 
     val resolveState

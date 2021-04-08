@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import org.jetbrains.annotations.TestOnly
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -40,6 +40,22 @@ abstract class FirModuleResolveState {
     internal abstract fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>>
 
     internal abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>>
+
+    internal inline fun <D : FirDeclaration, R> withLock(declaration: D, declarationLockType: DeclarationLockType, action: (D) -> R): R {
+        val originalDeclaration = (declaration as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: declaration
+        val session = originalDeclaration.session
+        return when {
+            originalDeclaration.origin == FirDeclarationOrigin.Source
+                    && session is FirIdeSourcesSession
+            -> {
+                val cache = session.cache
+                val file = getFirFile(declaration, cache)
+                    ?: error("Fir file was not found for\n${declaration.render()}\n${(declaration.psi as? KtElement)?.getElementTextInContext()}")
+                cache.firFileLockProvider.withLock(file, declarationLockType) { action(declaration) }
+            }
+            else -> action(declaration)
+        }
+    }
 
     @TestOnly
     internal abstract fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile?

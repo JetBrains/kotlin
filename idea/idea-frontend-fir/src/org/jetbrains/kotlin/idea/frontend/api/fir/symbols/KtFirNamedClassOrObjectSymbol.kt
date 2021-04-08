@@ -65,7 +65,7 @@ internal class KtFirNamedClassOrObjectSymbol(
     }
 
     override val superTypes: List<KtTypeAndAnnotations> by cached {
-        firRef.superTypesAndAnnotationsList(builder)
+        firRef.superTypesAndAnnotationsListForRegularClass(builder)
     }
 
     override val typeParameters by firRef.withFirAndCache { fir ->
