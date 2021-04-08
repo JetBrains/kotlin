@@ -20,5 +20,5 @@ FILE: delayedAssignment.kt
             }
         }
 
-        R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()
+        R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
     }

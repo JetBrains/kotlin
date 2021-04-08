@@ -19,14 +19,14 @@ fun <F> main(x: F, y: F, z: F, w: F, m: F) {
     val w1 = if (z != null) z else return
     val w2: F!! = if (w != null) w else return
 
-    y1.<!INAPPLICABLE_CANDIDATE!>foo<!>()
-    y2.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    y1<!UNSAFE_CALL!>.<!>foo()
+    y2<!UNSAFE_CALL!>.<!>foo()
     x1.foo()
-    x2.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    x2<!UNSAFE_CALL!>.<!>foo()
     z1.foo()
-    z2.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    z2<!UNSAFE_CALL!>.<!>foo()
     w1.foo()
-    w2.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    w2<!UNSAFE_CALL!>.<!>foo()
 
     expectNN(m)
     expectNN(m!!)

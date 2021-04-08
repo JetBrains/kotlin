@@ -46,7 +46,7 @@ digraph equalsToBoolean_kt {
                     color=blue
                     17 [label="Enter block"];
                     18 [label="Access variable R|<local>/b|"];
-                    19 [label="Function call: R|<local>/b|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Boolean.not>#()"];
+                    19 [label="Function call: R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Boolean.not>#()"];
                     20 [label="Exit block"];
                 }
                 21 [label="Exit when branch result"];
@@ -130,7 +130,7 @@ digraph equalsToBoolean_kt {
                     color=blue
                     50 [label="Enter block"];
                     51 [label="Access variable R|<local>/b|"];
-                    52 [label="Function call: R|<local>/b|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Boolean.not>#()"];
+                    52 [label="Function call: R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Boolean.not>#()"];
                     53 [label="Exit block"];
                 }
                 54 [label="Exit when branch result"];
@@ -205,7 +205,7 @@ digraph equalsToBoolean_kt {
                     color=blue
                     77 [label="Enter block"];
                     78 [label="Access variable R|<local>/b|"];
-                    79 [label="Function call: R|<local>/b|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Boolean.not>#()"];
+                    79 [label="Function call: R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Boolean.not>#()"];
                     80 [label="Exit block"];
                 }
                 81 [label="Exit when branch result"];
@@ -271,7 +271,7 @@ digraph equalsToBoolean_kt {
                     color=blue
                     98 [label="Enter block"];
                     99 [label="Access variable R|<local>/b|"];
-                    100 [label="Function call: R|<local>/b|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Boolean.not>#()"];
+                    100 [label="Function call: R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Boolean.not>#()"];
                     101 [label="Exit block"];
                 }
                 102 [label="Exit when branch result"];
@@ -355,7 +355,7 @@ digraph equalsToBoolean_kt {
                     color=blue
                     131 [label="Enter block"];
                     132 [label="Access variable R|<local>/b|"];
-                    133 [label="Function call: R|<local>/b|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Boolean.not>#()"];
+                    133 [label="Function call: R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Boolean.not>#()"];
                     134 [label="Exit block"];
                 }
                 135 [label="Exit when branch result"];
@@ -421,7 +421,7 @@ digraph equalsToBoolean_kt {
                     color=blue
                     152 [label="Enter block"];
                     153 [label="Access variable R|<local>/b|"];
-                    154 [label="Function call: R|<local>/b|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Boolean.not>#()"];
+                    154 [label="Function call: R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Boolean.not>#()"];
                     155 [label="Exit block"];
                 }
                 156 [label="Exit when branch result"];
@@ -496,7 +496,7 @@ digraph equalsToBoolean_kt {
                     color=blue
                     179 [label="Enter block"];
                     180 [label="Access variable R|<local>/b|"];
-                    181 [label="Function call: R|<local>/b|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Boolean.not>#()"];
+                    181 [label="Function call: R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Boolean.not>#()"];
                     182 [label="Exit block"];
                 }
                 183 [label="Exit when branch result"];
@@ -580,7 +580,7 @@ digraph equalsToBoolean_kt {
                     color=blue
                     212 [label="Enter block"];
                     213 [label="Access variable R|<local>/b|"];
-                    214 [label="Function call: R|<local>/b|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Boolean.not>#()"];
+                    214 [label="Function call: R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Boolean.not>#()"];
                     215 [label="Exit block"];
                 }
                 216 [label="Exit when branch result"];
