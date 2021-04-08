@@ -70,6 +70,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
         nodeJs.taskRequirements
             .getCompilationNpmRequirements(compilationDisambiguatedName)
             .map { it.toString() }
+            .sorted()
     }
 
     @get:Nested
