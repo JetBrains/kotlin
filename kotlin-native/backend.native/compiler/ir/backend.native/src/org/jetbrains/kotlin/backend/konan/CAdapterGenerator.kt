@@ -763,7 +763,11 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         }
     }
 
+    private fun ExportedElementScope.hasNonEmptySubScopes(): Boolean = elements.isNotEmpty() || scopes.any { it.hasNonEmptySubScopes() }
+
     private fun makeScopeDefinitions(scope: ExportedElementScope, kind: DefinitionKind, indent: Int) {
+        if (!scope.hasNonEmptySubScopes())
+            return
         if (kind == DefinitionKind.C_HEADER_STRUCT) output("struct {", indent)
         if (kind == DefinitionKind.C_SOURCE_STRUCT) output(".${scope.name} = {", indent)
         scope.elements.forEach { makeElementDefinition(it, kind, indent + 1) }
