@@ -31,7 +31,7 @@ class YarnImportedPackagesVersionResolver(
     }
 
     fun resolveAndUpdatePackages(): MutableList<String> {
-        resolve(externalModules, false)
+        resolve(externalModules, true)
         resolve(internalCompositeModules, true)
 
         npmProjects.forEach {
