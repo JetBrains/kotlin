@@ -2351,12 +2351,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                      resultLifetime: Lifetime): LLVMValueRef {
         check(!function.isTypedIntrinsic)
 
+        val needsNativeThreadState = function.needsNativeThreadState
         val exceptionHandler = function.annotations.findAnnotation(RuntimeNames.filterExceptions)?.let {
             val foreignExceptionMode = ForeignExceptionMode.byValue(it.getAnnotationValueOrNull<String>("mode"))
-            functionGenerationContext.filteringExceptionHandler(currentCodeContext, foreignExceptionMode)
+            functionGenerationContext.filteringExceptionHandler(currentCodeContext, foreignExceptionMode, needsNativeThreadState)
         } ?: currentCodeContext.exceptionHandler
 
-        val needsNativeThreadState = function.needsNativeThreadState
         if (needsNativeThreadState) {
             functionGenerationContext.switchThreadState(ThreadState.Native)
         }
