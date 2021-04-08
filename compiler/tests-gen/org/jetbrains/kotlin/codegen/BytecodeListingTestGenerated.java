@@ -351,6 +351,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
 
+        @TestMetadata("abstractMapRedefiningGetAny.kt")
+        public void testAbstractMapRedefiningGetAny() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractMapRedefiningGetAny.kt");
+        }
+
         public void testAllFilesPresentInCollectionStubs() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
