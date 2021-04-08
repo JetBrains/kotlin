@@ -483,14 +483,6 @@ internal class KotlinCompilationNpmResolver(
                 packageJson.dependencies[it.name] = it.version
             }
 
-            resolvedInternalDependencies.forEach {
-                packageJson.dependencies[it.packageJson.name] = it.packageJson.version
-            }
-
-            importedExternalGradleDependencies.forEach {
-                packageJson.dependencies[it.name] = fileVersion(it.path)
-            }
-
             compilationResolver.packageJsonHandlers.forEach {
                 it(packageJson)
             }
