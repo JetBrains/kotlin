@@ -922,19 +922,20 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
     }
 }
 
+@CacheableTask
 open class CInteropProcess @Inject constructor(@get:Internal val settings: DefaultCInteropSettings) : DefaultTask() {
 
     @Internal // Taken into account in the outputFileProvider property
     lateinit var destinationDir: Provider<File>
 
     val konanTarget: KonanTarget
-        @Internal get() = settings.compilation.konanTarget
+        @Input get() = settings.compilation.konanTarget
 
     val interopName: String
-        @Internal get() = settings.name
+        @Input get() = settings.name
 
     val baseKlibName: String
-        @Internal get() {
+        @Input get() {
             val compilationPrefix = settings.compilation.let {
                 if (it.isMain()) project.name else it.name
             }
