@@ -46,12 +46,6 @@ open class KotlinNpmInstallTask : DefaultTask() {
         nodeJs.packageManager.preparedFiles(nodeJs)
     }
 
-    // avoid using node_modules as output directory, as it is significantly slows down build
-    @get:OutputFile
-    val nodeModulesState: File by lazy {
-        nodeJs.rootNodeModulesStateFile
-    }
-
     @get:OutputFile
     val yarnLock: File by lazy {
         nodeJs.rootPackageDir.resolve("yarn.lock")

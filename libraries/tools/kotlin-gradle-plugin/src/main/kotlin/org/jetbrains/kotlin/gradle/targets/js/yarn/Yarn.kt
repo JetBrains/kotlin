@@ -16,17 +16,12 @@ import java.io.File
 
 class Yarn : NpmApi {
     private val yarnWorkspaces = YarnWorkspaces()
-    private val yarnSimple = YarnSimple()
 
     private fun getDelegate(project: Project): NpmApi =
-        if (project.yarn.useWorkspaces) yarnWorkspaces
-        else yarnSimple
+        yarnWorkspaces
 
     override fun setup(project: Project) =
         getDelegate(project.rootProject).setup(project)
-
-    override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) =
-        getDelegate(resolvedNpmProject.project).resolveProject(resolvedNpmProject)
 
     override fun preparedFiles(nodeJs: NodeJsRootExtension): Collection<File> =
         yarnWorkspaces.preparedFiles(nodeJs)
@@ -56,7 +51,6 @@ class Yarn : NpmApi {
         nodeJs: NodeJsRootExtension,
         yarnHome: File,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean,
         cliArgs: List<String>
     ) {
         yarnWorkspaces
@@ -66,7 +60,6 @@ class Yarn : NpmApi {
                 nodeJs,
                 yarnHome,
                 npmProjects,
-                skipExecution,
                 cliArgs
             )
     }
