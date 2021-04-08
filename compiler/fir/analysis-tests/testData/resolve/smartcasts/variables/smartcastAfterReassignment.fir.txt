@@ -19,5 +19,5 @@ FILE: smartcastAfterReassignment.kt
         R|<local>/x| = String()
         R|<local>/x|.R|kotlin/String.length|
         R|<local>/x| = Null(null)
-        R|<local>/x|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#
+        R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
     }

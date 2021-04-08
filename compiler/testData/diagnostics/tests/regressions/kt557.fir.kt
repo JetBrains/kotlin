@@ -8,5 +8,5 @@ fun Array<String>.length() : Int {
 }
 
 fun test(array : Array<String?>?) {
-    array?.sure<Array<String?>>()<!UNSAFE_CALL!>.<!>length()
+    array?.sure<Array<String?>>().<!INAPPLICABLE_CANDIDATE!>length<!>()
 }

@@ -1,6 +1,6 @@
 fun <E : String?, T : ((CharSequence) -> Unit)?> foo(x: E, y: T) {
     if (x != null) {
-        <!INAPPLICABLE_CANDIDATE!>y<!>(x)
+        <!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>(x)
     }
 
     if (y != null) {

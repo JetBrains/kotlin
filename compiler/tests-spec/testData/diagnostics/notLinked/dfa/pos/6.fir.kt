@@ -142,11 +142,11 @@ fun case_8(x: TypealiasNullableString) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>propAny
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>funAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funNullableAny()
     }
@@ -225,11 +225,11 @@ fun case_12(x: TypealiasNullableString, y: TypealiasNullableString, z1: Nothing?
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>propAny
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>funAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funNullableAny()
     } else "-1"
@@ -859,11 +859,11 @@ fun case_47(x: TypealiasNullableString, y: TypealiasNullableString, z: Nothing?)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>propAny
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>funAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.funNullableAny()
     } else "-1"
@@ -1296,11 +1296,11 @@ fun case_71(t: Any?) {
         if (t is Interface2?) {
             if (t != z2) {
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest()
 
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>() }
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!><!UNSAFE_CALL!>.<!>itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!><!UNSAFE_CALL!>.<!>itest2() }
             }
         }
     }
@@ -1318,11 +1318,11 @@ fun case_72(t: Any?, z1: Nothing?) {
 
     if (t is Interface1? && t != z1 ?: z2 && t is Interface2?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!><!UNSAFE_CALL!>.<!>itest()
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface1? & Interface2?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!><!UNSAFE_CALL!>.<!>itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!><!UNSAFE_CALL!>.<!>itest2() }
     }
 }
 
@@ -1341,11 +1341,11 @@ fun case_73(t: Any?) {
             if (t is ClassLevel2? && t is Interface1?) {
                 if (t !is Interface3?) {} else if (false) {
                     if (t != `null`) {
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test1<!>()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test2<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>test1()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>test2()
                         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & ClassLevel2? & Interface1? & Interface3?")!>t<!>
                     }
                 }
@@ -1366,11 +1366,11 @@ fun case_74(t: Any?) {
             if (t == implicitNullableNothingProperty || t === implicitNullableNothingProperty || t !is Interface1?) else {
                 if (t is ClassLevel2?) {
                     if (t is Interface3?) {
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test1<!>()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test2<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>test1()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>test2()
                         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface2? & Interface1? & ClassLevel2? & Interface3?")!>t<!>
                     }
                 }
@@ -1389,11 +1389,11 @@ fun case_75(t: Any?, z: Nothing?) {
     if (t !is ClassLevel2? || t !is ClassLevel1?) else {
         if (t === ((((((z)))))) || t !is Interface1?) else {
             if (t !is Interface2? || t !is Interface3?) {} else {
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test1<!>()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test2<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest2()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>test1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>test2()
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!>
             }
         }

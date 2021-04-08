@@ -397,7 +397,7 @@ private fun checkApplicabilityForArgumentType(
         val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
 
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-            sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType)) // TODO
+            sink.reportDiagnostic(UnsafeCall(argumentType)) // TODO
         } else {
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
             sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))

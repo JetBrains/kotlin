@@ -84,40 +84,34 @@ private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
 private fun mapUnsafeCallError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
-    rootCause: ResolutionDiagnostic?,
+    rootCause: UnsafeCall,
     qualifiedAccessSource: FirSourceElement?,
-): FirDiagnostic<*>? {
-    if (rootCause !is InapplicableWrongReceiver) return null
-    val actualType = rootCause.actualType ?: return null
-    val expectedType = rootCause.expectedType
-    if (actualType.isNullable && (expectedType == null || expectedType.isEffectivelyNotNull())) {
-        if (diagnostic.candidate.callInfo.isImplicitInvoke) {
-            return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, actualType)
-        }
+): FirDiagnostic<*> {
+    if (diagnostic.candidate.callInfo.isImplicitInvoke) {
+        return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, rootCause.actualType)
+    }
 
-        val candidateFunction = diagnostic.candidate.symbol.fir as? FirSimpleFunction
-        val candidateFunctionName = candidateFunction?.name
-        val left = diagnostic.candidate.callInfo.explicitReceiver
-        val right = diagnostic.candidate.callInfo.argumentList.arguments.singleOrNull()
-        if (left != null && right != null &&
-            source.elementType == KtNodeTypes.OPERATION_REFERENCE &&
-            (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
-        ) {
-            val operationToken = source.getChild(KtTokens.IDENTIFIER)
-            if (candidateFunction.isInfix && operationToken?.elementType == KtTokens.IDENTIFIER) {
-                return FirErrors.UNSAFE_INFIX_CALL.on(source, left, candidateFunctionName!!.asString(), right)
-            }
-            if (candidateFunction.isOperator && operationToken == null) {
-                return FirErrors.UNSAFE_OPERATOR_CALL.on(source, left, candidateFunctionName!!.asString(), right)
-            }
+    val candidateFunction = diagnostic.candidate.symbol.fir as? FirSimpleFunction
+    val candidateFunctionName = candidateFunction?.name
+    val left = diagnostic.candidate.callInfo.explicitReceiver
+    val right = diagnostic.candidate.callInfo.argumentList.arguments.singleOrNull()
+    if (left != null && right != null &&
+        source.elementType == KtNodeTypes.OPERATION_REFERENCE &&
+        (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
+    ) {
+        val operationToken = source.getChild(KtTokens.IDENTIFIER)
+        if (candidateFunction.isInfix && operationToken?.elementType == KtTokens.IDENTIFIER) {
+            return FirErrors.UNSAFE_INFIX_CALL.on(source, left, candidateFunctionName!!.asString(), right)
         }
-        return if (source.kind == FirFakeSourceElementKind.ArrayAccessNameReference) {
-            FirErrors.UNSAFE_CALL.on(source, actualType)
-        } else {
-            FirErrors.UNSAFE_CALL.on(qualifiedAccessSource ?: source, actualType)
+        if (candidateFunction.isOperator && operationToken == null) {
+            return FirErrors.UNSAFE_OPERATOR_CALL.on(source, left, candidateFunctionName!!.asString(), right)
         }
     }
-    return null
+    return if (source.kind == FirFakeSourceElementKind.ArrayAccessNameReference) {
+        FirErrors.UNSAFE_CALL.on(source, rootCause.actualType)
+    } else {
+        FirErrors.UNSAFE_CALL.on(qualifiedAccessSource ?: source, rootCause.actualType)
+    }
 }
 
 private fun mapInapplicableCandidateError(
@@ -127,8 +121,6 @@ private fun mapInapplicableCandidateError(
 ): List<FirDiagnostic<FirSourceElement>> {
     // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
     return diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
-        mapUnsafeCallError(diagnostic, source, rootCause, qualifiedAccessSource)?.let { return@mapNotNull it }
-
         when (rootCause) {
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(
                 rootCause.argument.source ?: qualifiedAccessSource
@@ -150,6 +142,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source ?: source,
                 rootCause.argument.name.asString()
             )
+            is UnsafeCall -> mapUnsafeCallError(diagnostic, source, rootCause, qualifiedAccessSource)
             else -> null
         }
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }

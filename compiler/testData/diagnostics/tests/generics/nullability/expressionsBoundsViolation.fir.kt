@@ -13,7 +13,7 @@ fun <F : String?> bar(x: F) {
     foo1(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
     foo1<F>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
-    x.<!INAPPLICABLE_CANDIDATE!>foo2<!>()
+    x<!UNSAFE_CALL!>.<!>foo2()
     x.<!INAPPLICABLE_CANDIDATE!>foo2<!><F>()
 }
 
