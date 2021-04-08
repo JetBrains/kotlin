@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.utils
 
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.properties.ReadOnlyProperty
@@ -61,6 +60,10 @@ abstract class TypeRegistry<K : Any, V : Any> {
     }
 
     fun <T : V, KK : K> generateNullableAccessor(kClass: KClass<KK>): NullableArrayMapAccessor<K, V, T> {
+        return NullableArrayMapAccessor(kClass, getId(kClass))
+    }
+
+    fun <KK : K> generateAnyNullableAccessor(kClass: KClass<KK>): NullableArrayMapAccessor<K, V, *> {
         return NullableArrayMapAccessor(kClass, getId(kClass))
     }
 
