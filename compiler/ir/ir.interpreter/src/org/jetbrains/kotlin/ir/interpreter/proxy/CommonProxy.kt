@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy
 
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
@@ -13,22 +14,28 @@ import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.toState
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
 
-/**
- * calledFromBuiltIns - used to avoid cyclic calls. For example:
- *     override fun toString(): String {
- *         return super.toString()
- *     }
- */
-internal class CommonProxy private constructor(
-    override val state: Common, override val callInterceptor: CallInterceptor, private val calledFromBuiltIns: Boolean = false
-) : Proxy {
+internal class CommonProxy private constructor(override val state: Common, override val callInterceptor: CallInterceptor) : Proxy {
+    private fun defaultEquals(other: Proxy): Boolean = this.state === other.state
+    private fun defaultHashCode(): Int = System.identityHashCode(state)
+    private fun defaultToString(): String = "${state.irClass.internalName()}@" + hashCode().toString(16).padStart(8, '0')
+
+    /**
+     *  This check used to avoid cyclic calls. For example:
+     *     override fun toString(): String = super.toString()
+     */
+    private fun IrFunction.wasAlreadyCalled(): Boolean {
+        val anyParameter = this.getLastOverridden().dispatchReceiverParameter!!.symbol
+        if (callInterceptor.environment.callStack.containsVariable(anyParameter)) return true
+        return this == callInterceptor.environment.callStack.getCurrentFrameOwner()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Proxy) return false
 
         val valueArguments = mutableListOf<Variable>()
         val equalsFun = state.getEqualsFunction()
-        if (equalsFun.isFakeOverriddenFromAny() || calledFromBuiltIns) return this.state === other.state
+        if (equalsFun.isFakeOverriddenFromAny() || equalsFun.wasAlreadyCalled()) return defaultEquals(other)
 
         equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
         valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, other.state))
@@ -39,7 +46,7 @@ internal class CommonProxy private constructor(
     override fun hashCode(): Int {
         val valueArguments = mutableListOf<Variable>()
         val hashCodeFun = state.getHashCodeFunction()
-        if (hashCodeFun.isFakeOverriddenFromAny() || calledFromBuiltIns) return System.identityHashCode(state)
+        if (hashCodeFun.isFakeOverriddenFromAny() || hashCodeFun.wasAlreadyCalled()) return defaultHashCode()
 
         hashCodeFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
         return callInterceptor.interceptProxy(hashCodeFun, valueArguments) as Int
@@ -48,24 +55,20 @@ internal class CommonProxy private constructor(
     override fun toString(): String {
         val valueArguments = mutableListOf<Variable>()
         val toStringFun = state.getToStringFunction()
-        if (toStringFun.isFakeOverriddenFromAny() || calledFromBuiltIns) {
-            return "${state.irClass.internalName()}@" + hashCode().toString(16).padStart(8, '0')
-        }
+        if (toStringFun.isFakeOverriddenFromAny() || toStringFun.wasAlreadyCalled()) return defaultToString()
 
         toStringFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
         return callInterceptor.interceptProxy(toStringFun, valueArguments) as String
     }
 
     companion object {
-        internal fun Common.asProxy(
-            callInterceptor: CallInterceptor, extendFrom: Class<*>? = null, calledFromBuiltIns: Boolean = false
-        ): Any {
-            val commonProxy = CommonProxy(this, callInterceptor, calledFromBuiltIns)
-
+        internal fun Common.asProxy(callInterceptor: CallInterceptor, extendFrom: Class<*>? = null): Any {
+            val commonProxy = CommonProxy(this, callInterceptor)
             val interfaces = when (extendFrom) {
                 null, Object::class.java -> arrayOf(Proxy::class.java)
                 else -> arrayOf(extendFrom, Proxy::class.java)
             }
+
             return java.lang.reflect.Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), interfaces)
             { /*proxy*/_, method, args ->
                 when {

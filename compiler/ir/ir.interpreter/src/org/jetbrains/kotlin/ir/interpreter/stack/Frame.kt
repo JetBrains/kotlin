@@ -66,9 +66,13 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
     }
 
     fun getVariable(symbol: IrSymbol): Variable {
-        return innerStack.reversed().firstNotNullResult { it.getVariable(symbol) }
+        return tryToGetVariable(symbol)
             ?: throw InterpreterError("$symbol not found") // TODO better message
     }
+
+    fun containsVariable(symbol: IrSymbol): Boolean = tryToGetVariable(symbol) != null
+
+    private fun tryToGetVariable(symbol: IrSymbol): Variable? = innerStack.reversed().firstNotNullResult { it.getVariable(symbol) }
 
     fun getAll(): List<Variable> = innerStack.flatMap { it.getAll() }
 

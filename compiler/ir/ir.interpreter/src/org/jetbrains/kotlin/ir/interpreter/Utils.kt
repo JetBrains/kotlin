@@ -282,9 +282,7 @@ internal fun IrFunction?.checkCast(environment: IrInterpreterEnvironment): Boole
 internal fun IrFunction.getArgsForMethodInvocation(
     callInterceptor: CallInterceptor, methodType: MethodType, args: List<State>
 ): List<Any?> {
-    val argsValues = args
-        .mapIndexed { index, state -> state.wrap(callInterceptor, methodType.parameterType(index)) }
-        .toMutableList()
+    val argsValues = args.wrap(callInterceptor, this, methodType).toMutableList()
 
     // TODO if vararg isn't last parameter
     // must convert vararg array into separated elements for correct invoke

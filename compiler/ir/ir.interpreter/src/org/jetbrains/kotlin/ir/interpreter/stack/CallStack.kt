@@ -175,6 +175,7 @@ internal class CallStack {
     }
 
     fun getVariable(symbol: IrSymbol): Variable = getCurrentFrame().getVariable(symbol)
+    fun containsVariable(symbol: IrSymbol): Boolean = getCurrentFrame().containsVariable(symbol)
 
     fun storeUpValues(state: StateWithClosure) {
         // TODO save only necessary declarations
