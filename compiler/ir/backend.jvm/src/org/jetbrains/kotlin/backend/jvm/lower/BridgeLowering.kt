@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.util.concurrent.ConcurrentHashMap
@@ -246,6 +245,9 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
     private fun createBridges(irClass: IrClass, irFunction: IrSimpleFunction) {
         // Track final overrides and bridges to avoid clashes
         val blacklist = mutableSetOf<Method>()
+        val existingMethodSignatures = irClass.functions
+            .filter { !it.isFakeOverride && it.name == irFunction.name }
+            .mapTo(HashSet()) { it.jvmMethod }
 
         // Add the current method to the blacklist if it is concrete or final.
         val targetMethod = (irFunction.resolveFakeOverride() ?: irFunction).jvmMethod
@@ -260,10 +262,14 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // bridge methods in a superclass.
             blacklist += irFunction.overriddenFinalSpecialBridges()
 
-            // We only generate a special bridge method if it does not clash with a final method in a superclass or the current method
-            val specialBridgeTarget = if (
-                specialBridge.signature !in blacklist && (!irFunction.isFakeOverride || irFunction.jvmMethod != specialBridge.signature)
-            ) {
+            fun getSpecialBridgeTargetAddingExtraBridges(): IrSimpleFunction {
+                // We only generate a special bridge method if it does not clash with a final method in a superclass or the current method
+                if (specialBridge.signature in blacklist ||
+                    irFunction.isFakeOverride && irFunction.jvmMethod == specialBridge.signature
+                ) {
+                    return irFunction
+                }
+
                 // If irFunction is a fake override, we replace it with a stub and redirect all calls to irFunction with
                 // calls to the stub instead. Otherwise we'll end up calling the special method itself and get into an
                 // infinite loop.
@@ -306,11 +312,15 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                     blacklist += bridgeTarget.jvmMethod
                 }
 
+                if (specialBridge.signature in existingMethodSignatures) {
+                    return irFunction
+                }
+
                 blacklist += specialBridge.signature
-                irClass.addSpecialBridge(specialBridge, bridgeTarget)
-            } else {
-                irFunction
+                return irClass.addSpecialBridge(specialBridge, bridgeTarget)
             }
+
+            val specialBridgeTarget = getSpecialBridgeTargetAddingExtraBridges()
 
             // Deal with existing function that override special bridge methods.
             if (!irFunction.isFakeOverride && specialBridge.methodInfo != null) {
@@ -434,9 +444,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 // This is technically wrong, but it's necessary to generate a method which maps to the same signature.
                 // In case of 'fun foo(): T', where 'T' is a type parameter with primitive upper bound (e.g., 'T : Char'),
                 // 'foo' is mapped to 'foo()C', regardless of its overrides.
-                val inheritedOverrides = bridge.overriddenSymbols.flatMapTo(mutableSetOf()) { function ->
-                    function.owner.safeAs<IrSimpleFunction>()?.overriddenSymbols ?: emptyList()
-                }
+                val inheritedOverrides = bridge.overriddenSymbols
+                    .flatMapTo(mutableSetOf()) { it.owner.overriddenSymbols }
                 val redundantOverrides = inheritedOverrides.flatMapTo(mutableSetOf()) {
                     it.owner.allOverridden().map { override -> override.symbol }
                 }
