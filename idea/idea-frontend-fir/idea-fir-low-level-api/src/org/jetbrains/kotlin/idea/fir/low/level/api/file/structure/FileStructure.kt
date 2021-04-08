@@ -80,7 +80,7 @@ internal class FileStructure(
         }
     }
 
-    private fun getAllStructureElements(): Collection<FileStructureElement> {
+    fun getAllStructureElements(): Collection<FileStructureElement> {
         val structureElements = mutableSetOf(getStructureElementFor(ktFile))
         ktFile.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {

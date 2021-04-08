@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistentCheckerContextFactory
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 
 internal open class FirIdeDiagnosticVisitor(
@@ -19,6 +18,13 @@ internal open class FirIdeDiagnosticVisitor(
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
     override fun beforeRunningSingleComponentOnElement(element: FirElement) {
         checkCanceled()
+    }
+
+    override fun goToNestedElements(element: FirElement) {
+        if (element is FirDeclaration) {
+            session.beforeElementDiagnosticCollectionHandler?.beforeGoingNestedDeclaration(element, context)
+        }
+        super.goToNestedElements(element)
     }
 
     override fun beforeRunningAllComponentsOnElement(element: FirElement) {

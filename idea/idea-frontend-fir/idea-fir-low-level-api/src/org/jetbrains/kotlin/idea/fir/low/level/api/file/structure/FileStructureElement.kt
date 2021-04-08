@@ -30,7 +30,7 @@ internal sealed class FileStructureElement(val firFile: FirFile, protected val l
 
 internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : AbstractFirBasedSymbol<*>>(
     firFile: FirFile,
-    protected val firSymbol: S,
+    val firSymbol: S,
     lockProvider: LockProvider<FirFile>,
 ) : FileStructureElement(firFile, lockProvider) {
     abstract override val psi: KtDeclaration
@@ -50,7 +50,11 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : Abstr
 
     fun isUpToDate(): Boolean = psi.getModificationStamp() == timestamp
 
-    override val diagnostics = FileStructureElementDiagnostics(firFile, lockProvider, SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir as FirDeclaration))
+    override val diagnostics = FileStructureElementDiagnostics(
+        firFile,
+        lockProvider,
+        SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir as FirDeclaration)
+    )
 
     companion object {
         val recorder = FirElementsRecorder()
@@ -143,7 +147,7 @@ internal class ReanalyzablePropertyStructureElement(
 
 internal class NonReanalyzableDeclarationStructureElement(
     firFile: FirFile,
-    fir: FirDeclaration,
+    val fir: FirDeclaration,
     override val psi: KtDeclaration,
     lockProvider: LockProvider<FirFile>,
 ) : FileStructureElement(firFile, lockProvider) {
