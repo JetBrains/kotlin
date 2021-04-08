@@ -809,7 +809,7 @@ class TypeResolver(
             val restParameters = parameters.subList(result.size, parameters.size)
 
             val typeArgumentsCanBeSpecifiedCount =
-                classifierDescriptor.classifierDescriptorsFromInnerToOuter().sumBy { it.declaredTypeParameters.size }
+                classifierDescriptor.classifierDescriptorsFromInnerToOuter().sumOf { it.declaredTypeParameters.size }
 
             if (restArguments == null && typeArgumentsCanBeSpecifiedCount > result.size) {
                 c.trace.report(

@@ -480,7 +480,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             assert(constantValue is Int) { "Mask should be of Integer type, but " + constantValue }
             maskValues.add(constantValue as Int)
             if (maskStartIndex == -1) {
-                maskStartIndex = invocationParamBuilder.listAllParams().sumBy {
+                maskStartIndex = invocationParamBuilder.listAllParams().sumOf {
                     if (it is CapturedParamInfo) 0 else it.type.size
                 }
             }

@@ -87,7 +87,7 @@ class KotlinResolutionCandidate(
     private var currentApplicability = CandidateApplicability.RESOLVED
     private var subResolvedAtoms: MutableList<ResolvedAtom> = arrayListOf()
 
-    private val stepCount = resolutionSequence.sumBy { it.run { workCount() } }
+    private val stepCount = resolutionSequence.sumOf { it.run { workCount() } }
     private var step = 0
 
     fun getSystem(): NewConstraintSystem {

@@ -44,7 +44,7 @@ abstract class BaseMultimap<K, V, C : Collection<V>, MC : MutableCollection<V>> 
     override val values: Collection<V>
         get() = object : AbstractCollection<V>() {
             override val size: Int
-                get() = map.values.sumBy { it.size }
+                get() = map.values.sumOf { it.size }
 
             override fun iterator(): Iterator<V> {
                 return ChainedIterator(map.values.map { it.iterator() })

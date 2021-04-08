@@ -56,7 +56,7 @@ fun bytesToStrings(bytes: ByteArray): Array<String> {
 }
 
 fun stringsToBytes(strings: Array<String>): ByteArray {
-    val resultLength = strings.sumBy { it.length }
+    val resultLength = strings.sumOf { it.length }
     val result = ByteArray(resultLength)
 
     var i = 0

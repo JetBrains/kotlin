@@ -280,7 +280,7 @@ class SerializableCodegenImpl(
             val superProps = bindingContext.serializablePropertiesFor(superClass).serializableProperties
             val creator = buildInternalConstructorDesc(propStartVar, maskVar, classCodegen, superProps)
             invokespecial(superType, "<init>", creator, false)
-            return superProps.size to propStartVar + superProps.sumBy { it.asmType.size }
+            return superProps.size to propStartVar + superProps.sumOf { it.asmType.size }
         }
     }
 

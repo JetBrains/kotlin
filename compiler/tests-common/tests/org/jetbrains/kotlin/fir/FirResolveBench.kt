@@ -72,7 +72,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                 user = sumByLong { it.user }
                 cpu = sumByLong { it.cpu }
                 gcTime = sumByLong { it.gcTime }
-                gcCollections = sumBy { it.gcCollections }
+                gcCollections = sumOf { it.gcCollections }
                 files = map { it.files }.average().toInt()
             }
         }
@@ -161,7 +161,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
             this.files += 1
             this.user += diff.userTime
             this.cpu += diff.cpuTime
-            this.gcCollections += diff.gcInfo.values.sumBy { it.collections.toInt() }
+            this.gcCollections += diff.gcInfo.values.sumOf { it.collections.toInt() }
             this.gcTime += diff.gcInfo.values.sumByLong { it.gcTime }
         }
     }
