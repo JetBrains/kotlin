@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.FileCollectionDependency
+import org.gradle.api.artifacts.ResolvedArtifact
+import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Usage
 import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Zip
+import org.gradle.configurationcache.extensions.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -31,7 +35,8 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
 import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.topRealPath
-import java.io.*
+import java.io.File
+import java.io.Serializable
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
@@ -137,6 +142,8 @@ internal class KotlinCompilationNpmResolver(
         if (packageJsonTaskHolder == null || packageJsonTaskHolder.get().state.upToDate) return resolve(skipWriting = true)
         if (rootResolver.forceFullResolve && resolution == null) {
             // need to force all NPM tasks to be configured in IDEA import
+            rootResolver.gradleNodeModules.fileHasher = project.serviceOf()
+            rootResolver.compositeNodeModules.fileHasher = project.serviceOf()
             project.tasks.implementing(RequiresNpmDependencies::class).all {}
             return resolve()
         }
@@ -189,12 +196,12 @@ internal class KotlinCompilationNpmResolver(
     data class ExternalGradleDependency(
         val dependency: ResolvedDependency,
         val artifact: ResolvedArtifact
-    ): Serializable
+    ) : Serializable
 
     data class FileCollectionExternalGradleDependency(
         val files: Collection<File>,
         val dependencyVersion: String?
-    ): Serializable
+    ) : Serializable
 
     data class FileExternalGradleDependency(
         val dependencyName: String,
@@ -231,14 +238,25 @@ internal class KotlinCompilationNpmResolver(
             configuration.allDependencies.forEach { dependency ->
                 when (dependency) {
                     is NpmDependency -> externalNpmDependencies.add(dependency)
-                    is FileCollectionDependency -> fileCollectionDependencies.add(FileCollectionExternalGradleDependency(dependency.files.files, dependency.version))
+                    is FileCollectionDependency -> fileCollectionDependencies.add(
+                        FileCollectionExternalGradleDependency(
+                            dependency.files.files,
+                            dependency.version
+                        )
+                    )
                 }
             }
 
             //TODO: rewrite when we get general way to have inter compilation dependencies
             if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
                 val main = compilation.target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJsCompilation
-                internalDependencies.add(InternalDependency(projectResolver.project.path, main.disambiguatedName, projectResolver[main].npmProject.name))
+                internalDependencies.add(
+                    InternalDependency(
+                        projectResolver.project.path,
+                        main.disambiguatedName,
+                        projectResolver[main].npmProject.name
+                    )
+                )
             }
 
             val hasPublicNpmDependencies = externalNpmDependencies.isNotEmpty()
@@ -328,7 +346,13 @@ internal class KotlinCompilationNpmResolver(
 
             rootResolver.findDependentResolver(project, dependentProject)
                 ?.forEach { dependentResolver ->
-                    internalDependencies.add(InternalDependency(dependentResolver.projectPath, dependentResolver.compilationDisambiguatedName, dependentResolver.npmProject.name))
+                    internalDependencies.add(
+                        InternalDependency(
+                            dependentResolver.projectPath,
+                            dependentResolver.compilationDisambiguatedName,
+                            dependentResolver.npmProject.name
+                        )
+                    )
                 }
         }
 
@@ -386,7 +410,7 @@ internal class KotlinCompilationNpmResolver(
                 internalCompositeDependencies.flatMap { it.getPackages() },
                 externalGradleDependencies.map { it.file },
                 externalNpmDependencies.map { it.uniqueRepresentation() },
-                fileCollectionDependencies.flatMap{ it.files }
+                fileCollectionDependencies.flatMap { it.files }
             )
 
         fun createPackageJson(skipWriting: Boolean): KotlinCompilationNpmResolution {
