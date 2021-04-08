@@ -34,16 +34,7 @@ class YarnImportedPackagesVersionResolver(
         resolve(externalModules, true)
         resolve(internalCompositeModules, true)
 
-        npmProjects.forEach {
-            writePackageJson(
-                packageJson = it.packageJson,
-                path = it.npmProject.packageJsonFile,
-                forceWrite = true
-            )
-        }
-
         if (resolvedVersion.isNotEmpty()) {
-            updatePackages(externalModules)
             updatePackages(internalCompositeModules)
         }
 
