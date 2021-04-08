@@ -1820,6 +1820,40 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/typeUse")
+            @TestDataPath("$PROJECT_ROOT")
+            public class TypeUse {
+                @Test
+                public void testAllFilesPresentInTypeUse() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/typeUse"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("kt19455.kt")
+                public void testKt19455() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt19455.kt");
+                }
+
+                @Test
+                @TestMetadata("kt25876.kt")
+                public void testKt25876() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt25876.kt");
+                }
+
+                @Test
+                @TestMetadata("kt8325.kt")
+                public void testKt8325() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt8325.kt");
+                }
+
+                @Test
+                @TestMetadata("nonTypeUseAnnotationOnType.kt")
+                public void testNonTypeUseAnnotationOnType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/nonTypeUseAnnotationOnType.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget")
             @TestDataPath("$PROJECT_ROOT")
             public class WithUseSiteTarget {

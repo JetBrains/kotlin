@@ -344,6 +344,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return;
         }
         checkForCastImpossibilityOrRedundancy(expression, actualType, targetType, context);
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProperCheckAnnotationsTargetInTypeUsePositions)) {
+            components.annotationChecker.check(expression.getRight(), context.trace, null);
+        }
     }
 
     private void checkForCastImpossibilityOrRedundancy(

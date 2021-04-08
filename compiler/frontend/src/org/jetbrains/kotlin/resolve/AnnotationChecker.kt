@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -41,7 +41,7 @@ class AnnotationChecker(
         if (annotated is KtProperty) {
             checkPropertyUseSiteTargetAnnotations(annotated, trace)
         }
-        if (annotated is KtClass) {
+        if (annotated is KtClassOrObject) {
             checkSuperTypeAnnotations(annotated, trace)
         }
         if (annotated is KtCallableDeclaration) {
@@ -51,12 +51,31 @@ class AnnotationChecker(
         if (annotated is KtTypeAlias) {
             annotated.getTypeReference()?.let { check(it, trace) }
         }
-        if (annotated is KtTypeParameterListOwner && annotated is KtCallableDeclaration) {
-            // TODO: support type parameter annotations for type parameters on classes and properties
+        if (
+            annotated is KtTypeParameterListOwner &&
+            (annotated is KtCallableDeclaration || languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions))
+        ) {
             annotated.typeParameters.forEach { check(it, trace) }
+            for (typeParameter in annotated.typeParameters) {
+                typeParameter.extendsBound?.let {
+                    checkTypeReference(
+                        it,
+                        trace,
+                        shouldCheckReferenceItself = true,
+                        checkWithoutLanguageFeature = annotated is KtCallableDeclaration
+                    )
+                }
+            }
+            for (typeConstraint in annotated.typeConstraints) {
+                typeConstraint.boundTypeReference?.let { checkTypeReference(it, trace, shouldCheckReferenceItself = true) }
+            }
         }
         if (annotated is KtTypeReference) {
-            annotated.typeElement?.typeArgumentsAsTypes?.filterNotNull()?.forEach { check(it, trace) }
+            if (languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions)) {
+                checkTypeReference(annotated, trace)
+            } else {
+                annotated.typeElement?.typeArgumentsAsTypes?.filterNotNull()?.forEach { check(it, trace) }
+            }
         }
         if (annotated is KtDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor
@@ -83,7 +102,7 @@ class AnnotationChecker(
     private fun checkPropertyUseSiteTargetAnnotations(property: KtProperty, trace: BindingTrace) {
         fun List<KtAnnotationEntry>?.getDescriptors() = this?.mapNotNull { trace.get(BindingContext.ANNOTATION, it)?.annotationClass } ?: listOf()
 
-        val reportError = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitRepeatedUseSiteTargetAnnotations)
+        val reportError = languageVersionSettings.supportsFeature(ProhibitRepeatedUseSiteTargetAnnotations)
 
         val propertyAnnotations = mapOf(
             AnnotationUseSiteTarget.PROPERTY_GETTER to property.getter?.annotationEntries.getDescriptors(),
@@ -107,20 +126,39 @@ class AnnotationChecker(
         }
     }
 
-    private fun checkSuperTypeAnnotations(annotated: KtClass, trace: BindingTrace) {
-        val reportError = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes)
-
+    private fun checkSuperTypeAnnotations(annotated: KtClassOrObject, trace: BindingTrace) {
         for (superType in annotated.superTypeListEntries.mapNotNull { it.typeReference }) {
-            for (entry in superType.annotationEntries) {
-                if (entry.useSiteTarget != null) {
+            checkTypeReference(superType, trace, isSuperType = true)
+        }
+    }
+
+    private fun checkTypeReference(
+        reference: KtTypeReference,
+        trace: BindingTrace,
+        isSuperType: Boolean = false,
+        shouldCheckReferenceItself: Boolean = false,
+        checkWithoutLanguageFeature: Boolean = false
+    ) {
+        val shouldRunCheck = isSuperType || shouldCheckReferenceItself
+        if (shouldRunCheck) {
+            for (entry in reference.annotationEntries) {
+                val actualTargets = getActualTargetList(reference, null, trace.bindingContext)
+                if (entry.useSiteTarget != null && isSuperType) {
+                    val reportError = languageVersionSettings.supportsFeature(ProhibitUseSiteTargetAnnotationsOnSuperTypes)
                     val diagnostic = if (reportError) {
                         Errors.ANNOTATION_ON_SUPERCLASS.on(entry)
                     } else {
                         Errors.ANNOTATION_ON_SUPERCLASS_WARNING.on(entry)
                     }
                     trace.report(diagnostic)
+                } else if (shouldRunCheck && (languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions) || checkWithoutLanguageFeature)) {
+                    checkAnnotationEntry(entry, actualTargets, trace)
                 }
             }
+        }
+        val typeArguments = reference.typeElement?.typeArgumentsAsTypes ?: return
+        for (typeArgument in typeArguments) {
+            typeArgument?.let { checkTypeReference(it, trace, shouldCheckReferenceItself = true) }
         }
     }
 
