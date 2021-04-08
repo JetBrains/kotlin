@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 class A() {
     var x: Int = 0
-        get() = <!RETURN_TYPE_MISMATCH!>"s"<!>
+        get() = "s"
         set(value: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
             field = value
         }
@@ -9,7 +9,7 @@ class A() {
         get(): String = "s"
     val z: Int
         get() {
-            return <!RETURN_TYPE_MISMATCH!>"s"<!>
+            return "s"
         }
 
     var a: Any = 1
@@ -28,7 +28,7 @@ class A() {
         }
     val e = 1
         get(): String {
-            return <!RETURN_TYPE_MISMATCH!>field<!>
+            return field
         }
 
 }

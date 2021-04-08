@@ -3,7 +3,7 @@ class C
 class B
 
 class A {
-    val B.foo: C.() -> Unit get() = <!RETURN_TYPE_MISMATCH!>null<!>
+    val B.foo: C.() -> Unit get() = null
 }
 
 fun <T, R> with(arg: T, f: T.() -> R): R = arg.f()

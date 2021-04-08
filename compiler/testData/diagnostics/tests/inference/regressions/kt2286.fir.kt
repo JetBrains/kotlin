@@ -12,14 +12,14 @@ abstract class Buggy {
     }
 
     val anotherThree : Int
-        get() = <!RETURN_TYPE_MISMATCH!>coll.find{ it > 3 }<!> // does not work here
+        get() = coll.find{ it > 3 } // does not work here
 
     val yetAnotherThree : Int
-        get() = <!RETURN_TYPE_MISMATCH!>coll.find({ v:Int -> v > 3 })<!> // neither here
+        get() = coll.find({ v:Int -> v > 3 }) // neither here
 
     val extendedGetter : Int
         get() {
-            return <!RETURN_TYPE_MISMATCH!>coll.find{ it > 3 }<!>  // not even here!
+            return coll.find{ it > 3 }  // not even here!
         }
 
 }

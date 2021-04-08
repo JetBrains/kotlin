@@ -19,7 +19,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.source ?: return
         val targetElement = expression.target.labeledElement
-        if (!(targetElement is FirSimpleFunction || targetElement is FirPropertyAccessor)) return
+        if (targetElement !is FirSimpleFunction) return
 
         val functionReturnType = targetElement.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
         val typeContext = context.session.typeContext

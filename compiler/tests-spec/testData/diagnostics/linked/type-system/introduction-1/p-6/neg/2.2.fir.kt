@@ -30,7 +30,7 @@ class Case6 {
 
 // TESTCASE NUMBER: 7
 class Case7 {
-    val x: Int get() = <!RETURN_TYPE_MISMATCH!>null<!>
+    val x: Int get() = null
 }
 
 // TESTCASE NUMBER: 8

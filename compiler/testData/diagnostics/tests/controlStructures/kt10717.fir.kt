@@ -37,9 +37,9 @@ fun test4() = run {
 
 val foo: Int
     get() = run {
-        if (true) return <!RETURN_TYPE_MISMATCH!>""<!>
+        if (true) return ""
 
-        <!RETURN_TYPE_MISMATCH!>return<!>
+        return
     }
 
 fun test(): Int = run {

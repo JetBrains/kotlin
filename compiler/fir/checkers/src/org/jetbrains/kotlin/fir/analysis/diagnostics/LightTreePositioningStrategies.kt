@@ -725,5 +725,5 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.firstChild(node: Light
 private fun FlyweightCapableTreeStructure<LighterASTNode>.lastChild(node: LighterASTNode): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode>>()
     getChildren(node, childrenRef)
-    return childrenRef.get()?.lastOrNull()
+    return childrenRef.get().lastOrNull()
 }
