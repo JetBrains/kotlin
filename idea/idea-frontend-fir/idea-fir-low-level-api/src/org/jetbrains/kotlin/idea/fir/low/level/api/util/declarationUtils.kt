@@ -122,7 +122,6 @@ private fun KtClassOrObject.findFir(firSymbolProvider: FirSymbolProvider): FirRe
     val classId = classIdIfNonLocal() ?: return null
     return executeWithoutPCE {
         firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
-            ?: error("Could not find class $classId")
     }
 }
 
