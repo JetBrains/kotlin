@@ -18,6 +18,7 @@
 #include "StableRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
+#include "ThreadState.hpp"
 #include "Utils.hpp"
 
 using namespace kotlin;
@@ -354,15 +355,10 @@ extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
 }
 
 extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
-    if (!pointer)
-        return;
-
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
-    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
+    DisposeStablePointerFor(kotlin::mm::GetMemoryState(), pointer);
 }
 
-extern "C" RUNTIME_NOTHROW void DisposeStablePointerInDeinit(void* pointer, MemoryState* memoryState) {
+extern "C" RUNTIME_NOTHROW void DisposeStablePointerFor(MemoryState* memoryState, void* pointer) {
     if (!pointer)
         return;
 

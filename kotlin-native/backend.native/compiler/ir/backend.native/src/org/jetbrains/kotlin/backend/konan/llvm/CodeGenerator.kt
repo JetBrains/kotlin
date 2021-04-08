@@ -1337,15 +1337,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 returnType == voidType -> {
                     releaseVars()
                     assert(returnSlot == null)
-                    if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
-                        if (!forbidRuntime) {
-                            call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
-                        }
-                        if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
-                            check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
-                            switchThreadState(Native)
-                        }
-                    }
+                    handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
                     LLVMBuildRetVoid(builder)
                 }
                 returns.isNotEmpty() -> {
@@ -1355,15 +1347,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         updateReturnRef(returnPhi, returnSlot!!)
                     }
                     releaseVars()
-                    if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
-                        if (!forbidRuntime) {
-                            call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
-                        }
-                        if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
-                            check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
-                            switchThreadState(Native)
-                        }
-                    }
+                    handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
                     LLVMBuildRet(builder, returnPhi)
                 }
                 // Do nothing, all paths throw.
@@ -1404,15 +1388,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
 
             releaseVars()
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
-                if (!forbidRuntime) {
-                    call(context.llvm.Kotlin_mm_safePointExceptionUnwind, emptyList())
-                }
-                if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
-                    check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
-                    switchThreadState(Native)
-                }
-            }
+            handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
             LLVMBuildResume(builder, landingpad)
         }
 
@@ -1420,6 +1396,18 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         vars.clear()
         returnSlot = null
         slotsPhi = null
+    }
+
+    private fun handleEpilogueForExperimentalMM(safePointFunction: LLVMValueRef) {
+        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
+            if (!forbidRuntime) {
+                call(safePointFunction, emptyList())
+            }
+            if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+                check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
+                switchThreadState(Native)
+            }
+        }
     }
 
     private val kotlinExceptionRtti: ConstPointer

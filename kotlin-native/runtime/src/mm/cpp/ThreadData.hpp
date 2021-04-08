@@ -16,7 +16,6 @@
 #include "ShadowStack.hpp"
 #include "StableRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
-#include "ThreadState.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 

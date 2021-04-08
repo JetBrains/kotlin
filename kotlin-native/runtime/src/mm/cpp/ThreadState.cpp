@@ -7,13 +7,7 @@
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
 
-namespace {
-
-ALWAYS_INLINE bool isStateSwitchAllowed(ThreadState oldState, ThreadState newState) noexcept {
-    return oldState != newState;
-}
-
-const char* stateToString(ThreadState state) noexcept {
+const char* kotlin::internal::stateToString(ThreadState state) noexcept {
     switch (state) {
         case ThreadState::kRunnable:
             return "RUNNABLE";
@@ -22,27 +16,8 @@ const char* stateToString(ThreadState state) noexcept {
     }
 }
 
-} // namespace
-
-// Switches the state of the given thread to `newState` and returns the previous state.
-ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(mm::ThreadData* threadData, ThreadState newState) noexcept {
-    auto oldState = threadData->setState(newState);
-    // TODO(perf): Mesaure the impact of this assert in debug and opt modes.
-    RuntimeAssert(isStateSwitchAllowed(oldState, newState),
-                  "Illegal thread state switch. Old state: %s. New state: %s.",
-                  stateToString(oldState), stateToString(newState));
-    return oldState;
-}
-
 ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState) noexcept {
     return SwitchThreadState(thread->GetThreadData(), newState);
-}
-
-ALWAYS_INLINE void kotlin::AssertThreadState(mm::ThreadData* threadData, ThreadState expected) noexcept {
-    auto actual = threadData->state();
-    RuntimeAssert(actual == expected,
-                  "Unexpected thread state. Expected: %s. Actual: %s.",
-                  stateToString(expected), stateToString(actual));
 }
 
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {

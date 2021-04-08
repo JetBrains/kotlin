@@ -3576,8 +3576,8 @@ RUNTIME_NOTHROW void DisposeStablePointer(KNativePtr pointer) {
   disposeStablePointer(pointer);
 }
 
-RUNTIME_NOTHROW void DisposeStablePointerInDeinit(KNativePtr pointer, MemoryState* memoryState) {
-  disposeStablePointer(pointer);
+RUNTIME_NOTHROW void DisposeStablePointerFor(MemoryState* memoryState, KNativePtr pointer) {
+  DisposeStablePointer(pointer);
 }
 
 OBJ_GETTER(DerefStablePointer, KNativePtr pointer) {

@@ -844,12 +844,12 @@ void Worker::destroy(MemoryState* memoryState) {
     for (auto job : queue_) {
         switch (job.kind) {
             case JOB_REGULAR:
-                DisposeStablePointerInDeinit(job.regularJob.argument, memoryState);
+                DisposeStablePointerFor(memoryState, job.regularJob.argument);
                 job.regularJob.future->cancelUnlocked(memoryState);
                 break;
             case JOB_EXECUTE_AFTER: {
                 // TODO: what do we do here? Shall we execute them?
-                DisposeStablePointerInDeinit(job.executeAfter.operation, memoryState);
+                DisposeStablePointerFor(memoryState, job.executeAfter.operation);
                 break;
             }
             case JOB_TERMINATE: {
@@ -866,11 +866,11 @@ void Worker::destroy(MemoryState* memoryState) {
 
     for (auto job : delayed_) {
         RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
-        DisposeStablePointerInDeinit(job.executeAfter.operation, memoryState);
+        DisposeStablePointerFor(memoryState, job.executeAfter.operation);
     }
 
     if (name_ != nullptr) {
-        DisposeStablePointerInDeinit(name_, memoryState);
+        DisposeStablePointerFor(memoryState, name_);
     }
 }
 

@@ -9,13 +9,37 @@
 #include <Common.h>
 #include <Utils.hpp>
 
+#include "ThreadData.hpp"
+
 namespace kotlin {
 
+namespace internal {
+
+ALWAYS_INLINE inline bool isStateSwitchAllowed(ThreadState oldState, ThreadState newState) noexcept  {
+    return oldState != newState;
+}
+
+const char* stateToString(ThreadState state) noexcept;
+
+} // namespace internal
+
 // Switches the state of the given thread to `newState` and returns the previous thread state.
-ALWAYS_INLINE ThreadState SwitchThreadState(mm::ThreadData* threadData, ThreadState newState) noexcept;
+ALWAYS_INLINE inline ThreadState SwitchThreadState(mm::ThreadData* threadData, ThreadState newState) noexcept {
+    auto oldState = threadData->setState(newState);
+    // TODO(perf): Mesaure the impact of this assert in debug and opt modes.
+    RuntimeAssert(internal::isStateSwitchAllowed(oldState, newState),
+                  "Illegal thread state switch. Old state: %s. New state: %s.",
+                  internal::stateToString(oldState), internal::stateToString(newState));
+    return oldState;
+}
 
 // Asserts that the given thread is in the given state.
-ALWAYS_INLINE void AssertThreadState(mm::ThreadData* threadData, ThreadState expected) noexcept;
+ALWAYS_INLINE inline void AssertThreadState(mm::ThreadData* threadData, ThreadState expected) noexcept {
+    auto actual = threadData->state();
+    RuntimeAssert(actual == expected,
+                  "Unexpected thread state. Expected: %s. Actual: %s.",
+                  internal::stateToString(expected), internal::stateToString(actual));
+}
 
 } // namespace kotlin
 
