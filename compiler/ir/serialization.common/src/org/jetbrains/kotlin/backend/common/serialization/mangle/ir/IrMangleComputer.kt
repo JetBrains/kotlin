@@ -33,6 +33,8 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
     open fun addReturnType(): Boolean = false
 
+    protected open fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean = false
+
     abstract override fun copy(newMode: MangleMode): IrMangleComputer
 
     private fun StringBuilder.appendName(s: String) {
@@ -121,7 +123,7 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
         typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
-        if (!isCtor && !returnType.isUnit() && addReturnType()) {
+        if (!isCtor && !returnType.isUnit() && (addReturnType() || addReturnTypeSpecialCase(this))) {
             mangleType(builder, returnType)
         }
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
+import org.jetbrains.kotlin.backend.common.ir.isFromJava
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 
 abstract class AbstractJvmManglerIr : IrBasedKotlinManglerImpl() {
@@ -33,7 +36,11 @@ abstract class AbstractJvmManglerIr : IrBasedKotlinManglerImpl() {
     }
 
     private class JvmIrManglerComputer(builder: StringBuilder, mode: MangleMode) : IrMangleComputer(builder, mode) {
-        override fun copy(newMode: MangleMode): IrMangleComputer = JvmIrManglerComputer(builder, newMode)
+        override fun copy(newMode: MangleMode): IrMangleComputer =
+            JvmIrManglerComputer(builder, newMode)
+
+        override fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean =
+            irFunction.isFromJava()
     }
 
     override fun getExportChecker(): KotlinExportChecker<IrDeclaration> = exportChecker
@@ -55,8 +62,14 @@ abstract class AbstractJvmDescriptorMangler(private val mainDetector: MainFuncti
         override fun DeclarationDescriptor.isPlatformSpecificExported() = false
     }
 
-    private class JvmDescriptorManglerComputer(builder: StringBuilder, private val mainDetector: MainFunctionDetector?, mode: MangleMode) :
-        DescriptorMangleComputer(builder, mode) {
+    private class JvmDescriptorManglerComputer(
+        builder: StringBuilder,
+        private val mainDetector: MainFunctionDetector?,
+        mode: MangleMode
+    ) : DescriptorMangleComputer(builder, mode) {
+        override fun addReturnTypeSpecialCase(functionDescriptor: FunctionDescriptor): Boolean =
+            functionDescriptor is JavaMethodDescriptor
+
         override fun copy(newMode: MangleMode): DescriptorMangleComputer =
             JvmDescriptorManglerComputer(builder, mainDetector, newMode)
 
