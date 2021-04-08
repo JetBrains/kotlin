@@ -17,7 +17,7 @@ fun Float.toRoundedString(digits: Int = 0): String {
 
 fun Float.toPercentageString(roundToDigits: Int = 1) = (this * 100).toRoundedString(roundToDigits)
 
-fun List<Float>.maxIndex() = withIndex().maxBy { it.value }!!.index
+fun List<Float>.maxIndex() = withIndex().maxByOrNull { it.value }!!.index
 
 fun accuracy(predictionBatch: FloatMatrix, labelBatch: FloatMatrix): Float {
     val resultIndexes = predictionBatch.toList().map { it.maxIndex() }
