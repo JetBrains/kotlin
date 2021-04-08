@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
+@CacheableTask
 internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
 
     internal data class CInteropGist(
