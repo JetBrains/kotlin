@@ -1,5 +1,5 @@
+// DUMP_EXTERNAL_CLASS: J1
 // FILE: javaConstructorWithTypeParameters.kt
-// DUMP_EXTERNAL_CLASS J1
 
 fun test1() = J1<Int>()
 

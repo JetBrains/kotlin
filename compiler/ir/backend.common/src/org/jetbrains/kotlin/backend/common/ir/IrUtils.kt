@@ -644,3 +644,8 @@ private fun computeAllOverridden(function: IrSimpleFunction, result: MutableSet<
         }
     }
 }
+
+fun IrDeclaration.isFromJava(): Boolean =
+    origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+            parent is IrDeclaration && (parent as IrDeclaration).isFromJava()
+

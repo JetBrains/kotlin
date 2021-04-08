@@ -80,6 +80,8 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
 
     protected open fun addReturnType(): Boolean = false
 
+    protected open fun addReturnTypeSpecialCase(functionDescriptor: FunctionDescriptor): Boolean = false
+
     open fun FunctionDescriptor.specialValueParamPrefix(param: ValueParameterDescriptor): String = ""
 
     private val CallableDescriptor.isRealStatic: Boolean
@@ -125,7 +127,7 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
         returnType?.run {
-            if (!isCtor && !isUnit() && addReturnType()) {
+            if (!isCtor && !isUnit() && (addReturnType() || addReturnTypeSpecialCase(this@mangleSignature))) {
                 mangleType(builder, this)
             }
         }
