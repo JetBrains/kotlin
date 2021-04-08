@@ -40,6 +40,18 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
         }
 
         @Test
+        @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
+        public void testAnnotationsOnNullableParenthesizedTypes() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationsOnParenthesizedTypes.kt")
+        public void testAnnotationsOnParenthesizedTypes() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnParenthesizedTypes.kt");
+        }
+
+        @Test
         @TestMetadata("complexTypes.kt")
         public void testComplexTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/complexTypes.kt");
@@ -169,6 +181,18 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
         @TestMetadata("simpleTypeAlias.kt")
         public void testSimpleTypeAlias() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/simpleTypeAlias.kt");
+        }
+
+        @Test
+        @TestMetadata("splitModifierList.kt")
+        public void testSplitModifierList() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/splitModifierList.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionTypes.kt")
+        public void testSuspendFunctionTypes() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/suspendFunctionTypes.kt");
         }
 
         @Test

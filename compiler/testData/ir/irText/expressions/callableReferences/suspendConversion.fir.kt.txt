@@ -1,6 +1,12 @@
 fun useSuspend(fn: SuspendFunction0<Unit>) {
 }
 
+fun useSuspendNullable(fn: SuspendFunction0<Unit>?) {
+}
+
+fun useSuspendNestedNullable(fn: SuspendFunction0<Unit>?) {
+}
+
 fun useSuspendInt(fn: SuspendFunction1<Int, Unit>) {
 }
 
@@ -96,4 +102,18 @@ fun testWithBoundReceiver() {
 
     C()::bar
   })
+}
+
+fun testNullableParam() {
+  useSuspendNullable(fn = local suspend fun foo1() {
+    foo1()
+  }
+)
+}
+
+fun testNestedNullableParam() {
+  useSuspendNestedNullable(fn = local suspend fun foo1() {
+    foo1()
+  }
+)
 }

@@ -916,7 +916,8 @@ class DeclarationsConverter(
             }
             constructedTypeRef = delegatedType.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
             this.isThis = isThis
-            val calleeKind = if (isImplicit) FirFakeSourceElementKind.ImplicitConstructor else FirFakeSourceElementKind.DelegatingConstructorCall
+            val calleeKind =
+                if (isImplicit) FirFakeSourceElementKind.ImplicitConstructor else FirFakeSourceElementKind.DelegatingConstructorCall
             val calleeSource = constructorDelegationCall.getChildNodeByType(CONSTRUCTOR_DELEGATION_REFERENCE)
                 ?.toFirSourceElement(calleeKind)
                 ?: this@buildDelegatedConstructorCall.source?.fakeElement(calleeKind)
@@ -1281,7 +1282,8 @@ class DeclarationsConverter(
                 CONTRACT_EFFECT -> {
                     val effect = it.getFirstChild()
                     if (effect == null) {
-                        val errorExpression = buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
+                        val errorExpression =
+                            buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
                         destination.add(errorExpression)
                     } else {
                         val expression = expressionConverter.convertExpression(effect, errorReason)
@@ -1674,18 +1676,32 @@ class DeclarationsConverter(
         if (type.asText.isEmpty()) {
             return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax) }
         }
-        var typeModifiers = TypeModifier()
+
+        // There can be MODIFIER_LIST children on the TYPE_REFERENCE node AND the descendant NULLABLE_TYPE nodes.
+        // We aggregate them to get modifiers and annotations. Not only that, there could be multiple modifier lists on each. Examples:
+        //
+        //   `@A() (@B Int)`   -> Has 2 modifier lists (@A and @B) in TYPE_REFERENCE
+        //   `(@A() (@B Int))? -> No modifier list on TYPE_REFERENCE, but 2 modifier lists (@A and @B) on child NULLABLE_TYPE
+        //   `@A() (@B Int)?   -> Has 1 modifier list (@A) on TYPE_REFERENCE, and 1 modifier list (@B) on child NULLABLE_TYPE
+        //   `@A (@B() (@C() (@Bar D)?)?)?` -> Has 1 modifier list (@A) on B and 1 modifier list on each of the
+        //                                     3 descendant NULLABLE_TYPE (@B, @C, @D)
+        //
+        // We need to examine all modifier lists for some cases:
+        // 1. `@A Int?` and `(@A Int)?` are effectively the same, but in the latter, the modifier list is on the child NULLABLE_TYPE
+        // 2. `(suspend @A () -> Int)?` is a nullable suspend function type but the modifier list is on the child NULLABLE_TYPE
+        //
+        // TODO: Report MODIFIER_LIST_NOT_ALLOWED error when there are multiple modifier lists. How do we report on each of them?
+        val allTypeModifiers = mutableListOf<TypeModifier>()
+
         var firType: FirTypeRef = buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax) }
-        var afterLPar = false
         type.forEachChildren {
             when (it.tokenType) {
-                LPAR -> afterLPar = true
                 TYPE_REFERENCE -> firType = convertType(it)
-                MODIFIER_LIST -> if (!afterLPar || typeModifiers.hasNoAnnotations()) typeModifiers = convertTypeModifierList(it)
+                MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
                 USER_TYPE -> firType = convertUserType(it)
-                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it)
-                NULLABLE_TYPE -> firType = convertNullableType(it)
-                FUNCTION_TYPE -> firType = convertFunctionType(it, isSuspend = typeModifiers.hasSuspend)
+                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, allTypeModifiers)
+                NULLABLE_TYPE -> firType = convertNullableType(it, allTypeModifiers)
+                FUNCTION_TYPE -> firType = convertFunctionType(it, isSuspend = allTypeModifiers.hasSuspend())
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
                     source = type.toFirSourceElement()
                     isMarkedNullable = false
@@ -1695,8 +1711,13 @@ class DeclarationsConverter(
             }
         }
 
-        return firType.also { (it.annotations as MutableList<FirAnnotationCall>) += typeModifiers.annotations }
+        for (modifierList in allTypeModifiers) {
+            (firType.annotations as MutableList<FirAnnotationCall>) += modifierList.annotations
+        }
+        return firType
     }
+
+    private fun Collection<TypeModifier>.hasSuspend() = any { it.hasSuspend }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRefContents
@@ -1715,15 +1736,19 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseNullableTypeSuffix
      */
-    private fun convertNullableType(nullableType: LighterASTNode): FirTypeRef {
+    private fun convertNullableType(
+        nullableType: LighterASTNode,
+        allTypeModifiers: MutableList<TypeModifier>,
+        isNullable: Boolean = true
+    ): FirTypeRef {
         lateinit var firType: FirTypeRef
         nullableType.forEachChildren {
             when (it.tokenType) {
-                USER_TYPE -> firType =
-                    convertUserType(it, true)
-                FUNCTION_TYPE -> firType = convertFunctionType(it, true)
-                NULLABLE_TYPE -> firType = convertNullableType(it)
-                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, nullable = true)
+                MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
+                USER_TYPE -> firType = convertUserType(it, isNullable)
+                FUNCTION_TYPE -> firType = convertFunctionType(it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
+                NULLABLE_TYPE -> firType = convertNullableType(it, allTypeModifiers)
+                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, allTypeModifiers, isNullable = true)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
                     source = nullableType.toFirSourceElement()
                     isMarkedNullable = true
@@ -1734,16 +1759,20 @@ class DeclarationsConverter(
         return firType
     }
 
-    private fun unwrapDefinitelyNotNullableType(definitelyNotNullType: LighterASTNode, nullable: Boolean = false): FirTypeRef {
+    private fun unwrapDefinitelyNotNullableType(
+        definitelyNotNullType: LighterASTNode,
+        allTypeModifiers: MutableList<TypeModifier>,
+        isNullable: Boolean = false
+    ): FirTypeRef {
         lateinit var firType: FirTypeRef
         // TODO: Support proper DefinitelyNotNullableType
         definitelyNotNullType.forEachChildren {
             when (it.tokenType) {
-                USER_TYPE -> firType =
-                    convertUserType(it, nullable)
-                FUNCTION_TYPE -> firType = convertFunctionType(it, nullable)
-                NULLABLE_TYPE -> firType = convertNullableType(it)
-                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, nullable)
+                MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
+                USER_TYPE -> firType = convertUserType(it, isNullable)
+                FUNCTION_TYPE -> firType = convertFunctionType(it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
+                NULLABLE_TYPE -> firType = convertNullableType(it, allTypeModifiers, isNullable = false)
+                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, allTypeModifiers, isNullable)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
                     source = definitelyNotNullType.toFirSourceElement()
                     isMarkedNullable = false

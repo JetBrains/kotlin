@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.name.LocalCallableIdConstructor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -1354,11 +1355,37 @@ open class RawFirBuilder(
             val source = typeReference.toFirSourceElement()
             val isNullable = typeElement is KtNullableType
 
+            // There can be KtDeclarationModifierLists in the KtTypeReference AND the descendant KtNullableTypes.
+            // We aggregate them to get modifiers and annotations. Not only that, there could be multiple modifier lists on each. Examples:
+            //
+            //   `@A() (@B Int)`   -> Has 2 modifier lists (@A and @B) on KtTypeReference
+            //   `(@A() (@B Int))? -> No modifier list on KtTypeReference, but 2 modifier lists (@A and @B) on child KtNullableType
+            //   `@A() (@B Int)?   -> Has 1 modifier list (@A) on KtTypeReference, and 1 modifier list (@B) on child KtNullableType
+            //   `@A (@B() (@C() (@Bar D)?)?)?` -> Has 1 modifier list (@A) on KtTypeReference and 1 modifier list on each of the
+            //                                     3 descendant KtNullableTypes (@B, @C, @D)
+            //
+            // We need to examine all modifier lists for some cases:
+            // 1. `@A Int?` and `(@A Int)?` are effectively the same, but in the latter, the modifier list is on the child KtNullableType
+            // 2. `(suspend @A () -> Int)?` is a nullable suspend function type but the modifier list is on the child KtNullableType
+            //
+            // `getModifierList()` only returns the first one so we have to get all modifier list children.
+            // TODO: Report MODIFIER_LIST_NOT_ALLOWED error when there are multiple modifier lists. How do we report on each of them?
+            fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
+                getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
+
+            val allModifierLists = mutableListOf<KtModifierList>(*typeReference.getAllModifierLists())
+
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
                 when (this) {
-                    is KtNullableType -> this.innerType.unwrapNullable()
+                    is KtNullableType -> {
+                        allModifierLists += getAllModifierLists()
+                        this.innerType.unwrapNullable()
+                    }
                     // TODO: Support explicit definitely not null type
-                    is KtDefinitelyNotNullType -> this.innerType.unwrapNullable()
+                    is KtDefinitelyNotNullType -> {
+                        allModifierLists += getAllModifierLists()
+                        this.innerType.unwrapNullable()
+                    }
                     else -> this
                 }
 
@@ -1403,7 +1430,7 @@ open class RawFirBuilder(
                     FirFunctionTypeRefBuilder().apply {
                         this.source = source
                         isMarkedNullable = isNullable
-                        isSuspend = typeReference.hasModifier(SUSPEND_KEYWORD)
+                        isSuspend = allModifierLists.any { it.hasSuspendModifier() }
                         receiverTypeRef = unwrappedElement.receiverTypeReference.convertSafe()
                         // TODO: probably implicit type should not be here
                         returnTypeRef = unwrappedElement.returnTypeReference.toFirOrErrorType()
@@ -1422,8 +1449,10 @@ open class RawFirBuilder(
                 else -> throw AssertionError("Unexpected type element: ${unwrappedElement.text}")
             }
 
-            for (annotationEntry in typeReference.annotationEntries) {
-                firTypeBuilder.annotations += annotationEntry.convert<FirAnnotationCall>()
+            for (modifierList in allModifierLists) {
+                for (annotationEntry in modifierList.annotationEntries) {
+                    firTypeBuilder.annotations += annotationEntry.convert<FirAnnotationCall>()
+                }
             }
             return firTypeBuilder.build()
         }
