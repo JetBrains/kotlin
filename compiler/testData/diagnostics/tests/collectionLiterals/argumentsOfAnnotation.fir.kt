@@ -15,7 +15,7 @@ fun test3() {}
 @Foo(c = [1f], b = [""], a = [1])
 fun test4() {}
 
-@Foo([1 + 2], ["Hello, " + "Kotlin"], [1 / 0f])
+@Foo([1 + 2], ["Hello, " + "Kotlin"], [<!DIVISION_BY_ZERO!>1 / 0f<!>])
 fun test5() {}
 
 const val ONE = 1

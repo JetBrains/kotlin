@@ -167,6 +167,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DIVISION_BY_ZERO) { firDiagnostic ->
+        DivisionByZeroImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.HIDDEN) { firDiagnostic ->
         HiddenImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),

@@ -89,6 +89,7 @@ object FirErrors {
     val INT_LITERAL_OUT_OF_RANGE by error0<FirSourceElement, PsiElement>()
     val FLOAT_LITERAL_OUT_OF_RANGE by error0<FirSourceElement, PsiElement>()
     val WRONG_LONG_SUFFIX by error0<FirSourceElement, KtElement>(SourceElementPositioningStrategies.LONG_LITERAL_SUFFIX)
+    val DIVISION_BY_ZERO by warning0<FirSourceElement, KtExpression>()
 
     // Unresolved
     val HIDDEN by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

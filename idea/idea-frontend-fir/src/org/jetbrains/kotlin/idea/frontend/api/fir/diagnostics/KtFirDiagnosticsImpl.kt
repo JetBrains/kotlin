@@ -194,6 +194,13 @@ internal class WrongLongSuffixImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class DivisionByZeroImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DivisionByZero(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class HiddenImpl(
     override val hidden: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,

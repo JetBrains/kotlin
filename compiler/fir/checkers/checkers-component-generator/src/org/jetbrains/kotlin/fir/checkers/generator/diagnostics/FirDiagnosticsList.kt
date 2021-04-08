@@ -64,6 +64,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val INT_LITERAL_OUT_OF_RANGE by error<FirSourceElement, PsiElement>()
         val FLOAT_LITERAL_OUT_OF_RANGE by error<FirSourceElement, PsiElement>()
         val WRONG_LONG_SUFFIX by error<FirSourceElement, KtElement>(PositioningStrategy.LONG_LITERAL_SUFFIX)
+        val DIVISION_BY_ZERO by warning<FirSourceElement, KtExpression>()
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
