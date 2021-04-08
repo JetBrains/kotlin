@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.RegressionsReporter
-import org.jetbrains.kotlin.RegressionsSummaryReporter
 import org.jetbrains.kotlin.BuildRegister
 import org.jetbrains.kotlin.MPPTools
 import org.jetbrains.kotlin.UtilsKt
@@ -151,33 +149,6 @@ private static String getAnalyzerTargetName() {
 private String findAnalyzerBinary() {
     String result = "${projectDir}/../${analyzerToolDirectory}/${getAnalyzerTargetName()}/" +
             "${analyzerTool}ReleaseExecutable/${analyzerTool}${MPPTools.getNativeProgramExtension()}"
-}
-
-// Produce and send slack report.
-task slackReport(type: RegressionsReporter) {
-    def analyzerBinary = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
-            "${rootBuildDirectory}/${analyzerToolDirectory}")
-    def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
-    if (teamcityConfig && analyzerBinary != null) {
-        // Create folder for report (root Kotlin project settings make create report in separate folder).
-        def reportDirectory = new File(outputReport).parentFile
-        mkdir reportDirectory
-        def targetsResults = new File(new File("${rootBuildDirectory}"), "targetsResults").toString()
-        mkdir targetsResults
-        currentBenchmarksReportFile = "${buildDir.absolutePath}/${nativeJson}"
-        analyzer = analyzerBinary
-        htmlReport = outputReport
-        defaultBranch = project.findProperty('kotlin.native.default.branch') ?: "master"
-        def target = System.getProperty("os.name")
-        summaryFile = "${targetsResults}/${target}.txt"
-        bundleBuild = project.findProperty('kotlin.bundleBuild') == null ? false : true
-    }
-}
-
-task slackSummary(type: RegressionsSummaryReporter) {
-    targetsResultFiles = ['Linux': "${rootBuildDirectory}/targetsResults/Linux.txt".toString(),
-                          'MacOSX': "${rootBuildDirectory}/targetsResults/Mac OS X.txt".toString(),
-                          'Windows': "${rootBuildDirectory}/targetsResults/Windows 10.txt".toString()]
 }
 
 private String getUploadedFile(String fileName) {
