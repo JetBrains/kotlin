@@ -218,7 +218,7 @@ internal class FirLazyDeclarationResolver(
                 .toList()
                 .asReversed()
                 .let(::addAll)
-            if (this@getDesignation is FirCallableDeclaration<*>) {
+            if (this@getDesignation is FirCallableDeclaration<*> || this@getDesignation is FirTypeAlias) {
                 add(this@getDesignation)
             }
         }
