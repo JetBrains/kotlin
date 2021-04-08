@@ -18,8 +18,6 @@ import java.io.File
 interface NpmApi {
     fun setup(project: Project)
 
-    fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution)
-
     fun preparedFiles(nodeJs: NodeJsRootExtension): Collection<File>
 
     fun prepareRootProject(
@@ -38,7 +36,6 @@ interface NpmApi {
         nodeJs: NodeJsRootExtension,
         yarnHome: File,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean,
         cliArgs: List<String>
     )
 

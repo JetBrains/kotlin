@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
@@ -229,26 +228,14 @@ internal class KotlinRootNpmResolver internal constructor(
                     .values
                     .flatMap { it.npmProjects }
 
-                // we need manual up-to-date checking to avoid call package manager during
-                // idea import if nothing was changed
-                // we should call it even kotlinNpmInstall task is up-to-date (skipPackageManager is true)
-                // because our upToDateChecks saves state for next execution
-                val upToDateChecks = allNpmPackages.map {
-                    PackageJsonUpToDateCheck(services, it.npmProject)
-                }
-                val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
-
                 nodeJs.packageManager.resolveRootProject(
                     services,
                     logger,
                     nodeJs,
                     yarn.requireConfigured().home,
                     allNpmPackages,
-                    upToDate,
                     args
                 )
-
-                upToDateChecks.forEach { it.commit() }
 
                 return KotlinRootNpmResolution(rootProject, projectResolutions)
             }
