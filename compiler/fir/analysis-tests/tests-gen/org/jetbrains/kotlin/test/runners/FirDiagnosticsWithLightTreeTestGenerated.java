@@ -3265,6 +3265,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("funInterfaceConstructorReference.kt")
+            public void testFunInterfaceConstructorReference() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/funInterfaceConstructorReference.kt");
+            }
+
+            @Test
             @TestMetadata("genericSam.kt")
             public void testGenericSam() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/genericSam.kt");
