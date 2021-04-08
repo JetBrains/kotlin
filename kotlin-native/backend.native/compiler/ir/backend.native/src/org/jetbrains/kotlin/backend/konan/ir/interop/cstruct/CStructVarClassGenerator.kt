@@ -4,8 +4,6 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
-import kotlinx.cinterop.interpretCPointer
-import kotlinx.cinterop.ptr
 import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
@@ -25,7 +23,7 @@ internal class CStructVarClassGenerator(
         context: GeneratorContext,
         private val interopBuiltIns: InteropBuiltIns,
         private val companionGenerator: CStructVarCompanionGenerator,
-        private val konanSymbols: KonanSymbols
+        private val symbols: KonanSymbols
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
@@ -66,7 +64,7 @@ internal class CStructVarClassGenerator(
                             else -> null
                         }
                     }
-                    .filterIsInstance<IrDeclaration>()
+                    .filterNotNull()
                     .forEach(irClass::addMember)
             }
 
@@ -92,7 +90,7 @@ internal class CStructVarClassGenerator(
     private fun createSecondaryConstructor(irClass: IrClass, descriptor: ClassConstructorDescriptor): IrConstructor {
         val primaryConstructor = irClass.primaryConstructor!!.symbol
 
-        val alloc = konanSymbols.interopAllocType
+        val alloc = symbols.interopAllocType
 
         val nativeheap = symbolTable.referenceClass(
             interopBuiltIns.nativeHeap
@@ -125,7 +123,7 @@ internal class CStructVarClassGenerator(
                         extensionReceiver = irGetObject(nativeheap)
                         putValueArgument(0, irGetObject(irClass.companionObject()!!.symbol))
                     }
-                    val nativePtr = irCall(konanSymbols.interopNativePointedGetRawPointer).apply {
+                    val nativePtr = irCall(symbols.interopNativePointedGetRawPointer).apply {
                         extensionReceiver = nativePointed
                     }
                     it.putValueArgument(0, nativePtr)

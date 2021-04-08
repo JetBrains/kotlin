@@ -57,7 +57,7 @@ internal class CStructVarCompanionGenerator(
                             else -> null
                         }
                     }
-                    .filterIsInstance<IrDeclaration>()
+                    .filterNotNull()
                     .forEach(companionIrClass::addMember)
             }
 

@@ -43,7 +43,7 @@ class SkiaNativeIndexImpl(library: NativeLibrary, verbose: Boolean) : NativeInde
         return ret
     }
 
-    override fun String.isUnknownTemplate() =
+    override fun String.isUnknownTemplate() = // TODO: this is a hack.
             this.isCppTemplate && !this.isSkiaSharedPointer
 }
 
@@ -58,8 +58,8 @@ val StructDecl.stripSkiaSharedPointer: String
         }
     }
 
-private val String.isCppTemplate: Boolean
-    get() = this.contains("<") && this.endsWith(">") // TODO: this is a hack.
+private val String.isCppTemplate: Boolean // TODO: this is a hack.
+    get() = this.contains("<") && this.endsWith(">")
 
-private val String.isSkiaSharedPointer: Boolean
-    get() = this.startsWith("sk_sp<") && this.endsWith(">") // TODO: this is a hack.
+private val String.isSkiaSharedPointer: Boolean // TODO: this is a hack.
+    get() = this.startsWith("sk_sp<") && this.endsWith(">")

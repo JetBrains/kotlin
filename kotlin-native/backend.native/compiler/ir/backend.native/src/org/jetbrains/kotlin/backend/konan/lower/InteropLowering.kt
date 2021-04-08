@@ -85,8 +85,7 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
             override val symbols get() = context.ir.symbols
 
             val klib: KonanLibrary? get() {
-                val expression = element ?: builder.scope.scopeOwnerSymbol.owner as? IrDeclaration
-                return (expression as? IrCall)?.symbol?.owner?.konanLibrary as? KonanLibrary
+                return (element as? IrCall)?.symbol?.owner?.konanLibrary as? KonanLibrary
             }
 
             override val language: String

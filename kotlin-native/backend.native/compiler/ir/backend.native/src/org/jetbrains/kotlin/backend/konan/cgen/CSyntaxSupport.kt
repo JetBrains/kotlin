@@ -42,7 +42,7 @@ private class SimpleCType(private val type: String) : CType {
     override fun render(name: String): String = if (name.isEmpty()) type else "$type $name"
 }
 
-private class PointerCType(val pointee: CType) : CType {
+private class PointerCType(private val pointee: CType) : CType {
     override fun render(name: String): String = pointee.render("*$name")
 }
 

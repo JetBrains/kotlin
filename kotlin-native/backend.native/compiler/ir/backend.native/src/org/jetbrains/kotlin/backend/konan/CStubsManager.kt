@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.ClangArgs
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 private const val dumpBridges = false
@@ -18,14 +17,14 @@ class CStubsManager(private val target: KonanTarget) {
 
     fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>, klib: KonanLibrary?) {
         val language = klib?.manifestProperties?.getProperty("language") ?: "C"
-        val klibStubs = stubs.getOrPut(language) { mutableListOf() }
+        val klibStubs = languageToStubs.getOrPut(language) { mutableListOf() }
         klibStubs += Stub(kotlinLocation, lines)
     }
 
     fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<File> {
-        if (stubs.isEmpty()) return emptyList()
+        if (languageToStubs.isEmpty()) return emptyList()
 
-        val bitcodes = stubs.keys.map { language ->
+        val bitcodes = languageToStubs.entries.map { (language, klibStubs) ->
             val compilerOptions = mutableListOf<String>()
             val sourceFileExtension = when {
                 language == "C++" -> ".cpp"
@@ -35,7 +34,6 @@ class CStubsManager(private val target: KonanTarget) {
                 }
                 else -> ".c"
             }
-            val klibStubs = stubs[language]!!
             val cSource = createTempFile("cstubs", sourceFileExtension)//.deleteOnExit()
             cSource.writeLines(klibStubs.flatMap { it.lines })
 
@@ -59,7 +57,7 @@ class CStubsManager(private val target: KonanTarget) {
 
             val result = Command(clangCommand).getResult(withErrors = true)
             if (result.exitCode != 0) {
-                reportCompilationErrors(cSourcePath, language, result, messageCollector, verbose)
+                reportCompilationErrors(cSourcePath, klibStubs, result, messageCollector, verbose)
             }
             bitcode
         }
@@ -69,7 +67,7 @@ class CStubsManager(private val target: KonanTarget) {
 
     private fun reportCompilationErrors(
             cSourcePath: String,
-            language: String,
+            klibStubs: List<Stub>,
             result: Command.Result,
             messageCollector: MessageCollector,
             verbose: Boolean
@@ -82,7 +80,7 @@ class CStubsManager(private val target: KonanTarget) {
         }
 
         val lineToStub = ArrayList<Stub>()
-        stubs[language]!!.forEach { stub ->
+        klibStubs.forEach { stub ->
             repeat(stub.lines.size) { lineToStub.add(stub) }
         }
 
@@ -110,7 +108,7 @@ class CStubsManager(private val target: KonanTarget) {
         throw KonanCompilationException()
     }
 
-    private val stubs = mutableMapOf<String, MutableList<Stub>>()
+    private val languageToStubs = mutableMapOf<String, MutableList<Stub>>()
     private class Stub(val kotlinLocation: CompilerMessageLocation?, val lines: List<String>)
     private var counter = 0
 }

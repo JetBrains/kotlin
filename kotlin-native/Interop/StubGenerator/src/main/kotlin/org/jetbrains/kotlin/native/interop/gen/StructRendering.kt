@@ -14,7 +14,10 @@ private fun tryRenderStruct(def: StructDef): String? {
     val isPackedStruct = def.fields.any { !it.isAligned }
 
     // Account for C++ vtable size.
-    var offset = if (def.members.isEmpty()) 8L else (def.members.first() as? Field)?.offsetBytes ?: 0L
+    var offset = if (def.members.isEmpty())
+        8L
+    else
+        (def.members.first() as? Field)?.offsetBytes ?: 0L
 
     return buildString {
         append("struct")

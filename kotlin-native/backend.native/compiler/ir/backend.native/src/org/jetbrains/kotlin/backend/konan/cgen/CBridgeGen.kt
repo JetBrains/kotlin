@@ -117,7 +117,6 @@ private fun IrType.isCStructCompanion(): Boolean {
     return clazz.hasAnnotation(RuntimeNames.cStruct)
 }
 
-
 private fun IrType.isCStruct(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.cStruct) ?: false
 
 internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
@@ -132,6 +131,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
     val targetFunctionName: String
 
     if (isInvoke) {
+        require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
         targetPtrParameter = callBuilder.passThroughBridge(
                 expression.extensionReceiver!!,
                 symbols.interopCPointer.typeWithStarProjections,
@@ -762,11 +762,8 @@ private fun KotlinStubs.mapType(
         }
     }
 
-    type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true -> if (managedTypeAnnotation) {
+    type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true ->
         TrivialValuePassing(type, CTypes.voidPtr)
-    } else {
-        TrivialValuePassing(type, CTypes.voidPtr)
-    }
 
     type.isFunction() -> {
         require(!variadic) { renderCompilerError(location) }
@@ -846,7 +843,7 @@ private abstract class SimpleValuePassing : ValuePassing {
     }
 }
 
-private open class TrivialValuePassing(val kotlinType: IrType, override val cType: CType) : SimpleValuePassing() {
+private class TrivialValuePassing(val kotlinType: IrType, override val cType: CType) : SimpleValuePassing() {
     override val kotlinBridgeType: IrType
         get() = kotlinType
     override val cBridgeType: CType
@@ -897,7 +894,7 @@ private class BooleanValuePassing(override val cType: CType, private val irBuilt
     override fun cToBridged(expression: String): String = cBridgeType.cast(expression)
 }
 
-private open class StructValuePassing(private val kotlinClass: IrClass, override val cType: CType) : ValuePassing {
+private class StructValuePassing(private val kotlinClass: IrClass, override val cType: CType) : ValuePassing {
     override fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression {
         val cBridgeValue = passThroughBridge(
                 cValuesRefToPointer(expression),
@@ -939,7 +936,7 @@ private open class StructValuePassing(private val kotlinClass: IrClass, override
         readCValue(irGet(kotlinPointed), symbols)
     }
 
-    protected fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: KonanSymbols): IrExpression =
+    private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: KonanSymbols): IrExpression =
         irCall(symbols.interopCValueRead.owner).apply {
             extensionReceiver = kotlinPointed
             putValueArgument(0, getTypeObject())
@@ -963,9 +960,9 @@ private open class StructValuePassing(private val kotlinClass: IrClass, override
         cBodyLines += "return $result;"
     }
 
-    protected val kotlinPointedType: IrType get() = kotlinClass.defaultType
+    private val kotlinPointedType: IrType get() = kotlinClass.defaultType
 
-    protected fun IrBuilderWithScope.getTypeObject() =
+    private fun IrBuilderWithScope.getTypeObject() =
             irGetObject(
                     kotlinClass.declarations.filterIsInstance<IrClass>()
                             .single { it.isCompanion }.symbol

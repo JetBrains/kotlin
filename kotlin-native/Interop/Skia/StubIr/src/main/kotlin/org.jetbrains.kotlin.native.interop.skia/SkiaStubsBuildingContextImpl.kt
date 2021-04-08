@@ -19,7 +19,7 @@ class SkiaStubsBuildingContextImpl(stubIrContext: StubIrContext) : StubsBuilding
             val struct = structDecl.stripSkiaSharedPointer
             val structArgument = nativeIndex.structs.singleOrNull {
                 it.spelling == struct && it.def != null
-            } ?: error("Finding template arg struct by name has found multiple candidates")
+            } ?: error("Expected to find a single template arg struct by name: ${struct}")
             return getKotlinClassForPointed(structArgument)
         }
     }

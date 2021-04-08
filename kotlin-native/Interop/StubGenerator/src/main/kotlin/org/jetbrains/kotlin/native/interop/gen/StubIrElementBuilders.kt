@@ -80,7 +80,7 @@ internal class StructStubBuilder(
         }
         val classifier = context.getKotlinClassForPointed(decl)
 
-        var methods: List<FunctionStub> =
+        val methods: List<FunctionStub> =
             def.methods
                     .filter { it.isCxxInstanceMethod }
                     // TODO: this excludes all similar named methods from all calsses.
@@ -566,10 +566,10 @@ internal abstract class FunctionalStubBuilder(
         return hasStableParameterNames
     }
 
-    protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) = listOf(
+    protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) = listOfNotNull(
             AnnotationStub.CCall.ManagedTypeReturn.takeIf { func.returnType is ManagedType },
             AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}")
-        ).filterNotNull()
+        )
 
     protected fun FunctionDecl.returnsVoid(): Boolean = this.returnType.unwrapTypedefs() is VoidType
 

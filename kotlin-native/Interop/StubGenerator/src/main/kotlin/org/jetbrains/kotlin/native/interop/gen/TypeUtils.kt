@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.native.interop.gen
 import org.jetbrains.kotlin.native.interop.gen.jvm.DefaultPlugin
 import org.jetbrains.kotlin.native.interop.gen.jvm.Plugin
 import org.jetbrains.kotlin.native.interop.indexer.*
+import org.jetbrains.kotlin.native.interop.skia.SkiaPlugin
 
 val EnumDef.isAnonymous: Boolean
     get() = spelling.contains("(anonymous ") // TODO: it is a hack
@@ -35,7 +36,7 @@ val StructDecl.isAnonymous: Boolean
 fun Type.getStringRepresentation(plugin: Plugin = DefaultPlugin): String = when (this) {
     VoidType -> "void"
     CharType -> "char"
-    CBoolType -> "bool" // "_Bool"
+    CBoolType -> if (plugin is SkiaPlugin) "bool" else "_Bool"
     ObjCBoolType -> "BOOL"
     is IntegerType -> this.spelling
     is FloatingType -> this.spelling

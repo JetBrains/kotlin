@@ -236,8 +236,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                                 getFunction(cursor, clazz.decl)?.let { clazz.methods.add(it) }
                         }
                     }
-                    CXCursorKind.CXCursor_Constructor ->
-                        getFunction(cursor, clazz.decl)?.let { clazz.methods.add(it) }
+                    CXCursorKind.CXCursor_Constructor,
                     CXCursorKind.CXCursor_Destructor ->
                         getFunction(cursor, clazz.decl)?.let { clazz.methods.add(it) }
 
@@ -868,16 +867,6 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             return
         }
 
-        // TODO: do we need it?
-        /*
-        val namespace: Namespace? =
-        // semantic parent of any namespace member is always namespace itself (no type aliases etc)
-            if (info.semanticContainer!!.pointed.cursor.kind == CXCursorKind.CXCursor_Namespace) {
-                val parent = info.semanticContainer!!.pointed.cursor.readValue()
-                Namespace(getCursorSpelling(parent), getParentName(parent))
-            } else null
-        */
-
         if (!cursor.isRecursivelyPublic()) {
             // c++ : skip anon namespaces, static functions and variables and private inner classes
             return
@@ -979,29 +968,25 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
     }
 
-    fun indexDeclaration(cursor: CValue<CXCursor>): Unit {
+    fun indexCxxDeclaration(cursor: CValue<CXCursor>): Unit {
+        if (library.language != Language.CPP) return
         if (!library.includesDeclaration(cursor)) {
             return
         }
 
         if (cursor.isRecursivelyPublic()) {
             when (cursor.kind) {
-
                 CXCursorKind.CXCursor_ClassDecl, CXCursorKind.CXCursor_StructDecl, CXCursorKind.CXCursor_UnionDecl -> {
-                    if (library.language == Language.CPP) {
-                        if (cursor.spelling.isEmpty()) {
-                            // Skip anonymous struct.
-                            // (It gets included anyway if used as a named field type).
-                        } else {
-                            getStructDeclAt(cursor)
-                        }
+                    if (cursor.spelling.isEmpty()) {
+                        // Skip anonymous struct.
+                        // (It gets included anyway if used as a named field type).
+                    } else {
+                        getStructDeclAt(cursor)
                     }
                 }
 
                 CXCursorKind.CXCursor_FunctionDecl -> {
-                    if (library.language == Language.CPP) {
-                        indexCxxFunction(cursor)
-                    }
+                    indexCxxFunction(cursor)
                 }
 
                 else -> {
@@ -1197,9 +1182,9 @@ fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResul
     return buildNativeIndexImpl(result)
 }
 
-fun buildNativeIndexImpl(result: NativeIndex): IndexerResult {
-    val compilation = indexDeclarations(result as NativeIndexImpl)
-    return IndexerResult(result, compilation)
+fun buildNativeIndexImpl(index: NativeIndexImpl): IndexerResult {
+    val compilation = indexDeclarations(index)
+    return IndexerResult(index, compilation)
 }
 
 private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH {
@@ -1235,7 +1220,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
 
             visitChildren(clang_getTranslationUnitCursor(translationUnit)) { cursor, _ ->
                 if (getContainingFile(cursor) in headers) {
-                    nativeIndex.indexDeclaration(cursor)
+                    nativeIndex.indexCxxDeclaration(cursor)
                 }
                 CXChildVisitResult.CXChildVisit_Recurse
             }

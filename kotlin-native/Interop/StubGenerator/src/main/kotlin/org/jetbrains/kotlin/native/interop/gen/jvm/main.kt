@@ -102,6 +102,7 @@ private fun List<String>?.isTrue(): Boolean {
 }
 
 private fun runCmd(command: Array<String>, verbose: Boolean = false) {
+    if (verbose) println("COMMAND: " + command.joinToString(" "))
     Command(*command).getOutputLines(true).let { lines ->
         if (verbose) lines.forEach(::println)
     }
@@ -121,19 +122,22 @@ private fun Properties.putAndRunOnReplace(key: Any, newValue: Any, beforeReplace
     this[key] = newValue
 }
 
-private fun selectNativeLanguage(config: DefFile.DefFileConfig, hintIsCPP: Boolean = false): Language {
+private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
     val languages = mapOf(
             "C" to Language.C,
             "C++" to Language.CPP,
             "Objective-C" to Language.OBJECTIVE_C
     )
 
+    // C++ is not publicly supported.
+    val publicLanguages = languages.keys.minus("C++")
+
     val lang = config.language?.let {
         languages[it]
-                ?: error("Unexpected language '${config.language}'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
+                ?: error("Unexpected language '${config.language}'. Possible values are: ${publicLanguages.joinToString { "'$it'" }}")
     } ?: Language.C
 
-    return if (lang == Language.C && hintIsCPP) Language.CPP else lang
+    return lang
 
 }
 
@@ -338,12 +342,6 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         def.manifestAddendProperties["ir_provider"] = KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
     }
     stubIrContext.addManifestProperties(def.manifestAddendProperties)
-
-    // TODO: this is for C++ compiler to be able to use -I
-    def.manifestAddendProperties["externalCompilerOpts"] =
-        (cinteropArguments.compilerOpts + cinteropArguments.compilerOptions + cinteropArguments.compilerOption)
-            .joinToString(" ")
-
     // cinterop command line option overrides def file property
     val foreignExceptionMode = cinteropArguments.foreignExceptionMode?: def.config.foreignExceptionMode
     foreignExceptionMode?.let {
@@ -360,7 +358,6 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             val outOFile = tempFiles.create(libName,".o")
             val compilerCmd = arrayOf(compiler, *compilerArgs,
                     "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
-            if (verbose) println("COMPILER: " + compilerCmd.joinToString(" "))
             runCmd(compilerCmd, verbose)
 
             val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
@@ -374,7 +371,6 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             val outLib = File(nativeLibsDir, "$libName.bc")
             val compilerCmd = arrayOf(compiler, *compilerArgs,
                     "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
-            if (verbose) println("COMPILER: " + compilerCmd.joinToString(" "))
             runCmd(compilerCmd, verbose)
             outLib.absolutePath
         }
@@ -486,8 +482,7 @@ internal fun buildNativeLibrary(
             arguments.compilerOptions + arguments.compilerOption).toTypedArray()
 
     val headerFiles = def.config.headers + additionalHeaders
-    val cppOptions = isCxxOptions(def.config.compilerOpts + additionalCompilerOpts)
-    val language = selectNativeLanguage(def.config, cppOptions)
+    val language = selectNativeLanguage(def.config)
     val compilerOpts: List<String> = mutableListOf<String>().apply {
         addAll(def.config.compilerOpts)
         addAll(tool.defaultCompilerOpts)
@@ -501,13 +496,7 @@ internal fun buildNativeLibrary(
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         addAll(when (language) {
             Language.C -> emptyList()
-            Language.CPP -> {
-                if (cppOptions)
-                    emptyList()
-                else
-                    // TODO: should this include be here or is it just a misconfiguration on my side?
-                    listOf("-x", "c++", "-I${tool.clang.absoluteTargetToolchain}/usr/include/c++/v1")
-            }
+            Language.CPP -> emptyList()
             Language.OBJECTIVE_C -> {
                 // "Objective-C" within interop means "Objective-C with ARC":
                 listOf("-fobjc-arc")
