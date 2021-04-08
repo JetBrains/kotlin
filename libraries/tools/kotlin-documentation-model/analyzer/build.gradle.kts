@@ -36,6 +36,11 @@ allprojects {
         mavenCentral()
         maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
         maven(url = "https://dl.bintray.com/kotlin/kotlin-dev")
+        maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") {
+            content {
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
     }
 }
 
