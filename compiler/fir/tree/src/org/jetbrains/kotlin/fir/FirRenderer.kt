@@ -983,7 +983,11 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef) {
+        functionTypeRef.annotations.dropExtensionFunctionAnnotation().renderAnnotations()
         print("( ")
+        if (functionTypeRef.isSuspend) {
+            print("suspend ")
+        }
         functionTypeRef.receiverTypeRef?.let {
             it.accept(this)
             print(".")

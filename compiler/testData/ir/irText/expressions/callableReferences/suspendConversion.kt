@@ -1,6 +1,8 @@
 // !LANGUAGE: +SuspendConversion
 
 fun useSuspend(fn: suspend () -> Unit) {}
+fun useSuspendNullable(fn: (suspend () -> Unit)?) {}
+fun useSuspendNestedNullable(fn: ((suspend () -> Unit)?)?) {}
 fun useSuspendInt(fn: suspend (Int) -> Unit) {}
 
 suspend fun foo0() {}
@@ -31,3 +33,7 @@ fun testWithCoercionToUnit() { useSuspend(::foo3) }
 fun testWithDefaults() { useSuspend(::foo4) }
 
 fun testWithBoundReceiver() { useSuspend(C()::bar) }
+
+fun testNullableParam() { useSuspendNullable(::foo1) }
+
+fun testNestedNullableParam() { useSuspendNestedNullable(::foo1) }
