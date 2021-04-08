@@ -40,12 +40,13 @@ private fun Project.getLeafCommonizerTarget(sourceSet: KotlinSourceSet): LeafCom
     val konanTargets = compilationsBySourceSets(this)[sourceSet].orEmpty()
         .flatMap { compilation -> compilation.konanTargets }
 
-    return when {
-        konanTargets.isEmpty() -> null
-        konanTargets.size == 1 -> LeafCommonizerTarget(konanTargets.single())
-        else -> error("Source set ${sourceSet.name} is not a leaf source set. konanTargets=$konanTargets")
-    }
+    return if (konanTargets.size == 1) LeafCommonizerTarget(konanTargets.single())
 
+    /*
+    Can even be more than one, when added using `KotlinCompilation.source`. Still returning null, since this
+    does not represent a 'proper' source set hierarchy
+     */
+    else null
 }
 
 private fun KotlinSourceSetContainer.resolveSourceSetsDirectlyDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
