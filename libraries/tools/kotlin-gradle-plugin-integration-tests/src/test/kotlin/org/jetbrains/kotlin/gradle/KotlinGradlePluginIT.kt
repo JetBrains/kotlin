@@ -1240,4 +1240,45 @@ class KotlinGradleIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testEarlyConfigurationsResolutionKotlin() = testEarlyConfigurationsResolution("kotlinProject", kts = false)
+
+    @Test
+    fun testEarlyConfigurationsResolutionKotlinJs() = testEarlyConfigurationsResolution("kotlin-js-browser-project", kts = true)
+
+    private fun testEarlyConfigurationsResolution(projectName: String, kts: Boolean) = with(Project(projectName = projectName)) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        //language=Gradle
+        gradleBuildScript().appendText(
+            """${'\n'}
+            // KT-45834 start
+            ${if (kts) "var" else "def"} ready = false
+            gradle.taskGraph.whenReady {
+                println("Task Graph Ready")
+                ready = true
+            }
+            
+            allprojects {
+                configurations.forEach { configuration ->
+                    configuration.incoming.beforeResolve {
+                        println("Resolving ${'$'}configuration")
+                        if (!ready) {
+                            throw ${if (kts) "" else "new"} GradleException("${'$'}configuration is being resolved at configuration time")
+                        }
+                    }
+                }
+            }
+            // KT-45834 end
+            """.trimIndent()
+        )
+
+        build(
+            "assemble",
+            options = defaultBuildOptions().copy(dryRun = true)
+        ) {
+            assertSuccessful()
+        }
+    }
 }

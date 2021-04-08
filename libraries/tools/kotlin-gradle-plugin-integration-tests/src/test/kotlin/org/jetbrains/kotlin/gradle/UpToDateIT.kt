@@ -79,7 +79,7 @@ class UpToDateIT : BaseGradleIT() {
 
         override fun initProject(project: Project) = with(project) {
             buildGradle.appendText(
-                "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getComputedCompilerClasspath\$kotlin_gradle_plugin() }"
+                "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getComputedCompilerClasspath\$kotlin_gradle_plugin().toList() }"
             )
             build("clean") { originalCompilerCp = "compiler_cp=\\[(.*)]".toRegex().find(output)!!.groupValues[1].split(", ") }
             buildGradle.appendText("""${'\n'}

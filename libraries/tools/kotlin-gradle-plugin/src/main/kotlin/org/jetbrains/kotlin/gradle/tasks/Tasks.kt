@@ -37,14 +37,17 @@ import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
-import org.jetbrains.kotlin.gradle.logging.*
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.isParentOf
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
+import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
@@ -109,25 +112,29 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
 
     @get:Classpath
     @get:InputFiles
-    internal val computedCompilerClasspath: List<File> by lazy {
-        require(!defaultCompilerClasspath.isEmpty) {
-            "Default Kotlin compiler classpath is empty! Task: ${this::class.qualifiedName}"
-        }
-
+    internal val computedCompilerClasspath: FileCollection = project.objects.fileCollection().from({
         when {
             !compilerClasspath.isNullOrEmpty() -> compilerClasspath!!
-            compilerJarFile != null -> listOf(compilerJarFile!!) +
-                    defaultCompilerClasspath
-                        .filterNot {
-                            it.nameWithoutExtension.startsWith("kotlin-compiler")
-                        }
+            compilerJarFile != null -> classpathWithCompilerJar
             useFallbackCompilerSearch -> findKotlinCompilerClasspath(project)
-            else -> defaultCompilerClasspath.toList()
+            else -> defaultCompilerClasspath
         }
-    }
+    })
 
+    // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
+    private val classpathWithCompilerJar
+        get() = project.objects.fileCollection()
+            .from(compilerJarFile, defaultCompilerClasspath.filter { !it.nameWithoutExtension.startsWith("kotlin-compiler") })
 
     protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
+
+    init {
+        doFirst {
+            require(!defaultCompilerClasspath.isEmpty) {
+                "Default Kotlin compiler classpath is empty! Task: ${path} (${this::class.qualifiedName})"
+            }
+        }
+    }
 }
 
 public class GradleCompileTaskProvider {
