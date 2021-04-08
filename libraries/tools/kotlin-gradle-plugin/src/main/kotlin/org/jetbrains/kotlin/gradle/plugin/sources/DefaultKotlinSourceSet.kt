@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.util.*
-import kotlin.collections.HashSet
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
@@ -53,6 +52,12 @@ class DefaultKotlinSourceSet(
 
     override val runtimeOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
+
+    /**
+     * Dependencies added to this configuration will not be exposed to any other source set.
+     */
+    val intransitiveMetadataConfigurationName: String
+        get() = lowerCamelCaseName(disambiguateName(INTRANSITIVE), METADATA_CONFIGURATION_NAME_SUFFIX)
 
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source").apply {
         filter.include("**/*.java")

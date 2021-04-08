@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
@@ -53,7 +54,12 @@ private fun Project.addDependencies(sourceSet: KotlinSourceSet, libraries: FileC
     getMetadataCompilationForSourceSet(sourceSet)?.let { compilation ->
         compilation.compileDependencyFiles += libraries
     }
-    dependencies.add(sourceSet.implementationMetadataConfigurationName, libraries)
+    if (sourceSet is DefaultKotlinSourceSet) {
+        val metadataConfigurationName =
+            if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
+            else sourceSet.implementationMetadataConfigurationName
+        dependencies.add(metadataConfigurationName, libraries)
+    }
 }
 
 private val Project.konanDistribution: KonanDistribution

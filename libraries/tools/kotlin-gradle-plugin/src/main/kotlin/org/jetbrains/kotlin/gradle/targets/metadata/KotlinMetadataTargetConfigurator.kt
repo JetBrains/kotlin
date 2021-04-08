@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.getLibraries
@@ -329,8 +330,11 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 }
                 project.copyCommonizeCInteropForIdeTask?.let { task ->
                     val libraries = task.getLibraries(this)
-                    kotlinSourceSetsIncludingDefault.forEach { sourceSet ->
-                        project.dependencies.add(sourceSet.implementationMetadataConfigurationName, libraries)
+                    kotlinSourceSetsIncludingDefault.filterIsInstance<DefaultKotlinSourceSet>().forEach { sourceSet ->
+                        val dependencyConfigurationName =
+                            if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
+                            else sourceSet.implementationMetadataConfigurationName
+                        project.dependencies.add(dependencyConfigurationName, libraries)
                     }
                 }
             }

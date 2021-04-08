@@ -18,6 +18,9 @@ internal val Project.isCInteropCommonizationEnabled: Boolean get() = PropertiesP
 
 internal val Project.isHierarchicalCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableHierarchicalCommonization
 
+internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean
+    get() = PropertiesProvider(this).enableIntransitiveMetadataConfiguration
+
 internal val Project.commonizeTask: TaskProvider<Task>
     get() = locateOrRegisterTask(
         "commonize",

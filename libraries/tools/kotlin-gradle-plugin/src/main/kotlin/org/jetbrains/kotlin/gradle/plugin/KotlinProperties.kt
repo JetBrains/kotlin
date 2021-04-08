@@ -233,6 +233,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableNativeDistributionCommonizationCache: Boolean
         get() = booleanProperty("kotlin.mpp.enableNativeDistributionCommonizationCache") ?: true
 
+    val enableIntransitiveMetadataConfiguration: Boolean
+        get() = booleanProperty("kotlin.mpp.enableIntransitiveMetadataConfiguration") ?: false
+
     /**
      * Dependencies caching strategy for all targets that support caches.
      */
