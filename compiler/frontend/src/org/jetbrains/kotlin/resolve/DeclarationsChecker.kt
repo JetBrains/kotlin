@@ -715,8 +715,10 @@ class DeclarationsChecker(
             } else if (property.receiverTypeReference != null) {
                 val delegatedPropertyResolvedCall = trace.get(DELEGATED_PROPERTY_RESOLVED_CALL, propertyDescriptor.getter)
                 val dispatchReceiverType = delegatedPropertyResolvedCall?.dispatchReceiver?.type
+                val extensionReceiverType = delegatedPropertyResolvedCall?.extensionReceiver?.type
                 val usedParameter = propertyDescriptor.typeParameters.find { typeParameter ->
-                    dispatchReceiverType?.contains { it.constructor == typeParameter.typeConstructor } == true
+                    dispatchReceiverType?.contains { it.constructor == typeParameter.typeConstructor } == true ||
+                            extensionReceiverType?.contains { it.constructor == typeParameter.typeConstructor } == true
                 }
                 if (usedParameter != null) {
                     if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate)) {

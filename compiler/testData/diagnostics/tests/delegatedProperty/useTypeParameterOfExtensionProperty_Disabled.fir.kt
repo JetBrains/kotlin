@@ -8,6 +8,12 @@ class Delegate<T : Any> {
 
 var <T : Any> List<T>.foo by Delegate<T>()
 
+class Wrapper<T>(val v: T? = null)
+
+operator fun <T> Wrapper<T>.getValue(thisRef: Any?, kp: Any?): T = v!!
+
+val <T : Any> List<T>.bar by Wrapper<T>()
+
 fun useString(s: String) {}
 
 fun main(listInt: List<Int>, listStr: List<String>) {
