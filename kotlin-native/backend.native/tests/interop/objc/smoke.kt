@@ -75,7 +75,7 @@ fun run() {
     if (foo.hashCode() == hash) {
         // toString (virtually):
         if (Platform.memoryModel == MemoryModel.STRICT)
-            println(map.keys.map { it.toString() }.min() == foo.description())
+            println(map.keys.map { it.toString() }.minOrNull() == foo.description())
         else
             // TODO: hack until proper cycle collection in maps.
             println(true)
