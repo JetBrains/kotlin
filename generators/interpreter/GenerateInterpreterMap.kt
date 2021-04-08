@@ -17,14 +17,16 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
+import org.jetbrains.kotlin.ir.util.SignatureScope
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -200,17 +202,31 @@ private fun getIrBuiltIns(): IrBuiltIns {
     val languageSettings = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3)
 
     val moduleDescriptor = ModuleDescriptorImpl(Name.special("<test-module>"), LockBasedStorageManager(""), DefaultBuiltIns.Instance)
-    val signaturer = object : IdSignatureComposer<Any> {
+    val signaturer = object : IdSignatureComposer {
         override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature = error("jhhh")
 
         override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature = error("dsd")
+        override fun composeFieldSignature(descriptor: PropertyDescriptor): IdSignature {
+            TODO("Not yet implemented")
+        }
 
-        override fun <R> inLocalScope(element: Any?, block: () -> R): R {
+        override fun composeAnonInitSignature(descriptor: ClassDescriptor): IdSignature {
+            TODO("Not yet implemented")
+        }
+
+        override fun inFile(file: IrFileSymbol?, block: () -> Unit) {
+            TODO("Not yet implemented")
+        }
+
+        override fun setupTypeApproximation(app: (KotlinType) -> KotlinType) {
+
+        }
+
+        override fun <E, R> inLocalScope(builder: (SignatureScope<E>) -> Unit, block: () -> R): R {
             TODO("Not yet implemented")
         }
     }
     val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
-    @Suppress("UNCHECKED_CAST")
-    val typeTranslator = TypeTranslatorImpl(symbolTable, signaturer as IdSignatureComposer<KtElement>, languageSettings, moduleDescriptor)
+    val typeTranslator = TypeTranslatorImpl(symbolTable, signaturer, languageSettings, moduleDescriptor)
     return IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 }
