@@ -5,7 +5,7 @@ fun String.toDouble(): Double = (+(this.asDynamic())).unsafeCast<Double>().also 
         TODO()
 }
 
-fun String.isNaN(): Boolean = when (this.toLowerCase()) {
+fun String.isNaN(): Boolean = when (this.lowercase()) {
     "nan", "+nan", "-nan" -> true
     else -> false
 }
