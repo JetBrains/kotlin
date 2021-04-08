@@ -8,11 +8,11 @@
 #include "Common.h"
 #include "ObjectOps.hpp"
 #include "ThreadData.hpp"
+#include "ThreadState.hpp"
 
 using namespace kotlin;
 
 OBJ_GETTER(mm::InitThreadLocalSingleton, ThreadData* threadData, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    // TODO: Is it possible that threadData != CurrentThreadData?
     AssertThreadState(threadData, ThreadState::kRunnable);
     if (auto* value = *location) {
         // Initialized by someone else.

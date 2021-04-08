@@ -19,6 +19,24 @@ bool isEmpty(T& iterable) {
     return iterable.begin() == iterable.end();
 }
 
+template <typename E, typename T>
+std::vector<E> collect(T& iterable) {
+    std::vector<E> result;
+    for (E element : iterable) {
+        result.push_back(element);
+    }
+    return std::move(result);
+}
+
+std::vector<mm::ThreadData*> collect(mm::ThreadRegistry::Iterable& iterable) {
+    std::vector<mm::ThreadData*> result;
+    for (mm::ThreadData& element : iterable) {
+        result.push_back(&element);
+    }
+    // Do not use std::move because clang complains that it prevents copy elision.
+    return result;
+}
+
 } // namespace
 
 extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
@@ -28,9 +46,8 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     auto stableRefs = mm::StableRefRegistry::Instance().Iter();
     auto threads = mm::ThreadRegistry::Instance().Iter();
 
-    // TODO: Improve error reporting.
-    EXPECT_TRUE(isEmpty(globals));
-    EXPECT_TRUE(isEmpty(objects));
-    EXPECT_TRUE(isEmpty(stableRefs));
-    EXPECT_TRUE(isEmpty(threads));
+    EXPECT_THAT(collect<ObjHeader**>(globals), testing::UnorderedElementsAre());
+    EXPECT_THAT(collect<mm::ObjectFactory<mm::GC>::NodeRef>(objects), testing::UnorderedElementsAre());
+    EXPECT_THAT(collect<ObjHeader*>(stableRefs), testing::UnorderedElementsAre());
+    EXPECT_THAT(collect(threads), testing::UnorderedElementsAre());
 }
