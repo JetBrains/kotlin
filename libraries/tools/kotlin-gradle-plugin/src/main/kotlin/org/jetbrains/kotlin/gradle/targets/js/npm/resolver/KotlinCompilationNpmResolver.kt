@@ -230,6 +230,8 @@ internal class KotlinCompilationNpmResolver(
         private val externalNpmDependencies = mutableSetOf<NpmDependency>()
         private val fileCollectionDependencies = mutableSetOf<FileCollectionExternalGradleDependency>()
 
+        private val visitedDependencies = mutableSetOf<ResolvedDependency>()
+
         fun visit(configuration: Configuration) {
             configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
                 visitDependency(it)
@@ -282,6 +284,8 @@ internal class KotlinCompilationNpmResolver(
         }
 
         private fun visitDependency(dependency: ResolvedDependency) {
+            if (dependency in visitedDependencies) return
+            visitedDependencies.add(dependency)
             visitArtifacts(dependency, dependency.moduleArtifacts)
 
             dependency.children.forEach {
