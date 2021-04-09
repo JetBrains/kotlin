@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -88,7 +90,15 @@ fun CallableMemberDescriptor.createTypeParameterWithNewName(
 }
 
 fun KotlinType.removeExternalProjections(): KotlinType {
-    val newArguments = arguments.map { TypeProjectionImpl(Variance.INVARIANT, it.type) }
+    val newArguments = arguments.map {
+        val type = it.type
+        TypeProjectionImpl(
+            Variance.INVARIANT,
+            if (type.constructor is IntersectionTypeConstructor)
+                NewCommonSuperTypeCalculator.commonSuperType(type.constructor.supertypes.map(KotlinType::unwrap))
+            else type
+        )
+    }
     return replace(newArguments)
 }
 
