@@ -127,11 +127,6 @@ class Worker {
 
   void startEventLoop();
 
-  // Cleans up the jobs in the queue and disposes stable pointers used by this worker.
-  // Called from runtime deinit when TLS may be deallocated, thus accepts the current
-  // MemoryState as a parameter.
-  void destroy(MemoryState* memoryState);
-
   void putJob(Job job, bool toFront);
   void putDelayedJob(Job job);
 
@@ -157,7 +152,16 @@ class Worker {
 
   pthread_t thread() const { return thread_; }
 
+  MemoryState* memoryState() { return memoryState_; }
+
  private:
+  void setMemoryState(MemoryState* state) {
+    RuntimeAssert(memoryState_ == nullptr, "MemoryState is already set for the worker with id=%d", id_);
+    memoryState_ = state;
+  }
+
+  friend Worker* WorkerInit(MemoryState* memoryState, KBoolean errorReporting);
+
   KInt id_;
   WorkerKind kind_;
   KStdDeque<Job> queue_;
@@ -171,6 +175,9 @@ class Worker {
   bool errorReporting_;
   bool terminated_ = false;
   pthread_t thread_ = 0;
+  // MemoryState for worker's thread.
+  // We set it in WorkerInit and use to correctly switch thread states in woker's destructor.
+  MemoryState* memoryState_ = nullptr;
 };
 
 #endif  // WITH_WORKERS
@@ -322,9 +329,12 @@ class State {
     workers_.erase(it);
   }
 
-  void destroyWorkerUnlocked(Worker* worker, MemoryState* memoryState) {
+  void destroyWorkerUnlocked(Worker* worker) {
     {
-      Locker locker(&lock_, memoryState);
+      // We call destroyWorkerUnlocked from runtimeDeinit when TLS may be already deallocated,
+      // so we have to use the pointer to MemoryState saved in the worker instance.
+      RuntimeAssert(pthread_self() == worker->thread(), "Worker destruction must be executed by the worker thread.");
+      Locker locker(&lock_, worker->memoryState());
       auto id = worker->id();
       auto it = workers_.find(id);
       if (it != workers_.end()) {
@@ -332,7 +342,6 @@ class State {
       }
     }
     GC_UnregisterWorker(worker);
-    worker->destroy(memoryState);
     konanDestructInstance(worker);
   }
 
@@ -760,26 +769,26 @@ KInt GetWorkerId(Worker* worker) {
 #endif  // WITH_WORKERS
 }
 
-Worker* WorkerInit(KBoolean errorReporting) {
+Worker* WorkerInit(MemoryState* memoryState, KBoolean errorReporting) {
 #if WITH_WORKERS
-  if (::g_worker != nullptr) return ::g_worker;
-  Worker* worker = theState()->addWorkerUnlocked(errorReporting != 0, nullptr, WorkerKind::kOther);
-  ::g_worker = worker;
+  Worker* worker;
+  if (::g_worker != nullptr) {
+      worker = ::g_worker;
+  } else {
+      worker = theState()->addWorkerUnlocked(errorReporting != 0, nullptr, WorkerKind::kOther);
+      ::g_worker = worker;
+  }
+  worker->setMemoryState(memoryState);
   return worker;
 #else
   return nullptr;
 #endif  // WITH_WORKERS
 }
 
-// The worker deinitialization requires proper thread state switching because
-// it contains locks and mutates the root set. But we call it from the runtime
-// deinitialization when TLS may be already deallocated making a pointer to
-// the current thread data invalid. Thus we have to explicitly pass the MemoryState
-// pointer to the deinitialization sequence.
-void WorkerDeinit(Worker* worker, MemoryState* memoryState) {
+void WorkerDeinit(Worker* worker) {
 #if WITH_WORKERS
   ::g_worker = nullptr;
-  theState()->destroyWorkerUnlocked(worker, memoryState);
+  theState()->destroyWorkerUnlocked(worker);
 #endif  // WITH_WORKERS
 }
 
@@ -812,6 +821,40 @@ bool WorkerSchedule(KInt id, KNativePtr jobStablePtr) {
 #if WITH_WORKERS
 
 Worker::~Worker() {
+  RuntimeAssert(pthread_self() == thread(), "Worker destruction must be executed by the worker thread.");
+  // Cleanup jobs in the queue.
+  for (auto job : queue_) {
+      switch (job.kind) {
+          case JOB_REGULAR:
+              DisposeStablePointerFor(memoryState_, job.regularJob.argument);
+              job.regularJob.future->cancelUnlocked(memoryState_);
+              break;
+          case JOB_EXECUTE_AFTER: {
+              // TODO: what do we do here? Shall we execute them?
+              DisposeStablePointerFor(memoryState_, job.executeAfter.operation);
+              break;
+          }
+          case JOB_TERMINATE: {
+              // TODO: any more processing here?
+              job.terminationRequest.future->cancelUnlocked(memoryState_);
+              break;
+          }
+          case JOB_NONE: {
+              RuntimeCheck(false, "Cannot be in queue");
+              break;
+          }
+      }
+  }
+
+  for (auto job : delayed_) {
+      RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
+      DisposeStablePointerFor(memoryState_, job.executeAfter.operation);
+  }
+
+  if (name_ != nullptr) {
+      DisposeStablePointerFor(memoryState_, name_);
+  }
+
   pthread_mutex_destroy(&lock_);
   pthread_cond_destroy(&cond_);
 }
@@ -837,41 +880,6 @@ void* workerRoutine(void* argument) {
 
 void Worker::startEventLoop() {
   pthread_create(&thread_, nullptr, workerRoutine, this);
-}
-
-void Worker::destroy(MemoryState* memoryState) {
-    // Cleanup jobs in the queue.
-    for (auto job : queue_) {
-        switch (job.kind) {
-            case JOB_REGULAR:
-                DisposeStablePointerFor(memoryState, job.regularJob.argument);
-                job.regularJob.future->cancelUnlocked(memoryState);
-                break;
-            case JOB_EXECUTE_AFTER: {
-                // TODO: what do we do here? Shall we execute them?
-                DisposeStablePointerFor(memoryState, job.executeAfter.operation);
-                break;
-            }
-            case JOB_TERMINATE: {
-                // TODO: any more processing here?
-                job.terminationRequest.future->cancelUnlocked(memoryState);
-                break;
-            }
-            case JOB_NONE: {
-                RuntimeCheck(false, "Cannot be in queue");
-                break;
-            }
-        }
-    }
-
-    for (auto job : delayed_) {
-        RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
-        DisposeStablePointerFor(memoryState, job.executeAfter.operation);
-    }
-
-    if (name_ != nullptr) {
-        DisposeStablePointerFor(memoryState, name_);
-    }
 }
 
 void Worker::putJob(Job job, bool toFront) {
