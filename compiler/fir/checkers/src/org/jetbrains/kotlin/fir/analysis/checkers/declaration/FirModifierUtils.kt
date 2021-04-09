@@ -12,7 +12,6 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
@@ -95,6 +94,6 @@ internal fun FirSourceElement?.getModifierList(): FirModifierList? {
 
 internal operator fun FirModifierList?.contains(token: KtModifierKeywordToken): Boolean = this?.contains(token) == true
 
-internal fun FirDeclaration.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
+internal fun FirElement.getModifier(token: KtModifierKeywordToken): FirModifier<*>? = source.getModifierList()?.get(token)
 
-internal fun FirDeclaration.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
+internal fun FirElement.hasModifier(token: KtModifierKeywordToken): Boolean = token in source.getModifierList()
