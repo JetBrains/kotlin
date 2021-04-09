@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -62,7 +63,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             simplifiedFunction.startOffset,
             simplifiedFunction.endOffset,
             context.irBuiltIns.unitType,
-            STATEMENT_ORIGIN_COROUTINE_IMPL,
+            JsStatementOrigins.STATEMENT_ORIGIN_COROUTINE_IMPL,
             originalBody.statements
         )
 
@@ -81,7 +82,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
 
         val unit = context.irBuiltIns.unitType
 
-        val switch = IrWhenImpl(body.startOffset, body.endOffset, unit, COROUTINE_SWITCH)
+        val switch = IrWhenImpl(body.startOffset, body.endOffset, unit, JsStatementOrigins.COROUTINE_SWITCH)
         val stateVar = JsIrBuilder.buildVar(context.irBuiltIns.intType, stateMachineFunction)
         val switchBlock = IrBlockImpl(switch.startOffset, switch.endOffset, switch.type).apply {
             statements += stateVar
@@ -92,7 +93,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             body.startOffset,
             body.endOffset,
             unit,
-            COROUTINE_ROOT_LOOP,
+            JsStatementOrigins.COROUTINE_ROOT_LOOP,
         ).also {
             it.condition = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
             it.body = rootTry

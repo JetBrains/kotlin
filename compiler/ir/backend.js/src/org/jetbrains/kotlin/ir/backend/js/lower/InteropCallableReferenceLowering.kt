@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -39,7 +40,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     inner class CallableReferenceLowerTransformer : IrElementTransformerVoid() {
         override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
             expression.transformChildrenVoid(this)
-            if (expression.origin === CallableReferenceLowering.Companion.CALLABLE_REFERENCE_CREATE) {
+            if (expression.origin === JsStatementOrigins.CALLABLE_REFERENCE_CREATE) {
                 return transformToJavaScriptFunction(expression)
             }
             return expression
@@ -76,7 +77,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             invokeFun.symbol,
             0,
             invokeFun.valueParameters.size,
-            EXPLICIT_INVOKE,
+            JsStatementOrigins.EXPLICIT_INVOKE,
             null
         )
 
@@ -162,7 +163,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                         nameGetter.symbol,
                         0,
                         0,
-                        CallableReferenceLowering.Companion.CALLABLE_REFERENCE_INVOKE
+                        JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                     ).apply {
                         dispatchReceiver = JsIrBuilder.buildGetValue(instanceVal.symbol)
                     }
@@ -204,7 +205,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             visibility = lambdaClass.visibility
             returnType = expression.type
             name = factoryName
-            origin = FACTORY_ORIGIN
+            origin = JsStatementOrigins.FACTORY_ORIGIN
         }
 
         factoryDeclaration.parent = implicitDeclarationFile
@@ -228,10 +229,5 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             receiver = IrDynamicMemberExpressionImpl(startOffset, endOffset, context.dynamicType, property, JsIrBuilder.buildGetValue(r))
             arguments += value
         }
-    }
-
-    companion object {
-        object EXPLICIT_INVOKE : IrStatementOriginImpl("EXPLICIT_INVOKE")
-        object FACTORY_ORIGIN : IrDeclarationOriginImpl("FACTORY_ORIGIN")
     }
 }

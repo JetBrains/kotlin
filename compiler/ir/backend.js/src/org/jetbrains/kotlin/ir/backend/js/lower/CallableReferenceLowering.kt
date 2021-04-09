@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -59,7 +60,10 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             return expression.run {
                 val vpCount = if (function.isSuspend) 1 else 0
                 val ctorCall =
-                    IrConstructorCallImpl(startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, vpCount, CALLABLE_REFERENCE_CREATE).apply {
+                    IrConstructorCallImpl(
+                        startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, vpCount,
+                        JsStatementOrigins.CALLABLE_REFERENCE_CREATE
+                    ).apply {
                         if (function.isSuspend) {
                             putValueArgument(0, IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType))
                         }
@@ -81,7 +85,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 val ctorCall = IrConstructorCallImpl(
                     startOffset, endOffset, type, ctor.symbol,
                     0 /*TODO: properly set type arguments*/, 0,
-                    vpCount, CALLABLE_REFERENCE_CREATE).apply {
+                    vpCount, JsStatementOrigins.CALLABLE_REFERENCE_CREATE
+                ).apply {
                     boundReceiver?.let {
                         putValueArgument(0, it)
                     }
@@ -215,7 +220,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         }
 
         fun getValue(d: IrValueDeclaration): IrGetValue =
-            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.type, d.symbol, CALLABLE_REFERENCE_INVOKE)
+            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.type, d.symbol, JsStatementOrigins.CALLABLE_REFERENCE_INVOKE)
 
         /**
         inner class IN<IT> {
@@ -252,7 +257,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                             callee.countContextTypeParameters(),
                             callee.typeParameters.size,
                             callee.valueParameters.size,
-                            CALLABLE_REFERENCE_INVOKE
+                            JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
                     is IrSimpleFunction ->
                         IrCallImpl(
@@ -262,7 +267,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                             callee.symbol,
                             callee.typeParameters.size,
                             callee.valueParameters.size,
-                            CALLABLE_REFERENCE_INVOKE
+                            JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
                     else ->
                         error("unknown function kind: ${callee.render()}")
@@ -299,7 +304,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                                 boundReceiverField.symbol,
                                 boundReceiverField.type,
                                 thisValue,
-                                CALLABLE_REFERENCE_INVOKE
+                                JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                             )
 
                         if (funRef.dispatchReceiver != null) irCall.dispatchReceiver = value
@@ -396,8 +401,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
         object GENERATED_MEMBER_IN_CALLABLE_REFERENCE : IrDeclarationOriginImpl("GENERATED_MEMBER_IN_CALLABLE_REFERENCE")
 
-        object CALLABLE_REFERENCE_CREATE : IrStatementOriginImpl("CALLABLE_REFERENCE_CREATE")
-        object CALLABLE_REFERENCE_INVOKE : IrStatementOriginImpl("CALLABLE_REFERENCE_INVOKE")
+
 
         val THIS_NAME = Name.special("<this>")
         val BOUND_RECEIVER_NAME = Name.identifier("\$boundThis")

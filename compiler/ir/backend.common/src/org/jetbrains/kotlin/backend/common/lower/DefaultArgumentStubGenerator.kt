@@ -281,8 +281,6 @@ private fun IrFunction.findBaseFunctionWithDefaultArguments(skipInlineMethods: B
     return dfsImpl()
 }
 
-val DEFAULT_DISPATCH_CALL = object : IrStatementOriginImpl("DEFAULT_DISPATCH_CALL") {}
-
 open class DefaultParameterInjector(
     open val context: CommonBackendContext,
     private val skipInline: Boolean = true,
@@ -338,7 +336,7 @@ open class DefaultParameterInjector(
         expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
             with(expression) {
-                IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, it as IrConstructorSymbol, DEFAULT_DISPATCH_CALL)
+                IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, it as IrConstructorSymbol, LoweredStatementOrigins.DEFAULT_DISPATCH_CALL)
             }
         }
     }
@@ -364,7 +362,7 @@ open class DefaultParameterInjector(
                     startOffset, endOffset, type, it as IrSimpleFunctionSymbol,
                     typeArgumentsCount = typeArgumentsCount,
                     valueArgumentsCount = it.owner.valueParameters.size,
-                    origin = DEFAULT_DISPATCH_CALL,
+                    origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = superQualifierSymbol
                 )
             }

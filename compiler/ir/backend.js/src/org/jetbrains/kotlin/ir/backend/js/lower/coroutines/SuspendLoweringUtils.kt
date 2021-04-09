@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.*
 
-object COROUTINE_ROOT_LOOP : IrStatementOriginImpl("COROUTINE_ROOT_LOOP")
-object COROUTINE_SWITCH : IrStatementOriginImpl("COROUTINE_SWITCH")
-
 open class SuspendableNodesCollector(private val suspendableNodes: MutableSet<IrElement>) : IrElementVisitorVoid {
 
     private var hasSuspendableChildren = false

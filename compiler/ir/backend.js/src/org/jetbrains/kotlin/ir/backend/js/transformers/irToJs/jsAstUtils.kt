@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
-import org.jetbrains.kotlin.ir.backend.js.lower.InteropCallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -86,7 +86,7 @@ private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean
     val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
 
-    if (call.origin === InteropCallableReferenceLowering.Companion.EXPLICIT_INVOKE) return false
+    if (call.origin === JsStatementOrigins.EXPLICIT_INVOKE) return false
 
     return simpleFunction.name == OperatorNameConventions.INVOKE && receiverType.isFunctionTypeOrSubtype()
 }

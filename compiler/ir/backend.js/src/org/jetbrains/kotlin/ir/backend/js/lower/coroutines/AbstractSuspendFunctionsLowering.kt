@@ -37,7 +37,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     private var IrFunction.coroutineConstructor by context.mapping.suspendFunctionToCoroutineConstructor
 
-    protected object STATEMENT_ORIGIN_COROUTINE_IMPL : IrStatementOriginImpl("COROUTINE_IMPL")
     protected object DECLARATION_ORIGIN_COROUTINE_IMPL : IrDeclarationOriginImpl("COROUTINE_IMPL")
 
     protected abstract val stateMachineMethodName: Name

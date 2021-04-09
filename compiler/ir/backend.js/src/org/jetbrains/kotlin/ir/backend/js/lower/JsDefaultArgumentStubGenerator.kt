@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsWhen
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
-import org.jetbrains.kotlin.backend.common.lower.DEFAULT_DISPATCH_CALL
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
@@ -67,14 +68,12 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     }
 }
 
-val BIND_CALL = object : IrStatementOriginImpl("BIND_CALL") {}
-
 class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 super.visitCall(expression)
-                if (expression.origin != DEFAULT_DISPATCH_CALL || expression.superQualifierSymbol == null) return expression
+                if (expression.origin != LoweredStatementOrigins.DEFAULT_DISPATCH_CALL || expression.superQualifierSymbol == null) return expression
 
                 val binding = buildBoundSuperCall(expression)
 
@@ -98,7 +97,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 typeArgumentsCount = 0,
                 valueArgumentsCount = originalFunction.valueParameters.size,
                 reflectionTarget = originalFunction.symbol,
-                origin = BIND_CALL
+                origin = JsStatementOrigins.BIND_CALL
             )
         }
 
@@ -110,7 +109,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 context.intrinsics.jsBind,
                 valueArgumentsCount = 2,
                 typeArgumentsCount = 0,
-                origin = BIND_CALL,
+                origin = JsStatementOrigins.BIND_CALL,
                 superQualifierSymbol = superQualifierSymbol
             )
         }.apply {

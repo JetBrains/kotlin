@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-object SYNTHESIZED_INIT_BLOCK : IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
-
 class InitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context), BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, true)
@@ -88,7 +86,7 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
 
     private fun handleAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
         with(declaration) {
-            IrBlockImpl(startOffset, endOffset, context.irBuiltIns.unitType, SYNTHESIZED_INIT_BLOCK, body.statements)
+            IrBlockImpl(startOffset, endOffset, context.irBuiltIns.unitType, LoweredStatementOrigins.SYNTHESIZED_INIT_BLOCK, body.statements)
         }
 }
 
