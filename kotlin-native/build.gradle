@@ -684,6 +684,7 @@ task clean(type: Delete) {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     doLast {
         delete distDir
+        delete buildDir
         delete bundle.outputs.files
         delete "${projectDir}/compile_commands.json"
     }
