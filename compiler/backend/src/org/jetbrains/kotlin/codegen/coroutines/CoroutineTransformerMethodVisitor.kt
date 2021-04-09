@@ -1329,7 +1329,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                     variable.desc,
                     variable.signature,
                     variable.start,
-                    nextSuspensionPointStartLabel(variable.start),
+                    min(variable.end, nextSuspensionPointStartLabel(variable.start)),
                     variable.index
                 )
             )

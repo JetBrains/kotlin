@@ -10850,6 +10850,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("unusedCatchVar.kt")
+            public void testUnusedCatchVar() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/unusedCatchVar.kt");
+            }
+
+            @Test
             @TestMetadata("usedInArrayStore.kt")
             public void testUsedInArrayStore() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInArrayStore.kt");

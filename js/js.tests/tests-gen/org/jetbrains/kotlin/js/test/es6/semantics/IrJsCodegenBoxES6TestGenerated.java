@@ -7789,6 +7789,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt");
             }
 
+            @TestMetadata("unusedCatchVar.kt")
+            public void testUnusedCatchVar() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/unusedCatchVar.kt");
+            }
+
             @TestMetadata("usedInMethodCall.kt")
             public void testUsedInMethodCall() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInMethodCall.kt");
