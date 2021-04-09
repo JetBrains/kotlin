@@ -105,7 +105,7 @@ RuntimeState* initRuntime() {
       case DESTROY_RUNTIME_LEGACY:
           compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
           result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
-          result->worker = WorkerInit(true);
+          result->worker = WorkerInit(result->memoryState, true);
           firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
           if (CurrentMemoryModel == MemoryModel::kExperimental) {
               RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
@@ -124,7 +124,7 @@ RuntimeState* initRuntime() {
               RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
           }
           result->memoryState = InitMemory(firstRuntime);
-          result->worker = WorkerInit(true);
+          result->worker = WorkerInit(result->memoryState, true);
   }
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
@@ -163,7 +163,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   if (destroyRuntime)
     InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
   auto workerId = GetWorkerId(state->worker);
-  WorkerDeinit(state->worker, state->memoryState);
+  WorkerDeinit(state->worker);
   DeinitMemory(state->memoryState, destroyRuntime);
   konanDestructInstance(state);
   WorkerDestroyThreadDataIfNeeded(workerId);
