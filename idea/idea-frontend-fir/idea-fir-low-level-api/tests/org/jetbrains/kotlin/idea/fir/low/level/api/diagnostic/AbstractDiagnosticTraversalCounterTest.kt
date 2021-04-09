@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.createResolveStateForNoCaching
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.BeforeElementDiagnosticCollectionHandler
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.renderWithClassName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
@@ -72,7 +75,17 @@ abstract class AbstractDiagnosticTraversalCounterTest : KotlinLightCodeInsightFi
         handler: BeforeElementTestDiagnosticCollectionHandler
     ): List<Pair<FirElement, Int>> {
         val errorElements = mutableListOf<Pair<FirElement, Int>>()
-        val nonDuplicatingElements = findNonDuplicatingFirElements(firFile)
+        val nonDuplicatingElements = findNonDuplicatingFirElements(firFile).filter { element ->
+            when {
+                element is FirTypeRef && element.source?.kind != FirRealSourceElementKind -> {
+                    // AbstractDiagnosticCollectorVisitor do not visit such elements
+                    false
+                }
+                element.source?.kind == FirRealSourceElementKind -> true
+                SingleNonLocalDeclarationDiagnosticRetriever.shouldDiagnosticsAlwaysBeCheckedOn(element) -> true
+                else -> false
+            }
+        }
         firFile.accept(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (element !in nonDuplicatingElements) return
@@ -86,6 +99,7 @@ abstract class AbstractDiagnosticTraversalCounterTest : KotlinLightCodeInsightFi
         return errorElements
     }
 
+
     private fun findNonDuplicatingFirElements(
         firFile: FirElement,
     ): Set<FirElement> {
@@ -93,6 +107,7 @@ abstract class AbstractDiagnosticTraversalCounterTest : KotlinLightCodeInsightFi
         firFile.accept(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 elementUsageCount.compute(element) { _, count -> (count ?: 0) + 1 }
+                element.acceptChildren(this)
             }
         })
         return elementUsageCount.filterValues { it == 1 }.keys
