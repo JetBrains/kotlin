@@ -43,6 +43,15 @@ abstract class AbstractDeserializedPackageFragmentProvider(
         packageFragments.addIfNotNull(fragments(fqName))
     }
 
+    override fun isEmpty(fqName: FqName): Boolean {
+        val descriptor = if (fragments.isComputed(fqName)) {
+            fragments.invoke(fqName)
+        } else {
+            findPackage(fqName)
+        }
+        return descriptor == null
+    }
+
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> = listOfNotNull(fragments(fqName))
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> = emptySet()

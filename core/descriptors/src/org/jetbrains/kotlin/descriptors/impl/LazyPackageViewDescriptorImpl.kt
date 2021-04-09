@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
@@ -38,8 +35,14 @@ open class LazyPackageViewDescriptorImpl(
         module.packageFragmentProvider.packageFragments(fqName)
     }
 
+    protected val empty: Boolean by storageManager.createLazyValue {
+        module.packageFragmentProvider.isEmpty(fqName)
+    }
+
+    override fun isEmpty(): Boolean = empty
+
     override val memberScope: MemberScope = LazyScopeAdapter(storageManager) {
-        if (fragments.isEmpty()) {
+        if (isEmpty()) {
             MemberScope.Empty
         } else {
             // Packages from SubpackagesScope are got via getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)

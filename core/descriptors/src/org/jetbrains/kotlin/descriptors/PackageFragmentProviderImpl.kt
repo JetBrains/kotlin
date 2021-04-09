@@ -26,6 +26,9 @@ class PackageFragmentProviderImpl(
         this.packageFragments.filterTo(packageFragments) { it.fqName == fqName }
     }
 
+    override fun isEmpty(fqName: FqName): Boolean =
+        this.packageFragments.none { it.fqName == fqName }
+
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =
         packageFragments.filter { it.fqName == fqName }
 

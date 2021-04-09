@@ -204,6 +204,12 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                 }
             }
 
+            @Override
+            public boolean isEmpty(@NotNull FqName fqName) {
+                PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
+                return provider == null;
+            }
+
             @NotNull
             @Override
             public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {

@@ -34,6 +34,8 @@ abstract class DeserializerForDecompilerBase(val directoryPackageFqName: FqName)
             packageFragments.add(createDummyPackageFragment(fqName))
         }
 
+        override fun isEmpty(fqName: FqName): Boolean = false
+
         override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
             return listOf(createDummyPackageFragment(fqName))
         }
