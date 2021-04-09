@@ -20,7 +20,7 @@ fun foo() {
 
 fun test2(): Sequence<String> = sequence {
     yield("")
-//    id(this::class) // TODO
+    id(this::class)
 }
 
 fun test3(): Sequence<String> = sequence {
