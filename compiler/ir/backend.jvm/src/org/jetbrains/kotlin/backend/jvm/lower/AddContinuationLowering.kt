@@ -79,8 +79,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 val transformed = super.visitCall(expression) as IrCall
                 return transformed.retargetToSuspendView(context, functionStack.peek() ?: return transformed) {
                     IrCallImpl.fromSymbolOwner(
-                            startOffset, endOffset, type, it,
-                            origin = origin, superQualifierSymbol = superQualifierSymbol
+                        startOffset, endOffset, type, it,
+                        origin = origin, superQualifierSymbol = superQualifierSymbol
                     )
                 }
             }
@@ -261,7 +261,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 return declaration
             }
 
-            private fun transformToView(function: IrSimpleFunction): List<IrFunction>? {
+            private fun transformToView(function: IrSimpleFunction): List<IrFunction> {
                 val flag = MutableFlag(false)
                 function.accept(this, flag)
 
@@ -378,10 +378,7 @@ private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): Ir
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
         function.copyReceiverParametersFrom(this, substitutionMap)
 
-        if (origin != JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE) {
-            function.overriddenSymbols +=
-                overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol as IrSimpleFunctionSymbol }
-        }
+        function.overriddenSymbols += overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol as IrSimpleFunctionSymbol }
 
         // The continuation parameter goes before the default argument mask(s) and handler for default argument stubs.
         // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
@@ -391,7 +388,9 @@ private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): Ir
             it.copyTo(function, index = it.index, type = it.type.substitute(substitutionMap))
         }
         function.addValueParameter(
-            SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType(context).substitute(substitutionMap), JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+            SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME,
+            continuationType(context).substitute(substitutionMap),
+            JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
         )
         function.valueParameters += valueParameters.drop(index).map {
             it.copyTo(function, index = it.index + 1, type = it.type.substitute(substitutionMap))
