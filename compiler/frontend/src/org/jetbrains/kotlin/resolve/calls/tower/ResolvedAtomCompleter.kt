@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.callUtil.toOldSubstitution
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceAdaptation
@@ -45,7 +46,6 @@ import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.shouldBeUpdated
@@ -230,7 +230,8 @@ class ResolvedAtomCompleter(
     ): FunctionLiteralTypes {
         val returnType =
             (if (resolvedAtom?.isCoercedToUnit == true) builtIns.unitType else resolvedAtom?.returnType) ?: descriptor.returnType
-        val receiverType = resolvedAtom?.receiver ?: descriptor.extensionReceiverParameter?.type
+        val extensionReceiverType = resolvedAtom?.receiver ?: descriptor.extensionReceiverParameter?.type
+        val dispatchReceiverType = descriptor.dispatchReceiverParameter?.type
         val valueParameterTypes = resolvedAtom?.parameters ?: descriptor.valueParameters.map { it.type }
 
         require(returnType != null)
@@ -239,10 +240,17 @@ class ResolvedAtomCompleter(
             descriptor.setReturnType(it.approximatedType)
         }
 
-        val receiverFromDescriptor = descriptor.extensionReceiverParameter
-        val substitutedReceiverType = receiverType?.substituteAndApproximate(substitutor)?.also {
-            if (receiverFromDescriptor is ReceiverParameterDescriptorImpl && receiverFromDescriptor.type.shouldBeUpdated()) {
-                receiverFromDescriptor.setOutType(it.approximatedType)
+        val extensionReceiverFromDescriptor = descriptor.extensionReceiverParameter
+        val substitutedReceiverType = extensionReceiverType?.substituteAndApproximate(substitutor)?.also {
+            if (extensionReceiverFromDescriptor is ReceiverParameterDescriptorImpl && extensionReceiverFromDescriptor.type.shouldBeUpdated()) {
+                extensionReceiverFromDescriptor.setOutType(it.approximatedType)
+            }
+        }
+
+        val dispatchReceiverFromDescriptor = descriptor.dispatchReceiverParameter
+        dispatchReceiverType?.substituteAndApproximate(substitutor)?.also {
+            if (dispatchReceiverFromDescriptor is ReceiverParameterDescriptorImpl && dispatchReceiverFromDescriptor.type.shouldBeUpdated()) {
+                dispatchReceiverFromDescriptor.setOutType(it.approximatedType)
             }
         }
 
@@ -306,16 +314,6 @@ class ResolvedAtomCompleter(
                 reportErrorForTypeMismatch = true,
                 convertedArgumentType = null
             )
-        }
-    }
-
-    private fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubstitution() {
-        override fun get(key: KotlinType): TypeProjection? {
-            return safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
-        }
-
-        override fun isEmpty(): Boolean {
-            return isEmpty
         }
     }
 
