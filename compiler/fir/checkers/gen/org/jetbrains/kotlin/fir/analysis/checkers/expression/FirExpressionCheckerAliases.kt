@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
  * DO NOT MODIFY IT MANUALLY
  */
 
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -27,3 +28,4 @@ typealias FirTryExpressionChecker = FirExpressionChecker<FirTryExpression>
 typealias FirWhenExpressionChecker = FirExpressionChecker<FirWhenExpression>
 typealias FirReturnExpressionChecker = FirExpressionChecker<FirReturnExpression>
 typealias FirBlockChecker = FirExpressionChecker<FirBlock>
+typealias FirAnnotationCallChecker = FirExpressionChecker<FirAnnotationCall>

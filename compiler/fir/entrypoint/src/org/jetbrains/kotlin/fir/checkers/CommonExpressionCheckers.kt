@@ -8,6 +8,11 @@ package org.jetbrains.kotlin.fir.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 
 object CommonExpressionCheckers : ExpressionCheckers() {
+    override val annotationCallCheckers: Set<FirAnnotationCallChecker>
+        get() = setOf(
+            FirAnnotationUsedAsAnnotationArgumentChecker,
+        )
+
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
             FirAnonymousFunctionChecker,
