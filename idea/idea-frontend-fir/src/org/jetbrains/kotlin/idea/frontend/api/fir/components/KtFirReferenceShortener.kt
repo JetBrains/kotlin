@@ -383,7 +383,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
     private fun getSingleUnambiguousCandidate(namedReference: FirErrorNamedReference): FirCallableSymbol<*>? {
         val coneAmbiguityError = namedReference.diagnostic as? ConeAmbiguityError ?: return null
 
-        val candidates = coneAmbiguityError.candidates.map { it as FirCallableSymbol<*> }
+        val candidates = coneAmbiguityError.candidates.map { it.symbol as FirCallableSymbol<*> }
         require(candidates.isNotEmpty()) { "Cannot have zero candidates" }
 
         val distinctCandidates = candidates.distinctBy { it.callableId }

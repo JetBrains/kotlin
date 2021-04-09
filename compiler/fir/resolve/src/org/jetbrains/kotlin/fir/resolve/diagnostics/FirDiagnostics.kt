@@ -57,8 +57,9 @@ class ConeArgumentTypeMismatchCandidateError(
         get() = "Type mismatch. Expected: $expectedType, Actual: $actualType"
 }
 
-class ConeAmbiguityError(val name: Name, val applicability: CandidateApplicability, val candidates: Collection<AbstractFirBasedSymbol<*>>) : ConeDiagnostic() {
-    override val reason: String get() = "Ambiguity: $name, ${candidates.map { describeSymbol(it) }}"
+class ConeAmbiguityError(val name: Name, val applicability: CandidateApplicability, val candidates: Collection<Candidate>) :
+    ConeDiagnostic() {
+    override val reason: String get() = "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}"
 }
 
 class ConeOperatorAmbiguityError(val candidates: Collection<AbstractFirBasedSymbol<*>>) : ConeDiagnostic() {

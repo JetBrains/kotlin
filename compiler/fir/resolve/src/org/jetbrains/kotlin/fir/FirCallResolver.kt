@@ -289,7 +289,7 @@ class FirCallResolver(
                 if (resolvedCallableReferenceAtom.hasBeenPostponed) {
                     val errorReference = buildErrorReference(
                         info,
-                        ConeAmbiguityError(info.name, applicability, reducedCandidates.map { it.symbol }),
+                        ConeAmbiguityError(info.name, applicability, reducedCandidates),
                         callableReferenceAccess.source
                     )
                     resolvedCallableReferenceAtom.resultingReference = errorReference
@@ -530,7 +530,7 @@ class FirCallResolver(
 
             candidates.size > 1 -> buildErrorReference(
                 callInfo,
-                ConeAmbiguityError(name, applicability, candidates.map { it.symbol }),
+                ConeAmbiguityError(name, applicability, candidates),
                 source
             )
 

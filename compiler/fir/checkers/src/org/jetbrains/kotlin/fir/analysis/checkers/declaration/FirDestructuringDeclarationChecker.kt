@@ -165,7 +165,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                     source,
                     FirErrors.COMPONENT_FUNCTION_AMBIGUITY,
                     diagnostic.name,
-                    diagnostic.candidates,
+                    diagnostic.candidates.map { it.symbol },
                     context
                 )
             }

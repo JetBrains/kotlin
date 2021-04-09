@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private fun ConeDiagnostic.toFirDiagnostic(
@@ -30,10 +31,14 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
     is ConeUnresolvedQualifierError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.qualifier)
     is ConeHiddenCandidateError -> FirErrors.HIDDEN.on(source, this.candidateSymbol)
-    is ConeAmbiguityError -> if (!this.applicability.isSuccess) {
-        FirErrors.NONE_APPLICABLE.on(source, this.candidates)
+    is ConeAmbiguityError -> if (this.applicability.isSuccess) {
+        FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.on(source, this.candidates.map { it.symbol })
+    } else if (this.applicability == CandidateApplicability.UNSAFE_CALL) {
+        val candidate = candidates.first { it.currentApplicability == CandidateApplicability.UNSAFE_CALL }
+        val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
+        mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
     } else {
-        FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.on(source, this.candidates)
+        FirErrors.NONE_APPLICABLE.on(source, this.candidates.map { it.symbol })
     }
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, this.candidates)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)
@@ -71,30 +76,20 @@ fun ConeDiagnostic.toFirDiagnostics(
     return listOfNotNull(toFirDiagnostic(source, qualifiedAccessSource))
 }
 
-private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
-    return when (this) {
-        is ConeClassLikeType -> !isMarkedNullable
-        is ConeTypeParameterType -> !isMarkedNullable && lookupTag.typeParameterSymbol.fir.bounds.any {
-            it.coneTypeSafe<ConeKotlinType>()?.isEffectivelyNotNull() == true
-        }
-        else -> false
-    }
-}
-
 private fun mapUnsafeCallError(
-    diagnostic: ConeInapplicableCandidateError,
-    source: FirSourceElement,
+    candidate: Candidate,
     rootCause: UnsafeCall,
+    source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?,
 ): FirDiagnostic<*> {
-    if (diagnostic.candidate.callInfo.isImplicitInvoke) {
+    if (candidate.callInfo.isImplicitInvoke) {
         return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, rootCause.actualType)
     }
 
-    val candidateFunction = diagnostic.candidate.symbol.fir as? FirSimpleFunction
+    val candidateFunction = candidate.symbol.fir as? FirSimpleFunction
     val candidateFunctionName = candidateFunction?.name
-    val left = diagnostic.candidate.callInfo.explicitReceiver
-    val right = diagnostic.candidate.callInfo.argumentList.arguments.singleOrNull()
+    val left = candidate.callInfo.explicitReceiver
+    val right = candidate.callInfo.argumentList.arguments.singleOrNull()
     if (left != null && right != null &&
         source.elementType == KtNodeTypes.OPERATION_REFERENCE &&
         (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
@@ -142,7 +137,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source ?: source,
                 rootCause.argument.name.asString()
             )
-            is UnsafeCall -> mapUnsafeCallError(diagnostic, source, rootCause, qualifiedAccessSource)
+            is UnsafeCall -> mapUnsafeCallError(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
             else -> null
         }
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }

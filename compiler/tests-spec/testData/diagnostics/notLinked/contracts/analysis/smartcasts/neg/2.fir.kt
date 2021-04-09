@@ -38,7 +38,7 @@ class case_5_class {
         funWithReturns(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null)
         println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
         println(value_2?.toByte())
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
     }
 }
 
@@ -131,22 +131,22 @@ class case_10_class {
         if (funWithReturnsTrue(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null)) {
             println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (!funWithReturnsFalse(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null)) {
             println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (funWithReturnsNotNull(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null) != null) {
             println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (funWithReturnsNull(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null) == null) {
             println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
     }
 }

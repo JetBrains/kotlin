@@ -13,15 +13,15 @@ class B {
 
     fun f() {
         a = A()
-        a.<!NONE_APPLICABLE!>f<!>(true)
-        takeInt(a.<!NONE_APPLICABLE!>f<!>(""))
+        a<!UNSAFE_CALL!>.<!>f(true)
+        takeInt(a<!UNSAFE_CALL!>.<!>f(""))
         a.<!NONE_APPLICABLE!>f<!>()
     }
 
     fun g() {
         takeInt(if (3 > 2) {
             a = A()
-            a.<!NONE_APPLICABLE!>f<!>(true)
+            a<!UNSAFE_CALL!>.<!>f(true)
         } else {
             6
         })
