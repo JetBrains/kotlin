@@ -42,7 +42,7 @@ class Bar<T : Foo>
 class Buzz<T> where T : Bar<Int>, T : <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: nioho">nioho</error>
 
 class X<T : Foo>
-class Y<T> where T :  Foo, T : <error descr="[ONLY_ONE_CLASS_BOUND_ALLOWED] Only one of the upper bounds can be a class">Bar<Foo></error>
+class Y<<error descr="[CONFLICTING_UPPER_BOUNDS] Upper bounds of T have empty intersection">T</error>> where T :  Foo, T : <error descr="[ONLY_ONE_CLASS_BOUND_ALLOWED] Only one of the upper bounds can be a class">Bar<Foo></error>
 
 fun <T> test2(t : T)
   where

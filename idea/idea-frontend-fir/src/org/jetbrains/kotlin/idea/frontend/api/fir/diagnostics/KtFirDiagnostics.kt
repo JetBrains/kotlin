@@ -647,21 +647,30 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeParameter: KtTypeParameterSymbol
     }
 
-    abstract class FinalUpperBound : KtFirDiagnostic<PsiElement>() {
+    abstract class FinalUpperBound : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = FinalUpperBound::class
         abstract val type: KtType
     }
 
-    abstract class UpperBoundIsExtensionFunctionType : KtFirDiagnostic<PsiElement>() {
+    abstract class UpperBoundIsExtensionFunctionType : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = UpperBoundIsExtensionFunctionType::class
     }
 
-    abstract class BoundsNotAllowedIfBoundedByTypeParameter : KtFirDiagnostic<PsiElement>() {
+    abstract class BoundsNotAllowedIfBoundedByTypeParameter : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = BoundsNotAllowedIfBoundedByTypeParameter::class
     }
 
-    abstract class OnlyOneClassBoundAllowed : KtFirDiagnostic<PsiElement>() {
+    abstract class OnlyOneClassBoundAllowed : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = OnlyOneClassBoundAllowed::class
+    }
+
+    abstract class RepeatedBound : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = RepeatedBound::class
+    }
+
+    abstract class ConflictingUpperBounds : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = ConflictingUpperBounds::class
+        abstract val typeParameter: KtTypeParameterSymbol
     }
 
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {

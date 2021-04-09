@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.analysis.checkers.canHaveSubtypes
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
+import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
@@ -48,7 +46,8 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
             checkOnlyOneTypeParameterBound(declaration, context, reporter)
         }
 
-        checkOnlyOneClassBound(declaration, context, reporter)
+        checkBoundUniqueness(declaration, context, reporter)
+        checkConflictingBounds(declaration, context, reporter)
     }
 
     private fun checkOnlyOneTypeParameterBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -78,15 +77,47 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
     }
 
 
-    private fun checkOnlyOneClassBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkBoundUniqueness(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         val seenClasses = mutableSetOf<FirRegularClass>()
-        val bounds = declaration.bounds.distinctBy { it.coneType }
-        bounds.forEach { bound ->
+        val allNonErrorBounds = declaration.bounds.filter { it !is FirErrorTypeRef }
+        val uniqueBounds = allNonErrorBounds.distinctBy { it.coneType.classId ?: it.coneType }
+        
+        uniqueBounds.forEach { bound ->
             bound.coneType.toRegularClass(context.session)?.let { clazz ->
                 if (classKinds.contains(clazz.classKind) && seenClasses.add(clazz) && seenClasses.size > 1) {
                     reporter.reportOn(bound.source, FirErrors.ONLY_ONE_CLASS_BOUND_ALLOWED, context)
                 }
             }
         }
+
+        allNonErrorBounds.minus(uniqueBounds).forEach { bound ->
+            reporter.reportOn(bound.source, FirErrors.REPEATED_BOUND, context)
+        }
     }
+
+    private fun checkConflictingBounds(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration.bounds.size < 2) return
+
+        fun anyConflictingTypes(types: List<ConeKotlinType>): Boolean {
+            types.forEach { type ->
+                if (!type.canHaveSubtypes(context.session)) {
+                    types.forEach { otherType ->
+                        if (type != otherType && !type.isRelated(context.session.typeContext, otherType)){
+                            return true
+                        }
+                    }
+                }
+            }
+            return false
+        }
+
+        if (anyConflictingTypes(declaration.bounds.map { it.coneType })) {
+            reporter.reportOn(declaration.source, FirErrors.CONFLICTING_UPPER_BOUNDS, declaration.symbol, context)
+        }
+    }
+
+    private fun KotlinTypeMarker.isRelated(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
+        isSubtypeOf(context, type) || isSupertypeOf(context, type)
+
+
 }

@@ -6,18 +6,18 @@ interface B
 
 interface D<T>
 
-interface IncorrectF<T : D<A>> where T : D<B>
+interface IncorrectF<T : D<A>> where T : <!REPEATED_BOUND!>D<B><!>
 
-interface CorrectF<T> where T : D<A>, T : D<B>
+interface CorrectF<T> where T : D<A>, T : <!REPEATED_BOUND!>D<B><!>
 
 interface G<T>
 
-interface IncorrectH<T : G<D<A>>> where T : G<D<T>>
+interface IncorrectH<T : G<D<A>>> where T : <!REPEATED_BOUND!>G<D<T>><!>
 
-interface CorrectH<T> where T : G<D<A>>, T : G<D<B>>
+interface CorrectH<T> where T : G<D<A>>, T : <!REPEATED_BOUND!>G<D<B>><!>
 
-interface incorrectJ<T: G<D<T>>> where T : G<D<T?>>
+interface incorrectJ<T: G<D<T>>> where T : <!REPEATED_BOUND!>G<D<T?>><!>
 
-interface correctJ<T> where T : G<D<T>>, T : G<D<T?>>
+interface correctJ<T> where T : G<D<T>>, T : <!REPEATED_BOUND!>G<D<T?>><!>
 
-fun <T> bar() where T : D<A>, T : D<B> {}
+fun <T> bar() where T : D<A>, T : <!REPEATED_BOUND!>D<B><!> {}

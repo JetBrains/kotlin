@@ -294,15 +294,21 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
-        val FINAL_UPPER_BOUND by warning<FirSourceElement, PsiElement> {
+        val FINAL_UPPER_BOUND by warning<FirSourceElement, KtTypeReference> {
             parameter<ConeKotlinType>("type")
         }
 
-        val UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE by error<FirSourceElement, PsiElement>()
+        val UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE by error<FirSourceElement, KtTypeReference>()
         
-        val BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER by error<FirSourceElement, PsiElement>()
+        val BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER by error<FirSourceElement, KtElement>()
         
-        val ONLY_ONE_CLASS_BOUND_ALLOWED by error<FirSourceElement, PsiElement>()
+        val ONLY_ONE_CLASS_BOUND_ALLOWED by error<FirSourceElement, KtTypeReference>()
+        
+        val REPEATED_BOUND by error<FirSourceElement, KtTypeReference>()
+
+        val CONFLICTING_UPPER_BOUNDS by error<FirSourceElement, KtNamedDeclaration> {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {
