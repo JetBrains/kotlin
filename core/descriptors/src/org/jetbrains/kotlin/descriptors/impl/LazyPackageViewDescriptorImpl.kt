@@ -39,8 +39,6 @@ open class LazyPackageViewDescriptorImpl(
         module.packageFragmentProvider.isEmpty(fqName)
     }
 
-    override fun isEmpty(): Boolean = empty
-
     override val memberScope: MemberScope = LazyScopeAdapter(storageManager) {
         if (isEmpty()) {
             MemberScope.Empty
