@@ -35,6 +35,9 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
                 // val p: Byte = 42 or similar situation
                 return
             }
+            if (propertyType.isExtensionFunctionType || expressionType.isExtensionFunctionType) {
+                return
+            }
             val source = declaration.source ?: return
             reporter.report(INITIALIZER_TYPE_MISMATCH.on(source, propertyType, expressionType), context)
         }

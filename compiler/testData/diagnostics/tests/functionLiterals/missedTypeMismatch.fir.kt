@@ -23,7 +23,7 @@ fun main() {
     foo(fun(): String = <!ARGUMENT_TYPE_MISMATCH!>"1"<!>)
     foo(((fun(): String = <!ARGUMENT_TYPE_MISMATCH!>"1"<!>)))
 
-    val a10: Int.(String) -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun (x: String) = 10<!>
+    val a10: Int.(String) -> Int = fun (x: String) = 10
     val a11: () -> () -> () -> Int = fun() = fun() = fun(): String = "1"
 
     val a12: Int = <!INITIALIZER_TYPE_MISMATCH!>fun(): String = "1"<!>

@@ -3082,6 +3082,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("fakeTypeMismatchOnExtensionReference.kt")
+            public void testFakeTypeMismatchOnExtensionReference() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/fakeTypeMismatchOnExtensionReference.kt");
+            }
+
+            @Test
             @TestMetadata("falseIntersection.kt")
             public void testFalseIntersection() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/falseIntersection.kt");
