@@ -999,7 +999,7 @@ class CoroutineTransformerMethodVisitor(
                 else -> next = next.next
             }
         }
-        return next
+        return null
     }
 
     // It's necessary to preserve some sensible invariants like there should be no jump in the middle of try-catch-block
