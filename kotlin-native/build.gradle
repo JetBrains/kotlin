@@ -277,69 +277,7 @@ task distSources {
     dependsOn(distEndorsedSources)
 }
 
-task detectJarCollision(type: CollisionDetector) {
-    configurations = [project.configurations.distPack]
-    resolvingRules["META-INF/kotlin-util-klib.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/kotlin-util-io.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/descriptors.jvm.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/descriptors.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/descriptors.runtime.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/deserialization.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/metadata.jvm.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/metadata.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/type-system.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/util.runtime.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/kotlin-native-utils.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/compiler.common.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/compiler.common.jvm.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/deserialization.common.jvm.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/deserialization.common.kotlin_module"] = "kotlin-compiler"
-
-    // These collisions are introduced by kotlinx-metadata-klib.
-    resolvingRules["META-INF/serialization.kotlin_module"] = "kotlin-compiler"
-    resolvingRules["META-INF/kotlin-util-klib-metadata.kotlin_module"] = "kotlin-compiler"
-
-    resolvingRules["kotlin/annotation/annotation.kotlin_builtins"] = "kotlin-compiler"
-    resolvingRules["kotlin/collections/collections.kotlin_builtins"] = "kotlin-compiler"
-    resolvingRules["kotlin/coroutines/coroutines.kotlin_builtins"] = "kotlin-compiler"
-    resolvingRules["kotlin/internal/internal.kotlin_builtins"] = "kotlin-compiler"
-    resolvingRules["kotlin/kotlin.kotlin_builtins"] = "kotlin-compiler"
-    resolvingRules["kotlin/ranges/ranges.kotlin_builtins"] = "kotlin-compiler"
-    resolvingRules["kotlin/reflect/reflect.kotlin_builtins"] = "kotlin-compiler"
-    resolvingRules["META-INF/maven/com.google.protobuf/protobuf-java/pom.properties"] = "kotlin-compiler"
-    resolvingRules["META-INF/maven/com.google.protobuf/protobuf-java/pom.xml"] = "kotlin-compiler"
-    resolvingRules["org/jetbrains/kotlin/builtins/konan/KonanBuiltIns.class"] = "kotlin-compiler"
-    resolvingRules["org/jetbrains/kotlin/resolve/konan/platform/NativeInliningRule.class"] = "kotlin-compiler"
-    resolvingRules["org/jetbrains/kotlin/resolve/konan/platform/NativePlatformAnalyzerServices.class"] = "kotlin-compiler"
-    resolvingRules["org/jetbrains/annotations/Nls.class"] = "kotlin-compiler"
-    resolvingRules["META-INF/extensions/core.xml"] = "kotlin-compiler"
-    librariesWithIgnoredClassCollisions.addAll(["kotlin-util-klib", "kotlin-util-io", "kotlinx-metadata-klib", "kotlin-native-utils"])
-    if (project.hasProperty('kotlinProjectPath')) {
-        resolvingRulesWithRegexes[new Regex("META-INF/.+\\.kotlin_module")] = "kotlin-compiler"
-        resolvingRules["META-INF/extensions/compiler.xml"] = "kotlin-compiler"
-        resolvingRules["META-INF/compiler.version"] = "kotlin-compiler"
-        resolvingRules["kotlinManifest.properties"] = "kotlin-compiler"
-        librariesWithIgnoredClassCollisions.addAll(["util", "container", "resolution.common", "resolution", "serialization", "psi",
-                                                    "deserialization.common", "deserialization.common.jvm", "compiler.backend.common.jvm",
-        											"frontend", "config", "config.jvm", "js.config", "javac-wrapper",
-                                                    "frontend.common", "frontend.java", "cli-common", "ir.tree",
-                                                    "ir.tree.impl", "ir.tree.persisting",
-                                                    "ir.psi2ir", "ir.backend.common", "backend.jvm", "backend.js",
-                                                    "backend.wasm", "ir.serialization.common", "ir.serialization.js",
-                                                    "ir.serialization.jvm", "ir.interpreter", "jvm", "compiler.version",
-                                                    "backend-common", "backend", "plugin-api", "light-classes", "cli",
-                                                    "cli-js", "incremental-compilation-impl", "js.ast", "js.serializer",
-                                                    "js.parser", "js.frontend", "js.translator", "js.dce", "metadata",
-                                                    "metadata.jvm", "descriptors", "descriptors.jvm", "descriptors.runtime",
-                                                    "deserialization", "util.runtime", "compiler.common", "type-system", "cones", "resolve",
-                                                    "tree", "psi2fir", "fir2ir", "java", "kotlin-build-common", "lightTree",
-                                                    "jvm", "checkers", "raw-fir.common", "light-tree2fir", "cfg",
-                                                    "fir-serialization", "fir-deserialization", "entrypoint", "wasm.ir"])
-    }
-}
-
 task shadowJar(type: ShadowJar) {
-    //dependsOn ':kotlin-native:detectJarCollision'
     mergeServiceFiles()
     destinationDirectory.set(file("$distDir/konan/lib"))
     archiveBaseName.set("kotlin-native")
@@ -351,9 +289,6 @@ task shadowJar(type: ShadowJar) {
     outputs.upToDateWhen {
         archiveFile.getOrNull()?.asFile.exists() ?: false
     }
-    //transform(CollisionTransformer.class) {
-    //    resolvedConflicts = detectJarCollision.resolvedConflicts
-    //}
 }
 
 task distCompiler(type: Copy) {
