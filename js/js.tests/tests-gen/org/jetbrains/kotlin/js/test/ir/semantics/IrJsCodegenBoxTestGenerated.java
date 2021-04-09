@@ -6026,6 +6026,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
 
+            @TestMetadata("interfaceGenericDefault.kt")
+            public void testInterfaceGenericDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceGenericDefault.kt");
+            }
+
             @TestMetadata("interfaceSpecialization.kt")
             public void testInterfaceSpecialization() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceSpecialization.kt");
