@@ -17396,6 +17396,49 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 public void testVoidReturnTypeAsObject() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/voidReturnTypeAsObject.kt");
                 }
+
+                @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class WithAccessor extends AbstractLightAnalysisModeTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInWithAccessor() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                    }
+
+                    @TestMetadata("privateBoundOuterClassMemberFun.kt")
+                    public void testPrivateBoundOuterClassMemberFun() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateBoundOuterClassMemberFun.kt");
+                    }
+
+                    @TestMetadata("privateCompanionObjectMember.kt")
+                    public void testPrivateCompanionObjectMember() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateCompanionObjectMember.kt");
+                    }
+
+                    @TestMetadata("privateOuterClassConstructor.kt")
+                    public void testPrivateOuterClassConstructor() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateOuterClassConstructor.kt");
+                    }
+
+                    @TestMetadata("privateOuterClassMemberFun.kt")
+                    public void testPrivateOuterClassMemberFun() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateOuterClassMemberFun.kt");
+                    }
+
+                    @TestMetadata("privateTopLevelExtFun.kt")
+                    public void testPrivateTopLevelExtFun() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateTopLevelExtFun.kt");
+                    }
+
+                    @TestMetadata("privateTopLevelFun.kt")
+                    public void testPrivateTopLevelFun() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateTopLevelFun.kt");
+                    }
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature")

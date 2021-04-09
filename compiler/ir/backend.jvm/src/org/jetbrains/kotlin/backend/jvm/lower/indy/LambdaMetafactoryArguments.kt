@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
+import org.jetbrains.kotlin.backend.jvm.lower.isPrivate
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -70,6 +71,13 @@ internal class LambdaMetafactoryArgumentsBuilder(
             return null
 
         val implFun = reference.symbol.owner
+
+        if (implFun is IrConstructor && implFun.visibility.isPrivate) {
+            // Kotlin generates constructor accessors differently from Java.
+            // TODO more precise accessibility check (see SyntheticAccessorLowering::isAccessible)
+            // TODO wrap inaccessible constructor with a local function
+            return null
+        }
 
         // Can't use JDK LambdaMetafactory for annotated lambdas.
         // JDK LambdaMetafactory doesn't copy annotations from implementation method to an instance method in a
@@ -322,6 +330,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             origin = reference.origin
         )
     }
+
 
     private fun IrValueParameter.copy(parent: IrSimpleFunction, newIndex: Int, newName: Name = this.name): IrValueParameter =
         buildValueParameter(parent) {

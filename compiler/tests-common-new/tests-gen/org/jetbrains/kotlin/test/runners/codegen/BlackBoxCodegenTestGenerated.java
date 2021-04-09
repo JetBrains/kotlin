@@ -20803,6 +20803,52 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 public void testVoidReturnTypeAsObject() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/voidReturnTypeAsObject.kt");
                 }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor")
+                @TestDataPath("$PROJECT_ROOT")
+                public class WithAccessor {
+                    @Test
+                    public void testAllFilesPresentInWithAccessor() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                    }
+
+                    @Test
+                    @TestMetadata("privateBoundOuterClassMemberFun.kt")
+                    public void testPrivateBoundOuterClassMemberFun() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateBoundOuterClassMemberFun.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("privateCompanionObjectMember.kt")
+                    public void testPrivateCompanionObjectMember() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateCompanionObjectMember.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("privateOuterClassConstructor.kt")
+                    public void testPrivateOuterClassConstructor() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateOuterClassConstructor.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("privateOuterClassMemberFun.kt")
+                    public void testPrivateOuterClassMemberFun() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateOuterClassMemberFun.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("privateTopLevelExtFun.kt")
+                    public void testPrivateTopLevelExtFun() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateTopLevelExtFun.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("privateTopLevelFun.kt")
+                    public void testPrivateTopLevelFun() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateTopLevelFun.kt");
+                    }
+                }
             }
 
             @Nested

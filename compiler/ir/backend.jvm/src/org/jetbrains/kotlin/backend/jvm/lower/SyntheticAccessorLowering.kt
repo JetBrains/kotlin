@@ -83,72 +83,133 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         val withSuper = (expression as? IrCall)?.superQualifierSymbol != null
         val thisSymbol = (expression as? IrCall)?.dispatchReceiver?.type?.classifierOrNull as? IrClassSymbol
 
+        if (expression is IrCall && callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic) {
+            return super.visitExpression(handleLambdaMetafactoryIntrinsic(expression, thisSymbol))
+        }
+
         val accessor = when {
             callee is IrConstructor && callee.isOrShouldBeHidden ->
                 handleHiddenConstructor(callee).symbol
-
-            !expression.symbol.isAccessible(withSuper, thisSymbol) -> {
-                // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
-                // we also need to put its accessor into A. However, due to the way that calls are implemented in the
-                // IR we generally need to look at the type of the dispatchReceiver *argument* in order to find the
-                // correct class. Consider the following code:
-                //
-                //     fun run(f : () -> Int): Int = f()
-                //
-                //     open class A {
-                //         private fun f() = 0
-                //         fun g() = run { this.f() }
-                //     }
-                //
-                //     class B : A {
-                //         override fun g() = 1
-                //         fun h() = run { super.g() }
-                //     }
-                //
-                // We have calls to the private methods A.f from a generated Lambda subclass for the argument to `run`
-                // in class A and a super call to A.g from a generated Lambda subclass in class B.
-                //
-                // In the first case, we need to produce an accessor in class A to access the private member of A.
-                // Both the parent of the function f and the type of the dispatch receiver point to the correct class.
-                // In the second case we need to call A.g from within class B, since this is the only way to invoke
-                // a method of a superclass on the JVM. However, the IR for the call to super.g points directly to the
-                // function g in class A. Confusingly, the `superQualifier` on this call also points to class A.
-                // The only way to compute the actual enclosing class for the call is by looking at the type of the
-                // dispatch receiver argument, which points to B.
-                //
-                // Beyond this, there can be accessors that are needed because other lowerings produce code calling
-                // private methods (e.g., local functions for lambdas are private and called from generated
-                // SAM wrapper classes). In this case we rely on the parent field of the called function.
-                //
-                // Finally, we need to produce accessors for calls to protected static methods coming from Java,
-                // which we put in the closest enclosing class which has access to the method in question.
-                val symbol = expression.symbol
-                val dispatchReceiverType = expression.dispatchReceiver?.type
-                val parent = symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent)
-
-                // The key in the cache/map needs to be BOTH the symbol of the function being accessed AND the parent
-                // of the accessor. Going from the above example, if we have another class C similar to B:
-                //
-                //     class C : A {
-                //         override fun g() = 2
-                //         fun i() = run { super.g() }
-                //     }
-                //
-                // For the call to super.g in function i, the accessor to A.g must be produced in C. Therefore, we
-                // cannot use the function symbol (A.g in the example) by itself as the key since there should be
-                // one accessor per dispatch receiver (i.e., parent of the accessor).
-                functionMap.getOrPut(symbol to parent) {
-                    when (symbol) {
-                        is IrConstructorSymbol -> symbol.owner.makeConstructorAccessor().also(pendingAccessorsToAdd::add).symbol
-                        is IrSimpleFunctionSymbol -> symbol.owner.makeSimpleFunctionAccessor(expression as IrCall, parent).symbol
-                        else -> error("Unknown subclass of IrFunctionSymbol")
-                    }
-                }
-            }
-
-            else -> return super.visitFunctionAccess(expression)
+            !expression.symbol.isAccessible(withSuper, thisSymbol) ->
+                createAccessor(expression)
+            else ->
+                return super.visitFunctionAccess(expression)
         }
         return super.visitExpression(modifyFunctionAccessExpression(expression, accessor))
+    }
+
+    private fun createAccessor(expression: IrFunctionAccessExpression): IrFunctionSymbol =
+        if (expression is IrCall)
+            createAccessor(expression.symbol, expression.dispatchReceiver?.type, expression.superQualifierSymbol)
+        else
+            createAccessor(expression.symbol, null, null)
+
+    private fun createAccessor(
+        symbol: IrFunctionSymbol,
+        dispatchReceiverType: IrType?,
+        superQualifierSymbol: IrClassSymbol?
+    ): IrFunctionSymbol {
+        // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
+        // we also need to put its accessor into A. However, due to the way that calls are implemented in the
+        // IR we generally need to look at the type of the dispatchReceiver *argument* in order to find the
+        // correct class. Consider the following code:
+        //
+        //     fun run(f : () -> Int): Int = f()
+        //
+        //     open class A {
+        //         private fun f() = 0
+        //         fun g() = run { this.f() }
+        //     }
+        //
+        //     class B : A {
+        //         override fun g() = 1
+        //         fun h() = run { super.g() }
+        //     }
+        //
+        // We have calls to the private methods A.f from a generated Lambda subclass for the argument to `run`
+        // in class A and a super call to A.g from a generated Lambda subclass in class B.
+        //
+        // In the first case, we need to produce an accessor in class A to access the private member of A.
+        // Both the parent of the function f and the type of the dispatch receiver point to the correct class.
+        // In the second case we need to call A.g from within class B, since this is the only way to invoke
+        // a method of a superclass on the JVM. However, the IR for the call to super.g points directly to the
+        // function g in class A. Confusingly, the `superQualifier` on this call also points to class A.
+        // The only way to compute the actual enclosing class for the call is by looking at the type of the
+        // dispatch receiver argument, which points to B.
+        //
+        // Beyond this, there can be accessors that are needed because other lowerings produce code calling
+        // private methods (e.g., local functions for lambdas are private and called from generated
+        // SAM wrapper classes). In this case we rely on the parent field of the called function.
+        //
+        // Finally, we need to produce accessors for calls to protected static methods coming from Java,
+        // which we put in the closest enclosing class which has access to the method in question.
+
+        val parent = symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent)
+
+        // The key in the cache/map needs to be BOTH the symbol of the function being accessed AND the parent
+        // of the accessor. Going from the above example, if we have another class C similar to B:
+        //
+        //     class C : A {
+        //         override fun g() = 2
+        //         fun i() = run { super.g() }
+        //     }
+        //
+        // For the call to super.g in function i, the accessor to A.g must be produced in C. Therefore, we
+        // cannot use the function symbol (A.g in the example) by itself as the key since there should be
+        // one accessor per dispatch receiver (i.e., parent of the accessor).
+        return functionMap.getOrPut(symbol to parent) {
+            when (symbol) {
+                is IrConstructorSymbol ->
+                    symbol.owner.makeConstructorAccessor()
+                        .also(pendingAccessorsToAdd::add)
+                        .symbol
+                is IrSimpleFunctionSymbol -> {
+                    symbol.owner.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent)
+                        .also(pendingAccessorsToAdd::add)
+                        .symbol
+                }
+                else -> error("Unknown subclass of IrFunctionSymbol")
+            }
+        }
+    }
+
+    private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
+        val implFunRef = call.getValueArgument(1) as? IrFunctionReference
+            ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${call.dump()}")
+        val implFunSymbol = implFunRef.symbol
+
+        if (implFunSymbol.isAccessible(false, thisSymbol)) return call
+
+        val accessorSymbol = createAccessor(implFunSymbol, implFunRef.dispatchReceiver?.type, null)
+        val accessorFun = accessorSymbol.owner
+        val accessorRef =
+            IrFunctionReferenceImpl(
+                implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
+                accessorSymbol,
+                accessorFun.typeParameters.size,
+                accessorFun.valueParameters.size,
+                implFunRef.reflectionTarget, implFunRef.origin
+            )
+
+        accessorRef.copyTypeArgumentsFrom(implFunRef)
+
+        val implFun = implFunSymbol.owner
+        var accessorArgIndex = 0
+        if (implFun.dispatchReceiverParameter != null) {
+            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.dispatchReceiver)
+        }
+        if (implFun.extensionReceiverParameter != null) {
+            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.extensionReceiver)
+        }
+        for (implArgIndex in 0 until implFunRef.valueArgumentsCount) {
+            accessorRef.putValueArgument(accessorArgIndex++, implFunRef.getValueArgument(implArgIndex))
+        }
+        if (accessorFun is IrConstructor) {
+            accessorRef.putValueArgument(accessorArgIndex, createAccessorMarkerArgument())
+        }
+
+        call.putValueArgument(1, accessorRef)
+        return call
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
@@ -318,28 +379,31 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             copyAllParamsToArgs(it, accessor)
         }
 
-    private fun IrSimpleFunction.makeSimpleFunctionAccessor(expression: IrCall, parent: IrDeclarationParent): IrSimpleFunction {
+    private fun IrSimpleFunction.makeSimpleFunctionAccessor(
+        superQualifierSymbol: IrClassSymbol?,
+        dispatchReceiverType: IrType?,
+        parent: IrDeclarationParent
+    ): IrSimpleFunction {
         val source = this
 
         return factory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = source.accessorName(expression.superQualifierSymbol)
+            name = source.accessorName(superQualifierSymbol)
             visibility = DescriptorVisibilities.PUBLIC
             modality = if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL
             isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
         }.also { accessor ->
             accessor.parent = parent
-            pendingAccessorsToAdd.add(accessor)
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, expression.dispatchReceiver?.type)
+            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.body = IrExpressionBodyImpl(
                 accessor.startOffset, accessor.startOffset,
-                createSimpleFunctionCall(accessor, source.symbol, expression.superQualifierSymbol)
+                createSimpleFunctionCall(accessor, source.symbol, superQualifierSymbol)
             )
         }
     }
@@ -487,17 +551,13 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             newExpression.putValueArgument(i, irExpression)
         }
         if (accessorSymbol is IrConstructorSymbol) {
-            newExpression.putValueArgument(
-                receiverAndArgs.size,
-                IrConstImpl.constNull(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable()
-                )
-            )
+            newExpression.putValueArgument(receiverAndArgs.size, createAccessorMarkerArgument())
         }
         return newExpression
     }
+
+    private fun createAccessorMarkerArgument() =
+        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable())
 
     private fun modifyGetterExpression(
         oldExpression: IrGetField,
@@ -618,14 +678,6 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         return "p" + if (isStatic && visibility.isProtected) "\$s" + parentAsClass.syntheticAccessorToSuperSuffix() else ""
     }
 
-    private val DescriptorVisibility.isPrivate
-        get() = DescriptorVisibilities.isPrivate(this)
-
-    private val DescriptorVisibility.isProtected
-        get() = this == DescriptorVisibilities.PROTECTED ||
-                this == JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE ||
-                this == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
-
     private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
         /// We assume that IR code that reaches us has been checked for correctness at the frontend.
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
@@ -705,4 +757,10 @@ private fun IrClass.syntheticAccessorToSuperSuffix(): String =
     // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
     name.asString().hashCode().toString()
 
+val DescriptorVisibility.isPrivate
+    get() = DescriptorVisibilities.isPrivate(this)
 
+val DescriptorVisibility.isProtected
+    get() = this == DescriptorVisibilities.PROTECTED ||
+            this == JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE ||
+            this == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
