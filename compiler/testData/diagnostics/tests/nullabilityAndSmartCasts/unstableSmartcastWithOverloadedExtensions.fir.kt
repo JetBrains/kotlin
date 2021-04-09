@@ -9,6 +9,6 @@ var a: A? = null
 
 fun smartCastInterference(b: B) {
     if (a != null) {
-        a.<!NONE_APPLICABLE!>foo<!>(b)
+        a<!UNSAFE_CALL!>.<!>foo(b)
     }
 }

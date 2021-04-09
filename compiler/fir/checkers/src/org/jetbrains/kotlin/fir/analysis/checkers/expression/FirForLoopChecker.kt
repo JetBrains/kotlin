@@ -95,9 +95,9 @@ object FirForLoopChecker : FirBlockChecker() {
             is FirErrorNamedReference -> {
                 when (val diagnostic = calleeReference.diagnostic) {
                     is ConeAmbiguityError -> if (diagnostic.applicability.isSuccess) {
-                        reporter.reportOn(reportSource, ambiguityFactory, diagnostic.candidates, context)
+                        reporter.reportOn(reportSource, ambiguityFactory, diagnostic.candidates.map { it.symbol }, context)
                     } else if (noneApplicableFactory != null) {
-                        reporter.reportOn(reportSource, noneApplicableFactory, diagnostic.candidates, context)
+                        reporter.reportOn(reportSource, noneApplicableFactory, diagnostic.candidates.map { it.symbol }, context)
                     }
                     is ConeUnresolvedNameError -> {
                         reporter.reportOn(reportSource, missingFactory, context)

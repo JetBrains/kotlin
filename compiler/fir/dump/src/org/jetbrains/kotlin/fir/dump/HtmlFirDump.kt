@@ -1258,7 +1258,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 +"Ambiguity: "
                 br
                 for (candidate in diagnostic.candidates) {
-                    describeVerbose(candidate)
+                    describeVerbose(candidate.symbol)
                     br
                 }
             }
