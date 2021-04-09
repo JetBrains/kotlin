@@ -388,6 +388,20 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
         val operatorIsResolvable = operatorCallReference?.isError == false
 
+        fun operatorReturnTypeMatches(candidate: Candidate): Boolean {
+            // After KT-45503, non-assign flavor of operator is checked more strictly: the return type must be assignable to the variable.
+            val operatorCallReturnType = resolvedOperatorCall.typeRef.coneType
+            val substitutor = candidate.system.currentStorage()
+                .buildAbstractResultingSubstitutor(candidate.system.typeSystemContext) as ConeSubstitutor
+            return AbstractTypeChecker.isSubtypeOf(
+                session.typeContext,
+                substitutor.substituteOrSelf(operatorCallReturnType),
+                leftArgument.typeRef.coneType
+            )
+        }
+        // following `!!` is safe since `operatorIsResolvable = true` implies `operatorCallReference != null`
+        val operatorReturnTypeMatches = operatorIsResolvable && operatorReturnTypeMatches(operatorCallReference!!.candidate)
+
         val lhsReference = leftArgument.toResolvedCallableReference()
         val lhsSymbol = lhsReference?.resolvedSymbol as? FirVariableSymbol<*>
         val lhsVariable = lhsSymbol?.fir
@@ -444,6 +458,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             !assignIsResolvable && !operatorIsResolvable -> chooseAssign()
             !assignIsResolvable && operatorIsResolvable -> chooseOperator()
             assignIsResolvable && !operatorIsResolvable -> chooseAssign()
+            assignIsResolvable && operatorIsResolvable && !operatorReturnTypeMatches -> chooseAssign()
             else -> reportAmbiguity()
         }
     }
