@@ -15,7 +15,6 @@ class FloorDivModTest {
     @Test
     fun intDivMod() {
         fun check(a: Int, b: Int, expectedFd: Int? = null, expectedMod: Int? = null) {
-            if (a == Int.MIN_VALUE && b == -1) return // do not test, due to native KT-45136
             val div = a / b
             val rem = a % b
             val fd = a.floorDiv(b)
@@ -51,7 +50,6 @@ class FloorDivModTest {
     @Test
     fun longDivMod() {
         fun check(a: Long, b: Long, expectedFd: Long? = null, expectedMod: Long? = null) {
-            if (a == Long.MIN_VALUE && b == -1L) return // do not test, due to native KT-45136
             val div = a / b
             val rem = a % b
             val fd = a.floorDiv(b)
