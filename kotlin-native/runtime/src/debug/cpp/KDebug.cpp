@@ -110,8 +110,9 @@ int Konan_DebugBufferSizeWithObjectImpl(KRef obj) {
 
 // Auxilary function which can be called by developer/debugger to inspect an object.
 int32_t Konan_DebugObjectToUtf8ArrayImpl(KRef obj, char* buffer, int32_t bufferSize) {
-  // Call a Kotlin method and modify the root set -> switch thread state.
-  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+  // We need the runnable thread state to call the Kotlin function 'KonanObjectToUtf8Array' and operate with it's result.
+  // But the current thread can be in any state when this function is called by the debugger. So we use the reentrant state switch.
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable, /* reentrant */ true);
   ObjHolder stringHolder;
   // Kotlin call.
   ArrayHeader* data = KonanObjectToUtf8Array(obj, stringHolder.slot())->array();
