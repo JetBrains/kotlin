@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.tree
 
+import org.jetbrains.kotlin.commonizer.cir.CirClass
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 
@@ -22,12 +23,15 @@ internal fun CirModuleNode.assembleCirTree(): CirTreeModule? {
 }
 
 internal fun CirPackageNode.assembleCirTree(): CirTreePackage? {
+    val commonizedPackage = commonDeclaration() ?: return null
+    val commonizedTypeAliases = typeAliases.mapNotNull { (_, typeAlias) -> typeAlias.assembleCirTree() }
+
     return CirTreePackage(
-        pkg = commonDeclaration() ?: return null,
+        pkg = commonizedPackage,
         properties = properties.mapNotNull { (key, property) -> property.assembleCirTree(key) },
         functions = functions.mapNotNull { (key, function) -> function.assembleCirTree(key) },
-        typeAliases = typeAliases.mapNotNull { (_, typeAlias) -> typeAlias.assembleCirTree() },
-        classes = classes.mapNotNull { (_, clazz) -> clazz.assembleCirTree() }
+        typeAliases = commonizedTypeAliases.filterIsInstance<CirTreeTypeAlias>(),
+        classes = classes.mapNotNull { (_, clazz) -> clazz.assembleCirTree() } + commonizedTypeAliases.filterIsInstance<CirTreeClass>()
     )
 }
 
@@ -42,11 +46,12 @@ internal fun CirClassNode.assembleCirTree(): CirTreeClass? {
     )
 }
 
-internal fun CirTypeAliasNode.assembleCirTree(): CirTreeTypeAlias? {
-    return CirTreeTypeAlias(
-        id = id,
-        typeAlias = commonDeclaration() as? CirTypeAlias ?: return null
-    )
+internal fun CirTypeAliasNode.assembleCirTree(): CirTreeClassifier? {
+    return when (val commonDeclaration = commonDeclaration()) {
+        is CirTypeAlias -> CirTreeTypeAlias(id, commonDeclaration)
+        is CirClass -> CirTreeClass(id, commonDeclaration)
+        else -> null
+    }
 }
 
 internal fun CirPropertyNode.assembleCirTree(approximationKey: PropertyApproximationKey): CirTreeProperty? {
