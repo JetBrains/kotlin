@@ -79,8 +79,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 val transformed = super.visitCall(expression) as IrCall
                 return transformed.retargetToSuspendView(context, functionStack.peek() ?: return transformed) {
                     IrCallImpl.fromSymbolOwner(
-                            startOffset, endOffset, type, it,
-                            origin = origin, superQualifierSymbol = superQualifierSymbol
+                        startOffset, endOffset, type, it,
+                        origin = origin, superQualifierSymbol = superQualifierSymbol
                     )
                 }
             }
@@ -261,11 +261,11 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 return declaration
             }
 
-            private fun transformToView(function: IrSimpleFunction): List<IrFunction>? {
+            private fun transformToView(function: IrSimpleFunction): List<IrFunction> {
                 val flag = MutableFlag(false)
                 function.accept(this, flag)
 
-                val view = function.suspendFunctionViewOrStub(context) as IrSimpleFunction
+                val view = function.suspendFunctionViewOrStub(context)
                 val continuationParameter = view.continuationParameter()
                 val parameterMap = function.explicitParameters.zip(view.explicitParameters.filter { it != continuationParameter }).toMap()
                 view.body = function.moveBodyTo(view, parameterMap)
@@ -334,7 +334,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
 
 // Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
 // the result is called 'view', just to be consistent with old backend.
-private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrFunction {
+private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrSimpleFunction {
     if (!isSuspend) return this
     return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
 }
@@ -377,10 +377,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
         function.copyReceiverParametersFrom(this, substitutionMap)
 
-        if (origin != JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE) {
-            function.overriddenSymbols +=
-                overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol as IrSimpleFunctionSymbol }
-        }
+        function.overriddenSymbols += overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol }
 
         // The continuation parameter goes before the default argument mask(s) and handler for default argument stubs.
         // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
@@ -390,7 +387,9 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
             it.copyTo(function, index = it.index, type = it.type.substitute(substitutionMap))
         }
         function.addValueParameter(
-            SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType(context).substitute(substitutionMap), JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+            SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME,
+            continuationType(context).substitute(substitutionMap),
+            JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
         )
         function.valueParameters += valueParameters.drop(index).map {
             it.copyTo(function, index = it.index + 1, type = it.type.substitute(substitutionMap))
@@ -427,7 +426,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
 
     // While the new callee technically returns `<original type> | COROUTINE_SUSPENDED`, the latter case is handled
     // by a method visitor so at an IR overview we don't need to consider it.
-    return copyWithTargetSymbol(view.symbol as IrSimpleFunctionSymbol).also {
+    return copyWithTargetSymbol(view.symbol).also {
         it.copyAttributes(this)
         it.copyTypeArgumentsFrom(this)
         it.dispatchReceiver = dispatchReceiver

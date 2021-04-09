@@ -9430,6 +9430,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("interfaceGenericDefault.kt")
+            public void testInterfaceGenericDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceGenericDefault.kt");
+            }
+
+            @Test
             @TestMetadata("interfaceSpecialization.kt")
             public void testInterfaceSpecialization() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceSpecialization.kt");
