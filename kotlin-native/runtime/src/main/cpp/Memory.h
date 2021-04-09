@@ -404,7 +404,7 @@ inline ThreadState GetThreadState() noexcept {
 }
 
 // Switches the state of the given thread to `newState` and returns the previous thread state.
-ALWAYS_INLINE ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState) noexcept;
+ALWAYS_INLINE ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant = false) noexcept;
 
 // Asserts that the given thread is in the given state.
 ALWAYS_INLINE void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
@@ -418,13 +418,13 @@ ALWAYS_INLINE inline void AssertThreadState(ThreadState expected) noexcept {
 class ThreadStateGuard final : private Pinned {
 public:
     // Set the state for the given thread.
-    ThreadStateGuard(MemoryState* thread, ThreadState state) noexcept : thread_(thread) {
-        oldState_ = SwitchThreadState(thread_, state);
+    ThreadStateGuard(MemoryState* thread, ThreadState state, bool reentrant = false) noexcept : thread_(thread) {
+        oldState_ = SwitchThreadState(thread_, state, reentrant);
     }
 
     // Sets the state for the current thread.
-    explicit ThreadStateGuard(ThreadState state) noexcept
-        : ThreadStateGuard(mm::GetMemoryState(), state) {};
+    explicit ThreadStateGuard(ThreadState state, bool reentrant = false) noexcept
+        : ThreadStateGuard(mm::GetMemoryState(), state, reentrant) {};
 
     ~ThreadStateGuard() noexcept {
         SwitchThreadState(thread_, oldState_);

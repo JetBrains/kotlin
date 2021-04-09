@@ -15,8 +15,8 @@ namespace kotlin {
 
 namespace internal {
 
-ALWAYS_INLINE inline bool isStateSwitchAllowed(ThreadState oldState, ThreadState newState) noexcept  {
-    return oldState != newState;
+ALWAYS_INLINE inline bool isStateSwitchAllowed(ThreadState oldState, ThreadState newState, bool reentrant) noexcept  {
+    return oldState != newState || reentrant;
 }
 
 const char* stateToString(ThreadState state) noexcept;
@@ -24,10 +24,10 @@ const char* stateToString(ThreadState state) noexcept;
 } // namespace internal
 
 // Switches the state of the given thread to `newState` and returns the previous thread state.
-ALWAYS_INLINE inline ThreadState SwitchThreadState(mm::ThreadData* threadData, ThreadState newState) noexcept {
+ALWAYS_INLINE inline ThreadState SwitchThreadState(mm::ThreadData* threadData, ThreadState newState, bool reentrant = false) noexcept {
     auto oldState = threadData->setState(newState);
     // TODO(perf): Mesaure the impact of this assert in debug and opt modes.
-    RuntimeAssert(internal::isStateSwitchAllowed(oldState, newState),
+    RuntimeAssert(internal::isStateSwitchAllowed(oldState, newState, reentrant),
                   "Illegal thread state switch. Old state: %s. New state: %s.",
                   internal::stateToString(oldState), internal::stateToString(newState));
     return oldState;
