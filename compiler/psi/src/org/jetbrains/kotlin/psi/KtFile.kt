@@ -101,8 +101,8 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
 
     val script: KtScript?
         get() {
-            stub?.let { if (!it.isScript()) return null }
             isScript?.let { if (!it) return null }
+            stub?.let { if (!it.isScript()) return null }
 
             val result = getChildOfType<KtScript>()
             if (isScript == null) {
