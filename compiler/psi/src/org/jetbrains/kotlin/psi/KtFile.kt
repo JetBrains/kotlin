@@ -208,7 +208,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         pathCached = null
     }
 
-    fun isScript(): Boolean = stub?.isScript() ?: isScriptByTree
+    fun isScript(): Boolean = isScript ?: stub?.isScript() ?: isScriptByTree
 
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }
