@@ -5054,6 +5054,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/extensionFunctions/kt5467.kt");
         }
 
+        @TestMetadata("memberExtensionEqualsHashCodeToStringInInterface.kt")
+        public void testMemberExtensionEqualsHashCodeToStringInInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionFunctions/memberExtensionEqualsHashCodeToStringInInterface.kt");
+        }
+
         @TestMetadata("nested2.kt")
         public void testNested2() throws Exception {
             runTest("compiler/testData/codegen/box/extensionFunctions/nested2.kt");
