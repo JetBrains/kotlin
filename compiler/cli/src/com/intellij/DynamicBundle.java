@@ -4,7 +4,6 @@ package com.intellij;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.AbstractExtensionPointBean;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.util.ReflectionUtil;
@@ -93,7 +92,8 @@ public abstract class DynamicBundle extends AbstractBundle {
   public static final DynamicBundle INSTANCE = new DynamicBundle("") {
   };
 
-  public static class LanguageBundleEP extends AbstractExtensionPointBean {
+  @SuppressWarnings("deprecation")
+  public static class LanguageBundleEP extends com.intellij.openapi.extensions.AbstractExtensionPointBean {
     public static final ExtensionPointName<LanguageBundleEP> EP_NAME = ExtensionPointName.create("com.intellij.languageBundle");
   }
 
