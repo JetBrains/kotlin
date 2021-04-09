@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 /*
 * Move to another module
@@ -28,7 +29,7 @@ public class IndexHelper(val project: Project, private val scope: GlobalSearchSc
     private inline fun <INDEX_KEY : Any, reified PSI : PsiElement> firstMatchingOrNull(
         stubKey: StubIndexKey<INDEX_KEY, PSI>,
         key: INDEX_KEY,
-        crossinline filter: (PSI) -> Boolean
+        crossinline filter: (PSI) -> Boolean = { true }
     ): PSI? {
         var result: PSI? = null
         stubIndex.processElements(
@@ -48,10 +49,14 @@ public class IndexHelper(val project: Project, private val scope: GlobalSearchSc
         classId.asStringForIndexes(),
     ) { candidate -> candidate.containingKtFile.packageFqName == classId.packageFqName }
 
-    fun typeAliasFromIndexByClassId(classId: ClassId) = firstMatchingOrNull(
+    fun typeAliasFromIndexByClassId(classId: ClassId): KtTypeAlias? = firstMatchingOrNull<String, KtTypeAlias>(
         KotlinTopLevelTypeAliasFqNameIndex.KEY,
-        classId.asStringForIndexes(),
+        key = classId.asStringForIndexes(),
     ) { candidate -> candidate.containingKtFile.packageFqName == classId.packageFqName }
+        ?: firstMatchingOrNull<String, KtTypeAlias>(
+            KotlinInnerTypeAliasClassIdIndex.KEY,
+            key = classId.asString(),
+        )
 
 
     fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
