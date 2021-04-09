@@ -8630,6 +8630,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt");
             }
 
+            @TestMetadata("unusedCatchVar.kt")
+            public void testUnusedCatchVar() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/unusedCatchVar.kt");
+            }
+
             @TestMetadata("usedInArrayStore.kt")
             public void testUsedInArrayStore() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInArrayStore.kt");
