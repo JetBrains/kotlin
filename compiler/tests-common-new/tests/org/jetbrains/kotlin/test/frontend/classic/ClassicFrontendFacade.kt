@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -95,7 +96,9 @@ class ClassicFrontendFacade(
                  * We need create KtFiles again with new project because otherwise we can access to some caches using
                  *   old project as key which may leads to missing services in core environment
                  */
-                ktFilesMap.putAll(testServices.sourceFileProvider.getKtFilesForSourceFiles(artifact.allKtFiles.keys, project))
+                val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(artifact.allKtFiles.keys, project)
+                ktFiles.values.forEach { ktFile -> ktFile.isCommonSource = true }
+                ktFilesMap.putAll(ktFiles)
                 hasCommonModules = true
             }
         }
