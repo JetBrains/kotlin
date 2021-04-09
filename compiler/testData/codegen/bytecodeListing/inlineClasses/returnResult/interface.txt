@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public interface I {
+    // source: 'interface.kt'
+    public abstract @org.jetbrains.annotations.NotNull method foo-d1pmJ48(): java.lang.Object
+}

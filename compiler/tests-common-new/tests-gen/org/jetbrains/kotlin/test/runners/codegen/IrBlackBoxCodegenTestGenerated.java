@@ -19483,6 +19483,52 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/returnResult")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ReturnResult {
+            @Test
+            public void testAllFilesPresentInReturnResult() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/returnResult"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("class.kt")
+            public void testClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/class.kt");
+            }
+
+            @Test
+            @TestMetadata("classAnyOverride.kt")
+            public void testClassAnyOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classAnyOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("classGenericOverride.kt")
+            public void testClassGenericOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classGenericOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("classResultOverride.kt")
+            public void testClassResultOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classResultOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("interface.kt")
+            public void testInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/interface.kt");
+            }
+
+            @Test
+            @TestMetadata("topLevel.kt")
+            public void testTopLevel() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/topLevel.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
         @TestDataPath("$PROJECT_ROOT")
         public class UnboxGenericParameter {

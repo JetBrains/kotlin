@@ -14280,6 +14280,49 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/returnResult")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReturnResult extends AbstractIrJsCodegenBoxES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInReturnResult() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/returnResult"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("class.kt")
+            public void testClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/class.kt");
+            }
+
+            @TestMetadata("classAnyOverride.kt")
+            public void testClassAnyOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classAnyOverride.kt");
+            }
+
+            @TestMetadata("classGenericOverride.kt")
+            public void testClassGenericOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classGenericOverride.kt");
+            }
+
+            @TestMetadata("classResultOverride.kt")
+            public void testClassResultOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/classResultOverride.kt");
+            }
+
+            @TestMetadata("interface.kt")
+            public void testInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/interface.kt");
+            }
+
+            @TestMetadata("topLevel.kt")
+            public void testTopLevel() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/returnResult/topLevel.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

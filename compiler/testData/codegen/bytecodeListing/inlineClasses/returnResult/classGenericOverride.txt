@@ -1,0 +1,21 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'classGenericOverride.kt'
+    public method <init>(): void
+    public synthetic bridge method foo(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method foo-d1pmJ48(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class I$DefaultImpls {
+    // source: 'classGenericOverride.kt'
+    public static method foo(@org.jetbrains.annotations.NotNull p0: I): java.lang.Object
+    public final inner class I$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'classGenericOverride.kt'
+    public abstract method foo(): java.lang.Object
+    public final inner class I$DefaultImpls
+}
