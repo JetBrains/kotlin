@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDepend
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirThreadSafeSymbolProviderWrapper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ModuleLibrariesSearchScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
@@ -60,10 +61,10 @@ internal object FirIdeSessionFactory {
         sessionsCache: MutableMap<ModuleSourceInfo, FirIdeSourcesSession>,
         isRootModule: Boolean,
         librariesCache: LibrariesCache,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         configureSession: (FirIdeSession.() -> Unit)? = null
     ): FirIdeSourcesSession {
         sessionsCache[moduleInfo]?.let { return it }
+        val languageVersionSettings = moduleInfo.module.languageVersionSettings
         val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
         val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
         val searchScope = ModuleProductionSourceScope(moduleInfo.module)
@@ -113,6 +114,7 @@ internal object FirIdeSessionFactory {
                                 builtinsAndCloneableSession,
                                 builtinTypes,
                                 librariesCache,
+                                languageVersionSettings = languageVersionSettings,
                                 configureSession = configureSession,
                             ).symbolProvider
                         )
