@@ -153,6 +153,7 @@ class ExpressionsConverter(
                 valueParameters += if (multiDeclaration != null) {
                     val name = Name.special("<destruct>")
                     val multiParameter = buildValueParameter {
+                        source = valueParameter.firValueParameter.source
                         session = baseSession
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = valueParameter.firValueParameter.returnTypeRef
