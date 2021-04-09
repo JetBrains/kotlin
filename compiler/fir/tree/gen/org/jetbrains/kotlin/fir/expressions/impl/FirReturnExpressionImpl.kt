@@ -48,12 +48,12 @@ internal class FirReturnExpressionImpl(
     }
 
     override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
-        result = result.transformSingle(transformer, data)
+        result = result.transform(transformer, data)
         return this
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
-        typeRef = typeRef.transformSingle(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }

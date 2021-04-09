@@ -37,7 +37,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             is FieldWithDefault -> origin.transform()
 
             is FirField ->
-                println("$name = ${name}${call()}transformSingle(transformer, data)")
+                println("$name = ${name}${call()}transform(transformer, data)")
 
             is FieldList -> {
                 println("${name}.transformInplace(transformer, data)")
@@ -198,13 +198,13 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 val dispatchReceiver = implementation["dispatchReceiver"]!!
                                 val extensionReceiver = implementation["extensionReceiver"]!!
                                 if (explicitReceiver.isMutable) {
-                                    println("explicitReceiver = explicitReceiver${explicitReceiver.call()}transformSingle(transformer, data)")
+                                    println("explicitReceiver = explicitReceiver${explicitReceiver.call()}transform(transformer, data)")
                                 }
                                 if (dispatchReceiver.isMutable) {
                                     println(
                                         """
                                     |if (dispatchReceiver !== explicitReceiver) {
-                                    |            dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
+                                    |            dispatchReceiver = dispatchReceiver.transform(transformer, data)
                                     |        }
                                 """.trimMargin(),
                                     )
@@ -213,7 +213,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                     println(
                                         """
                                     |if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-                                    |            extensionReceiver = extensionReceiver.transformSingle(transformer, data)
+                                    |            extensionReceiver = extensionReceiver.transform(transformer, data)
                                     |        }
                                 """.trimMargin(),
                                     )
@@ -266,10 +266,10 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                             println(
                                 """
                                 |if (subjectVariable != null) {
-                                |            subjectVariable = subjectVariable?.transformSingle(transformer, data)
+                                |            subjectVariable = subjectVariable?.transform(transformer, data)
                                 |            subject = subjectVariable?.initializer
                                 |        } else {
-                                |            subject = subject?.transformSingle(transformer, data)
+                                |            subject = subject?.transform(transformer, data)
                                 |        }
                                     """.trimMargin(),
                             )

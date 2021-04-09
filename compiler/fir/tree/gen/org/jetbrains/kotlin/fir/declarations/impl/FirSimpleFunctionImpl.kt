@@ -70,7 +70,7 @@ internal class FirSimpleFunctionImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
         transformStatus(transformer, data)
@@ -81,12 +81,12 @@ internal class FirSimpleFunctionImpl(
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
+        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
         return this
     }
 
@@ -96,17 +96,17 @@ internal class FirSimpleFunctionImpl(
     }
 
     override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        body = body?.transformSingle(transformer, data)
+        body = body?.transform(transformer, data)
         return this
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        status = status.transformSingle(transformer, data)
+        status = status.transform(transformer, data)
         return this
     }
 
     override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        contractDescription = contractDescription.transformSingle(transformer, data)
+        contractDescription = contractDescription.transform(transformer, data)
         return this
     }
 

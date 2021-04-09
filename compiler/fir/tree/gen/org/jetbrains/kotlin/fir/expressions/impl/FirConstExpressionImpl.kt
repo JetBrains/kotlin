@@ -32,7 +32,7 @@ internal class FirConstExpressionImpl<T> (
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstExpressionImpl<T> {
-        typeRef = typeRef.transformSingle(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }

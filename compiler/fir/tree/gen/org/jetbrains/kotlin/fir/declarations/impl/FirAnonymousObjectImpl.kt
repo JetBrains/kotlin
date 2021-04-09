@@ -61,8 +61,8 @@ internal class FirAnonymousObjectImpl(
         transformSuperTypeRefs(transformer, data)
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
-        typeRef = typeRef.transformSingle(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         return this
     }
 

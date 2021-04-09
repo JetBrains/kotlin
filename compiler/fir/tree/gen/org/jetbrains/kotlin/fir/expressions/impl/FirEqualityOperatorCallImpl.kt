@@ -34,9 +34,9 @@ internal class FirEqualityOperatorCallImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEqualityOperatorCallImpl {
-        typeRef = typeRef.transformSingle(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
-        argumentList = argumentList.transformSingle(transformer, data)
+        argumentList = argumentList.transform(transformer, data)
         return this
     }
 

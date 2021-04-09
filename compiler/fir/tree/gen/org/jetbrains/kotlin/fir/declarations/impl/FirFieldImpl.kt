@@ -77,7 +77,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
@@ -86,7 +86,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        initializer = initializer?.transformSingle(transformer, data)
+        initializer = initializer?.transform(transformer, data)
         return this
     }
 
@@ -113,7 +113,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        status = status.transformSingle(transformer, data)
+        status = status.transform(transformer, data)
         return this
     }
 
