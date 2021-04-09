@@ -18125,6 +18125,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("commonSealedWithPlatformInheritor.kt")
+                public void testCommonSealedWithPlatformInheritor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/commonSealedWithPlatformInheritor.kt");
+                }
+
+                @Test
                 @TestMetadata("expectEnum.kt")
                 public void testExpectEnum() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectEnum.kt");
