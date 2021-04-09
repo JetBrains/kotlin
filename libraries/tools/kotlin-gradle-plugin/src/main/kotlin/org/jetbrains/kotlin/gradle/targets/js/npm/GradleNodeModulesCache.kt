@@ -21,6 +21,9 @@ internal abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
     @Transient
     lateinit var fs: FileSystemOperationsCompat
 
+    override val type: String
+        get() = "gradle"
+
     // TODO: replace by injected service org.gradle.api.file.ArchiveOperations once min supported Gradle is 6.6
     @Transient
     lateinit var archiveOperations: ArchiveOperationsCompat

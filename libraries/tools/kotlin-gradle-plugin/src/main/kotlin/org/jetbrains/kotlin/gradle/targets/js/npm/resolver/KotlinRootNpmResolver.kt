@@ -126,7 +126,7 @@ internal class KotlinRootNpmResolver internal constructor(
     val plugins
         get() = plugins_ ?: resolverStateHolder.get().parameters.plugins.get()
 
-    val projectResolvers
+    private val projectResolvers
         get() = projectResolvers_ ?: configurationCacheProjectResolvers
 
     val yarn by lazy {

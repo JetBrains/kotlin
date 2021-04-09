@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import java.io.File
@@ -15,10 +14,6 @@ import java.io.File
 open class RootPackageJsonTask : DefaultTask() {
     init {
         check(project == project.rootProject)
-
-        outputs.upToDateWhen {
-            false
-        }
 
         onlyIf {
             resolutionManager.isConfiguringState()
@@ -32,6 +27,12 @@ open class RootPackageJsonTask : DefaultTask() {
     @get:OutputFile
     val rootPackageJson: File by lazy {
         nodeJs.rootPackageDir.resolve(NpmProject.PACKAGE_JSON)
+    }
+
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    val packageJsonFiles: Collection<File> by lazy {
+        resolutionManager.packageJsonFiles
     }
 
     @TaskAction
