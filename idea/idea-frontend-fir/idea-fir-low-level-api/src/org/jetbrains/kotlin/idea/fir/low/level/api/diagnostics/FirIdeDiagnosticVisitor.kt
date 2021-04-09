@@ -14,20 +14,22 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 
 internal open class FirIdeDiagnosticVisitor(
     context: PersistentCheckerContext,
-    components: List<AbstractDiagnosticCollectorComponent>
+    components: List<AbstractDiagnosticCollectorComponent>,
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
+    private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
+
     override fun beforeRunningSingleComponentOnElement(element: FirElement) {
         checkCanceled()
     }
 
-    override fun goToNestedElements(element: FirElement) {
+    override fun goToNestedDeclarations(element: FirElement) {
         if (element is FirDeclaration) {
-            session.beforeElementDiagnosticCollectionHandler?.beforeGoingNestedDeclaration(element, context)
+            beforeElementDiagnosticCollectionHandler?.beforeGoingNestedDeclaration(element, context)
         }
-        super.goToNestedElements(element)
+        super.goToNestedDeclarations(element)
     }
 
     override fun beforeRunningAllComponentsOnElement(element: FirElement) {
-        session.beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
+        beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
     }
 }

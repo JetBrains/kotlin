@@ -32,6 +32,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
     protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
     protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
 
+    protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
+    protected open fun onDeclarationExit(declaration: FirDeclaration) {}
+
     protected abstract fun goToNestedDeclarations(element: FirElement)
     protected abstract fun runComponents(element: FirElement)
 
@@ -114,6 +117,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
+        withSuppressedDiagnostics(typeAlias) {
+            visitWithDeclaration(typeAlias)
+        }
+    }
+
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
         if (propertyAccessor !is FirDefaultPropertyAccessor) {
             val property = context.containingDeclarations.last() as FirProperty
@@ -177,13 +186,16 @@ abstract class AbstractDiagnosticCollectorVisitor(
         visitWithGetClassCall(getClassCall)
     }
 
-    private inline fun visitWithDeclaration(
+    protected inline fun visitWithDeclaration(
         declaration: FirDeclaration,
-        block: () -> Unit = { declaration.acceptChildren(this, null) }
+        block: () -> Unit = { goToNestedDeclarations(declaration) }
     ) {
-        runComponents(declaration)
-        withDeclaration(declaration) {
-            block()
+        if (shouldVisitDeclaration(declaration)) {
+            runComponents(declaration)
+            withDeclaration(declaration) {
+                block()
+            }
+            onDeclarationExit(declaration)
         }
     }
 

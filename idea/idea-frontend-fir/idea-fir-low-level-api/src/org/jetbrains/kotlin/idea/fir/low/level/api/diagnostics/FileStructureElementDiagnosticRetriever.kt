@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistentCheckerContextFactory
@@ -22,8 +23,8 @@ internal abstract class FileStructureElementDiagnosticRetriever {
     ): FileStructureElementDiagnosticList
 }
 
-internal class SingleNonLocalDeclarationDiagnosticRetriever (
-    private val declaration: FirDeclaration
+internal class SingleNonLocalDeclarationDiagnosticRetriever(
+    private val structureElementDeclaration: FirDeclaration
 ) : FileStructureElementDiagnosticRetriever() {
     override fun retrieve(
         firFile: FirFile,
@@ -32,10 +33,60 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever (
     ): FileStructureElementDiagnosticList {
         val sessionHolder = SessionHolderImpl.createWithEmptyScopeSession(firFile.session)
         val context = lockProvider.withReadLock(firFile) {
-            PersistenceContextCollector.collectContext(sessionHolder, firFile, declaration)
+            PersistenceContextCollector.collectContext(sessionHolder, firFile, structureElementDeclaration)
         }
-        return collector.collectForStructureElement(declaration) { components ->
-            FirIdeDiagnosticVisitor(context, components)
+        return collector.collectForStructureElement(structureElementDeclaration) { components ->
+            Visitor(structureElementDeclaration, context, components)
+        }
+    }
+
+    private class Visitor(
+        private val structureElementDeclaration: FirDeclaration,
+        context: PersistentCheckerContext,
+        components: List<AbstractDiagnosticCollectorComponent>
+    ) : FirIdeDiagnosticVisitor(context, components) {
+        private var insideAlwaysVisitableDeclarations = 0
+
+        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
+            if (declaration.shouldVisitWithNestedDeclarations()) {
+                insideAlwaysVisitableDeclarations++
+            }
+
+            if (insideAlwaysVisitableDeclarations > 0) {
+                return true
+            }
+
+            @Suppress("IntroduceWhenSubject")
+            return when {
+                structureElementDeclaration !is FirRegularClass -> true
+                structureElementDeclaration == declaration -> true
+                else -> false
+            }
+        }
+
+        private fun FirDeclaration.shouldVisitWithNestedDeclarations(): Boolean {
+            if (shouldDiagnosticsAlwaysBeCheckedOn(this)) return true
+            return when (this) {
+                is FirAnonymousInitializer -> true
+                is FirEnumEntry -> true
+                is FirValueParameter -> true
+                is FirConstructor -> isPrimary
+                else -> false
+            }
+        }
+
+        override fun onDeclarationExit(declaration: FirDeclaration) {
+            if (declaration.shouldVisitWithNestedDeclarations()) {
+                insideAlwaysVisitableDeclarations--
+            }
+        }
+    }
+
+    companion object {
+        fun shouldDiagnosticsAlwaysBeCheckedOn(firElement: FirElement) = when (firElement.source?.kind) {
+            FirFakeSourceElementKind.PropertyFromParameter -> true
+            FirFakeSourceElementKind.ImplicitConstructor -> true
+            else -> false
         }
     }
 }
@@ -55,16 +106,15 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
         components: List<AbstractDiagnosticCollectorComponent>
     ) : FirIdeDiagnosticVisitor(
         PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(SessionHolderImpl.createWithEmptyScopeSession(firFile.session)),
-        components
+        components,
     ) {
-        override fun goToNestedDeclarations(element: FirElement) {
-            val goNested = when (element) {
-                is FirFile -> true
-                is FirDeclaration -> false
-                else -> true
-            }
-            if (goNested) {
-                super.goToNestedDeclarations(element)
+        override fun visitFile(file: FirFile, data: Nothing?) {
+            withSuppressedDiagnostics(file) {
+                visitWithDeclaration(file) {
+                    file.annotations.forEach { it.accept(this, data) }
+                    file.imports.forEach { it.accept(this, data) }
+                    // do not visit declarations here
+                }
             }
         }
     }

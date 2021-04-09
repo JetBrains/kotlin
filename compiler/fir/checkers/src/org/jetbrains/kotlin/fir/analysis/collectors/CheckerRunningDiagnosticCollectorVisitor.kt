@@ -13,7 +13,6 @@ open class CheckerRunningDiagnosticCollectorVisitor(
     context: PersistentCheckerContext,
     components: List<AbstractDiagnosticCollectorComponent>
 ) : AbstractDiagnosticCollectorVisitor(context, components) {
-    protected val session get() = context.session
 
     override fun goToNestedDeclarations(element: FirElement) {
         element.acceptChildren(this, null)
