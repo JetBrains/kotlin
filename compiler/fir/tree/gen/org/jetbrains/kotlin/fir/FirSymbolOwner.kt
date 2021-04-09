@@ -19,4 +19,8 @@ interface FirSymbolOwner<E> : FirElement where E : FirSymbolOwner<E>, E : FirDec
     val symbol: AbstractFirBasedSymbol<E>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSymbolOwner(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformSymbolOwner(this, data) as E
 }

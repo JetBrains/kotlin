@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.contracts
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.*
@@ -19,4 +20,8 @@ abstract class FirRawContractDescription : FirContractDescription() {
     abstract val rawEffects: List<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRawContractDescription(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformRawContractDescription(this, data) as E
 }

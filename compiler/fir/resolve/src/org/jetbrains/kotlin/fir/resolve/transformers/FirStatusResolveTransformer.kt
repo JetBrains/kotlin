@@ -50,7 +50,7 @@ fun <F : FirClassLikeDeclaration<F>> F.runStatusResolveForLocalClass(
         FirCompositeScope(scopesForLocalClass)
     )
 
-    return this.transform<F, Nothing?>(transformer, null)
+    return this.transform(transformer, null)
 }
 
 abstract class ResolvedStatusCalculator {

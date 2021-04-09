@@ -50,6 +50,7 @@ fun Implementation.collectImports(base: List<String> = emptyList(), kind: Import
 
 fun Element.collectImports(): List<String> {
     val baseTypes = parents.mapTo(mutableListOf()) { it.fullQualifiedName }
+    baseTypes += AbstractFirTreeBuilder.baseFirElement.fullQualifiedName
     baseTypes += parentsArguments.values.flatMap { it.values }.mapNotNull { it.fullQualifiedName }
     if (needPureAbstractElement) {
         baseTypes += pureAbstractElementType.fullQualifiedName!!

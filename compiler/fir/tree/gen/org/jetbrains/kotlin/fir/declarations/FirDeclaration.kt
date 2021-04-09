@@ -24,5 +24,9 @@ interface FirDeclaration : FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDeclaration(this, data)
 
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformDeclaration(this, data) as E
+
     fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 }

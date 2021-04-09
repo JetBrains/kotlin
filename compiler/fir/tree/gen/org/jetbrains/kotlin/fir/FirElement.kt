@@ -17,15 +17,15 @@ interface FirElement {
 
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
 
+    @Suppress("UNCHECKED_CAST")
+    fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformElement(this, data) as E
+
     fun accept(visitor: FirVisitorVoid) = accept(visitor, null)
 
     fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)
 
     fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)
-
-    @Suppress("UNCHECKED_CAST")
-    fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): E =
-        accept(visitor, data) as E
 
     fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement
 }
