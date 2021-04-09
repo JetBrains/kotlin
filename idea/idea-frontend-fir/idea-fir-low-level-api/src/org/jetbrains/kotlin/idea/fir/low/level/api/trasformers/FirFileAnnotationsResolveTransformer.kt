@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
 
 internal class FirFileAnnotationsResolveTransformer(
@@ -29,10 +27,10 @@ internal class FirFileAnnotationsResolveTransformer(
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
     ),
 ) {
-    override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
+    override fun transformFile(file: FirFile, data: ResolutionMode): FirFile {
         return context.withFile(file, components) {
             file.transformAnnotations(this, data)
-            file.compose()
+            file
         }
     }
 

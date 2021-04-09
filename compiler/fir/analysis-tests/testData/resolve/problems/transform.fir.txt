@@ -1,50 +1,4 @@
 FILE: transform.kt
-    public sealed class CompositeTransformResult<out T : R|kotlin/Any|> : R|kotlin/Any| {
-        protected constructor<out T : R|kotlin/Any|>(): R|CompositeTransformResult<T>| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final class Single<out T : R|kotlin/Any|> : R|CompositeTransformResult<T>| {
-            public constructor<out T : R|kotlin/Any|>(_single: R|T|): R|CompositeTransformResult.Single<T>| {
-                super<R|CompositeTransformResult<T>|>()
-            }
-
-            public final val _single: R|T| = R|<local>/_single|
-                public get(): R|T|
-
-        }
-
-        public final class Multiple<out T : R|kotlin/Any|> : R|CompositeTransformResult<T>| {
-            public constructor<out T : R|kotlin/Any|>(_list: R|kotlin/collections/List<T>|): R|CompositeTransformResult.Multiple<T>| {
-                super<R|CompositeTransformResult<T>|>()
-            }
-
-            public final val _list: R|kotlin/collections/List<T>| = R|<local>/_list|
-                public get(): R|kotlin/collections/List<T>|
-
-        }
-
-        public final companion object Companion : R|kotlin/Any| {
-            private constructor(): R|CompositeTransformResult.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-            public final fun <T : R|kotlin/Any|> single(t: R|T|): R|CompositeTransformResult.Single<T>| {
-                ^single R|SubstitutionOverride</CompositeTransformResult.Single.Single>|<R|T|>(R|<local>/t|)
-            }
-
-            public final fun <T : R|kotlin/Any|> many(l: R|kotlin/collections/List<T>|): R|CompositeTransformResult.Multiple<T>| {
-                ^many R|SubstitutionOverride</CompositeTransformResult.Multiple.Multiple>|<R|T|>(R|<local>/l|)
-            }
-
-        }
-
-        public final val single: R|T|
-            public get(): R|T| {
-                ^ ((this@R|/CompositeTransformResult| as R|CompositeTransformResult.Single<*>|).R|SubstitutionOverride</CompositeTransformResult.Single._single: R|CapturedType(*)|>| as R|T|)
-            }
-
-    }
     public abstract interface FirElement : R|kotlin/Any| {
         public abstract fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
 
@@ -52,7 +6,7 @@ FILE: transform.kt
             ^accept this@R|/FirElement|.R|/FirElement.accept|<R|kotlin/Unit|, R|kotlin/Nothing?|>(R|<local>/visitor|, Null(null))
         }
 
-        public abstract fun <E : R|FirElement|, D> transform(visitor: R|FirTransformer<D>|, data: R|D|): R|CompositeTransformResult<E>|
+        public abstract fun <E : R|FirElement|, D> transform(visitor: R|FirTransformer<D>|, data: R|D|): R|E|
 
     }
     public abstract class FirVisitor<out R, in D> : R|kotlin/Any| {
@@ -67,9 +21,9 @@ FILE: transform.kt
         }
 
     }
-    public abstract class FirTransformer<in D> : R|FirVisitor<CompositeTransformResult<FirElement>, D>| {
+    public abstract class FirTransformer<in D> : R|FirVisitor<FirElement, D>| {
         public constructor<in D>(): R|FirTransformer<D>| {
-            super<R|FirVisitor<CompositeTransformResult<FirElement>, D>|>()
+            super<R|FirVisitor<FirElement, D>|>()
         }
 
     }
@@ -109,7 +63,7 @@ FILE: transform.kt
     }
     public final fun <F : R|FirClass<F>|> R|F|.runSupertypeResolvePhaseForLocalClass(): R|F| {
         lval applySupertypesTransformer: R|FirApplySupertypesTransformer| = R|/FirApplySupertypesTransformer.FirApplySupertypesTransformer|()
-        ^runSupertypeResolvePhaseForLocalClass this@R|/runSupertypeResolvePhaseForLocalClass|.R|SubstitutionOverride</FirClass.transform: R|CompositeTransformResult<E>|>|<R|F|, R|kotlin/Nothing?|>(R|<local>/applySupertypesTransformer|, Null(null)).R|SubstitutionOverride</CompositeTransformResult.single: R|F|>|
+        ^runSupertypeResolvePhaseForLocalClass this@R|/runSupertypeResolvePhaseForLocalClass|.R|SubstitutionOverride</FirClass.transform: R|E|>|<R|F|, R|kotlin/Nothing?|>(R|<local>/applySupertypesTransformer|, Null(null))
     }
     public abstract class FirPureAbstractElement : R|FirElement| {
         public constructor(): R|FirPureAbstractElement| {

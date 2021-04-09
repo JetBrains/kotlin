@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstit
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 
 abstract class FirAbstractTreeTransformerWithSuperTypes(
     phase: FirResolvePhase,
@@ -50,7 +49,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
     protected fun resolveNestedClassesSupertypes(
         firClass: FirClass<*>,
         data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
+    ): FirStatement {
         firClass.replaceResolvePhase(transformerPhase)
         return withScopeCleanup {
             // Otherwise annotations may try to resolve

@@ -43,18 +43,18 @@ open class FirContractResolveTransformer(
 ) {
     override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsContractResolveTransformer(this)
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return annotationCall.compose()
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
+        return annotationCall
     }
 
     private class FirDeclarationsContractResolveTransformer(transformer: FirBodyResolveTransformer) : FirDeclarationsResolveTransformer(transformer) {
         override fun transformSimpleFunction(
             simpleFunction: FirSimpleFunction,
             data: ResolutionMode
-        ): CompositeTransformResult<FirSimpleFunction> {
+        ): FirSimpleFunction {
             simpleFunction.updatePhase()
             if (!simpleFunction.hasContractToResolve) {
-                return simpleFunction.compose()
+                return simpleFunction
             }
             val containingDeclaration = context.containerIfAny
             if (containingDeclaration != null && containingDeclaration !is FirClass<*>) {
@@ -63,7 +63,7 @@ open class FirContractResolveTransformer(
                         ConeContractDescriptionError("Local function can not be used in contract description")
                     )
                 )
-                return simpleFunction.compose()
+                return simpleFunction
             }
             @Suppress("UNCHECKED_CAST")
             return context.withSimpleFunction(simpleFunction) {
@@ -73,37 +73,37 @@ open class FirContractResolveTransformer(
             }
         }
 
-        override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
+        override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
             property.updatePhase()
             if (
                 property.getter?.hasContractToResolve != true && property.setter?.hasContractToResolve != true ||
                 property.isLocal || property.delegate != null
             ) {
-                return property.compose()
+                return property
             }
             if (property is FirSyntheticProperty) {
                 transformSimpleFunction(property.getter.delegate, data)
-                return property.compose()
+                return property
             }
             context.withProperty(property) {
                 property.getter?.let { transformPropertyAccessor(it, property) }
                 property.setter?.let { transformPropertyAccessor(it, property) }
             }
-            return property.compose()
+            return property
         }
 
-        override fun transformField(field: FirField, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        override fun transformField(field: FirField, data: ResolutionMode): FirDeclaration {
             field.updatePhase()
-            return field.compose()
+            return field
         }
 
         private fun transformPropertyAccessor(
             propertyAccessor: FirPropertyAccessor,
             owner: FirProperty
-        ): CompositeTransformResult<FirStatement> {
+        ): FirStatement {
             propertyAccessor.updatePhase()
             if (!propertyAccessor.hasContractToResolve) {
-                return propertyAccessor.compose()
+                return propertyAccessor
             }
             return context.withPropertyAccessor(owner, propertyAccessor, components, forContracts = true) {
                 transformContractDescriptionOwner(propertyAccessor)
@@ -112,7 +112,7 @@ open class FirContractResolveTransformer(
 
         private fun <T : FirContractDescriptionOwner> transformContractDescriptionOwner(
             owner: T
-        ): CompositeTransformResult<T> {
+        ): T {
             dataFlowAnalyzer.enterContractDescription()
             return when (val contractDescription = owner.contractDescription) {
                 is FirLegacyRawContractDescription -> transformLegacyRawContractDescriptionOwner(owner, contractDescription)
@@ -124,7 +124,7 @@ open class FirContractResolveTransformer(
         private fun <T : FirContractDescriptionOwner> transformLegacyRawContractDescriptionOwner(
             owner: T,
             contractDescription: FirLegacyRawContractDescription
-        ): CompositeTransformResult<T> {
+        ): T {
             val valueParameters = owner.valueParameters
             for (valueParameter in valueParameters) {
                 context.storeVariable(valueParameter)
@@ -150,13 +150,13 @@ open class FirContractResolveTransformer(
             }
             owner.replaceContractDescription(resolvedContractDescription)
             dataFlowAnalyzer.exitContractDescription()
-            return owner.compose()
+            return owner
         }
 
         private fun <T : FirContractDescriptionOwner> transformRawContractDescriptionOwner(
             owner: T,
             contractDescription: FirRawContractDescription
-        ): CompositeTransformResult<T> {
+        ): T {
             val effectsBlock = buildAnonymousFunction {
                 session = this@FirDeclarationsContractResolveTransformer.session
                 origin = FirDeclarationOrigin.Source
@@ -194,64 +194,64 @@ open class FirContractResolveTransformer(
             return transformLegacyRawContractDescriptionOwner(owner, legacyRawContractDescription)
         }
 
-        private fun <T : FirContractDescriptionOwner> transformOwnerWithUnresolvedContract(owner: T): CompositeTransformResult<T> {
+        private fun <T : FirContractDescriptionOwner> transformOwnerWithUnresolvedContract(owner: T): T {
             return when (val contractDescription = owner.contractDescription) {
                 is FirLegacyRawContractDescription -> { // old syntax contract description
                     val functionCall = contractDescription.contractCall
                     owner.replaceContractDescription(FirEmptyContractDescription)
                     owner.body.replaceFirstStatement(functionCall)
                     dataFlowAnalyzer.exitContractDescription()
-                    owner.compose()
+                    owner
                 }
                 is FirRawContractDescription -> { // new syntax contract description
                     owner.replaceContractDescription(FirEmptyContractDescription)
                     dataFlowAnalyzer.exitContractDescription()
-                    owner.compose()
+                    owner
                 }
-                else -> owner.compose() // TODO: change
+                else -> owner // TODO: change
             }
         }
 
-        override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
             regularClass.updatePhase()
             regularClass.transformCompanionObject(this, data)
             context.withRegularClass(regularClass, components, forContracts = true) {
                 regularClass.transformDeclarations(this, data)
             }
-            return regularClass.compose()
+            return regularClass
         }
 
         override fun transformAnonymousObject(
             anonymousObject: FirAnonymousObject,
             data: ResolutionMode
-        ): CompositeTransformResult<FirStatement> {
+        ): FirStatement {
             anonymousObject.updatePhase()
             context.withAnonymousObject(anonymousObject, components) {
                 anonymousObject.transformDeclarations(this, data)
             }
-            return anonymousObject.compose()
+            return anonymousObject
         }
 
         override fun transformAnonymousInitializer(
             anonymousInitializer: FirAnonymousInitializer,
             data: ResolutionMode
-        ): CompositeTransformResult<FirDeclaration> {
-            return anonymousInitializer.compose()
+        ): FirDeclaration {
+            return anonymousInitializer
         }
 
-        override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirDeclaration {
             constructor.updatePhase()
-            return constructor.compose()
+            return constructor
         }
 
-        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-            return enumEntry.compose()
+        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirDeclaration {
+            return enumEntry
         }
 
-        private fun <T : FirContractDescriptionOwner> transformOwnerOfErrorContract(owner: T): CompositeTransformResult<T> {
+        private fun <T : FirContractDescriptionOwner> transformOwnerOfErrorContract(owner: T): T {
             // TODO
             dataFlowAnalyzer.exitContractDescription()
-            return owner.compose()
+            return owner
         }
 
         private val FirContractDescriptionOwner.hasContractToResolve: Boolean

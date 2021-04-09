@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 @OptIn(AdapterForResolveProcessor::class)
@@ -52,7 +50,7 @@ fun <F : FirClassLikeDeclaration<F>> F.runStatusResolveForLocalClass(
         FirCompositeScope(scopesForLocalClass)
     )
 
-    return this.transform<F, Nothing?>(transformer, null).single
+    return this.transform<F, Nothing?>(transformer, null)
 }
 
 abstract class ResolvedStatusCalculator {
@@ -96,7 +94,7 @@ class FirStatusResolveTransformer(
     override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirStatement> {
+    ): FirStatement {
         val computationStatus = statusComputationSession.startComputing(regularClass)
         forceResolveStatusesOfSupertypes(regularClass)
         /*
@@ -155,8 +153,8 @@ private class FirDesignatedStatusResolveTransformer(
     override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirStatement> {
-        if (shouldSkipClass(regularClass)) return regularClass.compose()
+    ): FirStatement {
+        if (shouldSkipClass(regularClass)) return regularClass
         regularClass.symbol.ensureResolved(FirResolvePhase.TYPES, session)
         val classLocated = this.classLocated
         /*
@@ -255,7 +253,7 @@ abstract class AbstractFirStatusResolveTransformer(
     protected abstract fun FirDeclaration.needResolveMembers(): Boolean
     protected abstract fun FirDeclaration.needResolveNestedClassifiers(): Boolean
 
-    override fun transformFile(file: FirFile, data: FirResolvedDeclarationStatus?): CompositeTransformResult<FirFile> {
+    override fun transformFile(file: FirFile, data: FirResolvedDeclarationStatus?): FirFile {
         file.replaceResolvePhase(transformerPhase)
         if (file.needResolveMembers()) {
             for (declaration in file.declarations) {
@@ -271,20 +269,20 @@ abstract class AbstractFirStatusResolveTransformer(
                 }
             }
         }
-        return file.compose()
+        return file
     }
 
     override fun transformDeclarationStatus(
         declarationStatus: FirDeclarationStatus,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclarationStatus> {
-        return (data ?: declarationStatus).compose()
+    ): FirDeclarationStatus {
+        return (data ?: declarationStatus)
     }
 
     private inline fun storeClass(
         klass: FirClass<*>,
-        computeResult: () -> CompositeTransformResult<FirDeclaration>
-    ): CompositeTransformResult<FirDeclaration> {
+        computeResult: () -> FirDeclaration
+    ): FirDeclaration {
         classes += klass
         val result = computeResult()
         classes.removeAt(classes.lastIndex)
@@ -294,7 +292,7 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun transformDeclaration(
         declaration: FirDeclaration,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         declaration.replaceResolvePhase(transformerPhase)
         return when (declaration) {
             is FirCallableDeclaration<*> -> {
@@ -305,7 +303,7 @@ abstract class AbstractFirStatusResolveTransformer(
                         }
                     }
                 }
-                declaration.compose()
+                declaration
             }
             else -> {
                 transformElement(declaration, data)
@@ -316,7 +314,7 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun transformTypeAlias(
         typeAlias: FirTypeAlias,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         typeAlias.typeParameters.forEach { transformDeclaration(it, data) }
         typeAlias.transformStatus(this, statusResolver.resolveStatus(typeAlias, containingClass, isLocal = false))
         return transformDeclaration(typeAlias, data)
@@ -325,12 +323,12 @@ abstract class AbstractFirStatusResolveTransformer(
     abstract override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirStatement>
+    ): FirStatement
 
     override fun transformAnonymousObject(
         anonymousObject: FirAnonymousObject,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirStatement> {
+    ): FirStatement {
         @Suppress("UNCHECKED_CAST")
         return transformClass(anonymousObject, data)
     }
@@ -339,7 +337,7 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun <F : FirClass<F>> transformClass(
         klass: FirClass<F>,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirStatement> {
+    ): FirStatement {
         return storeClass(klass) {
             klass.typeParameters.forEach { it.transformSingle(this, data) }
             klass.replaceResolvePhase(transformerPhase)
@@ -355,8 +353,8 @@ abstract class AbstractFirStatusResolveTransformer(
                     }
                 }
             }
-            klass.compose()
-        } as CompositeTransformResult<FirStatement>
+            klass
+        } as FirStatement
     }
 
     protected fun updateResolvePhaseOfMembers(regularClass: FirRegularClass) {
@@ -447,7 +445,7 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun transformConstructor(
         constructor: FirConstructor,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         constructor.transformStatus(this, statusResolver.resolveStatus(constructor, containingClass, isLocal = false))
         return transformDeclaration(constructor, data)
     }
@@ -455,7 +453,7 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         simpleFunction.replaceResolvePhase(transformerPhase)
         simpleFunction.transformStatus(this, statusResolver.resolveStatus(simpleFunction, containingClass, isLocal = false))
         return transformDeclaration(simpleFunction, data)
@@ -464,20 +462,20 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun transformProperty(
         property: FirProperty,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         property.replaceResolvePhase(transformerPhase)
         property.transformStatus(this, statusResolver.resolveStatus(property, containingClass, isLocal = false))
 
         property.getter?.let { transformPropertyAccessor(it, property) }
         property.setter?.let { transformPropertyAccessor(it, property) }
 
-        return property.compose()
+        return property
     }
 
     override fun transformField(
         field: FirField,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         field.transformStatus(this, statusResolver.resolveStatus(field, containingClass, isLocal = false))
         return transformDeclaration(field, data)
     }
@@ -485,7 +483,7 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun transformEnumEntry(
         enumEntry: FirEnumEntry,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         enumEntry.transformStatus(this, statusResolver.resolveStatus(enumEntry, containingClass, isLocal = false))
         return transformDeclaration(enumEntry, data)
     }
@@ -493,19 +491,19 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirStatement> {
+    ): FirStatement {
         @Suppress("UNCHECKED_CAST")
-        return transformDeclaration(valueParameter, data) as CompositeTransformResult<FirStatement>
+        return transformDeclaration(valueParameter, data) as FirStatement
     }
 
     override fun transformTypeParameter(
         typeParameter: FirTypeParameter,
         data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         return transformDeclaration(typeParameter, data)
     }
 
-    override fun transformBlock(block: FirBlock, data: FirResolvedDeclarationStatus?): CompositeTransformResult<FirStatement> {
-        return block.compose()
+    override fun transformBlock(block: FirBlock, data: FirResolvedDeclarationStatus?): FirStatement {
+        return block
     }
 }

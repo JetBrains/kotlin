@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.compose
 
 abstract class FirAbstractTreeTransformer<D>(phase: FirResolvePhase) : FirAbstractPhaseTransformer<D>(phase) {
-    override fun <E : FirElement> transformElement(element: E, data: D): CompositeTransformResult<E> {
+    override fun <E : FirElement> transformElement(element: E, data: D): E {
         @Suppress("UNCHECKED_CAST")
-        return (element.transformChildren(this, data) as E).compose()
+        return (element.transformChildren(this, data) as E)
     }
 }

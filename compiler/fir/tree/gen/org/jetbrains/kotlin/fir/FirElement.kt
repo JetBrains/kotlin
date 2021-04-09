@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -25,8 +24,8 @@ interface FirElement {
     fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)
 
     @Suppress("UNCHECKED_CAST")
-    fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): CompositeTransformResult<E> =
-        accept(visitor, data) as CompositeTransformResult<E>
+    fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): E =
+        accept(visitor, data) as E
 
     fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement
 }

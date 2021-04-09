@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -148,13 +147,13 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     private class ConsistencyTransformer : FirTransformer<Unit>() {
         var result = hashSetOf<FirElement>()
 
-        override fun <E : FirElement> transformElement(element: E, data: Unit): CompositeTransformResult<E> {
+        override fun <E : FirElement> transformElement(element: E, data: Unit): E {
             if (!result.add(element)) {
                 throwTwiceVisitingError(element)
             } else {
                 element.transformChildren(this, Unit)
             }
-            return CompositeTransformResult.single(element)
+            return element
         }
     }
 

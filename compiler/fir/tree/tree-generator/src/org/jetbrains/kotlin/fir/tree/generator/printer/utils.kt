@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.compositeTransformResultType
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
@@ -52,10 +51,6 @@ fun Implementation.collectImports(base: List<String> = emptyList(), kind: Import
 fun Element.collectImports(): List<String> {
     val baseTypes = parents.mapTo(mutableListOf()) { it.fullQualifiedName }
     baseTypes += parentsArguments.values.flatMap { it.values }.mapNotNull { it.fullQualifiedName }
-    val isBaseFirElement = this == AbstractFirTreeBuilder.baseFirElement
-    if (isBaseFirElement) {
-        baseTypes += compositeTransformResultType.fullQualifiedName!!
-    }
     if (needPureAbstractElement) {
         baseTypes += pureAbstractElementType.fullQualifiedName!!
     }

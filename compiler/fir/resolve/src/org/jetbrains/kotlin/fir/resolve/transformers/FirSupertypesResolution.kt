@@ -46,11 +46,11 @@ class FirSupertypeResolverTransformer(
     private val supertypeResolverVisitor = FirSupertypeResolverVisitor(session, supertypeComputationSession, scopeSession)
     private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         checkSessionConsistency(file)
         file.accept(supertypeResolverVisitor)
         supertypeComputationSession.breakLoops(session)
@@ -75,26 +75,26 @@ fun <F : FirClassLikeDeclaration<F>> F.runSupertypeResolvePhaseForLocalClass(
     supertypeComputationSession.breakLoops(session)
 
     val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
-    return this.transform<F, Nothing?>(applySupertypesTransformer, null).single
+    return this.transform<F, Nothing?>(applySupertypesTransformer, null)
 }
 
 private class FirApplySupertypesTransformer(
     private val supertypeComputationSession: SupertypeComputationSession
 ) : FirDefaultTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformFile(file: FirFile, data: Nothing?): FirDeclaration {
         file.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
 
-        return (file.transformChildren(this, null) as FirFile).compose()
+        return (file.transformChildren(this, null) as FirFile)
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
         applyResolvedSupertypesToClass(regularClass)
 
-        return (regularClass.transformChildren(this, null) as FirRegularClass).compose()
+        return (regularClass.transformChildren(this, null) as FirRegularClass)
     }
 
     private fun applyResolvedSupertypesToClass(firClass: FirClass<*>) {
@@ -107,7 +107,7 @@ private class FirApplySupertypesTransformer(
         firClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
     }
 
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): CompositeTransformResult<FirStatement> {
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): FirStatement {
         applyResolvedSupertypesToClass(anonymousObject)
 
         return super.transformAnonymousObject(anonymousObject, data)
@@ -121,8 +121,8 @@ private class FirApplySupertypesTransformer(
         return status.supertypeRefs
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        if (typeAlias.expandedTypeRef is FirResolvedTypeRef) return typeAlias.compose()
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirDeclaration {
+        if (typeAlias.expandedTypeRef is FirResolvedTypeRef) return typeAlias
         val supertypeRefs = getResolvedSupertypeRefs(typeAlias)
 
         assert(supertypeRefs.size == 1) {
@@ -133,7 +133,7 @@ private class FirApplySupertypesTransformer(
         typeAlias.replaceExpandedTypeRef(supertypeRefs[0])
         typeAlias.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
 
-        return typeAlias.compose()
+        return typeAlias
     }
 }
 
@@ -295,7 +295,7 @@ private class FirSupertypeResolverVisitor(
               So we create a copy of supertypeRefs to avoid it
              */
             supertypeRefs.createCopy().mapTo(mutableListOf()) {
-                val superTypeRef = transformer.transformTypeRef(it, scope).single
+                val superTypeRef = transformer.transformTypeRef(it, scope)
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
                 when {
                     typeParameterType != null ->
@@ -334,7 +334,7 @@ private class FirSupertypeResolverVisitor(
 
         resolveSpecificClassLikeSupertypes(typeAlias) { transformer, scope ->
             val resolvedTypeRef =
-                transformer.transformTypeRef(typeAlias.expandedTypeRef, scope).single as? FirResolvedTypeRef
+                transformer.transformTypeRef(typeAlias.expandedTypeRef, scope) as? FirResolvedTypeRef
                     ?: return@resolveSpecificClassLikeSupertypes listOf(
                         createErrorTypeRef(
                             typeAlias.expandedTypeRef,

@@ -133,9 +133,9 @@ fun SmartPrinter.printElement(element: Element) {
                 println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
                 println()
                 println("@Suppress(\"UNCHECKED_CAST\")")
-                println("fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): CompositeTransformResult<E> =")
+                println("fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): E =")
                 withIndent {
-                    println("accept(visitor, data) as CompositeTransformResult<E>")
+                    println("accept(visitor, data) as E")
                 }
                 println()
                 println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
