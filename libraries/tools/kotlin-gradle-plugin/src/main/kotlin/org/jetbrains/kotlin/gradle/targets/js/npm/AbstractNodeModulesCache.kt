@@ -26,6 +26,8 @@ internal abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<A
         const val STATE_FILE_NAME = ".visited"
     }
 
+    abstract val type: String
+
     lateinit var fileHasher: FileHasher
 
     private val cache by lazy {
@@ -33,7 +35,7 @@ internal abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<A
             fileHasher,
             parameters.rootProjectDir.get().asFile,
             parameters.cacheDir.get().asFile,
-            STATE_FILE_NAME,
+            STATE_FILE_NAME + type,
             "9"
         )
     }
