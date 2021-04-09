@@ -33,11 +33,15 @@ import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeSubstitution
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
@@ -319,5 +323,15 @@ inline fun BindingTrace.reportTrailingLambdaErrorOr(
         } else {
             report(originalDiagnostic(expr))
         }
+    }
+}
+
+fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubstitution() {
+    override fun get(key: KotlinType): TypeProjection? {
+        return safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
+    }
+
+    override fun isEmpty(): Boolean {
+        return isEmpty
     }
 }

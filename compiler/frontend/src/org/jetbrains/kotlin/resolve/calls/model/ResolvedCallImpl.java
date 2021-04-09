@@ -35,12 +35,11 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
+import org.jetbrains.kotlin.types.Variance;
 
 import java.util.*;
 
@@ -63,7 +62,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final Call call;
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
-    private final ReceiverValue dispatchReceiver; // receiver object of a method
+    private ReceiverValue dispatchReceiver; // receiver object of a method
     private ReceiverValue extensionReceiver; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
     private final TypeSubstitutor knownTypeParametersSubstitutor;
@@ -239,6 +238,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             ValueParameterDescriptor substitutedVersion = substitutedParameters.get(valueParameterDescriptor.getIndex());
             assert substitutedVersion != null : valueParameterDescriptor;
             argumentToParameterMap.put(entry.getKey(), argumentMatch.replaceValueParameter(substitutedVersion));
+        }
+
+        if (dispatchReceiver instanceof ExpressionReceiver) {
+            dispatchReceiver = dispatchReceiver.replaceType(substitutor.safeSubstitute(dispatchReceiver.getType(), Variance.IN_VARIANCE));
+        }
+        if (extensionReceiver instanceof ExtensionReceiver) {
+            extensionReceiver =
+                    extensionReceiver.replaceType(substitutor.safeSubstitute(extensionReceiver.getType(), Variance.IN_VARIANCE));
         }
     }
 

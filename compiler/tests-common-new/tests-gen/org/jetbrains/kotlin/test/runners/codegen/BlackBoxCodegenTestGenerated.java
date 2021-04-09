@@ -16936,6 +16936,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("callableReferencesProperCompletion.kt")
+            public void testCallableReferencesProperCompletion() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/callableReferencesProperCompletion.kt");
+            }
+
+            @Test
             @TestMetadata("kt41164.kt")
             public void testKt41164() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/kt41164.kt");
