@@ -4460,6 +4460,18 @@ dynamicTest("kt36639") {
                    |""".stripMargin()
 }
 
+for (i in 0..2) {
+    dynamicTest("kt42796_$i") {
+        clangTool = "clang++"
+        disabled = (project.target.name != project.hostName)
+        source = "produce_dynamic/kt-42796/main-${i}.kt"
+        cSource = "$projectDir/produce_dynamic/kt-42796/main.cpp"
+        goldValue = ""
+        clangFlags = ["-DTEST=$i", "-Werror"]
+    }
+}
+
+
 dynamicTest("interop_concurrentRuntime") {
     disabled = (project.target.name != project.hostName)
     disabled = true  // KT-43180
