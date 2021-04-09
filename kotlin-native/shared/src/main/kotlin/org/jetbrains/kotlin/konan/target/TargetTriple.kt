@@ -65,3 +65,15 @@ val TargetTriple.isSimulator: Boolean
  */
 fun TargetTriple.withOSVersion(osVersion: String): TargetTriple =
         copy(os = "${os}${osVersion}")
+
+/**
+ * Triple without vendor (second) component.
+ *
+ * TODO: Actually, this method should return [TargetTriple],
+ *  but this class is not that flexible yet.
+ */
+fun TargetTriple.withoutVendor(): String {
+    val envSuffix = environment?.let { "-$environment" }
+            ?: ""
+    return "$architecture-$os$envSuffix"
+}
