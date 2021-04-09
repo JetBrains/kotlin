@@ -22,6 +22,7 @@ typealias Test15 = (@A() suspend () -> Unit)?
 typealias Test16 = (@A suspend () -> Unit)?
 typealias Test17 = @A suspend RS.() -> Unit
 typealias Test18 = (suspend () -> Unit)?
+typealias Test19 = (@A(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>{ val x: <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>suspend<!> String? = null; "" }()<!>) suspend () -> Unit)?
 
 interface Supertype1 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend () -> Unit<!> {
 
@@ -32,6 +33,6 @@ interface Supertype2 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend String.() -
 }
 
 @Target(AnnotationTarget.TYPE)
-annotation class A
+annotation class A(val value: String = "")
 
 interface RS
