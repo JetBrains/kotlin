@@ -14739,6 +14739,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("memberExtensionEqualsHashCodeToStringInInterface.kt")
+        public void testMemberExtensionEqualsHashCodeToStringInInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionFunctions/memberExtensionEqualsHashCodeToStringInInterface.kt");
+        }
+
+        @Test
         @TestMetadata("nested2.kt")
         public void testNested2() throws Exception {
             runTest("compiler/testData/codegen/box/extensionFunctions/nested2.kt");
