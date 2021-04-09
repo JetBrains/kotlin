@@ -23,6 +23,7 @@ fun main(args: Array<String>) {
         alias<FirTryExpression>("TryExpressionChecker")
         alias<FirWhenExpression>("WhenExpressionChecker")
         alias<FirReturnExpression>("ReturnExpressionChecker")
+        alias<FirAnnotationCall>("AnnotationCallChecker")
     }
 
     val declarationPackage = "org.jetbrains.kotlin.fir.analysis.checkers.declaration"
