@@ -58,10 +58,10 @@ object HLDiagnosticConverter {
     }
 
     private fun DiagnosticData.getHLDiagnosticClassName() =
-        name.toLowerCase()
+        name.lowercase()
             .split('_')
             .joinToString(separator = "") {
-                it.capitalize()
+                it.replaceFirstChar(Char::uppercaseChar)
             }
 
     private fun DiagnosticData.getHLDiagnosticImplClassName() =

@@ -484,7 +484,7 @@ private fun String.sanitize(quote: Char): String =
                 '\r' -> append("\\r")
                 '\t' -> append("\\t")
                 quote -> append("\\").append(quote)
-                else -> append(if (c.isISOControl()) "\\u%04x".format(c.toInt()) else c)
+                else -> append(if (c.isISOControl()) "\\u%04x".format(c.code) else c)
             }
         }
     }

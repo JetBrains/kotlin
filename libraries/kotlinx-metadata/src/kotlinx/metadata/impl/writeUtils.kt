@@ -34,7 +34,7 @@ fun KmAnnotationArgument.writeAnnotationArgument(strings: StringTable): ProtoBuf
             }
             is KmAnnotationArgument.CharValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.CHAR
-                this.intValue = value.toLong()
+                this.intValue = value.code.toLong()
             }
             is KmAnnotationArgument.ShortValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.SHORT

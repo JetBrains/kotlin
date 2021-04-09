@@ -85,7 +85,7 @@ public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequenc
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.capitalize(): String {
-    return if (isNotEmpty()) substring(0, 1).toUpperCase() + substring(1) else this
+    return if (isNotEmpty()) substring(0, 1).uppercase() + substring(1) else this
 }
 
 /**
@@ -97,7 +97,7 @@ public actual fun String.capitalize(): String {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
-    return if (isNotEmpty()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty()) substring(0, 1).lowercase() + substring(1) else this
 }
 
 /**
