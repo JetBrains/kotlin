@@ -10,7 +10,7 @@ import kotlinx.metadata.KmTypeParameter
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
-import org.jetbrains.kotlin.commonizer.mergedtree.mergers.ClassesToProcess
+import org.jetbrains.kotlin.commonizer.tree.deserializer.ClassesToProcess
 
 typealias TypeParameterId = Int
 typealias TypeParameterIndex = Int

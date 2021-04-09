@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmClass
-import org.jetbrains.kotlin.commonizer.mergedtree.mergers.ClassesToProcess
 import org.jetbrains.kotlin.commonizer.metadata.CirDeserializers
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreeClass

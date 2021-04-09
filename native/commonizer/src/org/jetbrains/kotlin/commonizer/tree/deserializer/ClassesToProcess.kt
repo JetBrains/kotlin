@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.commonizer.mergedtree.mergers
+package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import com.intellij.util.containers.FactoryMap
 import kotlinx.metadata.Flag

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.commonizer.tree.deserializer
 import kotlinx.metadata.KmModuleFragment
 import org.jetbrains.kotlin.commonizer.cir.CirPackage
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
-import org.jetbrains.kotlin.commonizer.mergedtree.mergers.ClassesToProcess
 import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.commonizer.tree.CirTreePackage
 
