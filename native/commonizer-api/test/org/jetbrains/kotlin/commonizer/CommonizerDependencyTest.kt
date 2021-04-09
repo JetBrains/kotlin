@@ -14,7 +14,7 @@ class CommonizerDependencyTest {
     @Test
     fun `sample identityString`() {
         assertEquals(
-            "((a, b), c)::/hello.txt",
+            "((a, b), c)::${File("/").canonicalPath}hello.txt",
             TargetedCommonizerDependency(parseCommonizerTarget("((a,b), c)"), File("/hello.txt")).identityString
         )
     }
