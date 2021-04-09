@@ -16,8 +16,8 @@ const char* kotlin::internal::stateToString(ThreadState state) noexcept {
     }
 }
 
-ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState) noexcept {
-    return SwitchThreadState(thread->GetThreadData(), newState);
+ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant) noexcept {
+    return SwitchThreadState(thread->GetThreadData(), newState, reentrant);
 }
 
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {

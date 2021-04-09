@@ -164,3 +164,13 @@ TEST(ThreadStateDeathTest, IncorrectStateSwitch) {
                      "runtime assert: Illegal thread state switch. Old state: NATIVE. New state: NATIVE");
     });
 }
+
+TEST(ThreadStateDeathTest, ReentrantStateSwitch) {
+    RunInNewThread([](MemoryState* memoryState) {
+        auto* threadData = memoryState->GetThreadData();
+        ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+        EXPECT_EXIT({ SwitchThreadState(memoryState, ThreadState::kRunnable, true); exit(0); },
+                    testing::ExitedWithCode(0),
+                    testing::Not(testing::ContainsRegex("runtime assert: Illegal thread state switch.")));
+    });
+}

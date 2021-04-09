@@ -3720,7 +3720,7 @@ ALWAYS_INLINE ObjHeader* ExceptionObjHolder::GetExceptionObject() noexcept {
 }
 #endif
 
-ALWAYS_INLINE kotlin::ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState) noexcept {
+ALWAYS_INLINE kotlin::ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant) noexcept {
     // no-op, used by the new MM only.
     return ThreadState::kRunnable;
 }
