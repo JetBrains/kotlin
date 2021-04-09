@@ -1276,16 +1276,13 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     fun isAlive(insnIndex: Int, variableIndex: Int): Boolean =
         liveness[insnIndex].isAlive(variableIndex)
 
-    fun nextSuspensionPointEndLabel(insn: AbstractInsnNode): LabelNode {
-        val suspensionPoint =
-            InsnSequence(insn, method.instructions.last).firstOrNull { isAfterSuspendMarker(it) } ?: method.instructions.last
-        return suspensionPoint as? LabelNode ?: suspensionPoint.findNextOrNull { it is LabelNode } as LabelNode
-    }
-
-    fun nextSuspensionPointStartLabel(insn: AbstractInsnNode): LabelNode {
-        val suspensionPoint =
-            InsnSequence(insn, method.instructions.last).firstOrNull { isBeforeSuspendMarker(it) } ?: method.instructions.last
-        return suspensionPoint as? LabelNode ?: suspensionPoint.findPreviousOrNull { it is LabelNode } as LabelNode
+    fun nextLabel(node: AbstractInsnNode?): LabelNode? {
+        var current = node
+        while (current != null) {
+            if (current is LabelNode) return current
+            current = current.next
+        }
+        return null
     }
 
     fun min(a: LabelNode, b: LabelNode): LabelNode =
@@ -1293,9 +1290,6 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
 
     fun max(a: LabelNode, b: LabelNode): LabelNode =
         if (method.instructions.indexOf(a) < method.instructions.indexOf(b)) b else a
-
-    fun containsSuspensionPoint(a: LabelNode, b: LabelNode): Boolean =
-        InsnSequence(min(a, b), max(a, b)).none { isBeforeSuspendMarker(it) }
 
     val oldLvt = arrayListOf<LocalVariableNode>()
     for (record in method.localVariables) {
@@ -1317,33 +1311,38 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 // No variable in LVT -> do not add one
                 val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
                 if (lvtRecord.name == CONTINUATION_VARIABLE_NAME) continue
-                // Extend lvt record to the next suspension point
-                val endLabel = min(lvtRecord.end, nextSuspensionPointEndLabel(insn))
+                // End the local when it is no longer live. Since it is not live, we will not spill and unspill it across
+                // suspension points. It is tempting to keep it alive until the next suspension point to leave it visible in
+                // the debugger for as long as possible. However, in the case of loops, the resumption after suspension can
+                // have a backwards edge targeting instruction between the point of death and the next suspension point.
+                //
+                // For example, code such as the following:
+                //
+                //    listOf<String>.forEach {
+                //       yield(it)
+                //    }
+                //
+                // Generates code of this form with a back edge after resumption that will lead to invalid locals tables
+                // if the local range is extended to the next suspension point.
+                //
+                //        iterator = iterable.iterator()
+                //    L1: (iterable dies here)
+                //        load iterator.next if there
+                //        yield suspension point
+                //
+                //    L2: (resumption point)
+                //        restore live variables (not including iterable)
+                //        goto L1 (iterator not restored here, so we cannot not have iterator live at L1)
+                val endLabel = nextLabel(insn.next)?.let { min(lvtRecord.end, it) } ?: lvtRecord.end
                 // startLabel can be null in case of parameters
                 @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
-                // Attempt to extend existing local variable node corresponding to the record in
-                // the original local variable table.
-                val recordToExtend: LocalVariableNode? = oldLvtNodeToLatestNewLvtNode[lvtRecord]
-                if (recordToExtend != null && containsSuspensionPoint(recordToExtend.end, startLabel)) {
-                    recordToExtend.end = endLabel
-                } else {
-                    val node = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
-                    if (lvtRecord !in oldLvtNodeToLatestNewLvtNode) {
-                        method.localVariables.add(node)
-                    }
-                    oldLvtNodeToLatestNewLvtNode[lvtRecord] = node
+                val node = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
+                if (lvtRecord !in oldLvtNodeToLatestNewLvtNode) {
+                    method.localVariables.add(node)
                 }
+                oldLvtNodeToLatestNewLvtNode[lvtRecord] = node
             }
         }
-    }
-
-    val deadVariables = arrayListOf<Int>()
-    outer@for (variableIndex in start until method.maxLocals) {
-        if (oldLvt.none { it.index == variableIndex }) continue
-        for (insnIndex in 0 until (method.instructions.size() - 1)) {
-            if (isAlive(insnIndex, variableIndex)) continue@outer
-        }
-        deadVariables += variableIndex
     }
 
     for (variable in oldLvt) {
@@ -1360,20 +1359,6 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
         if (variable.name == "this" && !isForNamedFunction) {
             method.localVariables.add(variable)
             continue
-        }
-
-        // Shrink LVT records of dead variables to the next suspension point
-        if (variable.index in deadVariables) {
-            method.localVariables.add(
-                LocalVariableNode(
-                    variable.name,
-                    variable.desc,
-                    variable.signature,
-                    variable.start,
-                    min(variable.end, nextSuspensionPointStartLabel(variable.start)),
-                    variable.index
-                )
-            )
         }
     }
 }
