@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
@@ -22,22 +21,25 @@ internal abstract class CompilerSystemPropertiesService : BuildService<CompilerS
     private val properties by lazy { parameters.properties.get().mapValues { it.value.orNull }.toMutableMap() }
 
     fun startIntercept() {
-        if (!parameters.properties.isPresent) return
+        if (parameters.properties.get().isEmpty()) return
 
         CompilerSystemProperties.systemPropertyGetter = {
             if (it in properties) properties[it] else System.getProperty(it)
         }
         CompilerSystemProperties.systemPropertySetter = setter@{ key, value ->
+            if (key !in properties) {
+                return@setter System.setProperty(key, value)
+            }
             val oldValue = properties[key]
-            if (oldValue == value) return@setter oldValue
             properties[key] = value
-            System.setProperty(key, value)
             oldValue
         }
-        CompilerSystemProperties.systemPropertyCleaner = {
+        CompilerSystemProperties.systemPropertyCleaner = cleaner@{
+            if (it !in properties) {
+                return@cleaner System.clearProperty(it)
+            }
             val oldValue = properties[it]
             properties.remove(it)
-            System.clearProperty(it)
             oldValue
         }
     }
@@ -49,22 +51,19 @@ internal abstract class CompilerSystemPropertiesService : BuildService<CompilerS
     }
 
     companion object {
-        private val Project.isBuildSrc get() = name == ":buildSrc"
-
-        fun registerIfAbsent(gradle: Gradle): Provider<CompilerSystemPropertiesService> =
-            gradle.sharedServices.registerIfAbsent(
-                "${CompilerSystemPropertiesService::class.java.canonicalName}_${CompilerSystemPropertiesService::class.java.classLoader.hashCode()}",
-                CompilerSystemPropertiesService::class.java
-            ) { service ->
-                val rootProject = gradle.rootProject
-                if (rootProject.isBuildSrc && isConfigurationCacheAvailable(gradle)) {
-                    service.parameters.properties.set(
-                        CompilerSystemProperties.values()
-                            .associate {
-                                it.property to rootProject.providers.systemProperty(it.property).forUseAtConfigurationTime()
-                            }.toMap()
-                    )
-                }
+        fun registerIfAbsent(gradle: Gradle): Provider<CompilerSystemPropertiesService> = gradle.sharedServices.registerIfAbsent(
+            "${CompilerSystemPropertiesService::class.java.canonicalName}_${CompilerSystemPropertiesService::class.java.classLoader.hashCode()}",
+            CompilerSystemPropertiesService::class.java
+        ) { service ->
+            if (isConfigurationCacheAvailable(gradle)) {
+                service.parameters.properties.set(
+                    CompilerSystemProperties.values()
+                        .filterNot { it.alwaysDirectAccess }
+                        .associate {
+                            it.property to gradle.rootProject.providers.systemProperty(it.property).forUseAtConfigurationTime()
+                        }.toMap()
+                )
             }
+        }
     }
 }
