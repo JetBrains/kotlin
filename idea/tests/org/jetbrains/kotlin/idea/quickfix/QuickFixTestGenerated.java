@@ -9119,6 +9119,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("abstractClassMemberNotImplemented.kt")
+        public void testAbstractClassMemberNotImplemented() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/abstractClassMemberNotImplemented.kt");
+        }
+
+        @TestMetadata("abstractMemberNotImplemented.kt")
+        public void testAbstractMemberNotImplemented() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/abstractMemberNotImplemented.kt");
+        }
+
         @TestMetadata("abstractModifierInEnum.kt")
         public void testAbstractModifierInEnum() throws Exception {
             runTest("idea/testData/quickfix/modifiers/abstractModifierInEnum.kt");

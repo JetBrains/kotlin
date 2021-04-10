@@ -1,0 +1,7 @@
+// "Make 'Foo' 'abstract'" "true"
+
+abstract class Bar {
+    abstract val i: Int
+}
+
+abstract class <caret>Foo : Bar() {}
