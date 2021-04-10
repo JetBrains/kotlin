@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.cli.common
 
-import com.intellij.util.LineSeparator
-import java.util.*
-
-enum class CompilerSystemProperties(val property: String) {
+/**
+ * @param alwaysDirectAccess Gradle has a list of properties that can be read without declaring, see https://github.com/gradle/gradle/blob/f191a61cec61afe308f2b45184cb303d32706a6f/subprojects/configuration-cache/src/main/kotlin/org/gradle/configurationcache/SystemPropertyAccessListener.kt#L32
+ */
+enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess: Boolean = false) {
     COMPILE_DAEMON_ENABLED_PROPERTY("kotlin.daemon.enabled"),
     COMPILE_DAEMON_JVM_OPTIONS_PROPERTY("kotlin.daemon.jvm.options"),
     COMPILE_DAEMON_OPTIONS_PROPERTY("kotlin.daemon.options"),
@@ -36,24 +36,31 @@ enum class CompilerSystemProperties(val property: String) {
     KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
-    OS_NAME("os.name"),
+    OS_NAME("os.name", alwaysDirectAccess = true),
     TMP_DIR("java.io.tmpdir"),
-    USER_HOME("user.home"),
-    JAVA_VERSION("java.specification.version"),
-    JAVA_HOME("java.home"),
-    JAVA_CLASS_PATH("java.class.path"),
+    USER_HOME("user.home", alwaysDirectAccess = true),
+    JAVA_VERSION("java.specification.version", alwaysDirectAccess = true),
+    JAVA_HOME("java.home", alwaysDirectAccess = true),
+    JAVA_CLASS_PATH("java.class.path", alwaysDirectAccess = true),
     ;
 
-    var value
-        get() = (systemPropertyGetter ?: System::getProperty)(property)
+    private fun <T> getProperFunction(custom: T?, default: T): T {
+        if (alwaysDirectAccess) return default
+        return custom ?: default
+    }
+
+    var value: String?
+        get() {
+            return getProperFunction(systemPropertyGetter, System::getProperty)(property)
+        }
         set(value) {
-            (systemPropertySetter ?: System::setProperty)(property, value!!)
+            getProperFunction(systemPropertySetter, System::setProperty)(property, value!!)
         }
 
     val safeValue
         get() = value ?: error("No value for $property system property")
 
-    fun clear(): String? = (systemPropertyCleaner ?: System::clearProperty)(property)
+    fun clear(): String? = getProperFunction(systemPropertyCleaner, System::clearProperty)(property)
 
     companion object {
         var systemPropertyGetter: ((String) -> String?)? = null
@@ -65,9 +72,9 @@ enum class CompilerSystemProperties(val property: String) {
 }
 
 val isWindows: Boolean
-    get() = CompilerSystemProperties.OS_NAME.value!!.toLowerCase(Locale.ENGLISH).startsWith("windows")
+    get() = CompilerSystemProperties.OS_NAME.value!!.lowercase().startsWith("windows")
 
-fun String?.toBooleanLenient(): Boolean? = when (this?.toLowerCase()) {
+fun String?.toBooleanLenient(): Boolean? = when (this?.lowercase()) {
     null -> false
     in listOf("", "yes", "true", "on", "y") -> true
     in listOf("no", "false", "off", "n") -> false

@@ -76,6 +76,17 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @Test
+    fun testInstantExecutionWithIncludedBuildPlugin() =
+        with(Project("instantExecutionWithIncludedBuildPlugin", gradleVersionRequirement = GradleVersionRequired.AtLeast("6.8"))) {
+            setupWorkingDir()
+            testConfigurationCacheOf(
+                "build", executedTaskNames = listOf(
+                    ":compileKotlin",
+                )
+            )
+        }
+
+    @Test
     fun testInstantExecutionForJs() = with(Project("instantExecutionToJs")) {
         testConfigurationCacheOf("assemble", executedTaskNames = asList(":compileKotlin2Js"))
     }
