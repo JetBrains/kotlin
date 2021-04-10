@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ E : kotlin.Enum<E>> createMap(/*0*/ enumClass: java.lang.Class<E>): kotlin.Unit
+public fun reproduce(): kotlin.Unit
