@@ -15,13 +15,13 @@ internal object ClassIdCalculator {
     fun calculateClassId(declaration: KtClassLikeDeclaration): ClassId? {
         var ktFile: KtFile? = null
         var element: PsiElement? = declaration
-        val containingClasses = mutableListOf<KtClassOrObject>()
+        val containingClasses = mutableListOf<KtClassLikeDeclaration>()
         while (element != null) {
             when (element) {
                 is KtEnumEntry -> {
                     return null
                 }
-                is KtClassOrObject -> {
+                is KtClassLikeDeclaration -> {
                     containingClasses += element
                 }
                 is KtFile -> {

@@ -31,7 +31,7 @@ fun createTypeAliasStub(
     }
 
     val typeAlias = KotlinTypeAliasStubImpl(
-        parent, classId.shortClassName.ref(), classId.asSingleFqName().ref(),
+        parent, classId.shortClassName.ref(), classId.asSingleFqName().ref(), classId,
         isTopLevel = !classId.isNestedClass
     )
 

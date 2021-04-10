@@ -154,7 +154,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  TYPEALIAS[fqName=foo.TopLevelMembers.Alias, isTopLevel=true, name=Alias]
+  TYPEALIAS[classId=foo/TopLevelMembers/Alias, fqName=foo.TopLevelMembers.Alias, isTopLevel=true, name=Alias]
     MODIFIER_LIST[private]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]

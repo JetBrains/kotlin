@@ -107,7 +107,7 @@ PsiJetFileStubImpl[package=test]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      TYPEALIAS[fqName=test.TypeAliases.B, isTopLevel=false, name=B]
+      TYPEALIAS[classId=test/TypeAliases.B, fqName=test.TypeAliases.B, isTopLevel=false, name=B]
         MODIFIER_LIST[public]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -123,7 +123,7 @@ PsiJetFileStubImpl[package=test]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-      TYPEALIAS[fqName=test.TypeAliases.Parametrized, isTopLevel=false, name=Parametrized]
+      TYPEALIAS[classId=test/TypeAliases.Parametrized, fqName=test.TypeAliases.Parametrized, isTopLevel=false, name=Parametrized]
         MODIFIER_LIST[private]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
             CONSTRUCTOR_CALLEE

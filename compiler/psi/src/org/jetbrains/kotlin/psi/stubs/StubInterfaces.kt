@@ -45,7 +45,7 @@ interface KotlinClassifierStub {
     fun getClassId(): ClassId?
 }
 
-interface KotlinTypeAliasStub : KotlinStubWithFqName<KtTypeAlias> {
+interface KotlinTypeAliasStub : KotlinClassifierStub, KotlinStubWithFqName<KtTypeAlias> {
     fun isTopLevel(): Boolean
 }
 
