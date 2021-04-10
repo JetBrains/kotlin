@@ -54,6 +54,14 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
             RemoveModifierFix.removeNonRedundantModifier,
             ChangeVariableMutabilityFix.CONST_VAL_FACTORY
         )
+        registerPsiQuickFixes(
+            KtFirDiagnostic.AbstractMemberNotImplemented::class,
+            AddModifierFix.addAbstractModifier
+        )
+        registerPsiQuickFixes(
+            KtFirDiagnostic.AbstractClassMemberNotImplemented::class,
+            AddModifierFix.addAbstractModifier
+        )
     }
 
     private val propertyInitialization = KtQuickFixesListBuilder.registerPsiQuickFix {
