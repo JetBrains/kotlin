@@ -36,14 +36,8 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
                     checkTypeRef(it, context, reporter)
                 }
             }
-            is FirTypeAlias -> {
-                for (it in declaration.typeParameters) {
-                    if (it.variance != Variance.INVARIANT) {
-                        reporter.reportOn(it.source, FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, context)
-                    }
-                }
+            is FirTypeAlias ->
                 checkTypeRef(declaration.expandedTypeRef, context, reporter)
-            }
         }
     }
 

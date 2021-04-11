@@ -701,6 +701,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeParametersOwner: KtSymbol
     }
 
+    abstract class BoundOnTypeAliasParameterNotAllowed : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = BoundOnTypeAliasParameterNotAllowed::class
+    }
+
+    abstract class ReifiedTypeParameterNoInline : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ReifiedTypeParameterNoInline::class
+    }
+
     abstract class ReturnTypeMismatch : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ReturnTypeMismatch::class
         abstract val expected: KtType

@@ -92,6 +92,12 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
+        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
+            withSuppressedDiagnostics(typeAlias) {
+                visitWithDeclaration(typeAlias)
+            }
+        }
+
         private fun visitJump(loopJump: FirLoopJump) {
             withSuppressedDiagnostics(loopJump) {
                 loopJump.runComponents()
