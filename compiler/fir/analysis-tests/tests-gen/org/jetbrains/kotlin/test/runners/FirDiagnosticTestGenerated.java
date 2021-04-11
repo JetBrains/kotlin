@@ -1322,6 +1322,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("multipleBounds.kt")
+            public void testMultipleBounds() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/multipleBounds.kt");
+            }
+
+            @Test
             @TestMetadata("nonConstValInAnnotationArgument.kt")
             public void testNonConstValInAnnotationArgument() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/nonConstValInAnnotationArgument.kt");

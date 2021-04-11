@@ -1150,6 +1150,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/methodOfAnyImplementedInInterface.kt");
         }
 
+        @TestMetadata("multipleBounds.kt")
+        public void testMultipleBounds() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/multipleBounds.kt");
+        }
+
         @TestMetadata("nonConstValInAnnotationArgument.kt")
         public void testNonConstValInAnnotationArgument() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/nonConstValInAnnotationArgument.kt");

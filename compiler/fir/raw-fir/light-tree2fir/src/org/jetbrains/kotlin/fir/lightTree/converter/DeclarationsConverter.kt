@@ -526,6 +526,7 @@ class DeclarationsConverter(
             }
         }.also {
             it.initContainingClassForLocalAttr()
+            fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
         }
     }
 
@@ -1083,6 +1084,8 @@ class DeclarationsConverter(
                 }
             }
             annotations += modifiers.annotations
+        }.also {
+            fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
         }
     }
 
@@ -1394,6 +1397,9 @@ class DeclarationsConverter(
             context.firFunctionTargets.removeLast()
         }.build().also {
             target.bind(it)
+            if (it is FirSimpleFunction) {
+                fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
+            }
         }
     }
 
@@ -1573,17 +1579,21 @@ class DeclarationsConverter(
     private fun convertTypeConstraint(typeConstraint: LighterASTNode): TypeConstraint {
         lateinit var identifier: String
         lateinit var firType: FirTypeRef
+        lateinit var referenceExpression: LighterASTNode
         val annotations = mutableListOf<FirAnnotationCall>()
         typeConstraint.forEachChildren {
             when (it.tokenType) {
                 //annotations will be saved later, on mapping stage with type parameters
                 ANNOTATION, ANNOTATION_ENTRY -> annotations += convertAnnotation(it)
-                REFERENCE_EXPRESSION -> identifier = it.asText
+                REFERENCE_EXPRESSION -> {
+                    identifier = it.asText
+                    referenceExpression = it
+                }
                 TYPE_REFERENCE -> firType = convertType(it)
             }
         }
 
-        return TypeConstraint(annotations, identifier, firType)
+        return TypeConstraint(annotations, identifier, firType, referenceExpression.toFirSourceElement())
     }
 
     /**
@@ -1866,5 +1876,25 @@ class DeclarationsConverter(
             )
         }
         calleeReference = FirReferencePlaceholderForResolvedAnnotations
+    }
+
+    private fun <T> fillDanglingConstraintsTo(
+        typeParameters: List<FirTypeParameter>,
+        typeConstraints: List<TypeConstraint>,
+        to: T
+    ) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
+        val typeParamNames = typeParameters.map { it.name }.toSet()
+        val result = typeConstraints.mapNotNull { constraint ->
+            val name = constraint.identifier.nameAsSafeName()
+            if (!typeParamNames.contains(name)) {
+                DanglingTypeConstraint(name, constraint.source)
+            } else {
+                null
+            }
+
+        }
+        if (result.isNotEmpty()) {
+            to.danglingTypeConstraints = result
+        }
     }
 }

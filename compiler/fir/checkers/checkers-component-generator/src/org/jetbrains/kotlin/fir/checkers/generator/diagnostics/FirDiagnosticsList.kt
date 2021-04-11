@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -308,6 +305,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val CONFLICTING_UPPER_BOUNDS by error<FirSourceElement, KtNamedDeclaration> {
             parameter<FirTypeParameterSymbol>("typeParameter")
+        }
+
+        val NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER by error<FirSourceElement, KtSimpleNameExpression> {
+            parameter<Name>("typeParameterName")
+            parameter<FirDeclaration>("typeParametersOwner")
         }
     }
 

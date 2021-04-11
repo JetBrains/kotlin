@@ -500,6 +500,23 @@ open class RawFirBuilder(
             }
         }
 
+        private fun <T> KtTypeParameterListOwner.fillDanglingConstraintsTo(to: T) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
+            val typeParamNames = typeParameters.mapNotNull { it.nameAsName }.toSet()
+            val result = typeConstraints.mapNotNull { constraint ->
+                constraint.subjectTypeParameterName?.getReferencedNameAsName()?.let { name ->
+                    if (!typeParamNames.contains(name)) {
+                        DanglingTypeConstraint(name, constraint.subjectTypeParameterName!!.toFirSourceElement())
+                    } else {
+                        null
+                    }
+                }
+
+            }
+            if (result.isNotEmpty()) {
+                to.danglingTypeConstraints = result
+            }
+        }
+
         private fun KtDeclarationWithBody.extractValueParametersTo(
             container: FirFunctionBuilder,
             defaultTypeRef: FirTypeRef? = null,
@@ -898,6 +915,7 @@ open class RawFirBuilder(
                 }
             }.also {
                 it.initContainingClassForLocalAttr()
+                classOrObject.fillDanglingConstraintsTo(it)
             }
         }
 
@@ -1030,6 +1048,9 @@ open class RawFirBuilder(
                 context.firFunctionTargets.removeLast()
             }.build().also {
                 target.bind(it)
+                if (it is FirSimpleFunction) {
+                    function.fillDanglingConstraintsTo(it)
+                }
             }
         }
 
@@ -1308,6 +1329,10 @@ open class RawFirBuilder(
                     }
                 }
                 extractAnnotationsTo(this)
+            }.also {
+                if (!isLocal) {
+                    fillDanglingConstraintsTo(it)
+                }
             }
         }
 
