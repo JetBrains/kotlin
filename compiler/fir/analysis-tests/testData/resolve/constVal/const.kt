@@ -18,3 +18,10 @@ class ForConst{
         fun two(): Int = 2
     }
 }
+
+private const val MAJOR_BITS = 3
+private const val MINOR_BITS = 4
+private const val PATCH_BITS = 7
+private const val MAJOR_MASK = (1 shl MAJOR_BITS) - 1 // False positive error
+private const val MINOR_MASK = (1 shl MINOR_BITS) - 1 // False positive error
+private const val PATCH_MASK = (1 shl PATCH_BITS) - 1    // False positive error
