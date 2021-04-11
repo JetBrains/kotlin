@@ -94,5 +94,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val typeParameterCheckers: Set<FirTypeParameterChecker> = setOf(
         FirTypeParameterBoundsChecker,
         FirTypeParameterVarianceChecker,
+        FirReifiedTypeParameterChecker,
     )
 }
