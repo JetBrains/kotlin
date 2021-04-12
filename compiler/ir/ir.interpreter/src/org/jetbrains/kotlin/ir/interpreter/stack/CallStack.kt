@@ -187,7 +187,7 @@ internal class CallStack {
     }
 
     fun copyUpValuesFromPreviousFrame() {
-        frames[frames.size - 2].getAll().forEach { addVariable(it) }
+        frames[frames.size - 2].getAll().forEach { if (!containsVariable(it.symbol)) addVariable(it) }
     }
 
     fun getStackTrace(): List<String> {

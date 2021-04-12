@@ -83,84 +83,67 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
 }
 
 private fun unfoldCall(call: IrCall, callStack: CallStack) {
-    val function = call.symbol.owner
-    // new sub frame is used to store value arguments, in case then they are used in default args evaluation
-    callStack.newSubFrame(call, listOf())
-    callStack.addInstruction(SimpleInstruction(call))
     unfoldValueParameters(call, callStack)
-
-    // must save receivers in memory in case then they are used in default args evaluation
-    call.extensionReceiver?.let {
-        callStack.addInstruction(SimpleInstruction(function.extensionReceiverParameter!!))
-        callStack.addInstruction(CompoundInstruction(it))
-    }
-    call.dispatchReceiver?.let {
-        callStack.addInstruction(SimpleInstruction(function.dispatchReceiverParameter!!))
-        callStack.addInstruction(CompoundInstruction(it))
-    }
 }
 
 private fun unfoldConstructorCall(constructorCall: IrFunctionAccessExpression, callStack: CallStack) {
     val constructor = constructorCall.symbol.owner
-    callStack.newSubFrame(constructorCall, listOf()) // used to store value arguments, in case then they are use as default args
+    unfoldValueParameters(constructorCall, callStack)
     // this variable is used to create object once
     callStack.addVariable(Variable(constructorCall.getThisReceiver(), Common(constructor.parentAsClass)))
-    callStack.addInstruction(SimpleInstruction(constructorCall))
-    unfoldValueParameters(constructorCall, callStack)
-
-    constructorCall.dispatchReceiver?.let {
-        callStack.addInstruction(SimpleInstruction(constructor.dispatchReceiverParameter!!))
-        callStack.addInstruction(CompoundInstruction(it))
-    }
 }
 
 private fun unfoldEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall, callStack: CallStack) {
-    callStack.newSubFrame(enumConstructorCall, listOf()) // used to store value arguments, in case then they are use as default args
-    callStack.addInstruction(SimpleInstruction(enumConstructorCall))
     unfoldValueParameters(enumConstructorCall, callStack)
 }
 
 private fun unfoldDelegatingConstructorCall(delegatingConstructorCall: IrFunctionAccessExpression, callStack: CallStack) {
-    callStack.newSubFrame(delegatingConstructorCall, listOf()) // used to store value arguments, in case then they are use as default args
-    callStack.addInstruction(SimpleInstruction(delegatingConstructorCall))
     unfoldValueParameters(delegatingConstructorCall, callStack)
 }
 
 private fun unfoldValueParameters(expression: IrFunctionAccessExpression, callStack: CallStack) {
-    fun IrValueParameter.getDefault(): IrExpressionBody? {
-        return defaultValue
-            ?: (this.parent as? IrSimpleFunction)?.overriddenSymbols
-                ?.map { it.owner.valueParameters[this.index].getDefault() }
-                ?.firstNotNullOfOrNull { it }
-    }
+    val irFunction = expression.symbol.owner
+    // new sub frame is used to store value arguments, in case then they are used in default args evaluation
+    callStack.newSubFrame(expression, listOf(SimpleInstruction(expression)))
 
     fun getDefaultForParameterAt(index: Int): IrExpression? {
-        return expression.symbol.owner.valueParameters[index].getDefault()?.expression
-    }
-
-    val irFunction = expression.symbol.owner
-    val valueParametersSymbols = irFunction.valueParameters.map { it.symbol }
-    val valueArguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
-
-    for (i in valueParametersSymbols.indices.reversed()) {
-        callStack.addInstruction(SimpleInstruction(valueParametersSymbols[i].owner))
-        val arg = valueArguments[i] ?: getDefaultForParameterAt(i)
-        when {
-            arg != null -> callStack.addInstruction(CompoundInstruction(arg))
-            else ->
-                // case when value parameter is vararg and it is missing
-                expression.getVarargType(i)?.let {
-                    callStack.addInstruction(SimpleInstruction(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it)))
-                }
+        fun IrValueParameter.getDefault(): IrExpressionBody? {
+            return defaultValue
+                ?: (this.parent as? IrSimpleFunction)?.overriddenSymbols
+                    ?.map { it.owner.valueParameters[this.index].getDefault() }
+                    ?.firstNotNullOfOrNull { it }
         }
+
+        return irFunction.valueParameters[index].getDefault()?.expression
     }
 
-    // hack for extension receiver in lambda
-    if (expression.valueArgumentsCount != irFunction.valueParameters.size) {
-        val extensionReceiver = irFunction.getExtensionReceiver() ?: return
-        callStack.addInstruction(SimpleInstruction(extensionReceiver.owner))
-        valueArguments[0]?.let { callStack.addInstruction(CompoundInstruction(it)) }
+    val valueParametersSymbols = irFunction.valueParameters.map { it.symbol }
+
+    // interpret defaults for null arguments (at the end)
+    (expression.valueArgumentsCount - 1 downTo 0).forEach { index ->
+        if (expression.getValueArgument(index) != null) return@forEach
+        callStack.addInstruction(SimpleInstruction(valueParametersSymbols[index].owner))
+
+        getDefaultForParameterAt(index)
+            ?.let { callStack.addInstruction(CompoundInstruction(it)) }
+            ?: expression.getVarargType(index)?.let { // case when value parameter is vararg and it is missing
+                callStack.addInstruction(SimpleInstruction(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it)))
+            }
     }
+
+    // interpret not null arguments (after evaluation of arguments)
+    expression.dispatchReceiver?.let { callStack.addInstruction(SimpleInstruction(irFunction.dispatchReceiverParameter!!)) }
+    expression.extensionReceiver?.let { callStack.addInstruction(SimpleInstruction(irFunction.extensionReceiverParameter!!)) }
+    (0 until expression.valueArgumentsCount).forEach {
+        if (expression.getValueArgument(it) != null) callStack.addInstruction(SimpleInstruction(irFunction.valueParameters[it]))
+    }
+
+    // evaluate arguments
+    (expression.valueArgumentsCount - 1 downTo 0).forEach {
+        callStack.addInstruction(CompoundInstruction(expression.getValueArgument(it)))
+    }
+    expression.extensionReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
+    expression.dispatchReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
 }
 
 private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceInitializerCall, callStack: CallStack) {
@@ -360,7 +343,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
                 toStringCall.dispatchReceiver = IrConstImpl.constNull(0, 0, receiver.type) // just stub receiver
 
                 callStack.newSubFrame(toStringCall, listOf(SimpleInstruction(toStringCall)))
-                callStack.pushState(state)
+                callStack.addVariable(Variable(receiver.symbol, state))
             }
         }
     }
@@ -382,22 +365,21 @@ private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
 
 private fun unfoldFunctionReference(reference: IrFunctionReference, callStack: CallStack) {
     val function = reference.symbol.owner
-    callStack.newSubFrame(reference, listOf())
-    callStack.addInstruction(SimpleInstruction(reference))
+    callStack.newSubFrame(reference, listOf(SimpleInstruction(reference)))
 
-    reference.extensionReceiver?.let {
-        callStack.addInstruction(SimpleInstruction(function.extensionReceiverParameter!!))
-        callStack.addInstruction(CompoundInstruction(it))
-    }
-    reference.dispatchReceiver?.let {
-        callStack.addInstruction(SimpleInstruction(function.dispatchReceiverParameter!!))
-        callStack.addInstruction(CompoundInstruction(it))
-    }
+    reference.dispatchReceiver?.let { callStack.addInstruction(SimpleInstruction(function.dispatchReceiverParameter!!)) }
+    reference.extensionReceiver?.let { callStack.addInstruction(SimpleInstruction(function.extensionReceiverParameter!!)) }
+
+    reference.extensionReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
+    reference.dispatchReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
 }
 
 private fun unfoldPropertyReference(propertyReference: IrPropertyReference, callStack: CallStack) {
     callStack.addInstruction(SimpleInstruction(propertyReference))
-    callStack.addInstruction(CompoundInstruction(propertyReference.dispatchReceiver))
+    propertyReference.dispatchReceiver?.let {
+        callStack.addInstruction(SimpleInstruction(propertyReference.getter!!.owner.dispatchReceiverParameter!!))
+        callStack.addInstruction(CompoundInstruction(it))
+    }
 }
 
 private fun unfoldClassReference(classReference: IrClassReference, callStack: CallStack) {

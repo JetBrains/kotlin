@@ -179,11 +179,6 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     }
 }
 
-internal fun State?.extractNonLocalDeclarations(): List<Variable> {
-    this ?: return listOf()
-    return this.fields.filter { it.symbol !is IrFieldSymbol }
-}
-
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()
 
 internal fun IrType.isUnsigned() = this.isUByte() || this.isUShort() || this.isUInt() || this.isULong()
