@@ -42,6 +42,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirDestructuringDeclarationChecker,
         FirConstPropertyChecker,
         FirPropertyAccessorChecker,
+        FirPropertyTypeParametersChecker,
+        FirPropertyAccessorChecker,
         FirInitializerTypeMismatchChecker
     )
 

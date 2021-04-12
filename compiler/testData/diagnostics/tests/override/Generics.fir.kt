@@ -43,7 +43,7 @@ abstract class MyAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalGenericClass1<!><T> : MyTrait<T>, MyAbstractClass<T>() {}
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalGenericClass2<!><T, R>(r : R) : MyTrait<T>, MyAbstractClass<R>() {
     override fun foo(r: R) = r
-    override val <T> pr : R = r
+    override val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T<!>> pr : R = r
 }
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass1<!> : MyTrait<Int>, MyAbstractClass<String>() {}
 abstract class MyLegalAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {}
@@ -51,10 +51,10 @@ abstract class MyLegalAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass2<!><T>(t : T) : MyTrait<Int>, MyAbstractClass<Int>() {
     fun foo(t: T) = t
     fun bar(t: T) = t
-    val <R> pr : T = t
+    val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>R<!>> pr : T = t
 }
 abstract class MyLegalAbstractClass2<T>(t : T) : MyTrait<Int>, MyAbstractClass<Int>() {
     fun foo(t: T) = t
     fun bar(t: T) = t
-    val <R> pr : T = t
+    val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>R<!>> pr : T = t
 }
