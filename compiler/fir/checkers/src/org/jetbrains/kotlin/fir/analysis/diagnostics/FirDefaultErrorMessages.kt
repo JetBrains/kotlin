@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_PAIR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_AS_SUPERTYPE
@@ -511,6 +512,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(RETURN_TYPE_MISMATCH, "Return type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
 
             map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds")
+
+            map.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Type parameters must be placed before the name of the function")
 
             // Reflection
             map.put(

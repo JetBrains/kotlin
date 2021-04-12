@@ -44,6 +44,7 @@ object FirCyclicTypeBoundsChecker : FirMemberDeclarationChecker() {
             declaration.typeParameters
                 .filter { cycles.contains(it.symbol.name) }
                 .forEach { param ->
+                    //for some reason FE 1.0 report differently for class declarations
                     val targets = if (declaration is FirRegularClass) {
                         param.symbol.fir.originalBounds().filter { cycles.contains(extractTypeParamName(it.coneType)) }
                             .mapNotNull { it.source }

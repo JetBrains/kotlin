@@ -35,7 +35,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
-        FirFunctionNameChecker
+        FirFunctionNameChecker,
+        FirFunctionTypeParametersChecker,
     )
 
     override val propertyCheckers: Set<FirPropertyChecker> = setOf(

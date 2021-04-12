@@ -577,7 +577,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.ifKeyword(node: Lighte
 private fun FlyweightCapableTreeStructure<LighterASTNode>.returnKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RETURN_KEYWORD)
 
-private fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
+internal fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IDENTIFIER)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
