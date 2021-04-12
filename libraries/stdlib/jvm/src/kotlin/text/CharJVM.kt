@@ -111,7 +111,7 @@ public actual inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(thi
 public actual inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
 
 /**
- * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
 @Deprecated("Use uppercaseChar() instead.", ReplaceWith("uppercaseChar()"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
