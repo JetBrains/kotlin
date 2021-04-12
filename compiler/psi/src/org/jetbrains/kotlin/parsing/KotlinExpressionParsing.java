@@ -1094,6 +1094,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     private boolean parseLocalDeclaration(boolean rollbackIfDefinitelyNotExpression, boolean isScriptTopLevel) {
         PsiBuilder.Marker decl = mark();
+        if (atSet(CONTEXT_KEYWORD)) {
+            myKotlinParsing.parseContextReceiverList();
+        }
         KotlinParsing.ModifierDetector detector = new KotlinParsing.ModifierDetector();
         myKotlinParsing.parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
