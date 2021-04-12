@@ -731,6 +731,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DeprecatedTypeParameterSyntax::class
     }
 
+    abstract class MisplacedTypeParameterConstraints : KtFirDiagnostic<KtTypeParameter>() {
+        override val diagnosticClass get() = MisplacedTypeParameterConstraints::class
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol

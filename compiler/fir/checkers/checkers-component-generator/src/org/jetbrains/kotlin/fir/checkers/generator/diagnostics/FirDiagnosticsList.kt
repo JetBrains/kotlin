@@ -334,6 +334,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val CYCLIC_GENERIC_UPPER_BOUND by error<FirSourceElement, PsiElement>()
 
         val DEPRECATED_TYPE_PARAMETER_SYNTAX by error<FirSourceElement, KtTypeParameterList>()
+
+        val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning<FirSourceElement, KtTypeParameter>()
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

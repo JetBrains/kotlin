@@ -42,6 +42,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         checkBoundUniqueness(declaration, context, reporter)
         checkConflictingBounds(declaration, context, reporter)
         checkTypeAliasBound(declaration, containingDeclaration, context, reporter)
+        checkBoundsPlacement(declaration, context, reporter)
     }
 
     private fun checkFinalUpperBounds(
@@ -144,6 +145,15 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
         if (anyConflictingTypes(declaration.bounds.map { it.coneType })) {
             reporter.reportOn(declaration.source, FirErrors.CONFLICTING_UPPER_BOUNDS, declaration.symbol, context)
+        }
+    }
+
+    private fun checkBoundsPlacement(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration.bounds.size < 2) return
+
+        val (constraint, params) = declaration.bounds.partition { it.isInTypeConstraint() }
+        if (params.isNotEmpty() && constraint.isNotEmpty()) {
+            reporter.reportOn(declaration.source, FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS, context)
         }
     }
 

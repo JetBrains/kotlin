@@ -242,6 +242,7 @@ object FirErrors {
     val RETURN_TYPE_MISMATCH by error2<FirSourceElement, KtExpression, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
     val CYCLIC_GENERIC_UPPER_BOUND by error0<FirSourceElement, PsiElement>()
     val DEPRECATED_TYPE_PARAMETER_SYNTAX by error0<FirSourceElement, KtTypeParameterList>()
+    val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning0<FirSourceElement, KtTypeParameter>()
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<FirSourceElement, KtExpression, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
