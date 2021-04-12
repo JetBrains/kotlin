@@ -77,7 +77,7 @@ abstract class BinaryJavaMethodBase(
                         contextForMethod.addTypeParameters(it.typeParameters)
                     }
                     // JVM specs allows disagreements in parameters between signature and descriptor/serialized method. In particular the
-                    // situation was detected on Scala stdlib (see #KT-3825 for some details).
+                    // situation was detected on Scala stdlib (see #KT-38325 for some details).
                     // But in our implementation we are using the parameter infos read here as a "master" so if signature has less params
                     // than the descriptor, we need get missing parameter infos from somewhere.
                     // Since the known cases are rare, it was decided to keep it simple for now and only cover this particular case.
