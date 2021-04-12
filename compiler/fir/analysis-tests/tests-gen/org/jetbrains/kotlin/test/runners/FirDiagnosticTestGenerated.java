@@ -5260,6 +5260,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("KtFirCompositeScope.kt")
+            public void testKtFirCompositeScope() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/KtFirCompositeScope.kt");
+            }
+
+            @Test
             @TestMetadata("lightMember.kt")
             public void testLightMember() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/lightMember.kt");
