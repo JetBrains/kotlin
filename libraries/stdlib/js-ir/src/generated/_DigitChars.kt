@@ -18,6 +18,10 @@ private object Digit {
     )
 }
 
+/**
+ * Returns the index of the largest element in [array] smaller or equal to the specified [needle],
+ * or -1 if [needle] is smaller than the smallest element in [array].
+ */
 internal fun binarySearchRange(array: IntArray, needle: Int): Int {
     var bottom = 0
     var top = array.size - 1
@@ -37,11 +41,19 @@ internal fun binarySearchRange(array: IntArray, needle: Int): Int {
 }
 
 /**
+ * Returns an integer from 0..9 indicating the digit this character represents,
+ * or -1 if this character is not a digit.
+ */
+internal fun Char.digitToIntImpl(): Int {
+    val ch = this.code
+    val index = binarySearchRange(Digit.rangeStart, ch)
+    val diff = ch - Digit.rangeStart[index]
+    return if (diff < 10) diff else -1
+}
+
+/**
  * Returns `true` if this character is a digit.
  */
 internal fun Char.isDigitImpl(): Boolean {
-    val ch = this.code
-    val index = binarySearchRange(Digit.rangeStart, ch)
-    val high = Digit.rangeStart[index] + 9
-    return ch <= high
+    return digitToIntImpl() >= 0
 }

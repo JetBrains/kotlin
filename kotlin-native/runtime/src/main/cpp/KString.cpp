@@ -78,17 +78,6 @@ OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
   RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::with_replacement::utf8to16>, rawString, end, charCount);
 }
 
-constexpr KChar digitKeys[] = {
-  0x30, 0x41, 0x61, 0x660, 0x6f0, 0x966, 0x9e6, 0xa66, 0xae6, 0xb66, 0xbe7, 0xc66, 0xce6, 0xd66, 0xe50, 0xed0, 0xf20, 0x1040, 0x1369, 0x17e0,
-  0x1810, 0xff10, 0xff21, 0xff41
-};
-
-constexpr KChar digitValues[] = {
-  0x39, 0x30, 0x5a, 0x37, 0x7a, 0x57, 0x669, 0x660, 0x6f9, 0x6f0, 0x96f, 0x966, 0x9ef, 0x9e6, 0xa6f, 0xa66, 0xaef, 0xae6, 0xb6f, 0xb66,
-  0xbef, 0xbe6, 0xc6f, 0xc66, 0xcef, 0xce6, 0xd6f, 0xd66, 0xe59, 0xe50, 0xed9, 0xed0, 0xf29, 0xf20, 0x1049, 0x1040, 0x1371, 0x1368, 0x17e9, 0x17e0,
-  0x1819, 0x1810, 0xff19, 0xff10, 0xff3a, 0xff17, 0xff5a, 0xff37
-};
-
 } // namespace
 
 extern "C" {
@@ -317,36 +306,6 @@ KBoolean Kotlin_Char_isHighSurrogate(KChar ch) {
 
 KBoolean Kotlin_Char_isLowSurrogate(KChar ch) {
   return ((ch & 0xfc00) == 0xdc00);
-}
-
-constexpr KInt digits[] = {
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-  -1, -1, -1, -1, -1, -1, -1,
-  10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-  20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-  30, 31, 32, 33, 34, 35,
-  -1, -1, -1, -1, -1, -1,
-  10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-  20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-  30, 31, 32, 33, 34, 35
-};
-
-// Based on Apache Harmony implementation.
-// Radix check is performed on the Kotlin side.
-KInt Kotlin_Char_digitOfChecked(KChar ch, KInt radix) {
-
-  KInt result = -1;
-  if (ch >= 0x30 /* 0 */ && ch <= 0x7a /* z */) {
-    result = digits[ch - 0x30];
-  } else {
-    int index = -1;
-    index = binarySearchRange(digitKeys, ARRAY_SIZE(digitKeys), ch);
-    if (index >= 0 && ch <= digitValues[index * 2]) {
-      result = ch - digitValues[index * 2 + 1];
-    }
-  }
-  if (result >= radix) return -1;
-  return result;
 }
 
 KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {
