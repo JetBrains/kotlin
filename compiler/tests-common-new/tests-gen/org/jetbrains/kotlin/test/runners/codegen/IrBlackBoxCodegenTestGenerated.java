@@ -18338,6 +18338,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("boxReturnValueInDefaultMethod.kt")
+            public void testBoxReturnValueInDefaultMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt");
+            }
+
+            @Test
             @TestMetadata("covariantOverrideChainErasedToAny.kt")
             public void testCovariantOverrideChainErasedToAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt");

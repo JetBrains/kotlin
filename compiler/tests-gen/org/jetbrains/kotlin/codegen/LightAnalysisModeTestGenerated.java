@@ -15191,6 +15191,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("boxReturnValueInDefaultMethod.kt")
+            public void testBoxReturnValueInDefaultMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt");
+            }
+
             @TestMetadata("covariantOverrideChainErasedToAny.kt")
             public void testCovariantOverrideChainErasedToAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt");

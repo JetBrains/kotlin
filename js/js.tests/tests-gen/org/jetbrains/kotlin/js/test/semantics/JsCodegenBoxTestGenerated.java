@@ -12856,6 +12856,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
+            @TestMetadata("boxReturnValueInDefaultMethod.kt")
+            public void testBoxReturnValueInDefaultMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt");
+            }
+
             @TestMetadata("covariantOverrideChainErasedToAny.kt")
             public void testCovariantOverrideChainErasedToAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt");
