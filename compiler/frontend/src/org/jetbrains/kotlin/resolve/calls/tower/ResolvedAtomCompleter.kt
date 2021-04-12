@@ -117,7 +117,8 @@ class ResolvedAtomCompleter(
 
         clearPartiallyResolvedCall(resolvedCallAtom)
 
-        if (resolvedCallAtom.atom.psiKotlinCall is PSIKotlinCallForVariable) return null
+        val atom = resolvedCallAtom.atom
+        if (atom.psiKotlinCall is PSIKotlinCallForVariable) return null
 
         val allDiagnostics = diagnostics + diagnosticsFromPartiallyResolvedCall
 
@@ -135,8 +136,14 @@ class ResolvedAtomCompleter(
             return resolvedCall
         }
 
+        val psiCallForResolutionContext = when (atom) {
+            // PARTIAL_CALL_RESOLUTION_CONTEXT has been written for the baseCall
+            is PSIKotlinCallForInvoke -> atom.baseCall.psiCall
+            else -> atom.psiKotlinCall.psiCall
+        }
+
         val resolutionContextForPartialCall =
-            topLevelCallContext.trace[BindingContext.PARTIAL_CALL_RESOLUTION_CONTEXT, resolvedCallAtom.atom.psiKotlinCall.psiCall]
+            topLevelCallContext.trace[BindingContext.PARTIAL_CALL_RESOLUTION_CONTEXT, psiCallForResolutionContext]
 
         val callCheckerContext = if (resolutionContextForPartialCall != null)
             CallCheckerContext(

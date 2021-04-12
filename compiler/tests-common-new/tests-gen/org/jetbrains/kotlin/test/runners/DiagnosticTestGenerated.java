@@ -5607,6 +5607,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeInsideWhen.kt");
             }
 
+            @Test
+            @TestMetadata("suspendInvokeWithReceiver.kt")
+            public void testSuspendInvokeWithReceiver() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeWithReceiver.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/coroutines/callableReference")
             @TestDataPath("$PROJECT_ROOT")
