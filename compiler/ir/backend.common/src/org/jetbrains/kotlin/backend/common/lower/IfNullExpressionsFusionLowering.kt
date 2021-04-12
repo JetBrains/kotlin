@@ -103,12 +103,15 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
             if ((!outer.ifNotNullExpr.isTrivial() && innerKeepsNull != true && innerDiscardsNonNull != true) ||
                 (!outer.ifNullExpr.isTrivial() && innerKeepsNull != false && innerDiscardsNonNull != false)
             ) return this
-            return inner.createIrBuilder().irBlock {
+            val result = inner.createIrBuilder().irBlock {
                 val ifNull = outer.substitute(inner.ifNullExpr, innerKeepsNull, inner.type)
                 val ifNotNull = outer.substitute(inner.ifNotNullExpr, innerDiscardsNonNull, inner.type)
                 +inner.subjectVar
                 +irIfNull(outer.type, irGet(inner.subjectVar), ifNull, ifNotNull)
-            }
+            } as IrBlock
+            // Each `FUSE_IF_NULL` removes one level of `IfNull` from the expression being checked,
+            // so this eventually terminates when we no longer have `IfNull(IfNull(...), ...)`.
+            return result.fuseIfNull()
         }
 
         private fun IfNullExpr.substitute(subject: IrExpression, knownNullability: Boolean?, temporaryVarType: IrType): IrExpression =
@@ -126,30 +129,32 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
         private fun IfNullExpr.createIrBuilder() =
             context.createIrBuilder((subjectVar.parent as IrSymbolOwner).symbol, subjectVar.startOffset, subjectVar.endOffset)
 
-        private fun IrExpression.isNull(knownVariableSymbol: IrVariableSymbol, knownVariableIsNull: Boolean): Boolean? {
+        private fun IrExpression.isNull(knownVariableSymbol: IrVariableSymbol, knownVariableIsNull: Boolean): Boolean? =
             when (this) {
-                is IrConst<*> ->
-                    return value == null
-                is IrGetValue -> {
-                    if (symbol == knownVariableSymbol) return knownVariableIsNull
-                    if (!type.isNullable()) return false
+                is IrConst<*> -> value == null
+                is IrGetValue -> when {
+                    symbol == knownVariableSymbol -> knownVariableIsNull
+                    !type.isNullable() -> false
+                    else -> null
                 }
                 is IrConstructorCall,
                 is IrGetSingletonValue,
                 is IrFunctionExpression,
                 is IrCallableReference<*>,
                 is IrClassReference,
-                is IrGetClass ->
-                    return false
+                is IrGetClass -> false
                 is IrCall ->
-                    if (!type.isNullable() && isStableCall()) return false
+                    if (!type.isNullable() && symbol.owner.isStable()) false else null
+                is IrGetField ->
+                    if (!type.isNullable() && symbol.owner.isStable()) false else null
+                is IrBlock ->
+                    (statements.singleOrNull() as IrExpression?)?.takeIf { it.type == type }?.isNull(knownVariableSymbol, knownVariableIsNull)
+                else -> null
             }
-            return null
-        }
 
         // TODO make calls to the declarations within the same module "stable"
-        private fun IrCall.isStableCall() =
-            symbol.owner.fileOrNull == currentFile
+        private fun IrDeclaration.isStable() =
+            fileOrNull == currentFile
     }
 
     private class IfNullExpr(
