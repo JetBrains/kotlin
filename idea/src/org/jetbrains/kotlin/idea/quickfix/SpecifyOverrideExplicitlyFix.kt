@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.overrideImplement.BodyType
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -72,7 +73,7 @@ class SpecifyOverrideExplicitlyFix(
 
                 val overrideMemberChooserObject = OverrideMemberChooserObject.create(
                     project, delegatedDescriptor, overriddenDescriptor,
-                    OverrideMemberChooserObject.BodyType.Delegate(delegateTargetDescriptor.name.asString())
+                    BodyType.Delegate(delegateTargetDescriptor.name.asString())
                 )
                 val member = overrideMemberChooserObject.generateMember(element, copyDoc = false)
                 val insertedMember = element.addDeclaration(member)

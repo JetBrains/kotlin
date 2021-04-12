@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.insertMembersAfter
+import org.jetbrains.kotlin.idea.core.insertMembersAfterAndReformat
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
@@ -202,6 +202,6 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
         val targetClass = info.classDescriptor.source.getPsi() as KtClass
         val prototype = generateToString(targetClass, info) ?: return emptyList()
         val anchor = with(targetClass.declarations) { lastIsInstanceOrNull<KtNamedFunction>() ?: lastOrNull() }
-        return insertMembersAfter(editor, targetClass, listOf(prototype), anchor)
+        return insertMembersAfterAndReformat(editor, targetClass, listOf(prototype), anchor)
     }
 }
