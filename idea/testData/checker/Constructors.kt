@@ -1,4 +1,4 @@
-
+// EXPECTED_DUPLICATED_HIGHLIGHTING
 open class NoC
 class NoC1 : NoC()
 

@@ -39,7 +39,7 @@ public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFix
 
         myFixture.configureByFile(fileName());
 
-        withExpectedDuplicatedHighlighting(expectedDuplicatedHighlighting, () -> {
+        withExpectedDuplicatedHighlighting(expectedDuplicatedHighlighting, isFirPlugin(), () -> {
             try {
                 checkHighlighting(fileText);
             }
@@ -54,7 +54,7 @@ public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFix
         });
     }
 
-    private void withExpectedDuplicatedHighlighting(boolean expectedDuplicatedHighlighting, Runnable runnable) {
+    public static void withExpectedDuplicatedHighlighting(boolean expectedDuplicatedHighlighting, boolean isFirPlugin, Runnable runnable) {
         if (!expectedDuplicatedHighlighting) {
             runnable.run();
             return;
@@ -63,7 +63,7 @@ public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFix
         try {
             ExpectedHighlightingData.expectedDuplicatedHighlighting(runnable);
         } catch (IllegalStateException e) {
-            if (isFirPlugin()) {
+            if (isFirPlugin) {
                 runnable.run();
             } else {
                 throw e;

@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.rt.execution.junit.FileComparisonFailure
+import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest
 import org.jetbrains.kotlin.idea.invalidateCaches
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import org.jetbrains.kotlin.test.uitls.IgnoreTests.DIRECTIVES
 import org.jetbrains.kotlin.test.uitls.IgnoreTests.cleanUpIdenticalFirTestFile
@@ -45,14 +47,20 @@ abstract class AbstractFirKotlinHighlightingPassTest : AbstractKotlinHighlightin
         checkWeakWarnings: Boolean
     ): Long {
         val fileText = file.text
-        return withCustomCompilerOptions(fileText, project, module) {
-            try {
-                withPossiblyDisabledDuplicatedFirSourceElementsException(fileText) {
-                    myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings)
+        val isDuplicatedHighlightingExpected =
+            InTextDirectivesUtils.isDirectiveDefined(fileText, AbstractHighlightingTest.EXPECTED_DUPLICATED_HIGHLIGHTING_PREFIX)
+        var result: Long? = null
+        AbstractHighlightingTest.withExpectedDuplicatedHighlighting(isDuplicatedHighlightingExpected, /*isFirPlugin*/true) {
+            withCustomCompilerOptions(fileText, project, module) {
+                try {
+                    withPossiblyDisabledDuplicatedFirSourceElementsException(fileText) {
+                        result = myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings)
+                    }
+                } catch (e: FileComparisonFailure) {
+                    throw FileComparisonFailure(e.message, e.expected, e.actual, File(e.filePath).absolutePath)
                 }
-            } catch (e: FileComparisonFailure) {
-                throw FileComparisonFailure(e.message, e.expected, e.actual, File(e.filePath).absolutePath)
             }
         }
+        return result!!
     }
 }

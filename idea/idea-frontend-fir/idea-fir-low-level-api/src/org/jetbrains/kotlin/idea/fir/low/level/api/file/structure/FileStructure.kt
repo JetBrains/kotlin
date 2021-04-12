@@ -64,12 +64,12 @@ internal class FileStructure(
     fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> {
         val structureElements = getAllStructureElements()
 
-        return buildSet {
+        return buildList {
             collectDiagnosticsFromStructureElements(structureElements, diagnosticCheckerFilter)
         }
     }
 
-    private fun MutableSet<FirPsiDiagnostic<*>>.collectDiagnosticsFromStructureElements(
+    private fun MutableCollection<FirPsiDiagnostic<*>>.collectDiagnosticsFromStructureElements(
         structureElements: Collection<FileStructureElement>,
         diagnosticCheckerFilter: DiagnosticCheckerFilter
     ) {

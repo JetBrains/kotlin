@@ -1,4 +1,4 @@
-
+// EXPECTED_DUPLICATED_HIGHLIGHTING
 open class NoC
 class NoC1 : NoC()
 
@@ -18,7 +18,7 @@ class WithPC1(a : Int) {
 }
 
 
-class Foo() : WithPC0(), <error descr="Type expected"><error descr="[SYNTAX] Syntax error">this</error></error>() {
+class Foo() : WithPC0(), <error descr="Type expected"><error descr="[SYNTAX] Syntax error"><error descr="[SYNTAX] Syntax error">this</error></error></error>() {
 
 }
 
