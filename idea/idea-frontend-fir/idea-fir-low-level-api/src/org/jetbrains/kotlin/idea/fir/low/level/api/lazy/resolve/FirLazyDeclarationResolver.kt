@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve
 
 import com.intellij.psi.util.parentsOfType
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
@@ -50,12 +51,18 @@ internal class FirLazyDeclarationResolver(
         if (declaration.resolvePhase >= toPhase) return
 
         if (declaration is FirPropertyAccessor || declaration is FirTypeParameter || declaration is FirValueParameter) {
-            val ktContainingResolvableDeclaration = when (val ktDeclaration = declaration.ktDeclaration) {
-                is KtPropertyAccessor -> ktDeclaration.property
-                is KtProperty -> ktDeclaration
-                is KtParameter, is KtTypeParameter -> ktDeclaration.getNonLocalContainingOrThisDeclaration()
+            val ktContainingResolvableDeclaration = when (val psi = declaration.psi) {
+                is KtPropertyAccessor -> psi.property
+                is KtProperty -> psi
+                is KtParameter, is KtTypeParameter -> psi.getNonLocalContainingOrThisDeclaration()
                     ?: error("Cannot find containing declaration for KtParameter")
-                else -> error("Invalid source of property accessor ${ktDeclaration::class}")
+                is KtCallExpression -> {
+                    check(declaration.source?.kind == FirFakeSourceElementKind.DefaultAccessor)
+                    val delegationCall = psi.parent as KtPropertyDelegate
+                    delegationCall.parent as KtProperty
+                }
+                null -> error("Cannot find containing declaration for KtParameter")
+                else -> error("Invalid source of property accessor ${psi::class}")
             }
             val containingProperty = ktContainingResolvableDeclaration
                 .findSourceNonLocalFirDeclaration(firFileBuilder, declaration.declarationSiteSession.symbolProvider, moduleFileCache)
