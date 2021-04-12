@@ -115,7 +115,7 @@ class SerializableIrGenerator(
                 val getDescriptorExpr = if (serializableDescriptor.isStaticSerializable) {
                     getStaticSerialDescriptorExpr()
                 } else {
-                    // synthetic constructor creates only for internally serializable classes - so companion definitely exists
+                    // synthetic constructor is created only for internally serializable classes - so companion definitely exists
                     val companionObject = irClass.companionObject()!!
                     getParametrizedSerialDescriptorExpr(companionObject, createCachedDescriptorProperty(companionObject))
                 }
