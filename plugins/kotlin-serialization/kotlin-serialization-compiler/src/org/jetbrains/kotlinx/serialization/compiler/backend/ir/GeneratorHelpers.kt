@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -28,10 +29,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -42,6 +40,12 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.FUNCTION0_FQ
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.KPROPERTY1_FQ
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_FQ
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_FUNC_FQ
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_MODE_FQ
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_PUBLICATION_MODE_NAME
 
 interface IrBuilderExtension {
     val compilerContext: SerializationPluginContext
@@ -82,48 +86,125 @@ interface IrBuilderExtension {
         ) { bodyGen(c) }
     }
 
-    // function will not be created in the real class
-    fun IrClass.createInlinedFunction(
-        name: Name,
-        visibility: DescriptorVisibility,
-        origin: IrDeclarationOrigin,
-        returnType: IrType,
-        bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit
-    ): IrSimpleFunction {
-        val function = factory.buildFun {
-            this.name = name
-            this.visibility = visibility
-            this.origin = origin
-            this.isInline = true
-            this.returnType = returnType
-        }
-        val functionSymbol = function.symbol
-        function.parent = this
-        function.body = DeclarationIrBuilder(compilerContext, functionSymbol, startOffset, endOffset).irBlockBody(
-            startOffset,
-            endOffset
-        ) { bodyGen(function) }
-        return function
-    }
-
-    fun IrClass.createSingletonLambda(
-        returnType: IrType,
-        startOffset: Int,
-        endOffset: Int,
+    fun IrClass.createLambdaExpression(
+        type: IrType,
         bodyGen: IrBlockBodyBuilder.() -> Unit
-    ): IrSimpleFunction {
+    ): IrFunctionExpression {
         val function = compilerContext.irFactory.buildFun {
-            this.startOffset = startOffset
-            this.endOffset = endOffset
-            this.returnType = returnType
+            this.startOffset = this@createLambdaExpression.startOffset
+            this.endOffset = this@createLambdaExpression.endOffset
+            this.returnType = type
             name = Name.identifier("<anonymous>")
             visibility = DescriptorVisibilities.LOCAL
             origin = SERIALIZABLE_PLUGIN_ORIGIN
         }
         function.body =
             DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset, bodyGen)
+        function.parent = this
 
-        return function
+        val f0Type = module.findClassAcrossModuleDependencies(ClassId.topLevel(FUNCTION0_FQ))!!.defaultType
+        val f0ParamSymbol = compilerContext.symbolTable.referenceTypeParameter(f0Type.constructor.parameters[0])
+        val f0IrType = f0Type.toIrType().substitute(mapOf(f0ParamSymbol to type))
+
+        return IrFunctionExpressionImpl(
+            startOffset,
+            endOffset,
+            f0IrType,
+            function,
+            IrStatementOrigin.LAMBDA
+        )
+    }
+
+    fun createLazyProperty(
+        containingClass: IrClass,
+        targetIrType: IrType,
+        name: Name,
+        initializerBuilder: IrBlockBodyBuilder.() -> Unit
+    ): IrProperty {
+        val lazySafeModeClassDescriptor = compilerContext.referenceClass(LAZY_MODE_FQ)!!.descriptor
+        val lazyFunctionSymbol = compilerContext.referenceFunctions(LAZY_FUNC_FQ).single {
+            it.descriptor.valueParameters.size == 2 && it.descriptor.valueParameters[0].type == lazySafeModeClassDescriptor.defaultType
+        }
+        val publicationEntryDescriptor = lazySafeModeClassDescriptor.enumEntries().single { it.name == LAZY_PUBLICATION_MODE_NAME }
+
+        val lazyIrClass = compilerContext.referenceClass(LAZY_FQ)!!.owner
+        val lazyKotlinType = lazyIrClass.defaultType.substitute(mapOf(lazyIrClass.typeParameters[0].symbol to targetIrType)).toKotlinType()
+
+        val kPropertyIrClass = compilerContext.referenceClass(KPROPERTY1_FQ)!!.owner
+        val kPropertyKotlinType = kPropertyIrClass.defaultType.substitute(
+            mapOf(
+                kPropertyIrClass.typeParameters[0].symbol to targetIrType,
+                kPropertyIrClass.typeParameters[1].symbol to containingClass.defaultType,
+            )
+        ).toKotlinType()
+
+        val targetKotlinType = targetIrType.toKotlinType()
+
+        val propertyDescriptor =
+            KSerializerDescriptorResolver.createValPropertyDescriptor(name, containingClass.descriptor, targetKotlinType)
+
+        val delegate = IrPropertyDelegateDescriptorImpl(propertyDescriptor, lazyKotlinType, kPropertyKotlinType)
+
+        return generateSimplePropertyWithBackingField(delegate, containingClass, delegate.name).apply {
+            val builder = DeclarationIrBuilder(compilerContext, containingClass.symbol, startOffset, endOffset)
+            val initializerBody = builder.run {
+                val enumElement = IrGetEnumValueImpl(
+                    startOffset,
+                    endOffset,
+                    publicationEntryDescriptor.classValueType!!.toIrType(),
+                    compilerContext.symbolTable.referenceEnumEntry(publicationEntryDescriptor)
+                )
+
+                val lambdaExpression = containingClass.createLambdaExpression(targetIrType, initializerBuilder)
+
+                irExprBody(
+                    irInvoke(null, lazyFunctionSymbol, listOf(targetIrType), listOf(enumElement, lambdaExpression), targetIrType)
+                )
+            }
+            backingField!!.initializer = initializerBody
+        }
+    }
+
+    fun createCompanionValProperty(
+        companionClass: IrClass,
+        type: IrType,
+        name: Name,
+        initializerBuilder: IrBlockBodyBuilder.() -> Unit
+    ): IrProperty {
+        val targetKotlinType = type.toKotlinType()
+        val propertyDescriptor =
+            KSerializerDescriptorResolver.createValPropertyDescriptor(name, companionClass.descriptor, targetKotlinType)
+
+        return generateSimplePropertyWithBackingField(propertyDescriptor, companionClass, name).apply {
+            companionClass.contributeAnonymousInitializer {
+                val irBlockBody = irBlockBody(startOffset, endOffset, initializerBuilder)
+                irBlockBody.statements.dropLast(1).forEach { +it }
+                val expression = irBlockBody.statements.last() as? IrExpression
+                    ?: throw AssertionError("Last statement in property initializer builder is not an a expression")
+                +irSetField(irGetObject(companionClass), backingField!!, expression)
+            }
+        }
+    }
+
+    fun IrClass.contributeAnonymousInitializer(bodyGen: IrBlockBodyBuilder.() -> Unit) {
+        val symbol = IrAnonymousInitializerSymbolImpl(descriptor)
+        factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol).also {
+            it.parent = this
+            declarations.add(it)
+            it.body = DeclarationIrBuilder(compilerContext, symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset, bodyGen)
+        }
+    }
+
+    fun IrBlockBodyBuilder.getLazyValueExpression(companionClass: IrClass, property: IrProperty): IrExpression {
+        val lazyIrClass = compilerContext.referenceClass(LAZY_FQ)!!.owner
+        val valueGetter = lazyIrClass.getPropertyGetter("value")!!
+
+        val backingField = property.backingField!!
+        return irGet(
+            backingField.type,
+            irGetField(irGetObject(companionClass), backingField),
+            valueGetter
+        )
     }
 
     fun IrBuilderWithScope.irInvoke(

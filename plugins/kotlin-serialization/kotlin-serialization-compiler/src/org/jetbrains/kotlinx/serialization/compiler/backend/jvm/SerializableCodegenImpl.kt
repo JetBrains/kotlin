@@ -35,7 +35,7 @@ import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_NAME
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.INITIALIZED_DESCRIPTOR_FIELD_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.CACHED_DESCRIPTOR_FIELD
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_NAME
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -354,7 +354,7 @@ class SerializableCodegenImpl(
         } else {
             generateStaticDescriptorField()
 
-            getstatic(thisAsmType.internalName, INITIALIZED_DESCRIPTOR_FIELD_NAME, descType.descriptor)
+            getstatic(thisAsmType.internalName, CACHED_DESCRIPTOR_FIELD, descType.descriptor)
         }
     }
 
@@ -362,7 +362,7 @@ class SerializableCodegenImpl(
         val flags = Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_STATIC
         classCodegen.v.newField(
             OtherOrigin(classCodegen.myClass.psiOrParent), flags,
-            INITIALIZED_DESCRIPTOR_FIELD_NAME, descType.descriptor, null, null
+            CACHED_DESCRIPTOR_FIELD, descType.descriptor, null, null
         )
 
         val clInit = classCodegen.createOrGetClInitCodegen()
@@ -380,7 +380,7 @@ class SerializableCodegenImpl(
                 invokevirtual(descImplType.internalName, CallingConventions.addElement, "(Ljava/lang/String;Z)V", false)
             }
 
-            putstatic(thisAsmType.internalName, INITIALIZED_DESCRIPTOR_FIELD_NAME, descType.descriptor)
+            putstatic(thisAsmType.internalName, CACHED_DESCRIPTOR_FIELD, descType.descriptor)
         }
     }
 

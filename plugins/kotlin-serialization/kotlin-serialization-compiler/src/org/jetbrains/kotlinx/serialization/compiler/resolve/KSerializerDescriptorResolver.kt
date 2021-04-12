@@ -290,6 +290,40 @@ object KSerializerDescriptorResolver {
         return functionDescriptor
     }
 
+    fun createValPropertyDescriptor(
+        name: Name,
+        containingClassDescriptor: ClassDescriptor,
+        type: KotlinType,
+        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
+        createGetter: Boolean = false
+    ): PropertyDescriptor {
+        val propertyDescriptor = PropertyDescriptorImpl.create(
+            containingClassDescriptor,
+            Annotations.EMPTY, Modality.FINAL, visibility, false, name,
+            CallableMemberDescriptor.Kind.SYNTHESIZED, containingClassDescriptor.source, false, false, false, false, false, false
+        )
+        val extensionReceiverParameter: ReceiverParameterDescriptor? = null // kludge to disambiguate call
+        propertyDescriptor.setType(
+            type,
+            emptyList(), // no need type parameters?
+            containingClassDescriptor.thisAsReceiverParameter,
+            extensionReceiverParameter
+        )
+
+        val propertyGetter: PropertyGetterDescriptorImpl? = if (createGetter) {
+            PropertyGetterDescriptorImpl(
+                propertyDescriptor, Annotations.EMPTY, Modality.FINAL, visibility, false, false, false,
+                CallableMemberDescriptor.Kind.SYNTHESIZED, null, containingClassDescriptor.source
+            ).apply { initialize(type) }
+        } else {
+            null
+        }
+
+        propertyDescriptor.initialize(propertyGetter, null)
+
+        return propertyDescriptor
+    }
+
     fun createLoadConstructorDescriptor(
         classDescriptor: ClassDescriptor,
         bindingContext: BindingContext,

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -29,7 +27,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.INITIALIZED_DESCRIPTOR_FIELD_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.CACHED_DESCRIPTOR_FIELD_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD
 
@@ -38,8 +36,6 @@ class SerializableIrGenerator(
     override val compilerContext: SerializationPluginContext,
     bindingContext: BindingContext
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
-
-    private val descriptorGenerationFunctionName = Name.identifier("createInitializedDescriptor")
 
     private val serialDescClass: ClassDescriptor = serializableDescriptor.module
         .getClassFromSerializationDescriptorsPackage(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS)
@@ -116,7 +112,14 @@ class SerializableIrGenerator(
                 // for abstract classes fields MUST BE checked in child classes
                 !serializableDescriptor.isAbstractSerializableClass() && !serializableDescriptor.isSealedSerializableClass()
             ) {
-                generateGoldenMaskCheck(seenVars, properties, getSerialDescriptorExpr())
+                val getDescriptorExpr = if (serializableDescriptor.isStaticSerializable) {
+                    getStaticSerialDescriptorExpr()
+                } else {
+                    // synthetic constructor is created only for internally serializable classes - so companion definitely exists
+                    val companionObject = irClass.companionObject()!!
+                    getParametrizedSerialDescriptorExpr(companionObject, createCachedDescriptorProperty(companionObject))
+                }
+                generateGoldenMaskCheck(seenVars, properties, getDescriptorExpr)
             }
             when {
                 superClass.symbol == compilerContext.irBuiltIns.anyClass -> generateAnySuperConstructorCall(toBuilder = this@contributeConstructor)
@@ -167,29 +170,25 @@ class SerializableIrGenerator(
             }
         }
 
-    private fun IrBlockBodyBuilder.getSerialDescriptorExpr(): IrExpression {
-        return if (serializableDescriptor.isStaticSerializable) {
-            val serializer = serializableDescriptor.classSerializer!!
-            val serialDescriptorGetter = compilerContext.referenceClass(serializer.fqNameSafe)!!.getPropertyGetter(SERIAL_DESC_FIELD)!!
-            irGet(
-                serialDescriptorGetter.owner.returnType,
-                irGetObject(serializer),
-                serialDescriptorGetter.owner.symbol
-            )
-        } else {
-            irGetField(null, generateStaticDescriptorField())
-        }
+    private fun IrBlockBodyBuilder.getStaticSerialDescriptorExpr(): IrExpression {
+        val serializer = serializableDescriptor.classSerializer!!
+        val serialDescriptorGetter = compilerContext.referenceClass(serializer.fqNameSafe)?.getPropertyGetter(SERIAL_DESC_FIELD)
+            ?: throw Exception("No class with name ${serializer.fqNameSafe}")
+        return irGet(
+            serialDescriptorGetter.owner.returnType,
+            irGetObject(serializer),
+            serialDescriptorGetter.owner.symbol
+        )
     }
 
-    private fun IrBlockBodyBuilder.generateStaticDescriptorField(): IrField {
-        val serialDescItType = serialDescClass.defaultType.toIrType()
+    private fun IrBlockBodyBuilder.getParametrizedSerialDescriptorExpr(companionObject: IrClass, property: IrProperty): IrExpression {
+        return irGetField(irGetObject(companionObject), property.backingField!!)
+    }
 
-        val function = irClass.createInlinedFunction(
-            descriptorGenerationFunctionName,
-            DescriptorVisibilities.PRIVATE,
-            SERIALIZABLE_PLUGIN_ORIGIN,
-            serialDescItType
-        ) {
+    private fun IrBlockBodyBuilder.createCachedDescriptorProperty(companionObject: IrClass): IrProperty {
+        val serialDescIrType = serialDescClass.defaultType.toIrType()
+
+        return createCompanionValProperty(companionObject, serialDescIrType, CACHED_DESCRIPTOR_FIELD_NAME) {
             val serialDescVar = irTemporary(
                 getInstantiateDescriptorExpr(),
                 nameHint = "serialDesc"
@@ -197,17 +196,8 @@ class SerializableIrGenerator(
             for (property in properties.serializableProperties) {
                 +getAddElementToDescriptorExpr(property, serialDescVar)
             }
-            +irReturn(irGet(serialDescVar))
+            +irGet(serialDescVar)
         }
-
-        return irClass.addField {
-            name = Name.identifier(INITIALIZED_DESCRIPTOR_FIELD_NAME)
-            visibility = DescriptorVisibilities.PRIVATE
-            origin = SERIALIZABLE_PLUGIN_ORIGIN
-            isFinal = true
-            isStatic = true
-            type = serialDescItType
-        }.apply { initializer = irClass.factory.createExpressionBody(irCall(function)) }
     }
 
     private fun IrBlockBodyBuilder.getInstantiateDescriptorExpr(): IrExpression {
