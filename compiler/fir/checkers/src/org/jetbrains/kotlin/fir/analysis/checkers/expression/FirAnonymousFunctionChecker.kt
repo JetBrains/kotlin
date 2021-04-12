@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.toFirLightSourceElement
 
 object FirAnonymousFunctionChecker : FirExpressionChecker<FirStatement>() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -24,6 +23,24 @@ object FirAnonymousFunctionChecker : FirExpressionChecker<FirStatement>() {
             }
             if (valueParameter.isVararg) {
                 reporter.reportOn(source, FirErrors.USELESS_VARARG_ON_PARAMETER, context)
+            }
+        }
+
+        checkTypeParameters(expression, reporter, context)
+    }
+
+    private fun checkTypeParameters(
+        expression: FirStatement,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ) {
+        expression.source?.let { source ->
+            source.treeStructure.typeParametersList(source.lighterASTNode)?.let { typeParamsNode ->
+                reporter.reportOn(
+                    typeParamsNode.toFirLightSourceElement(source.treeStructure),
+                    FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
+                    context
+                )
             }
         }
     }

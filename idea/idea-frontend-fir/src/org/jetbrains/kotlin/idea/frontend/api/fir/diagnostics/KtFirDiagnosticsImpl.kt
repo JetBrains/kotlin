@@ -1145,6 +1145,13 @@ internal class ReifiedTypeParameterNoInlineImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class TypeParametersNotAllowedImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.TypeParametersNotAllowed(), KtAbstractFirDiagnostic<KtDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ReturnTypeMismatchImpl(
     override val expected: KtType,
     override val actual: KtType,

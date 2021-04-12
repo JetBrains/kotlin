@@ -322,6 +322,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val REIFIED_TYPE_PARAMETER_NO_INLINE by error<FirSourceElement, PsiElement>()
 
+        val TYPE_PARAMETERS_NOT_ALLOWED by error<FirSourceElement, KtDeclaration>()
+
         val RETURN_TYPE_MISMATCH by error<FirSourceElement, KtExpression>(PositioningStrategy.WHOLE_ELEMENT) {
             parameter<ConeKotlinType>("expected")
             parameter<ConeKotlinType>("actual")

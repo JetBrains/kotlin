@@ -998,6 +998,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.TYPE_PARAMETERS_NOT_ALLOWED) { firDiagnostic ->
+        TypeParametersNotAllowedImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.RETURN_TYPE_MISMATCH) { firDiagnostic ->
         ReturnTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

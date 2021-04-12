@@ -709,6 +709,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ReifiedTypeParameterNoInline::class
     }
 
+    abstract class TypeParametersNotAllowed : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = TypeParametersNotAllowed::class
+    }
+
     abstract class ReturnTypeMismatch : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ReturnTypeMismatch::class
         abstract val expected: KtType
