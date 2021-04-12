@@ -620,7 +620,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * contextReceiverList
      *   : "context" "(" (label? typeReference{","})+ ")"
      */
-    private void parseContextReceiverList() {
+    public void parseContextReceiverList() {
         assert _at(CONTEXT_KEYWORD);
         PsiBuilder.Marker contextReceiverList = mark();
         advance(); // CONTEXT_KEYWORD

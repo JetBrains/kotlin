@@ -10607,6 +10607,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("localDeclaration.kt")
+                public void testLocalDeclaration() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/localDeclaration.kt");
+                }
+
+                @Test
                 @TestMetadata("manyReceivers.kt")
                 public void testManyReceivers() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/manyReceivers.kt");
