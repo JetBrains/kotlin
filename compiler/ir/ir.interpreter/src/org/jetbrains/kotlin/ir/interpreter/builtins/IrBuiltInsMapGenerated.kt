@@ -78,6 +78,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "Float" -> return (a as Float).toByte()
             "Long" -> return (a as Long).toByte()
             "Double" -> return (a as Double).toByte()
+            "Number" -> return (a as Number).toByte()
         }
         "toChar" -> when (type) {
             "Char" -> return (a as Char).toChar()
@@ -87,6 +88,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "Float" -> return (a as Float).toChar()
             "Long" -> return (a as Long).toChar()
             "Double" -> return (a as Double).toChar()
+            "Number" -> return (a as Number).toChar()
         }
         "toDouble" -> when (type) {
             "Char" -> return (a as Char).toDouble()
@@ -96,6 +98,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "Float" -> return (a as Float).toDouble()
             "Long" -> return (a as Long).toDouble()
             "Double" -> return (a as Double).toDouble()
+            "Number" -> return (a as Number).toDouble()
         }
         "toFloat" -> when (type) {
             "Char" -> return (a as Char).toFloat()
@@ -105,6 +108,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "Float" -> return (a as Float).toFloat()
             "Long" -> return (a as Long).toFloat()
             "Double" -> return (a as Double).toFloat()
+            "Number" -> return (a as Number).toFloat()
         }
         "toInt" -> when (type) {
             "Char" -> return (a as Char).toInt()
@@ -114,6 +118,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "Float" -> return (a as Float).toInt()
             "Long" -> return (a as Long).toInt()
             "Double" -> return (a as Double).toInt()
+            "Number" -> return (a as Number).toInt()
         }
         "toLong" -> when (type) {
             "Char" -> return (a as Char).toLong()
@@ -123,6 +128,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "Float" -> return (a as Float).toLong()
             "Long" -> return (a as Long).toLong()
             "Double" -> return (a as Double).toLong()
+            "Number" -> return (a as Number).toLong()
         }
         "toShort" -> when (type) {
             "Char" -> return (a as Char).toShort()
@@ -132,6 +138,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "Float" -> return (a as Float).toShort()
             "Long" -> return (a as Long).toShort()
             "Double" -> return (a as Double).toShort()
+            "Number" -> return (a as Number).toShort()
         }
         "unaryMinus" -> when (type) {
             "Byte" -> return (a as Byte).unaryMinus()
@@ -155,6 +162,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
         }
         "length" -> when (type) {
             "String" -> return (a as String).length
+            "CharSequence" -> return (a as CharSequence).length
         }
         "size" -> when (type) {
             "BooleanArray" -> return (a as BooleanArray).size
@@ -244,6 +252,7 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
                 "Short" -> return (a as Double).compareTo(b as Short)
             }
             "String" -> if (typeB == "String") return (a as String).compareTo(b as String)
+            "Comparable" -> if (typeB == "T") return (a as Comparable<Any?>).compareTo(b)
         }
         "equals" -> when (typeA) {
             "Boolean" -> if (typeB == "Any?") return (a as Boolean).equals(b)
@@ -564,6 +573,7 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
         }
         "get" -> when (typeA) {
             "String" -> if (typeB == "Int") return (a as String).get(b as Int)
+            "CharSequence" -> if (typeB == "Int") return (a as CharSequence).get(b as Int)
             "BooleanArray" -> if (typeB == "Int") return (a as BooleanArray).get(b as Int)
             "CharArray" -> if (typeB == "Int") return (a as CharArray).get(b as Int)
             "ByteArray" -> if (typeB == "Int") return (a as ByteArray).get(b as Int)
@@ -634,6 +644,7 @@ internal fun interpretTernaryFunction(name: String, typeA: String, typeB: String
     when (name) {
         "subSequence" -> when (typeA) {
             "String" -> if (typeB == "Int" && typeC == "Int") return (a as String).subSequence(b as Int, c as Int)
+            "CharSequence" -> if (typeB == "Int" && typeC == "Int") return (a as CharSequence).subSequence(b as Int, c as Int)
         }
         "set" -> when (typeA) {
             "BooleanArray" -> if (typeB == "Int" && typeC == "Boolean") return (a as BooleanArray).set(b as Int, c as Boolean)

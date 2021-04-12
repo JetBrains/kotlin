@@ -142,6 +142,7 @@ private fun generateInterpretTernaryFunction(p: Printer, ternaryOperations: List
 private fun castValue(name: String, type: String): String = when (type) {
     "Any?", "T" -> name
     "Array" -> "$name as Array<Any?>"
+    "Comparable" -> "$name as Comparable<Any?>"
     else -> "$name as $type"
 }
 
@@ -184,6 +185,7 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
     val operationMap = mutableListOf<Operation>()
     val allPrimitiveTypes = PrimitiveType.values().map { builtIns.getBuiltInClassByFqName(it.typeFqName) }
     val arrays = PrimitiveType.values().map { builtIns.getPrimitiveArrayClassDescriptor(it) } + builtIns.array
+    val additionalBuiltIns = listOf(builtIns.string, builtIns.any, builtIns.charSequence, builtIns.number, builtIns.comparable)
 
     fun CallableDescriptor.isFakeOverride(classDescriptor: ClassDescriptor): Boolean {
         val isPrimitive = KotlinBuiltIns.isPrimitiveClass(classDescriptor) || KotlinBuiltIns.isString(classDescriptor.defaultType)
@@ -191,7 +193,7 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
         return !isPrimitive && isFakeOverridden
     }
 
-    for (classDescriptor in allPrimitiveTypes + builtIns.string + arrays + builtIns.any) {
+    for (classDescriptor in allPrimitiveTypes + additionalBuiltIns + arrays) {
         val compileTimeFunctions = classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()
             .filterIsInstance<CallableDescriptor>()
             .filter { !it.isFakeOverride(classDescriptor) && it.valueParameters.size + 1 == argumentsCount }

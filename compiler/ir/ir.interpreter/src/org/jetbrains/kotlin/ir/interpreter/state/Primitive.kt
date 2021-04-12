@@ -27,13 +27,9 @@ internal class Primitive<T>(val value: T, val type: IrType) : State {
         return super.getState(symbol) ?: this
     }
 
-    override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
+    override fun getIrFunctionByIrCall(expression: IrCall): IrFunction {
         val owner = expression.symbol.owner
-        // must add property's getter to declaration's list because they are not present in ir class for primitives
-        val declarations = irClass.declarations.map { if (it is IrProperty) it.getter else it }
-        return declarations.filterIsInstance<IrFunction>()
-            .firstOrNull { it.symbol == owner.symbol || (it is IrSimpleFunction && it.overrides(owner)) }
-            ?.let { if (it.isFakeOverride) it.getLastOverridden() else it }
+        return if (owner.isFakeOverride) owner.getLastOverridden() else owner
     }
 
     override fun equals(other: Any?): Boolean {
