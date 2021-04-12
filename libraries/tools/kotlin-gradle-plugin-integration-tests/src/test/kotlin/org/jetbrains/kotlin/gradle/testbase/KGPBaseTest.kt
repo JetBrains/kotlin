@@ -10,18 +10,12 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.impldep.org.junit.platform.commons.support.AnnotationSupport.findAnnotation
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
-import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 import org.jetbrains.kotlin.test.WithMuteInDatabase
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.io.TempDir
-import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
-import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.streams.asStream
@@ -39,7 +33,7 @@ abstract class KGPBaseTest {
 
     data class BuildOptions(
         val logLevel: LogLevel = LogLevel.INFO,
-        val kotlinVersion: String = KOTLIN_VERSION,
+        val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
         val warningMode: WarningMode = WarningMode.Fail,
         val configurationCache: Boolean = false,
         val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
@@ -117,8 +111,8 @@ abstract class KGPBaseTest {
     @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS)
     @Retention(AnnotationRetention.RUNTIME)
     annotation class GradleTestVersions(
-        val minVersion: String = minSupportedGradleVersion,
-        val maxVersion: String = "7.0",
+        val minVersion: String = TestVersions.Gradle.MIN_SUPPORTED,
+        val maxVersion: String = TestVersions.Gradle.MAX_SUPPORTED,
         val additionalVersions: Array<String> = []
     )
 }
