@@ -17,4 +17,4 @@ fun test(properties: Map<String, String>, nullableProperties: Map<String, String
 fun <T, R> myEmptyMap(): Map<T, R> = TODO()
 
 @Suppress("INVISIBLE_REFERENCE")
-fun <S> select1(x: S, y: S): @kotlin.internal.Exact S = y
+fun <S> select1(x: S, y: S): <!HIDDEN, HIDDEN!>@kotlin.internal.Exact<!> S = y

@@ -4,7 +4,7 @@
 fun <R> Iterable<*>.filterIsInstance1(): List<@kotlin.internal.NoInfer R> = throw Exception()
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <R> List<*>.filterIsInstance2(): @kotlin.internal.NoInfer List<R> = throw Exception()
+fun <R> List<*>.filterIsInstance2(): <!HIDDEN, HIDDEN!>@kotlin.internal.NoInfer<!> List<R> = throw Exception()
 
 fun test(list: List<Int>) {
     list.filterIsInstance1<Int>().map { it * 2 }
@@ -19,7 +19,7 @@ fun test() {
 }
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <R> List<R>.foo(): @kotlin.internal.NoInfer R = throw Exception()
+fun <R> List<R>.foo(): <!HIDDEN, HIDDEN!>@kotlin.internal.NoInfer<!> R = throw Exception()
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 fun <R> bar(r: R, f: Function1<@kotlin.internal.NoInfer R, Unit>): Nothing = throw Exception()

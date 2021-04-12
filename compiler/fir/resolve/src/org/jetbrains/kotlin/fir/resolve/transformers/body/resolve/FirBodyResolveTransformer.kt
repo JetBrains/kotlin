@@ -61,12 +61,14 @@ open class FirBodyResolveTransformer(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: ResolutionMode): FirResolvedTypeRef {
-        if (typeRef is FirResolvedTypeRef) {
-            return typeRef
+        val resolvedTypeRef = if (typeRef is FirResolvedTypeRef) {
+            typeRef
+        } else {
+            typeResolverTransformer.withFile(context.file) {
+                transformTypeRef(typeRef, FirCompositeScope(components.createCurrentScopeList()))
+            }
         }
-        return typeResolverTransformer.withFile(context.file) {
-            transformTypeRef(typeRef, FirCompositeScope(components.createCurrentScopeList()))
-        }
+        return resolvedTypeRef.transformAnnotations(this, data)
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): FirTypeRef {

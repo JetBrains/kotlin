@@ -6,7 +6,7 @@ interface B : A
 interface C : A
 
 @Suppress("INVISIBLE_REFERENCE")
-fun <K> select(x: K, y: K): @kotlin.internal.Exact K = x
+fun <K> select(x: K, y: K): <!HIDDEN, HIDDEN!>@kotlin.internal.Exact<!> K = x
 
 fun foo(a: Any) {}
 
