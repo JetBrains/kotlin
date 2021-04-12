@@ -530,6 +530,16 @@ task sum_3const(type: KonanLocalTest) {
     source = "codegen/function/sum_3const.kt"
 }
 
+standaloneTest("function_nothingN_returning_safe_call1") {
+    flags = ["-g", "-entry", "codegen.function.nothingN_returning_safe_call1.main"]
+    source = "codegen/function/nothingNReturningSafeCall1.kt"
+}
+
+standaloneTest("function_nothingN_returning_safe_call2") {
+    flags = ["-g", "-entry", "codegen.function.nothingN_returning_safe_call2.main"]
+    source = "codegen/function/nothingNReturningSafeCall2.kt"
+}
+
 task codegen_controlflow_for_loops(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops.kt"
     goldValue = "01234\n0123\n43210\n\n024\n02\n420\n\n036\n03\n630\n\n024\n02\n420\n\n"

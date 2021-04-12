@@ -40,8 +40,14 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
                             }
                         }
                         is IrBlockBody -> {
-                            if (declaration is IrConstructor || declaration.returnType == context.irBuiltIns.unitType)
+                            if (declaration is IrConstructor || declaration.returnType == context.irBuiltIns.unitType) {
                                 body.statements += irReturn(irGetObject(symbols.unit))
+                            } else if (declaration.returnType == context.irBuiltIns.nothingNType) {
+                                val typeOperatorCall = body.statements.singleOrNull() as? IrTypeOperatorCall
+                                if (typeOperatorCall?.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
+                                    body.statements[0] = irReturn(typeOperatorCall.argument)
+                                }
+                            }
                         }
                     }
                 }
