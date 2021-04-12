@@ -22,7 +22,7 @@ public inline fun Char(code: Int): Char {
     if (code < Char.MIN_VALUE.code || code > Char.MAX_VALUE.code) {
         throw IllegalArgumentException("Invalid Char code: $code")
     }
-    return Char(code.toUShort())
+    return code.toChar()
 }
 
 /**
