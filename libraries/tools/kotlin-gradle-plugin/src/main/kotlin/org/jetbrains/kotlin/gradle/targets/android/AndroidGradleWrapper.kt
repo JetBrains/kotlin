@@ -13,7 +13,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
 object AndroidGradleWrapper {
-    fun getRuntimeJars(basePlugin: BasePlugin, baseExtension: BaseExtension): Any? {
+    fun getRuntimeJars(basePlugin: BasePlugin<*>, baseExtension: BaseExtension): Any? {
         return basePlugin("getRuntimeJarList") ?: baseExtension("getBootClasspath") ?: basePlugin("getBootClasspath")
     }
 }

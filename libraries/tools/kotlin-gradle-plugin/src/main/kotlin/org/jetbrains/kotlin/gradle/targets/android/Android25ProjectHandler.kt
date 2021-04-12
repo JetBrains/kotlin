@@ -40,7 +40,7 @@ class Android25ProjectHandler(
     override fun wireKotlinTasks(
         project: Project,
         compilation: KotlinJvmAndroidCompilation,
-        androidPlugin: BasePlugin,
+        androidPlugin: BasePlugin<*>,
         androidExt: BaseExtension,
         variantData: BaseVariant,
         javaTask: TaskProvider<out AbstractCompile>,
