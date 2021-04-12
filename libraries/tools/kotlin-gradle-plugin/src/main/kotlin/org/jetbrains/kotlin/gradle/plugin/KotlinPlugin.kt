@@ -767,7 +767,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
     protected abstract fun wireKotlinTasks(
         project: Project,
         compilation: KotlinJvmAndroidCompilation,
-        androidPlugin: BasePlugin,
+        androidPlugin: BasePlugin<*>,
         androidExt: BaseExtension,
         variantData: BaseVariant,
         javaTask: TaskProvider<out AbstractCompile>,
@@ -796,7 +796,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         val plugin by lazy {
             androidPluginIds.asSequence()
-                .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
+                .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin<*> }
                 .firstOrNull()
                 ?: throw InvalidPluginException("'kotlin-android' expects one of the Android Gradle " +
                                                         "plugins to be applied to the project:\n\t" +
@@ -972,7 +972,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
         androidExt: BaseExtension,
-        androidPlugin: BasePlugin
+        androidPlugin: BasePlugin<*>
     ) {
 
         getTestedVariantData(variantData)?.let { testedVariant ->

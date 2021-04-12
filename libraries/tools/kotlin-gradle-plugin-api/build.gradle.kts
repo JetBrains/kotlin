@@ -14,7 +14,7 @@ dependencies {
     compile(kotlinStdlib())
 
     compileOnly(gradleApi())
-    compileOnly("com.android.tools.build:gradle:0.4.2")
+    compileOnly("com.android.tools.build:gradle:3.4.0")
 }
 
 pill {
