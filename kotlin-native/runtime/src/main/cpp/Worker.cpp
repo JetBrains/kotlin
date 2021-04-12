@@ -155,8 +155,13 @@ class Worker {
   MemoryState* memoryState() { return memoryState_; }
 
  private:
+  void setThread(pthread_t thread) {
+    RuntimeAssert(thread_ == 0 || thread == thread, "Cannot overwrite thread id for worker with id=%d", id());
+    thread_ = thread;
+  }
+
   void setMemoryState(MemoryState* state) {
-    RuntimeAssert(memoryState_ == nullptr, "MemoryState is already set for the worker with id=%d", id_);
+    RuntimeAssert(memoryState_ == nullptr, "MemoryState is already set for the worker with id=%d", id());
     memoryState_ = state;
   }
 
@@ -778,6 +783,7 @@ Worker* WorkerInit(MemoryState* memoryState, KBoolean errorReporting) {
       worker = theState()->addWorkerUnlocked(errorReporting != 0, nullptr, WorkerKind::kOther);
       ::g_worker = worker;
   }
+  worker->setThread(pthread_self());
   worker->setMemoryState(memoryState);
   return worker;
 #else
