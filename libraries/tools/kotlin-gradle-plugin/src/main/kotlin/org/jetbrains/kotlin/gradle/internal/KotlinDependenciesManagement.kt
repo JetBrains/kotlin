@@ -260,7 +260,7 @@ private fun kotlinTestCapabilityForJvmSourceSet(project: Project, kotlinSourceSe
             compilation is KotlinJvmAndroidCompilation -> when (compilation.androidVariant) {
                 is UnitTestVariant ->
                     project.locateTask<AbstractTestTask>(lowerCamelCaseName("test", compilation.androidVariant.name))?.get()?.let(::listOf)
-                is TestVariant -> (compilation.androidVariant as TestVariant).connectedInstrumentTest?.let(::listOf)
+                is TestVariant -> (compilation.androidVariant as TestVariant).connectedInstrumentTestProvider.orNull?.let(::listOf)
                 else -> null
             }
             else -> null
