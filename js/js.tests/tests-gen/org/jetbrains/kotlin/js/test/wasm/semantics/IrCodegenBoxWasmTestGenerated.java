@@ -4727,6 +4727,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/enum/enumShort.kt");
         }
 
+        @TestMetadata("enumValueOf.kt")
+        public void testEnumValueOf() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumValueOf.kt");
+        }
+
         @TestMetadata("enumWithLambdaParameter.kt")
         public void testEnumWithLambdaParameter() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumWithLambdaParameter.kt");
