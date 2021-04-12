@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.insertMembersAfter
+import org.jetbrains.kotlin.idea.core.insertMembersAfterAndReformat
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -326,6 +326,6 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 addIfNotNull(generateHashCode(project, info, targetClass))
             }
         val anchor = with(targetClass.declarations) { lastIsInstanceOrNull<KtNamedFunction>() ?: lastOrNull() }
-        return insertMembersAfter(editor, targetClass, prototypes, anchor)
+        return insertMembersAfterAndReformat(editor, targetClass, prototypes, anchor)
     }
 }

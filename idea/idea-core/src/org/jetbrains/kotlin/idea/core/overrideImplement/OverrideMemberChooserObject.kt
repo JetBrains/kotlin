@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.TemplateKind
 import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.*
+import org.jetbrains.kotlin.idea.core.overrideImplement.BodyType.*
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
@@ -40,15 +40,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
 interface OverrideMemberChooserObject : ClassMember {
-    sealed class BodyType(val requiresReturn: Boolean = true) {
-        object NO_BODY : BodyType()
-        object EMPTY_OR_TEMPLATE : BodyType(requiresReturn = false)
-        object FROM_TEMPLATE : BodyType(requiresReturn = false)
-        object SUPER : BodyType()
-        object QUALIFIED_SUPER : BodyType()
-
-        class Delegate(val receiverName: String) : BodyType()
-    }
 
     val descriptor: CallableMemberDescriptor
     val immediateSuper: CallableMemberDescriptor
@@ -109,12 +100,6 @@ interface OverrideMemberChooserObject : ClassMember {
             }
         }
     }
-}
-
-enum class MemberGenerateMode {
-    OVERRIDE,
-    ACTUAL,
-    EXPECT
 }
 
 fun OverrideMemberChooserObject.generateMember(
@@ -271,7 +256,7 @@ private fun generateProperty(
     project: Project,
     descriptor: PropertyDescriptor,
     renderer: DescriptorRenderer,
-    bodyType: OverrideMemberChooserObject.BodyType,
+    bodyType: BodyType,
     forceOverride: Boolean
 ): KtProperty {
     val newDescriptor = descriptor.wrap(forceOverride)
@@ -308,7 +293,7 @@ private fun generateFunction(
     project: Project,
     descriptor: FunctionDescriptor,
     renderer: DescriptorRenderer,
-    bodyType: OverrideMemberChooserObject.BodyType,
+    bodyType: BodyType,
     forceOverride: Boolean
 ): KtFunction {
     val newDescriptor = descriptor.wrap(forceOverride)
@@ -336,13 +321,13 @@ private fun generateFunction(
     }
 }
 
-private fun OverrideMemberChooserObject.BodyType.effectiveBodyType(canBeEmpty: Boolean): OverrideMemberChooserObject.BodyType =
+private fun BodyType.effectiveBodyType(canBeEmpty: Boolean): BodyType =
     if (!canBeEmpty && this == EMPTY_OR_TEMPLATE) FROM_TEMPLATE else this
 
 fun generateUnsupportedOrSuperCall(
     project: Project,
     descriptor: CallableMemberDescriptor,
-    bodyType: OverrideMemberChooserObject.BodyType,
+    bodyType: BodyType,
     canBeEmpty: Boolean = true
 ): String {
     when (bodyType.effectiveBodyType(canBeEmpty)) {

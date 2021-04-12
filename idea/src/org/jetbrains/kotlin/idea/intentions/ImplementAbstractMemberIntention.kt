@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.BodyType
+import org.jetbrains.kotlin.idea.core.overrideImplement.GenerateMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
@@ -120,10 +121,10 @@ abstract class ImplementAbstractMemberIntentionBase : SelfTargetingRangeIntentio
             member.project,
             descriptorToImplement,
             descriptorToImplement,
-            OverrideMemberChooserObject.BodyType.FROM_TEMPLATE,
+            BodyType.FROM_TEMPLATE,
             preferConstructorParameters
         )
-        OverrideImplementMembersHandler.generateMembers(editor, targetClass, listOf(chooserObject), false)
+        GenerateMembersHandler.generateMembers(editor, targetClass, listOf(chooserObject), false)
     }
 
     private fun implementInJavaClass(member: KtNamedDeclaration, targetClass: PsiClass) {

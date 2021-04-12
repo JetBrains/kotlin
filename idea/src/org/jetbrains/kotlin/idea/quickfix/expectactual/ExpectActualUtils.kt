@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.findOrCreateDirectoryForPackage
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import org.jetbrains.kotlin.idea.core.overrideImplement.MemberGenerateMode
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.NO_BODY
+import org.jetbrains.kotlin.idea.core.overrideImplement.BodyType.EMPTY_OR_TEMPLATE
+import org.jetbrains.kotlin.idea.core.overrideImplement.BodyType.NO_BODY
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.Companion.create
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual

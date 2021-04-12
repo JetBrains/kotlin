@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.GenerateMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -60,7 +60,7 @@ class MakePrivateAndOverrideMemberFix(
         if (makePrivate) {
             element.addModifier(KtTokens.PRIVATE_KEYWORD)
         }
-        OverrideImplementMembersHandler.generateMembers(editor, containingClassOrObject, listOf(memberToOverride), false)
+        GenerateMembersHandler.generateMembers(editor, containingClassOrObject, listOf(memberToOverride), false)
     }
 
     object AccidentalOverrideFactory : KotlinSingleIntentionActionFactory() {

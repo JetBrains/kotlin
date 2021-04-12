@@ -19,7 +19,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.GenerateMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -88,33 +88,33 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
         myFixture.checkResultByFile(getTestName(true) + "/foo/JavaClass.java.after")
     }
 
-    private fun doFileTest(handler: OverrideImplementMembersHandler, memberToOverride: String? = null) {
+    private fun doFileTest(handler: GenerateMembersHandler, memberToOverride: String? = null) {
         myFixture.configureByFile(getTestName(true) + ".kt")
         doOverrideImplement(handler, memberToOverride)
         checkResultByFile(getTestName(true) + ".kt.after")
     }
 
-    private fun doMultiFileTest(handler: OverrideImplementMembersHandler) {
+    private fun doMultiFileTest(handler: GenerateMembersHandler) {
         myFixture.configureByFile(getTestName(true) + ".kt")
         doMultiOverrideImplement(handler)
         checkResultByFile(getTestName(true) + ".kt.after")
     }
 
-    private fun doDirectoryTest(handler: OverrideImplementMembersHandler, memberToOverride: String? = null) {
+    private fun doDirectoryTest(handler: GenerateMembersHandler, memberToOverride: String? = null) {
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/Impl.kt")
         doOverrideImplement(handler, memberToOverride)
         checkResultByFile(getTestName(true) + "/foo/Impl.kt.after")
     }
 
-    private fun doMultiDirectoryTest(handler: OverrideImplementMembersHandler) {
+    private fun doMultiDirectoryTest(handler: GenerateMembersHandler) {
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/Impl.kt")
         doMultiOverrideImplement(handler)
         checkResultByFile(getTestName(true) + "/foo/Impl.kt.after")
     }
 
-    private fun doOverrideImplement(handler: OverrideImplementMembersHandler, memberToOverride: String?) {
+    private fun doOverrideImplement(handler: GenerateMembersHandler, memberToOverride: String?) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
         val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, KtClassOrObject::class.java)
             ?: error("Caret should be inside class or object")
@@ -138,7 +138,7 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
         performGenerateCommand(classOrObject, listOf(singleToOverride))
     }
 
-    private fun doMultiOverrideImplement(handler: OverrideImplementMembersHandler) {
+    private fun doMultiOverrideImplement(handler: GenerateMembersHandler) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
         val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, KtClassOrObject::class.java)
             ?: error("Caret should be inside class or object")
@@ -167,7 +167,7 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
         try {
             val copyDoc = InTextDirectivesUtils.isDirectiveDefined(classOrObject.containingFile.text, "// COPY_DOC")
             myFixture.project.executeWriteCommand("") {
-                OverrideImplementMembersHandler.generateMembers(myFixture.editor, classOrObject, selectedElements, copyDoc)
+                GenerateMembersHandler.generateMembers(myFixture.editor, classOrObject, selectedElements, copyDoc)
             }
         } catch (throwable: Throwable) {
             throw rethrow(throwable)
