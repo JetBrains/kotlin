@@ -14017,6 +14017,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("enumValueOf.kt")
+        public void testEnumValueOf() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumValueOf.kt");
+        }
+
+        @Test
         @TestMetadata("enumWithLambdaParameter.kt")
         public void testEnumWithLambdaParameter() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumWithLambdaParameter.kt");
