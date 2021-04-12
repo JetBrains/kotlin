@@ -1,6 +1,6 @@
-// FILE: State.java
+// FILE: simulation/State.java
 
-package simulation
+package simulation;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface State {

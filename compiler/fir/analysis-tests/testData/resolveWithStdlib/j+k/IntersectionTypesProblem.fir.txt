@@ -2,6 +2,6 @@ FILE: test.kt
     public final fun <K> select(x: R|K|, y: R|K|): R|K| {
         ^select R|<local>/x|
     }
-    public final fun test(d1: R|DiagnosticWithParameters1<*, *>|, d2: R|DiagnosticWithParameters2<*, *, *>|): R|kotlin/Unit| {
-        lval res: R|ft<kotlin/Any, kotlin/Any?>| = R|jvm/select|<R|ft<kotlin/Any, kotlin/Any?>|>(R|<local>/d1|.R|/DiagnosticWithParameters1.a|, R|<local>/d2|.R|/DiagnosticWithParameters2.b|)
+    public final fun test(d1: R|jvm/DiagnosticWithParameters1<*, *>|, d2: R|jvm/DiagnosticWithParameters2<*, *, *>|): R|kotlin/Unit| {
+        lval res: R|ft<kotlin/Any, kotlin/Any?>| = R|jvm/select|<R|ft<kotlin/Any, kotlin/Any?>|>(R|<local>/d1|.R|jvm/DiagnosticWithParameters1.a|, R|<local>/d2|.R|jvm/DiagnosticWithParameters2.b|)
     }

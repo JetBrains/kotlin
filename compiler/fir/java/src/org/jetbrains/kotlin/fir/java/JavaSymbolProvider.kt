@@ -156,7 +156,7 @@ class JavaSymbolProvider(
     ): Pair<FirRegularClassSymbol?, JavaClass?> {
         val foundClass = findClass(classId, content)
         return if (foundClass == null ||
-            foundClass.hasDifferentRelativeClassName(classId) ||
+            foundClass.hasDifferentClassId(classId) ||
             foundClass.hasMetadataAnnotation()
         ) {
             null to null
@@ -166,13 +166,8 @@ class JavaSymbolProvider(
         }
     }
 
-
-    /**
-     * We do not check the package because we can look for the class in the same package by class name without package specified.
-     * In this case, found [JavaClass] may have different `packageFqName`, but not `relativeClassName`.
-     */
-    private fun JavaClass.hasDifferentRelativeClassName(lookupClassId: ClassId): Boolean =
-        classId?.relativeClassName != lookupClassId.relativeClassName
+    private fun JavaClass.hasDifferentClassId(lookupClassId: ClassId): Boolean =
+        classId != lookupClassId
 
     private fun JavaClass.hasMetadataAnnotation(): Boolean =
         annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }
