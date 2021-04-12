@@ -330,6 +330,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<ConeKotlinType>("expected")
             parameter<ConeKotlinType>("actual")
         }
+
+        val CYCLIC_GENERIC_UPPER_BOUND by error<FirSourceElement, PsiElement>()
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

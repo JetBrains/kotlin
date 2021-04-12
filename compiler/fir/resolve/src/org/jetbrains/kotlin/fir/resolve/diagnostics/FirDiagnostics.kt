@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.diagnostics
 
+import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.render
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -112,6 +114,10 @@ class ConeTypeParameterSupertype(val symbol: FirTypeParameterSymbol) : ConeDiagn
 
 class ConeTypeParameterInQualifiedAccess(val symbol: FirTypeParameterSymbol) : ConeDiagnostic() {
     override val reason: String get() = "Type parameter ${symbol.fir.name} in qualified access"
+}
+
+class ConeCyclicTypeBound(val symbol: FirTypeParameterSymbol, val bounds: ImmutableList<FirTypeRef>) : ConeDiagnostic() {
+    override val reason: String get() = "Type parameter ${symbol.fir.name} has cyclic bounds"
 }
 
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {

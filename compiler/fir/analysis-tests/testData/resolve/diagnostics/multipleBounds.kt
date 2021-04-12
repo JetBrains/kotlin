@@ -9,9 +9,9 @@ interface B {
 }
 
 interface G<X> {
-    val <X> boo: Double  where X : A, X : B
-    val <A> bal: Double  where A : B
-    val <Y> bas: Double where Y : B, <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>X<!> : B
+    val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>X<!>> boo: Double  where X : A, X : B
+    val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>A<!>> bal: Double  where A : B
+    val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>Y<!>> bas: Double where Y : B, <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>X<!> : B
 }
 
 class C() : A(), B
@@ -66,4 +66,4 @@ val t1 = test2<A>(<!ARGUMENT_TYPE_MISMATCH!>A()<!>)
 val t2 = test2<B>(<!ARGUMENT_TYPE_MISMATCH!>C()<!>)
 val t3 = test2<C>(C())
 
-val <T, B : T> x : Int = 0
+val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T<!>, <!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>B : T<!>> x : Int = 0

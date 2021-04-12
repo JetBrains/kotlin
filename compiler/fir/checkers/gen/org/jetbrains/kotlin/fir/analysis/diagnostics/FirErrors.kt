@@ -240,6 +240,7 @@ object FirErrors {
     val TYPE_PARAMETERS_NOT_ALLOWED by error0<FirSourceElement, KtDeclaration>()
     val TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER by error0<FirSourceElement, KtTypeParameter>()
     val RETURN_TYPE_MISMATCH by error2<FirSourceElement, KtExpression, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
+    val CYCLIC_GENERIC_UPPER_BOUND by error0<FirSourceElement, PsiElement>()
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<FirSourceElement, KtExpression, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -12,9 +13,11 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 
 class FirTypeResolveProcessor(
@@ -140,9 +143,11 @@ class FirTypeResolveTransformer(
         for (typeParameter in typeParametersOwner.typeParameters) {
             if (typeParameter !is FirTypeParameter) continue
             if (hasSupertypePathToParameter(typeParameter, typeParameter, mutableSetOf())) {
-                // TODO: Report diagnostic somewhere
+                val errorType = buildErrorTypeRef {
+                    diagnostic = ConeCyclicTypeBound(typeParameter.symbol, typeParameter.bounds.toImmutableList())
+                }
                 typeParameter.replaceBounds(
-                    listOf(session.builtinTypes.nullableAnyType)
+                    listOf(errorType)
                 )
             }
         }
