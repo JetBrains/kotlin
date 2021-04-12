@@ -80,17 +80,21 @@ class CharTest {
             }
         }
 
-        for (char in 'A'..'Z') {
-            val digit = 10 + (char - 'A')
-            val lower = char.lowercaseChar()
+        val letterRanges = listOf('A'..'Z', '\uFF21'..'\uFF3A')
 
-            for (radix in digit + 1..36) {
-                testEquals(digit, char, radix)
-                testEquals(digit, lower, radix)
-            }
-            for (radix in 2..digit) {
-                testFails(char, radix)
-                testFails(lower, radix)
+        for (range in letterRanges) {
+            for (char in range) {
+                val digit = 10 + (char - range.first)
+                val lower = char.lowercaseChar()
+
+                for (radix in digit + 1..36) {
+                    testEquals(digit, char, radix)
+                    testEquals(digit, lower, radix)
+                }
+                for (radix in 2..digit) {
+                    testFails(char, radix)
+                    testFails(lower, radix)
+                }
             }
         }
 
