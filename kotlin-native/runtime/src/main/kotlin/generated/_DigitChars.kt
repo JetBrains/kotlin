@@ -17,6 +17,10 @@ private val rangeStart = intArrayOf(
     0x1810, 0x1946, 0x19d0, 0x1a80, 0x1a90, 0x1b50, 0x1bb0, 0x1c40, 0x1c50, 0xa620, 0xa8d0, 0xa900, 0xa9d0, 0xa9f0, 0xaa50, 0xabf0, 0xff10, 
 )
 
+/**
+ * Returns the index of the largest element in [array] smaller or equal to the specified [needle],
+ * or -1 if [needle] is smaller than the smallest element in [array].
+ */
 internal fun binarySearchRange(array: IntArray, needle: Int): Int {
     var bottom = 0
     var top = array.size - 1
@@ -36,11 +40,19 @@ internal fun binarySearchRange(array: IntArray, needle: Int): Int {
 }
 
 /**
+ * Returns an integer from 0..9 indicating the digit this character represents,
+ * or -1 if this character is not a digit.
+ */
+internal fun Char.digitToIntImpl(): Int {
+    val ch = this.code
+    val index = binarySearchRange(rangeStart, ch)
+    val diff = ch - rangeStart[index]
+    return if (diff < 10) diff else -1
+}
+
+/**
  * Returns `true` if this character is a digit.
  */
 internal fun Char.isDigitImpl(): Boolean {
-    val ch = this.code
-    val index = binarySearchRange(rangeStart, ch)
-    val high = rangeStart[index] + 9
-    return ch <= high
+    return digitToIntImpl() >= 0
 }
