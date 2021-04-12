@@ -74,6 +74,11 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/localProperty.kt");
     }
 
+    @TestMetadata("memberTypeAlias.kt")
+    public void testMemberTypeAlias() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/memberTypeAlias.kt");
+    }
+
     @TestMetadata("nestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/nestedClasses.kt");
