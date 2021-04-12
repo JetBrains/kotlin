@@ -140,7 +140,7 @@ public fun <T> Sequence<T>.shuffled(random: Random): Sequence<T> = sequence<T> {
     val buffer = toMutableList()
     while (buffer.isNotEmpty()) {
         val j = random.nextInt(buffer.size)
-        val last = @OptIn(ExperimentalStdlibApi::class) buffer.removeLast()
+        val last = buffer.removeLast()
         val value = if (j < buffer.size) buffer.set(j, last) else last
         yield(value)
     }

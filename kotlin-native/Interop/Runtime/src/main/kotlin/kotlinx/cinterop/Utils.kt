@@ -571,7 +571,6 @@ public fun CPointer<IntVar>.toKStringFromUtf32(): String {
  *
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
-@OptIn(ExperimentalStdlibApi::class)
 @SinceKotlin("1.3")
 public fun ByteArray.toKString() : String {
     val realEndIndex = realEndIndex(this, 0, this.size)
@@ -590,7 +589,6 @@ public fun ByteArray.toKString() : String {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
-@OptIn(ExperimentalStdlibApi::class)
 @SinceKotlin("1.3")
 public fun ByteArray.toKString(
         startIndex: Int = 0,
