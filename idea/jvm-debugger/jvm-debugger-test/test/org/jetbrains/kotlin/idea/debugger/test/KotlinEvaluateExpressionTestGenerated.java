@@ -717,14 +717,34 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simple.kt");
             }
 
+            @TestMetadata("simpleFunction.kt")
+            public void testSimpleFunction() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleFunction.kt");
+            }
+
             @TestMetadata("simpleInPackage.kt")
             public void testSimpleInPackage() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleInPackage.kt");
             }
 
+            @TestMetadata("simpleLocalFunction.kt")
+            public void testSimpleLocalFunction() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleLocalFunction.kt");
+            }
+
             @TestMetadata("simpleLocalVariable.kt")
             public void testSimpleLocalVariable() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleLocalVariable.kt");
+            }
+
+            @TestMetadata("simpleObjectFunction.kt")
+            public void testSimpleObjectFunction() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleObjectFunction.kt");
+            }
+
+            @TestMetadata("typedArray.kt")
+            public void testTypedArray() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/typedArray.kt");
             }
 
             @TestMetadata("varModification.kt")

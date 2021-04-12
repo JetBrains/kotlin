@@ -1,0 +1,13 @@
+package simpleFunction
+
+fun definitelyNotAnIntrinsic(): Int {
+    return 0
+}
+
+fun main() {
+    //Breakpoint!
+    val a = 5
+}
+
+// EXPRESSION: definitelyNotAnIntrinsic()
+// RESULT: 0: I

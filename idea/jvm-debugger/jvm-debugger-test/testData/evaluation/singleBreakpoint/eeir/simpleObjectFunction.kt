@@ -1,0 +1,15 @@
+package simpleObjectFunction
+
+object O {
+    fun definitelyNotAnIntrinsic(): Int {
+        return 0
+    }
+}
+
+fun main() {
+    //Breakpoint!
+    val a = 5
+}
+
+// EXPRESSION: O.definitelyNotAnIntrinsic()
+// RESULT: 0: I
