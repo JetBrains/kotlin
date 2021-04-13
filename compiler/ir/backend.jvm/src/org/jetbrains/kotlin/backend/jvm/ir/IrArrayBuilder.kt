@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.getArrayElementType
-import org.jetbrains.kotlin.ir.types.isBoxedArray
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
@@ -105,16 +102,12 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
         return builder.irBlock {
             val spreadVar = if (spread is IrGetValue) spread.symbol.owner else irTemporary(spread)
             val size = unwrappedArrayType.classOrNull!!.getPropertyGetter("size")!!
-            fun getSize() = irCall(size).apply { dispatchReceiver = irGet(spreadVar) }
-            val result = irTemporary(newArray(getSize()))
-            +irCall(builder.irSymbols.systemArraycopy).apply {
+            val arrayCopyOf = builder.irSymbols.getArraysCopyOfFunction(unwrappedArrayType as IrSimpleType)
+            // TODO consider using System.arraycopy if the requested array type is non-generic.
+            +irCall(arrayCopyOf).apply {
                 putValueArgument(0, coerce(irGet(spreadVar), unwrappedArrayType))
-                putValueArgument(1, irInt(0))
-                putValueArgument(2, irGet(result))
-                putValueArgument(3, irInt(0))
-                putValueArgument(4, getSize())
+                putValueArgument(1, irCall(size).apply { dispatchReceiver = irGet(spreadVar) })
             }
-            +irGet(result)
         }
     }
 

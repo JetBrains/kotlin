@@ -9,4 +9,5 @@ enum class Foo {
 
 // JVM_IR_TEMPLATES:
 // There should be only one CHECKCAST in Foo.valueOf
-// 1 CHECKCAST
+// 1 CHECKCAST Foo
+// 1 CHECKCAST \[LFoo\;
