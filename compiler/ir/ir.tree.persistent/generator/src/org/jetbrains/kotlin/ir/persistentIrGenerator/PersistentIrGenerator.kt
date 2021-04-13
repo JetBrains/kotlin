@@ -274,7 +274,7 @@ internal object PersistentIrGenerator {
 
         protoFields += fields.mapNotNull { f ->
             f.proto?.protoPrefix?.let { p ->
-                val modifier = f.proto.fieldKind.toString().toLowerCase()
+                val modifier = f.proto.fieldKind.toString().lowercase()
                 "$modifier $p ${f.name}"
             }
         }
