@@ -23,8 +23,8 @@ fun <T> test(x: T) {
 
     baz<Int?, String?>(null, null, ::foo)
 
-    baz<Int, String?>(<!ARGUMENT_TYPE_MISMATCH!>null<!>, null, ::foo)
-    baz<Int?, String>(null, <!ARGUMENT_TYPE_MISMATCH!>null<!>, ::foo)
+    baz<Int, String?>(<!NULL_FOR_NONNULL_TYPE!>null<!>, null, ::foo)
+    baz<Int?, String>(null, <!NULL_FOR_NONNULL_TYPE!>null<!>, ::foo)
     baz(null, "", ::foo)
     baz(1, null, ::foo)
     baz(null, null, ::foo)

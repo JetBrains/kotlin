@@ -193,6 +193,7 @@ object FirErrors {
     val NONE_APPLICABLE by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val INAPPLICABLE_CANDIDATE by error1<PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val ARGUMENT_TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val NULL_FOR_NONNULL_TYPE by error0<PsiElement>()
     val INAPPLICABLE_LATEINIT_MODIFIER by error1<KtModifierListOwner, String>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
     val VARARG_OUTSIDE_PARENTHESES by error0<KtExpression>()
     val NAMED_ARGUMENTS_NOT_ALLOWED by error1<KtValueArgument, ForbiddenNamedArgumentsTarget>(SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT)

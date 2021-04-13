@@ -142,6 +142,9 @@ private fun mapInapplicableCandidateError(
                 rootCause.expectedType,
                 rootCause.actualType
             )
+            is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.on(
+                rootCause.argument.source ?: source
+            )
             is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.on(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
             is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.on(rootCause.argument.source)
             is TooManyArguments -> FirErrors.TOO_MANY_ARGUMENTS.on(rootCause.argument.source ?: source, rootCause.function)

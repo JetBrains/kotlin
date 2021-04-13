@@ -21,7 +21,7 @@ class Pair<X, Y>(val x: X, val y: Y)
 typealias PL<T> = Pair<T, List<T>>
 typealias PN<T> = Pair<T, Num<T>>
 
-val test5 = PL(1, <!ARGUMENT_TYPE_MISMATCH!>null<!>)
+val test5 = PL(1, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
 
 class Foo<T>(val p: Pair<T, T>)

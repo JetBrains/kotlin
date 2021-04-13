@@ -353,6 +353,10 @@ private fun checkApplicabilityForArgumentType(
             }
         }
 
+        if (argument.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
+            return NullForNotNullType(argument)
+        }
+
         fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType {
             if (type is ConeTypeVariableType) {
                 val originalTypeParameter =
@@ -373,7 +377,6 @@ private fun checkApplicabilityForArgumentType(
             argument
         )
     }
-
 
     if (isReceiver && isDispatch) {
         if (!expectedType.isNullable && argumentType.isMarkedNullable) {

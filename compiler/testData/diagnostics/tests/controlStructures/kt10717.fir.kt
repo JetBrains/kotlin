@@ -13,7 +13,7 @@ fun test2() = run {
 
 inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> = null!!
 fun test3(a: List<String>, b: List<Int>) = a.map {
-    if (it.length == 3) return <!RETURN_TYPE_MISMATCH!>null<!>
+    if (it.length == 3) return <!NULL_FOR_NONNULL_TYPE!>null<!>
     if (it.length == 4) return <!RETURN_TYPE_MISMATCH!>""<!>
     if (it.length == 4) return <!RETURN_TYPE_MISMATCH!>5<!>
     if (it.length == 4) return b

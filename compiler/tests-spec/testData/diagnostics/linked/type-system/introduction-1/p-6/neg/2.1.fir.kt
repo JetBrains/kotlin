@@ -4,44 +4,44 @@
 
 // TESTCASE NUMBER: 1
 fun case_1() {
-    val x: Int = <!INITIALIZER_TYPE_MISMATCH!>null<!>
+    val x: Int = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 2
 fun case_2() {
-    val x: Any = <!INITIALIZER_TYPE_MISMATCH!>null<!>
+    val x: Any = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 3
 fun case_3() {
-    val x: Nothing = <!INITIALIZER_TYPE_MISMATCH!>null<!>
+    val x: Nothing = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 4
 fun case_4() {
-    var x: Int = <!INITIALIZER_TYPE_MISMATCH!>null<!>
+    var x: Int = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 5
 fun case_5() {
-    var x: Any = <!INITIALIZER_TYPE_MISMATCH!>null<!>
+    var x: Any = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 6
 fun case_6() {
-    var x: Nothing = <!INITIALIZER_TYPE_MISMATCH!>null<!>
+    var x: Nothing = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 7
 fun case_7() {
     val x: Int
-    x = null
+    x = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 8
 fun case_8() {
     var x: Int = 10
-    x = null
+    x = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
 
 // TESTCASE NUMBER: 9

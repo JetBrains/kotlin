@@ -851,6 +851,13 @@ internal class ArgumentTypeMismatchImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class NullForNonnullTypeImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NullForNonnullType(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class InapplicableLateinitModifierImpl(
     override val reason: String,
     firDiagnostic: FirPsiDiagnostic<*>,

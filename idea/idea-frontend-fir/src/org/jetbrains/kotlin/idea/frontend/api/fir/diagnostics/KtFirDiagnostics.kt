@@ -532,6 +532,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actualType: KtType
     }
 
+    abstract class NullForNonnullType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = NullForNonnullType::class
+    }
+
     abstract class InapplicableLateinitModifier : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = InapplicableLateinitModifier::class
         abstract val reason: String

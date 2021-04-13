@@ -30,7 +30,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirTypeParameterInQualifiedAccessChecker,
             FirSealedClassConstructorCallChecker,
             FirUninitializedEnumChecker,
-        FirFunInterfaceConstructorReferenceChecker,
+            FirFunInterfaceConstructorReferenceChecker,
     )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
@@ -46,7 +46,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
         get() = setOf(
-            FirValReassignmentViaBackingFieldChecker
+            FirValReassignmentViaBackingFieldChecker,
+            FirAssignmentTypeMismatchChecker
         )
 
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker>

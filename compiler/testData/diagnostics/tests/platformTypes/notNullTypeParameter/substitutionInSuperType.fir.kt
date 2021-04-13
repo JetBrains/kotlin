@@ -33,9 +33,9 @@ class C2 : A<String?>() {
 }
 
 fun test() {
-    B1().bar(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
-    B2().bar(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
+    B1().bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    B2().bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    C1().bar(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
+    C1().bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
 

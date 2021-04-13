@@ -22,6 +22,6 @@ val doubleList: List<Double?> = null!!
 
 fun main() {
     Test.rawField.foo("", <!ARGUMENT_TYPE_MISMATCH!>doubleList<!>)
-    Test.rawField.foo(<!ARGUMENT_TYPE_MISMATCH!>null<!>, <!ARGUMENT_TYPE_MISMATCH!>doubleList<!>)
-    Test.DerivedRawA().foo(<!ARGUMENT_TYPE_MISMATCH!>null<!>, <!ARGUMENT_TYPE_MISMATCH!>doubleList<!>)
+    Test.rawField.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!ARGUMENT_TYPE_MISMATCH!>doubleList<!>)
+    Test.DerivedRawA().foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!ARGUMENT_TYPE_MISMATCH!>doubleList<!>)
 }

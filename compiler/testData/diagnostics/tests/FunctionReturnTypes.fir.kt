@@ -30,7 +30,7 @@ fun foo(expr: StringBuilder): Int {
 
 fun unitShort() : Unit = Unit
 fun unitShortConv() : Unit = <!RETURN_TYPE_MISMATCH!>1<!>
-fun unitShortNull() : Unit = <!RETURN_TYPE_MISMATCH!>null<!>
+fun unitShortNull() : Unit = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
 fun intEmpty() : Int {}
 fun intShortInfer() = 1

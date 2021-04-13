@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isComponentCall
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.typeContext
@@ -43,7 +45,11 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
                 // TODO: remove after fix of KT-45989
                 return
             }
-            reporter.report(INITIALIZER_TYPE_MISMATCH.on(source, propertyType, expressionType), context)
+            if (initializer.isNullLiteral && propertyType.nullability == ConeNullability.NOT_NULL) {
+                reporter.reportOn(initializer.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
+            } else {
+                reporter.report(INITIALIZER_TYPE_MISMATCH.on(source, propertyType, expressionType), context)
+            }
         }
     }
 }

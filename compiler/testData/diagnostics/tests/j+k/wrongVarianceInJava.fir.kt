@@ -20,5 +20,5 @@ class In<in F> {
 
 fun test() {
     A.foo().x() checkType { _<Any?>() }
-    A.bar().y(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
+    A.bar().y(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }

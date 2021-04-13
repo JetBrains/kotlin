@@ -27,7 +27,7 @@ fun foo(expr: StringBuilder): Int {
 
 fun unitShort() : Unit = Unit
 fun unitShortConv() : Unit = <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/Unit, actual kotlin/Int">1</error>
-fun unitShortNull() : Unit = <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/Unit, actual kotlin/Nothing?">null</error>
+fun unitShortNull() : Unit = <error descr="[NULL_FOR_NONNULL_TYPE] ">null</error>
 
 fun intEmpty() : Int {}
 fun intShortInfer() = 1

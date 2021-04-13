@@ -6,7 +6,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(): Boolean? {
-    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsNotNull() implies (<!ARGUMENT_TYPE_MISMATCH!>null<!>)<!> }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsNotNull() implies (<!NULL_FOR_NONNULL_TYPE!>null<!>)<!> }
     return true
 }
 

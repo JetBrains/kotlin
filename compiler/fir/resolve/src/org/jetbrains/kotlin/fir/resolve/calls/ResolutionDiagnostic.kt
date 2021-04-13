@@ -92,3 +92,7 @@ class ArgumentTypeMismatch(
     val actualType: ConeKotlinType,
     val argument: FirExpression
 ) : ResolutionDiagnostic(INAPPLICABLE)
+
+class NullForNotNullType(
+    val argument: FirExpression
+) : ResolutionDiagnostic(INAPPLICABLE)
