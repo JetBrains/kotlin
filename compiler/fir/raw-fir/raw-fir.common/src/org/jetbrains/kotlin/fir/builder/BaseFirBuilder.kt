@@ -147,11 +147,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return result
     }
 
-    /**** Common utils ****/
-    companion object {
-        val ANONYMOUS_OBJECT_NAME = Name.special("<anonymous>")
-    }
-
     fun FirExpression.toReturn(
         baseSource: FirSourceElement? = source,
         labelName: String? = null,
@@ -1205,5 +1200,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         } finally {
             context.forcedElementSourceKind = currentForced
         }
+    }
+
+    /**** Common utils ****/
+    companion object {
+        val ANONYMOUS_OBJECT_NAME = Name.special("<anonymous>")
+
+        val DESTRUCTURING_NAME = Name.special("<destruct>")
     }
 }

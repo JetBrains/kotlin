@@ -151,7 +151,7 @@ class ExpressionsConverter(
             for (valueParameter in valueParameterList) {
                 val multiDeclaration = valueParameter.destructuringDeclaration
                 valueParameters += if (multiDeclaration != null) {
-                    val name = Name.special("<destruct>")
+                    val name = DESTRUCTURING_NAME
                     val multiParameter = buildValueParameter {
                         source = valueParameter.firValueParameter.source
                         session = baseSession
@@ -975,7 +975,7 @@ class ExpressionsConverter(
                     val multiDeclaration = parameter!!.destructuringDeclaration
                     val firLoopParameter = generateTemporaryVariable(
                         this@ExpressionsConverter.baseSession, null,
-                        if (multiDeclaration != null) Name.special("<destruct>") else parameter!!.firValueParameter.name,
+                        if (multiDeclaration != null) DESTRUCTURING_NAME else parameter!!.firValueParameter.name,
                         buildFunctionCall {
                             calleeReference = buildSimpleNamedReference { name = Name.identifier("next") }
                             explicitReceiver = generateResolvedAccessExpression(null, iteratorVal)

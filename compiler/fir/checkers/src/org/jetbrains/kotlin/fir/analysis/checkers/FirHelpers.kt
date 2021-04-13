@@ -420,9 +420,6 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
 
 fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
 
-val FirProperty.isDestructuringDeclaration
-    get() = name.asString() == "<destruct>"
-
 val FirExpression.isComponentCall
     get() = this is FirComponentCall
 

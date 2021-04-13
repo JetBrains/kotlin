@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isComponentCall
-import org.jetbrains.kotlin.fir.analysis.checkers.isDestructuringDeclaration
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_TYPE_MISMATCH
@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val initializer = declaration.initializer ?: return
-        if (declaration.isDestructuringDeclaration) return
+        val source = declaration.source ?: return
+        if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) return
         if (initializer.isComponentCall) return
         if (declaration.returnTypeRef.source?.kind != FirRealSourceElementKind) return
         val propertyType = declaration.returnTypeRef.coneType
@@ -40,7 +41,6 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
             if (propertyType.isExtensionFunctionType || expressionType.isExtensionFunctionType) {
                 return
             }
-            val source = declaration.source ?: return
             reporter.report(INITIALIZER_TYPE_MISMATCH.on(source, propertyType, expressionType), context)
         }
     }

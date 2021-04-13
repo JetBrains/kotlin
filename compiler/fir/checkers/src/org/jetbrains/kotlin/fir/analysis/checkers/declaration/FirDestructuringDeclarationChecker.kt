@@ -33,9 +33,6 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
         val source = declaration.source ?: return
         // val (...) = `destructuring_declaration`
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
-            assert(declaration.name.isSpecial && declaration.name.asString() == "<destruct>") {
-                "Unexpected name: ${declaration.name.asString()} for destructuring declaration"
-            }
             checkInitializer(source, declaration.initializer, reporter, context)
             return
         }

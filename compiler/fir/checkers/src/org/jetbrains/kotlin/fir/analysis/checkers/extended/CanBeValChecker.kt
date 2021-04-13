@@ -37,8 +37,9 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         graph.traverse(TraverseDirection.Forward, reporterVisitor)
 
         for (property in unprocessedProperties) {
-            if (property.fir.source is FirFakeSourceElement<*>) continue
-            if (property.isDestructuring) continue
+            val source = property.fir.source
+            if (source is FirFakeSourceElement<*>) continue
+            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) continue
             propertiesCharacteristics[property] = EventOccurrencesRange.ZERO
         }
 
@@ -48,7 +49,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
 
         for ((symbol, value) in propertiesCharacteristics) {
             val source = symbol.fir.source
-            if (symbol.isDestructuring) {
+            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
                 lastDestructuringSource = source
                 lastDestructuredVariables = symbol.getDestructuringChildrenCount() ?: continue
                 destructuringCanBeVal = true
@@ -108,9 +109,6 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
             it?.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
         }
     }
-
-    private val FirPropertySymbol.isDestructuring
-        get() = callableId.callableName.asString() == "<destruct>"
 
     private val canBeValOccurrenceRanges = setOf(
         EventOccurrencesRange.EXACTLY_ONCE,
