@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyScopedTypeParametersResolver
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -19,13 +18,13 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 class DeclarationStubGeneratorImpl(
     moduleDescriptor: ModuleDescriptor,
     symbolTable: SymbolTable,
-    languageVersionSettings: LanguageVersionSettings,
+    irBuiltins: IrBuiltIns,
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
-) : DeclarationStubGenerator(moduleDescriptor, symbolTable, extensions) {
+) : DeclarationStubGenerator(moduleDescriptor, symbolTable, irBuiltins, extensions) {
     override val typeTranslator: TypeTranslator =
         TypeTranslatorImpl(
             lazyTable,
-            languageVersionSettings,
+            irBuiltins.languageVersionSettings,
             moduleDescriptor,
             { LazyScopedTypeParametersResolver(lazyTable) },
             true,
@@ -42,7 +41,7 @@ fun generateTypicalIrProviderList(
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ): List<IrProvider> {
     val stubGenerator = DeclarationStubGeneratorImpl(
-        moduleDescriptor, symbolTable, irBuiltins.languageVersionSettings, extensions
+        moduleDescriptor, symbolTable, irBuiltins, extensions
     )
     return listOfNotNull(deserializer, stubGenerator)
 }

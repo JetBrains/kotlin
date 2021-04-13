@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.name.Name
@@ -48,7 +49,13 @@ class IrLazyFunction(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
-    override var body: IrBody? = null
+    override var body: IrBody? by lazyVar {
+        if (!isInline) return@lazyVar null
+        val toplevel = getToplevel()
+        val loaded = (toplevel as? DeserializableClass)?.loadIR() ?: false
+        // Underlying field has been set by IR loading
+        if (loaded) body else null
+    }
 
     override var returnType: IrType by createReturnType()
 
@@ -98,5 +105,13 @@ class IrLazyFunction(
 
     init {
         symbol.bind(this)
+    }
+
+    private fun getToplevel(): IrDeclaration {
+        var current: IrDeclarationParent = parent
+        while (current is IrDeclaration && current.parent !is IrPackageFragment) {
+            current = current.parent
+        }
+        return current as IrDeclaration
     }
 }

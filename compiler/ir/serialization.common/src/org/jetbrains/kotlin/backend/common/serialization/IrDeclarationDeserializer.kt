@@ -66,7 +66,7 @@ class IrDeclarationDeserializer(
     private val symbolTable: SymbolTable,
     val irFactory: IrFactory,
     private val fileReader: IrLibraryFile,
-    private val file: IrFile,
+    private val parent: IrDeclarationParent,
     val allowErrorNodes: Boolean,
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
@@ -166,7 +166,7 @@ class IrDeclarationDeserializer(
         }
     }
 
-    private var currentParent: IrDeclarationParent = file
+    private var currentParent: IrDeclarationParent = parent
 
     private inline fun <T : IrDeclarationParent> T.usingParent(block: T.() -> Unit): T =
         this.apply {
@@ -298,7 +298,7 @@ class IrDeclarationDeserializer(
             }
         }
 
-    private fun deserializeIrClass(proto: ProtoClass): IrClass =
+    fun deserializeIrClass(proto: ProtoClass): IrClass =
         withDeserializedIrDeclarationBase(proto.base) { symbol, signature, startOffset, endOffset, origin, fcode ->
             val flags = ClassFlags.decode(fcode)
 

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -74,13 +75,19 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
         else
             IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
-    override fun generateFacadeClass(irFactory: IrFactory, source: DeserializedContainerSource): IrClass? {
-        if (!generateFacades || source !is JvmPackagePartSource) return null
-        val facadeName = source.facadeClassName ?: source.className
-        return irFactory.buildClass {
-            origin = if (source.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS
-            name = facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName()
-        }.also {
+    override fun generateFacadeClass(
+        irFactory: IrFactory,
+        deserializedSource: DeserializedContainerSource,
+        stubGenerator: DeclarationStubGenerator
+    ): IrClass? {
+        if (!generateFacades || deserializedSource !is JvmPackagePartSource) return null
+        val facadeName = deserializedSource.facadeClassName ?: deserializedSource.className
+        return JvmFileFacadeClass(
+            if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
+            facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
+            deserializedSource,
+            stubGenerator
+        ).also {
             it.createParameterDeclarations()
             classNameOverride[it] = facadeName
         }

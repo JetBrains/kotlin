@@ -85,7 +85,7 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         val stubGenerator = DeclarationStubGeneratorImpl(
             irModule.descriptor,
             SymbolTable(signaturer, IrFactoryImpl), // TODO
-            module.languageVersionSettings
+            irModule.irBuiltins
         )
 
         val baseFile = testServices.moduleStructure.originalTestDataFiles.first()
