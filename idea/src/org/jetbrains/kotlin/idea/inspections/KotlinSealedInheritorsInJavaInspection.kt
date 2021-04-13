@@ -43,6 +43,7 @@ class KotlinSealedInheritorsInJavaInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : JavaElementVisitor() {
             override fun visitClass(aClass: PsiClass?) {
+                if (aClass is PsiTypeParameter) return
                 aClass?.listSealedParentReferences()?.forEach {
                     holder.registerProblem(
                         it, KotlinBundle.message("inheritance.of.kotlin.sealed", 0.takeIf { aClass.isInterface } ?: 1),

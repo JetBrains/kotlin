@@ -46,7 +46,7 @@
 
   <problem>
     <file>JavaTriesToExtendKotlinSealed.java</file>
-    <line>12</line>
+    <line>14</line>
     <module>testKotlinSealedInJavaTest_KotlinSealedInJavaTest</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="class" FQNAME="JavaTriesToExtendKotlinSealed$1" />
@@ -59,7 +59,7 @@
 
   <problem>
     <file>JavaTriesToExtendKotlinSealed.java</file>
-    <line>13</line>
+    <line>15</line>
     <module>testKotlinSealedInJavaTest_KotlinSealedInJavaTest</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="class" FQNAME="JavaTriesToExtendKotlinSealed$2" />
