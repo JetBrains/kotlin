@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiJavaModule
@@ -427,6 +428,9 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyGenerationFinished()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             outputs[module] = generationState
+
+            PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+            Disposer.dispose(environment.project)
         }
 
         val mainClassFqName: FqName? =
