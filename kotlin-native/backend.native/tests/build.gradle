@@ -4249,6 +4249,7 @@ standaloneTest("interop_opengl_teapot") {
 
 if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_smoke") {
+        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         goldValue = "84\nFoo\nDeallocated\n" +
                 "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
                 "true\ntrue\n" +
@@ -4283,7 +4284,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
-        enabled = !isExperimentalMM  // Experimental MM does not support Obj-C weaks yet.
+        enabled = !isExperimentalMM  // Experimental MM does not support Obj-C weaks and thread state switching for ObjC interop yet.
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']
@@ -4406,7 +4407,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_illegal_sharing_with_weak") {
-        enabled = !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
+        enabled = !isExperimentalMM  // Experimental MM doesn't support multiple mutators and thread state switching for ObjC interop yet.
         source = "interop/objc/illegal_sharing_with_weak/main.kt"
         interop = 'objc_illegal_sharing_with_weak'
 
@@ -4419,7 +4420,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_kt42172") {
-        enabled = !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
+        enabled = !isExperimentalMM  // Experimental MM doesn't support multiple mutators and thread state switching for ObjC interop yet.
         source = "interop/objc/kt42172/main.kt"
         interop = "objc_kt42172"
         flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
@@ -4470,7 +4471,7 @@ standaloneTest("interop_zlib") {
 
 standaloneTest("interop_objc_illegal_sharing") {
     disabled = !isAppleTarget(project) ||
-        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators and thread state switching for ObjC interop yet.
     source = "interop/objc/illegal_sharing.kt"
     UtilsKt.dependsOnPlatformLibs(it)
     expectedExitStatusChecker = { it != 0 }
@@ -4744,7 +4745,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
 
 if (isAppleTarget(project)) {
     frameworkTest('testObjCExport') {
-        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks yet.
+        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks and thread state switching for ObjC interop yet.
         final String frameworkName = 'Kt'
         final String dir = "$testOutputFramework/testObjCExport"
         final File lazyHeader = file("$dir/$target-lazy.h")
@@ -4793,7 +4794,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest('testObjCExportNoGenerics') {
-        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks yet.
+        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks and thread state switching for ObjC interop yet.
         final String frameworkName = 'KtNoGenerics'
         final String frameworkArtifactName = 'Kt'
         final String dir = "$testOutputFramework/testObjCExportNoGenerics"
@@ -4846,7 +4847,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest('testObjCExportStatic') {
-        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks yet.
+        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks and thread state switching for ObjC interop yet.
         final String frameworkName = 'KtStatic'
         final String frameworkArtifactName = 'Kt'
         final String libraryName = frameworkName + "Library"
