@@ -1,5 +1,5 @@
 FILE: eqNotEq.kt
-    public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Unit|
+    public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Boolean|
         [R|Contract description]
          <
             Returns(TRUE) -> x != null

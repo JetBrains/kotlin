@@ -1,11 +1,11 @@
 import kotlin.contracts.*
 
-fun checkIsString(x: Any) {
+fun checkIsString(x: Any): Boolean {
     contract {
         returns(true) implies (x is String)
         returns(false) implies (x !is String)
     }
-    return <!RETURN_TYPE_MISMATCH!>x is String<!>
+    return x is String
 }
 
 fun test(x: Any) {
