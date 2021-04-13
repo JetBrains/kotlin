@@ -34,14 +34,13 @@ object FirAnonymousFunctionChecker : FirExpressionChecker<FirStatement>() {
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
-        expression.source?.let { source ->
-            source.treeStructure.typeParametersList(source.lighterASTNode)?.let { typeParamsNode ->
-                reporter.reportOn(
-                    typeParamsNode.toFirLightSourceElement(source.treeStructure),
-                    FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
-                    context
-                )
-            }
+        val source = expression.source ?: return
+        source.treeStructure.typeParametersList(source.lighterASTNode)?.let { typeParamsNode ->
+            reporter.reportOn(
+                typeParamsNode.toFirLightSourceElement(source.treeStructure),
+                FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
+                context
+            )
         }
     }
 }

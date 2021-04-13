@@ -192,4 +192,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.LONG_LITERAL_SUFFIX,
         PositioningStrategies.LONG_LITERAL_SUFFIX
     )
+
+    val REIFIED_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.REIFIED_MODIFIER,
+        PositioningStrategies.REIFIED_MODIFIER
+    )
 }

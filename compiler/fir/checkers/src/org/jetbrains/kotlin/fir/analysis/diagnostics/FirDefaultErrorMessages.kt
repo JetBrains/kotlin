@@ -81,6 +81,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_PAIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_AS_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
@@ -520,6 +521,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
                 "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause"
             )
+
+            map.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound")
 
             // Reflection
             map.put(

@@ -542,6 +542,9 @@ object LightTreePositioningStrategies {
 
     val LONG_LITERAL_SUFFIX = object : LightTreePositioningStrategy() {
     }
+
+    val REIFIED_MODIFIER: LightTreePositioningStrategy =
+        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.REIFIED_KEYWORD))
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
@@ -735,6 +738,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(
     }
     return null
 }
+
+internal fun FlyweightCapableTreeStructure<LighterASTNode>.getAncestors(node: LighterASTNode): Sequence<LighterASTNode> =
+    generateSequence(getParent(node)) { getParent(it) }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.firstChild(node: LighterASTNode): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode>>()

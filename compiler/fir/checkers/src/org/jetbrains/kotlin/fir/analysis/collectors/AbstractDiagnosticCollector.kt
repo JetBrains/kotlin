@@ -92,7 +92,7 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
-        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
+        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
             withSuppressedDiagnostics(typeAlias) {
                 visitWithDeclaration(typeAlias)
             }

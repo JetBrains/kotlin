@@ -236,13 +236,14 @@ object FirErrors {
     val CONFLICTING_UPPER_BOUNDS by error1<FirSourceElement, KtNamedDeclaration, FirTypeParameterSymbol>()
     val NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER by error2<FirSourceElement, KtSimpleNameExpression, Name, FirDeclaration>()
     val BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED by error0<FirSourceElement, KtTypeReference>()
-    val REIFIED_TYPE_PARAMETER_NO_INLINE by error0<FirSourceElement, PsiElement>()
+    val REIFIED_TYPE_PARAMETER_NO_INLINE by error0<FirSourceElement, KtTypeParameter>(SourceElementPositioningStrategies.REIFIED_MODIFIER)
     val TYPE_PARAMETERS_NOT_ALLOWED by error0<FirSourceElement, KtDeclaration>()
     val TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER by error0<FirSourceElement, KtTypeParameter>()
     val RETURN_TYPE_MISMATCH by error2<FirSourceElement, KtExpression, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
     val CYCLIC_GENERIC_UPPER_BOUND by error0<FirSourceElement, PsiElement>()
     val DEPRECATED_TYPE_PARAMETER_SYNTAX by error0<FirSourceElement, KtTypeParameterList>()
     val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning0<FirSourceElement, KtTypeParameter>()
+    val DYNAMIC_UPPER_BOUND by error0<FirSourceElement, KtTypeReference>()
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<FirSourceElement, KtExpression, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

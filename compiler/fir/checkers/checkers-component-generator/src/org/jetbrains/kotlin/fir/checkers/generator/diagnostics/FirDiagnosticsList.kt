@@ -320,7 +320,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED by error<FirSourceElement, KtTypeReference>()
 
-        val REIFIED_TYPE_PARAMETER_NO_INLINE by error<FirSourceElement, PsiElement>()
+        val REIFIED_TYPE_PARAMETER_NO_INLINE by error<FirSourceElement, KtTypeParameter>(PositioningStrategy.REIFIED_MODIFIER)
 
         val TYPE_PARAMETERS_NOT_ALLOWED by error<FirSourceElement, KtDeclaration>()
 
@@ -336,6 +336,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val DEPRECATED_TYPE_PARAMETER_SYNTAX by error<FirSourceElement, KtTypeParameterList>()
 
         val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning<FirSourceElement, KtTypeParameter>()
+        
+        val DYNAMIC_UPPER_BOUND by error<FirSourceElement, KtTypeReference>()
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {
