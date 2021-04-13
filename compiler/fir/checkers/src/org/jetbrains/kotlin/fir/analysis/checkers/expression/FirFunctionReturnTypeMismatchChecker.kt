@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
@@ -25,7 +26,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         val resultExpression = expression.result
         if (resultExpression is FirWhenExpression && !resultExpression.isExhaustive) return
 
-        val functionReturnType = targetElement.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
+        val functionReturnType = targetElement.returnTypeRef.coneType
         val typeContext = context.session.typeContext
         val returnExpressionType = resultExpression.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
 

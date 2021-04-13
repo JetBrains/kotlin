@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isComponentCall
 import org.jetbrains.kotlin.fir.analysis.checkers.isDestructuringDeclaration
@@ -22,7 +23,8 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
         val initializer = declaration.initializer ?: return
         if (declaration.isDestructuringDeclaration) return
         if (initializer.isComponentCall) return
-        val propertyType = declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
+        if (declaration.returnTypeRef.source?.kind != FirRealSourceElementKind) return
+        val propertyType = declaration.returnTypeRef.coneType
         val expressionType = initializer.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
         val typeContext = context.session.typeContext
 
