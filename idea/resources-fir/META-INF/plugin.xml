@@ -73,6 +73,10 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <beforeResolveHighlightingVisitor implementation="org.jetbrains.kotlin.idea.fir.highlighter.visitors.DeclarationHighlightingExtension"/>
+    <binaryExtension implementation="org.jetbrains.kotlin.idea.util.JavaClassBinary"/>
+    <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinBuiltInBinary"/>
+    <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinModuleBinary"/>
+    <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinJsMetaBinary"/>
   </extensions>
 
   <actions>

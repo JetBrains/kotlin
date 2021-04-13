@@ -1,1 +1,1 @@
-Value write 11 Foo.X = 1
+Value write 10 Foo.X = 1

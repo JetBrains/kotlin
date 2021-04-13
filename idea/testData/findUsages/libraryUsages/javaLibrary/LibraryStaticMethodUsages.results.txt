@@ -1,1 +1,1 @@
-Function call 11 Foo.baz(1)
+Function call 10 Foo.baz(1)
