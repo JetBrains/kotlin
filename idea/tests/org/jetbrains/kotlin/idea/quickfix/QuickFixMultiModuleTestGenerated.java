@@ -416,6 +416,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createActual/enum/");
         }
 
+        @TestMetadata("expectSealedInCommonWhen")
+        public void testExpectSealedInCommonWhen() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/expectSealedInCommonWhen/");
+        }
+
         @TestMetadata("function")
         public void testFunction() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createActual/function/");
@@ -474,6 +479,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         @TestMetadata("sealed")
         public void testSealed() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createActual/sealed/");
+        }
+
+        @TestMetadata("sealedInCommonWhen")
+        public void testSealedInCommonWhen() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/sealedInCommonWhen/");
         }
 
         @TestMetadata("sealedSubclass")

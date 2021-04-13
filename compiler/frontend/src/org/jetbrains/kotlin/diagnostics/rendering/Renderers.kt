@@ -23,13 +23,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.moduleInfo
 import org.jetbrains.kotlin.analyzer.unwrapPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.cfg.hasUnknown
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isCommon
@@ -697,9 +695,12 @@ object Renderers {
 
     private val WHEN_MISSING_LIMIT = 7
 
+    private val List<WhenMissingCase>.assumesElseBranchOnly: Boolean
+        get() = any { it == WhenMissingCase.Unknown || it is WhenMissingCase.ConditionTypeIsExpect }
+
     @JvmField
     val RENDER_WHEN_MISSING_CASES = Renderer<List<WhenMissingCase>> {
-        if (!it.hasUnknown) {
+        if (!it.assumesElseBranchOnly) {
             val list = it.joinToString(", ", limit = WHEN_MISSING_LIMIT) { "'$it'" }
             val branches = if (it.size > 1) "branches" else "branch"
             "$list $branches or 'else' branch instead"
