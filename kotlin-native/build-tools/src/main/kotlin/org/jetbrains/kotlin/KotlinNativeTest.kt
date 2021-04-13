@@ -474,7 +474,7 @@ open class KonanDynamicTest : KonanStandaloneTest() {
             ) + clangFlags
             standardOutput = log
             errorOutput = log
-            isIgnoreExitValue = true
+            isIgnoreExitValue = false
         })
         log.toString("UTF-8").also {
             project.file("$executable.compilation.log").writeText(it)
