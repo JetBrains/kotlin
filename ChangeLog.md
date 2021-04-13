@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 1.4.32
+
+### IDE
+
+- [`KT-43824`](https://youtrack.jetbrains.com/issue/KT-43824) KtLightClassForSourceDeclaration#isInheritor works in a different way than java implementation
+- [`KT-45287`](https://youtrack.jetbrains.com/issue/KT-45287) LightClasses: `KtLightSimpleModifierList` is no more a parent of `KtLightAnnotationForSourceEntry`
+- [`KT-45291`](https://youtrack.jetbrains.com/issue/KT-45291) LightClasses: can't get annotations for constructor val-parameter
+- [`KT-45417`](https://youtrack.jetbrains.com/issue/KT-45417) ULC leakage of primitive type annotations
+
+### Tools. CLI
+
+- [`KT-44758`](https://youtrack.jetbrains.com/issue/KT-44758) kotlin-compiler-embeddable dependency includes unshaded `fastutil` package
+- [`KT-45007`](https://youtrack.jetbrains.com/issue/KT-45007) Concurrent Kotlin script compilation/execution results in NullPointerException in KeyedExtensionCollector.getPoint()
+
+
 ## 1.4.31
 
 
