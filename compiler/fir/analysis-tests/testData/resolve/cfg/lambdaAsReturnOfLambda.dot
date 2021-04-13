@@ -5,26 +5,19 @@ digraph lambdaAsReturnOfLambda_kt {
 
     subgraph cluster_0 {
         color=red
-        14 [label="Enter function getter" style="filled" fillcolor=red];
-        15 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    14 -> {15};
-
-    subgraph cluster_1 {
-        color=red
-        16 [label="Enter property" style="filled" fillcolor=red];
-        17 [label="Postponed enter to lambda"];
-        subgraph cluster_2 {
+        14 [label="Enter property" style="filled" fillcolor=red];
+        15 [label="Postponed enter to lambda"];
+        subgraph cluster_1 {
             color=blue
             0 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-            subgraph cluster_3 {
+            subgraph cluster_2 {
                 color=blue
                 1 [label="Enter block"];
                 2 [label="Postponed enter to lambda"];
-                subgraph cluster_4 {
+                subgraph cluster_3 {
                     color=blue
                     8 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                    subgraph cluster_5 {
+                    subgraph cluster_4 {
                         color=blue
                         9 [label="Enter block"];
                         10 [label="Access variable R|<local>/foo|"];
@@ -43,15 +36,15 @@ digraph lambdaAsReturnOfLambda_kt {
             }
             7 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
-        18 [label="Postponed exit from lambda"];
-        19 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(...)"];
-        20 [label="Exit property" style="filled" fillcolor=red];
+        16 [label="Postponed exit from lambda"];
+        17 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(...)"];
+        18 [label="Exit property" style="filled" fillcolor=red];
     }
+    14 -> {15};
+    15 -> {16 0};
+    15 -> {0} [style=dashed];
     16 -> {17};
-    17 -> {18 0};
-    17 -> {0} [style=dashed];
-    18 -> {19};
-    19 -> {20};
+    17 -> {18};
     0 -> {1};
     1 -> {2};
     2 -> {3 8};
@@ -67,39 +60,39 @@ digraph lambdaAsReturnOfLambda_kt {
     11 -> {12};
     12 -> {13};
 
-    subgraph cluster_6 {
+    subgraph cluster_5 {
         color=red
-        21 [label="Enter function bar" style="filled" fillcolor=red];
-        subgraph cluster_7 {
+        19 [label="Enter function bar" style="filled" fillcolor=red];
+        subgraph cluster_6 {
             color=blue
-            22 [label="Enter block"];
-            23 [label="Exit block"];
+            20 [label="Enter block"];
+            21 [label="Exit block"];
         }
-        24 [label="Exit function bar" style="filled" fillcolor=red];
+        22 [label="Exit function bar" style="filled" fillcolor=red];
     }
+    19 -> {20};
+    20 -> {21};
     21 -> {22};
-    22 -> {23};
-    23 -> {24};
 
-    subgraph cluster_8 {
+    subgraph cluster_7 {
         color=red
-        25 [label="Enter function run" style="filled" fillcolor=red];
-        subgraph cluster_9 {
+        23 [label="Enter function run" style="filled" fillcolor=red];
+        subgraph cluster_8 {
             color=blue
-            26 [label="Enter block"];
-            27 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
-            28 [label="Jump: ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
-            29 [label="Stub" style="filled" fillcolor=gray];
-            30 [label="Exit block" style="filled" fillcolor=gray];
+            24 [label="Enter block"];
+            25 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
+            26 [label="Jump: ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
+            27 [label="Stub" style="filled" fillcolor=gray];
+            28 [label="Exit block" style="filled" fillcolor=gray];
         }
-        31 [label="Exit function run" style="filled" fillcolor=red];
+        29 [label="Exit function run" style="filled" fillcolor=red];
     }
+    23 -> {24};
+    24 -> {25};
     25 -> {26};
-    26 -> {27};
-    27 -> {28};
-    28 -> {31};
+    26 -> {29};
+    26 -> {27} [style=dotted];
+    27 -> {28} [style=dotted];
     28 -> {29} [style=dotted];
-    29 -> {30} [style=dotted];
-    30 -> {31} [style=dotted];
 
 }

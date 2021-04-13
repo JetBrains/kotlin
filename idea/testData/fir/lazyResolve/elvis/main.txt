@@ -5,7 +5,7 @@ FILE: main.kt
         }
 
         public final [STATUS] val value: R|kotlin/String?| = R|<local>/value|
-            [STATUS] public get(): R|kotlin/String?|
+            [BODY_RESOLVE] public get(): R|kotlin/String?|
 
         public final [BODY_RESOLVE] fun foo(): R|kotlin/String| {
             ^foo this@R|elvis/WithElvis|.R|elvis/WithElvis.value| ?: String()

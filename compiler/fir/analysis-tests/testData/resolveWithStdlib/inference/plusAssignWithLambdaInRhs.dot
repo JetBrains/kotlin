@@ -58,8 +58,8 @@ digraph plusAssignWithLambdaInRhs_kt {
     }
     16 -> {17} [color=green];
     17 -> {18} [style=dotted];
-    17 -> {24} [color=green];
-    17 -> {24} [style=dashed];
+    17 -> {22} [color=green];
+    17 -> {22} [style=dashed];
 
     subgraph cluster_5 {
         color=red
@@ -72,97 +72,90 @@ digraph plusAssignWithLambdaInRhs_kt {
 
     subgraph cluster_6 {
         color=red
-        22 [label="Enter function getter" style="filled" fillcolor=red];
-        23 [label="Exit function getter" style="filled" fillcolor=red];
+        22 [label="Enter property" style="filled" fillcolor=red];
+        23 [label="Access variable R|<local>/executor|"];
+        24 [label="Exit property" style="filled" fillcolor=red];
     }
     22 -> {23};
+    23 -> {24};
+    24 -> {18} [color=green];
 
     subgraph cluster_7 {
         color=red
-        24 [label="Enter property" style="filled" fillcolor=red];
-        25 [label="Access variable R|<local>/executor|"];
-        26 [label="Exit property" style="filled" fillcolor=red];
-    }
-    24 -> {25};
-    25 -> {26};
-    26 -> {18} [color=green];
-
-    subgraph cluster_8 {
-        color=red
-        27 [label="Enter function postpone" style="filled" fillcolor=red];
-        subgraph cluster_9 {
+        25 [label="Enter function postpone" style="filled" fillcolor=red];
+        subgraph cluster_8 {
             color=blue
-            28 [label="Enter block"];
-            29 [label="Function call: R|kotlin/collections/mutableListOf|<R|() -> kotlin/Unit|>()"];
-            30 [label="Variable declaration: lval queue: R|kotlin/collections/MutableList<kotlin/Function0<kotlin/Unit>>|"];
-            31 [label="Postponed enter to lambda"];
-            subgraph cluster_10 {
+            26 [label="Enter block"];
+            27 [label="Function call: R|kotlin/collections/mutableListOf|<R|() -> kotlin/Unit|>()"];
+            28 [label="Variable declaration: lval queue: R|kotlin/collections/MutableList<kotlin/Function0<kotlin/Unit>>|"];
+            29 [label="Postponed enter to lambda"];
+            subgraph cluster_9 {
                 color=blue
-                38 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                subgraph cluster_11 {
+                36 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_10 {
                     color=blue
-                    39 [label="Enter block"];
-                    40 [label="Access variable R|<local>/queue|"];
-                    41 [label="Postponed enter to lambda"];
-                    subgraph cluster_12 {
+                    37 [label="Enter block"];
+                    38 [label="Access variable R|<local>/queue|"];
+                    39 [label="Postponed enter to lambda"];
+                    subgraph cluster_11 {
                         color=blue
-                        46 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                        subgraph cluster_13 {
+                        44 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        subgraph cluster_12 {
                             color=blue
-                            47 [label="Enter block"];
-                            48 [label="Function call: R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
-                            49 [label="Function call: R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(...)"];
-                            50 [label="Exit block"];
+                            45 [label="Enter block"];
+                            46 [label="Function call: R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
+                            47 [label="Function call: R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(...)"];
+                            48 [label="Exit block"];
                         }
-                        51 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                        49 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
-                    42 [label="Postponed exit from lambda"];
-                    43 [label="Function call: R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(...)"];
-                    44 [label="Exit block"];
+                    40 [label="Postponed exit from lambda"];
+                    41 [label="Function call: R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(...)"];
+                    42 [label="Exit block"];
                 }
-                45 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                43 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            32 [label="Postponed exit from lambda"];
-            33 [label="Function call: R|/A.A|<R|T|>(...)"];
-            34 [label="Jump: ^postpone R|/A.A|<R|T|>(<L> = A@fun <anonymous>(resolve: R|(T) -> kotlin/Unit|): R|kotlin/Unit| <inline=NoInline>  {
+            30 [label="Postponed exit from lambda"];
+            31 [label="Function call: R|/A.A|<R|T|>(...)"];
+            32 [label="Jump: ^postpone R|/A.A|<R|T|>(<L> = A@fun <anonymous>(resolve: R|(T) -> kotlin/Unit|): R|kotlin/Unit| <inline=NoInline>  {
     R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(A@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
         R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
     }
     )
 }
 )"];
-            35 [label="Stub" style="filled" fillcolor=gray];
-            36 [label="Exit block" style="filled" fillcolor=gray];
+            33 [label="Stub" style="filled" fillcolor=gray];
+            34 [label="Exit block" style="filled" fillcolor=gray];
         }
-        37 [label="Exit function postpone" style="filled" fillcolor=red];
+        35 [label="Exit function postpone" style="filled" fillcolor=red];
     }
+    25 -> {26};
+    26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {30};
+    29 -> {30 36};
+    29 -> {36} [style=dashed];
     30 -> {31};
-    31 -> {32 38};
-    31 -> {38} [style=dashed];
-    32 -> {33};
-    33 -> {34};
-    34 -> {37};
+    31 -> {32};
+    32 -> {35};
+    32 -> {33} [style=dotted];
+    33 -> {34} [style=dotted];
     34 -> {35} [style=dotted];
-    35 -> {36} [style=dotted];
-    36 -> {37} [style=dotted];
+    36 -> {37};
+    37 -> {38};
     38 -> {39};
-    39 -> {40};
+    39 -> {44};
+    39 -> {40} [color=red];
+    39 -> {44} [style=dashed];
     40 -> {41};
-    41 -> {46};
-    41 -> {42} [color=red];
-    41 -> {46} [style=dashed];
+    41 -> {42};
     42 -> {43};
-    43 -> {44};
-    44 -> {45};
-    46 -> {51 47};
+    44 -> {49 45};
+    45 -> {46};
+    46 -> {47};
     47 -> {48};
     48 -> {49};
-    49 -> {50};
-    50 -> {51};
-    51 -> {42} [color=green];
-    51 -> {46} [color=green style=dashed];
+    49 -> {40} [color=green];
+    49 -> {44} [color=green style=dashed];
 
 }
