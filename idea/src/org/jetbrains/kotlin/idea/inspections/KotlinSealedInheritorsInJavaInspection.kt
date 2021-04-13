@@ -27,17 +27,14 @@ class KotlinSealedInheritorsInJavaInspection : LocalInspectionTool() {
             return sealedBaseClasses.orEmpty() + sealedBaseInterfaces.orEmpty()
         }
 
-        private fun PsiReferenceList.listSealedMembers(): List<PsiReference>? = referencedTypes
-            ?.filter { it.isKotlinSealed() }
-            ?.mapNotNull { it as? PsiClassReferenceType }
-            ?.map { it.reference }
+        private fun PsiReferenceList.listSealedMembers(): List<PsiReference> = referencedTypes
+            .filter { it.isKotlinSealed() }
+            .mapNotNull { it as? PsiClassReferenceType }
+            .map { it.reference }
 
         private fun PsiClassType.isKotlinSealed(): Boolean = resolve()?.isKotlinSealed() == true
 
         private fun PsiClass.isKotlinSealed(): Boolean = this is KtUltraLightClass && getDescriptor()?.isSealed() == true
-
-        private val PsiClass.abstractionTypeName: String
-            get() = if (isInterface) "interface" else "class"
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
