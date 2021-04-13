@@ -93,6 +93,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("tryFinally10.kt")
+    public void testTryFinally10() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally10.kt");
+    }
+
+    @Test
     @TestMetadata("tryFinally2.kt")
     public void testTryFinally2() throws Exception {
         runTest("compiler/testData/debug/localVariables/tryFinally2.kt");
@@ -114,6 +120,30 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     @TestMetadata("tryFinally5.kt")
     public void testTryFinally5() throws Exception {
         runTest("compiler/testData/debug/localVariables/tryFinally5.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally6.kt")
+    public void testTryFinally6() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally6.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally7.kt")
+    public void testTryFinally7() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally7.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally8.kt")
+    public void testTryFinally8() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally8.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally9.kt")
+    public void testTryFinally9() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally9.kt");
     }
 
     @Test

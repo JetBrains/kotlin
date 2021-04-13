@@ -26,13 +26,9 @@ fun box() {
     val localX = x
 }
 
-// JVM_IR backend correctly gets rid of the `a` local in the finally, but the inliner
-// does not get rid of `b` or the inlining locals.
+// JVM backend has the `a` local covering the finally block. It shouldn't.
 
-// JVM backend does not get rid of `a` and also the inliner does not get rid of `b`
-// or the inlining locals.
-
-// IGNORE_BACKEND: JVM_IR, JVM
+// IGNORE_BACKEND: JVM
 
 // LOCAL VARIABLES
 // test.kt:25 box:

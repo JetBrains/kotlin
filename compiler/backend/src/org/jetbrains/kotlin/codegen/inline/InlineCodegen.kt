@@ -320,8 +320,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
                 val splitBy = SimpleInterval(start.info as LabelNode, extension.finallyIntervalEnd)
                 processor.tryBlocksMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
-
-                //processor.getLocalVarsMetaInfo().splitAndRemoveIntervalsFromCurrents(splitBy);
+                processor.localVarsMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true);
 
                 mark.dropTo()
             }
@@ -330,8 +329,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         }
 
         processor.substituteTryBlockNodes(intoNode)
-
-        //processor.substituteLocalVarTable(intoNode);
+        processor.substituteLocalVarTable(intoNode);
     }
 
     protected abstract fun generateAssertFieldIfNeeded(info: RootInliningContext)

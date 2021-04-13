@@ -87,8 +87,26 @@ class TryWithFinallyInfo(val onExit: IrExpression) : TryInfo()
 class BlockInfo(val parent: BlockInfo? = null) {
     val variables = mutableListOf<VariableInfo>()
     val infos: Stack<ExpressionInfo> = parent?.infos ?: Stack()
+    var activeLocalGaps = 0
 
     fun hasFinallyBlocks(): Boolean = infos.firstIsInstanceOrNull<TryWithFinallyInfo>() != null
+
+    internal inline fun forEachBlockUntil(tryWithFinallyInfo: TryWithFinallyInfo, onBlock: BlockInfo.() -> Unit) {
+        var current: BlockInfo? = this
+        while (current != null && current != tryWithFinallyInfo.blockInfo) {
+            current.onBlock()
+            current = current.parent
+        }
+    }
+
+    internal inline fun localGapScope(tryWithFinallyInfo: TryWithFinallyInfo, block: () -> Unit) {
+        forEachBlockUntil(tryWithFinallyInfo) { ++activeLocalGaps }
+        try {
+            block()
+        } finally {
+            forEachBlockUntil(tryWithFinallyInfo) { --activeLocalGaps }
+        }
+    }
 
     internal inline fun <T : ExpressionInfo, R> withBlock(info: T, f: (T) -> R): R {
         info.blockInfo = this
@@ -411,14 +429,15 @@ class ExpressionCodegen(
         gapStart: Label,
         restartLabel: Label
     ) {
-        var current: BlockInfo? = info
-        while (current != null && current != tryWithFinallyInfo.blockInfo) {
-            for (variable in current.variables) {
-                if (variable.declaration.isVisibleInLVT) {
-                    variable.gaps.add(Gap(gapStart, restartLabel))
+        info.forEachBlockUntil(tryWithFinallyInfo) {
+            // If we are already in a gap do not add a new one.
+            if (activeLocalGaps == 0) {
+                for (variable in variables) {
+                    if (variable.declaration.isVisibleInLVT) {
+                        variable.gaps.add(Gap(gapStart, restartLabel))
+                    }
                 }
             }
-            current = current.parent
         }
     }
 
@@ -1239,21 +1258,21 @@ class ExpressionCodegen(
         nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf()
     ) {
         val gapStart = markNewLinkedLabel()
-
-        finallyDepth++
-        if (isFinallyMarkerRequired()) {
-            generateFinallyMarker(mv, finallyDepth, true)
+        data.localGapScope(tryWithFinallyInfo) {
+            finallyDepth++
+            if (isFinallyMarkerRequired()) {
+                generateFinallyMarker(mv, finallyDepth, true)
+            }
+            tryWithFinallyInfo.onExit.accept(this, data).discard()
+            if (isFinallyMarkerRequired()) {
+                generateFinallyMarker(mv, finallyDepth, false)
+            }
+            finallyDepth--
+            if (tryCatchBlockEnd != null) {
+                tryWithFinallyInfo.onExit.markLineNumber(startOffset = false)
+                mv.goTo(tryCatchBlockEnd)
+            }
         }
-        tryWithFinallyInfo.onExit.accept(this, data).discard()
-        if (isFinallyMarkerRequired()) {
-            generateFinallyMarker(mv, finallyDepth, false)
-        }
-        finallyDepth--
-        if (tryCatchBlockEnd != null) {
-            tryWithFinallyInfo.onExit.markLineNumber(startOffset = false)
-            mv.goTo(tryCatchBlockEnd)
-        }
-
         // Split the local variables for the blocks on the way to the finally. Variables introduced in these blocks do not
         // cover the finally block code.
         val endOfFinallyCode = markNewLinkedLabel()
