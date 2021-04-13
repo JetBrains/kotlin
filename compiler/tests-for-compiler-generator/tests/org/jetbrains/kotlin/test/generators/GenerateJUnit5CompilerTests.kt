@@ -122,6 +122,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
             }
+
+            testClass<AbstractFirDiagnosticsWithLightTreeTest>(
+                suiteTestClassName = "FirOldFrontendDiagnosticsWithLightTreeTestGenerated",
+                annotations = listOf(annotation(Execution::class.java, ExecutionMode.SAME_THREAD))
+            ) {
+                model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
