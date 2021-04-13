@@ -1,5 +1,71 @@
 # CHANGELOG
 
+## 1.5.0-RC
+
+### Compiler
+
+#### New Features
+
+- [`KT-28791`](https://youtrack.jetbrains.com/issue/KT-28791) Kotlin serialization with inline classes
+- [`KT-43920`](https://youtrack.jetbrains.com/issue/KT-43920) Support loading binary Java annotations on fields
+
+#### Performance Improvements
+
+- [`KT-44153`](https://youtrack.jetbrains.com/issue/KT-44153) NI: Low Memory and IntelliJ hangs when quotes in split() are missed
+- [`KT-45410`](https://youtrack.jetbrains.com/issue/KT-45410) JVM / IR: Extreme performance regression on arithmetic operations inside a loop
+
+#### Fixes
+
+- [`KT-35224`](https://youtrack.jetbrains.com/issue/KT-35224) It's possible to pass non-spread arrays after arguments with SAM-conversion
+- [`KT-36853`](https://youtrack.jetbrains.com/issue/KT-36853) IR: UninitializedPropertyAccessException on tailrec with object expression in default argument
+- [`KT-41056`](https://youtrack.jetbrains.com/issue/KT-41056) Increase stub version due to new "contract" keyword
+- [`KT-43887`](https://youtrack.jetbrains.com/issue/KT-43887) Problem with FunctionReferenceLowering$FunctionReferenceBuilder in kotlin native
+- [`KT-44210`](https://youtrack.jetbrains.com/issue/KT-44210) KJS / IR: "AssertionError: Undefined parameter referenced: <this> defined" caused by plus assign operators in build blocks
+- [`KT-44947`](https://youtrack.jetbrains.com/issue/KT-44947) Sealed interfaces: Sealed fun interface leads to "NoWhenBranchMatchedException"
+- [`KT-44993`](https://youtrack.jetbrains.com/issue/KT-44993) JVM IR: VerifyError on getfield with Kotlin generic field and elvis operator
+- [`KT-45139`](https://youtrack.jetbrains.com/issue/KT-45139) Inline class: AssertionError: Expected top level inline class
+- [`KT-45195`](https://youtrack.jetbrains.com/issue/KT-45195) JVM IR: annotation methods are generated as default interface methods if `allopen` is used
+- [`KT-45446`](https://youtrack.jetbrains.com/issue/KT-45446) JVM / IR: NullPointerException caused by unreachable code and comparison
+- [`KT-45721`](https://youtrack.jetbrains.com/issue/KT-45721) JVM / IR: "Unbound symbols not allowed" caused by class reference in sequence lambda
+- [`KT-45853`](https://youtrack.jetbrains.com/issue/KT-45853) JVM / IR: "Accidental override" caused by inheriting Throwable.getCause from Java interface
+- [`KT-45861`](https://youtrack.jetbrains.com/issue/KT-45861) Turning warnings into errors for calls with type parameters annotated by @OnlyInputTypes
+- [`KT-45868`](https://youtrack.jetbrains.com/issue/KT-45868) JVM IR: ClassCastException with SAM function in init block when SAM is generated via invokedynamic
+- [`KT-45920`](https://youtrack.jetbrains.com/issue/KT-45920) JVM IR: "Accidental override" on redefining `get()` in custom Map class
+- [`KT-45963`](https://youtrack.jetbrains.com/issue/KT-45963) JVM / IR: "AbstractMethodError: Receiver class does not define or inherit an implementation of the resolved method" in Dokka tests
+- [`KT-45967`](https://youtrack.jetbrains.com/issue/KT-45967) JVM IR: "IllegalAccessError" with invokedynamic to Java SAM over callable reference to private function
+- [`KT-45982`](https://youtrack.jetbrains.com/issue/KT-45982) Wrong subtyping result on captured types with postponed type variables
+
+### IDE. Inspections and Intentions
+
+- [`KT-38155`](https://youtrack.jetbrains.com/issue/KT-38155) Lift assignment out of 'if' produces type mismatch without manually adding a semicolon
+
+### JavaScript
+
+- [`KT-44796`](https://youtrack.jetbrains.com/issue/KT-44796) KJS / IR: default parameter of function with @JsName leads to "RangeError: Maximum call stack size exceeded"
+
+### Libraries
+
+- [`KT-39177`](https://youtrack.jetbrains.com/issue/KT-39177) Make CharCategory available in common multiplatform code
+- [`KT-43772`](https://youtrack.jetbrains.com/issue/KT-43772) Kotlin/Native unfinished workers detected.
+
+### Tools. Gradle
+
+- [`KT-43605`](https://youtrack.jetbrains.com/issue/KT-43605) Kotlin Gradle Plugin 1.4.20 undeclared system property reads cause problems with Gradle configuration cache enabled
+- [`KT-44462`](https://youtrack.jetbrains.com/issue/KT-44462) Kotlin Gradle plugin creates `compile` configuration with Gradle 7.0
+- [`KT-44949`](https://youtrack.jetbrains.com/issue/KT-44949) Compatibility with Gradle 7.0
+- [`KT-44957`](https://youtrack.jetbrains.com/issue/KT-44957) gradle - target.compilations seems to be deprecated
+- [`KT-45340`](https://youtrack.jetbrains.com/issue/KT-45340) Update minimal supported version of Kotlin Gradle Plugin to 6.1
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-44900`](https://youtrack.jetbrains.com/issue/KT-44900) Support gradle configuration cache with kotlin.multiplatform plugin
+
+### Tools. kapt
+
+- [`KT-43686`](https://youtrack.jetbrains.com/issue/KT-43686) KaptWithoutKotlincTask should use `@CompileClasspath` for `kotlinStdlibClasspath` for cache relocateability.
+- [`KT-44130`](https://youtrack.jetbrains.com/issue/KT-44130) KAPT changes field order in 1.4.30-M1
+
+
 ## 1.5.0-M2
 
 ### Compiler
