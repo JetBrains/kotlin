@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeNullability
+import org.jetbrains.kotlin.fir.utils.WeakPair
 
 class ConeClassLikeTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,
@@ -20,7 +21,7 @@ class ConeClassLikeTypeImpl(
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
 
     // Cached expanded type and the relevant session
-    var cachedExpandedType: Pair<*, ConeClassLikeType>? = null
+    var cachedExpandedType: WeakPair<*, ConeClassLikeType>? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
