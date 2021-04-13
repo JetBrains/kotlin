@@ -577,26 +577,6 @@ allprojects {
     }
 }
 
-if ((gradle.startParameter as? org.gradle.api.internal.StartParameterInternal)?.isConfigurationCache != true) {
-    // TODO: remove it once Gradle is bumped to 6.8:
-    // See https://docs.gradle.org/6.8/release-notes.html#more-cache-hits-when-empty-directories-are-present
-    gradle.buildFinished {
-        val taskGraph = gradle?.taskGraph
-        if (taskGraph != null) {
-            taskGraph.allTasks
-                .filterIsInstance<SourceTask>()
-                .filter { it.didWork }
-                .forEach {
-                    it.source.visit {
-                        if (file.isDirectory && file.listFiles()?.isEmpty() == true) {
-                            logger.warn("Empty source directories may cause build cache misses: " + file.absolutePath)
-                        }
-                    }
-                }
-        }
-    }
-}
-
 gradle.taskGraph.whenReady {
     fun Boolean.toOnOff(): String = if (this) "on" else "off"
     val profile = if (isTeamcityBuild) "CI" else "Local"
