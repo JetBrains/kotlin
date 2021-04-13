@@ -24,6 +24,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         val targetElement = expression.target.labeledElement
         if (targetElement !is FirSimpleFunction) return
         val resultExpression = expression.result
+        // To avoid duplications with NO_ELSE_IN_WHEN or INVALID_IF_AS_EXPRESSION
         if (resultExpression is FirWhenExpression && !resultExpression.isExhaustive) return
 
         val functionReturnType = targetElement.returnTypeRef.coneType

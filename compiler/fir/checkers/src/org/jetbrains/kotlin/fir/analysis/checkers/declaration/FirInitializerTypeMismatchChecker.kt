@@ -36,9 +36,11 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
                 expressionType.nullability == ConeNullability.NOT_NULL
             ) {
                 // val p: Byte = 42 or similar situation
+                // TODO: remove after fix of KT-46047
                 return
             }
             if (propertyType.isExtensionFunctionType || expressionType.isExtensionFunctionType) {
+                // TODO: remove after fix of KT-45989
                 return
             }
             reporter.report(INITIALIZER_TYPE_MISMATCH.on(source, propertyType, expressionType), context)
