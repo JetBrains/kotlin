@@ -24141,6 +24141,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/ranges/contains/inUntilMinValueNonConst.kt");
             }
 
+            @TestMetadata("jvmStaticContainsInObject.kt")
+            public void testJvmStaticContainsInObject() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/jvmStaticContainsInObject.kt");
+            }
+
             @TestMetadata("kt20106.kt")
             public void testKt20106() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/contains/kt20106.kt");
