@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -26,20 +24,11 @@ internal class IdeFirPhaseManager(
         symbol: AbstractFirBasedSymbol<*>,
         requiredPhase: FirResolvePhase
     ) {
-        val result = symbol.fir as FirDeclaration
-        val availablePhase = result.resolvePhase
-        if (availablePhase >= requiredPhase) return
-        // NB: we should use session from symbol here, not transformer session (important for IDE)
-        val provider = result.session.firProvider
-
-        require(provider.isPhasedFirAllowed) {
-            "Incorrect resolvePhase: actual: $availablePhase, expected: $requiredPhase\n For: ${symbol.fir.render()}"
-        }
-
+        val fir = symbol.fir as FirDeclaration
         try {
-            lazyDeclarationResolver.lazyResolveDeclaration(result, cache, requiredPhase, checkPCE = true)
+            lazyDeclarationResolver.lazyResolveDeclaration(fir, cache, requiredPhase, checkPCE = true)
         } catch (e: Throwable) {
-            sessionInvalidator.invalidate((symbol.fir as FirDeclaration).session)
+            sessionInvalidator.invalidate(fir.session)
             throw e
         }
     }
