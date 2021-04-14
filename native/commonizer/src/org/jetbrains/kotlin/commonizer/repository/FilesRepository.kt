@@ -20,7 +20,10 @@ internal class FilesRepository(
     private val librariesByKonanTargets: Map<Set<KonanTarget>, Set<NativeLibrary>> by lazy {
         libraryFiles
             .map(libraryLoader::invoke)
-            .groupBy { library -> library.manifestData.nativeTargets.map(::konanTargetOrThrow).toSet() }
+            .groupBy { library ->
+                library.manifestData.commonizerTarget?.konanTargets
+                    ?: library.manifestData.nativeTargets.map(::konanTargetOrThrow).toSet()
+            }
             .mapValues { (_, list) -> list.toSet() }
     }
 

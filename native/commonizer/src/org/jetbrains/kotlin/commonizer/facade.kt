@@ -105,7 +105,7 @@ private fun serialize(parameters: CommonizerParameters, mergedTree: CirRootNode,
         val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
             SerializedMetadata(header, fragments, fragmentNames)
         }
-        val manifestData = parameters.manifestProvider[target].getManifest(libraryName)
+        val manifestData = parameters.manifestProvider[target].buildManifest(libraryName)
         parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
     }
     parameters.resultsConsumer.targetConsumed(target)

@@ -47,13 +47,13 @@ private fun writeLibrary(
         moduleName = manifestData.uniqueName,
         versions = manifestData.versions,
         builtInsPlatform = BuiltInsPlatform.NATIVE,
-        nativeTargets = emptyList(), // will be overwritten with NativeSensitiveManifestData.applyTo() below
+        nativeTargets = emptyList(), // will be overwritten with addManifest(manifestData) below
         nopack = true,
         shortName = manifestData.shortName,
         layout = layout
     )
     library.addMetadata(metadata)
-    manifestData.applyTo(library.base as BaseWriterImpl)
+    (library.base as BaseWriterImpl).addManifest(manifestData)
     library.commit()
 }
 

@@ -81,6 +81,14 @@ class CommonizeLibcurlTest {
 
         assertContainsManifestWithContent(x64OutputDirectory, "native_targets=linux_x64")
         assertContainsManifestWithContent(arm64OutputDirectory, "native_targets=linux_arm64")
-        assertContainsManifestWithContent(commonOutputDirectory, "native_targets=linux_x64 linux_arm64")
+        assertContainsManifestWithContent(commonOutputDirectory, "native_targets=linux_arm64 linux_x64")
+
+        assertContainsManifestWithContent(x64OutputDirectory, "commonizer_target=linux_x64")
+        assertContainsManifestWithContent(arm64OutputDirectory, "commonizer_target=linux_arm64")
+
+        assertContainsManifestWithContent(commonOutputDirectory, "commonizer_native_targets=linux_arm64 linux_x64")
+        assertContainsManifestWithContent(
+            commonOutputDirectory, "commonizer_target=${CommonizerTarget(LINUX_X64, LINUX_ARM64).identityString}"
+        )
     }
 }

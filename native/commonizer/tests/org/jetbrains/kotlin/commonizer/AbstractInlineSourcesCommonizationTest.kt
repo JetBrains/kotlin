@@ -148,11 +148,11 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
     private fun Parameters.toCommonizerParameters(
         resultsConsumer: ResultsConsumer,
-        manifestDataProvider: NativeManifestDataProvider = MockNativeManifestDataProvider()
+        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
     ): CommonizerParameters {
         return CommonizerParameters(
             outputTarget = outputTarget,
-            manifestProvider = TargetDependent(outputTarget.withAllAncestors()) { manifestDataProvider },
+            manifestProvider = TargetDependent(outputTarget.withAllAncestors(), manifestDataProvider),
             dependenciesProvider = TargetDependent(outputTarget.withAllAncestors()) { target ->
                 val explicitDependencies = dependencies.getOrNull(target).orEmpty().map { module -> createModuleDescriptor(module) }
                 val implicitDependencies = listOfNotNull(if (target == outputTarget) DefaultBuiltIns.Instance.builtInsModule else null)
