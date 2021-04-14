@@ -2,9 +2,12 @@ package filter
 
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.model.DEnum
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class VisibilityFilterTest : BaseAbstractTest() {
 
@@ -203,6 +206,84 @@ class VisibilityFilterTest : BaseAbstractTest() {
         ) {
             preMergeDocumentablesTransformationStage = {
                 assertEquals(0, it.first().packages.first().typealiases.size)
+            }
+        }
+    }
+
+    @Test
+    fun `internal property from enum should be skipped`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    includeNonPublic = false
+                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                }
+            }
+        }
+        testInline(
+            """
+            |/src/main/kotlin/basic/Test.kt
+            |package enums
+            |
+            |enum class Test(internal val value: Int) {
+            |    A(0) {
+            |        override fun testFun(): Float = 0.05F
+            |    },
+            |    B(1) {
+            |        override fun testFun(): Float = 0.1F
+            |    };
+            | 
+            |    internal open fun testFun(): Float = 0.5F
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                val enum = module.packages.flatMap { it.classlikes }.filterIsInstance<DEnum>().first()
+                val entry = enum.entries.first()
+
+                assertFalse("testFun" in entry.functions.map { it.name })
+                assertFalse("value" in entry.properties.map { it.name })
+                assertFalse("testFun" in enum.functions.map { it.name })
+            }
+        }
+    }
+
+    @Test
+    fun `internal property from enum`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    includeNonPublic = true
+                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                }
+            }
+        }
+        testInline(
+            """
+            |/src/main/kotlin/basic/Test.kt
+            |package enums
+            |
+            |enum class Test(internal val value: Int) {
+            |    A(0) {
+            |        override fun testFun(): Float = 0.05F
+            |    },
+            |    B(1) {
+            |        override fun testFun(): Float = 0.1F
+            |    };
+            | 
+            |    internal open fun testFun(): Float = 0.5F
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                val enum = module.packages.flatMap { it.classlikes }.filterIsInstance<DEnum>().first()
+                val entry = enum.entries.first()
+
+                assertTrue("testFun" in entry.functions.map { it.name })
+                assertTrue("value" in entry.properties.map { it.name })
+                assertTrue("testFun" in enum.functions.map { it.name })
             }
         }
     }

@@ -157,23 +157,26 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
                 }
             }
 
-        private fun filterEnumEntries(entries: List<DEnumEntry>, filteredPlatforms: Set<DokkaSourceSet>) =
-            entries.mapNotNull { entry ->
-                if (filteredPlatforms.containsAll(entry.sourceSets)) entry
+        private fun filterEnumEntries(entries: List<DEnumEntry>, filteredPlatforms: Set<DokkaSourceSet>): Pair<Boolean, List<DEnumEntry>> =
+            entries.foldRight(Pair(false, emptyList())) { entry, acc ->
+                val intersection = filteredPlatforms.intersect(entry.sourceSets)
+                if (intersection.isEmpty()) Pair(true, acc.second)
                 else {
-                    val intersection = filteredPlatforms.intersect(entry.sourceSets)
-                    if (intersection.isEmpty()) null
-                    else DEnumEntry(
+                    val functions = filterFunctions(entry.functions) { _, data -> data in intersection }
+                    val properties = filterProperties(entry.properties) { _, data -> data in intersection }
+                    val classlikes = filterClasslikes(entry.classlikes) { _, data -> data in intersection }
+
+                    DEnumEntry(
                         entry.dri,
                         entry.name,
                         entry.documentation.filtered(intersection),
                         entry.expectPresentInSet.filtered(filteredPlatforms),
-                        filterFunctions(entry.functions) { _, data -> data in intersection }.second,
-                        filterProperties(entry.properties) { _, data -> data in intersection }.second,
-                        filterClasslikes(entry.classlikes) { _, data -> data in intersection }.second,
+                        functions.second,
+                        properties.second,
+                        classlikes.second,
                         intersection,
                         entry.extra
-                    )
+                    ).let { Pair(functions.first || properties.first || classlikes.first, acc.second + it) }
                 }
             }
 
@@ -218,7 +221,10 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
                         val generics =
                             if (this is WithGenerics) generics.mapNotNull { param -> param.filter(filteredPlatforms) } else emptyList()
                         val enumEntries =
-                            if (this is DEnum) filterEnumEntries(entries, filteredPlatforms) else emptyList()
+                            if (this is DEnum) filterEnumEntries(entries, filteredPlatforms).let { (listModified, list) ->
+                                modified = modified || listModified
+                                list
+                            } else emptyList()
                         classlikesListChanged = classlikesListChanged || modified
                         when {
                             !modified -> this
