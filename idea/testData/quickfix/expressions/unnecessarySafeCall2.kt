@@ -1,4 +1,4 @@
 // "Replace with dot call" "true"
 fun Any.foo() {
-    this.equals(0)
+    this<caret>?.equals(0)
 }
