@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -734,17 +736,25 @@ class FirCallCompletionResultsWriterTransformer(
         return arrayOfCall
     }
 
-    private fun FirNamedReferenceWithCandidate.toResolvedReference() = if (this is FirErrorReferenceWithCandidate) {
-        buildErrorNamedReference {
-            source = this@toResolvedReference.source
-            diagnostic = this@toResolvedReference.diagnostic
-            candidateSymbol = this@toResolvedReference.candidateSymbol
+    private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
+        val errorDiagnostic = when {
+            this is FirErrorReferenceWithCandidate -> this.diagnostic
+            !candidate.isSuccessful -> ConeInapplicableCandidateError(candidate.currentApplicability, candidate)
+            else -> null
         }
-    } else {
-        buildResolvedNamedReference {
-            source = this@toResolvedReference.source
-            name = this@toResolvedReference.name
-            resolvedSymbol = this@toResolvedReference.candidateSymbol
+
+        return if (errorDiagnostic != null) {
+            buildErrorNamedReference {
+                source = this@toResolvedReference.source
+                diagnostic = errorDiagnostic
+                candidateSymbol = this@toResolvedReference.candidateSymbol
+            }
+        } else {
+            buildResolvedNamedReference {
+                source = this@toResolvedReference.source
+                name = this@toResolvedReference.name
+                resolvedSymbol = this@toResolvedReference.candidateSymbol
+            }
         }
     }
 }
