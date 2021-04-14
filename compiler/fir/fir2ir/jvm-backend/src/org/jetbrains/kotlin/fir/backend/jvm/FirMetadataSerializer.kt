@@ -139,7 +139,7 @@ class FirMetadataSerializer(
             annotations += property.annotations
             typeParameters += typeParameterSet
         }.apply {
-            delegateFieldSymbol?.fir = this
+            delegateFieldSymbol?.bind(this)
         }
     }
 

@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 abstract class AbstractFirBasedSymbol<E> : FirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
+    private var _fir: E? = null
 
-    override lateinit var fir: E
+    override val fir: E
+        get() = _fir
+            ?: error("Fir is not initialized for $this")
 
     override fun bind(e: E) {
-        fir = e
+        _fir = e
     }
 }

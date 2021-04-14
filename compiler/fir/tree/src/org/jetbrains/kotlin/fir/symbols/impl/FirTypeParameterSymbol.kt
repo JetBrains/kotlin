@@ -17,5 +17,7 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
     private val lookupTag = ConeTypeParameterLookupTag(this)
 
     override fun toLookupTag(): ConeTypeParameterLookupTag = lookupTag
+
+    override fun toString(): String = "${this::class.simpleName} ${name.asString()}"
 }
 
