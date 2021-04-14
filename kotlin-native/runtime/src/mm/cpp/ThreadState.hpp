@@ -35,8 +35,6 @@ ALWAYS_INLINE inline ThreadState SwitchThreadState(mm::ThreadData* threadData, T
 
 // Asserts that the given thread is in the given state.
 ALWAYS_INLINE inline void AssertThreadState(mm::ThreadData* threadData, ThreadState expected) noexcept {
-    // In unit tests, this assert may be called on a non-registered thread, where thread == null.
-    if (threadData == nullptr) return;
     auto actual = threadData->state();
     RuntimeAssert(actual == expected,
                   "Unexpected thread state. Expected: %s. Actual: %s.",
