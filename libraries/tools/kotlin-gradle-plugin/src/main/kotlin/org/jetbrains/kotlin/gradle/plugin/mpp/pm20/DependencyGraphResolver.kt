@@ -48,23 +48,21 @@ class GradleKotlinDependencyGraphResolver(
 
         val nodeByModuleId = mutableMapOf<KotlinModuleIdentifier, GradleDependencyGraphNode>()
 
-        fun nodeFromComponent(component: ResolvedComponentResult, isRoot: Boolean /*refactor me*/): GradleDependencyGraphNode {
-            val id = component.toSingleModuleIdentifier()
-            return nodeByModuleId.getOrPut(id) {
-                val module = if (isRoot)
-                    requestingModule
-                else moduleResolver.resolveDependency(requestingModule, component.toModuleDependency())
-                    .takeIf { component !in excludeLegacyMetadataModulesFromResult }
-                    ?: buildSyntheticModule(component, component.variants.singleOrNull()?.displayName ?: "default")
+        fun getKotlinModuleFromComponentResult(component: ResolvedComponentResult): KotlinModule =
+            moduleResolver.resolveDependency(requestingModule, component.toModuleDependency())
+                ?: buildSyntheticPlainModule(component, component.variants.singleOrNull()?.displayName ?: "default")
 
+        fun nodeFromModule(componentResult: ResolvedComponentResult, kotlinModule: KotlinModule): GradleDependencyGraphNode {
+            val id = kotlinModule.moduleIdentifier
+            return nodeByModuleId.getOrPut(id) {
                 val metadataSourceComponent =
-                    (module as? ExternalImportedKotlinModule)
+                    (kotlinModule as? ExternalImportedKotlinModule)
                         ?.takeIf { it.hasLegacyMetadataModule }
-                        ?.let { (component.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected }
-                        ?: component
+                        ?.let { (componentResult.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected }
+                        ?: componentResult
 
                 val dependenciesRequestedByModule =
-                    module.fragments.flatMap { fragment -> fragment.declaredModuleDependencies.map { it.moduleIdentifier } }.toSet()
+                    kotlinModule.fragments.flatMap { fragment -> fragment.declaredModuleDependencies.map { it.moduleIdentifier } }.toSet()
 
                 val resolvedComponentDependencies = metadataSourceComponent.dependencies
                     .filterIsInstance<ResolvedDependencyResult>()
@@ -74,15 +72,18 @@ class GradleKotlinDependencyGraphResolver(
                     .flatMap { dependency -> dependency.requested.toModuleIdentifiers().map { id -> id to dependency.selected } }
                     .toMap()
 
-                val fragmentDependencies = module.fragments.associateWith { it.declaredModuleDependencies }
+                val fragmentDependencies = kotlinModule.fragments.associateWith { it.declaredModuleDependencies }
 
                 val nodeDependenciesMap = fragmentDependencies.mapValues { (_, deps) ->
-                    deps.mapNotNull { resolvedComponentDependencies[it.moduleIdentifier] }.map { nodeFromComponent(it, isRoot = false) }
+                    deps.mapNotNull { resolvedComponentDependencies[it.moduleIdentifier] }.map {
+                        val dependencyModule = getKotlinModuleFromComponentResult(it)
+                        nodeFromModule(it, dependencyModule)
+                    }
                 }
 
                 GradleDependencyGraphNode(
-                    module,
-                    component,
+                    kotlinModule,
+                    componentResult,
                     metadataSourceComponent,
                     nodeDependenciesMap
                 )
@@ -91,7 +92,7 @@ class GradleKotlinDependencyGraphResolver(
 
         return GradleDependencyGraph(
             requestingModule,
-            nodeFromComponent(configurationToResolve(requestingModule).incoming.resolutionResult.root, isRoot = true)
+            nodeFromModule(configurationToResolve(requestingModule).incoming.resolutionResult.root, requestingModule)
         )
     }
 }
