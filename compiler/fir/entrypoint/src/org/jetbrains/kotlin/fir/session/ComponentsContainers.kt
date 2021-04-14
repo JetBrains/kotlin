@@ -51,17 +51,9 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
 }
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerThreadUnsafeCaches() {
+fun FirSession.registerCliCompilerOnlyComponents() {
     register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
-}
-
-@OptIn(SessionConfiguration::class)
-fun FirSession.registerSealedClassInheritorsProvider() {
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
-}
-
-@OptIn(SessionConfiguration::class)
-fun FirSession.registerFirCliPhaseManager() {
     register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
 }
 

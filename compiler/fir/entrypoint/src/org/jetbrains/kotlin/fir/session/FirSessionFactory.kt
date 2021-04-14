@@ -73,12 +73,10 @@ object FirSessionFactory {
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirJavaModuleBasedSession {
         return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
-            registerThreadUnsafeCaches()
-            registerFirCliPhaseManager()
+            registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker)
             registerJavaSpecificResolveComponents()
-            registerSealedClassInheritorsProvider()
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
@@ -127,10 +125,8 @@ object FirSessionFactory {
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirLibrarySession {
         return FirLibrarySession(moduleInfo, sessionProvider).apply {
-            registerThreadUnsafeCaches()
-            registerFirCliPhaseManager()
+            registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerSealedClassInheritorsProvider()
 
             val javaSymbolProvider = JavaSymbolProvider(this, project, scope)
 
