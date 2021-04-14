@@ -12,18 +12,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirVariableAssignme
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 
 object ExtendedExpressionCheckers : ExpressionCheckers() {
-    override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
-        ArrayEqualityCanBeReplacedWithEquals,
-        RedundantSingleExpressionStringTemplateChecker,
-        EmptyRangeChecker,
-    )
+    override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
+        get() = setOf(
+            ArrayEqualityCanBeReplacedWithEquals,
+            RedundantSingleExpressionStringTemplateChecker,
+            EmptyRangeChecker,
+        )
 
-    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = setOf(
-        CanBeReplacedWithOperatorAssignmentChecker,
-    )
+    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
+        get() = setOf(
+            CanBeReplacedWithOperatorAssignmentChecker,
+        )
 
-    override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker> = setOf(
-        RedundantCallOfConversionMethod,
-        UselessCallOnNotNullChecker,
-    )
+    override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
+        get() = setOf(
+            RedundantCallOfConversionMethod,
+            UselessCallOnNotNullChecker,
+        )
 }
