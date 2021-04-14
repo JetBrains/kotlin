@@ -10,9 +10,10 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.descriptors.isSealed
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.getClassDescriptorIfAny
 
 
 class KotlinSealedInheritorsInJavaInspection : LocalInspectionTool() {
@@ -34,7 +35,9 @@ class KotlinSealedInheritorsInJavaInspection : LocalInspectionTool() {
 
         private fun PsiClassType.isKotlinSealed(): Boolean = resolve()?.isKotlinSealed() == true
 
-        private fun PsiClass.isKotlinSealed(): Boolean = this is KtUltraLightClass && getDescriptor()?.isSealed() == true
+        private fun PsiClass.isKotlinSealed(): Boolean {
+            return this is KtLightClass && (getClassDescriptorIfAny()?.isSealed() ?: false)
+        }
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
