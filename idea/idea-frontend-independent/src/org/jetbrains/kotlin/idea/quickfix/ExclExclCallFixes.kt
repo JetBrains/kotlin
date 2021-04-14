@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinPsiOnlyQuickFixAction<PsiElement>(psiElement) {
     override fun getFamilyName(): String = text
@@ -25,28 +26,18 @@ abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinPsiOnlyQuickFixAc
 class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix, HighPriorityAction {
     override fun getText(): String = KotlinBundle.message("fix.remove.non.null.assertion")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
-        getExclExclPostfixExpression() != null
-
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
-        val postfixExpression = getExclExclPostfixExpression() ?: return
+        val postfixExpression = element as? KtPostfixExpression ?: return
         val expression = KtPsiFactory(project).createExpression(postfixExpression.baseExpression!!.text)
         postfixExpression.replace(expression)
     }
 
-    private fun getExclExclPostfixExpression(): KtPostfixExpression? {
-        val operationParent = element?.parent
-        if (operationParent is KtPostfixExpression && operationParent.baseExpression != null) {
-            return operationParent
-        }
-        return null
-    }
-
     companion object : QuickFixesPsiBasedFactory<PsiElement>(PsiElement::class, PsiElementSuitabilityCheckers.ALWAYS_SUITABLE) {
         override fun doCreateQuickFix(psiElement: PsiElement): List<IntentionAction> {
-            return listOfNotNull(RemoveExclExclCallFix(psiElement))
+            val postfixExpression = psiElement.getNonStrictParentOfType<KtPostfixExpression>() ?: return emptyList()
+            return listOfNotNull(RemoveExclExclCallFix(postfixExpression))
         }
     }
 }
