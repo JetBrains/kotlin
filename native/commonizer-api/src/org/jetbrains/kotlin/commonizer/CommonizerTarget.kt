@@ -56,6 +56,14 @@ public fun CommonizerTarget(konanTarget: KonanTarget, vararg konanTargets: Konan
     return SharedCommonizerTarget(targets.map(::LeafCommonizerTarget).toSet())
 }
 
+public fun CommonizerTarget(commonizerTarget: CommonizerTarget, vararg commonizerTargets: CommonizerTarget): SharedCommonizerTarget {
+    val targets = mutableListOf<CommonizerTarget>().apply {
+        add(commonizerTarget)
+        addAll(commonizerTargets)
+    }
+    return SharedCommonizerTarget(targets.toSet())
+}
+
 public val CommonizerTarget.identityString: String
     get() = when (this) {
         is LeafCommonizerTarget -> name

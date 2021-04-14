@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.utils.konanHome
-import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_ARM64
-import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -69,15 +68,6 @@ class CommonizeLibcurlTest {
         assertContainsKnmFiles(arm64OutputDirectory)
         assertContainsKnmFiles(commonOutputDirectory)
 
-        fun assertContainsManifestWithContent(directory: File, content: String) {
-            val manifest = directory.walkTopDown().firstOrNull { it.name == "manifest" }
-                ?: fail("${directory.name} does not contain any manifest")
-
-            assertTrue(
-                content in manifest.readText(),
-                "Expected manifest in ${directory.name} to contain $content\n${manifest.readText()}"
-            )
-        }
 
         assertContainsManifestWithContent(x64OutputDirectory, "native_targets=linux_x64")
         assertContainsManifestWithContent(arm64OutputDirectory, "native_targets=linux_arm64")
@@ -91,4 +81,52 @@ class CommonizeLibcurlTest {
             commonOutputDirectory, "commonizer_target=${CommonizerTarget(LINUX_X64, LINUX_ARM64).identityString}"
         )
     }
+
+
+    @Test
+    fun `commonizeSuccessfully with unsupported targets`() {
+        val libraries = File("testData/libcurl").walkTopDown().filter { it.isFile && it.extension == "klib" }.toSet()
+        val commonizer = CliCommonizer(this::class.java.classLoader)
+
+        commonizer.commonizeLibraries(
+            konanHome = konanHome,
+            inputLibraries = libraries,
+            dependencyLibraries = emptySet<CommonizerDependency>() +
+                    KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_X64.name).listFiles().orEmpty()
+                        .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_X64), it) }.toSet() +
+
+                    KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_ARM64.name).listFiles().orEmpty()
+                        .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
+                        .toSet(),
+            outputCommonizerTarget = CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_X64),
+            outputDirectory = temporaryOutputDirectory.root
+        )
+
+        val x64OutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_X64).identityString)
+        val arm64OutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_ARM64).identityString)
+        val commonOutputDirectory = temporaryOutputDirectory.root
+            .resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString)
+
+        assertContainsManifestWithContent(x64OutputDirectory, "native_targets=linux_x64")
+        assertContainsManifestWithContent(arm64OutputDirectory, "native_targets=linux_arm64")
+        assertContainsManifestWithContent(commonOutputDirectory, "native_targets=linux_arm64 linux_x64")
+
+        assertContainsManifestWithContent(x64OutputDirectory, "commonizer_target=linux_x64")
+        assertContainsManifestWithContent(arm64OutputDirectory, "commonizer_target=linux_arm64")
+
+        assertContainsManifestWithContent(commonOutputDirectory, "commonizer_native_targets=linux_arm64 linux_x64 macos_x64")
+        assertContainsManifestWithContent(
+            commonOutputDirectory, "commonizer_target=${CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString}"
+        )
+    }
+}
+
+private fun assertContainsManifestWithContent(directory: File, content: String) {
+    val manifest = directory.walkTopDown().firstOrNull { it.name == "manifest" }
+        ?: fail("${directory.name} does not contain any manifest")
+
+    assertTrue(
+        content in manifest.readText(),
+        "Expected manifest in ${directory.name} to contain $content\n${manifest.readText()}"
+    )
 }
