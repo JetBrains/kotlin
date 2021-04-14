@@ -1,23 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.FileModificationService
-import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
@@ -50,42 +38,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-
-abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<PsiElement>(psiElement) {
-    override fun getFamilyName(): String = text
-
-    override fun startInWriteAction(): Boolean = true
-}
-
-class RemoveExclExclCallFix(psiElement: PsiElement) : ExclExclCallFix(psiElement), CleanupFix, HighPriorityAction {
-    override fun getText(): String = KotlinBundle.message("fix.remove.non.null.assertion")
-
-    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
-        getExclExclPostfixExpression() != null
-
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
-
-        val postfixExpression = getExclExclPostfixExpression() ?: return
-        val expression = KtPsiFactory(project).createExpression(postfixExpression.baseExpression!!.text)
-        postfixExpression.replace(expression)
-    }
-
-    private fun getExclExclPostfixExpression(): KtPostfixExpression? {
-        val operationParent = element?.parent
-        if (operationParent is KtPostfixExpression && operationParent.baseExpression != null) {
-            return operationParent
-        }
-        return null
-    }
-
-    companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction = RemoveExclExclCallFix(diagnostic.psiElement)
-    }
-}
-
-class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean) : ExclExclCallFix(psiElement), LowPriorityAction {
-    constructor(psiElement: PsiElement) : this(psiElement, true)
+class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boolean = true) : ExclExclCallFix(psiElement),
+    LowPriorityAction {
 
     override fun getText() = KotlinBundle.message("fix.introduce.non.null.assertion")
 
