@@ -125,7 +125,7 @@ fun CFGNode<*>.render(): String =
         )
     }
 
-private object CfgRenderMode : FirRenderer.RenderMode(
+private val CfgRenderMode = FirRenderer.RenderMode(
     renderLambdaBodies = false,
     renderCallArguments = false,
     renderCallableFqNames = false,

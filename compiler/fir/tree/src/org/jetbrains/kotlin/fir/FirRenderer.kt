@@ -51,7 +51,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         )
     }
 
-    abstract class RenderMode(
+    data class RenderMode(
         val renderLambdaBodies: Boolean,
         val renderCallArguments: Boolean,
         val renderCallableFqNames: Boolean,
@@ -61,57 +61,59 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         val renderPropertyAccessors: Boolean = true,
         val renderDeclarationAttributes: Boolean = false,
     ) {
-        object Normal : RenderMode(
-            renderLambdaBodies = true,
-            renderCallArguments = true,
-            renderCallableFqNames = false,
-            renderDeclarationResolvePhase = false,
-            renderAnnotation = true,
-        )
+        companion object {
+            val Normal = RenderMode(
+                renderLambdaBodies = true,
+                renderCallArguments = true,
+                renderCallableFqNames = false,
+                renderDeclarationResolvePhase = false,
+                renderAnnotation = true,
+            )
 
-        object WithFqNames : RenderMode(
-            renderLambdaBodies = true,
-            renderCallArguments = true,
-            renderCallableFqNames = true,
-            renderDeclarationResolvePhase = false,
-            renderAnnotation = true,
-        )
+            val WithFqNames = RenderMode(
+                renderLambdaBodies = true,
+                renderCallArguments = true,
+                renderCallableFqNames = true,
+                renderDeclarationResolvePhase = false,
+                renderAnnotation = true,
+            )
 
-        object WithFqNamesExceptAnnotationAndBody : RenderMode(
-            renderLambdaBodies = true,
-            renderCallArguments = true,
-            renderCallableFqNames = true,
-            renderDeclarationResolvePhase = false,
-            renderAnnotation = false,
-            renderBodies = false,
-        )
+            val WithFqNamesExceptAnnotationAndBody = RenderMode(
+                renderLambdaBodies = true,
+                renderCallArguments = true,
+                renderCallableFqNames = true,
+                renderDeclarationResolvePhase = false,
+                renderAnnotation = false,
+                renderBodies = false,
+            )
 
-        object WithResolvePhases : RenderMode(
-            renderLambdaBodies = true,
-            renderCallArguments = true,
-            renderCallableFqNames = false,
-            renderDeclarationResolvePhase = true,
-            renderAnnotation = true,
-        )
+            val WithResolvePhases = RenderMode(
+                renderLambdaBodies = true,
+                renderCallArguments = true,
+                renderCallableFqNames = false,
+                renderDeclarationResolvePhase = true,
+                renderAnnotation = true,
+            )
 
-        object NoBodies : RenderMode(
-            renderLambdaBodies = false,
-            renderCallArguments = false,
-            renderCallableFqNames = false,
-            renderDeclarationResolvePhase = false,
-            renderAnnotation = false,
-            renderBodies = false,
-            renderPropertyAccessors = false,
-        )
+            val NoBodies = RenderMode(
+                renderLambdaBodies = false,
+                renderCallArguments = false,
+                renderCallableFqNames = false,
+                renderDeclarationResolvePhase = false,
+                renderAnnotation = false,
+                renderBodies = false,
+                renderPropertyAccessors = false,
+            )
 
-        object WithDeclarationAttributes : RenderMode(
-            renderLambdaBodies = true,
-            renderCallArguments = true,
-            renderCallableFqNames = false,
-            renderDeclarationResolvePhase = false,
-            renderAnnotation = true,
-            renderDeclarationAttributes = true,
-        )
+            val WithDeclarationAttributes = RenderMode(
+                renderLambdaBodies = true,
+                renderCallArguments = true,
+                renderCallableFqNames = false,
+                renderDeclarationResolvePhase = false,
+                renderAnnotation = true,
+                renderDeclarationAttributes = true,
+            )
+        }
     }
 
     private val printer = Printer(builder)
