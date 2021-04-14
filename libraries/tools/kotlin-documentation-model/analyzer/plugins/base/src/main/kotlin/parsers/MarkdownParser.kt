@@ -1,7 +1,6 @@
 package org.jetbrains.dokka.base.parsers
 
 import com.intellij.psi.PsiElement
-import org.intellij.markdown.MarkdownElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
@@ -288,6 +287,13 @@ open class MarkdownParser(
             )
         }
 
+
+    private fun rawHtmlHandler(node: ASTNode): DocTag =
+        DocTagsFromIElementFactory.getInstance(
+            node.type,
+            body = text.substring(node.startOffset, node.endOffset)
+        )
+
     private fun codeSpansHandler(node: ASTNode) =
         DocTagsFromIElementFactory.getInstance(
             node.type,
@@ -356,6 +362,9 @@ open class MarkdownParser(
             MarkdownElementTypes.CODE_FENCE -> codeFencesHandler(node)
             MarkdownElementTypes.CODE_SPAN -> codeSpansHandler(node)
             MarkdownElementTypes.IMAGE -> imagesHandler(node)
+            MarkdownElementTypes.HTML_BLOCK,
+            MarkdownTokenTypes.HTML_TAG,
+            MarkdownTokenTypes.HTML_BLOCK_CONTENT -> rawHtmlHandler(node)
             MarkdownTokenTypes.HARD_LINE_BREAK -> DocTagsFromIElementFactory.getInstance(node.type)
             MarkdownTokenTypes.CODE_FENCE_CONTENT,
             MarkdownTokenTypes.CODE_LINE -> codeLineHandler(node)
@@ -400,7 +409,12 @@ open class MarkdownParser(
         if (index == lastIndex && elemTransformed is Text) elemTransformed.copy(elemTransformed.body.trimEnd()) else elemTransformed
     }
 
-    private val notLeafNodes = listOf(MarkdownTokenTypes.HORIZONTAL_RULE, MarkdownTokenTypes.HARD_LINE_BREAK)
+    private val notLeafNodes = listOf(
+        MarkdownTokenTypes.HORIZONTAL_RULE,
+        MarkdownTokenTypes.HARD_LINE_BREAK,
+        MarkdownTokenTypes.HTML_TAG,
+        MarkdownTokenTypes.HTML_BLOCK_CONTENT
+    )
 
     private fun List<ASTNode>.isNotLeaf(index: Int): Boolean =
         if (index in 0..this.lastIndex)
