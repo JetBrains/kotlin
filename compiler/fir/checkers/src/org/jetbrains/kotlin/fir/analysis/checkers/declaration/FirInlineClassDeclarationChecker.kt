@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
+class FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
     private val reservedFunctionNames = setOf("box", "unbox", "equals", "hashCode")
     private val kotlinCloneableType = ClassId.fromString("kotlin/Cloneable").constructClassLikeType(emptyArray(), false)

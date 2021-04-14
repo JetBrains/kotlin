@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullable
 
-object FirInapplicableLateinitChecker : FirPropertyChecker() {
+class FirInapplicableLateinitChecker : FirPropertyChecker() {
     var primitives: Set<ConeKotlinType>? = null
 
     private fun getPrimitiveTypes(context: CheckerContext) = primitives ?: mutableSetOf<ConeKotlinType>().apply {
