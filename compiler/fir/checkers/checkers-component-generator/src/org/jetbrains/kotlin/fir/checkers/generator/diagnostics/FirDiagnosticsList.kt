@@ -642,6 +642,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<List<WhenMissingCase>>("missingWhenCases")
         }
         val INVALID_IF_AS_EXPRESSION by error<KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
+        val ELSE_MISPLACED_IN_WHEN by error<KtWhenEntry>(PositioningStrategy.ELSE_ENTRY)
     }
 
     val CONTEXT_TRACKING by object : DiagnosticGroup("Context tracking") {

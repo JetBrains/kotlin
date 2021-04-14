@@ -501,6 +501,17 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val ELSE_ENTRY = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.elseKeyword(node) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
+
     val ARRAY_ACCESS = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -576,6 +587,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.whenKeyword(node: Ligh
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.ifKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IF_KEYWORD)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.elseKeyword(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.ELSE_KEYWORD)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.returnKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RETURN_KEYWORD)

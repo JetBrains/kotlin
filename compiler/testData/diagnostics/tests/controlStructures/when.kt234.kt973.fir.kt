@@ -31,7 +31,7 @@ fun t5(x: Int) = <!NO_ELSE_IN_WHEN!>when<!> (x) {
 }
 
 fun foo3(x: Int) = when(x) {
-    else -> 1
+    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> 1
     2 -> 2
 }
 

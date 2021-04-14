@@ -35,7 +35,7 @@ fun test() {
   val z = 1
 
   when (z) {
-    else -> 1
+    <error descr="[ELSE_MISPLACED_IN_WHEN] ">else</error> -> 1
     1 -> 2
   }
 

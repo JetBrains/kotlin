@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 
@@ -1258,6 +1259,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class InvalidIfAsExpression : KtFirDiagnostic<KtIfExpression>() {
         override val diagnosticClass get() = InvalidIfAsExpression::class
+    }
+
+    abstract class ElseMisplacedInWhen : KtFirDiagnostic<KtWhenEntry>() {
+        override val diagnosticClass get() = ElseMisplacedInWhen::class
     }
 
     abstract class TypeParameterIsNotAnExpression : KtFirDiagnostic<KtSimpleNameExpression>() {

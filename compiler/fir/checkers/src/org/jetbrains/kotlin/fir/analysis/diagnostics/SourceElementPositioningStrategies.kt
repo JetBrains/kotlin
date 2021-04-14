@@ -163,6 +163,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.IF_EXPRESSION
     )
 
+    val ELSE_ENTRY = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ELSE_ENTRY,
+        PositioningStrategies.ELSE_ENTRY
+    )
+
     val ARRAY_ACCESS = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.ARRAY_ACCESS,
         PositioningStrategies.ARRAY_ACCESS
