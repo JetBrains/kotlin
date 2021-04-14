@@ -84,12 +84,23 @@ actual class W actual constructor() {
     }
 }
 
-actual class BB1 actual constructor() { actual companion object }
+actual class BB1 actual constructor() {
+    actual companion object
+}
+
 actual class BB2 actual constructor()
 
-actual class CC1 actual constructor() { actual companion object DD1 }
-actual class CC2 actual constructor() { companion object CompanionWithAnotherName }
-actual class CC3 actual constructor() { companion object }
+actual class CC1 actual constructor() {
+    actual companion object DD1
+}
+
+actual class CC2 actual constructor() {
+    companion object CompanionWithAnotherName
+}
+
+actual class CC3 actual constructor() {
+    companion object
+}
 
 actual inline class EE1 actual constructor(actual val value: String)
 class EE2(val value: String)
@@ -102,16 +113,17 @@ actual class FF1 actual constructor(actual val property1: String) {
     actual fun function1() = property1
     actual fun function2() = function1()
 }
+
 actual external class FF2 actual constructor()
 
 actual sealed class GG1
 actual sealed class GG2 {
-    actual class HH1 actual constructor(): GG2()
+    actual class HH1 actual constructor() : GG2()
     actual object HH2 : GG2()
     class HH4 : GG2()
 }
 
-actual class HH5 actual constructor(): GG2()
+actual class HH5 actual constructor() : GG2()
 actual object HH6 : GG2()
 class HH8 : GG2()
 
@@ -126,7 +138,7 @@ actual interface JJ {
 
 actual class KK1 actual constructor(actual override val property: String) : JJ {
     val property2 = property
-    actual override fun function() =  property
+    actual override fun function() = property
 }
 
 actual class KK2 actual constructor(wrapped: JJ) : JJ by wrapped

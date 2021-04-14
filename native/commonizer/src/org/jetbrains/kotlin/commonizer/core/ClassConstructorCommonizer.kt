@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.commonizer.cir.CirClassConstructor
 import org.jetbrains.kotlin.commonizer.cir.CirContainingClass
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 
 class ClassConstructorCommonizer(
     classifiers: CirKnownClassifiers

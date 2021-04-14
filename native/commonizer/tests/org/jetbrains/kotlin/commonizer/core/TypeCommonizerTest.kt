@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.commonizer.utils.mockTAType
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.junit.Before
 import org.junit.Test

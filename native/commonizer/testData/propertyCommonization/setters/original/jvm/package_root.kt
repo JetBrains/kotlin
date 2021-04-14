@@ -1,5 +1,6 @@
 var defaultSetter1 = 42
 var defaultSetter2 = 42 // intentionally commented setter declaration
+
 //    set
 var defaultSetter3 = 42
     set
@@ -15,17 +16,18 @@ var setterWithDelegation2 = 42 // intentionally left without delegation
 var defaultSetteCustomVisibility1 = 42
     public set
 var defaultSetteCustomVisibility2 = 42
-//    internal set
+    //    internal set
     public set // intentionally used public visibility
 var defaultSetteCustomVisibility3 = 42
     internal set
 var defaultSetteCustomVisibility4 = 42
-//    private set
+    //    private set
     internal set // intentionally used internal visibility
 var defaultSetteCustomVisibility5 = 42
     private set
 
 val propertyWithoutSetter = 42
+
 //var propertyMaybeSetter = 42
 val propertyMaybeSetter = 42 // fixed to be a property without setter
 var propertyWithSetter = 42

@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.commonizer.metadata
 
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.KlibModuleMetadata
-import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
+import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializationContext.Path
 import org.jetbrains.kotlin.commonizer.stats.DeclarationType
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector.StatsKey
 import org.jetbrains.kotlin.commonizer.utils.DEFAULT_CONSTRUCTOR_NAME
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.commonizer.utils.firstNonNull
-import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializationContext.Path
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 object CirTreeSerializer {
     fun serializeSingleTarget(
@@ -176,7 +175,14 @@ private class CirTreeSerializationVisitor(
             property
         }
 
-        return cirClass.serializeClass(classContext, fullClassName, directNestedClasses, nestedConstructors, nestedFunctions, nestedProperties)
+        return cirClass.serializeClass(
+            classContext,
+            fullClassName,
+            directNestedClasses,
+            nestedConstructors,
+            nestedFunctions,
+            nestedProperties
+        )
     }
 
     override fun visitClassConstructorNode(

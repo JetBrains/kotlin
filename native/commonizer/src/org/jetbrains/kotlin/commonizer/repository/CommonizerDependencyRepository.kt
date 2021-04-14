@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.commonizer.repository
 
 import org.jetbrains.kotlin.commonizer.*
-import org.jetbrains.kotlin.commonizer.NativeLibraryLoader
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
 
 internal class CommonizerDependencyRepository(

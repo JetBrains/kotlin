@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
-import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.assertCommonized
-import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 
 class HierarchicalPropertyCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 

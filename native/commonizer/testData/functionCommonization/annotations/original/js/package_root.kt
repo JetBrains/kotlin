@@ -1,52 +1,95 @@
 @Deprecated("This function is deprecated")
-fun deprecatedFunction1() {}
+fun deprecatedFunction1() {
+}
+
 @Deprecated("This function is deprecated")
-fun deprecatedFunction2() {}
+fun deprecatedFunction2() {
+}
 
 class Holder {
     @Deprecated("This function is deprecated")
-    fun deprecatedFunction1() {}
-    @Deprecated("This function is deprecated")
-    fun deprecatedFunction2() {}
+    fun deprecatedFunction1() {
+    }
 
     @Deprecated("This function is deprecated")
-    fun deprecatedFunctionWithCustomizedAnnotation1() {}
+    fun deprecatedFunction2() {
+    }
+
     @Deprecated("This function is deprecated")
-    fun deprecatedFunctionWithCustomizedAnnotation2() {}
+    fun deprecatedFunctionWithCustomizedAnnotation1() {
+    }
+
+    @Deprecated("This function is deprecated")
+    fun deprecatedFunctionWithCustomizedAnnotation2() {
+    }
+
     @Deprecated("This function is deprecated", level = DeprecationLevel.WARNING)
-    fun deprecatedFunctionWithCustomizedAnnotation3() {}
+    fun deprecatedFunctionWithCustomizedAnnotation3() {
+    }
+
     @Deprecated("This function is deprecated")
-    fun deprecatedFunctionWithCustomizedAnnotation4() {}
+    fun deprecatedFunctionWithCustomizedAnnotation4() {
+    }
+
     @Deprecated("This function is deprecated")
-    fun deprecatedFunctionWithCustomizedAnnotation5() {}
+    fun deprecatedFunctionWithCustomizedAnnotation5() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith(""))
-    fun deprecatedFunctionWithCustomizedAnnotation6() {}
+    fun deprecatedFunctionWithCustomizedAnnotation6() {
+    }
+
     @Deprecated("This function is deprecated")
-    fun deprecatedFunctionWithCustomizedAnnotation7() {}
+    fun deprecatedFunctionWithCustomizedAnnotation7() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith(""))
-    fun deprecatedFunctionWithCustomizedAnnotation8() {}
+    fun deprecatedFunctionWithCustomizedAnnotation8() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith("", imports = emptyArray()))
-    fun deprecatedFunctionWithCustomizedAnnotation9() {}
+    fun deprecatedFunctionWithCustomizedAnnotation9() {
+    }
+
     @Deprecated("This function is deprecated")
-    fun deprecatedFunctionWithCustomizedAnnotation10() {}
+    fun deprecatedFunctionWithCustomizedAnnotation10() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith("foo()"))
-    fun deprecatedFunctionWithCustomizedAnnotation11() {}
+    fun deprecatedFunctionWithCustomizedAnnotation11() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith("bar()"))
-    fun deprecatedFunctionWithCustomizedAnnotation12() {}
+    fun deprecatedFunctionWithCustomizedAnnotation12() {
+    }
+
     @Deprecated("This function is deprecated")
-    fun deprecatedFunctionWithCustomizedAnnotation13() {}
+    fun deprecatedFunctionWithCustomizedAnnotation13() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith(""))
-    fun deprecatedFunctionWithCustomizedAnnotation14() {}
+    fun deprecatedFunctionWithCustomizedAnnotation14() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith("", imports = arrayOf("org.sample.foo")))
-    fun deprecatedFunctionWithCustomizedAnnotation15() {}
+    fun deprecatedFunctionWithCustomizedAnnotation15() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith("", imports = arrayOf("org.sample.bar")))
-    fun deprecatedFunctionWithCustomizedAnnotation16() {}
+    fun deprecatedFunctionWithCustomizedAnnotation16() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith("foo()", imports = arrayOf("org.sample.foo")))
-    fun deprecatedFunctionWithCustomizedAnnotation17() {}
+    fun deprecatedFunctionWithCustomizedAnnotation17() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith("foo()", imports = arrayOf("org.sample.bar")))
-    fun deprecatedFunctionWithCustomizedAnnotation18() {}
+    fun deprecatedFunctionWithCustomizedAnnotation18() {
+    }
+
     @Deprecated("This function is deprecated", replaceWith = ReplaceWith("bar()", imports = arrayOf("org.sample.foo")))
-    fun deprecatedFunctionWithCustomizedAnnotation19() {}
+    fun deprecatedFunctionWithCustomizedAnnotation19() {
+    }
 
     fun nonDeprecatedFunction1() {}
     fun nonDeprecatedFunction2() {}

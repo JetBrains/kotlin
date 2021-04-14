@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.commonizer.cir.CirPropertySetter
 import org.jetbrains.kotlin.descriptors.Visibilities.Internal
 import org.jetbrains.kotlin.descriptors.Visibilities.Local
 import org.jetbrains.kotlin.descriptors.Visibilities.Private
 import org.jetbrains.kotlin.descriptors.Visibilities.Protected
 import org.jetbrains.kotlin.descriptors.Visibilities.Public
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.commonizer.cir.CirPropertySetter
 import org.junit.Test
 
 class PropertySetterCommonizerTest : AbstractCommonizerTest<CirPropertySetter?, CirPropertySetter?>() {

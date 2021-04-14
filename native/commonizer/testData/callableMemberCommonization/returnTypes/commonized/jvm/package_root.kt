@@ -67,6 +67,7 @@ actual class Outer<A> actual constructor() {
         actual class Nested<C> actual constructor()
         actual inner class Inner<D> actual constructor()
     }
+
     actual inner class Inner<E> actual constructor() {
         actual inner class Inner<F> actual constructor()
     }

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.commonizer.cir.CirHasVisibility
 import org.jetbrains.kotlin.commonizer.cir.CirPropertySetter
+import org.jetbrains.kotlin.descriptors.Visibility
 
 class PropertySetterCommonizer : AbstractNullableCommonizer<CirPropertySetter, CirPropertySetter, CirHasVisibility, Visibility>(
     wrappedCommonizerFactory = { VisibilityCommonizer.equalizing() },

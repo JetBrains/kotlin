@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId.Companion.create
 import org.jetbrains.kotlin.commonizer.cir.CirName.Companion.create
-import org.jetbrains.kotlin.commonizer.utils.hashCode
+import org.jetbrains.kotlin.commonizer.cir.CirPackageName.Companion.create
 import org.jetbrains.kotlin.commonizer.utils.Interner
 import org.jetbrains.kotlin.commonizer.utils.appendHashCode
+import org.jetbrains.kotlin.commonizer.utils.hashCode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name

@@ -50,6 +50,7 @@ typealias Y = V // TA at the RHS with the different nullability of own RHS
 
 // Supertypes:
 typealias FILE = __sFILE
+
 final class __sFILE : kotlinx.cinterop.CStructVar {}
 
 typealias uuid_t = __darwin_uuid_t

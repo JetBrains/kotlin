@@ -71,7 +71,8 @@ internal fun CirNodeWithMembers<*, *>.buildFunction(
 }
 
 internal fun CirNodeWithMembers<*, *>.buildProperty(
-    context: TargetBuildingContext, treeProperty: CirTreeProperty, parent: CirNode<*, *>? = null) {
+    context: TargetBuildingContext, treeProperty: CirTreeProperty, parent: CirNode<*, *>? = null
+) {
     val propertyNode = properties.getOrPut(treeProperty.approximationKey) {
         buildPropertyNode(context.storageManager, context.targets, context.classifiers, parent?.commonDeclaration)
     }

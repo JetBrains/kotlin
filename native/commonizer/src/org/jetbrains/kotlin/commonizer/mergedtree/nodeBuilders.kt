@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import org.jetbrains.kotlin.commonizer.cir.CirDeclaration
-import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirClassRecursionMarker
 import org.jetbrains.kotlin.commonizer.cir.CirClassifierRecursionMarker
+import org.jetbrains.kotlin.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.core.*
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue

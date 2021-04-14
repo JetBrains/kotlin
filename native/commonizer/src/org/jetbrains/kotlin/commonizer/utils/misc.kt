@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 import java.util.Collections.singletonList
 import java.util.Collections.singletonMap
-import kotlin.collections.ArrayList
 
 internal inline fun <K : Any, V, R> Map<K, V>.compactMapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> =
     when (size) {
