@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
@@ -28,6 +27,14 @@ internal class KtFirSymbolContainingDeclarationProvider(
     override fun getContainingDeclaration(symbol: KtSymbolWithKind): KtSymbolWithKind? {
         if (symbol is KtPackageSymbol) return null
         if (symbol.symbolKind == KtSymbolKind.TOP_LEVEL) return null
+        if (symbol is KtCallableSymbol) {
+            val classId = symbol.callableIdIfNonLocal?.classId
+            if (classId != null) {
+                with(analysisSession) {
+                    return classId.getCorrespondingToplevelClassOrObjectSymbol()
+                }
+            }
+        }
         return when (symbol.origin) {
             KtSymbolOrigin.SOURCE, KtSymbolOrigin.SOURCE_MEMBER_GENERATED ->
                 getContainingDeclarationForKotlinInSourceSymbol(symbol)

@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtVisibilityChecker
-import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolDeclarationRendererProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirOverrideInfoProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.recordCompletionContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -61,6 +62,8 @@ private constructor(
         KtFirSymbolDeclarationRendererProvider(this, token)
 
     override val expressionInfoProviderImpl = KtFirExpressionInfoProvider(this, token)
+
+    override val overrideInfoProviderImpl = KtFirOverrideInfoProvider(this, token)
 
     override val visibilityCheckerImpl: KtVisibilityChecker = KtFirVisibilityChecker(this, token)
 

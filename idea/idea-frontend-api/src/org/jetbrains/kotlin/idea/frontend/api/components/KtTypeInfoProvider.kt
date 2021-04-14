@@ -38,6 +38,7 @@ interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
     val KtType.isChar: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.CHAR)
     val KtType.isBoolean: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.BOOLEAN)
     val KtType.isString: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.STRING)
+    val KtType.isAny: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.ANY)
 
     val KtType.isUInt: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uInt)
     val KtType.isULong: Boolean get() = isClassTypeWithClassId(StandardNames.FqNames.uLong)
@@ -84,5 +85,6 @@ object DefaultTypeClassIds {
     val CHAR = ClassId.topLevel(StandardNames.FqNames._char.toSafe())
     val BOOLEAN = ClassId.topLevel(StandardNames.FqNames._boolean.toSafe())
     val STRING = ClassId.topLevel(StandardNames.FqNames.string.toSafe())
+    val ANY = ClassId.topLevel(StandardNames.FqNames.any.toSafe())
     val PRIMITIVES = setOf(INT, LONG, SHORT, BYTE, FLOAT, DOUBLE, CHAR, BOOLEAN)
 }
