@@ -20,10 +20,13 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.containingPackage
+import org.jetbrains.kotlin.descriptors.isSealed
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.cases.*
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.move.getTargetPackageFqName
 import org.jetbrains.kotlin.idea.refactoring.move.guessNewFileName
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler
@@ -37,7 +40,10 @@ import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 class MoveToSealedMatchingPackageFix(element: KtTypeReference) : KotlinQuickFixAction<KtTypeReference>(element) {
 
@@ -94,9 +100,18 @@ class MoveToSealedMatchingPackageFix(element: KtTypeReference) : KotlinQuickFixA
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
+
+        private fun ClassDescriptor.isBinarySealed(): Boolean = isSealed() && this is DeserializedClassDescriptor
+
         override fun createAction(diagnostic: Diagnostic): MoveToSealedMatchingPackageFix? {
-            val annotationEntry = diagnostic.psiElement as? KtTypeReference ?: return null
-            return MoveToSealedMatchingPackageFix(annotationEntry)
+            val typeReference = diagnostic.psiElement as? KtTypeReference ?: return null
+
+            // We cannot suggest moving this class to the binary of his parent
+            val classDescriptor = typeReference.parentOfType<KtClass>()?.resolveToDescriptorIfAny() ?: return null
+            if (classDescriptor.getSuperInterfaces().any { it.isBinarySealed() }) return null
+            if (classDescriptor.getSuperClassNotAny()?.isBinarySealed() == true) return null
+
+            return MoveToSealedMatchingPackageFix(typeReference)
         }
     }
 }
