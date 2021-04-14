@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariable
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
@@ -45,7 +43,7 @@ class ResolvedLambdaAtom(
     val isSuspend: Boolean,
     val receiver: ConeKotlinType?,
     val parameters: List<ConeKotlinType>,
-    val returnType: ConeKotlinType,
+    var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
     candidateOfOuterCall: Candidate?
 ) : PostponedResolvedAtom() {
@@ -66,8 +64,9 @@ class ResolvedLambdaAtom(
     override val inputTypes: Collection<ConeKotlinType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: ConeKotlinType get() = returnType
 
-    fun replaceExpectedType(expectedType: ConeKotlinType) {
+    fun replaceExpectedType(expectedType: ConeKotlinType, newReturnType: ConeTypeVariableType) {
         this.expectedType = expectedType
+        this.returnType = newReturnType
     }
 
     fun replaceTypeVariableForLambdaReturnType(typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType) {

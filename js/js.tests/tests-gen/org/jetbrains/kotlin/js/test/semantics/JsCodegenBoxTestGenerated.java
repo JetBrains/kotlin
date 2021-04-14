@@ -11901,6 +11901,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/specialCallsWithCallableReferences.kt");
         }
 
+        @TestMetadata("sumOfOverloads.kt")
+        public void testSumOfOverloads() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/sumOfOverloads.kt");
+        }
+
         @TestMetadata("suspendExtensionRecevierFromConstraint.kt")
         public void testSuspendExtensionRecevierFromConstraint() throws Exception {
             runTest("compiler/testData/codegen/box/inference/suspendExtensionRecevierFromConstraint.kt");

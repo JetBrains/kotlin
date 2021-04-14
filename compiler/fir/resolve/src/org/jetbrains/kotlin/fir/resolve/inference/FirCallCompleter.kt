@@ -143,7 +143,7 @@ class FirCallCompleter(
             functionalType.attributes
         )
         csBuilder.addSubtypeConstraint(expectedType, functionalType, ConeArgumentConstraintPosition())
-        atom.replaceExpectedType(expectedType)
+        atom.replaceExpectedType(expectedType, returnVariable.defaultType)
         atom.replaceTypeVariableForLambdaReturnType(returnVariable)
     }
 
