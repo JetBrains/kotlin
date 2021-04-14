@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
+import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -170,6 +171,7 @@ internal object FirIdeSessionFactory {
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
         FirIdeLibrariesSession(moduleInfo, project, searchScope, builtinTypes).apply {
             registerIdeComponents()
+            register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
             registerJavaSpecificResolveComponents()
 
@@ -213,6 +215,7 @@ internal object FirIdeSessionFactory {
     ): FirIdeBuiltinsAndCloneableSession {
         return FirIdeBuiltinsAndCloneableSession(project, builtinTypes).apply {
             registerIdeComponents()
+            register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)

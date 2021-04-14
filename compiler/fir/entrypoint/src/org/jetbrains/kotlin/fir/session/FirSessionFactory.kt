@@ -74,6 +74,7 @@ object FirSessionFactory {
     ): FirJavaModuleBasedSession {
         return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
             registerThreadUnsafeCaches()
+            registerFirCliPhaseManager()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker)
             registerJavaSpecificResolveComponents()
@@ -127,6 +128,7 @@ object FirSessionFactory {
     ): FirLibrarySession {
         return FirLibrarySession(moduleInfo, sessionProvider).apply {
             registerThreadUnsafeCaches()
+            registerFirCliPhaseManager()
             registerCommonComponents(languageVersionSettings)
             registerSealedClassInheritorsProvider()
 

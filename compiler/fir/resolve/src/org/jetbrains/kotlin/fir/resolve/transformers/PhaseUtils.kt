@@ -23,13 +23,9 @@ fun AbstractFirBasedSymbol<*>.ensureResolved(
     // TODO: Decide which one session should be used and probably get rid of the parameter if use-site session is not needed
     @Suppress("UNUSED_PARAMETER") useSiteSession: FirSession,
 ) {
-    val fir = fir as FirDeclaration
-    val availablePhase = fir.resolvePhase
-    if (availablePhase >= requiredPhase) return
-    val resolver = fir.session.phaseManager
-        ?: error("phaseManager should be defined when working with FIR in phased mode")
-
-    resolver.ensureResolved(this, requiredPhase)
+    val session = (fir as FirDeclaration).session
+    val phaseManager = session.phaseManager
+    phaseManager.ensureResolved(this, requiredPhase)
 }
 
 fun FirSymbolOwner<*>.ensureResolved(
