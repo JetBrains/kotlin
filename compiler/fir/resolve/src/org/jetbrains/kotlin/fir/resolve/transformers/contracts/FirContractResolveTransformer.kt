@@ -79,10 +79,12 @@ open class FirContractResolveTransformer(
                 property.getter?.hasContractToResolve != true && property.setter?.hasContractToResolve != true ||
                 property.isLocal || property.delegate != null
             ) {
+                property.updatePhaseForAccessors()
                 return property
             }
             if (property is FirSyntheticProperty) {
                 transformSimpleFunction(property.getter.delegate, data)
+                property.updatePhaseForAccessors()
                 return property
             }
             context.withProperty(property) {
@@ -90,6 +92,11 @@ open class FirContractResolveTransformer(
                 property.setter?.let { transformPropertyAccessor(it, property) }
             }
             return property
+        }
+
+        private fun FirProperty.updatePhaseForAccessors() {
+            getter?.updatePhase()
+            setter?.updatePhase()
         }
 
         override fun transformField(field: FirField, data: ResolutionMode): FirDeclaration {
@@ -236,6 +243,7 @@ open class FirContractResolveTransformer(
             anonymousInitializer: FirAnonymousInitializer,
             data: ResolutionMode
         ): FirDeclaration {
+            anonymousInitializer.updatePhase()
             return anonymousInitializer
         }
 
@@ -245,6 +253,7 @@ open class FirContractResolveTransformer(
         }
 
         override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirDeclaration {
+            enumEntry.updatePhase()
             return enumEntry
         }
 
