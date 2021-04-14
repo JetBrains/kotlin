@@ -47,6 +47,9 @@ fun foo(
     aListInt: A<List<Int>>,
     aSetInt: A<Set<Int>>,
     aListString: A<List<String>>,
+
+    mutableListAny: MutableList<Any>,
+    listString: List<String>,
 ) {
     "a" == "b"
     1 == 2
@@ -94,4 +97,6 @@ fun foo(
 
     <!EQUALITY_NOT_APPLICABLE_WARNING!>aString == aListString<!>
     <!EQUALITY_NOT_APPLICABLE_WARNING!>bString == aListString<!>
+
+    <!EQUALITY_NOT_APPLICABLE_WARNING!>mutableListAny == listString<!>
 }

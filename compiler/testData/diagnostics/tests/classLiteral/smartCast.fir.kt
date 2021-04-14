@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 class Foo {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other === null || <!EQUALITY_NOT_APPLICABLE!>other::class != this::class<!>) return false
+        if (other === null || other::class != this::class) return false
 
         return true
     }
