@@ -60,6 +60,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         val renderBodies: Boolean = true,
         val renderPropertyAccessors: Boolean = true,
         val renderDeclarationAttributes: Boolean = false,
+        val renderDeclarationOrigin: Boolean = false,
     ) {
         companion object {
             val Normal = RenderMode(
@@ -382,8 +383,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitDeclaration(declaration: FirDeclaration) {
-        declaration.renderDeclarationAttributesIfNeeded()
-        declaration.renderPhaseIfNeeded()
+        declaration.renderDeclarationData()
         print(
             when (declaration) {
                 is FirRegularClass -> declaration.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")
@@ -400,7 +400,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         )
     }
 
-    private fun FirDeclaration.renderPhaseIfNeeded() {
+    private fun FirDeclaration.renderDeclarationData() {
+        renderDeclarationResolvePhaseIfNeeded()
+        renderDeclarationAttributesIfNeeded()
+        renderDeclarationOriginIfNeeded()
+    }
+
+    private fun FirDeclaration.renderDeclarationResolvePhaseIfNeeded() {
         if (mode.renderDeclarationResolvePhase) {
             print("[${resolvePhase}] ")
         }
@@ -414,6 +420,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print("[$attributes] ")
         }
     }
+
+    private fun FirDeclaration.renderDeclarationOriginIfNeeded() {
+        if (mode.renderDeclarationOrigin) {
+            print("[$origin] ")
+        }
+    }
+
 
     private fun FirDeclaration.getAttributesWithValues(): List<Pair<KClass<out FirDeclarationDataKey>, Any?>> {
         val attributesMap = FirDeclarationDataRegistry.allValuesThreadUnsafeForRendering()
@@ -527,8 +540,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (constructor.isActual) {
             print("actual ")
         }
-        constructor.renderPhaseIfNeeded()
-        constructor.renderDeclarationAttributesIfNeeded()
+        constructor.renderDeclarationData()
         print("constructor")
         constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()
@@ -550,8 +562,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
-        propertyAccessor.renderPhaseIfNeeded()
-        propertyAccessor.renderDeclarationAttributesIfNeeded()
+        propertyAccessor.renderDeclarationData()
         propertyAccessor.annotations.renderAnnotations()
         print(propertyAccessor.visibility.asString() + " ")
         print(if (propertyAccessor.isInline) "inline " else "")
@@ -565,8 +576,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-        anonymousFunction.renderPhaseIfNeeded()
-        anonymousFunction.renderDeclarationAttributesIfNeeded()
+        anonymousFunction.renderDeclarationData()
         anonymousFunction.annotations.renderAnnotations()
         val label = anonymousFunction.label
         if (label != null) {
@@ -667,8 +677,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitValueParameter(valueParameter: FirValueParameter) {
-        valueParameter.renderPhaseIfNeeded()
-        valueParameter.renderDeclarationAttributesIfNeeded()
+        valueParameter.renderDeclarationData()
         valueParameter.annotations.renderAnnotations()
         if (valueParameter.isCrossinline) {
             print("crossinline ")
