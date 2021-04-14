@@ -28864,6 +28864,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("jvmStaticContainsInObject.kt")
+            public void testJvmStaticContainsInObject() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/jvmStaticContainsInObject.kt");
+            }
+
+            @Test
             @TestMetadata("kt20106.kt")
             public void testKt20106() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/contains/kt20106.kt");
