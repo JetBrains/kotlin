@@ -8,6 +8,7 @@
 
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
+#include "TestSupport.hpp"
 #include "ThreadData.hpp"
 
 using namespace kotlin;
@@ -50,4 +51,9 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     EXPECT_THAT(collect<mm::ObjectFactory<mm::GC>::NodeRef>(objects), testing::UnorderedElementsAre());
     EXPECT_THAT(collect<ObjHeader*>(stableRefs), testing::UnorderedElementsAre());
     EXPECT_THAT(collect(threads), testing::UnorderedElementsAre());
+}
+
+void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {
+    DeinitMemory(memoryState, false);
+    mm::ThreadRegistry::TestSupport::ClearCurrentThreadData();
 }

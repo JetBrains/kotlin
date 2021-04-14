@@ -21,13 +21,16 @@ constexpr int kDefaultThreadCount = 10;
 constexpr int kDefaultThreadCount = 100;
 #endif
 
+inline MemoryState* InitMemoryForTests() { return InitMemory(false); }
+void DeinitMemoryForTests(MemoryState* memoryState);
+
 // Scopely initializes the memory subsystem of the current thread for tests.
 class ScopedMemoryInit : private kotlin::Pinned {
 public:
-    ScopedMemoryInit() : memoryState_(InitMemory(false)) {}
+    ScopedMemoryInit() : memoryState_(InitMemoryForTests()) {}
     ~ScopedMemoryInit() {
         ClearMemoryForTests(memoryState());
-        DeinitMemory(memoryState(), false);
+        DeinitMemoryForTests(memoryState());
     }
 
     MemoryState* memoryState() { return memoryState_; }
