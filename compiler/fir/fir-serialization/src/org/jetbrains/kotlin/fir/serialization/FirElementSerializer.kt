@@ -607,7 +607,7 @@ class FirElementSerializer private constructor(
         val builder = ProtoBuf.Type.newBuilder()
 
         when (type) {
-            is ConeDefinitelyNotNullType -> return typeProto(type, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
+            is ConeDefinitelyNotNullType -> return typeProto(type.original, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
             is ConeKotlinErrorType -> {
                 extension.serializeErrorType(type, builder)
                 return builder
