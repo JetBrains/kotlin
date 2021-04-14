@@ -154,6 +154,11 @@ public class RendererTestGenerated extends AbstractRendererTest {
         runTest("idea/idea-frontend-fir/testData/components/declarationRenderer/typeParameters.kt");
     }
 
+    @TestMetadata("vararg.kt")
+    public void testVararg() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/declarationRenderer/vararg.kt");
+    }
+
     @TestMetadata("where.kt")
     public void testWhere() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/declarationRenderer/where.kt");

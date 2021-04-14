@@ -41,7 +41,9 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     KtReferenceResolveMixIn,
     KtReferenceShortenerMixIn,
     KtSymbolDeclarationRendererMixIn,
-    KtVisibilityCheckerMixIn {
+    KtVisibilityCheckerMixIn,
+    KtMemberSymbolProviderMixin
+{
 
     override val analysisSession: KtAnalysisSession get() = this
 
@@ -94,4 +96,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     internal val visibilityChecker: KtVisibilityChecker get() = visibilityCheckerImpl
     protected abstract val visibilityCheckerImpl: KtVisibilityChecker
+
+    internal val overrideInfoProvider: KtOverrideInfoProvider get() = overrideInfoProviderImpl
+    protected abstract val overrideInfoProviderImpl: KtOverrideInfoProvider
 }

@@ -13,4 +13,7 @@ sealed class BodyType(val requiresReturn: Boolean = true) {
     object QUALIFIED_SUPER : BodyType()
 
     class Delegate(val receiverName: String) : BodyType()
+
+    fun effectiveBodyType(canBeEmpty: Boolean): BodyType = if (!canBeEmpty && this == EMPTY_OR_TEMPLATE) FROM_TEMPLATE else this
 }
+

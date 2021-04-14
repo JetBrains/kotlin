@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -24,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
@@ -32,11 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -49,6 +44,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
+import org.jetbrains.kotlin.util.ImplementationStatus
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
@@ -428,3 +425,107 @@ fun isSubtypeOfForFunctionalTypeReturningUnit(context: ConeInferenceContext, sub
     }
     return false
 }
+
+fun FirCallableMemberDeclaration<*>.isVisibleInClass(parentClass: FirClass<*>): Boolean {
+    val classPackage = parentClass.symbol.classId.packageFqName
+    if (visibility == Visibilities.Private ||
+        !visibility.visibleFromPackage(classPackage, symbol.callableId.packageName)
+    ) return false
+    if (visibility == Visibilities.Internal &&
+        declarationSiteSession !== parentClass.declarationSiteSession
+    ) return false
+    return true
+}
+
+/**
+ * Get the [ImplementationStatus] for this member.
+ *
+ * @param parentClass the contextual class for this query.
+ */
+fun FirCallableMemberDeclaration<*>.getImplementationStatus(sessionHolder: SessionHolder, parentClass: FirClass<*>): ImplementationStatus {
+    val containingClass = getContainingClass(sessionHolder)
+    val symbol = this.symbol
+    if (symbol is FirIntersectionCallableSymbol) {
+        if (containingClass === parentClass && symbol.subjectToManyNotImplemented(sessionHolder)) {
+            return ImplementationStatus.AMBIGUOUSLY_INHERITED
+        }
+        // In Java 8, non-abstract intersection overrides having abstract symbol from base class
+        // still should be implemented in current class (even when they have default interface implementation)
+        if (symbol.intersections.any {
+                val fir = (it.fir as FirCallableMemberDeclaration).unwrapFakeOverrides()
+                fir.isAbstract && (fir.getContainingClass(sessionHolder) as? FirRegularClass)?.classKind == ClassKind.CLASS
+            }
+        ) {
+            // Exception from the rule above: interface implementation via delegation
+            if (symbol.intersections.none {
+                    val fir = (it.fir as FirCallableMemberDeclaration)
+                    fir.origin == FirDeclarationOrigin.Delegated && !fir.isAbstract
+                }
+            ) {
+                return ImplementationStatus.NOT_IMPLEMENTED
+            }
+        }
+    }
+    if (this is FirSimpleFunction) {
+        if (parentClass is FirRegularClass && parentClass.isData && matchesDataClassSyntheticMemberSignatures) {
+            return ImplementationStatus.INHERITED_OR_SYNTHESIZED
+        }
+        // TODO: suspend function overridden by a Java class in the middle is not properly regarded as an override
+        if (isSuspend) {
+            return ImplementationStatus.INHERITED_OR_SYNTHESIZED
+        }
+    }
+    return when {
+        isFinal -> ImplementationStatus.CANNOT_BE_IMPLEMENTED
+        containingClass === parentClass && origin == FirDeclarationOrigin.Source -> ImplementationStatus.ALREADY_IMPLEMENTED
+        containingClass is FirRegularClass && containingClass.isExpect -> ImplementationStatus.CANNOT_BE_IMPLEMENTED
+        isAbstract -> ImplementationStatus.NOT_IMPLEMENTED
+        else -> ImplementationStatus.INHERITED_OR_SYNTHESIZED
+    }
+}
+
+
+fun FirIntersectionCallableSymbol.subjectToManyNotImplemented(sessionHolder: SessionHolder): Boolean {
+    var nonAbstractCountInClass = 0
+    var nonAbstractCountInInterface = 0
+    var abstractCountInInterface = 0
+    for (intersectionSymbol in intersections) {
+        val intersection = intersectionSymbol.fir as FirCallableMemberDeclaration
+        val containingClass = intersection.getContainingClass(sessionHolder) as? FirRegularClass
+        val hasInterfaceContainer = containingClass?.classKind == ClassKind.INTERFACE
+        if (intersection.modality != Modality.ABSTRACT) {
+            if (hasInterfaceContainer) {
+                nonAbstractCountInInterface++
+            } else {
+                nonAbstractCountInClass++
+            }
+        } else if (hasInterfaceContainer) {
+            abstractCountInInterface++
+        }
+        if (nonAbstractCountInClass + nonAbstractCountInInterface > 1) {
+            return true
+        }
+        if (nonAbstractCountInInterface > 0 && abstractCountInInterface > 0) {
+            return true
+        }
+    }
+    return false
+}
+
+private val FirSimpleFunction.matchesDataClassSyntheticMemberSignatures: Boolean
+    get() = (this.name == OperatorNameConventions.EQUALS && matchesEqualsSignature) ||
+            (this.name == HASHCODE_NAME && matchesHashCodeSignature) ||
+            (this.name == OperatorNameConventions.TO_STRING && matchesToStringSignature)
+
+private fun FirSymbolOwner<*>.getContainingClass(sessionHolder: SessionHolder): FirClassLikeDeclaration<*>? =
+    this.safeAs<FirCallableMemberDeclaration<*>>()?.containingClass()?.toSymbol(sessionHolder.session)?.fir
+
+// NB: we intentionally do not check return types
+private val FirSimpleFunction.matchesEqualsSignature: Boolean
+    get() = valueParameters.size == 1 && valueParameters[0].returnTypeRef.coneType.isNullableAny
+
+private val FirSimpleFunction.matchesHashCodeSignature: Boolean
+    get() = valueParameters.isEmpty()
+
+private val FirSimpleFunction.matchesToStringSignature: Boolean
+    get() = valueParameters.isEmpty()

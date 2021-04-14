@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.renderer.ConeTypeIdeRenderer
 import org.jetbrains.kotlin.idea.frontend.api.fir.renderer.FirIdeRenderer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
@@ -39,7 +39,7 @@ internal class KtFirSymbolDeclarationRendererProvider(
         val phaseNeeded =
             if (options.renderContainingDeclarations) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
 
-        return (containingSymbol ?: symbol).firRef.withFir(phaseNeeded) { fir ->
+        return symbol.firRef.withFir(phaseNeeded) { fir ->
             val containingFir = containingSymbol?.firRef?.withFirUnsafe { it }
             FirIdeRenderer.render(fir, containingFir, options, fir.declarationSiteSession)
         }

@@ -28,7 +28,7 @@ abstract class AbstractGenerateMembersHandler<T : ClassMember> : LanguageCodeIns
 
     protected abstract fun getNoMembersFoundHint(): String
 
-    protected abstract fun generateMembers(
+    abstract fun generateMembers(
         editor: Editor,
         classOrObject: KtClassOrObject,
         selectedElements: Collection<T>,
@@ -74,8 +74,7 @@ abstract class AbstractGenerateMembersHandler<T : ClassMember> : LanguageCodeIns
         }
 
         val copyDoc: Boolean
-        val selectedElements: Collection<T
-                >
+        val selectedElements: Collection<T>
         if (implementAll) {
             selectedElements = members
             copyDoc = false
