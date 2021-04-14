@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.name
+import kotlin.test.assertEquals
 import  org.jetbrains.dokka.links.Callable as DRICallable
 
 class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
@@ -342,4 +343,41 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             }
         }
     }
+
+    @Test
+    fun `retention should work with static import`() {
+        inlineModelTest(
+            """
+            |import java.lang.annotation.Retention;
+            |import java.lang.annotation.RetentionPolicy;
+            |import static java.lang.annotation.RetentionPolicy.RUNTIME;
+            |
+            |@Retention(RUNTIME)
+            |public @interface JsonClass {
+            |};
+            """, configuration = configuration
+        ) {
+            with((this / "java" / "JsonClass").cast<DAnnotation>()) {
+                val annotation = extra[Annotations]?.directAnnotations?.entries
+                    ?.firstOrNull()?.value //First sourceset
+                    ?.firstOrNull()
+
+                val expectedDri = DRI("java.lang.annotation", "Retention", null, PointingToDeclaration)
+                val expectedParams = "value" to EnumValue(
+                    "RUNTIME",
+                    DRI(
+                        "java.lang.annotation",
+                        "RetentionPolicy",
+                        DRICallable("RUNTIME", null, emptyList()),
+                        PointingToDeclaration
+                    )
+                )
+
+                assertEquals(expectedDri, annotation?.dri)
+                assertEquals(expectedParams.first, annotation?.params?.entries?.first()?.key)
+                assertEquals(expectedParams.second, annotation?.params?.entries?.first()?.value)
+            }
+        }
+    }
+
 }
