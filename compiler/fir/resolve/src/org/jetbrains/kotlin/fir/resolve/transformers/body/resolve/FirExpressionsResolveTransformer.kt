@@ -759,7 +759,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 symbol.constructType(emptyArray(), isNullable = false)
             }
             else -> {
-                lhs.resultType.coneType
+                val resultType = lhs.resultType
+                if (resultType is FirErrorTypeRef) {
+                    resultType.coneType
+                } else {
+                    ConeKotlinTypeProjectionOut(resultType.coneType)
+                }
             }
         }
 

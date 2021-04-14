@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
               <class: T>: <root>.SettingType<kotlin.Int>
               t: CONSTRUCTOR_CALL 'public constructor <init> (type: kotlin.reflect.KClass<out V of <root>.SettingType>) [primary] declared in <root>.SettingType' type=<root>.SettingType<kotlin.Int> origin=null
                 <class: V>: kotlin.Int
-                type: GET_CLASS type=kotlin.reflect.KClass<kotlin.Int>
+                type: GET_CLASS type=kotlin.reflect.KClass<out kotlin.Int>
                   CONST Int type=kotlin.Int value=42
               v: CONST Int type=kotlin.Int value=42
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-projectTemplate> visibility:public modality:FINAL <> ($this:<root>.IdeWizard) returnType:kotlin.Int?
@@ -168,7 +168,7 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
                     <set-?>: TYPE_OP type=T of <root>.IdeWizard.setting origin=CAST typeOperand=T of <root>.IdeWizard.setting
                       CONSTRUCTOR_CALL 'public constructor <init> (type: kotlin.reflect.KClass<out V of <root>.SettingType>) [primary] declared in <root>.SettingType' type=<root>.SettingType<V of <root>.IdeWizard.setting> origin=null
                         <class: V>: V of <root>.IdeWizard.setting
-                        type: GET_CLASS type=kotlin.reflect.KClass<V of <root>.IdeWizard.setting>
+                        type: GET_CLASS type=kotlin.reflect.KClass<out V of <root>.IdeWizard.setting>
                           GET_VAR 'value: V of <root>.IdeWizard.setting? declared in <root>.IdeWizard.setting.<no name provided>.setValue' type=V of <root>.IdeWizard.setting? origin=null
                   CALL 'public final fun <set-v> (<set-?>: V of <root>.SettingReference): kotlin.Unit declared in <root>.SettingReference' type=kotlin.Unit origin=EQ
                     $this: GET_VAR 'reference: <root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting> declared in <root>.IdeWizard.setting' type=<root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting> origin=null
