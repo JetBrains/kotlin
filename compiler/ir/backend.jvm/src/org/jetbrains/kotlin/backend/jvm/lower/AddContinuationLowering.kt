@@ -316,8 +316,12 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                         function as IrAttributeContainer,
                         flag.capturesCrossinline
                     )
-                    for (statement in newFunction.body!!.statements) {
-                        +statement
+                    if (newFunction.body is IrExpressionBody) {
+                        +irReturn(newFunction.body!!.statements[0] as IrExpression)
+                    } else {
+                        for (statement in newFunction.body!!.statements) {
+                            +statement
+                        }
                     }
                 }
                 return result
