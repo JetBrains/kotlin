@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
-internal class KPropertyState(
-    val property: IrProperty, override val irClass: IrClass, val dispatchReceiver: State? = null
-) : ReflectionState() {
-
-    constructor(propertyReference: IrPropertyReference, dispatchReceiver: State?)
-            : this(propertyReference.symbol.owner, propertyReference.type.classOrNull!!.owner, dispatchReceiver)
+internal class KPropertyState(val property: IrProperty, override val irClass: IrClass, val receiver: State? = null) : ReflectionState() {
+    constructor(propertyReference: IrPropertyReference, receiver: State?)
+            : this(propertyReference.symbol.owner, propertyReference.type.classOrNull!!.owner, receiver)
 
     private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
@@ -30,7 +27,7 @@ internal class KPropertyState(
         if (_parameters != null) return _parameters!!
         val kParameterIrClass = irClass.getIrClassOfReflectionFromList("parameters")
         var index = 0
-        val instanceParameter = property.getter?.dispatchReceiverParameter?.takeIf { dispatchReceiver == null }
+        val instanceParameter = property.getter?.dispatchReceiverParameter?.takeIf { receiver == null }
             ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), callInterceptor) }
         val extensionParameter = property.getter?.extensionReceiverParameter
             ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), callInterceptor) }
@@ -64,14 +61,14 @@ internal class KPropertyState(
         other as KPropertyState
 
         if (property != other.property) return false
-        if (dispatchReceiver != other.dispatchReceiver) return false
+        if (receiver != other.receiver) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = property.hashCode()
-        result = 31 * result + (dispatchReceiver?.hashCode() ?: 0)
+        result = 31 * result + (receiver?.hashCode() ?: 0)
         return result
     }
 

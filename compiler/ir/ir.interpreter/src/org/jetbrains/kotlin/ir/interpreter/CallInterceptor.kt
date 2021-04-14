@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretBinaryFunction
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
@@ -51,25 +54,69 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private val bodyMap: Map<IdSignature, IrBody> = interpreter.bodyMap
 
     override fun interceptProxy(irFunction: IrFunction, valueArguments: List<Variable>, expectedResultClass: Class<*>): Any? {
-        return interpreter.withNewCallStack(irFunction) {
-            this@withNewCallStack.environment.callStack.addInstruction(CompoundInstruction(irFunction))
+        val irCall = IrCallImpl.fromSymbolOwner(0, 0, irFunction.returnType, irFunction.symbol as IrSimpleFunctionSymbol)
+        return interpreter.withNewCallStack(irCall) {
+            this@withNewCallStack.environment.callStack.addInstruction(SimpleInstruction(irCall))
             valueArguments.forEach { this@withNewCallStack.environment.callStack.addVariable(it) }
         }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = true, extendFrom = expectedResultClass)
     }
 
     override fun interceptCall(call: IrCall, irFunction: IrFunction, receiver: State?, args: List<State>, defaultAction: () -> Unit) {
         val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
-        val originalCallName = call.symbol.owner.name.asString()
         when {
             receiver is Wrapper && !isInlineOnly -> receiver.getMethod(irFunction).invokeMethod(irFunction, args)
             irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
-            receiver is KFunctionState && originalCallName == "invoke" -> callStack.addInstruction(CompoundInstruction(irFunction))
+            receiver is KFunctionState && call.symbol.owner.name.asString() == "invoke" -> handleInvoke(call, receiver, args)
             receiver is ReflectionState -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
             receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
             irFunction.body is IrSyntheticBody -> handleIntrinsicMethods(irFunction)
             irFunction.body == null ->
                 irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction, args)
             else -> defaultAction()
+        }
+    }
+
+    // TODO unite this logic with interpretCall
+    private fun handleInvoke(call: IrCall, functionState: KFunctionState, args: List<State>) {
+        val invokedFunction = functionState.irFunction
+
+        var index = 1 // drop first arg that is reference to function
+        val dispatchReceiver = invokedFunction.dispatchReceiverParameter?.let { functionState.getState(it.symbol) ?: args[index++] }
+        val extensionReceiver = invokedFunction.extensionReceiverParameter?.let { functionState.getState(it.symbol) ?: args[index++] }
+        val valueArguments = invokedFunction.valueParameters.map { args[index++] }
+
+        val function = when (val symbol = invokedFunction.symbol) {
+            is IrSimpleFunctionSymbol -> {
+                val irCall = IrCallImpl.fromSymbolOwner(0, 0, invokedFunction.returnType, invokedFunction.symbol as IrSimpleFunctionSymbol)
+                val actualFunction = dispatchReceiver?.getIrFunctionByIrCall(irCall) ?: invokedFunction
+                callStack.newFrame(actualFunction, listOf(SimpleInstruction(actualFunction)))
+                callStack.addVariable(Variable(actualFunction.symbol, KTypeState(call.type, irBuiltIns.anyClass.owner)))
+
+                actualFunction
+            }
+            is IrConstructorSymbol -> {
+                val irConstructorCall = IrConstructorCallImpl.fromSymbolOwner(invokedFunction.returnType, symbol)
+                callStack.newSubFrame(irConstructorCall, listOf(SimpleInstruction(irConstructorCall)))
+                callStack.addVariable(Variable(invokedFunction.parentAsClass.thisReceiver!!.symbol, Common(invokedFunction.parentAsClass)))
+
+                invokedFunction
+            }
+            else -> TODO("unsupported symbol $symbol for invoke")
+        }
+
+        function.dispatchReceiverParameter?.let { callStack.addVariable(Variable(it.symbol, dispatchReceiver!!)) }
+        function.extensionReceiverParameter?.let { callStack.addVariable(Variable(it.symbol, extensionReceiver!!)) }
+        function.valueParameters.forEachIndexed { i, param -> callStack.addVariable(Variable(param.symbol, valueArguments[i])) }
+
+        callStack.loadUpValues(functionState)
+        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
+        if (dispatchReceiver is Complex && function.parentClassOrNull?.isInner == true) {
+            generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { callStack.addVariable(it) }
+        }
+
+        if (invokedFunction.symbol is IrConstructorSymbol) return
+        this.interceptCall(call, function, dispatchReceiver, listOfNotNull(dispatchReceiver, extensionReceiver) + valueArguments) {
+            callStack.addInstruction(CompoundInstruction(function))
         }
     }
 
@@ -133,7 +180,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         this ?: return handleIntrinsicMethods(irFunction)
         val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(this@DefaultCallInterceptor, this.type(), args)
         withExceptionHandler(environment) {
-            val result = this.invokeWithArguments(argsForMethodInvocation)
+            val result = this.invokeWithArguments(argsForMethodInvocation) // TODO if null return Unit
             callStack.pushState(result.toState(result.getType(irFunction.returnType)))
         }
     }

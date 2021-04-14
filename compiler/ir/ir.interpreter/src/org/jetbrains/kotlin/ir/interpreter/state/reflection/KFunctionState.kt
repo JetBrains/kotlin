@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.interpreter.state.reflection
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
@@ -61,11 +60,9 @@ internal class KFunctionState(val irFunction: IrFunction, override val irClass: 
     }
 
     fun getArity(): Int? {
-        return irClass.name.asString().removePrefix("Function").removePrefix("KFunction").toIntOrNull()
-    }
-
-    override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
-        return if (expression.symbol.owner.name.asString() == "invoke") irFunction else null
+        return irClass.name.asString()
+            .removePrefix("Suspend").removePrefix("Function").removePrefix("KFunction")
+            .toIntOrNull()
     }
 
     private fun isLambda(): Boolean = irFunction.name.let { it == Name.special("<anonymous>") || it == Name.special("<no name provided>") }

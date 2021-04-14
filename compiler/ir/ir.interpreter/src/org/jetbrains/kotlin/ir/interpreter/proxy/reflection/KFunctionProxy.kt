@@ -7,12 +7,19 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.interpreter.toState
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.statements
 import kotlin.reflect.*
 
 internal class KFunctionProxy(
@@ -68,17 +75,62 @@ internal class KFunctionProxy(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ReflectionProxy) return false
+        if (other !is KFunctionProxy) return false
+        if (arity != other.arity || isSuspend != other.isSuspend) return false
+        if (state.fields.zip(other.state.fields).any { (first, second) -> first.state !== second.state }) return false
 
-        return state == other.state
+        return when {
+            state.irFunction.isAdapter() && other.state.irFunction.isAdapter() -> state.irFunction.eqaulsByAdapteeCall(other.state.irFunction)
+            else -> state.irFunction == other.state.irFunction
+        }
     }
 
     override fun hashCode(): Int {
-        return state.hashCode()
+        return when {
+            state.irFunction.isAdapter() -> state.irFunction.getAdapteeCallSymbol()!!.hashCode()
+            else -> state.irFunction.hashCode()
+        }
     }
 
     override fun toString(): String {
         return state.toString()
+    }
+
+    private fun IrFunction.isAdapter() = this.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
+
+    private fun IrFunction.getAdapteeCallSymbol(): IrFunctionSymbol? {
+        if (!this.isAdapter()) return null
+
+        val call = when (val statement = this.body!!.statements.single()) {
+            is IrTypeOperatorCall -> statement.argument
+            is IrReturn -> statement.value
+            else -> statement
+        }
+        return (call as? IrFunctionAccessExpression)?.symbol
+    }
+
+    private fun IrFunction.eqaulsByAdapteeCall(other: IrFunction): Boolean {
+        if (!this.isAdapter() || !other.isAdapter()) return false
+
+        val statement = this.body!!.statements.single()
+        val otherStatement = other.body!!.statements.single()
+
+        val (thisArg, otherArg) = when (statement) {
+            is IrTypeOperatorCall -> {
+                if (otherStatement !is IrTypeOperatorCall) return false
+                Pair(statement.argument, otherStatement.argument)
+            }
+            is IrReturn -> {
+                if (otherStatement !is IrReturn) return false
+                Pair(statement.value, otherStatement.value)
+            }
+            else -> Pair(statement, otherStatement)
+        }
+
+        if (thisArg !is IrFunctionAccessExpression || otherArg !is IrFunctionAccessExpression) return false
+        if (thisArg.symbol != otherArg.symbol) return false
+
+        return true
     }
 }
 

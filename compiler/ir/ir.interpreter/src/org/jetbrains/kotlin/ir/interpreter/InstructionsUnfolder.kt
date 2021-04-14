@@ -192,8 +192,8 @@ private fun unfoldStatements(statements: List<IrStatement>, callStack: CallStack
 }
 
 private fun unfoldReturn(expression: IrReturn, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(expression)) //2
-    callStack.addInstruction(CompoundInstruction(expression.value)) //1
+    callStack.addInstruction(SimpleInstruction(expression))
+    callStack.addInstruction(CompoundInstruction(expression.value))
 }
 
 private fun unfoldSetField(expression: IrSetField, callStack: CallStack) {
@@ -375,11 +375,14 @@ private fun unfoldFunctionReference(reference: IrFunctionReference, callStack: C
 }
 
 private fun unfoldPropertyReference(propertyReference: IrPropertyReference, callStack: CallStack) {
-    callStack.addInstruction(SimpleInstruction(propertyReference))
-    propertyReference.dispatchReceiver?.let {
-        callStack.addInstruction(SimpleInstruction(propertyReference.getter!!.owner.dispatchReceiverParameter!!))
-        callStack.addInstruction(CompoundInstruction(it))
-    }
+    val getter = propertyReference.getter!!.owner
+    callStack.newSubFrame(propertyReference, listOf(SimpleInstruction(propertyReference)))
+
+    propertyReference.dispatchReceiver?.let { callStack.addInstruction(SimpleInstruction(getter.dispatchReceiverParameter!!)) }
+    propertyReference.extensionReceiver?.let { callStack.addInstruction(SimpleInstruction(getter.extensionReceiverParameter!!)) }
+
+    propertyReference.extensionReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
+    propertyReference.dispatchReceiver?.let { callStack.addInstruction(CompoundInstruction(it)) }
 }
 
 private fun unfoldClassReference(classReference: IrClassReference, callStack: CallStack) {
