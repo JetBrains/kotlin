@@ -5,6 +5,10 @@ import org.jetbrains.dokka.model.WithChildren
 
 sealed class DocTag : WithChildren<DocTag> {
     abstract val params: Map<String, String>
+
+    companion object {
+        fun contentTypeParam(type: String): Map<String, String> = mapOf("content-type" to type)
+    }
 }
 
 data class A(
