@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+#include <TestSupport.hpp>
 #include "MarkAndSweepUtils.hpp"
 
 #include "gmock/gmock.h"
@@ -232,6 +233,8 @@ public:
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
 
 private:
+    // TODO: Provide a common base class for all unit tests that require memory initializtion.
+    kotlin::ScopedMemoryInit memoryInit;
     FinalizerHooksTestSupport finalizerHooks_;
     GC::ThreadData gcThreadData_;
     ObjectFactory objectFactory_;

@@ -37,6 +37,11 @@ public:
     ALWAYS_INLINE ThreadData* CurrentThreadData() const noexcept;
     Node* CurrentThreadDataNode() const noexcept { return currentThreadDataNode_; }
 
+    class TestSupport {
+    public:
+        static void ClearCurrentThreadData() { currentThreadDataNode_ = nullptr; }
+    };
+
 private:
     friend class GlobalData;
 
