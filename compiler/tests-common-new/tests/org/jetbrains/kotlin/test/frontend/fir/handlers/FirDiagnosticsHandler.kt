@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
+import com.intellij.lang.LighterASTNode
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import com.intellij.psi.TokenType
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -108,11 +113,19 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean
     ) {
-        // TODO: support in light tree
-        val psiFile = firFile.psi ?: return
-        val metaInfos = AnalyzingUtils.getSyntaxErrorRanges(psiFile).map {
-            FirErrors.SYNTAX.on(FirRealPsiSourceElement(it)).toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+        val metaInfos = if (firFile.psi != null) {
+            AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
+                FirErrors.SYNTAX.on(FirRealPsiSourceElement(it)).toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+            }
+        } else {
+            val source = firFile.source ?: return
+            val errorNodes = LightTreeErrorsCollector(source.treeStructure).collectErrorNodes(source.lighterASTNode)
+            errorNodes.map { node ->
+                FirErrors.SYNTAX.on(node.toFirLightSourceElement(source.treeStructure))
+                    .toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+            }
         }
+
         globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
     }
 
@@ -286,4 +299,34 @@ class PsiLightTreeMetaInfoProcessor(testServices: TestServices) : AbstractTwoAtt
     override fun firstAttributeEnabled(module: TestModule): Boolean {
         return FirDiagnosticsDirectives.USE_LIGHT_TREE !in module.directives
     }
+}
+
+private class LightTreeErrorsCollector(private val tree: FlyweightCapableTreeStructure<LighterASTNode>) {
+
+    private fun LighterASTNode.getChildrenAsArray(): Array<out LighterASTNode?> {
+        val kidsRef = Ref<Array<LighterASTNode?>>()
+        return if (tree.getChildren(this, kidsRef) > 0) kidsRef.get() else emptyArray()
+    }
+
+    private inline fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
+        val kidsArray = this.getChildrenAsArray()
+        for (kid in kidsArray) {
+            if (kid == null) break
+            val tokenType = kid.tokenType
+            if (KtTokens.COMMENTS.contains(tokenType) || tokenType == KtTokens.WHITE_SPACE || tokenType == KtTokens.SEMICOLON) continue
+            f(kid)
+        }
+    }
+
+    fun collectErrorNodes(node: LighterASTNode, acc: MutableList<LighterASTNode> = mutableListOf()): List<LighterASTNode> {
+        if (node.tokenType == TokenType.ERROR_ELEMENT) {
+            acc.add(node)
+        } else {
+            node.forEachChildren { child ->
+                collectErrorNodes(child, acc)
+            }
+        }
+        return acc
+    }
+
 }
