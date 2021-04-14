@@ -344,6 +344,11 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
             runTest("idea/testData/quickfix/expressions/unnecessarySafeCall1.kt");
         }
 
+        @TestMetadata("unnecessarySafeCall2.kt")
+        public void testUnnecessarySafeCall2() throws Exception {
+            runTest("idea/testData/quickfix/expressions/unnecessarySafeCall2.kt");
+        }
+
         @TestMetadata("unsafeCall1.kt")
         public void testUnsafeCall1() throws Exception {
             runTest("idea/testData/quickfix/expressions/unsafeCall1.kt");
@@ -871,6 +876,39 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         @TestMetadata("returnTypeMismatchOnOverrideUnitInt.kt")
         public void testReturnTypeMismatchOnOverrideUnitInt() throws Exception {
             runTest("idea/testData/quickfix/override/typeMismatchOnOverride/returnTypeMismatchOnOverrideUnitInt.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/replaceWithDotCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceWithDotCall extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceWithDotCall() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/replaceWithDotCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("comment.kt")
+        public void testComment() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithDotCall/comment.kt");
+        }
+
+        @TestMetadata("functionCall.kt")
+        public void testFunctionCall() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithDotCall/functionCall.kt");
+        }
+
+        @TestMetadata("lineBreak.kt")
+        public void testLineBreak() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithDotCall/lineBreak.kt");
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithDotCall/normal.kt");
         }
     }
 
