@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
-import org.jetbrains.kotlin.idea.configuration.IdeBuiltInsLoadingState
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
@@ -353,25 +352,7 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
         val (libraries, sdks) = LibraryDependenciesCache.getInstance(project).getLibrariesAndSdksUsedWith(this)
 
         result.addAll(sdks)
-
-        /*
-        * When built-ins are created from module dependencies (as opposed to loading them from classloader)
-        * we must resolve Kotlin standard library containing some of the built-ins declarations in the same
-        * resolver for project as JDK. This comes from the following requirements:
-        * - JvmBuiltins need JDK and standard library descriptors -> resolver for project should be able to
-        *   resolve them
-        * - Builtins are created in BuiltinsCache -> module descriptors should be resolved under lock of the
-        *   SDK resolver to prevent deadlocks
-        * This means we have to maintain dependencies of the standard library manually or effectively drop
-        * resolver for SDK otherwise. Libraries depend on superset of their actual dependencies because of
-        * the inability to get real dependencies from IDEA model. So moving stdlib with all dependencies
-        * down is a questionable option.
-        */
-        if (!IdeBuiltInsLoadingState.isFromClassLoader && this.isCoreKotlinLibrary(project)) {
-            libraries.filterTo(result) { it.isCoreKotlinLibrary(project) }
-        } else {
-            result.addAll(libraries)
-        }
+        result.addAll(libraries)
 
         return result.toList()
     }

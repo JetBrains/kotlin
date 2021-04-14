@@ -13,6 +13,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.xmlb.XmlSerializerUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCache
@@ -58,6 +59,11 @@ class ResolutionAnchorCacheServiceImpl(val project: Project) :
 
     override fun loadState(state: State) {
         XmlSerializerUtil.copyBean(state, myState)
+    }
+
+    @TestOnly
+    fun setAnchors(mapping: Map<String, String>) {
+        myState = State(mapping)
     }
 
     object ResolutionAnchorMappingCacheKey
