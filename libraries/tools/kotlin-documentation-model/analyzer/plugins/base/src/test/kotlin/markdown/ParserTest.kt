@@ -1481,5 +1481,41 @@ class ParserTest : KDocTest() {
             exception?.message
         )
     }
+
+    @Test
+    fun `should ignore html comments`() {
+        val kdoc = """
+        | # Example <!--- not visible in header --> Kdoc
+        | <!-- not visible alone -->
+        | Pre <!--- not visible --> visible
+        """.trimMargin()
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    CustomDocTag(
+                        listOf(
+                            H1(
+                                listOf(
+                                    Text("Example "),
+                                    Text("<!--- not visible in header -->", params = mapOf("content-type" to "html")),
+                                    Text(" Kdoc")
+                                )
+                            ),
+                            Text("<!-- not visible alone -->", params = mapOf("content-type" to "html")),
+                            P(
+                                listOf(
+                                    Text("Pre "),
+                                    Text("<!--- not visible -->", params = mapOf("content-type" to "html")),
+                                    Text(" visible")
+                                )
+                            )
+                        ),
+                        name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
 }
 

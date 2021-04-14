@@ -7,6 +7,7 @@ import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.flavours.gfm.GFMElementTypes
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.model.doc.DocTag.Companion.contentTypeParam
 import java.lang.NullPointerException
 
 object DocTagsFromIElementFactory {
@@ -41,6 +42,9 @@ object DocTagsFromIElementFactory {
             GFMElementTypes.ROW                         -> Tr(children, params)
             GFMTokenTypes.CELL                          -> Td(children, params)
             MarkdownElementTypes.MARKDOWN_FILE          -> CustomDocTag(children, params, MarkdownElementTypes.MARKDOWN_FILE.name)
+            MarkdownElementTypes.HTML_BLOCK,
+            MarkdownTokenTypes.HTML_TAG,
+            MarkdownTokenTypes.HTML_BLOCK_CONTENT       -> Text(body.orEmpty(), params = params + contentTypeParam("html"))
             else                                        -> CustomDocTag(children, params, type.name)
         }
 }
