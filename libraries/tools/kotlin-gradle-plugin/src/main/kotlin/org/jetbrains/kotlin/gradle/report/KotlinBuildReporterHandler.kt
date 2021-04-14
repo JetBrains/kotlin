@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.invocation.Gradle
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
-import java.util.*
 import kotlin.math.max
 
 class KotlinBuildReporterHandler {
@@ -38,25 +38,25 @@ class KotlinBuildReporterHandler {
         }
 
         return buildString {
-            appendln("Gradle start parameters:")
+            appendLine("Gradle start parameters:")
             startParams.forEach {
-                appendln("  $it")
+                appendLine("  $it")
             }
             if (failure != null) {
-                appendln("Build failed: ${failure}")
+                appendLine("Build failed: ${failure}")
             }
-            appendln()
+            appendLine()
         }
     }
 
     internal fun taskOverview(kotlinTaskTimeNs: Map<String, Long>, allTasksTimeNs: Long): String {
-        if (kotlinTaskTimeNs.isEmpty()) return buildString { appendln("No Kotlin task was run") }
+        if (kotlinTaskTimeNs.isEmpty()) return buildString { appendLine("No Kotlin task was run") }
 
         val sb = StringBuilder()
         val kotlinTotalTimeNs = kotlinTaskTimeNs.values.sum()
         val ktTaskPercent = (kotlinTotalTimeNs.toDouble() / allTasksTimeNs * 100).asString(1)
 
-        sb.appendln("Total time for Kotlin tasks: ${formatTime(kotlinTotalTimeNs)} ($ktTaskPercent % of all tasks time)")
+        sb.appendLine("Total time for Kotlin tasks: ${formatTime(kotlinTotalTimeNs)} ($ktTaskPercent % of all tasks time)")
 
         val table = TextTable("Time", "% of Kotlin time", "Task")
         kotlinTaskTimeNs.entries
@@ -66,7 +66,7 @@ class KotlinBuildReporterHandler {
                 table.addRow(formatTime(timeNs), "$percent %", taskPath)
             }
         table.printTo(sb)
-        sb.appendln()
+        sb.appendLine()
         return sb.toString()
     }
 
@@ -90,7 +90,7 @@ class KotlinBuildReporterHandler {
 
         fun printTo(sb: StringBuilder) {
             for (row in rows) {
-                sb.appendln()
+                sb.appendLine()
                 for ((i, col) in row.withIndex()) {
                     if (i > 0) sb.append("|")
 

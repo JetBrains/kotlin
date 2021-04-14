@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
@@ -113,7 +114,7 @@ class KotlinKarma(
             // Not all log events goes through this appender
             // For example Error in config file
             //language=ES6
-            it.appendln(
+            it.appendLine(
                 """
                 config.plugins = config.plugins || [];
                 config.plugins.push('kotlin-test-js-runner/karma-kotlin-reporter.js');
@@ -225,13 +226,13 @@ class KotlinKarma(
 
         addPreprocessor("webpack")
         confJsWriters.add {
-            it.appendln()
-            it.appendln("// webpack config")
-            it.appendln("function createWebpackConfig() {")
+            it.appendLine()
+            it.appendLine("// webpack config")
+            it.appendLine("function createWebpackConfig() {")
 
             webpackConfig.appendTo(it)
             //language=ES6
-            it.appendln(
+            it.appendLine(
                 """
                 // noinspection JSUnnecessarySemicolon
                 ;(function(config) {
@@ -252,11 +253,11 @@ class KotlinKarma(
             """.trimIndent()
             )
 
-            it.appendln("   return config;")
-            it.appendln("}")
-            it.appendln()
-            it.appendln("config.set({webpack: createWebpackConfig()});")
-            it.appendln()
+            it.appendLine("   return config;")
+            it.appendLine("}")
+            it.appendLine()
+            it.appendLine("config.set({webpack: createWebpackConfig()});")
+            it.appendLine()
         }
     }
 
@@ -351,7 +352,7 @@ class KotlinKarma(
 
             confJsWriters.add {
                 //language=ES6
-                it.appendln(
+                it.appendLine(
                     """
                         if (!config.plugins) {
                             config.plugins = config.plugins || [];
@@ -568,9 +569,9 @@ class KotlinKarma(
             return
         }
 
-        appendln()
+        appendLine()
         appendConfigsFromDir(configDirectory)
-        appendln()
+        appendLine()
     }
 }
 

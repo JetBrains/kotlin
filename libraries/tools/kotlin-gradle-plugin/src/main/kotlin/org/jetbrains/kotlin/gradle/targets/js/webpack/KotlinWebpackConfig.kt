@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.EXTRA
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.IMPORT
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
@@ -171,7 +172,7 @@ data class KotlinWebpackConfig(
     fun appendTo(target: Appendable) {
         with(target) {
             //language=JavaScript 1.8
-            appendln(
+            appendLine(
                 """
                     let config = {
                       mode: '${mode.code}',
@@ -202,7 +203,7 @@ data class KotlinWebpackConfig(
 
             if (export) {
                 //language=JavaScript 1.8
-                appendln("module.exports = config")
+                appendLine("module.exports = config")
             }
         }
     }
@@ -213,7 +214,7 @@ data class KotlinWebpackConfig(
         val filePath = reportEvaluatedConfigFile!!.canonicalPath.jsQuoted()
 
         //language=JavaScript 1.8
-        appendln(
+        appendLine(
             """
                 // save evaluated config file
                 ;(function(config) {
@@ -230,9 +231,9 @@ data class KotlinWebpackConfig(
     private fun Appendable.appendFromConfigDir() {
         if (configDirectory == null || !configDirectory!!.isDirectory) return
 
-        appendln()
+        appendLine()
         appendConfigsFromDir(configDirectory!!)
-        appendln()
+        appendLine()
     }
 
     private fun Appendable.appendReport() {
@@ -250,7 +251,7 @@ data class KotlinWebpackConfig(
         )
 
         //language=JavaScript 1.8
-        appendln(
+        appendLine(
             """
                 // save webpack-bundle-analyzer report 
                 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; 
@@ -258,22 +259,22 @@ data class KotlinWebpackConfig(
                 
            """.trimIndent()
         )
-        appendln()
+        appendLine()
     }
 
     private fun Appendable.appendDevServer() {
         if (devServer == null) return
 
-        appendln("// dev server")
-        appendln("config.devServer = ${json(devServer!!)};")
-        appendln()
+        appendLine("// dev server")
+        appendLine("config.devServer = ${json(devServer!!)};")
+        appendLine()
     }
 
     private fun Appendable.appendSourceMaps() {
         if (!sourceMaps) return
 
         //language=JavaScript 1.8
-        appendln(
+        appendLine(
             """
                 // source maps
                 config.module.rules.push({
@@ -309,7 +310,7 @@ data class KotlinWebpackConfig(
         val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
 
         //language=JavaScript 1.8
-        appendln(
+        appendLine(
             """
                 // entry
                 config.entry = {
@@ -336,7 +337,7 @@ data class KotlinWebpackConfig(
         if (!cssSupport.enabled || cssSupport.rules.isEmpty())
             return
 
-        appendln(
+        appendLine(
             """
             // css settings
             ;(function(config) {
@@ -372,12 +373,12 @@ data class KotlinWebpackConfig(
             """.trimMargin()
 
         cssSupport.rules.forEach { rule ->
-            appendln(
+            appendLine(
                 """
             |    ;(function(config) {
             """.trimMargin()
             )
-            appendln(
+            appendLine(
                 """
             |       const use = [
             |           {
@@ -389,9 +390,9 @@ data class KotlinWebpackConfig(
             )
 
             when (rule.mode) {
-                EXTRACT -> appendln(extractedCss)
-                INLINE -> appendln(inlinedCss)
-                IMPORT -> appendln(importedCss)
+                EXTRACT -> appendLine(extractedCss)
+                INLINE -> appendLine(inlinedCss)
+                IMPORT -> appendLine(importedCss)
                 else -> cssError()
             }
 
@@ -407,7 +408,7 @@ data class KotlinWebpackConfig(
                 } else null
             }
 
-            appendln(
+            appendLine(
                 """
             |       config.module.rules.push({
             |           test: /\.css${'$'}/,
@@ -419,7 +420,7 @@ data class KotlinWebpackConfig(
             """.trimMargin()
             )
 
-            appendln(
+            appendLine(
                 """
             |   })(config);
             
@@ -427,7 +428,7 @@ data class KotlinWebpackConfig(
             )
         }
 
-        appendln(
+        appendLine(
             """
             })(config);
             
@@ -437,7 +438,7 @@ data class KotlinWebpackConfig(
 
     private fun Appendable.appendErrorPlugin() {
         //language=ES6
-        appendln(
+        appendLine(
             """
                 // noinspection JSUnnecessarySemicolon
                 ;(function(config) {
@@ -457,7 +458,7 @@ data class KotlinWebpackConfig(
         if (!resolveFromModulesFirst || entry == null || entry!!.parent == null) return
 
         //language=JavaScript 1.8
-        appendln(
+        appendLine(
             """
                 // resolve modules
                 config.resolve.modules.unshift(${entry!!.parent.jsQuoted()})
@@ -470,7 +471,7 @@ data class KotlinWebpackConfig(
         if (!progressReporter) return
 
         //language=ES6
-        appendln(
+        appendLine(
             """
                 // Report progress to console
                 // noinspection JSUnnecessarySemicolon

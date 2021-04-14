@@ -16,6 +16,7 @@ import org.gradle.api.tasks.testing.*
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 import java.net.URI
 
@@ -171,7 +172,7 @@ open class KotlinTestReport : TestReport() {
         if (taskFailures.isNotEmpty()) {
             val allErrors = mutableListOf<Error>()
             val msg = buildString {
-                appendln("Failed to execute all tests:")
+                appendLine("Failed to execute all tests:")
                 taskFailures.groupBy { it.first }.forEach { (path, errors) ->
                     append(path)
                     append(": ")
@@ -179,7 +180,7 @@ open class KotlinTestReport : TestReport() {
                     errors.forEach { (_, error) ->
                         allErrors.add(error)
                         append(error.message)
-                        if (first) first = false else appendln()
+                        if (first) first = false else appendLine()
                     }
                 }
 
@@ -189,7 +190,7 @@ open class KotlinTestReport : TestReport() {
                         logger.warn(getFailingTestsMessage())
                     } else {
                         allErrors.add(Error(failedTestsMessage))
-                        appendln("Also: $failedTestsMessage")
+                        appendLine("Also: $failedTestsMessage")
                     }
                 }
             }

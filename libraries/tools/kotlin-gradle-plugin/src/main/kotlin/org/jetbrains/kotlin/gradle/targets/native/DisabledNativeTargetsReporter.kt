@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -58,10 +59,10 @@ internal object DisabledNativeTargetsReporter : AggregateReporter() {
             .toSortedMap(compareBy { it.path })
 
         project.logger.warn(buildString {
-            appendln("\n$WARNING_PREFIX${HostManager.host} machine and are disabled:")
+            appendLine("\n$WARNING_PREFIX${HostManager.host} machine and are disabled:")
 
             disabledTargetGroups.forEach { (targetProject, targetsBySupportedHosts) ->
-                appendln(
+                appendLine(
                     "    * In project '${targetProject.path}':"
                 )
                 targetsBySupportedHosts.forEach { (supportedHosts, disabledTargets) ->
@@ -72,10 +73,10 @@ internal object DisabledNativeTargetsReporter : AggregateReporter() {
                         1 -> "a ${supportedHosts.single()} host"
                         else -> "one of the hosts: ${supportedHosts.joinToString(", ")}"
                     }
-                    appendln(" (can be built with $supportedHostsString)")
+                    appendLine(" (can be built with $supportedHostsString)")
                 }
             }
-            appendln("To hide this message, add '$DISABLE_WARNING_PROPERTY_NAME=true' to the Gradle properties.")
+            appendLine("To hide this message, add '$DISABLE_WARNING_PROPERTY_NAME=true' to the Gradle properties.")
         })
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.jetbrains.kotlin.gradle.internal.testing.ParsedStackTrace
+import org.jetbrains.kotlin.gradle.utils.appendLine
 
 data class NodeJsStackTrace(
     val message: String?,
@@ -118,7 +119,7 @@ fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
             )
         } else {
             if (firstLines) {
-                message.appendln(it)
+                message.appendLine(it)
             }
         }
     }

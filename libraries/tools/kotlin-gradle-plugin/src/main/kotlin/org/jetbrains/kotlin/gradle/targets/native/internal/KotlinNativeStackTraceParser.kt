@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.jetbrains.kotlin.gradle.internal.testing.ParsedStackTrace
+import org.jetbrains.kotlin.gradle.utils.appendLine
 
 data class KotlinNativeStackTrace(
     val message: String?,
@@ -126,7 +127,7 @@ fun parseKotlinNativeStackTrace(stackTrace: String): KotlinNativeStackTrace {
             }
         } else {
             if (firstLines) {
-                message.appendln(it)
+                message.appendLine(it)
             }
         }
     }

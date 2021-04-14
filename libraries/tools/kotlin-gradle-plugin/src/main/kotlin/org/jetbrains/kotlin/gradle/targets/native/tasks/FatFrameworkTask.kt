@@ -12,6 +12,7 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
@@ -234,13 +235,13 @@ open class FatFrameworkTask : DefaultTask() {
             headerContents.toList().forEachIndexed { i, (arch, content) ->
                 val macro = arch.clangMacro
                 if (i == 0) {
-                    writer.appendln("#if defined($macro)\n")
+                    writer.appendLine("#if defined($macro)\n")
                 } else {
-                    writer.appendln("#elif defined($macro)\n")
+                    writer.appendLine("#elif defined($macro)\n")
                 }
-                writer.appendln(content)
+                writer.appendLine(content)
             }
-            writer.appendln(
+            writer.appendLine(
                 """
                 #else
                 #error Unsupported platform

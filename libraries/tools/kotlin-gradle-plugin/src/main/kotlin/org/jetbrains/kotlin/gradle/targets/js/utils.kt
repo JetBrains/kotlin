@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 
 fun Appendable.appendConfigsFromDir(confDir: File) {
@@ -15,10 +16,10 @@ fun Appendable.appendConfigsFromDir(confDir: File) {
         .filter { it.extension == "js" }
         .sortedBy { it.name }
         .forEach {
-            appendln("// ${it.name}")
+            appendLine("// ${it.name}")
             append(it.readText())
-            appendln()
-            appendln()
+            appendLine()
+            appendLine()
         }
 }
 
