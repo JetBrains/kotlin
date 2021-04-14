@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
@@ -50,7 +51,8 @@ fun markRange(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     originalNode: LighterASTNode
 ): List<TextRange> {
-    val startDelta = tree.getStartOffset(from) - tree.getStartOffset(originalNode)
+    val betterFrom = from.nonFillerChildOrSelf(tree)
+    val startDelta = tree.getStartOffset(betterFrom) - tree.getStartOffset(originalNode)
     val endDelta = tree.getEndOffset(to) - tree.getEndOffset(originalNode)
     return listOf(TextRange(startDelta + startOffset, endDelta + endOffset))
 }
@@ -59,6 +61,10 @@ private val DOC_AND_COMMENT_TOKENS = setOf(
     WHITE_SPACE, KtTokens.IDENTIFIER,
     KtTokens.EOL_COMMENT, KtTokens.BLOCK_COMMENT, KtTokens.SHEBANG_COMMENT, KtTokens.DOC_COMMENT
 )
+
+private fun LighterASTNode.nonFillerChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
+    getChildren(tree).firstOrNull { it != null && it.tokenType !in DOC_AND_COMMENT_TOKENS } ?: this
+
 
 private fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
     if (node.tokenType == TokenType.ERROR_ELEMENT) return true
