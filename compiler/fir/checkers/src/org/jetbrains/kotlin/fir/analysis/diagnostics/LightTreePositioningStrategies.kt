@@ -545,7 +545,7 @@ object LightTreePositioningStrategies {
             if (labeledExpression != null) {
                 return markRange(node, labeledExpression, startOffset, endOffset, tree, node)
             }
-            return markElement(tree.returnKeyword(node) ?: node, startOffset, endOffset, tree)
+            return markElement(tree.returnKeyword(node) ?: node, startOffset, endOffset, tree, node)
         }
     }
 
