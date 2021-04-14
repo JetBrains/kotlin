@@ -21,8 +21,6 @@ ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadS
 }
 
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {
-    // In unit tests, this assert may be called on a non-registered thread, where thread == null.
-    if (thread == nullptr) return;
     AssertThreadState(thread->GetThreadData(), expected);
 }
 
