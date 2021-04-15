@@ -125,7 +125,12 @@ object LightTreePositioningStrategies {
             startOffset: Int,
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
-        ): List<TextRange> {
+        ): List<TextRange> = markElement(getElementToMark(node, tree), startOffset, endOffset, tree, node)
+
+        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean =
+            super.isValid(getElementToMark(node, tree), tree)
+
+        private fun getElementToMark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode {
             val (returnTypeRef, nameIdentifierOrPlaceHolder) = when {
                 node.tokenType == KtNodeTypes.PROPERTY_ACCESSOR ->
                     tree.typeReference(node) to tree.accessorNamePlaceholder(node)
@@ -134,13 +139,7 @@ object LightTreePositioningStrategies {
                 else ->
                     null to null
             }
-            if (returnTypeRef != null) {
-                return markElement(returnTypeRef, startOffset, endOffset, tree, node)
-            }
-            if (nameIdentifierOrPlaceHolder != null) {
-                return markElement(nameIdentifierOrPlaceHolder, startOffset, endOffset, tree, node)
-            }
-            return DEFAULT.mark(node, startOffset, endOffset, tree)
+            return returnTypeRef ?: (nameIdentifierOrPlaceHolder ?: node)
         }
     }
 
@@ -621,7 +620,8 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     getChildren(node, childrenRef)
     var result = childrenRef.get()?.firstOrNull {
         it?.tokenType == KtNodeTypes.REFERENCE_EXPRESSION || it?.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE ||
-                it?.tokenType == KtNodeTypes.SUPER_EXPRESSION || it?.tokenType == KtNodeTypes.PARENTHESIZED
+                it?.tokenType == KtNodeTypes.SUPER_EXPRESSION || it?.tokenType == KtNodeTypes.PARENTHESIZED ||
+                it?.tokenType == KtNodeTypes.ARRAY_ACCESS_EXPRESSION
     }
     while (locateReferencedName && result != null && result.tokenType == KtNodeTypes.PARENTHESIZED) {
         result = referenceExpression(result, locateReferencedName = true)

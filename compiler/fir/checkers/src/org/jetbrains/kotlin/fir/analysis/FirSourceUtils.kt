@@ -36,6 +36,13 @@ private fun FirPsiSourceElement<*>.getChild(types: Set<IElementType>, index: Int
 
 private fun FirLightSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int): FirSourceElement? {
     val visitor = LighterTreeElementFinderByType(treeStructure, types, index, depth)
-    return visitor.find(lighterASTNode)?.toFirLightSourceElement(treeStructure)
+    val childNode = visitor.find(lighterASTNode) ?: return null
+    //we need to keep 'padding' of parent node in child node
+    val offsetDelta = startOffset - lighterASTNode.startOffset
+    return childNode.toFirLightSourceElement(
+        treeStructure,
+        startOffset = childNode.startOffset + offsetDelta,
+        endOffset = childNode.endOffset + offsetDelta
+    )
 }
 
