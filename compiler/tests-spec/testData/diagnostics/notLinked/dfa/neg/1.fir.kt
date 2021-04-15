@@ -180,7 +180,7 @@ fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndire
 
 // TESTCASE NUMBER: 13
 fun case_13(x: <!UNRESOLVED_REFERENCE!>otherpackage.Case13?<!>) =
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Can't resolve when expression")!>if ((x == null !is Boolean) !== true) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>if ((x == null !is Boolean) !== true) {
         throw Exception()
     } else {
         <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>

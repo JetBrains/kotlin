@@ -6,5 +6,5 @@ FILE: ambiguityWhenNoApplicableCallableReferenceCandidate.kt
     public final fun <T> bar(f: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/bar|<R|kotlin/Any?|>(::<Unresolved reference: foo>#)
+        R|/bar|<R|kotlin/Any?|>(::<Ambiguity: foo, [/foo, /foo]>#)
     }

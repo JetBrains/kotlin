@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
@@ -17,11 +18,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
@@ -65,7 +65,7 @@ class FirSyntheticCallGenerator(
             argumentList,
             SyntheticCallableId.WHEN.callableName,
             context = context
-        ) ?: return null // TODO
+        )
 
         return whenExpression.transformCalleeReference(UpdateReference, reference)
     }
@@ -89,7 +89,7 @@ class FirSyntheticCallGenerator(
             argumentList,
             SyntheticCallableId.TRY.callableName,
             context = context
-        ) ?: return null // TODO
+        )
 
         return tryExpression.transformCalleeReference(UpdateReference, reference)
     }
@@ -104,7 +104,7 @@ class FirSyntheticCallGenerator(
             checkNotNullCall.argumentList,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
             context = context
-        ) ?: return null // TODO
+        )
 
         return checkNotNullCall.transformCalleeReference(UpdateReference, reference)
     }
@@ -122,7 +122,7 @@ class FirSyntheticCallGenerator(
             argumentList,
             SyntheticCallableId.ELVIS_NOT_NULL.callableName,
             context = context
-        ) ?: return null
+        )
 
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
     }
@@ -142,12 +142,6 @@ class FirSyntheticCallGenerator(
                 SyntheticCallableId.ID.callableName,
                 CallKind.SyntheticIdForCallableReferencesResolution,
                 context
-            ) ?: return callableReferenceAccess.transformCalleeReference(
-                StoreCalleeReference,
-                buildErrorNamedReference {
-                    source = callableReferenceAccess.source
-                    diagnostic = ConeUnresolvedNameError(callableReferenceAccess.calleeReference.name)
-                }
             )
         val fakeCallElement = buildFunctionCall {
             calleeReference = reference
@@ -165,12 +159,18 @@ class FirSyntheticCallGenerator(
         name: Name,
         callKind: CallKind = CallKind.SyntheticSelect,
         context: ResolutionContext
-    ): FirNamedReferenceWithCandidate? {
+    ): FirNamedReferenceWithCandidate {
         val callInfo = generateCallInfo(callSite, name, argumentList, callKind)
         val candidate = generateCandidate(callInfo, function, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         if (applicability <= CandidateApplicability.INAPPLICABLE) {
-            return null
+            return createErrorReferenceWithExistingCandidate(
+                candidate,
+                ConeInapplicableCandidateError(applicability, candidate),
+                source = null,
+                context,
+                components.resolutionStageRunner
+            )
         }
 
         return FirNamedReferenceWithCandidate(null, name, candidate)

@@ -327,15 +327,24 @@ class FirCallCompletionResultsWriterTransformer(
         callableReferenceAccess.replaceTypeArguments(typeArguments)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, typeRef.source ?: callableReferenceAccess.source, null)
 
-        return callableReferenceAccess.transformCalleeReference(
-            StoreCalleeReference,
-            buildResolvedCallableReference {
+        val resolvedReference = when (calleeReference) {
+            is FirErrorReferenceWithCandidate -> buildErrorNamedReference {
+                source = calleeReference.source
+                diagnostic = calleeReference.diagnostic
+                candidateSymbol = calleeReference.candidateSymbol
+            }
+            else -> buildResolvedCallableReference {
                 source = calleeReference.source
                 name = calleeReference.name
                 resolvedSymbol = calleeReference.candidateSymbol
                 inferredTypeArguments.addAll(computeTypeArgumentTypes(calleeReference.candidate))
                 mappedArguments = subCandidate.callableReferenceAdaptation?.mappedArguments ?: emptyMap()
-            },
+            }
+        }
+
+        return callableReferenceAccess.transformCalleeReference(
+            StoreCalleeReference,
+            resolvedReference,
         ).transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
             .transformExtensionReceiver(StoreReceiver, subCandidate.extensionReceiverExpression())
     }

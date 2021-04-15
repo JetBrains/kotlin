@@ -11,7 +11,7 @@ package testsCase1
 import libCase1.boo
 
 fun case1() {
-    val y1 =1::<!UNRESOLVED_REFERENCE!>boo<!>
+    val y1 =1::<!OVERLOAD_RESOLUTION_AMBIGUITY!>boo<!>
 }
 
 // FILE: LibCase1.kt
@@ -27,7 +27,7 @@ package testsCase2
 import libCase2.*
 
 fun case2() {
-    val y1 =1::<!UNRESOLVED_REFERENCE!>boo<!>
+    val y1 =1::<!OVERLOAD_RESOLUTION_AMBIGUITY!>boo<!>
 }
 
 // FILE: LibCase2.kt

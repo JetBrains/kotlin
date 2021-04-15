@@ -3,7 +3,7 @@ fun foo(x: Int, y: Any) = x
 fun foo(x: Any, y: Int) = y
 
 fun main() {
-    ::<!UNRESOLVED_REFERENCE!>foo<!>
+    ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 
     val fooRef: (Int, Any) -> Unit = ::<!UNRESOLVED_REFERENCE!>foo<!>
 }

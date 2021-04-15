@@ -29,13 +29,13 @@ fun poll11(flag: Boolean) {
 }
 
 fun poll12(flag: Boolean) {
-    val inv = if (flag) { ::bar3 } else { ::foo3 }
+    val inv = if (flag) { ::<!UNRESOLVED_REFERENCE!>bar3<!> } else { ::<!UNRESOLVED_REFERENCE!>foo3<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
 fun poll13(flag: Boolean) {
-    val inv = if (flag) { ::bar2 } else { ::foo3 }
-    inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    val inv = if (flag) { ::bar2 } else { ::<!UNRESOLVED_REFERENCE!>foo3<!> }
+    inv()
 }
 
 fun poll14(flag: Boolean) {
@@ -44,7 +44,7 @@ fun poll14(flag: Boolean) {
 }
 
 fun poll15(flag: Boolean) {
-    val inv = if (flag) { ::bar5 } else { ::foo5 }
+    val inv = if (flag) { ::<!UNRESOLVED_REFERENCE!>bar5<!> } else { ::<!UNRESOLVED_REFERENCE!>foo5<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -59,7 +59,7 @@ fun poll17(flag: Boolean) {
 }
 
 fun poll2(flag: Boolean) {
-    val inv = when (flag) { true -> ::bar else -> ::foo }
+    val inv = when (flag) { true -> ::<!UNRESOLVED_REFERENCE!>bar<!> else -> ::<!UNRESOLVED_REFERENCE!>foo<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -69,7 +69,7 @@ fun poll21(flag: Boolean) {
 }
 
 fun poll22(flag: Boolean) {
-    val inv = when (flag) { true -> ::bar3 else -> ::foo3 }
+    val inv = when (flag) { true -> ::<!UNRESOLVED_REFERENCE!>bar3<!> else -> ::<!UNRESOLVED_REFERENCE!>foo3<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -79,7 +79,7 @@ fun poll23(flag: Boolean) {
 }
 
 fun poll24(flag: Boolean) {
-    val inv = when (flag) { true -> ::bar5 else -> ::foo5 }
+    val inv = when (flag) { true -> ::<!UNRESOLVED_REFERENCE!>bar5<!> else -> ::<!UNRESOLVED_REFERENCE!>foo5<!> }
     inv
 }
 
@@ -94,7 +94,7 @@ fun poll26(flag: Boolean) {
 }
 
 fun poll3(flag: Boolean) {
-    val inv = when (flag) { true -> ::bar false -> ::foo }
+    val inv = when (flag) { true -> ::<!UNRESOLVED_REFERENCE!>bar<!> false -> ::<!UNRESOLVED_REFERENCE!>foo<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -104,7 +104,7 @@ fun poll31(flag: Boolean) {
 }
 
 fun poll32(flag: Boolean) {
-    val inv = when (flag) { true -> ::bar3 false -> ::foo3 }
+    val inv = when (flag) { true -> ::<!UNRESOLVED_REFERENCE!>bar3<!> false -> ::<!UNRESOLVED_REFERENCE!>foo3<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -114,7 +114,7 @@ fun poll33(flag: Boolean) {
 }
 
 fun poll34(flag: Boolean) {
-    val inv = when (flag) { true -> ::bar5 false -> ::foo5 }
+    val inv = when (flag) { true -> ::<!UNRESOLVED_REFERENCE!>bar5<!> false -> ::<!UNRESOLVED_REFERENCE!>foo5<!> }
     inv
 }
 
@@ -129,7 +129,7 @@ fun poll36(flag: Boolean) {
 }
 
 fun poll4() {
-    val inv = try { ::bar } finally { ::<!UNRESOLVED_REFERENCE!>foo<!> }
+    val inv = try { ::<!UNRESOLVED_REFERENCE!>bar<!> } finally { ::<!UNRESOLVED_REFERENCE!>foo<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -139,7 +139,7 @@ fun poll41() {
 }
 
 fun poll42() {
-    val inv = try { ::bar3 } finally { ::<!UNRESOLVED_REFERENCE!>foo3<!> }
+    val inv = try { ::<!UNRESOLVED_REFERENCE!>bar3<!> } finally { ::<!UNRESOLVED_REFERENCE!>foo3<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -149,7 +149,7 @@ fun poll43() {
 }
 
 fun poll44() {
-    val inv = try { ::bar5 } finally { ::<!UNRESOLVED_REFERENCE!>foo5<!> }
+    val inv = try { ::<!UNRESOLVED_REFERENCE!>bar5<!> } finally { ::<!UNRESOLVED_REFERENCE!>foo5<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -164,7 +164,7 @@ fun poll46() {
 }
 
 fun poll5() {
-    val inv = try { ::bar } catch (e: Exception) { ::foo } finally { ::<!UNRESOLVED_REFERENCE!>foo<!> }
+    val inv = try { ::<!UNRESOLVED_REFERENCE!>bar<!> } catch (e: Exception) { ::<!UNRESOLVED_REFERENCE!>foo<!> } finally { ::<!UNRESOLVED_REFERENCE!>foo<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -174,7 +174,7 @@ fun poll51() {
 }
 
 fun poll52() {
-    val inv = try { ::bar3 } catch (e: Exception) { ::foo3 } finally { ::<!UNRESOLVED_REFERENCE!>foo3<!> }
+    val inv = try { ::<!UNRESOLVED_REFERENCE!>bar3<!> } catch (e: Exception) { ::<!UNRESOLVED_REFERENCE!>foo3<!> } finally { ::<!UNRESOLVED_REFERENCE!>foo3<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -184,7 +184,7 @@ fun poll53() {
 }
 
 fun poll54() {
-    val inv = try { ::bar5 } catch (e: Exception) { ::foo5 } finally { ::<!UNRESOLVED_REFERENCE!>foo5<!> }
+    val inv = try { ::<!UNRESOLVED_REFERENCE!>bar5<!> } catch (e: Exception) { ::<!UNRESOLVED_REFERENCE!>foo5<!> } finally { ::<!UNRESOLVED_REFERENCE!>foo5<!> }
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -234,7 +234,7 @@ fun poll66() {
 }
 
 fun poll7() {
-    val inv = ::bar<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -244,7 +244,7 @@ fun poll71() {
 }
 
 fun poll72() {
-    val inv = ::bar3<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar3<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
@@ -254,7 +254,7 @@ fun poll73() {
 }
 
 fun poll74() {
-    val inv = ::bar5<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar5<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
     inv
 }
 

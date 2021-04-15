@@ -84,14 +84,14 @@ fun <T : Foo, R: Number, D: Int> main() {
     bar1(::resolve) // OK
 
     // with LHS and conflicting projection
-    bar2<T>(Foo::<!UNRESOLVED_REFERENCE!>resolve<!>)
-    bar2<Foo>(Foo::<!UNRESOLVED_REFERENCE!>resolve<!>)
-    bar2(Foo::<!UNRESOLVED_REFERENCE!>resolve<!>)
+    bar2<T>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    bar2<Foo>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    bar2(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and Any? expected type
-    bar3<T>(Foo::<!UNRESOLVED_REFERENCE!>resolve<!>)
-    bar3<Foo>(Foo::<!UNRESOLVED_REFERENCE!>resolve<!>)
-    bar3(Foo::<!UNRESOLVED_REFERENCE!>resolve<!>)
+    bar3<T>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    bar3<Foo>(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
+    bar3(Foo::<!OVERLOAD_RESOLUTION_AMBIGUITY!>resolve<!>)
 
     // with LHS and `Function` expected type
     bar4<T>(Foo::resolve) // ERROR before the fix in NI

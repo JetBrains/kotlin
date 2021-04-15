@@ -37,7 +37,7 @@ FILE: chooseCallableReferenceDependingOnInferredReceiver.kt
                 lval a: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
                 lval b: R|B| = R|/bar|<R|B|>(::R|/B.foo|)
                 lval t3: R|B| = R|/bar|<R|B|>(::R|/B.baz|)
-                ^ R|/bar|<R|kotlin/Nothing|>(::<Unresolved reference: foo>#)
+                ^ R|/bar|<R|kotlin/Nothing|>(::<Ambiguity: foo, [/B.foo, /B.foo]>#)
             }
             )
         }

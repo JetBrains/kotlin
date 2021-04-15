@@ -2827,9 +2827,19 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/references/integerLiteralInLhs.kt");
         }
 
+        @TestMetadata("leakedImplicitType.kt")
+        public void testLeakedImplicitType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/references/leakedImplicitType.kt");
+        }
+
         @TestMetadata("referenceToExtension.kt")
         public void testReferenceToExtension() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/references/referenceToExtension.kt");
+        }
+
+        @TestMetadata("referenceToField.kt")
+        public void testReferenceToField() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/references/referenceToField.kt");
         }
 
         @TestMetadata("simple.kt")

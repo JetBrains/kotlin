@@ -9,16 +9,16 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 //  --------------------------- Variables ---------------------------
@@ -121,7 +121,8 @@ class ResolvedCallableReferenceAtom(
 
     val mightNeedAdditionalResolution get() = !hasBeenResolvedOnce || hasBeenPostponed
 
-    var resultingCandidate: Pair<Candidate, CandidateApplicability>? = null
+    var resultingReference: FirNamedReference? = null
+    var resultingTypeForCallableReference: ConeKotlinType? = null
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
