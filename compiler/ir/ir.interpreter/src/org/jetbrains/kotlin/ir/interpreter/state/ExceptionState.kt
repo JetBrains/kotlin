@@ -23,9 +23,9 @@ internal class ExceptionState private constructor(
     override var outerClass: Variable? = null
 
     override val message: String?
-        get() = getState(messageProperty.symbol)?.asStringOrNull()
+        get() = getField(messageProperty.symbol)?.asStringOrNull()
     override val cause: Throwable?
-        get() = getState(causeProperty.symbol)?.let { if (it is ExceptionState) it else null }
+        get() = getField(causeProperty.symbol)?.let { if (it is ExceptionState) it else null }
 
     private lateinit var exceptionFqName: String
     private val exceptionHierarchy = mutableListOf<String>()
@@ -115,7 +115,7 @@ internal class ExceptionState private constructor(
             val causeVar = exception.cause?.let {
                 Variable(causeProperty.symbol, ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" }))
             }
-            return listOfNotNull(messageVar, causeVar).toMutableList()
+            return causeVar?.let { mutableListOf(messageVar, it) } ?: mutableListOf(messageVar)
         }
 
         private fun evaluateAdditionalStackTrace(e: Throwable): List<String> {

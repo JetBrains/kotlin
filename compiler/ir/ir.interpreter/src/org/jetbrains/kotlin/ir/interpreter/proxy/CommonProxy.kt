@@ -26,7 +26,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
     private fun IrFunction.wasAlreadyCalled(): Boolean {
         val anyParameter = this.getLastOverridden().dispatchReceiverParameter!!.symbol
         if (callInterceptor.environment.callStack.containsVariable(anyParameter)) return true
-        return this == callInterceptor.environment.callStack.getCurrentFrameOwner()
+        return this == callInterceptor.environment.callStack.currentFrameOwner
     }
 
     override fun equals(other: Any?): Boolean {

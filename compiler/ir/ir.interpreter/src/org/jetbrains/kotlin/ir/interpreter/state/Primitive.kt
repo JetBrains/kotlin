@@ -19,7 +19,7 @@ internal class Primitive<T>(val value: T, val type: IrType) : State {
     override val fields: MutableList<Variable> = mutableListOf()
     override val irClass: IrClass = type.classOrNull!!.owner
 
-    override fun getState(symbol: IrSymbol): State? = null
+    override fun getField(symbol: IrSymbol): State? = null
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction {
         val owner = expression.symbol.owner

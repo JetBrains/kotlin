@@ -19,22 +19,22 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 
 internal class CallStack {
     private val frames = mutableListOf<Frame>()
-    private fun getCurrentFrame() = frames.last()
-    internal fun getCurrentFrameOwner() = frames.last().currentSubFrameOwner
+    private val currentFrame get() = frames.last()
+    internal val currentFrameOwner get() = currentFrame.currentSubFrameOwner
 
-    fun newFrame(frameOwner: IrElement, instructions: List<Instruction>, irFile: IrFile? = null) {
-        val newFrame = SubFrame(instructions.toMutableList(), frameOwner)
+    fun newFrame(frameOwner: IrElement, irFile: IrFile? = null) {
+        val newFrame = SubFrame(frameOwner)
         frames.add(Frame(newFrame, irFile))
     }
 
-    fun newFrame(frameOwner: IrFunction, instructions: List<Instruction>) {
-        val newFrame = SubFrame(instructions.toMutableList(), frameOwner)
+    fun newFrame(frameOwner: IrFunction) {
+        val newFrame = SubFrame(frameOwner)
         frames.add(Frame(newFrame, frameOwner.fileOrNull))
     }
 
-    fun newSubFrame(frameOwner: IrElement, instructions: List<Instruction>) {
-        val newFrame = SubFrame(instructions.toMutableList(), frameOwner)
-        getCurrentFrame().addSubFrame(newFrame)
+    fun newSubFrame(frameOwner: IrElement) {
+        val newFrame = SubFrame(frameOwner)
+        currentFrame.addSubFrame(newFrame)
     }
 
     fun dropFrame() {
@@ -49,12 +49,12 @@ internal class CallStack {
     }
 
     fun dropSubFrame() {
-        getCurrentFrame().removeSubFrame()
+        currentFrame.removeSubFrame()
     }
 
     fun returnFromFrameWithResult(irReturn: IrReturn) {
         val result = popState()
-        var frameOwner = getCurrentFrameOwner()
+        var frameOwner = currentFrameOwner
         while (frameOwner != irReturn.returnTargetSymbol.owner) {
             when (frameOwner) {
                 is IrTry -> {
@@ -65,7 +65,7 @@ internal class CallStack {
                     return
                 }
                 is IrCatch -> {
-                    val tryBlock = getCurrentFrame().dropInstructions()!!.element as IrTry// last instruction in `catch` block is `try`
+                    val tryBlock = currentFrame.dropInstructions()!!.element as IrTry// last instruction in `catch` block is `try`
                     dropSubFrame()
                     pushState(result)
                     addInstruction(SimpleInstruction(irReturn))
@@ -74,44 +74,46 @@ internal class CallStack {
                 }
                 else -> {
                     dropSubFrame()
-                    if (getCurrentFrame().hasNoSubFrames() && frameOwner != irReturn.returnTargetSymbol.owner) dropFrame()
-                    frameOwner = getCurrentFrameOwner()
+                    if (currentFrame.hasNoSubFrames() && frameOwner != irReturn.returnTargetSymbol.owner) dropFrame()
+                    frameOwner = currentFrameOwner
                 }
             }
         }
 
         dropFrame()
         // check that last frame is not a function itself; use case for proxyInterpret
-        if (frames.size == 0) newFrame(irReturn, emptyList()) // just stub frame
+        if (frames.size == 0) newFrame(irReturn) // just stub frame
         pushState(result)
     }
 
     fun unrollInstructionsForBreakContinue(breakOrContinue: IrBreakContinue) {
-        var frameOwner = getCurrentFrameOwner()
+        var frameOwner = currentFrameOwner
         while (frameOwner != breakOrContinue.loop) {
             when (frameOwner) {
                 is IrTry -> {
-                    getCurrentFrame().removeSubFrameWithoutDataPropagation()
+                    currentFrame.removeSubFrameWithoutDataPropagation()
                     addInstruction(CompoundInstruction(breakOrContinue))
-                    newSubFrame(frameOwner, listOf(SimpleInstruction(frameOwner))) // will be deleted when interpret 'try'
+                    newSubFrame(frameOwner) // will be deleted when interpret 'try'
+                    addInstruction(SimpleInstruction(frameOwner))
                     return
                 }
                 is IrCatch -> {
-                    val tryInstruction = getCurrentFrame().dropInstructions()!! // last instruction in `catch` block is `try`
-                    getCurrentFrame().removeSubFrameWithoutDataPropagation()
+                    val tryInstruction = currentFrame.dropInstructions()!! // last instruction in `catch` block is `try`
+                    currentFrame.removeSubFrameWithoutDataPropagation()
                     addInstruction(CompoundInstruction(breakOrContinue))
-                    newSubFrame(tryInstruction.element!!, listOf(tryInstruction))  // will be deleted when interpret 'try'
+                    newSubFrame(tryInstruction.element!!)  // will be deleted when interpret 'try'
+                    addInstruction(tryInstruction)
                     return
                 }
                 else -> {
-                    getCurrentFrame().removeSubFrameWithoutDataPropagation()
-                    frameOwner = getCurrentFrameOwner()
+                    currentFrame.removeSubFrameWithoutDataPropagation()
+                    frameOwner = currentFrameOwner
                 }
             }
         }
 
         when (breakOrContinue) {
-            is IrBreak -> getCurrentFrame().removeSubFrameWithoutDataPropagation() // drop loop
+            is IrBreak -> currentFrame.removeSubFrameWithoutDataPropagation() // drop loop
             else -> if (breakOrContinue.loop is IrDoWhileLoop) {
                 addInstruction(SimpleInstruction(breakOrContinue.loop))
                 addInstruction(CompoundInstruction(breakOrContinue.loop.condition))
@@ -123,15 +125,15 @@ internal class CallStack {
 
     fun dropFramesUntilTryCatch() {
         val exception = popState()
-        var frameOwner = getCurrentFrameOwner()
+        var frameOwner = currentFrameOwner
         while (frames.isNotEmpty()) {
-            val frame = getCurrentFrame()
+            val frame = currentFrame
             while (!frame.hasNoSubFrames()) {
                 frameOwner = frame.currentSubFrameOwner
                 when (frameOwner) {
                     is IrTry -> {
                         dropSubFrame()  // drop all instructions that left
-                        newSubFrame(frameOwner, listOf())
+                        newSubFrame(frameOwner)
                         addInstruction(SimpleInstruction(frameOwner)) // to evaluate finally at the end
                         frameOwner.catches.reversed().forEach { addInstruction(CompoundInstruction(it)) }
                         pushState(exception)
@@ -149,37 +151,38 @@ internal class CallStack {
             dropFrame()
         }
 
-        if (frames.size == 0) newFrame(frameOwner, emptyList()) // just stub frame
+        if (frames.size == 0) newFrame(frameOwner) // just stub frame
         pushState(exception)
     }
 
     fun hasNoInstructions() = frames.isEmpty() || (frames.size == 1 && frames.first().hasNoInstructions())
 
     fun addInstruction(instruction: Instruction) {
-        getCurrentFrame().addInstruction(instruction)
+        currentFrame.addInstruction(instruction)
     }
 
     fun popInstruction(): Instruction {
-        return getCurrentFrame().popInstruction()
+        return currentFrame.popInstruction()
     }
 
     fun pushState(state: State) {
-        getCurrentFrame().pushState(state)
+        currentFrame.pushState(state)
     }
 
-    fun popState(): State = getCurrentFrame().popState()
-    fun peekState(): State? = getCurrentFrame().peekState()
+    fun popState(): State = currentFrame.popState()
+    fun peekState(): State? = currentFrame.peekState()
 
     fun addVariable(variable: Variable) {
-        getCurrentFrame().addVariable(variable)
+        currentFrame.addVariable(variable)
     }
 
-    fun getVariable(symbol: IrSymbol): Variable = getCurrentFrame().getVariable(symbol)
-    fun containsVariable(symbol: IrSymbol): Boolean = getCurrentFrame().containsVariable(symbol)
+    fun getState(symbol: IrSymbol): State = currentFrame.getState(symbol)
+    fun setState(symbol: IrSymbol, newState: State) = currentFrame.setState(symbol, newState)
+    fun containsVariable(symbol: IrSymbol): Boolean = currentFrame.containsVariable(symbol)
 
     fun storeUpValues(state: StateWithClosure) {
         // TODO save only necessary declarations
-        state.upValues.addAll(getCurrentFrame().getAll().toMutableList())
+        state.upValues.addAll(currentFrame.getAll().toMutableList())
     }
 
     fun loadUpValues(state: StateWithClosure) {

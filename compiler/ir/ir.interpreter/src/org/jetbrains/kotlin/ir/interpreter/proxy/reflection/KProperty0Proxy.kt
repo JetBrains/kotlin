@@ -28,7 +28,7 @@ internal open class KProperty0Proxy(
                 val receiver = state.receiver // null receiver <=> property is on top level
                     ?: return callInterceptor.interceptProxy(getter, emptyList())
 
-                val value = receiver.getState(actualPropertySymbol)
+                val value = receiver.getField(actualPropertySymbol)
                 return when {
                     // null value <=> property is extension or Primitive; receiver.isNull() <=> nullable extension
                     value == null || receiver.isNull() -> {

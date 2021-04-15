@@ -19,7 +19,7 @@ internal interface State {
     val fields: MutableList<Variable>
     val irClass: IrClass
 
-    fun getState(symbol: IrSymbol): State? {
+    fun getField(symbol: IrSymbol): State? {
         return fields.firstOrNull { it.symbol == symbol }?.state
     }
 

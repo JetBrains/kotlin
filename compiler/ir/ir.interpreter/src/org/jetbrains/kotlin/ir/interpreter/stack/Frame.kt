@@ -14,26 +14,24 @@ import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
     private val innerStack = mutableListOf(subFrame)
     private var currentInstruction: Instruction? = null
-    val currentSubFrameOwner: IrElement
-        get() = getCurrentFrame().owner
+
+    private val currentFrame get() = innerStack.last()
+    val currentSubFrameOwner: IrElement get() = currentFrame.owner
 
     companion object {
         const val NOT_DEFINED = "Not defined"
     }
-
-    private fun getCurrentFrame() = innerStack.last()
 
     fun addSubFrame(frame: SubFrame) {
         innerStack.add(frame)
     }
 
     fun removeSubFrame() {
-        getCurrentFrame().peekState()?.let { if (innerStack.size > 1) innerStack[innerStack.size - 2].pushState(it) }
+        currentFrame.peekState()?.let { if (innerStack.size > 1) innerStack[innerStack.size - 2].pushState(it) }
         removeSubFrameWithoutDataPropagation()
     }
 
@@ -45,34 +43,39 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
     fun hasNoInstructions() = hasNoSubFrames() || (innerStack.size == 1 && innerStack.first().isEmpty())
 
     fun addInstruction(instruction: Instruction) {
-        getCurrentFrame().pushInstruction(instruction)
+        currentFrame.pushInstruction(instruction)
     }
 
     fun popInstruction(): Instruction {
-        return getCurrentFrame().popInstruction().apply { currentInstruction = this }
+        return currentFrame.popInstruction().apply { currentInstruction = this }
     }
 
-    fun dropInstructions() = getCurrentFrame().dropInstructions()
+    fun dropInstructions() = currentFrame.dropInstructions()
 
     fun pushState(state: State) {
-        getCurrentFrame().pushState(state)
+        currentFrame.pushState(state)
     }
 
-    fun popState(): State = getCurrentFrame().popState()
-    fun peekState(): State? = getCurrentFrame().peekState()
+    fun popState(): State = currentFrame.popState()
+    fun peekState(): State? = currentFrame.peekState()
 
     fun addVariable(variable: Variable) {
-        getCurrentFrame().addVariable(variable)
+        currentFrame.addVariable(variable)
     }
 
-    fun getVariable(symbol: IrSymbol): Variable {
-        return tryToGetVariable(symbol)
+    fun getState(symbol: IrSymbol): State {
+        return (innerStack.lastIndex downTo 0).firstNotNullOfOrNull { innerStack[it].getState(symbol) }
             ?: throw InterpreterError("$symbol not found") // TODO better message
     }
 
-    fun containsVariable(symbol: IrSymbol): Boolean = tryToGetVariable(symbol) != null
+    fun setState(symbol: IrSymbol, newState: State) {
+        (innerStack.lastIndex downTo 0).forEach {
+            if (innerStack[it].containsVariable(symbol))
+                return innerStack[it].setState(symbol, newState)
+        }
+    }
 
-    private fun tryToGetVariable(symbol: IrSymbol): Variable? = innerStack.reversed().firstNotNullResult { it.getVariable(symbol) }
+    fun containsVariable(symbol: IrSymbol): Boolean = (innerStack.lastIndex downTo 0).any { innerStack[it].containsVariable(symbol) }
 
     fun getAll(): List<Variable> = innerStack.flatMap { it.getAll() }
 
@@ -102,46 +105,44 @@ internal class Frame(subFrame: SubFrame, val irFile: IrFile? = null) {
     }
 }
 
-internal class SubFrame(private val instructions: MutableList<Instruction>, val owner: IrElement) {
-    private val memory = mutableListOf<Variable>()
+internal class SubFrame(val owner: IrElement) {
+    private val instructions = mutableListOf<Instruction>()
     private val dataStack = DataStack()
+    private val memory = mutableListOf<Variable>()
 
+    // Methods to work with instruction
     fun isEmpty() = instructions.isEmpty()
-
-    fun pushInstruction(instruction: Instruction) {
-        instructions.add(0, instruction)
-    }
-
-    fun popInstruction(): Instruction {
-        return instructions.removeFirst()
-    }
-
+    fun pushInstruction(instruction: Instruction) = instructions.add(0, instruction)
+    fun popInstruction(): Instruction = instructions.removeFirst()
     fun dropInstructions() = instructions.lastOrNull()?.apply { instructions.clear() }
 
-    fun pushState(state: State) {
-        dataStack.push(state)
-    }
-
+    // Methods to work with data
+    fun pushState(state: State) = dataStack.push(state)
     fun popState(): State = dataStack.pop()
-    fun peekState(): State? = if (!dataStack.isEmpty()) dataStack.peek() else null
+    fun peekState(): State? = dataStack.peek()
 
+    // Methods to work with memory
     fun addVariable(variable: Variable) {
         memory += variable
     }
 
-    fun getVariable(symbol: IrSymbol): Variable? = memory.firstOrNull { it.symbol == symbol }
+    private fun getVariable(symbol: IrSymbol): Variable? = memory.firstOrNull { it.symbol == symbol }
+    fun containsVariable(symbol: IrSymbol): Boolean = getVariable(symbol) != null
+    fun getState(symbol: IrSymbol): State? = getVariable(symbol)?.state
+    fun setState(symbol: IrSymbol, newState: State) {
+        getVariable(symbol)?.state = newState
+    }
+
     fun getAll(): List<Variable> = memory
 }
 
 private class DataStack {
     private val stack = mutableListOf<State>()
 
-    fun isEmpty() = stack.isEmpty()
-
     fun push(state: State) {
         stack.add(state)
     }
 
     fun pop(): State = stack.removeLast()
-    fun peek(): State = stack.last()
+    fun peek(): State? = stack.lastOrNull()
 }
