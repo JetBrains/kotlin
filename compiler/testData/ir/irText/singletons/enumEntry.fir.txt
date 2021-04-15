@@ -18,13 +18,13 @@ FILE fqName:<root> fileName:/enumEntry.kt
         FUN name:test visibility:public modality:FINAL <> ($this:<root>.Z.ENTRY) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.Z.ENTRY
           BLOCK_BODY
-        CLASS CLASS name:A modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
+        CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[kotlin.Any]
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.ENTRY.A
           CONSTRUCTOR visibility:public <> ($this:<root>.Z.ENTRY) returnType:<root>.Z.ENTRY.A [primary]
             $outer: VALUE_PARAMETER name:<this> type:<root>.Z.ENTRY
             BLOCK_BODY
               DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[kotlin.Any]'
           FUN name:test2 visibility:public modality:FINAL <> ($this:<root>.Z.ENTRY.A) returnType:kotlin.Unit
             $this: VALUE_PARAMETER name:<this> type:<root>.Z.ENTRY.A
             BLOCK_BODY

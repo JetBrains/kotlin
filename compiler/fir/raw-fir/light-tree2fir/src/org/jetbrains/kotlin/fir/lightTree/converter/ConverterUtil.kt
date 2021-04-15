@@ -90,9 +90,11 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
                 parent?.tokenType == KT_FILE -> return true
                 parent?.tokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent?.getParent()?.tokenType == OBJECT_LITERAL) -> return true
                 parent?.tokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
-                // NB: enum entry nested classes are considered local by FIR design (see discussion in KT-45115)
-                parent?.tokenType == ENUM_ENTRY -> return true
             }
+        }
+        // NB: enum entry nested classes are considered local by FIR design (see discussion in KT-45115)
+        if (parent?.tokenType == ENUM_ENTRY) {
+            return true
         }
         if (tokenType == BLOCK) {
             return true

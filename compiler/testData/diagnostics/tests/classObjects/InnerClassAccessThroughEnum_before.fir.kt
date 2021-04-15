@@ -5,7 +5,7 @@ package a
 
 enum class C {
     E1, E2, E3 {
-        object O_O
+        <!LOCAL_OBJECT_NOT_ALLOWED!>object O_O<!>
 
         fun b() {
             O_O
