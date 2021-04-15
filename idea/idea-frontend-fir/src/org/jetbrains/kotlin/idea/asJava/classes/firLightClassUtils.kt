@@ -320,7 +320,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
     // we can't prohibit creating light classes with null names either since they can contain members
 
     analyzeWithSymbolAsContext(this) {
-        getDeclaredMemberScope().getAllSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
+        getDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
             FirLightClassForSymbol(it, manager)
         }
     }
