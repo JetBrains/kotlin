@@ -50,15 +50,21 @@ private class LightTreeErrorsCollector(private val tree: Tree) {
 
 private data class OffsetTree(val tree: Tree, val offset: Int)
 
-private object FirTreesExtractVisitor : FirVisitor<Unit, Pair<Tree?, MutableList<OffsetTree>>>() {
-    override fun visitElement(element: FirElement, data: Pair<Tree?, MutableList<OffsetTree>>) {
+private data class VisitorState(
+    val lastTree: Tree? = null,
+    val visitedTrees: MutableSet<Tree> = mutableSetOf(),
+    val result: MutableList<OffsetTree> = mutableListOf()
+)
+
+private object FirTreesExtractVisitor : FirVisitor<Unit, VisitorState>() {
+    override fun visitElement(element: FirElement, data: VisitorState) {
         val source = element.source ?: return
         val currentTree = source.treeStructure
-        val (lastTree, trees) = data
-        val newData = if (lastTree !== currentTree) {
+        val (lastTree, visitedTrees, result) = data
+        val newData = if (lastTree !== currentTree && visitedTrees.add(currentTree)) {
             val newTreeWithOffset = OffsetTree(currentTree, element.source?.startOffset ?: 0)
-            trees.add(newTreeWithOffset)
-            currentTree to trees
+            result.add(newTreeWithOffset)
+            data.copy(lastTree = lastTree)
         } else {
             data
         }
@@ -67,9 +73,9 @@ private object FirTreesExtractVisitor : FirVisitor<Unit, Pair<Tree?, MutableList
 }
 
 internal fun collectLightTreeSyntaxErrors(file: FirFile): List<FirLightSourceElement> {
-    val trees = mutableListOf<OffsetTree>()
-    file.accept(FirTreesExtractVisitor, null to trees)
-    return trees.flatMap { (tree, offset) ->
+    val state = VisitorState()
+    file.accept(FirTreesExtractVisitor,state)
+    return state.result.flatMap { (tree, offset) ->
         LightTreeErrorsCollector(tree).collectErrorNodes(tree.root).map {
             it.toFirLightSourceElement(tree, startOffset = it.startOffset + offset, endOffset = it.endOffset + offset)
         }
