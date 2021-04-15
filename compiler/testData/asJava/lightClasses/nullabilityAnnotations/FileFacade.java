@@ -3,17 +3,19 @@ public final class FileFacadeKt /* FileFacadeKt*/ {
   private static final java.lang.String notNullVal;
 
   @org.jetbrains.annotations.NotNull()
+  private static final java.lang.String privateNn;
+
+  @org.jetbrains.annotations.NotNull()
   private static java.lang.String notNullVar;
 
   @org.jetbrains.annotations.Nullable()
   private static final java.lang.String nullableVal;
 
   @org.jetbrains.annotations.Nullable()
-  private static java.lang.String nullableVar;
-
   private static final java.lang.String privateN;
 
-  private static final java.lang.String privateNn;
+  @org.jetbrains.annotations.Nullable()
+  private static java.lang.String nullableVar;
 
   @org.jetbrains.annotations.NotNull()
   @org.jetbrains.annotations.Nullable()

@@ -1320,8 +1320,8 @@ fun main(args: Array<String>) {
             testClass<AbstractIdeCompiledLightClassTest> {
                 model(
                     "asJava/lightClasses",
-                    excludeDirs = listOf("local", "compilationErrors", "ideRegression"),
-                    pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME
+                    excludeDirs = listOf("local", "compilationErrors", "ideRegression", "script"),
+                    pattern = KT_WITHOUT_DOTS_IN_NAME
                 )
             }
         }

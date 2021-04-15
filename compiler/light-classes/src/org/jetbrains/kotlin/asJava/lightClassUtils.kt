@@ -241,7 +241,7 @@ fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierLis
     // backing fields for lateinit props are skipped
     if (lightElement is KtLightField && annotatedElement is KtProperty && annotatedElement.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
 
-    if (lightElement is KtLightField && (annotatedElement as? KtModifierListOwner)?.isPrivate() == true) {
+    if (lightElement is KtLightMethod && (annotatedElement as? KtModifierListOwner)?.isPrivate() == true) {
         return false
     }
 
@@ -252,16 +252,17 @@ fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierLis
             if (annotatedElement.parent.parent is KtPrimaryConstructor) return false
         }
 
-        val parent = annotatedElement.parent.parent
-        if (parent is KtModifierListOwner && parent !is KtPrimaryConstructor && parent.isPrivate()) return false
-
-        if (parent is KtPropertyAccessor) {
-            val propertyOfAccessor = parent.parent
-            if (propertyOfAccessor is KtProperty && propertyOfAccessor.isPrivate()) return false
+        when (val parent = annotatedElement.parent.parent) {
+            is KtConstructor<*> -> {
+                if (lightElement is KtLightParameter && parent.isPrivate()) return false
+            }
+            is KtNamedFunction -> {
+                return !parent.isPrivate()
+            }
+            is KtPropertyAccessor -> {
+                return (parent.parent as? KtProperty)?.isPrivate() != true
+            }
         }
-    } else {
-        // private properties
-        if ((annotatedElement as? KtModifierListOwner)?.isPrivate() == true) return false
     }
 
     return true

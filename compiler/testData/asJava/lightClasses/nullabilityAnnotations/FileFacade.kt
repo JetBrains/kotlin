@@ -34,3 +34,5 @@ var nullableVarWithGetSet: String?
 private val privateNn: String = { "" }()
 private val privateN: String? = { "" }()
 private fun privateFun(a: String, b: String?): String? = null
+
+// FIR_COMPARISON
