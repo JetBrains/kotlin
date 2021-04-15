@@ -961,6 +961,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClass(type, FqNames.throwable);
     }
 
+    public static boolean isThrowable(@NotNull ClassDescriptor descriptor) {
+        return classFqNameEquals(descriptor, FqNames.throwable.toUnsafe());
+    }
+
     public static boolean isKClass(@NotNull ClassDescriptor descriptor) {
         return classFqNameEquals(descriptor, FqNames.kClass);
     }

@@ -386,6 +386,10 @@ internal class ObjCExportTranslatorImpl(
             }
 
             translateClassMembers(descriptor, genericExportScope)
+
+            if (KotlinBuiltIns.isThrowable(descriptor)) {
+                add { buildThrowableAsErrorMethod() }
+            }
         }
 
         val attributes = if (descriptor.isFinalOrEnum) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()
@@ -403,6 +407,18 @@ internal class ObjCExportTranslatorImpl(
                 superProtocols = superProtocols,
                 members = members,
                 attributes = attributes
+        )
+    }
+
+    private fun buildThrowableAsErrorMethod(): ObjCMethod {
+        val asError = ObjCExportNamer.kotlinThrowableAsErrorMethodName
+        return ObjCMethod(
+                descriptor = null,
+                isInstanceMethod = true,
+                returnType = ObjCClassType("NSError"),
+                selectors = listOf(asError),
+                parameters = emptyList(),
+                attributes = listOf(swiftNameAttribute("$asError()"))
         )
     }
 

@@ -1291,6 +1291,9 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
                     createObjectInstanceAdapter(irClass, it.selector)
                 }
             }
+            ObjCKotlinThrowableAsErrorMethod -> {
+                adapters += createThrowableAsErrorAdapter()
+            }
             is ObjCMethodForKotlinMethod -> {} // Handled below.
         }.let {} // Force exhaustive.
     }
@@ -1573,6 +1576,22 @@ private fun ObjCExportCodeGenerator.createEnumValuesAdapter(
 
     val imp = generateObjCImp(valuesFunction, valuesFunction, methodBridge, isVirtual = false)
 
+    return objCToKotlinMethodAdapter(selector, methodBridge, imp)
+}
+
+private fun ObjCExportCodeGenerator.createThrowableAsErrorAdapter(): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
+    val methodBridge = MethodBridge(
+            returnBridge = MethodBridge.ReturnValue.Mapped(ReferenceBridge),
+            receiver = MethodBridgeReceiver.Instance,
+            valueParameters = emptyList()
+    )
+
+    val imp = generateObjCImpBy(methodBridge) {
+        val exception = objCReferenceToKotlin(param(0), Lifetime.ARGUMENT)
+        ret(callFromBridge(context.llvm.Kotlin_ObjCExport_WrapExceptionToNSError, listOf(exception)))
+    }
+
+    val selector = ObjCExportNamer.kotlinThrowableAsErrorMethodName
     return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 

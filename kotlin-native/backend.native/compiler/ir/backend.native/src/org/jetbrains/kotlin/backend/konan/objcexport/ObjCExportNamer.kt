@@ -66,6 +66,10 @@ interface ObjCExportNamer {
     val mutableSetName: ClassOrProtocolName
     val mutableMapName: ClassOrProtocolName
     val kotlinNumberName: ClassOrProtocolName
+
+    companion object {
+        internal val kotlinThrowableAsErrorMethodName: String = "asError"
+    }
 }
 
 fun createNamer(moduleDescriptor: ModuleDescriptor,
