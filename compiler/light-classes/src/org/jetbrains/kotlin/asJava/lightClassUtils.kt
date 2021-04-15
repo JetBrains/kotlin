@@ -254,7 +254,7 @@ fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierLis
         }
 
         val parent = annotatedElement.parent.parent
-        if (parent is KtModifierListOwner && parent.isPrivate()) return false
+        if (parent is KtModifierListOwner && parent !is KtPrimaryConstructor && parent.isPrivate()) return false
 
         if (parent is KtPropertyAccessor) {
             val propertyOfAccessor = parent.parent

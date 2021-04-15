@@ -346,13 +346,14 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
             annotatedElement.bodyExpression?.let { it.getType(it.analyze()) }?.let { return it }
         }
         if (annotatedElement is KtProperty) {
-            annotatedElement.initializer?.let { it.getType(it.analyze()) }?.let { return it }
+            (annotatedElement.initializer ?: annotatedElement.getter?.initializer)
+                ?.let { it.getType(it.analyze()) }?.let { return it }
             annotatedElement.delegateExpression?.let { it.getType(it.analyze())?.arguments?.firstOrNull()?.type }?.let { return it }
         }
 
         return annotatedElement.getParentOfType<KtProperty>(false)?.let {
             it.typeReference?.getType()
-                ?: it.initializer
+                ?: (it.initializer ?: it.getter?.initializer)
                     ?.let { initializer -> initializer.getType(initializer.analyze()) }
         }
     }
