@@ -245,6 +245,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("kt45934.kt")
+        public void testKt45934() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/kt45934.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaInDataClassDefaultParameter.kt")
         public void testLambdaInDataClassDefaultParameter() throws Exception {
             runTest("compiler/testData/ir/irText/classes/lambdaInDataClassDefaultParameter.kt");
