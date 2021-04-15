@@ -10,7 +10,7 @@ fun test() {
     takeArray([""])
     val v = [""]
     [""]
-    [1, 2, 3].<!UNRESOLVED_REFERENCE!>size<!>
+    [1, 2, 3].size
 }
 
 fun baz(arg: Array<Int> = []) {

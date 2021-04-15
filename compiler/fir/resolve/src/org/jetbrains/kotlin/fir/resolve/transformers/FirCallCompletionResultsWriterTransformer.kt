@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -44,7 +43,7 @@ class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator,
-    private val typeApproximator: AbstractTypeApproximator,
+    private val typeApproximator: ConeTypeApproximator,
     private val dataFlowAnalyzer: FirDataFlowAnalyzer<*>,
     private val mode: Mode = Mode.Normal
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
@@ -287,7 +286,7 @@ class FirCallCompletionResultsWriterTransformer(
         val substitutedType = finalSubstitutor.substituteOrNull(initialType)
         val finalType = typeApproximator.approximateToSuperType(
             type = substitutedType ?: initialType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
-        ) as ConeKotlinType? ?: substitutedType
+        ) ?: substitutedType
 
         return withReplacedConeType(finalType)
     }
@@ -475,7 +474,7 @@ class FirCallCompletionResultsWriterTransformer(
                 finalSubstitutor.substituteOrSelf(it).let { substitutedType ->
                     typeApproximator.approximateToSuperType(
                         substitutedType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
-                    ) as ConeKotlinType? ?: substitutedType
+                    ) ?: substitutedType
                 }
             }
     }
@@ -537,7 +536,8 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (needUpdateLambdaType) {
-            val resolvedTypeRef = anonymousFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
+            val resolvedTypeRef =
+                anonymousFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
             anonymousFunction.replaceTypeRef(resolvedTypeRef)
             session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, anonymousFunction.source, null)
         }
@@ -558,7 +558,8 @@ class FirCallCompletionResultsWriterTransformer(
 
             val newReturnTypeRef = resultFunction.returnTypeRef.withReplacedConeType(lastExpressionType)
             resultFunction.replaceReturnTypeRef(newReturnTypeRef)
-            val resolvedTypeRef = resultFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
+            val resolvedTypeRef =
+                resultFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
             resultFunction.replaceTypeRef(resolvedTypeRef)
             session.lookupTracker?.let {
                 it.recordTypeResolveAsLookup(newReturnTypeRef, anonymousFunction.source, null)
@@ -710,9 +711,14 @@ class FirCallCompletionResultsWriterTransformer(
         val expectedArrayType = data?.getExpectedType(arrayOfCall)
         val expectedArrayElementType = expectedArrayType?.arrayElementType()
         arrayOfCall.transformChildren(this, expectedArrayElementType?.toExpectedType())
-        val arrayElementType = session.inferenceComponents.ctx.commonSuperTypeOrNull(arrayOfCall.arguments.map { it.typeRef.coneType })
-            ?: session.builtinTypes.nullableAnyType.type
-        arrayOfCall.resultType = arrayOfCall.typeRef.resolvedTypeFromPrototype(arrayElementType.createArrayType())
+        val arrayElementType =
+            session.inferenceComponents.ctx.commonSuperTypeOrNull(arrayOfCall.arguments.map { it.typeRef.coneType })?.let {
+                typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference)
+                    ?: it
+            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type
+        arrayOfCall.resultType = arrayOfCall.typeRef.resolvedTypeFromPrototype(
+            arrayElementType.createArrayType(createPrimitiveArrayType = expectedArrayType?.isPrimitiveArray == true)
+        )
         return arrayOfCall
     }
 

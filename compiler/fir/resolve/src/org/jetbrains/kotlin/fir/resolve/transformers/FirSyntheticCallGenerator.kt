@@ -127,6 +127,22 @@ class FirSyntheticCallGenerator(
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
     }
 
+    fun generateSyntheticCallForArrayOfCall(arrayOfCall: FirArrayOfCall, context: ResolutionContext): FirFunctionCall {
+        val argumentList = buildArgumentList {
+            arguments += arrayOfCall
+        }
+        return buildFunctionCall {
+            this.argumentList = argumentList
+            calleeReference = generateCalleeReferenceWithCandidate(
+                arrayOfCall,
+                idFunction,
+                argumentList,
+                SyntheticCallableId.ID.callableName,
+                context = context
+            )
+        }
+    }
+
     fun resolveCallableReferenceWithSyntheticOuterCall(
         callableReferenceAccess: FirCallableReferenceAccess,
         expectedTypeRef: FirTypeRef?,

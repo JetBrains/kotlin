@@ -968,6 +968,17 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return result
     }
 
+    override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ResolutionMode): FirStatement {
+        if (data is ResolutionMode.ContextDependent) {
+            arrayOfCall.transformChildren(transformer, data)
+            return arrayOfCall
+        }
+        val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticCallForArrayOfCall(arrayOfCall, resolutionContext)
+        arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+        callCompleter.completeCall(syntheticIdCall, data.expectedType ?: components.noExpectedType)
+        return arrayOfCall
+    }
+
     // ------------------------------------------------------------------------------------------------
 
     internal fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
