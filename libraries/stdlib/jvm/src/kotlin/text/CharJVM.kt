@@ -213,7 +213,10 @@ public actual inline fun Char.lowercase(): String = toString().lowercase()
 public fun Char.lowercase(locale: Locale): String = toString().lowercase(locale)
 
 /**
- * Returns `true` if this character is a titlecase character.
+ * Returns `true` if this character is a title case letter.
+ *
+ * A character is considered to be a title case letter if its [category] is [CharCategory.TITLECASE_LETTER].
+ *
  * @sample samples.text.Chars.isTitleCase
  */
 @kotlin.internal.InlineOnly
