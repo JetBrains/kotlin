@@ -2602,7 +2602,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         appendingTo(this) {
             code()
         }
-            }
+    }
 }
 
 private fun IrValueParameter.debugNameConversion() = descriptor.name.debugNameConversion()

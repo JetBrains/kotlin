@@ -156,7 +156,12 @@ class Worker {
 
  private:
   void setThread(pthread_t thread) {
-    RuntimeAssert(thread_ == 0 || thread == thread, "Cannot overwrite thread id for worker with id=%d", id());
+    // For workers started using the Worker API, we set thread_ in startEventLoop when calling pthread_create.
+    // But we also set thread_ in WorkerInit to handle the main thread and threads calling Kotlin from ObjC.
+    // In this case, thread id will be set twice for workers started by the Worker API.
+    // This assert takes this into account.
+    RuntimeAssert(thread_ == 0 || pthread_equal(thread_, thread),
+                  "Cannot overwrite thread id for worker with id=%d", id());
     thread_ = thread;
   }
 
@@ -338,7 +343,8 @@ class State {
     {
       // We call destroyWorkerUnlocked from runtimeDeinit when TLS may be already deallocated,
       // so we have to use the pointer to MemoryState saved in the worker instance.
-      RuntimeAssert(pthread_self() == worker->thread(), "Worker destruction must be executed by the worker thread.");
+      RuntimeAssert(pthread_equal(worker->thread(), pthread_self()),
+                    "Worker destruction must be executed by the worker thread.");
       Locker locker(&lock_, worker->memoryState());
       auto id = worker->id();
       auto it = workers_.find(id);
@@ -711,47 +717,47 @@ KInt startWorker(KBoolean errorReporting, KRef customName) {
 }
 
 KInt stateOfFuture(KInt id) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 KInt execute(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 void executeAfter(KInt id, KRef job, KLong afterMicroseconds) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 KBoolean processQueue(KInt id) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 KBoolean park(KInt id, KLong timeoutMicroseconds, KBoolean process) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 KInt currentWorker() {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 OBJ_GETTER(consumeFuture, KInt id) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 OBJ_GETTER(getWorkerName, KInt id) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 KInt requestTermination(KInt id, KBoolean processScheduledJobs) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 KBoolean waitForAnyFuture(KInt versionToken, KInt millis) {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 KInt versionToken() {
-  ThrowWorkerUnsupported()
+  ThrowWorkerUnsupported();
 }
 
 OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
@@ -827,7 +833,8 @@ bool WorkerSchedule(KInt id, KNativePtr jobStablePtr) {
 #if WITH_WORKERS
 
 Worker::~Worker() {
-  RuntimeAssert(pthread_self() == thread(), "Worker destruction must be executed by the worker thread.");
+  RuntimeAssert(pthread_equal(thread(), pthread_self()),
+                "Worker destruction must be executed by the worker thread.");
   // Cleanup jobs in the queue.
   for (auto job : queue_) {
       switch (job.kind) {

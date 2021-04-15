@@ -156,10 +156,11 @@ internal annotation class HasFreezeHook
  * Indicates that calls of this function will be replaced with calls to the
  * [callee] implemented in the C++ part of the runtime.
  *
- * Note that [callee] is responsible for correct interaction with the garbage collector:
+ * This annotation is unsafe and should be used with care: [callee] is
+ * responsible for correct interaction with the garbage collector, like
  * placing safe points and switching thread state when using blocking APIs.
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(value = AnnotationRetention.BINARY)
 @InternalForKotlinNative
-internal annotation class GCUnsafeCall(val callee: String)
+annotation class GCUnsafeCall(val callee: String)
