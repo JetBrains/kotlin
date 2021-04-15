@@ -81,6 +81,7 @@ inline val FirMemberDeclaration.isConst: Boolean get() = status.isConst
 inline val FirMemberDeclaration.isLateInit: Boolean get() = status.isLateInit
 inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFromSealedClass
 inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
+inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 
 inline val FirFunction<*>.hasBody get() = body != null
 

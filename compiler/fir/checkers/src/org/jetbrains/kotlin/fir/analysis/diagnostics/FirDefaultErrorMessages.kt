@@ -689,7 +689,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(CANNOT_INFER_PARAMETER_TYPE, "cannot infer a type for this parameter. Please specify it explicitly.")
 
             // Fun interfaces
-            map.put(FUN_INTERFACE_CONSTRUCTOR_REFERENCE, "Functional interface constructor references are prohibited")
+            map.put(FUN_INTERFACE_CONSTRUCTOR_REFERENCE, "Functional/SAM interface constructor references are prohibited")
 
             // Properties & accessors
             map.put(
