@@ -31001,6 +31001,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("implicitNothingInDelegate.kt")
+        public void testImplicitNothingInDelegate() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/implicitNothingInDelegate.kt");
+        }
+
+        @Test
         @TestMetadata("InaccessibleInternalClass.kt")
         public void testInaccessibleInternalClass() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/InaccessibleInternalClass.kt");
