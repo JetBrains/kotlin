@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.internal.os.OperatingSystem
+import org.junit.Ignore
 import org.junit.Test
 
 class CommonizerHierarchicalIT : BaseGradleIT() {
@@ -82,6 +83,26 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
                     assertFileExists("p1/build/classes/kotlin/windowsX64/main/klib/p1.klib")
                     assertFileExists("p1/build/classes/kotlin/windowsX86/main/klib/p1.klib")
                 }
+            }
+        }
+    }
+
+    @Ignore("Waiting for next bootstrap compiler")
+    @Test
+    fun `test commonizeHierarchicallyMultiModule`() {
+        with(Project("commonizeHierarchicallyMultiModule")) {
+            build("assemble") {
+                assertSuccessful()
+                assertTasksExecuted(":p1:commonizeCInterop")
+                assertTasksExecuted(":p2:commonizeCInterop")
+                assertTasksExecuted(":p3:commonizeCInterop")
+
+                /*
+                Commonized C-Interops are not published or forwarded to other Gradle projects.
+                The missing dependency will be ignored by the metadata compiler.
+                We still expect a warning being printed.
+                 */
+                assertContains("w: Could not find \"commonizeHierarchicallyMultiModule:p1-cinterop-withPosix\" in ")
             }
         }
     }
