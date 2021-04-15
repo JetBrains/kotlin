@@ -98,6 +98,9 @@ public actual fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) ||
 
 /**
  * Returns `true` if this character is upper case.
+ *
+ * @see Character.isUpperCase
+ *
  * @sample samples.text.Chars.isUpperCase
  */
 @kotlin.internal.InlineOnly
@@ -105,6 +108,9 @@ public actual inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(thi
 
 /**
  * Returns `true` if this character is lower case.
+ *
+ * @see Character.isLowerCase
+ *
  * @sample samples.text.Chars.isLowerCase
  */
 @kotlin.internal.InlineOnly
