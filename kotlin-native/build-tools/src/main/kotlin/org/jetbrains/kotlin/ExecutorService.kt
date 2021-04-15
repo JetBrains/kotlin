@@ -230,8 +230,9 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
             "${configurables.target} is not a simulator."
         }
         val compatibleArchs = when (HostManager.host.architecture) {
-            is Architecture.X64 -> listOf(Architecture.X64, Architecture.X86)
-            is Architecture.ARM64 -> listOf(Architecture.ARM64, Architecture.ARM32)
+            Architecture.X64 -> listOf(Architecture.X64, Architecture.X86)
+            Architecture.ARM64 -> listOf(Architecture.ARM64, Architecture.ARM32)
+            else -> throw IllegalStateException("$target is not supported by the simulator")
         }
         require(configurables.target.architecture in compatibleArchs) {
             "Can't run simulator with ${configurables.target.architecture} architecture."
