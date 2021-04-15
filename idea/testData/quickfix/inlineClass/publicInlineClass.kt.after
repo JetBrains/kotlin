@@ -1,0 +1,5 @@
+// "Replace with '@JvmInline value'" "true"
+// WITH_RUNTIME
+
+@JvmInline
+public value class IC(val i: Int)
