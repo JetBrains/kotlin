@@ -3,9 +3,9 @@
 annotation class Ann(val x: Int)
 
 // TESTCASE NUMBER: 1
-val <T> @Ann(unresolved_reference) T.test // OK, error only in IDE but not in the compiler
+val <T> @Ann(<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>unresolved_reference<!>) T.test // OK, error only in IDE but not in the compiler
     get() = 10
 
 // TESTCASE NUMBER: 2
-val @Ann(unresolved_reference) Int.test
+val @Ann(<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>unresolved_reference<!>) Int.test
     get() = 10

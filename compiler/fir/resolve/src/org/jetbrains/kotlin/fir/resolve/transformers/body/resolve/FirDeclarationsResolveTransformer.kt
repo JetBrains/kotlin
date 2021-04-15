@@ -126,6 +126,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return property
         }
 
+        property.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterProperty(property)
         doTransformTypeParameters(property)
         return withFullBodyResolve {
