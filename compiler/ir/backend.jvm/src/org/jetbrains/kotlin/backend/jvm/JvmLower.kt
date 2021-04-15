@@ -326,7 +326,6 @@ private val jvmFilePhases = listOf(
     polymorphicSignaturePhase,
     varargPhase,
     arrayConstructorPhase,
-    checkNotNullPhase,
 
     lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,

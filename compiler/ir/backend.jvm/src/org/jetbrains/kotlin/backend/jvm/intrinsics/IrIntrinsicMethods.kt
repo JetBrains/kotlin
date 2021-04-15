@@ -110,6 +110,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.booleanNotSymbol.toKey()!! to Not,
                 irBuiltIns.noWhenBranchMatchedExceptionSymbol.toKey()!! to IrNoWhenBranchMatchedException,
                 irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
+                irBuiltIns.checkNotNullSymbol.toKey()!! to IrCheckNotNull,
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
                 irBuiltIns.dataClassArrayMemberHashCodeSymbol.toKey()!! to IrDataClassArrayMemberHashCode,
