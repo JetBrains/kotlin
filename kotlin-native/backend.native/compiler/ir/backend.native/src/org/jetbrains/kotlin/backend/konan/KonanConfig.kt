@@ -81,7 +81,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val purgeUserLibs: Boolean
         get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
 
-    internal val resolve = KonanLibrariesResolveSupport(configuration, target, distribution)
+    internal val resolve = KonanLibrariesResolveSupport(
+            configuration, target, distribution, resolveManifestDependenciesLenient = metadataKlib
+    )
 
     internal val resolvedLibraries get() = resolve.resolvedLibraries
 
@@ -186,7 +188,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val nativeLibraries: List<String> =
         configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
 
-    internal val includeBinaries: List<String> = 
+    internal val includeBinaries: List<String> =
         configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
 
     internal val languageVersionSettings =
@@ -202,5 +204,5 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 }
 
-fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 
+fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)
     = this.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)

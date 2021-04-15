@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
-import org.jetbrains.kotlin.konan.parseCompilerVersion
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.UnresolvedLibrary
@@ -22,7 +20,8 @@ import org.jetbrains.kotlin.util.Logger
 class KonanLibrariesResolveSupport(
         configuration: CompilerConfiguration,
         target: KonanTarget,
-        distribution: Distribution
+        distribution: Distribution,
+        resolveManifestDependenciesLenient: Boolean
 ) {
     private val includedLibraryFiles =
             configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { File(it) }
@@ -56,7 +55,7 @@ class KonanLibrariesResolveSupport(
             target,
             distribution,
             resolverLogger
-    ).libraryResolver()
+    ).libraryResolver(resolveManifestDependenciesLenient)
 
     // We pass included libraries by absolute paths to avoid repository-based resolution for them.
     // Strictly speaking such "direct" libraries should be specially handled by the resolver, not by KonanConfig.
