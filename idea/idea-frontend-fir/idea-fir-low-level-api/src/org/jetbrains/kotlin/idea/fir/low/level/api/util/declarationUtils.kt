@@ -103,7 +103,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             val containingClass = containingClassOrObject
                 ?: error("Container class should be not null for KtConstructor")
             val containerClassFir = containingClass.findFir(firSymbolProvider) ?: return null
-            containerClassFir.declarations.first { it.psi === this }
+            containerClassFir.declarations.firstOrNull { it.psi === this }
         }
         this is KtTypeAlias -> findFir(firSymbolProvider)
         else -> error("Invalid container ${this::class}\n${getElementTextInContext()}")
