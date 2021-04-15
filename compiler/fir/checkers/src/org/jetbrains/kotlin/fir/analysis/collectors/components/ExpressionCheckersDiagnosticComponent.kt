@@ -105,6 +105,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allReturnExpressionCheckers.check(returnExpression, data, reporter)
     }
 
+    override fun visitBlock(block: FirBlock, data: CheckerContext) {
+        checkers.allBlockCheckers.check(block, data, reporter)
+    }
+
     private fun <E : FirStatement> Collection<FirExpressionChecker<E>>.check(
         expression: E,
         context: CheckerContext,
