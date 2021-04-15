@@ -83,7 +83,7 @@ internal class FirLightFieldForPropertySymbol(
             modifiers.add(PsiModifier.VOLATILE)
         }
 
-        val nullability = if (visibility != PsiModifier.PRIVATE && !(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit))
+        val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit))
             propertySymbol.annotatedType.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         else NullabilityType.Unknown
 

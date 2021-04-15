@@ -15,3 +15,5 @@ class Test(@get:MyAnnotation @set:MyAnnotation2 @setparam:MyAnnotation3 @propert
         get() = Unit
         set(value) {}
 }
+
+// FIR_COMPARISON
