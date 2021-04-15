@@ -745,13 +745,13 @@ class JvmSymbols(
         }
     }
 
-    private val arraysCopyOfFunctions = HashMap<IrSimpleType, IrSimpleFunction>()
+    private val arraysCopyOfFunctions = HashMap<IrClassifierSymbol, IrSimpleFunction>()
 
     private fun IrClass.addArraysCopyOfFunction(arrayType: IrSimpleType) {
         addFunction("copyOf", arrayType, isStatic = true).apply {
             addValueParameter("original", arrayType)
             addValueParameter("newLength", irBuiltIns.intType)
-            arraysCopyOfFunctions[arrayType] = this
+            arraysCopyOfFunctions[arrayType.classifierOrFail] = this
         }
     }
 
@@ -771,15 +771,12 @@ class JvmSymbols(
         }
 
     fun getArraysCopyOfFunction(arrayType: IrSimpleType): IrSimpleFunctionSymbol {
-        val copyOf = arraysCopyOfFunctions[arrayType]
-        return when {
-            copyOf != null ->
-                copyOf.symbol
-            arrayType.classifierOrFail == array ->
-                arraysCopyOfFunctions[arrayOfAnyNType]!!.symbol
-            else ->
-                throw AssertionError("Array type expected: ${arrayType.render()}")
-        }
+        val classifier = arrayType.classifier
+        val copyOf = arraysCopyOfFunctions[classifier]
+        if (copyOf != null)
+            return copyOf.symbol
+        else
+            throw AssertionError("Array type expected: ${arrayType.render()}")
     }
 
     private val javaLangInteger: IrClassSymbol = createClass(FqName("java.lang.Integer")) { klass ->

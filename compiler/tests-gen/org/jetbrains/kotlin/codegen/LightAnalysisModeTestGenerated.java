@@ -33008,6 +33008,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/vararg/kt45187.kt");
         }
 
+        @TestMetadata("kt46092.kt")
+        public void testKt46092() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/kt46092.kt");
+        }
+
         @TestMetadata("kt581.kt")
         public void testKt581() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/kt581.kt");
