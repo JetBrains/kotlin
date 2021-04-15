@@ -698,7 +698,7 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  * @param startIndex the beginning (inclusive) of the range to remove.
  * @param endIndex the end (exclusive) of the range to remove.
  *
- * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
