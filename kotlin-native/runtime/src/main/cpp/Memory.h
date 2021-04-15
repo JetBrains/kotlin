@@ -418,8 +418,8 @@ ALWAYS_INLINE inline void AssertThreadState(ThreadState expected) noexcept {
 class ThreadStateGuard final : private Pinned {
 public:
     // Set the state for the given thread.
-    ThreadStateGuard(MemoryState* thread, ThreadState state, bool reentrant = false) noexcept : thread_(thread) {
-        oldState_ = SwitchThreadState(thread_, state, reentrant);
+    ThreadStateGuard(MemoryState* thread, ThreadState state, bool reentrant = false) noexcept : thread_(thread), reentrant_(reentrant) {
+        oldState_ = SwitchThreadState(thread_, state, reentrant_);
     }
 
     // Sets the state for the current thread.
@@ -427,11 +427,12 @@ public:
         : ThreadStateGuard(mm::GetMemoryState(), state, reentrant) {};
 
     ~ThreadStateGuard() noexcept {
-        SwitchThreadState(thread_, oldState_);
+        SwitchThreadState(thread_, oldState_, reentrant_);
     }
 private:
     MemoryState* thread_;
     ThreadState oldState_;
+    bool reentrant_;
 };
 
 template <ThreadState state, typename R, typename... Args>

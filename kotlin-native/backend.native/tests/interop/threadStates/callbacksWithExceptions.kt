@@ -49,7 +49,7 @@ fun callbackWithFinally() {
     } finally {
         assertRunnableThreadState()
     }
-    assertRunnableThreadState()
+    fail("No excetion thrown")
 }
 
 fun callbackWithFinallyNoCatch() {
@@ -91,5 +91,5 @@ fun nestedCallbackWithFinally() {
     } finally {
         assertRunnableThreadState()
     }
-    assertRunnableThreadState()
+    fail("No excetion thrown")
 }

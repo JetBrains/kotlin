@@ -301,7 +301,7 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 
     if (origin == InternalAbi.INTERNAL_ABI_ORIGIN) return null
 
-    throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName or @ObjCMethod annotation")
+    throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName, @GCUnsafeCall or @ObjCMethod annotation")
 }
 
 val IrFunction.isBuiltInOperator get() = origin == IrBuiltIns.BUILTIN_OPERATOR

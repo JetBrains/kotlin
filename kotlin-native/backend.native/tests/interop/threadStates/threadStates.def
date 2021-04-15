@@ -6,7 +6,7 @@ language = C
 
 void assertNativeThreadState();
 
-int32_t runCallback(void(*callback)()) {
+int32_t runCallback(void(*callback)(void)) {
     assertNativeThreadState();
     callback();
     assertNativeThreadState();
@@ -17,4 +17,4 @@ int32_t answer() {
     return 42;
 }
 
-void runInNewThread(int32_t(*callback)());
+void runInNewThread(int32_t(*callback)(void));
