@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -170,7 +169,13 @@ private fun CInteropProcess.toGist(): CInteropGist {
         konanTarget = konanTarget,
         sourceSets = project.provider { settings.compilation.kotlinSourceSetsIncludingDefault },
         libraryFile = outputFileProvider,
-        dependencies = project.filesProvider { settings.dependencyFiles }.filter(File::isValidDependency)
+
+        /**
+         * See: KT-46109
+         * For now, c-interop commonization is invoked for all relevant files together.
+         * Using dependencies coming e.g. from a different Gradle project requires additional design.
+         */
+        dependencies = project.files()
     )
 }
 
@@ -232,8 +237,4 @@ private fun Project.getDependingNativeCompilations(compilation: KotlinSharedNati
         .filterIsInstance<KotlinNativeCompilation>()
         .filter { nativeCompilation -> nativeCompilation.allParticipatingSourceSets().containsAll(allParticipatingSourceSetsOfCompilation) }
         .toSet()
-}
-
-private fun File.isValidDependency(): Boolean {
-    return this.exists() && (this.isDirectory || this.extension == "klib")
 }
