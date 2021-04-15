@@ -104,6 +104,7 @@ public actual fun String.decapitalize(): String {
 /**
  * Returns a string containing this char sequence repeated [n] times.
  * @throws [IllegalArgumentException] when n < 0.
+ * @sample samples.text.Strings.repeat
  */
 public actual fun CharSequence.repeat(n: Int): String {
     require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
