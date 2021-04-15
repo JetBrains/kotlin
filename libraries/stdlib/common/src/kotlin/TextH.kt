@@ -192,6 +192,11 @@ internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 public expect fun String.substring(startIndex: Int): String
 public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
+/**
+ * Returns a string containing this char sequence repeated [n] times.
+ * @throws [IllegalArgumentException] when n < 0.
+ * @sample samples.text.Strings.repeat
+ */
 public expect fun CharSequence.repeat(n: Int): String
 
 
