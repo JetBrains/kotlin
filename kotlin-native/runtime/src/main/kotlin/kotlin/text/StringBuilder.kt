@@ -645,7 +645,7 @@ actual class StringBuilder private constructor (
 }
 
 /**
- * Clears the content of this string builder making it empty.
+ * Clears the content of this string builder making it empty and returns this instance.
  *
  * @sample samples.text.Strings.clearStringBuilder
  */
