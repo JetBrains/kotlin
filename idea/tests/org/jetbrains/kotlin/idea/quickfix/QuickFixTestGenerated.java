@@ -8418,6 +8418,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testInlineClassDeprecated_js() throws Exception {
             runTest("idea/testData/quickfix/inlineClass/inlineClassDeprecated_js.kt");
         }
+
+        @TestMetadata("publicInlineClass.kt")
+        public void testPublicInlineClass() throws Exception {
+            runTest("idea/testData/quickfix/inlineClass/publicInlineClass.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/inlineClassConstructorNotValParameter")
