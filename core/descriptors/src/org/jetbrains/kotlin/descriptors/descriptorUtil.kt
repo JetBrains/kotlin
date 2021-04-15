@@ -58,6 +58,20 @@ fun DeclarationDescriptor.isTopLevelInPackage(name: String, packageName: String)
     return packageName == packageFqName
 }
 
+fun DeclarationDescriptor.isTopLevelInPackage() = containingDeclaration is PackageFragmentDescriptor
+
+fun DeclarationDescriptor.getTopLevelContainingClassifier(): ClassifierDescriptor? {
+    val containingDeclaration = containingDeclaration
+
+    if (containingDeclaration == null || this is PackageFragmentDescriptor) return null
+
+    return if (!containingDeclaration.isTopLevelInPackage()) {
+        containingDeclaration.getTopLevelContainingClassifier()
+    } else if (containingDeclaration is ClassifierDescriptor) {
+        containingDeclaration
+    } else null
+}
+
 fun CallableDescriptor.isSupportedForCallableReference() = this is PropertyDescriptor || this is FunctionDescriptor
 
 @OptIn(ExperimentalContracts::class)

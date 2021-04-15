@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
+import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -36,8 +33,7 @@ import org.jetbrains.kotlin.load.kotlin.signature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -152,6 +148,18 @@ class SignatureEnhancement(
         }
     }
 
+    private fun <D : CallableMemberDescriptor> D.getDefaultAnnotations(c: LazyJavaResolverContext): Annotations {
+        val topLevelClassifier = getTopLevelContainingClassifier() ?: return annotations
+        val classId = topLevelClassifier.classId ?: return annotations
+        val moduleAnnotations = c.components.javaModuleResolver.getModuleAnnotations(classId)
+
+        if (moduleAnnotations.isNullOrEmpty()) return annotations
+
+        val moduleAnnotationDescriptors = moduleAnnotations.map { LazyJavaAnnotationDescriptor(c, it, isFreshlySupportedAnnotation = true) }
+
+        return Annotations.create(annotations + moduleAnnotationDescriptors)
+    }
+
     private fun <D : CallableMemberDescriptor> D.enhanceSignature(c: LazyJavaResolverContext): D {
         // TODO type parameters
         // TODO use new type parameters while enhancing other types
@@ -162,7 +170,7 @@ class SignatureEnhancement(
         // Fake overrides with one overridden has been enhanced before
         if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE && original.overriddenDescriptors.size == 1) return this
 
-        val memberContext = c.copyWithNewDefaultTypeQualifiers(annotations)
+        val memberContext = c.copyWithNewDefaultTypeQualifiers(getDefaultAnnotations(c))
 
         // When loading method as an override for a property, all annotations are stick to its getter
         val annotationOwnerForMember =
