@@ -110,7 +110,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 qualifiedAccessExpression.resultType = delegateFieldSymbol.delegate.typeRef
                 qualifiedAccessExpression
             }
-            is FirResolvedNamedReference -> {
+            is FirResolvedNamedReference,
+            is FirErrorNamedReference -> {
                 if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {
                     storeTypeFromCallee(qualifiedAccessExpression)
                 }
@@ -262,18 +263,22 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
-        if (functionCall.calleeReference is FirResolvedNamedReference && functionCall.resultType is FirImplicitTypeRef) {
+        val calleeReference = functionCall.calleeReference
+        if (
+            (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
+            functionCall.resultType is FirImplicitTypeRef
+        ) {
             storeTypeFromCallee(functionCall)
         }
-        if (functionCall.calleeReference !is FirSimpleNamedReference) {
+        if (calleeReference !is FirSimpleNamedReference) {
             // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
             // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
-            if (functionCall.calleeReference !is FirResolvedNamedReference) {
+            if (calleeReference !is FirResolvedNamedReference) {
                 functionCall.transformChildren(transformer, data)
             }
             return functionCall
         }
-        if (functionCall.calleeReference is FirNamedReferenceWithCandidate) return functionCall
+        if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
         dataFlowAnalyzer.enterCall()
         functionCall.transformAnnotations(transformer, data)
         functionCall.transformSingle(InvocationKindTransformer, null)
