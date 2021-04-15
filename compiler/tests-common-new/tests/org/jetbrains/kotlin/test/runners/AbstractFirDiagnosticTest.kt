@@ -51,6 +51,7 @@ abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
             ::FirDumpHandler,
             ::FirCfgDumpHandler,
             ::FirCfgConsistencyHandler,
+            ::FirNoImplicitTypesHandler,
         )
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirNoImplicitTypesHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.*
 
@@ -38,8 +39,12 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
                 // See KT-44152
                 -USE_PSI_CLASS_FILES_READING
             }
-            useFrontendHandlers(::FirDumpHandler, ::FirScopeDumpHandler)
-            useFrontendHandlers(::FirCfgDumpHandler)
+            useFrontendHandlers(
+                ::FirDumpHandler,
+                ::FirScopeDumpHandler,
+                ::FirCfgDumpHandler,
+                ::FirNoImplicitTypesHandler,
+            )
             dumpHandlersForCodegenTest()
         }
     }
