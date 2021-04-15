@@ -35,6 +35,8 @@ public:
 
     ~InitSingletonTest() {
         globalConstructor_ = nullptr;
+        mm::GlobalData::Instance().objectFactory().ClearForTests();
+        mm::GlobalData::Instance().globalsRegistry().ClearForTests();
     }
 
     testing::MockFunction<void(ObjHeader*)>& constructor() { return constructor_; }
@@ -206,10 +208,12 @@ TEST_F(InitSingletonTest, InitSingletonConcurrent) {
     for (size_t i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([this, i, &location, &stackLocations, &actual, &readyCount, &canStart]() {
             ScopedMemoryInit init;
+            auto* threadData = init.memoryState()->GetThreadData();
             ++readyCount;
             while (!canStart) {
             }
-            actual[i] = InitSingleton(&location, *init.memoryState()->GetThreadData(), &stackLocations[i]);
+            actual[i] = InitSingleton(&location, *threadData, &stackLocations[i]);
+            threadData->Publish();
         });
     }
 
@@ -240,15 +244,17 @@ TEST_F(InitSingletonTest, InitSingletonConcurrentFailing) {
     for (size_t i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([this, i, &location, &stackLocations, &readyCount, &canStart]() {
             ScopedMemoryInit init;
+            auto* threadData = init.memoryState()->GetThreadData();
             ++readyCount;
             while (!canStart) {
             }
             try {
-                InitSingleton(&location, *init.memoryState()->GetThreadData(), &stackLocations[i]);
+                InitSingleton(&location, *threadData, &stackLocations[i]);
                 ASSERT_TRUE(false); // Cannot be reached.
             } catch (int exception) {
                 EXPECT_THAT(exception, kException);
             }
+            threadData->Publish();
         });
     }
 
