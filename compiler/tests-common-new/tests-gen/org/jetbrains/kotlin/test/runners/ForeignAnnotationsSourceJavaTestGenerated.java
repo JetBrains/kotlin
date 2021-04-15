@@ -1070,16 +1070,176 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
-        @Test
-        @TestMetadata("binaryModuleInfoAnnotation.kt")
-        public void testBinaryModuleInfoAnnotation() throws Exception {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/binaryModuleInfoAnnotation.kt");
-        }
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Jspecify {
+            @Test
+            public void testAllFilesPresentInJspecify() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
 
-        @Test
-        @TestMetadata("sourceModuleInfoAnnotation.kt")
-        public void testSourceModuleInfoAnnotation() throws Exception {
-            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/sourceModuleInfoAnnotation.kt");
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ModuleAnnotations {
+                @Test
+                public void testAllFilesPresentInModuleAnnotations() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Strict {
+                    @Test
+                    public void testAllFilesPresentInStrict() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @Test
+                    @TestMetadata("basic.kt")
+                    public void testBasic() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/basic.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("composeWithClassDefaultAnnotation.kt")
+                    public void testComposeWithClassDefaultAnnotation() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/composeWithClassDefaultAnnotation.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("composeWithPackageDefaultAnnotation.kt")
+                    public void testComposeWithPackageDefaultAnnotation() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/composeWithPackageDefaultAnnotation.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dependentModulesNoNullMarked.kt")
+                    public void testDependentModulesNoNullMarked() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/dependentModulesNoNullMarked.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dependentModulesNullMarked.kt")
+                    public void testDependentModulesNullMarked() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/dependentModulesNullMarked.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
+                    public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dotNamedModule.kt")
+                    public void testDotNamedModule() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/dotNamedModule.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("inheritanceAcrossModules.kt")
+                    public void testInheritanceAcrossModules() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/inheritanceAcrossModules.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nestedClasses.kt")
+                    public void testNestedClasses() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/nestedClasses.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("overrideAtDeclarationLevel.kt")
+                    public void testOverrideAtDeclarationLevel() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/overrideAtDeclarationLevel.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("severalModulesDifferentPackages.kt")
+                    public void testSeveralModulesDifferentPackages() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/strict/severalModulesDifferentPackages.kt");
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Warn {
+                    @Test
+                    public void testAllFilesPresentInWarn() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @Test
+                    @TestMetadata("basic.kt")
+                    public void testBasic() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/basic.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("composeWithClassDefaultAnnotation.kt")
+                    public void testComposeWithClassDefaultAnnotation() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/composeWithClassDefaultAnnotation.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("composeWithPackageDefaultAnnotation.kt")
+                    public void testComposeWithPackageDefaultAnnotation() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/composeWithPackageDefaultAnnotation.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dependentModulesNoNullMarked.kt")
+                    public void testDependentModulesNoNullMarked() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/dependentModulesNoNullMarked.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dependentModulesNullMarked.kt")
+                    public void testDependentModulesNullMarked() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/dependentModulesNullMarked.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt")
+                    public void testDontPropagateModuleAnnotationToAnotherModuleWithSamePackage() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/dontPropagateModuleAnnotationToAnotherModuleWithSamePackage.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("dotNamedModule.kt")
+                    public void testDotNamedModule() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/dotNamedModule.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("inheritanceAcrossModules.kt")
+                    public void testInheritanceAcrossModules() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/inheritanceAcrossModules.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("nestedClasses.kt")
+                    public void testNestedClasses() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/nestedClasses.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("overrideAtDeclarationLevel.kt")
+                    public void testOverrideAtDeclarationLevel() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/overrideAtDeclarationLevel.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("severalModulesDifferentPackages.kt")
+                    public void testSeveralModulesDifferentPackages() throws Exception {
+                        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java9Tests/jspecify/moduleAnnotations/warn/severalModulesDifferentPackages.kt");
+                    }
+                }
+            }
         }
     }
 }
