@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.checkers.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -18,22 +14,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds.primitiveTypesAndString
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
-import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_OPERATION_NAMES
 
 object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -53,7 +36,7 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
         session: FirSession,
         reporter: DiagnosticReporter,
         context: CheckerContext
-    ): FirDiagnosticFactory0<FirSourceElement, KtExpression>? {
+    ): FirDiagnosticFactory0<KtExpression>? {
         when (expression) {
             is FirArrayOfCall -> {
                 var usedNonConst = false

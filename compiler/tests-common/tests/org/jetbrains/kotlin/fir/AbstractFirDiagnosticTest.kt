@@ -221,7 +221,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1<FirSourceElement, PsiElement, String>(name, severity)
+                FirDiagnosticFactory1<PsiElement, String>(name, severity)
             )
         }
     }

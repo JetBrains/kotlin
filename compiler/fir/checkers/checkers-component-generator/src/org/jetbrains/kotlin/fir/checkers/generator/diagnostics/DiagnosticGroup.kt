@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.PrivateForInline
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 import kotlin.reflect.typeOf
 
 abstract class DiagnosticGroup @PrivateForInline constructor(val name: String) {
@@ -24,21 +22,21 @@ abstract class DiagnosticGroup @PrivateForInline constructor(val name: String) {
         get() = _diagnostics
 
     @OptIn(PrivateForInline::class)
-    inline fun <reified E : FirSourceElement, reified P : PsiElement> error(
+    inline fun <reified P : PsiElement> error(
         positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
         crossinline init: DiagnosticBuilder.() -> Unit = {}
-    ) = diagnosticDelegateProvider<E, P>(Severity.ERROR, positioningStrategy, init)
+    ) = diagnosticDelegateProvider<P>(Severity.ERROR, positioningStrategy, init)
 
 
     @OptIn(PrivateForInline::class)
-    inline fun <reified E : FirSourceElement, reified P : PsiElement> warning(
+    inline fun <reified P : PsiElement> warning(
         positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
         crossinline init: DiagnosticBuilder.() -> Unit = {}
-    ) = diagnosticDelegateProvider<E, P>(Severity.WARNING, positioningStrategy, init)
+    ) = diagnosticDelegateProvider<P>(Severity.WARNING, positioningStrategy, init)
 
     @PrivateForInline
     @OptIn(ExperimentalStdlibApi::class)
-    inline fun <reified E : FirSourceElement, reified P : PsiElement> diagnosticDelegateProvider(
+    inline fun <reified P : PsiElement> diagnosticDelegateProvider(
         severity: Severity,
         positioningStrategy: PositioningStrategy,
         crossinline init: DiagnosticBuilder.() -> Unit = {}
@@ -46,7 +44,6 @@ abstract class DiagnosticGroup @PrivateForInline constructor(val name: String) {
         val diagnostic = DiagnosticBuilder(
             severity,
             name = property.name,
-            sourceElementType = typeOf<E>(),
             psiType = typeOf<P>(),
             positioningStrategy,
         ).apply(init).build()

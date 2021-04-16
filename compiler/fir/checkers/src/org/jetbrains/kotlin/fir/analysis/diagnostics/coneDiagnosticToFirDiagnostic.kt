@@ -155,7 +155,7 @@ private fun mapInapplicableCandidateError(
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }
 }
 
-private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {
+private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<*> {
     @Suppress("UNCHECKED_CAST")
     return when (kind) {
         DiagnosticKind.Syntax -> FirErrors.SYNTAX

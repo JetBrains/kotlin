@@ -11,7 +11,6 @@ import kotlin.reflect.KType
 data class DiagnosticData(
     val severity: Severity,
     val name: String,
-    val sourceElementType: KType,
     val psiType: KType,
     val parameters: List<DiagnosticParameter>,
     val positioningStrategy: PositioningStrategy,
