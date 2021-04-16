@@ -52,7 +52,7 @@ public class Array<T> {
     public val size: Int
 
     /**
-     * Creates an iterator for iterating over the elements of the array.
+     * Creates an [Iterator] for iterating over the elements of the array.
      */
     public operator fun iterator(): Iterator<T>
 }
