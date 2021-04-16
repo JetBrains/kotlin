@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.psi
@@ -625,6 +626,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.WRONG_MODIFIER_TARGET) { firDiagnostic ->
         WrongModifierTargetImpl(
             firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.OPERATOR_MODIFIER_REQUIRED) { firDiagnostic ->
+        OperatorModifierRequiredImpl(
+            firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firDiagnostic.a.fir),
             firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,

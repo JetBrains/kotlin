@@ -144,6 +144,16 @@ FILE: forLoopChecker.kt
         public abstract operator fun next(): R|kotlin/Int|
 
     }
+    public abstract class ImproperIterator6 : R|kotlin/Any| {
+        public constructor(): R|ImproperIterator6| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun hasNext(): R|kotlin/Boolean|
+
+        public abstract fun next(): R|kotlin/Int|
+
+    }
     public abstract class NotRange8 : R|kotlin/Any| {
         public constructor(): R|NotRange8| {
             super<R|kotlin/Any|>()
@@ -152,7 +162,15 @@ FILE: forLoopChecker.kt
         public abstract operator fun iterator(): R|ImproperIterator5|
 
     }
-    public final fun test(notRange1: R|NotRange1|, notRange2: R|NotRange2|, notRange3: R|NotRange3|, notRange4: R|NotRange4|, notRange5: R|NotRange5|, notRange6: R|NotRange6|, notRange7: R|NotRange7|, notRange8: R|NotRange8|, range0: R|Range0|, range1: R|Range1|): R|kotlin/Unit| {
+    public abstract class NotRange9 : R|kotlin/Any| {
+        public constructor(): R|NotRange9| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun iterator(): R|ImproperIterator6|
+
+    }
+    public final fun test(notRange1: R|NotRange1|, notRange2: R|NotRange2|, notRange3: R|NotRange3|, notRange4: R|NotRange4|, notRange5: R|NotRange5|, notRange6: R|NotRange6|, notRange7: R|NotRange7|, notRange8: R|NotRange8|, notRange9: R|NotRange9|, range0: R|Range0|, range1: R|Range1|): R|kotlin/Unit| {
         lval <iterator>: R|ERROR CLASS: Unresolved name: iterator| = R|<local>/notRange1|.<Unresolved name: iterator>#()
         while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
             lval i: R|ERROR CLASS: Unresolved name: next| = R|<local>/<iterator>|.<Unresolved name: next>#()
@@ -191,6 +209,11 @@ FILE: forLoopChecker.kt
         lval <iterator>: R|ImproperIterator5| = R|<local>/notRange8|.R|/NotRange8.iterator|()
         while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
             lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator5.next|()
+        }
+
+        lval <iterator>: R|ImproperIterator6| = R|<local>/notRange9|.R|/NotRange9.iterator|()
+        while(R|<local>/<iterator>|.R|/ImproperIterator6.hasNext|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator6.next|()
         }
 
         lval <iterator>: R|GoodIterator| = R|<local>/range0|.R|/Range0.iterator|()

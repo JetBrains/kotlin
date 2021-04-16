@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -173,6 +174,7 @@ object FirErrors {
     val INCOMPATIBLE_MODIFIERS by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val REDUNDANT_OPEN_IN_INTERFACE by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.OPEN_MODIFIER)
     val WRONG_MODIFIER_TARGET by error2<PsiElement, KtModifierKeywordToken, String>()
+    val OPERATOR_MODIFIER_REQUIRED by error2<FirSourceElement, PsiElement, FirNamedFunctionSymbol, String>()
 
     // Inline classes
     val INLINE_CLASS_NOT_TOP_LEVEL by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)

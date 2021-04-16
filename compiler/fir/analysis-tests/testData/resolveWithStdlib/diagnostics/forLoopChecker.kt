@@ -70,20 +70,42 @@ abstract class ImproperIterator5 {
     abstract operator fun next() : Int
 }
 
+abstract class ImproperIterator6 {
+    abstract fun hasNext() : Boolean
+    abstract fun next() : Int
+}
+
 abstract class NotRange8() {
     abstract operator fun iterator() : ImproperIterator5
 }
 
+abstract class NotRange9() {
+    abstract fun iterator(): ImproperIterator6
+}
 
-fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRange4: NotRange4, notRange5: NotRange5, notRange6: NotRange6, notRange7: NotRange7, notRange8: NotRange8, range0: Range0, range1: Range1) {
+
+fun test(
+    notRange1: NotRange1,
+    notRange2: NotRange2,
+    notRange3: NotRange3,
+    notRange4: NotRange4,
+    notRange5: NotRange5,
+    notRange6: NotRange6,
+    notRange7: NotRange7,
+    notRange8: NotRange8,
+    notRange9: NotRange9,
+    range0: Range0,
+    range1: Range1
+) {
     for (i in <!ITERATOR_MISSING!>notRange1<!>);
-    for (i in <!HAS_NEXT_MISSING!>notRange2<!>);
+    for (i in <!HAS_NEXT_MISSING, NEXT_MISSING!>notRange2<!>);
     for (i in <!NEXT_MISSING!>notRange3<!>);
     for (i in <!HAS_NEXT_MISSING!>notRange4<!>);
     for (i in notRange5);
     for (i in notRange6);
     for (i in notRange7);
     for (i in <!HAS_NEXT_MISSING!>notRange8<!>);
+    for (i in <!OPERATOR_MODIFIER_REQUIRED, OPERATOR_MODIFIER_REQUIRED, OPERATOR_MODIFIER_REQUIRED!>notRange9<!>);
     for (i in range0);
     for (i in range1);
 }

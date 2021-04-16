@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
@@ -457,6 +458,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = WrongModifierTarget::class
         abstract val modifier: KtModifierKeywordToken
         abstract val target: String
+    }
+
+    abstract class OperatorModifierRequired : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = OperatorModifierRequired::class
+        abstract val functionSymbol: KtFunctionLikeSymbol
+        abstract val name: String
     }
 
     abstract class InlineClassNotTopLevel : KtFirDiagnostic<KtDeclaration>() {

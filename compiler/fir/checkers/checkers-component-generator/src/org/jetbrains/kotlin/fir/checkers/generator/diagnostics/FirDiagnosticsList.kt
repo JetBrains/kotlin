@@ -185,6 +185,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<KtModifierKeywordToken>("modifier")
             parameter<String>("target")
         }
+        val OPERATOR_MODIFIER_REQUIRED by error<FirSourceElement, PsiElement> {
+            parameter<FirNamedFunctionSymbol>("functionSymbol")
+            parameter<String>("name")
+        }
     }
 
     val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {
