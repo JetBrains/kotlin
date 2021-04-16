@@ -93,7 +93,6 @@ fun Project.compilerDummyForDependenciesRewriting(
         exclude(packagesToExcludeFromDummy)
         body()
     }
-
 const val COMPILER_DUMMY_JAR_CONFIGURATION_NAME = "compilerDummyJar"
 
 fun Project.compilerDummyJar(task: TaskProvider<out Jar>, body: Jar.() -> Unit = {}) {

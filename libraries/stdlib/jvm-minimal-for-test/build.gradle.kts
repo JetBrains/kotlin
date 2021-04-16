@@ -73,21 +73,12 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+publish()
+
 val jar = runtimeJar {
-    archiveFileName.set("kotlin-stdlib-minimal-for-test.jar")
     dependsOn(builtins)
     from(provider { zipTree(builtins.singleFile) }) { include("kotlin/**") }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("internal") {
-            artifactId = "kotlin-stdlib-minimal-for-test"
-            artifact(jar.get())
-        }
-    }
-
-    repositories {
-        maven("${rootProject.buildDir}/internal/repo")
-    }
-}
+sourcesJar()
+javadocJar()
