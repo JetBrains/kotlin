@@ -89,5 +89,7 @@ publishing {
 
     repositories {
         maven("${rootProject.buildDir}/internal/repo")
+        mavenLocal()
+        mavenCentral()
     }
 }

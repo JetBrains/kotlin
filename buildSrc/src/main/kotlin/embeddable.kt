@@ -94,6 +94,27 @@ fun Project.compilerDummyForDependenciesRewriting(
         body()
     }
 
+fun Project.unshadedCompiler(
+    taskName: String = "unshadedCompiler", body: ShadowJar.() -> Unit = {}
+): TaskProvider<out Jar> =
+    compilerShadowJar(taskName) {
+        exclude(listOf(
+            "org/jetbrains/jps/**",
+            "com/sun/jna/**",
+            "com/thoughtworks/xstream/**",
+            "*.proto",
+            "messages/**",
+            "net/sf/cglib/**",
+            "one/util/streamex/**",
+            "org/iq80/snappy/**",
+            "org/jline/**",
+            "org/xmlpull/**",
+            "*.txt"
+        ))
+        body()
+    }
+
+
 const val COMPILER_DUMMY_JAR_CONFIGURATION_NAME = "compilerDummyJar"
 
 fun Project.compilerDummyJar(task: TaskProvider<out Jar>, body: Jar.() -> Unit = {}) {
