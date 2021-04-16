@@ -121,10 +121,7 @@ import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.navigationToolbar.AbstractKotlinNavBarTest
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.perf.*
-import org.jetbrains.kotlin.idea.quickfix.AbstractHighLevelQuickFixTest
-import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
-import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiModuleTest
-import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
+import org.jetbrains.kotlin.idea.quickfix.*
 import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
 import org.jetbrains.kotlin.idea.refactoring.copy.AbstractCopyTest
 import org.jetbrains.kotlin.idea.refactoring.copy.AbstractMultiModuleCopyTest
@@ -1178,6 +1175,10 @@ fun main(args: Array<String>) {
                 model("quickfix/addInitializer", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/addPropertyAccessors", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/when", pattern = pattern, filenameStartsLowerCase = true)
+            }
+
+            testClass<AbstractHighLevelQuickFixMultiFileTest> {
+                model("quickfix/autoImports", pattern = """^(\w+)\.((before\.Main\.\w+))$""", testMethod = "doTestWithExtraFile")
             }
 
             testClass<AbstractHLInspectionTest> {
