@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -123,7 +125,9 @@ fun generateDestructuringBlock(
                 returnTypeRef = entry.returnTypeRef
                 name = entry.name
                 initializer = buildComponentCall {
-                    explicitReceiver = generateResolvedAccessExpression(null, container)
+                    val componentCallSource = entry.source?.fakeElement(FirFakeSourceElementKind.DesugaredComponentFunctionCall)
+                    source = componentCallSource
+                    explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
                     componentIndex = index + 1
                 }
                 this.isVar = isVar
