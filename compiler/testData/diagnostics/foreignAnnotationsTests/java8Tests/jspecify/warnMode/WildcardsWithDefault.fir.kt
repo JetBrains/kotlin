@@ -1,5 +1,3 @@
-// JSPECIFY_MUTE
-
 // FILE: WildcardsWithDefault.java
 import org.jspecify.nullness.*;
 
@@ -23,11 +21,11 @@ fun main(
             b: WildcardsWithDefault
 ): Unit {
     b.noBoundsNotNull(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.noBoundsNotNull(aNotNullNotNullNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.noBoundsNotNull(aNotNullNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.noBoundsNotNull(aNotNullNullNull)
 
     b.noBoundsNullable(aNotNullNotNullNotNull)

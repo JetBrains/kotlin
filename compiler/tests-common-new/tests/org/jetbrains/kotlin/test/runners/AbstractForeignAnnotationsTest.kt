@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
+import org.jetbrains.kotlin.test.frontend.classic.handlers.JspecifyDiagnosticComplianceHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.preprocessors.JspecifyTestsPreprocessor
+import org.jetbrains.kotlin.test.preprocessors.JspecifyMarksCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.configuration.*
 import org.jetbrains.kotlin.test.services.jvm.ForeignAnnotationAgainstCompiledJavaTestSuppressor
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -89,7 +90,8 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
         }
 
         forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/*") {
-            useSourcePreprocessor(::JspecifyTestsPreprocessor, needToPrepend = true)
+            useFrontendHandlers(::JspecifyDiagnosticComplianceHandler)
+            useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
         }
     }
 }
