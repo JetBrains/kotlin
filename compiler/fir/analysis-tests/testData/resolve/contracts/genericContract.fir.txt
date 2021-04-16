@@ -1,0 +1,35 @@
+FILE: genericContract.kt
+    public final inline fun <reified T> requreIsInstance(value: R|kotlin/Any|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> value is T
+        >
+     {
+        when () {
+            (R|<local>/value| !is R|T|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+    }
+    public final fun test_1(s: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/requreIsInstance|<R|kotlin/String|>(R|<local>/s|)
+        R|<local>/s|.R|kotlin/String.length|
+    }
+    public final inline fun <reified T> requreIsInstanceOf(value: R|kotlin/Any|, requiredValue: R|T|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> value is T
+        >
+     {
+        when () {
+            (R|<local>/value| !is R|T|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+    }
+    public final fun test_2(x: R|kotlin/Any|, s: R|kotlin/String|): R|kotlin/Unit| {
+        R|/requreIsInstanceOf|<R|kotlin/String|>(R|<local>/x|, R|<local>/s|)
+        R|<local>/x|.R|kotlin/String.length|
+    }
