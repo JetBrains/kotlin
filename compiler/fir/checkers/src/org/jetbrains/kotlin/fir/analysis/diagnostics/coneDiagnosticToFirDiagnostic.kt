@@ -174,7 +174,7 @@ private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<*> {
         DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
         DiagnosticKind.Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
         DiagnosticKind.SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
-        DiagnosticKind.ExpressionRequired -> FirErrors.EXPRESSION_REQUIRED
+        DiagnosticKind.ExpressionExpected -> FirErrors.EXPRESSION_EXPECTED
         DiagnosticKind.JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
         DiagnosticKind.NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL
         DiagnosticKind.VariableExpected -> FirErrors.VARIABLE_EXPECTED

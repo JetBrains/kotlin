@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -60,7 +58,7 @@ class ExpressionsConverter(
         return expression?.let {
             convertExpression(it, errorReason)
         } as? R ?: buildErrorExpression(
-            null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired)
+            null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
         ) as R
     }
 
@@ -111,7 +109,7 @@ class ExpressionsConverter(
 
                 OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
                 FUN -> declarationsConverter.convertFunctionDeclaration(expression)
-                else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired))
+                else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
             }
         }
 

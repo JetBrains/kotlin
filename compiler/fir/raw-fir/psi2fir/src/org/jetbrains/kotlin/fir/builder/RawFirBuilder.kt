@@ -180,13 +180,13 @@ open class RawFirBuilder(
             if (stubMode) buildExpressionStub()
             else with(this()) {
                 convertSafe() ?: buildErrorExpression(
-                    this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired),
+                    this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
                 )
             }
 
         private fun KtExpression?.toFirExpression(
             errorReason: String,
-            kind: DiagnosticKind = DiagnosticKind.ExpressionRequired,
+            kind: DiagnosticKind = DiagnosticKind.ExpressionExpected,
         ): FirExpression =
             if (stubMode) buildExpressionStub()
             else convertSafe() ?: buildErrorExpression(

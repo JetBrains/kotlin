@@ -910,7 +910,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 } ?: buildErrorExpression {
                     source = null
                     diagnostic = ConeSimpleDiagnostic(
-                        "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionRequired
+                        "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
                     )
                 }
                 rightArgument = value

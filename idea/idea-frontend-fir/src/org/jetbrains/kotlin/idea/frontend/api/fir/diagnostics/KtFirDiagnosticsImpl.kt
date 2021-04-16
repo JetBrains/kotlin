@@ -102,10 +102,10 @@ internal class IllegalUnderscoreImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
-internal class ExpressionRequiredImpl(
+internal class ExpressionExpectedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExpressionRequired(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.ExpressionExpected(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

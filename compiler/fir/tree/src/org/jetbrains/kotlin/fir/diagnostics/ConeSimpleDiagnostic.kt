@@ -9,7 +9,7 @@ class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind
 
 enum class DiagnosticKind {
     Syntax,
-    ExpressionRequired,
+    ExpressionExpected,
     NotLoopLabel,
     JumpOutsideLoop,
     VariableExpected,

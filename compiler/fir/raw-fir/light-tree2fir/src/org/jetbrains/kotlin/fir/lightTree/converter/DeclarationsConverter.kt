@@ -1245,7 +1245,7 @@ class DeclarationsConverter(
                 CONTRACT_EFFECT -> {
                     val effect = it.getFirstChild()
                     if (effect == null) {
-                        val errorExpression = buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired))
+                        val errorExpression = buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
                         destination.add(errorExpression)
                     } else {
                         val expression = expressionConverter.convertExpression(effect, errorReason)

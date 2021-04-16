@@ -88,8 +88,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.EXPRESSION_REQUIRED) { firDiagnostic ->
-        ExpressionRequiredImpl(
+    add(FirErrors.EXPRESSION_EXPECTED) { firDiagnostic ->
+        ExpressionExpectedImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

@@ -83,8 +83,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IllegalUnderscore::class
     }
 
-    abstract class ExpressionRequired : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = ExpressionRequired::class
+    abstract class ExpressionExpected : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExpressionExpected::class
     }
 
     abstract class BreakOrContinueOutsideALoop : KtFirDiagnostic<PsiElement>() {

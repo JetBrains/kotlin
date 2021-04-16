@@ -15,7 +15,7 @@ fun main() {
 }
 
 //KT-351 Distinguish statement and expression positions
-val w = <!EXPRESSION_REQUIRED!>while (true) {}<!>
+val w = <!EXPRESSION_EXPECTED!>while (true) {}<!>
 
 fun foo() {
     var z = 2
@@ -149,12 +149,12 @@ fun bar(a: Unit) {}
 
 fun testStatementInExpressionContext() {
     var z = 34
-    val a1: Unit = <!EXPRESSION_REQUIRED!>z = 334<!>
+    val a1: Unit = <!EXPRESSION_EXPECTED!>z = 334<!>
     val f = for (i in 1..10) {}
-    if (true) return <!EXPRESSION_REQUIRED!>z = 34<!>
-    return <!EXPRESSION_REQUIRED!>while (true) {}<!>
+    if (true) return <!EXPRESSION_EXPECTED!>z = 34<!>
+    return <!EXPRESSION_EXPECTED!>while (true) {}<!>
 }
 
 fun testStatementInExpressionContext2() {
-    val a2: Unit = <!EXPRESSION_REQUIRED!>while(true) {}<!>
+    val a2: Unit = <!EXPRESSION_EXPECTED!>while(true) {}<!>
 }
