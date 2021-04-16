@@ -1,4 +1,5 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
+// IGNORE_IRRELEVANT_ACTIONS
 // ERROR: Unresolved reference: TTTTT
 // ERROR: Function declaration must have a name
 

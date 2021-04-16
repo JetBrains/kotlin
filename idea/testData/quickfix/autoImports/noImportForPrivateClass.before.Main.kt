@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ACTION: Create local variable 'PrivateClass'
 // ACTION: Create object 'PrivateClass'
 // ACTION: Create parameter 'PrivateClass'

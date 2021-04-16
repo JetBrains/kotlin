@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ACTION: Create annotation 'SomeTest'
 // ACTION: Create class 'SomeTest'
 // ACTION: Create interface 'SomeTest'

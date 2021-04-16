@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ACTION: Rename reference
 // ACTION: Convert to run
 // ACTION: Convert to with

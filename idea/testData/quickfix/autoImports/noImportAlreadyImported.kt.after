@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ERROR: Unresolved reference: some[12]
 // ERROR: No get method providing array access
 

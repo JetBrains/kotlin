@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ERROR: Unresolved reference: SomeTest
 // ERROR: Expression expected, but a package name found
 // ACTION: Convert to lazy property

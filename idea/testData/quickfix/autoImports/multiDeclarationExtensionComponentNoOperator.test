@@ -1,5 +1,5 @@
 // FILE: first.before.kt
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
 // ACTION: Create extension function 'Some.component1'
 // ACTION: Create member function 'Some.component1'

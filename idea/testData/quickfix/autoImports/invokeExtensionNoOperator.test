@@ -1,5 +1,5 @@
 // FILE: first.before.kt
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ERROR: Expression 'Some()' of type 'Some' cannot be invoked as a function. The function 'invoke()' is not found
 // ACTION: Create extension function 'Some.invoke'
 // ACTION: Create member function 'Some.invoke'

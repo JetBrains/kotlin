@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ACTION: Create extension function 'H?.inc'
 // ACTION: Create member function 'H.inc'
 // ACTION: Replace overloaded operator with function call

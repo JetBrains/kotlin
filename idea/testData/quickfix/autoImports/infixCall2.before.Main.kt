@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ERROR: Unresolved reference: foo
 // ACTION: Create extension function 'H.foo'
 // ACTION: Create member function 'H.foo'

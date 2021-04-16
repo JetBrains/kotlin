@@ -1,5 +1,5 @@
 // FILE: first.before.kt
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ERROR: Unresolved reference: foo()["str"]
 // ERROR: No set method providing array access
 // ACTION: Convert assignment to assignment expression

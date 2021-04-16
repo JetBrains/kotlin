@@ -1,5 +1,5 @@
 // FILE: first.before.kt
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 // ERROR: Unresolved reference: foo()["str"]
 // ERROR: No get method providing array access
 // ACTION: Create extension function 'Some.get'
