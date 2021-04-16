@@ -32507,6 +32507,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("contractWithDeepGenerics.kt")
+                public void testContractWithDeepGenerics() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractWithDeepGenerics.kt");
+                }
+
+                @Test
                 @TestMetadata("contractsOnMembers.kt")
                 public void testContractsOnMembers() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractsOnMembers.kt");
