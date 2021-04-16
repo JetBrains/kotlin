@@ -31,6 +31,10 @@ object LightTreePositioningStrategies {
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
             when (node.tokenType) {
+                KtNodeTypes.OBJECT_LITERAL -> {
+                    val objectKeyword = tree.findDescendantByType(node, KtTokens.OBJECT_KEYWORD)!!
+                    return markElement(objectKeyword, startOffset, endOffset, tree, node)
+                }
                 KtNodeTypes.OBJECT_DECLARATION -> {
                     val objectKeyword = tree.objectKeyword(node)!!
                     return markRange(
@@ -440,6 +444,9 @@ object LightTreePositioningStrategies {
             if (node.tokenType == KtNodeTypes.CALL_EXPRESSION || node.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL) {
                 return markElement(tree.referenceExpression(node, locateReferencedName) ?: node, startOffset, endOffset, tree, node)
             }
+            if (node.tokenType == KtNodeTypes.PROPERTY_DELEGATE) {
+                return markElement(tree.findReferenceExpressionDeep(node) ?: node, startOffset, endOffset, tree, node)
+            }
             if (node.tokenType in nodeTypesWithOperation) {
                 return markElement(tree.operationReference(node) ?: node, startOffset, endOffset, tree, node)
             }
@@ -599,6 +606,13 @@ internal fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
 
+private val REFERENCE_EXPRESSIONS = setOf(
+    KtNodeTypes.REFERENCE_EXPRESSION,
+    KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE,
+    KtNodeTypes.SUPER_EXPRESSION,
+    KtNodeTypes.ARRAY_ACCESS_EXPRESSION
+)
+
 /**
  * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for diagnostics
  * on super and unresolved references. For example, with the following, only the part inside the parentheses should be highlighted.
@@ -619,15 +633,16 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     var result = childrenRef.get()?.firstOrNull {
-        it?.tokenType == KtNodeTypes.REFERENCE_EXPRESSION || it?.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE ||
-                it?.tokenType == KtNodeTypes.SUPER_EXPRESSION || it?.tokenType == KtNodeTypes.PARENTHESIZED ||
-                it?.tokenType == KtNodeTypes.ARRAY_ACCESS_EXPRESSION
+        it?.tokenType in REFERENCE_EXPRESSIONS || it?.tokenType == KtNodeTypes.PARENTHESIZED
     }
     while (locateReferencedName && result != null && result.tokenType == KtNodeTypes.PARENTHESIZED) {
         result = referenceExpression(result, locateReferencedName = true)
     }
     return result
 }
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.findReferenceExpressionDeep(node: LighterASTNode): LighterASTNode? =
+    findDescendantByTypes(node, REFERENCE_EXPRESSIONS)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RPAR)
@@ -731,6 +746,13 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByType(node: Lig
     getChildren(node, childrenRef)
     return childrenRef.get()?.firstOrNull { it?.tokenType == type } ?: childrenRef.get()
         ?.firstNotNullResult { child -> child?.let { findDescendantByType(it, type) } }
+}
+
+fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByTypes(node: LighterASTNode, types: Set<IElementType>): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get()?.firstOrNull { types.contains(it?.tokenType) } ?: childrenRef.get()
+        ?.firstNotNullResult { child -> child?.let { findDescendantByTypes(it, types) } }
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: TokenSet): LighterASTNode? {
