@@ -70,7 +70,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
         val INVISIBLE_REFERENCE by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<AbstractFirBasedSymbol<*>>("reference")
+            parameter<Symbol>("reference")
         }
         val UNRESOLVED_REFERENCE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("reference")
@@ -216,11 +216,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
         val NONE_APPLICABLE by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<Symbol>>("candidates")
         }
 
         val INAPPLICABLE_CANDIDATE by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<AbstractFirBasedSymbol<*>>("candidate")
+            parameter<Symbol>("candidate")
         }
 
         val ARGUMENT_TYPE_MISMATCH by error<PsiElement> {
@@ -256,10 +256,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
         val OVERLOAD_RESOLUTION_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<Symbol>>("candidates")
         }
         val ASSIGN_OPERATOR_AMBIGUITY by error<PsiElement> {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<Symbol>>("candidates")
         }
         val ITERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
@@ -448,10 +448,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {
         val MANY_COMPANION_OBJECTS by error<KtObjectDeclaration>(PositioningStrategy.COMPANION_OBJECT)
         val CONFLICTING_OVERLOADS by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("conflictingOverloads")
+            parameter<Collection<Symbol>>("conflictingOverloads")
         }
         val REDECLARATION by error<PsiElement> {
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("conflictingDeclarations")
+            parameter<Collection<Symbol>>("conflictingDeclarations")
         }
         val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE by error<PsiElement>()
     }
@@ -569,7 +569,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
         val COMPONENT_FUNCTION_AMBIGUITY by error<PsiElement> {
             parameter<Name>("functionWithAmbiguityName")
-            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+            parameter<Collection<Symbol>>("candidates")
         }
         val COMPONENT_FUNCTION_ON_NULLABLE by error<KtExpression> {
             parameter<Name>("componentFunctionName")
@@ -601,12 +601,12 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<FirPropertySymbol>("property")
         }
         val WRONG_INVOCATION_KIND by warning<PsiElement> {
-            parameter<AbstractFirBasedSymbol<*>>("declaration")
+            parameter<Symbol>("declaration")
             parameter<EventOccurrencesRange>("requiredRange")
             parameter<EventOccurrencesRange>("actualRange")
         }
         val LEAKED_IN_PLACE_LAMBDA by error<PsiElement> {
-            parameter<AbstractFirBasedSymbol<*>>("lambda")
+            parameter<Symbol>("lambda")
         }
         val WRONG_IMPLIES_CONDITION by warning<PsiElement>()
     }
@@ -740,3 +740,5 @@ private inline fun <reified P : PsiElement> DiagnosticGroup.exposedVisibilityWar
 ): PropertyDelegateProvider<Any?, ReadOnlyProperty<DiagnosticGroup, DiagnosticData>> {
     return warning<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
+
+typealias Symbol = AbstractFirBasedSymbol<*>
