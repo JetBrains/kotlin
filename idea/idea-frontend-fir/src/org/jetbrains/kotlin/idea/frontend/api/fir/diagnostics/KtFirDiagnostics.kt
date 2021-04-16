@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -85,6 +86,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ExpressionExpected : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ExpressionExpected::class
+    }
+
+    abstract class AssignmentInExpressionContext : KtFirDiagnostic<KtBinaryExpression>() {
+        override val diagnosticClass get() = AssignmentInExpressionContext::class
     }
 
     abstract class BreakOrContinueOutsideALoop : KtFirDiagnostic<PsiElement>() {

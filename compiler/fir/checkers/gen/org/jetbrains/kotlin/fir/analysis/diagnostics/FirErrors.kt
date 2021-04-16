@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -76,6 +77,7 @@ object FirErrors {
     val ILLEGAL_CONST_EXPRESSION by error0<PsiElement>()
     val ILLEGAL_UNDERSCORE by error0<PsiElement>()
     val EXPRESSION_EXPECTED by error0<PsiElement>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
+    val ASSIGNMENT_IN_EXPRESSION_CONTEXT by error0<FirSourceElement, KtBinaryExpression>()
     val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error0<PsiElement>()
     val NOT_A_LOOP_LABEL by error0<PsiElement>()
     val VARIABLE_EXPECTED by error0<PsiElement>()

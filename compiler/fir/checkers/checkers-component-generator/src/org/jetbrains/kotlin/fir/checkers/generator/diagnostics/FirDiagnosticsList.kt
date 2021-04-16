@@ -50,6 +50,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val ILLEGAL_CONST_EXPRESSION by error<PsiElement>()
         val ILLEGAL_UNDERSCORE by error<PsiElement>()
         val EXPRESSION_EXPECTED by error<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
+        val ASSIGNMENT_IN_EXPRESSION_CONTEXT by error<FirSourceElement, KtBinaryExpression>()
         val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error<PsiElement>()
         val NOT_A_LOOP_LABEL by error<PsiElement>()
         val VARIABLE_EXPECTED by error<PsiElement>()

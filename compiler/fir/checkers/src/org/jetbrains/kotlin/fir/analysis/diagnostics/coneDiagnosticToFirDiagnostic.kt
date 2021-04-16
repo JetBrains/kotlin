@@ -48,9 +48,9 @@ private fun ConeDiagnostic.toFirDiagnostic(
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifiedAccessSource ?: source, this.desiredCount, this.type)
     is ConeNoTypeArgumentsOnRhsError ->
         FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.on(qualifiedAccessSource ?: source, this.desiredCount, this.type)
-    is ConeSimpleDiagnostic -> when {
-        source.kind is FirFakeSourceElementKind -> null
-        else -> this.getFactory().on(qualifiedAccessSource ?: source)
+    is ConeSimpleDiagnostic -> when (source.kind) {
+        is FirFakeSourceElementKind -> null
+        else -> this.getFactory(source).on(qualifiedAccessSource ?: source)
     }
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, this.target)
     is ConeStubDiagnostic -> null
@@ -158,7 +158,7 @@ private fun mapInapplicableCandidateError(
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }
 }
 
-private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<*> {
+private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0<*> {
     @Suppress("UNCHECKED_CAST")
     return when (kind) {
         DiagnosticKind.Syntax -> FirErrors.SYNTAX
@@ -174,7 +174,11 @@ private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<*> {
         DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
         DiagnosticKind.Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
         DiagnosticKind.SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
-        DiagnosticKind.ExpressionExpected -> FirErrors.EXPRESSION_EXPECTED
+        DiagnosticKind.ExpressionExpected -> if (source.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+            FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
+        } else {
+            FirErrors.EXPRESSION_EXPECTED
+        }
         DiagnosticKind.JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
         DiagnosticKind.NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL
         DiagnosticKind.VariableExpected -> FirErrors.VARIABLE_EXPECTED
