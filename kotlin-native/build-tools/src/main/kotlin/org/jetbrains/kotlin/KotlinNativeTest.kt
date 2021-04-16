@@ -16,13 +16,11 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.konan.exec.Command
-
-import java.io.File
-import java.io.ByteArrayOutputStream
-import java.util.regex.Pattern
-
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.util.regex.Pattern
 
 abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     enum class Logger {
@@ -35,7 +33,9 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
 
     var disabled: Boolean
         get() = !enabled
-        set(value) { enabled = !value }
+        set(value) {
+            enabled = !value
+        }
 
     /**
      * Test output directory. Used to store processed sources and binary artifacts.
@@ -74,10 +74,12 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
      * As this run task comes after the build task all actions for doFirst
      * should be done before the build and not run.
      */
-    @Input @Optional
+    @Input
+    @Optional
     override var doBeforeBuild: Action<in Task>? = null
 
-    @Input @Optional
+    @Input
+    @Optional
     override var doBeforeRun: Action<in Task>? = null
 
     override val buildTasks: List<Task>
@@ -122,7 +124,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
 /**
  * Create a test task of the given type. Supports configuration with Closure passed form build.gradle file.
  */
-fun <T: KonanTestExecutable> Project.createTest(name: String, type: Class<T>, config: Closure<*>): T =
+fun <T : KonanTestExecutable> Project.createTest(name: String, type: Class<T>, config: Closure<*>): T =
         project.tasks.create(name, type).apply {
             // Apply closure set in build.gradle to get all parameters.
             this.configure(config)
@@ -157,7 +159,7 @@ open class KonanGTest : KonanTest() {
     override fun run() {
         doBeforeRun?.execute(this)
         runProcess(
-                executor = {project.executor.execute(it)},
+                executor = { project.executor.execute(it) },
                 executable = executable,
                 args = arguments
         ).run {
@@ -201,45 +203,55 @@ open class KonanLocalTest : KonanTest() {
 
     override var testLogger = Logger.SILENT
 
-    @Input @Optional
+    @Input
+    @Optional
     var expectedExitStatus: Int? = null
 
-    @Input @Optional
+    @Input
+    @Optional
     var expectedExitStatusChecker: (Int) -> Boolean = { it == (expectedExitStatus ?: 0) }
 
     /**
      * Should this test fail or not.
      */
-    @Input @Optional
+    @Input
+    @Optional
     var expectedFail = false
 
     /**
      * Used to validate output as a gold value.
      */
-    @Input @Optional
+    @Input
+    @Optional
     var goldValue: String? = null
 
     /**
      * Checks test's output against gold value and returns true if the output matches the expectation.
      */
-    @Input @Optional
+    @Input
+    @Optional
     var outputChecker: (String) -> Boolean = { str -> goldValue == null || goldValue == str }
+
     /**
      * Input test data to be passed to process' stdin.
      */
-    @Input @Optional
+    @Input
+    @Optional
     var testData: String? = null
 
     /**
      * Should compiler message be read and validated with output checker or gold value.
      */
-    @Input @Optional
+    @Input
+    @Optional
     var compilerMessages = false
 
-    @Input @Optional
+    @Input
+    @Optional
     var multiRuns = false
 
-    @Input @Optional
+    @Input
+    @Optional
     var multiArguments: List<List<String>>? = null
 
     @TaskAction
@@ -250,9 +262,9 @@ open class KonanLocalTest : KonanTest() {
         for (i in 1..times) {
             val args = arguments + (multiArguments?.get(i - 1) ?: emptyList())
             output += if (testData != null)
-                runProcessWithInput({project.executor.execute(it)}, executable, args, testData!!)
+                runProcessWithInput({ project.executor.execute(it) }, executable, args, testData!!)
             else
-                runProcess({project.executor.execute(it)}, executable, args)
+                runProcess({ project.executor.execute(it) }, executable, args)
         }
         if (compilerMessages) {
             // TODO: as for now it captures output only in the driver task.
@@ -280,7 +292,8 @@ open class KonanLocalTest : KonanTest() {
                 "Expected exit status: $expectedExitStatus, actual: $exitCode"
             else
                 "Actual exit status doesn't match with exit status checker: $exitCode"
-            check(expectedFail) { """
+            check(expectedFail) {
+                """
                     |Test failed. $message
                     |stdout:
                     |$stdOut
@@ -303,7 +316,8 @@ open class KonanLocalTest : KonanTest() {
             println("Expected failure. $message")
         }
 
-        check ((exitCodeMismatch || goldValueMismatch) || !expectedFail) { """
+        check((exitCodeMismatch || goldValueMismatch) || !expectedFail) {
+            """
             |Unexpected pass:
             | * exit code mismatch: $exitCodeMismatch
             | * gold value mismatch: $goldValueMismatch
@@ -330,10 +344,12 @@ open class KonanStandaloneTest : KonanLocalTest() {
     override val executable: String
         get() = "$outputDirectory/${project.testTarget.name}/$name.${project.testTarget.family.exeSuffix}"
 
-    @Input @Optional
+    @Input
+    @Optional
     var enableKonanAssertions = true
 
-    @Input @Optional
+    @Input
+    @Optional
     var verifyIr = true
 
     /**
@@ -394,7 +410,11 @@ open class KonanDriverTest : KonanStandaloneTest() {
                 writeText(it.stdOut)
                 appendText(it.stdErr)
             }
-            check(it.exitCode == 0) { "Compiler failed with exit code ${it.exitCode}" }
+            check(it.exitCode == 0) {
+                "Compiler failed with exit code ${it.exitCode}\n" +
+                        "stdOut: ${it.stdOut}\n" +
+                        "stdErr: ${it.stdErr}"
+            }
         }
     }
 }
@@ -436,7 +456,8 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     @Input
     var clangFlags: List<String> = listOf()
 
-    @Input @Optional
+    @Input
+    @Optional
     var interop: String? = null
 
     // Replace testlib_api.h and all occurrences of the testlib with the actual name of the test
