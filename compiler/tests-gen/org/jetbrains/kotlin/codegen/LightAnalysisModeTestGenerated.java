@@ -17482,9 +17482,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class WithAccessor extends AbstractLightAnalysisModeTest {
-                    @TestMetadata("protectedSuperclassCompanionObjectMember.kt")
-                    public void ignoreProtectedSuperclassCompanionObjectMember() throws Exception {
-                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/protectedSuperclassCompanionObjectMember.kt");
+                    @TestMetadata("protectedCompanionObjectStaticMember.kt")
+                    public void ignoreProtectedCompanionObjectStaticMember() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/protectedCompanionObjectStaticMember.kt");
+                    }
+
+                    @TestMetadata("protectedMember.kt")
+                    public void ignoreProtectedMember() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/protectedMember.kt");
                     }
 
                     private void runTest(String testDataFilePath) throws Exception {

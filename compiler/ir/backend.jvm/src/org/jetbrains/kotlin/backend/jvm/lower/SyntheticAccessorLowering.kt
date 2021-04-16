@@ -178,7 +178,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${call.dump()}")
         val implFunSymbol = implFunRef.symbol
 
-        if (implFunSymbol.isAccessible(false, thisSymbol)) return call
+        if (implFunSymbol.isAccessibleFromSyntheticProxy(thisSymbol))
+            return call
 
         val accessorSymbol = createAccessor(implFunSymbol, implFunRef.dispatchReceiver?.type, null)
         val accessorFun = accessorSymbol.owner
@@ -210,6 +211,23 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
         call.putValueArgument(1, accessorRef)
         return call
+    }
+
+    private fun IrFunctionSymbol.isAccessibleFromSyntheticProxy(thisSymbol: IrClassSymbol?): Boolean {
+        if (!isAccessible(false, thisSymbol))
+            return false
+
+        if (owner.visibility != DescriptorVisibilities.PROTECTED &&
+            owner.visibility != JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+        ) {
+            return true
+        }
+
+        // We have a protected member.
+        // It is accessible from a synthetic proxy class (created by LambdaMetafactory)
+        // if it belongs to the current class.
+        val outerClassInfo = getOuterClassInfo() ?: return false
+        return outerClassInfo.outerClass == owner.parentAsClass
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
@@ -713,6 +731,25 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val ownerClass = declaration.parent as? IrClass ?: return true
 
+        val outerClassInfo = getOuterClassInfo() ?: return false
+        val outerClass = outerClassInfo.outerClass
+        val throughCrossinlineLambda = outerClassInfo.throughCrossinlineLambda
+
+        val samePackage = ownerClass.getPackageFragment()?.fqName == outerClass.getPackageFragment()?.fqName
+        val fromSubclassOfReceiversClass = !throughCrossinlineLambda &&
+                outerClass.isSubclassOf(ownerClass) &&
+                (thisObjReference == null || outerClass.symbol.isSubtypeOfClass(thisObjReference))
+        return when {
+            declaration.visibility.isPrivate && (throughCrossinlineLambda || ownerClass != outerClass) -> false
+            declaration.visibility.isProtected && !samePackage && !fromSubclassOfReceiversClass -> false
+            withSuper && !fromSubclassOfReceiversClass -> false
+            else -> true
+        }
+    }
+
+    private class OuterClassInfo(val outerClass: IrClass, val throughCrossinlineLambda: Boolean)
+
+    private fun getOuterClassInfo(): OuterClassInfo? {
         var context = currentScope!!.irElement as IrDeclaration
         var throughCrossinlineLambda = false
         while (context !is IrClass) {
@@ -727,21 +764,13 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 // inlined into a different class, e.g. a callable reference. For protected inline functions
                 // calling methods on `super` we also need an accessor to satisfy INVOKESPECIAL constraints.
                 // TODO scan nested classes for calls to private inline functions?
-                return false
+                return null
             } else {
-                context = context.parent as? IrDeclaration ?: return false
+                context = context.parent as? IrDeclaration
+                    ?: return null
             }
         }
-
-        val samePackage = ownerClass.getPackageFragment()?.fqName == context.getPackageFragment()?.fqName
-        val fromSubclassOfReceiversClass = !throughCrossinlineLambda &&
-                context.isSubclassOf(ownerClass) && (thisObjReference == null || context.symbol.isSubtypeOfClass(thisObjReference))
-        return when {
-            declaration.visibility.isPrivate && (throughCrossinlineLambda || ownerClass != context) -> false
-            declaration.visibility.isProtected && !samePackage && !fromSubclassOfReceiversClass -> false
-            withSuper && !fromSubclassOfReceiversClass -> false
-            else -> true
-        }
+        return OuterClassInfo(context, throughCrossinlineLambda)
     }
 
     // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).

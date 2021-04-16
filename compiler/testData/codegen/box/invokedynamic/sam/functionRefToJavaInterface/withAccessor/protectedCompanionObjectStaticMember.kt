@@ -8,6 +8,7 @@
 
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
+// 1 c2/C2\.access\$test\$s[0-9]+\(\)Ljava/lang/String\;
 
 // FILE: test.kt
 import c2.*
@@ -29,8 +30,15 @@ open class C1 {
 package c2
 
 import c1.*
-import java.util.function.Supplier
+import j.*
 
 class C2 : C1() {
-    fun supplier() = Supplier<String>(::test)
+    fun supplier() = J(::test)
+}
+
+// FILE: j/J.java
+package j;
+
+public interface J {
+    public String get();
 }

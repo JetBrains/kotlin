@@ -20960,9 +20960,15 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     }
 
                     @Test
-                    @TestMetadata("protectedSuperclassCompanionObjectMember.kt")
-                    public void testProtectedSuperclassCompanionObjectMember() throws Exception {
-                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/protectedSuperclassCompanionObjectMember.kt");
+                    @TestMetadata("protectedCompanionObjectStaticMember.kt")
+                    public void testProtectedCompanionObjectStaticMember() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/protectedCompanionObjectStaticMember.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("protectedMember.kt")
+                    public void testProtectedMember() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/protectedMember.kt");
                     }
                 }
             }
