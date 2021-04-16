@@ -1609,6 +1609,11 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
                 }
 
+                @TestMetadata("methodAddDefault")
+                public void testMethodAddDefault() throws Exception {
+                    runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddDefault/");
+                }
+
                 @TestMetadata("methodAdded")
                 public void testMethodAdded() throws Exception {
                     runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAdded/");
@@ -1627,6 +1632,19 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
                 @TestMetadata("methodSignatureChangedSamAdapter")
                 public void testMethodSignatureChangedSamAdapter() throws Exception {
                     runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChangedSamAdapter/");
+                }
+
+                @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddDefault")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class MethodAddDefault extends AbstractIncrementalFirJvmCompilerRunnerTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInMethodAddDefault() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddDefault"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    }
                 }
 
                 @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAdded")
