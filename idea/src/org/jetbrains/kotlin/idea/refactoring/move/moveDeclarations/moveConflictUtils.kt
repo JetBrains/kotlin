@@ -733,10 +733,11 @@ class MoveConflictChecker(
 
             val targetModule = moveTarget.getTargetModule(project) ?: return null
             val targetPackage = moveTarget.getTargetPackage() ?: return null
+            val targetDir = moveTarget.targetFile?.takeIf { it.isDirectory } ?: moveTarget.targetFile?.parent
 
             val className = classToMove.nameAsSafeName.asString()
 
-            if (otherHierarchyMembers.none { it.residesIn(targetModule, targetPackage) }) {
+            if (otherHierarchyMembers.none { it.residesIn(targetModule, targetPackage, targetDir) }) {
                 val hierarchyMembers = buildList { add(classToMove); addAll(otherHierarchyMembers) }.toNamesList()
                 return KotlinBundle.message(
                     "text.sealed.broken.hierarchy.none.in.target",
@@ -749,9 +750,10 @@ class MoveConflictChecker(
 
             val moduleToMoveFrom = classToMove.module ?: return null
             val packageToMoveFrom = classToMoveDesc.findPsiPackage(moduleToMoveFrom) ?: return null
+            val directoryToMoveFrom = classToMove.containingKtFile.containingDirectory?.virtualFile
 
             val membersRemainingInOriginalPackage =
-                otherHierarchyMembers.filter { it.residesIn(moduleToMoveFrom, packageToMoveFrom) && !isToBeMoved(it) }.toList()
+                otherHierarchyMembers.filter { it.residesIn(moduleToMoveFrom, packageToMoveFrom, directoryToMoveFrom) && !isToBeMoved(it) }.toList()
 
             if ((targetPackage != packageToMoveFrom || targetModule != moduleToMoveFrom) &&
                 membersRemainingInOriginalPackage.any { !isToBeMoved(it) }
@@ -765,10 +767,11 @@ class MoveConflictChecker(
             return null
         }
 
-        private fun KtClassOrObject.residesIn(targetModule: Module, targetPackage: PsiPackage): Boolean {
+        private fun KtClassOrObject.residesIn(targetModule: Module, targetPackage: PsiPackage, targetDir: VirtualFile?): Boolean {
             val myModule = module ?: return false
             val myPackage = descriptor?.findPsiPackage(myModule)
-            return myPackage == targetPackage && myModule == targetModule
+            val myDirectory = containingKtFile.containingDirectory?.virtualFile
+            return myPackage == targetPackage && myModule == targetModule && myDirectory == targetDir
         }
 
         private fun DeclarationDescriptor.findPsiPackage(module: Module): PsiPackage? {
