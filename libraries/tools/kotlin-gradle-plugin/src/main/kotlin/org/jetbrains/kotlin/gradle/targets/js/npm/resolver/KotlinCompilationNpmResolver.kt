@@ -405,6 +405,10 @@ internal class KotlinCompilationNpmResolver(
         private val projectPackagesDir by lazy { compilationResolver.nodeJs.projectPackagesDir }
         private val rootDir by lazy { compilationResolver.nodeJs.rootProject.rootDir }
 
+        private val dukatPackageVersion by lazy {
+            compilationResolver.nodeJs.versions.dukat
+        }
+
         @Transient
         internal lateinit var compilationResolver: KotlinCompilationNpmResolver
 
@@ -452,7 +456,18 @@ internal class KotlinCompilationNpmResolver(
             val toolsNpmDependencies = compilationResolver.rootResolver.nodeJs.taskRequirements
                 .getCompilationNpmRequirements(compilationResolver.compilationDisambiguatedName)
 
-            val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies
+            val dukatIfNecessary = if (externalNpmDependencies.any { it.generateExternals }) {
+                setOf(
+                    NpmDependencyDeclaration(
+                        scope = NpmDependency.Scope.DEV,
+                        name = dukatPackageVersion.name,
+                        version = dukatPackageVersion.version,
+                        generateExternals = false
+                    )
+                )
+            } else emptySet()
+
+            val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies + dukatIfNecessary
 
             val packageJson = packageJson(
                 compilationResolver.npmProject.name,

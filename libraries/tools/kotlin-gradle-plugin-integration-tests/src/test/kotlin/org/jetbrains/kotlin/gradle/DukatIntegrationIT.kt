@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.google.gson.Gson
 import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DukatIntegrationIT : BaseGradleIT() {
@@ -394,6 +398,32 @@ class DukatIntegrationIT : BaseGradleIT() {
                 !directoryFile.exists(),
                 "[$legacyExternals] should not contain files"
             )
+        }
+    }
+
+    @Test
+    fun testWithoutGenerateExternals() {
+        val projectName = "without-generate-externals"
+        val project = Project(
+            projectName = projectName,
+            directoryPrefix = "dukat-integration"
+        )
+        project.setupWorkingDir()
+
+        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        project.build("assemble", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+            assertSuccessful()
+
+            assertTasksNotExecuted(":generateExternalsIntegrated")
+
+            assertFalse("Dukat don't need to be dependency for thus project") {
+                fileInWorkingDir("build/js/packages/without-generate-externals")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let {
+                        Gson().fromJson(it.readText(), PackageJson::class.java)
+                    }.dependencies.containsKey("dukat")
+            }
         }
     }
 

@@ -17,6 +17,11 @@ open class IntegratedDukatTask
 constructor(
     compilation: KotlinJsCompilation
 ) : DukatTask(compilation) {
+    init {
+        onlyIf {
+            dts.isNotEmpty() || npmProject.externalsDirRoot.resolve("inputs.txt").exists()
+        }
+    }
 
     override val considerGeneratingFlag: Boolean = true
 
