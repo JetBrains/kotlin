@@ -14,7 +14,7 @@ open class CheckerRunningDiagnosticCollectorVisitor(
     components: List<AbstractDiagnosticCollectorComponent>
 ) : AbstractDiagnosticCollectorVisitor(context, components) {
 
-    override fun goToNestedDeclarations(element: FirElement) {
+    override fun visitNestedElements(element: FirElement) {
         element.acceptChildren(this, null)
     }
 

@@ -18,11 +18,11 @@ internal open class FirIdeDiagnosticVisitor(
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
     private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
 
-    override fun goToNestedDeclarations(element: FirElement) {
+    override fun visitNestedElements(element: FirElement) {
         if (element is FirDeclaration) {
             beforeElementDiagnosticCollectionHandler?.beforeGoingNestedDeclaration(element, context)
         }
-        super.goToNestedDeclarations(element)
+        super.visitNestedElements(element)
     }
 
     override fun runComponents(element: FirElement) {

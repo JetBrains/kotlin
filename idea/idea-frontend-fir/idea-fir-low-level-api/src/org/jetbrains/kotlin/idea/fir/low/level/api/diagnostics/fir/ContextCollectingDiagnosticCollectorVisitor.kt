@@ -31,7 +31,7 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
         }
     }
 
-    override fun goToNestedDeclarations(element: FirElement) {
+    override fun visitNestedElements(element: FirElement) {
         if (element is FirDeclaration) {
             contextCollector.nextStep()
         } else {

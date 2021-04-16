@@ -32,7 +32,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
     protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
-    protected abstract fun goToNestedDeclarations(element: FirElement)
+    protected abstract fun visitNestedElements(element: FirElement)
     protected abstract fun runComponents(element: FirElement)
 
     override fun visitElement(element: FirElement, data: Nothing?) {
@@ -41,13 +41,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
             return
         }
         runComponents(element)
-        goToNestedDeclarations(element)
+        visitNestedElements(element)
     }
 
     override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: Nothing?) {
         withSuppressedDiagnostics(annotationContainer) {
             runComponents(annotationContainer)
-            goToNestedDeclarations(annotationContainer)
+            visitNestedElements(annotationContainer)
         }
     }
 
@@ -161,7 +161,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
             withSuppressedDiagnostics(typeRef) {
                 runComponents(typeRef)
-                goToNestedDeclarations(typeRef)
+                visitNestedElements(typeRef)
             }
         }
     }
@@ -185,7 +185,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     protected inline fun visitWithDeclaration(
         declaration: FirDeclaration,
-        block: () -> Unit = { goToNestedDeclarations(declaration) }
+        block: () -> Unit = { visitNestedElements(declaration) }
     ) {
         if (shouldVisitDeclaration(declaration)) {
             runComponents(declaration)
@@ -203,7 +203,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
                 declaration,
                 receiverTypeRef?.coneTypeSafe()
             ) {
-                goToNestedDeclarations(declaration)
+                visitNestedElements(declaration)
             }
         }
     }
@@ -211,14 +211,14 @@ abstract class AbstractDiagnosticCollectorVisitor(
     private fun visitWithQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
         return withQualifiedAccess(qualifiedAccess) {
             runComponents(qualifiedAccess)
-            goToNestedDeclarations(qualifiedAccess)
+            visitNestedElements(qualifiedAccess)
         }
     }
 
     private fun visitWithGetClassCall(getClassCall: FirGetClassCall) {
         return withGetClassCall(getClassCall) {
             runComponents(getClassCall)
-            goToNestedDeclarations(getClassCall)
+            visitNestedElements(getClassCall)
         }
     }
 
