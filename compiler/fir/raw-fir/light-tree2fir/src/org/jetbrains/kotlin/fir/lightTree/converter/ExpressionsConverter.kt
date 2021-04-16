@@ -58,7 +58,7 @@ class ExpressionsConverter(
         return expression?.let {
             convertExpression(it, errorReason)
         } as? R ?: buildErrorExpression(
-            null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
+            expression?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
         ) as R
     }
 
@@ -962,7 +962,7 @@ class ExpressionsConverter(
             )
             statements += iteratorVal
             statements += FirWhileLoopBuilder().apply {
-                source = forLoop.toFirSourceElement()
+                source = fakeSource
                 condition = buildFunctionCall {
                     source = fakeSource
                     calleeReference = buildSimpleNamedReference {
