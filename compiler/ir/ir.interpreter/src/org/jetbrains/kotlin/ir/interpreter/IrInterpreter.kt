@@ -69,7 +69,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
     private fun incrementAndCheckCommands() {
         commandCount++
-        if (commandCount >= MAX_COMMANDS) throw InterpreterTimeOutError()
+        if (commandCount >= MAX_COMMANDS) InterpreterTimeOutError().throwAsUserException()
     }
 
     fun interpret(expression: IrExpression): IrExpression {
