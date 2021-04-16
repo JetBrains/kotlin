@@ -14,5 +14,9 @@ interface CodeMetaInfo {
     val renderConfiguration: AbstractCodeMetaInfoRenderConfiguration
     val attributes: MutableList<String>
 
+    val tagPrefix: String get() = "<!"
+    val tagPostfix: String get() = "!>"
+    val closingTag: String get() = "<!>"
+
     fun asString(): String
 }

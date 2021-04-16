@@ -24,13 +24,13 @@ fun main(a1: NullnessUnspecifiedTypeParameter<Any>, a2: NullnessUnspecifiedTypeP
     a2.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     a2.foo(1)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
     a1.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)
     // jspecify_nullness_mismatch
     a1.bar(x, <!NULL_FOR_NONNULL_TYPE!>null<!>)
     a1.bar(x, 1)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
     a2.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)
     // jspecify_nullness_mismatch
     a2.bar(x, <!NULL_FOR_NONNULL_TYPE!>null<!>)

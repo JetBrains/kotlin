@@ -59,11 +59,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val JSPECIFY_MUTE by directive(
-        "Skip jspecify checks for compliance Kotlin diagnostics to jspecify marks",
-        applicability = DirectiveApplicability.Global
-    )
-
     @Suppress("RemoveExplicitTypeArguments")
     val STRING_CONCAT by enumDirective<JvmStringConcat>(
         description = "Configure mode of string concatenation",

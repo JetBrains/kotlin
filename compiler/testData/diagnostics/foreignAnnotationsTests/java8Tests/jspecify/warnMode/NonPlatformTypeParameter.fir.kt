@@ -1,6 +1,4 @@
 // !LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// JSPECIFY_MUTE
-
 // FILE: NonPlatformTypeParameter.java
 import org.jspecify.nullness.*;
 
@@ -16,14 +14,14 @@ public class Test {}
 fun <T : Test> main(a1: NonPlatformTypeParameter<Any?>, a2: NonPlatformTypeParameter<Test>, x: T): Unit {
     a1.foo(null)
     a1.bar<Test?>(null)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     a1.bar<T>(null)
     a1.bar<T>(x)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     a2.foo(null)
     a2.bar<Test?>(null)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     a2.bar<T>(null)
     a2.bar<T>(x)
 }

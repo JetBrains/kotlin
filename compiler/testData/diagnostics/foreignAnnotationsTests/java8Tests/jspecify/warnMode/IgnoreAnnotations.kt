@@ -30,7 +30,7 @@ public class Derived extends Base { }
 fun main(a: IgnoreAnnotations, x: Derived): Unit {
     // jspecify_nullness_mismatch
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(x, null)<!>.foo()
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, x)<!>.foo()
 
     // jspecify_nullness_mismatch

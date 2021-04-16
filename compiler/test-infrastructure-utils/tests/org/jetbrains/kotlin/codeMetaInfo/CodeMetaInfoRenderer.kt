@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codeMetaInfo
 
 import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import java.io.File
 
@@ -55,9 +54,10 @@ object CodeMetaInfoRenderer {
         checkOpenedAndCloseStringIfNeeded(opened, offset, builder)
         val matchedCodeMetaInfos = sortedMetaInfos[offset] ?: emptyList()
         if (matchedCodeMetaInfos.isNotEmpty()) {
-            openStartTag(builder)
             val iterator = matchedCodeMetaInfos.listIterator()
             var current: CodeMetaInfo? = iterator.next()
+
+            if (current != null) builder.append(current.tagPrefix)
 
             while (current != null) {
                 val next: CodeMetaInfo? = if (iterator.hasNext()) iterator.next() else null
@@ -65,11 +65,13 @@ object CodeMetaInfoRenderer {
                 builder.append(current.asString())
                 when {
                     next == null ->
-                        closeStartTag(builder)
+                        builder.append(current.tagPostfix)
                     next.end == current.end ->
                         builder.append(", ")
-                    else ->
-                        closeStartAndOpenNewTag(builder)
+                    else -> {
+                        builder.append(current.tagPostfix)
+                        builder.append(next.tagPrefix)
+                    }
                 }
                 current = next
             }
@@ -84,16 +86,11 @@ object CodeMetaInfoRenderer {
         return metaInfos.sortedWith(metaInfoComparator)
     }
 
-    private fun closeString(result: StringBuilder) = result.append("<!>")
-    private fun openStartTag(result: StringBuilder) = result.append("<!")
-    private fun closeStartTag(result: StringBuilder) = result.append("!>")
-    private fun closeStartAndOpenNewTag(result: StringBuilder) = result.append("!><!")
-
     private fun checkOpenedAndCloseStringIfNeeded(opened: Stack<CodeMetaInfo>, end: Int, result: StringBuilder) {
         var prev: CodeMetaInfo? = null
         while (!opened.isEmpty() && end == opened.peek().end) {
             if (prev == null || prev.start != opened.peek().start)
-                closeString(result)
+                result.append(opened.peek().closingTag)
             prev = opened.pop()
         }
     }

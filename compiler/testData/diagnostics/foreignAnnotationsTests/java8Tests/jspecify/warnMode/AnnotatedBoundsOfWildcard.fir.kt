@@ -1,5 +1,3 @@
-// JSPECIFY_MUTE
-
 // FILE: AnnotatedBoundsOfWildcard.java
 import org.jspecify.nullness.*;
 
@@ -42,9 +40,9 @@ fun main(
 
             b: AnnotatedBoundsOfWildcard
 ): Unit {
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.superAsIs(aAnyNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.superAsIs(aAnyNotNullNotNullNull)
     b.superAsIs(aAnyNotNullNullNotNull)
     b.superAsIs(aAnyNotNullNullNull)
@@ -54,13 +52,13 @@ fun main(
     b.superNotNull(aAnyNotNullNullNotNull)
     b.superNotNull(aAnyNotNullNullNull)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.superNullable(aAnyNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.superNullable(aAnyNotNullNotNullNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.superNullable(aAnyNotNullNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.superNullable(aAnyNotNullNullNull)
 
     b.extendsAsIs(aNotNullNotNullNotNull)
@@ -69,11 +67,11 @@ fun main(
     b.extendsAsIs(aNotNullNullNull)
 
     b.extendsNotNull(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.extendsNotNull(aNotNullNotNullNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.extendsNotNull(aNotNullNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.extendsNotNull(aNotNullNullNull)
 
     b.extendsNullable(aNotNullNotNullNotNull)

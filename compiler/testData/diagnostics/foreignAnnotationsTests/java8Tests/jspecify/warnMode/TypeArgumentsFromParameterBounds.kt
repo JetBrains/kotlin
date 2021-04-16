@@ -1,5 +1,3 @@
-// JSPECIFY_MUTE
-
 // FILE: TypeArgumentsFromParameterBounds.java
 import org.jspecify.nullness.*;
 
@@ -33,16 +31,16 @@ fun main(
     a: A, b: B
 ): Unit {
     a.bar(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     a.bar(aNotNullNotNullNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     a.bar(aNotNullNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     a.bar(aNotNullNullNull)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.bar(aNotNullNotNullNotNull)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b.bar(aNotNullNotNullNull)
     b.bar(aNotNullNullNotNull)
     b.bar(aNotNullNullNull)

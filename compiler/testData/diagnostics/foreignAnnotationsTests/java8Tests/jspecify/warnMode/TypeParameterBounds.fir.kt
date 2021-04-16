@@ -1,5 +1,3 @@
-// JSPECIFY_MUTE
-
 // FILE: A.java
 import org.jspecify.nullness.*;
 
@@ -21,27 +19,27 @@ public class B<T> {
 public class Test {}
 
 // FILE: main.kt
-// jspecify_nullness_mismatch
+// jspecify_nullness_mismatch, jspecify_nullness_mismatch
 fun <T : Test> main(a1: A<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>Any?<!>>, a2: A<Test>, b1: B<<!UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS!>Any?<!>>, b2: B<Test>, x: T): Unit {
     a1.foo(null)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     a1.bar<T?>(null)
     a1.bar<T>(x)
 
     a2.foo(null)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     a2.bar<T?>(null)
     a2.bar<T>(x)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b1.foo(null)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b1.bar<T?>(null)
     b1.bar<T>(x)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b2.foo(null)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     b2.bar<T?>(null)
     b2.bar<T>(x)
 }

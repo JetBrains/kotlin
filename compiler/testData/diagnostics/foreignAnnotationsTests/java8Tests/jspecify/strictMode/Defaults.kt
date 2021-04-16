@@ -35,7 +35,7 @@ fun main(a: Defaults, x: Foo): Unit {
 
     a.everythingUnknown(null).foo()
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch, jspecify_nullness_mismatch
     a.mixed(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNSAFE_CALL!>.<!>foo()
     // jspecify_nullness_mismatch
     a.mixed(x)<!UNSAFE_CALL!>.<!>foo()

@@ -1,5 +1,3 @@
-// JSPECIFY_MUTE
-
 // FILE: SelfType.java
 import org.jspecify.nullness.*;
 
@@ -39,20 +37,20 @@ public class CKN extends C<@Nullable CK> {}
 // FILE: main.kt
 fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     ak.foo(ak)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     ak.foo(null)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     akn.foo(null)
 
     bk.foo(bk)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     bk.foo(null)
 
     ck.foo(ck)
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     ck.foo(null)
 
-    // jspecify_nullness_mismatch
+    // jspecify_nullness_mismatch{mute}
     ckn.foo(null)
 }
