@@ -31,10 +31,8 @@ internal class FragmentGranularMetadataResolver(
         refinesParentResolvers.value.flatMap { it.resolutions }.groupBy { it.dependency.toSingleModuleIdentifier() }
     }
 
-    private val metadataModuleBuilder = ProjectStructureMetadataModuleBuilder()
-    private val projectModuleBuilder = GradleProjectModuleBuilder(true)
-    private val moduleResolver = GradleModuleDependencyResolver(metadataModuleBuilder, projectModuleBuilder)
-    private val variantResolver = GradleModuleVariantResolver(project)
+    private val moduleResolver = GradleModuleDependencyResolver.getForCurrentBuild(project)
+    private val variantResolver = GradleModuleVariantResolver.getForCurrentBuild(project)
     private val fragmentResolver = DefaultModuleFragmentsResolver(variantResolver)
     private val dependencyGraphResolver = GradleKotlinDependencyGraphResolver(moduleResolver)
 
@@ -78,21 +76,11 @@ internal class FragmentGranularMetadataResolver(
             val resolvedComponentResult = dependencyNode.selectedComponent
             val isResolvedAsProject = resolvedComponentResult.toProjectOrNull(project)
             val result = when (dependencyModule) {
-                is ExternalSyntheticKotlinModule -> {
+                is ExternalPlainKotlinModule -> {
                     MetadataDependencyResolution.KeepOriginalDependency(resolvedComponentResult, isResolvedAsProject)
                 }
                 else -> run {
-                    val projectStructureMetadata = (dependencyModule as? ExternalImportedKotlinModule)?.projectStructureMetadata
-                        ?: checkNotNull(getProjectStructureMetadata(project, resolvedComponentResult, configurationToResolve))
-
                     val metadataSourceComponent = dependencyNode.run { metadataSourceComponent ?: selectedComponent }
-
-                    val parentResolutionsForDependency =
-                        parentResultsByModuleIdentifier[metadataSourceComponent.toSingleModuleIdentifier()].orEmpty()
-                    val fragmentsVisibleByParents =
-                        parentResolutionsForDependency.filterIsInstance<ChooseVisibleSourceSetsImpl>()
-                            .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
-                    val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
 
                     val metadataExtractor = getMetadataExtractor(project, resolvedComponentResult, configurationToResolve, true)
 
@@ -103,12 +91,20 @@ internal class FragmentGranularMetadataResolver(
                         resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments, metadataExtractor)
                     }
 
+                    val projectStructureMetadata = (dependencyModule as? ExternalImportedKotlinModule)?.projectStructureMetadata
+                        ?: checkNotNull(metadataExtractor?.getProjectStructureMetadata())
+
+                    val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
+                    val visibleFragmentNamesExcludingVisibleByParents =
+                        visibleFragmentNames
+                            .minus(fragmentsNamesVisibleByParents(metadataSourceComponent.toSingleModuleIdentifier()))
+
                     ChooseVisibleSourceSetsImpl(
                         metadataSourceComponent,
                         isResolvedAsProject,
                         projectStructureMetadata,
                         visibleFragmentNames,
-                        visibleFragmentNames.minus(fragmentsVisibleByParents),
+                        visibleFragmentNamesExcludingVisibleByParents,
                         visibleTransitiveDependencies.map { resolvedDependenciesByModuleId.getValue(it.module.moduleIdentifier) }.toSet(),
                         checkNotNull(metadataExtractor)
                     )
@@ -126,6 +122,12 @@ internal class FragmentGranularMetadataResolver(
         return results
     }
 
+    private fun fragmentsNamesVisibleByParents(kotlinModuleIdentifier: KotlinModuleIdentifier): MutableSet<String> {
+        val parentResolutionsForDependency = parentResultsByModuleIdentifier[kotlinModuleIdentifier].orEmpty()
+        return parentResolutionsForDependency.filterIsInstance<ChooseVisibleSourceSetsImpl>()
+            .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
+    }
+
     private fun resolveHostSpecificMetadataArtifacts(
         dependencyModule: ExternalImportedKotlinModule,
         chosenFragments: FragmentResolution.ChosenFragments,
@@ -135,19 +137,18 @@ internal class FragmentGranularMetadataResolver(
         val variantResolutions = chosenFragments.variantResolutions
         val hostSpecificFragments = dependencyModule.hostSpecificFragments
         val hostSpecificFragmentToArtifact = visibleFragments.intersect(hostSpecificFragments).mapNotNull { hostSpecificFragment ->
-            val relevantResolution = variantResolutions
+            val relevantVariantResolution = variantResolutions
                 .filterIsInstance<VariantResolution.VariantMatch>()
                 // find some of our variants that resolved a dependency's variant containing the fragment
                 .find { hostSpecificFragment in it.chosenVariant.refinesClosure }
             // resolve the dependencies of that variant getting the host-specific metadata artifact
-            relevantResolution?.let { resolution ->
-                val variantResolvingPlatformArtifact =
+            relevantVariantResolution?.let { resolution ->
+                val configurationResolvingPlatformVariant =
                     (resolution.requestingVariant as KotlinGradleVariant).compileDependencyConfiguration
-                val configuration = variantResolvingPlatformArtifact
                 val hostSpecificArtifact = ResolvedMppVariantsProvider.get(project)
                     .getHostSpecificMetadataArtifactByRootModule(
                         dependencyModule.moduleIdentifier,
-                        configuration
+                        configurationResolvingPlatformVariant
                     )
                 hostSpecificArtifact?.let { hostSpecificFragment.fragmentName to it }
             }

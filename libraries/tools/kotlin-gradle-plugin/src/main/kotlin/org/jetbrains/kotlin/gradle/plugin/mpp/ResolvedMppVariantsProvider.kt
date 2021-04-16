@@ -17,19 +17,17 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import java.io.File
 
 internal class ResolvedMppVariantsProvider private constructor(private val project: Project) {
     companion object {
-
-        fun get(project: Project): ResolvedMppVariantsProvider = with(project.extensions.extraProperties) {
+        fun get(project: Project): ResolvedMppVariantsProvider {
             val propertyName = "kotlin.mpp.internal.resolvedModuleVariantsProvider"
-            if (!has(propertyName)) {
-                set(propertyName, ResolvedMppVariantsProvider(project))
+            return project.extensions.extraProperties.getOrPut(propertyName) {
+                ResolvedMppVariantsProvider(project)
             }
-            @Suppress("UNCHECKED_CAST")
-            get(propertyName) as ResolvedMppVariantsProvider
         }
     }
 

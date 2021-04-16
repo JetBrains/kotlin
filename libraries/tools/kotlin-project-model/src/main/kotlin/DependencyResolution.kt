@@ -13,7 +13,6 @@ interface ModuleDependencyResolver {
 }
 
 interface KotlinDependencyGraphResolver {
-    // TODO add explicit dependency consistency scopes if we decide to keep non-production code in the same variant
     fun resolveDependencyGraph(requestingModule: KotlinModule): DependencyGraphResolution
 }
 

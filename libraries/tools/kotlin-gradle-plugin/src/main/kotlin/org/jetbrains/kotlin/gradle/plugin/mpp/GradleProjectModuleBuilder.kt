@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 
 class ProjectStructureMetadataModuleBuilder {
@@ -260,22 +261,35 @@ internal fun Dependency.toModuleDependency(
 private fun BasicKotlinModule.fragmentByName(name: String) =
     fragments.single { it.fragmentName == name }
 
-class GradleModuleVariantResolver(val project: Project) : ModuleVariantResolver {
-    private val resolvedVariantProvider = ResolvedMppVariantsProvider.get(project)
+class CachingModuleVariantResolver(private val actualResolver: ModuleVariantResolver) : ModuleVariantResolver {
+    private val resultCacheByRequestingVariant: MutableMap<KotlinModuleVariant, MutableMap<KotlinModule, VariantResolution>> = mutableMapOf()
 
+    override fun getChosenVariant(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): VariantResolution {
+        val resultCache = resultCacheByRequestingVariant.getOrPut(requestingVariant) { mutableMapOf() }
+        return resultCache.getOrPut(dependencyModule) { actualResolver.getChosenVariant(requestingVariant, dependencyModule) }
+    }
+}
+
+class GradleModuleVariantResolver : ModuleVariantResolver {
     override fun getChosenVariant(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): VariantResolution {
         // TODO maybe improve this behavior? Currently it contradicts dependency resolution in that it may return a chosen variant for an
         //  unrequested dependency. This workaround is needed for synthetic modules which were not produced from module metadata, so maybe
         //  those modules should be marked somehow
-        if (dependencyModule is ExternalSyntheticKotlinModule) {
+        if (dependencyModule is ExternalPlainKotlinModule) {
             return VariantResolution.fromMatchingVariants(
                 requestingVariant,
                 dependencyModule,
-                listOf(dependencyModule.variants.single())
+                listOf(dependencyModule.singleVariant)
             )
         }
 
+        if (requestingVariant !is KotlinGradleVariant) {
+            return VariantResolution.Unknown(requestingVariant, dependencyModule)
+        }
+
         val module = requestingVariant.containingModule
+        val project = module.project
+        val resolvedVariantProvider = ResolvedMppVariantsProvider.get(project)
 
         // This implementation can only resolve variants for the current project's KotlinModule
         require(module.representsProject(project))
@@ -324,4 +338,13 @@ class GradleModuleVariantResolver(val project: Project) : ModuleVariantResolver 
             }
             else -> error("could not find the compile dependencies configuration for variant $requestingVariant")
         }
+
+    companion object {
+        fun getForCurrentBuild(project: Project): ModuleVariantResolver {
+            val extraPropertyName = "org.jetbrains.kotlin.dependencyResolution.variantResolver.${project.getKotlinPluginVersion()}"
+            return project.getOrPutRootProjectProperty(extraPropertyName) {
+                CachingModuleVariantResolver(GradleModuleVariantResolver())
+            }
+        }
+    }
 }

@@ -44,8 +44,6 @@ class GradleKotlinDependencyGraphResolver(
     }
 
     private fun resolveAsGraph(requestingModule: KotlinGradleModule): GradleDependencyGraph {
-        val excludeLegacyMetadataModulesFromResult = mutableSetOf<ResolvedComponentResult>()
-
         val nodeByModuleId = mutableMapOf<KotlinModuleIdentifier, GradleDependencyGraphNode>()
 
         fun getKotlinModuleFromComponentResult(component: ResolvedComponentResult): KotlinModule =
@@ -100,6 +98,8 @@ class GradleKotlinDependencyGraphResolver(
 class GradleDependencyGraphNode(
     override val module: KotlinModule,
     val selectedComponent: ResolvedComponentResult,
+    /** If the Kotlin module description was provided by a different component, such as with legacy publishing layout using *-metadata
+     * modules, then this property points to the other component. */
     val metadataSourceComponent: ResolvedComponentResult?,
     override val dependenciesByFragment: Map<KotlinModuleFragment, Iterable<GradleDependencyGraphNode>>
 ) : DependencyGraphNode(module, dependenciesByFragment)

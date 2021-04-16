@@ -11,31 +11,69 @@ import org.gradle.api.artifacts.component.*
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.capabilities.Capability
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.getProjectStructureMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
-import java.util.ArrayDeque
+import java.util.*
+
+class CachingModuleDependencyResolver(private val actualResolver: ModuleDependencyResolver) : ModuleDependencyResolver {
+    private val cacheByRequestingModule = WeakHashMap<KotlinModule, MutableMap<KotlinModuleDependency, KotlinModule?>>()
+
+    private fun cacheForRequestingModule(requestingModule: KotlinModule) =
+        cacheByRequestingModule.getOrPut(requestingModule) { mutableMapOf() }
+
+    override fun resolveDependency(requestingModule: KotlinModule, moduleDependency: KotlinModuleDependency): KotlinModule? =
+        cacheForRequestingModule(requestingModule).getOrPut(moduleDependency) {
+            actualResolver.resolveDependency(requestingModule, moduleDependency)
+        }
+}
+
+open class GradleComponentResultCachingResolver {
+    private val cachedResultsByRequestingModule = mutableMapOf<KotlinGradleModule, Map<KotlinModuleIdentifier, ResolvedComponentResult>>()
+
+    protected open fun configurationToResolve(requestingModule: KotlinGradleModule): Configuration =
+        configurationToResolveMetadataDependencies(requestingModule.project, requestingModule)
+
+    protected open fun resolveDependencies(module: KotlinGradleModule): Map<KotlinModuleIdentifier, ResolvedComponentResult> {
+        val allComponents = configurationToResolve(module).incoming.resolutionResult.allComponents
+        // FIXME handle multi-component results
+        return allComponents.flatMap { component -> component.toModuleIdentifiers().map { it to component } }.toMap()
+    }
+
+    private fun getResultsForModule(module: KotlinGradleModule): Map<KotlinModuleIdentifier, ResolvedComponentResult> =
+        cachedResultsByRequestingModule.getOrPut(module) { resolveDependencies(module) }
+
+    fun resolveModuleDependencyAsComponentResult(
+        requestingModule: KotlinGradleModule,
+        moduleDependency: KotlinModuleDependency
+    ): ResolvedComponentResult? =
+        getResultsForModule(requestingModule)[moduleDependency.moduleIdentifier]
+
+    companion object {
+        fun getForCurrentBuild(project: Project): GradleComponentResultCachingResolver {
+            val extraPropertyName = "org.jetbrains.kotlin.dependencyResolution.gradleComponentResolver.${project.getKotlinPluginVersion()}"
+            return project.getOrPutRootProjectProperty(extraPropertyName) {
+                GradleComponentResultCachingResolver()
+            }
+        }
+    }
+}
 
 class GradleModuleDependencyResolver(
+    private val gradleComponentResultResolver: GradleComponentResultCachingResolver,
     private val projectStructureMetadataModuleBuilder: ProjectStructureMetadataModuleBuilder,
     private val projectModuleBuilder: GradleProjectModuleBuilder
 ) : ModuleDependencyResolver {
-
-    private fun configurationToResolve(requestingModule: KotlinGradleModule): Configuration =
-        configurationToResolveMetadataDependencies(requestingModule.project, requestingModule)
 
     override fun resolveDependency(requestingModule: KotlinModule, moduleDependency: KotlinModuleDependency): KotlinModule? {
         require(requestingModule is KotlinGradleModule)
         val project = requestingModule.project
 
-        val allComponents = configurationToResolve(requestingModule).incoming.resolutionResult.allComponents
-        // TODO: optimize O(n) search, store the resolved components with dependency keys?
-        val component = allComponents.find { it.id.matchesModuleDependency(moduleDependency) }
+        val component = gradleComponentResultResolver.resolveModuleDependencyAsComponentResult(requestingModule, moduleDependency)
         val id = component?.id
 
         //FIXME multiple?
@@ -49,7 +87,8 @@ class GradleModuleDependencyResolver(
                 val metadata = getProjectStructureMetadata(
                     project,
                     component,
-                    configurationToResolve(requestingModule),
+                    // TODO: consistent choice of configurations across multiple resolvers?
+                    configurationToResolveMetadataDependencies(requestingModule.project, requestingModule),
                     moduleDependency.moduleIdentifier
                 ) ?: return null
                 val result = projectStructureMetadataModuleBuilder.getModule(component, metadata)
@@ -58,13 +97,30 @@ class GradleModuleDependencyResolver(
             else -> null
         }
     }
+
+    companion object {
+        fun getForCurrentBuild(project: Project): ModuleDependencyResolver {
+            val extraPropertyName = "org.jetbrains.kotlin.dependencyResolution.moduleResolver.${project.getKotlinPluginVersion()}"
+            return project.getOrPutRootProjectProperty(extraPropertyName) {
+                val componentResultResolver = GradleComponentResultCachingResolver.getForCurrentBuild(project)
+                val metadataModuleBuilder = ProjectStructureMetadataModuleBuilder()
+                val projectModuleBuilder = GradleProjectModuleBuilder(true)
+                CachingModuleDependencyResolver(
+                    GradleModuleDependencyResolver(componentResultResolver, metadataModuleBuilder, projectModuleBuilder)
+                )
+            }
+        }
+    }
 }
 
 // refactor extract to a separate class/interface
 // TODO think about multi-variant stub modules for non-Kotlin modules which got more than one chosen variant
-internal fun buildSyntheticModule(resolvedComponentResult: ResolvedComponentResult, singleVariantName: String): ExternalSyntheticKotlinModule {
+internal fun buildSyntheticPlainModule(
+    resolvedComponentResult: ResolvedComponentResult,
+    singleVariantName: String
+): ExternalPlainKotlinModule {
     val moduleDependency = resolvedComponentResult.toModuleDependency()
-    return ExternalSyntheticKotlinModule(BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
+    return ExternalPlainKotlinModule(BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
         BasicKotlinModuleVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder()).apply {
             fragments.add(this)
             this.declaredModuleDependencies.addAll(
@@ -76,8 +132,12 @@ internal fun buildSyntheticModule(resolvedComponentResult: ResolvedComponentResu
     })
 }
 
-internal class ExternalSyntheticKotlinModule(private val moduleData: BasicKotlinModule) : KotlinModule by moduleData {
-    override fun toString(): String = "synthetic $moduleData"
+internal class ExternalPlainKotlinModule(private val moduleData: BasicKotlinModule) : KotlinModule by moduleData {
+    override fun toString(): String = "external plain $moduleData"
+
+    val singleVariant: KotlinModuleVariant
+        get() = moduleData.variants.singleOrNull()
+            ?: error("synthetic $moduleData was expected to have a single variant, got: ${moduleData.variants}")
 }
 
 internal class ExternalImportedKotlinModule(

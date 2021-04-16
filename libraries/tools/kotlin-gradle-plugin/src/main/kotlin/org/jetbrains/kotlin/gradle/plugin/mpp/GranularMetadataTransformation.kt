@@ -433,6 +433,7 @@ internal open class JarArtifactMppDependencyMetadataExtractor(
     val primaryArtifact: File
 ) : MppDependencyMetadataExtractor(project, dependency) {
 
+    // TODO: add proper API to make an artifact extractor with just the composite artifact "evolve" into one with host-specific artifacts
     val metadataArtifactBySourceSet: MutableMap<String, File> = mutableMapOf()
 
     private fun parseJsonProjectStructureMetadata(input: InputStream) =
