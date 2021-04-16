@@ -26,9 +26,9 @@ import com.intellij.refactoring.move.moveClassesOrPackages.AutocreatingSingleSou
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil;
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination;
 import com.intellij.ui.*;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.collectKotlinAwareDestinationSourceRoots;
 import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getKotlinAwareDestinationSourceRoots;
 
 // Based on com.intellij.refactoring.move.moveClassesOrPackages.DestinationFolderComboBox
@@ -81,13 +82,14 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
     }
 
     public void setData(Project project, PsiDirectory initialTargetDirectory, Pass<String> errorMessageUpdater,
-            EditorComboBox editorComboBox, boolean sourceRootsInTargetDirOnly
+            EditorComboBox editorComboBox, boolean sourceRootOfTargetDirOnly
     ) {
         myInitialTargetDirectory = initialTargetDirectory;
 
-        if (sourceRootsInTargetDirOnly) {
+        if (sourceRootOfTargetDirOnly) {
             Module module = ModuleUtilCore.findModuleForFile(myInitialTargetDirectory.getVirtualFile(), project);
-            mySourceRoots = ProjectRootUtilsKt.collectKotlinAwareDestinationSourceRoots(module);
+            List<VirtualFile> moduleSourceRoots = collectKotlinAwareDestinationSourceRoots(module);
+            mySourceRoots = ContainerUtil.filter(moduleSourceRoots, this::targetDirIsInRoot);
         } else {
             mySourceRoots = getKotlinAwareDestinationSourceRoots(project);
         }
@@ -145,7 +147,7 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
                 }
             }
             setComboboxModel(getComboBox(), root, root, fileIndex, mySourceRoots, project, true, errorMessageUpdater,
-                             sourceRootsInTargetDirOnly);
+                             sourceRootOfTargetDirOnly);
         });
 
         editorComboBox.addDocumentListener(new DocumentListener() {
@@ -155,11 +157,11 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
                 DirectoryChooser.ItemWrapper selectedItem = (DirectoryChooser.ItemWrapper) comboBox.getSelectedItem();
                 setComboboxModel(comboBox, selectedItem != null && selectedItem != NULL_WRAPPER ? fileIndex
                                          .getSourceRootForFile(selectedItem.getDirectory().getVirtualFile()) : initialSourceRoot, selection[0], fileIndex,
-                                 mySourceRoots, project, false, errorMessageUpdater, sourceRootsInTargetDirOnly);
+                                 mySourceRoots, project, false, errorMessageUpdater, sourceRootOfTargetDirOnly);
             }
         });
         setComboboxModel(getComboBox(), initialSourceRoot, selection[0], fileIndex, mySourceRoots, project, false, errorMessageUpdater,
-                         sourceRootsInTargetDirOnly);
+                         sourceRootOfTargetDirOnly);
         getComboBox().addActionListener(e -> {
             Object selectedItem = getComboBox().getSelectedItem();
             updateErrorMessage(errorMessageUpdater, fileIndex, selectedItem);
@@ -170,6 +172,10 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
                 }
             }
         });
+    }
+
+    private boolean targetDirIsInRoot(VirtualFile sourceRoot) {
+        return myInitialTargetDirectory.getVirtualFile().getPath().startsWith(sourceRoot.getPath());
     }
 
     @Nullable
