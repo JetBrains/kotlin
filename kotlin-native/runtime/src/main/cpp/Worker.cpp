@@ -157,7 +157,7 @@ class Worker {
  private:
   void setThread(pthread_t thread) {
     // For workers started using the Worker API, we set thread_ in startEventLoop when calling pthread_create.
-    // But we also set thread_ in WorkerInit to handle the main thread and threads calling Kotlin from ObjC.
+    // But we also set thread_ in WorkerInit to handle the main thread and threads calling Kotlin from native code.
     // In this case, thread id will be set twice for workers started by the Worker API.
     // This assert takes this into account.
     RuntimeAssert(thread_ == 0 || pthread_equal(thread_, thread),
