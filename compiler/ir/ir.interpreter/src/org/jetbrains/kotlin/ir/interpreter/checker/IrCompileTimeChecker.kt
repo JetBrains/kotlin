@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.interpreter
+package org.jetbrains.kotlin.ir.interpreter.checker
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.builtins.compileTimeAnnotation
 import org.jetbrains.kotlin.ir.interpreter.builtins.contractsDslAnnotation
 import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
+import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
+import org.jetbrains.kotlin.ir.interpreter.isUnsigned
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
-
-enum class EvaluationMode {
-    FULL, ONLY_BUILTINS
-}
 
 class IrCompileTimeChecker(
     containingDeclaration: IrElement? = null, private val mode: EvaluationMode = EvaluationMode.FULL

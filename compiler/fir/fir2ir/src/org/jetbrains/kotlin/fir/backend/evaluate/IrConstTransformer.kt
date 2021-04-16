@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.interpreter.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.IrCompileTimeChecker
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
+import org.jetbrains.kotlin.ir.interpreter.checker.IrCompileTimeChecker
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
