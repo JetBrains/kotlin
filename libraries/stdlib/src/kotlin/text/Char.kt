@@ -12,8 +12,8 @@ package kotlin.text
  * Returns the numeric value of the decimal digit that this Char represents.
  * Throws an exception if this Char is not a valid decimal digit.
  *
- * A Char is considered to represent a decimal digit if the Char is one of the ASCII decimal digits '0' through '9'.
- * In this case, `this.code - '0'.code` is returned.
+ * A Char is considered to represent a decimal digit if [isDigit] is true for the Char.
+ * In this case, the Unicode decimal digit value of the character is returned.
  *
  * @sample samples.text.Chars.digitToInt
  */
@@ -30,7 +30,7 @@ public fun Char.digitToInt(): Int {
  * Throws an exception if the [radix] is not in the range `2..36` or if this Char is not a valid digit in the specified [radix].
  *
  * A Char is considered to represent a digit in the specified [radix] if at least one of the following is true:
- *  - The Char is one of the ASCII decimal digits '0' through '9' and its [code] is less than `radix + '0'.code`. In this case, `this.code - '0'.code` is returned.
+ *  - [isDigit] is `true` for the Char and the Unicode decimal digit value of the character is less than the specified [radix]. In this case the decimal digit value is returned.
  *  - The Char is one of the uppercase Latin letters 'A' through 'Z' and its [code] is less than `radix + 'A'.code - 10`. In this case, `this.code - 'A'.code + 10` is returned.
  *  - The Char is one of the lowercase Latin letters 'a' through 'z' and its [code] is less than `radix + 'a'.code - 10`. In this case, `this.code - 'a'.code + 10` is returned.
  *
@@ -46,8 +46,8 @@ public fun Char.digitToInt(radix: Int): Int {
  *
  * Returns the numeric value of the decimal digit that this Char represents, or `null` if this Char is not a valid decimal digit.
  *
- * A Char is considered to represent a decimal digit if the Char is one of the ASCII decimal digits '0' through '9'.
- * In this case, `this.code - '0'.code` is returned.
+ * A Char is considered to represent a decimal digit if [isDigit] is true for the Char.
+ * In this case, the Unicode decimal digit value of the character is returned.
  *
  * @sample samples.text.Chars.digitToIntOrNull
  */
@@ -62,7 +62,7 @@ public fun Char.digitToIntOrNull(): Int? {
  * Throws an exception if the [radix] is not in the range `2..36`.
  *
  * A Char is considered to represent a digit in the specified [radix] if at least one of the following is true:
- *  - The Char is one of the ASCII decimal digits '0' through '9' and its [code] is less than `radix + '0'.code`. In this case, `this.code - '0'.code` is returned.
+ *  - [isDigit] is `true` for the Char and the Unicode decimal digit value of the character is less than the specified [radix]. In this case the decimal digit value is returned.
  *  - The Char is one of the uppercase Latin letters 'A' through 'Z' and its [code] is less than `radix + 'A'.code - 10`. In this case, `this.code - 'A'.code + 10` is returned.
  *  - The Char is one of the lowercase Latin letters 'a' through 'z' and its [code] is less than `radix + 'a'.code - 10`. In this case, `this.code - 'a'.code + 10` is returned.
  *
