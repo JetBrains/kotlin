@@ -38,7 +38,7 @@ abstract class DukatTask(
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
-        setOf(nodeJs.versions.dukat)
+        emptySet<RequiredKotlinJsDependency>()
     }
 
     /**
