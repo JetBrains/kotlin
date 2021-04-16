@@ -200,20 +200,20 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
 
     override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy { WrappedTreeStructure(psi.containingFile) }
 
-    private class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
+    internal class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
         private val lighterAST = TreeBackedLighterAST(file.node)
 
-        private fun LighterASTNode.unwrap() = lighterAST.unwrap(this)
+        fun unwrap(node: LighterASTNode) = lighterAST.unwrap(node)
 
-        override fun toString(node: LighterASTNode): CharSequence = node.unwrap().text
+        override fun toString(node: LighterASTNode): CharSequence = unwrap(node).text
 
         override fun getRoot(): LighterASTNode = lighterAST.root
 
         override fun getParent(node: LighterASTNode): LighterASTNode? =
-            node.unwrap().psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
+            unwrap(node).psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
 
         override fun getChildren(node: LighterASTNode, nodesRef: Ref<Array<LighterASTNode>>): Int {
-            val psi = node.unwrap().psi
+            val psi = unwrap(node).psi
             val children = mutableListOf<PsiElement>()
             var child = psi.firstChild
             while (child != null) {
@@ -232,7 +232,7 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
         }
 
         override fun getStartOffset(node: LighterASTNode): Int {
-            return getStartOffset(node.unwrap().psi)
+            return getStartOffset(unwrap(node).psi)
         }
 
         private fun getStartOffset(element: PsiElement): Int {
@@ -249,7 +249,7 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
         }
 
         override fun getEndOffset(node: LighterASTNode): Int {
-            return getEndOffset(node.unwrap().psi)
+            return getEndOffset(unwrap(node).psi)
         }
 
         private fun getEndOffset(element: PsiElement): Int {
@@ -296,6 +296,19 @@ class FirLightSourceElement(
 ) : FirSourceElement() {
     override val elementType: IElementType
         get() = lighterASTNode.tokenType
+
+    /**
+     * We can create a [FirLightSourceElement] from a [FirPsiSourceElement] by using [FirPsiSourceElement.lighterASTNode];
+     * [unwrapToFirPsiSourceElement] allows to get original [FirPsiSourceElement] in such case.
+     *
+     * If it is `pure` [FirLightSourceElement], i.e, compiler created it in light tree mode, then return [unwrapToFirPsiSourceElement] `null`.
+     * Otherwise, return some not-null result.
+     */
+    fun unwrapToFirPsiSourceElement(): FirPsiSourceElement<*>? {
+        if (treeStructure !is FirPsiSourceElement.WrappedTreeStructure) return null
+        val node = treeStructure.unwrap(lighterASTNode)
+        return node.psi?.toFirPsiSourceElement(kind)
+    }
 }
 
 val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)?.psi

@@ -5,29 +5,18 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
-import org.jetbrains.kotlin.fir.FirElement
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
-import org.jetbrains.kotlin.fir.checkers.CommonDeclarationCheckers
-import org.jetbrains.kotlin.fir.checkers.CommonExpressionCheckers
-import org.jetbrains.kotlin.fir.checkers.ExtendedDeclarationCheckers
-import org.jetbrains.kotlin.fir.checkers.ExtendedExpressionCheckers
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.checkers.*
 
 internal abstract class AbstractFirIdeDiagnosticsCollector(
     session: FirSession,
@@ -53,9 +42,16 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
 
     private inner class Reporter : DiagnosticReporter() {
         override fun report(diagnostic: FirDiagnostic<*>?, context: CheckerContext) {
-            if (diagnostic !is FirPsiDiagnostic<*>) return
+            if (diagnostic == null) return
             if (context.isDiagnosticSuppressed(diagnostic)) return
-            onDiagnostic(diagnostic)
+
+            val psiDiagnostic = when (diagnostic) {
+                is FirPsiDiagnostic<*> -> diagnostic
+                is FirLightDiagnostic -> diagnostic.toPsiDiagnostic()
+                else -> error("Unknown diagnostic type ${diagnostic::class.simpleName}")
+            }
+
+            onDiagnostic(psiDiagnostic)
         }
     }
 
@@ -72,6 +68,40 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
     }
 }
 
+private fun FirLightDiagnostic.toPsiDiagnostic(): FirPsiDiagnostic<*> {
+    val psiSourceElement = element.unwrapToFirPsiSourceElement()
+        ?: error("Diagnostic should be created from PSI in IDE")
+    @Suppress("UNCHECKED_CAST")
+    return when (this) {
+        is FirLightSimpleDiagnostic -> FirPsiSimpleDiagnostic(
+            psiSourceElement,
+            severity,
+            factory as FirDiagnosticFactory0<PsiElement>
+        )
+
+        is FirLightDiagnosticWithParameters1<*> -> FirPsiDiagnosticWithParameters1(
+            psiSourceElement,
+            a,
+            severity,
+            factory as FirDiagnosticFactory1<PsiElement, Any>
+        )
+
+        is FirLightDiagnosticWithParameters2<*, *> -> FirPsiDiagnosticWithParameters2(
+            psiSourceElement,
+            a, b,
+            severity,
+            factory as FirDiagnosticFactory2<PsiElement, Any, Any>
+        )
+
+        is FirLightDiagnosticWithParameters3<*, *, *> -> FirPsiDiagnosticWithParameters3(
+            psiSourceElement,
+            a, b, c,
+            severity,
+            factory as FirDiagnosticFactory3<PsiElement, Any, Any, Any>
+        )
+        else -> error("Unknown diagnostic type ${this::class.simpleName}")
+    }
+}
 
 private object CheckersFactory {
     private val extendedDeclarationCheckers = createDeclarationCheckers(ExtendedDeclarationCheckers)
