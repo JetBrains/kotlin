@@ -761,6 +761,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("idea/testData/quickfix/autoImports/importKotlinStaticPropertyOverloadedSetterFromJava.test");
         }
 
+        @TestMetadata("importNullableTraitWithGenerics.before.Main.kt")
+        public void testImportNullableTraitWithGenerics() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/importNullableTraitWithGenerics.before.Main.kt");
+        }
+
         @TestMetadata("ImportOperatorInvokeWithConvention.before.Main.kt")
         public void testImportOperatorInvokeWithConvention() throws Exception {
             runTest("idea/testData/quickfix/autoImports/ImportOperatorInvokeWithConvention.before.Main.kt");
@@ -949,6 +954,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("noImportForPrivateClass.before.Main.kt")
         public void testNoImportForPrivateClass() throws Exception {
             runTest("idea/testData/quickfix/autoImports/noImportForPrivateClass.before.Main.kt");
+        }
+
+        @TestMetadata("noImportForPrivateFunction.before.Main.kt")
+        public void testNoImportForPrivateFunction() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/noImportForPrivateFunction.before.Main.kt");
         }
 
         @TestMetadata("noImportInImports.before.Main.kt")

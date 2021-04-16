@@ -1,9 +1,9 @@
 import importTrait.data.TestTrait
 
 // "Import" "true"
-// IGNORE_FIR
+// FIR_IGNORE
 // ERROR: Unresolved reference: TestTrait
 
 fun test() {
-    val a = <caret>TestTrait
+    val a: TestTrait<String, Int>? = null
 }
