@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.ir.interpreter
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
+import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -29,15 +27,16 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.lang.invoke.MethodType
-import kotlin.math.min
+
+val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
+val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
+val contractsDslAnnotation = FqName("kotlin.internal.ContractsDsl")
 
 internal fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? = this.dispatchReceiverParameter?.symbol
 
 internal fun IrFunction.getExtensionReceiver(): IrValueParameterSymbol? = this.extensionReceiverParameter?.symbol
 
 internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?: this.getExtensionReceiver()
-
-internal fun IrFunctionAccessExpression.getBody(): IrBody? = this.symbol.owner.body
 
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
@@ -180,7 +179,12 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
 
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()
 
-internal fun IrType.isUnsigned() = this.isUByte() || this.isUShort() || this.isUInt() || this.isULong()
+internal fun IrType.isUnsigned() = this.getUnsignedType() != null
+internal fun IrType.isFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.Function") ?: false
+internal fun IrType.isKFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.reflect.KFunction") ?: false
+internal fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
+internal fun IrType.isThrowable() = this.getClass()?.fqNameWhenAvailable?.asString() == "kotlin.Throwable"
+
 internal fun IrType.isUnsignedArray(): Boolean {
     if (this !is IrSimpleType || classifier !is IrClassSymbol) return false
     val fqName = (classifier.owner as IrDeclarationWithName).fqNameWhenAvailable?.asString()
@@ -191,34 +195,7 @@ internal fun IrType.isPrimitiveArray(): Boolean {
     return this.getClass()?.fqNameWhenAvailable?.toUnsafe()?.let { StandardNames.isPrimitiveArray(it) } ?: false
 }
 
-internal fun IrType.isFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.Function") ?: false
-internal fun IrType.isKFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.reflect.KFunction") ?: false
-
-internal fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
-
-internal fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
-
-internal fun IrType.isThrowable() = this.getClass()?.fqNameWhenAvailable?.asString() == "kotlin.Throwable"
-
-internal fun IrType.renderType(): String {
-    var renderedType = this.render()
-    do {
-        val index = renderedType.indexOf(" of ")
-        if (index == -1) break
-        val replaceUntilComma = renderedType.indexOf(',', index)
-        val replaceUntilTriangle = renderedType.indexOf('>', index)
-        val replaceUntil = when {
-            replaceUntilComma == -1 && replaceUntilTriangle == -1 -> renderedType.length
-            replaceUntilComma == -1 -> replaceUntilTriangle
-            replaceUntilTriangle == -1 -> replaceUntilComma
-            else -> min(replaceUntilComma, replaceUntilTriangle)
-        }
-        renderedType = renderedType.replaceRange(index, replaceUntil, "")
-    } while (true)
-    return renderedType
-}
-
-fun IrClass.internalName(): String {
+internal fun IrClass.internalName(): String {
     val internalName = StringBuilder(this.name.asString())
     generateSequence(this as? IrDeclarationParent) { (it as? IrDeclaration)?.parent }
         .drop(1)

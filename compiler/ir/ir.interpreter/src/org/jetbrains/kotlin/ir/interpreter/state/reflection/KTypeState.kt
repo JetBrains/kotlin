@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KClassProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
-import org.jetbrains.kotlin.ir.interpreter.renderType
 import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.Variance

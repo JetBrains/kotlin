@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretBinaryFunction
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretTernaryFunction
 import org.jetbrains.kotlin.ir.interpreter.builtins.interpretUnaryFunction
