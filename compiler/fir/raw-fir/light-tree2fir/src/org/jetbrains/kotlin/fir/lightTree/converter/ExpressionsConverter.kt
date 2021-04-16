@@ -755,6 +755,9 @@ class ExpressionsConverter(
                     conditionSource = it.toFirSourceElement()
                     isNegate = true
                 }
+                it.tokenType == OPERATION_REFERENCE -> {
+                    conditionSource = it.toFirSourceElement()
+                }
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
             }
         }
@@ -762,6 +765,7 @@ class ExpressionsConverter(
         val subjectExpression = if (whenRefWithSubject != null) {
             buildWhenSubjectExpression {
                 whenRef = whenRefWithSubject
+                source = whenCondition.toFirSourceElement()
             }
         } else {
             return buildErrorExpression {
