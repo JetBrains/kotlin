@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.contracts.model.functors
 
 import org.jetbrains.kotlin.contracts.model.*
-import org.jetbrains.kotlin.contracts.model.structure.ESConstants
-import org.jetbrains.kotlin.contracts.model.structure.ESIs
-import org.jetbrains.kotlin.contracts.model.structure.ESReturns
-import org.jetbrains.kotlin.contracts.model.structure.ESType
+import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 
 class IsFunctor(val type: ESType, val isNegated: Boolean) : AbstractFunctor() {
@@ -37,7 +34,9 @@ class IsFunctor(val type: ESType, val isNegated: Boolean) : AbstractFunctor() {
     }
 
     private fun invokeWithValue(value: ESValue, typeSubstitution: ESTypeSubstitution): List<ConditionalEffect> {
-        val substitutedType = typeSubstitution[type] ?: type
+        val substitutedKotlinType = typeSubstitution.substitutor.safeSubstitute(type.toKotlinType(typeSubstitution.builtIns).unwrap())
+
+        val substitutedType = ESKotlinType(substitutedKotlinType)
 
         val trueIs = ESIs(value, IsFunctor(substitutedType, isNegated))
         val falseIs = ESIs(value, IsFunctor(substitutedType, isNegated.not()))
