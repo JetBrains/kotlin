@@ -1508,6 +1508,13 @@ internal class FunctionDeclarationWithNoNameImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class AnonymousFunctionWithNameImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AnonymousFunctionWithName(), KtAbstractFirDiagnostic<KtFunction> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class AnonymousFunctionParameterWithDefaultValueImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

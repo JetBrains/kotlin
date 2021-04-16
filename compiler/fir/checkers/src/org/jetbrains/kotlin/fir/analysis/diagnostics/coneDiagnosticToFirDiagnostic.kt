@@ -174,10 +174,10 @@ private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagno
         DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
         DiagnosticKind.Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
         DiagnosticKind.SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
-        DiagnosticKind.ExpressionExpected -> if (source.elementType == KtNodeTypes.BINARY_EXPRESSION) {
-            FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
-        } else {
-            FirErrors.EXPRESSION_EXPECTED
+        DiagnosticKind.ExpressionExpected -> when (source.elementType) {
+            KtNodeTypes.BINARY_EXPRESSION -> FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
+            KtNodeTypes.FUN -> FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
+            else -> FirErrors.EXPRESSION_EXPECTED
         }
         DiagnosticKind.JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
         DiagnosticKind.NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL

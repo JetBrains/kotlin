@@ -1320,6 +1320,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ANONYMOUS_FUNCTION_WITH_NAME) { firDiagnostic ->
+        AnonymousFunctionWithNameImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE) { firDiagnostic ->
         AnonymousFunctionParameterWithDefaultValueImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

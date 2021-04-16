@@ -5,5 +5,5 @@ fun foo() {
     fun A.foo() {}
     (fun A.foo() {})
 
-    run(<!EXPRESSION_EXPECTED!>fun foo() {}<!>)
+    run(<!ANONYMOUS_FUNCTION_WITH_NAME!>fun foo() {}<!>)
 }

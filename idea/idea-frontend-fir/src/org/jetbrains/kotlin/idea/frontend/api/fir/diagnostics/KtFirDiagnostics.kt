@@ -937,6 +937,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = FunctionDeclarationWithNoName::class
     }
 
+    abstract class AnonymousFunctionWithName : KtFirDiagnostic<KtFunction>() {
+        override val diagnosticClass get() = AnonymousFunctionWithName::class
+    }
+
     abstract class AnonymousFunctionParameterWithDefaultValue : KtFirDiagnostic<KtParameter>() {
         override val diagnosticClass get() = AnonymousFunctionParameterWithDefaultValue::class
     }
