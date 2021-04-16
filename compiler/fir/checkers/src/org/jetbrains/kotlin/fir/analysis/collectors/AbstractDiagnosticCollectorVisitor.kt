@@ -29,9 +29,6 @@ abstract class AbstractDiagnosticCollectorVisitor(
     protected val components: List<AbstractDiagnosticCollectorComponent>,
 ) : FirDefaultVisitor<Unit, Nothing?>() {
 
-    protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
-    protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
-
     protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
     protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
