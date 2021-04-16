@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -56,7 +55,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
-        if (reference.origin != IrStatementOrigin.LAMBDA && !samClass.isFromJava())
+        if (!reference.origin.isLambda && !samClass.isFromJava())
             return null
 
         val samMethod = samClass.getSingleAbstractMethod()
@@ -83,7 +82,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // JDK LambdaMetafactory doesn't copy annotations from implementation method to an instance method in a
         // corresponding synthetic class, which doesn't look like a binary compatible change.
         // TODO relaxed mode?
-        if (implFun.annotations.isNotEmpty())
+        if (reference.origin.isLambda && implFun.annotations.isNotEmpty())
             return null
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.

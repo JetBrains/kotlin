@@ -5,35 +5,27 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
-import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 
 internal val jvmStaticInObjectPhase = makeIrModulePhase(
@@ -145,10 +137,37 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
         val callee = expression.symbol.owner
-        if (callee.isJvmStaticInCompanion() && callee.visibility == DescriptorVisibilities.PROTECTED && !callee.isInlineFunctionCall(context)) {
-            val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
-            return expression.makeStatic(context, staticProxy)
+        return when {
+            shouldReplaceWithStaticCall(callee) -> {
+                val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
+                expression.makeStatic(context, staticProxy)
+            }
+            callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic -> {
+                val implFunRef = expression.getValueArgument(1) as? IrFunctionReference
+                    ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${expression.dump()}")
+                val implFun = implFunRef.symbol.owner
+                if (implFunRef.dispatchReceiver != null && implFun is IrSimpleFunction && shouldReplaceWithStaticCall(implFun)) {
+                    val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(implFun)
+                    expression.putValueArgument(
+                        1,
+                        IrFunctionReferenceImpl(
+                            implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
+                            staticProxy.symbol,
+                            staticProxy.typeParameters.size,
+                            staticProxy.valueParameters.size,
+                            implFunRef.reflectionTarget, implFunRef.origin
+                        )
+                    )
+                }
+                expression
+            }
+            else ->
+                expression
         }
-        return expression
     }
+
+    private fun shouldReplaceWithStaticCall(callee: IrSimpleFunction) =
+        callee.isJvmStaticInCompanion() &&
+                callee.visibility == DescriptorVisibilities.PROTECTED &&
+                !callee.isInlineFunctionCall(context)
 }

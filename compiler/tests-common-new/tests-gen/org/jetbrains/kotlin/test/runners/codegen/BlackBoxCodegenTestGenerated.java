@@ -20934,6 +20934,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     public void testPrivateTopLevelFun() throws Exception {
                         runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/privateTopLevelFun.kt");
                     }
+
+                    @Test
+                    @TestMetadata("protectedSuperclassCompanionObjectMember.kt")
+                    public void testProtectedSuperclassCompanionObjectMember() throws Exception {
+                        runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor/protectedSuperclassCompanionObjectMember.kt");
+                    }
                 }
             }
 
@@ -39746,6 +39752,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("protectedFromLambda.kt")
         public void testProtectedFromLambda() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/protectedFromLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("protectedSuperclassCompanionObjectMember.kt")
+        public void testProtectedSuperclassCompanionObjectMember() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/protectedSuperclassCompanionObjectMember.kt");
         }
 
         @Test

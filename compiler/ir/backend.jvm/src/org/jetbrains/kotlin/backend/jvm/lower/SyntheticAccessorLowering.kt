@@ -332,7 +332,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 classes.flatMap { it.declarations.filter(IrDeclaration::isAnonymousObject).filterIsInstance<IrClass>() }
             val candidates = objectsInScope + companions + classes
             candidates.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
-        } else parent
+        } else {
+            parent
+        }
 
     private fun IrConstructor.makeConstructorAccessor(
         originForConstructorAccessor: IrDeclarationOrigin =
