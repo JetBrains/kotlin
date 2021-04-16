@@ -126,7 +126,6 @@ internal class FirModuleResolveStateImpl(
         }
         val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(container) { firDeclaration ->
             when (val realPsi = firDeclaration.realPsi) {
-                is KtObjectLiteralExpression -> realPsi.objectDeclaration == ktDeclaration
                 is KtFunctionLiteral -> realPsi.parent == ktDeclaration
                 else -> realPsi == ktDeclaration
             }
