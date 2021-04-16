@@ -141,16 +141,16 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     public inline operator fun times(other: Double): Double =
             this.toDouble() * other
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Byte): Int =
             this.toInt() / other.toInt()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Short): Int =
             this.toInt() / other.toInt()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Int): Int =
             this.toInt() / other
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Long): Long =
             this.toLong() / other
     /** Divides this value by the other value. */
@@ -420,16 +420,16 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     public inline operator fun times(other: Double): Double =
             this.toDouble() * other
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Byte): Int =
             this.toInt() / other.toInt()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Short): Int =
             this.toInt() / other.toInt()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Int): Int =
             this.toInt() / other
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Long): Long =
             this.toLong() / other
     /** Divides this value by the other value. */
@@ -698,16 +698,16 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     public inline operator fun times(other: Double): Double =
             this.toDouble() * other
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Byte): Int =
             this / other.toInt()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Short): Int =
             this / other.toInt()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @TypedIntrinsic(IntrinsicType.SIGNED_DIV)
     external public operator fun div(other: Int): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Long): Long =
             this.toLong() / other
     /** Divides this value by the other value. */
@@ -1000,16 +1000,16 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     public inline operator fun times(other: Double): Double =
             this.toDouble() * other
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Byte): Long =
             this / other.toLong()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Short): Long =
             this / other.toLong()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Int): Long =
             this / other.toLong()
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @TypedIntrinsic(IntrinsicType.SIGNED_DIV)
     external public operator fun div(other: Long): Long
     /** Divides this value by the other value. */
