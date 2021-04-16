@@ -37,7 +37,7 @@ fun callbackWithException() {
         assertRunnableThreadState()
         fail("Wrong exception type: ${e.message}")
     }
-    fail("No excetion thrown")
+    fail("No exception thrown")
 }
 
 fun callbackWithFinally() {
@@ -49,7 +49,7 @@ fun callbackWithFinally() {
     } finally {
         assertRunnableThreadState()
     }
-    fail("No excetion thrown")
+    fail("No exception thrown")
 }
 
 fun callbackWithFinallyNoCatch() {
@@ -76,7 +76,7 @@ fun nestedCallbackWithException() {
         assertRunnableThreadState()
         fail("Wrong exception type: ${e.message}")
     }
-    fail("No excetion thrown")
+    fail("No exception thrown")
 }
 
 fun nestedCallbackWithFinally() {
@@ -91,5 +91,5 @@ fun nestedCallbackWithFinally() {
     } finally {
         assertRunnableThreadState()
     }
-    fail("No excetion thrown")
+    fail("No exception thrown")
 }

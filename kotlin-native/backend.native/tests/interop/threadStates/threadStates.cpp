@@ -12,7 +12,7 @@ extern "C" void assertNativeThreadState() {
     }
 }
 
-extern "C" void runInNewThread(int32_t(*callback)(void)) {
+extern "C" void runInNewThread(void(*callback)(void)) {
     std::thread t([callback]() {
         callback();
     });

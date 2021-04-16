@@ -38,6 +38,7 @@ fun nestedCalls() {
     runCallback(staticCFunction { ->
         assertRunnableThreadState()
         answer()
+        Unit
     })
     assertRunnableThreadState()
 }
