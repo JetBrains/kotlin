@@ -193,9 +193,6 @@ open class RawFirBuilder(
                 this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, kind),
             )
 
-        private fun KtExpression.toFirStatement(errorReason: String): FirStatement =
-            convertSafe() ?: buildErrorExpression(this.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax))
-
         private inline fun KtExpression.toFirStatement(errorReasonLazy: () -> String): FirStatement =
             convertSafe() ?: buildErrorExpression(this.toFirSourceElement(), ConeSimpleDiagnostic(errorReasonLazy(), DiagnosticKind.Syntax))
 
@@ -1510,7 +1507,8 @@ open class RawFirBuilder(
                 source = expression.toFirSourceElement()
                 for (statement in expression.statements) {
                     val firStatement = statement.toFirStatement { "Statement expected: ${statement.text}" }
-                    if (firStatement !is FirBlock || firStatement.annotations.isNotEmpty()) {
+                    val isForLoopBlock = firStatement is FirBlock && firStatement.source?.kind == FirFakeSourceElementKind.DesugaredForLoop
+                    if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty()) {
                         statements += firStatement
                     } else {
                         statements += firStatement.statements

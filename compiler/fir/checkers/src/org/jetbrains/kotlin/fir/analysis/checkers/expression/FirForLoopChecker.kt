@@ -38,48 +38,47 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 object FirForLoopChecker : FirBlockChecker() {
     override fun check(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression.source?.kind != FirFakeSourceElementKind.DesugaredForLoop) return
         val statements = expression.statements
-        for ((iteratorDeclaration, whileLoop) in statements.windowed(2)) {
-            if (iteratorDeclaration !is FirProperty) continue
-            if (whileLoop !is FirWhileLoop) continue
-            if (iteratorDeclaration.source?.kind != FirFakeSourceElementKind.DesugaredForLoop) continue
-            val iteratorCall = iteratorDeclaration.initializer as FirFunctionCall
-            val source = iteratorCall.explicitReceiver?.source ?: iteratorCall.source
-            if (checkSpecialFunctionCall(
-                    iteratorCall,
-                    reporter,
-                    source,
-                    context,
-                    ITERATOR_AMBIGUITY,
-                    ITERATOR_MISSING,
-                    unsafeCallFactory = ITERATOR_ON_NULLABLE
-                )
-            ) {
-                continue
-            }
-            val hasNextCall = whileLoop.condition as FirFunctionCall
-            checkSpecialFunctionCall(
-                hasNextCall,
+        val iteratorDeclaration = statements[0] as? FirProperty ?: return
+        val whileLoop = statements[1] as? FirWhileLoop ?: return
+        if (iteratorDeclaration.source?.kind != FirFakeSourceElementKind.DesugaredForLoop) return
+        val iteratorCall = iteratorDeclaration.initializer as FirFunctionCall
+        val source = iteratorCall.explicitReceiver?.source ?: iteratorCall.source
+        if (checkSpecialFunctionCall(
+                iteratorCall,
                 reporter,
                 source,
                 context,
-                HAS_NEXT_FUNCTION_AMBIGUITY,
-                HAS_NEXT_MISSING,
-                noneApplicableFactory = HAS_NEXT_FUNCTION_NONE_APPLICABLE
+                ITERATOR_AMBIGUITY,
+                ITERATOR_MISSING,
+                unsafeCallFactory = ITERATOR_ON_NULLABLE
             )
-            val elementDeclaration = whileLoop.block.statements.firstOrNull() as? FirProperty ?: continue
-            if (elementDeclaration.initializer?.source?.kind != FirFakeSourceElementKind.DesugaredForLoop) continue
-            val nextCall = elementDeclaration.initializer as FirFunctionCall
-            checkSpecialFunctionCall(
-                nextCall,
-                reporter,
-                source,
-                context,
-                NEXT_AMBIGUITY,
-                NEXT_MISSING,
-                noneApplicableFactory = NEXT_NONE_APPLICABLE
-            )
+        ) {
+            return
         }
+        val hasNextCall = whileLoop.condition as FirFunctionCall
+        checkSpecialFunctionCall(
+            hasNextCall,
+            reporter,
+            source,
+            context,
+            HAS_NEXT_FUNCTION_AMBIGUITY,
+            HAS_NEXT_MISSING,
+            noneApplicableFactory = HAS_NEXT_FUNCTION_NONE_APPLICABLE
+        )
+        val elementDeclaration = whileLoop.block.statements.firstOrNull() as? FirProperty ?: return
+        if (elementDeclaration.initializer?.source?.kind != FirFakeSourceElementKind.DesugaredForLoop) return
+        val nextCall = elementDeclaration.initializer as FirFunctionCall
+        checkSpecialFunctionCall(
+            nextCall,
+            reporter,
+            source,
+            context,
+            NEXT_AMBIGUITY,
+            NEXT_MISSING,
+            noneApplicableFactory = NEXT_NONE_APPLICABLE
+        )
     }
 
     private fun checkSpecialFunctionCall(
