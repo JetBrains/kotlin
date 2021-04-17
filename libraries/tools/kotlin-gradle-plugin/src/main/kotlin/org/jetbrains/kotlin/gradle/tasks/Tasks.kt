@@ -304,15 +304,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         taskData.compilation.moduleName
     }
 
-    init {
-        if (taskData.compilation is AbstractKotlinCompilation<*> &&
-            (taskData.compilation as AbstractKotlinCompilation<*>).friendArtifactsTask != null) {
-            this@AbstractKotlinCompile.dependsOn(
-                (taskData.compilation as AbstractKotlinCompilation<*>).friendArtifactsTask
-            )
-        }
-    }
-
     @get:Internal // takes part in the compiler arguments
     val friendPaths: FileCollection = project.files(
         project.provider {

@@ -233,7 +233,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
                 // that depends on this module's production part, include the main artifact in the friend artifacts, lazily:
                 files(
                     Callable {
-                        friendArtifactsTaskProvider.get().archivePathCompatible
+                        friendArtifactsTaskProvider.flatMap { it.archiveFile }
                     }
                 )
             } else files()
