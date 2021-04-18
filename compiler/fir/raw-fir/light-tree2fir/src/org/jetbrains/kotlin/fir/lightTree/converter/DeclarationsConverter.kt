@@ -614,11 +614,17 @@ class DeclarationsConverter(
         lateinit var identifier: String
         val enumSuperTypeCallEntry = mutableListOf<FirExpression>()
         var classBodyNode: LighterASTNode? = null
+        var superTypeCallEntry: LighterASTNode? = null
         enumEntry.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 IDENTIFIER -> identifier = it.asText
-                INITIALIZER_LIST -> enumSuperTypeCallEntry += convertInitializerList(it)
+                INITIALIZER_LIST -> {
+                    enumSuperTypeCallEntry += convertInitializerList(it)
+                    it.getChildNodeByType(SUPER_TYPE_CALL_ENTRY)?.let { superTypeCall ->
+                        superTypeCallEntry = superTypeCall
+                    }
+                }
                 CLASS_BODY -> classBodyNode = it
             }
         }
@@ -666,7 +672,12 @@ class DeclarationsConverter(
                         superTypeCallEntry = enumSuperTypeCallEntry
                     )
                     superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
-                    convertPrimaryConstructor(null, null, enumClassWrapper, null)?.let { declarations += it.firConstructor }
+                    convertPrimaryConstructor(
+                        null,
+                        enumEntry.toFirSourceElement(),
+                        enumClassWrapper,
+                        superTypeCallEntry?.toFirSourceElement()
+                    )?.let { declarations += it.firConstructor }
                     classBodyNode?.also {
                         // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
                         withChildClassName(ANONYMOUS_OBJECT_NAME, isLocal = true) {
@@ -743,8 +754,14 @@ class DeclarationsConverter(
             constructedTypeRef = classWrapper.delegatedSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
             isThis = false
             calleeReference = buildExplicitSuperReference {
-                source = classWrapper.delegatedSuperTypeRef.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
-                    ?: this@buildDelegatedConstructorCall.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                //[dirty] if there is not explicit constructor call source, don't take delegatedSuperTypeRef.source
+                source = if (delegatedConstructorSource != null) {
+                    classWrapper.delegatedSuperTypeRef.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                        ?: this@buildDelegatedConstructorCall.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                } else {
+                    this@buildDelegatedConstructorCall.source
+                }
+
                 superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
             }
             extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
