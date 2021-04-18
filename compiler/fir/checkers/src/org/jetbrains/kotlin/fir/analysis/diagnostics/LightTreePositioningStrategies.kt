@@ -171,6 +171,20 @@ object LightTreePositioningStrategies {
             }
             return DEFAULT.mark(node, startOffset, endOffset, tree)
         }
+
+        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
+            //in FE 1.0 this is part of DeclarationHeader abstract strategy
+            if (node.tokenType != KtNodeTypes.OBJECT_DECLARATION
+                && node.tokenType != KtNodeTypes.FUN
+                && node.tokenType != KtNodeTypes.SECONDARY_CONSTRUCTOR
+                && node.tokenType != KtNodeTypes.OBJECT_LITERAL
+            ) {
+                if (tree.nameIdentifier(node) == null) {
+                    return false
+                }
+            }
+            return super.isValid(node, tree)
+        }
     }
 
     val DECLARATION_SIGNATURE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
