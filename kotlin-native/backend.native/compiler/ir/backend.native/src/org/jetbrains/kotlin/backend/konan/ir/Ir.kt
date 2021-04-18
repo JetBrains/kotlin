@@ -206,6 +206,10 @@ internal class KonanSymbols(
 
     val nativeMemUtils = symbolTable.referenceClass(context.interopBuiltIns.nativeMemUtils)
 
+    val nativeHeap = symbolTable.referenceClass(context.interopBuiltIns.nativeHeap)
+
+    val interopGetPtr = symbolTable.referenceSimpleFunction(context.interopBuiltIns.interopGetPtr)
+
     val readBits = interopFunction("readBits")
     val writeBits = interopFunction("writeBits")
 

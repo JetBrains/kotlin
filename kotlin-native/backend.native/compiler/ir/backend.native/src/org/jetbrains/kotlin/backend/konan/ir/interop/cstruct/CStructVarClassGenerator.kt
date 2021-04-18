@@ -50,7 +50,7 @@ internal class CStructVarClassGenerator(
                 descriptor.constructors
                     .filterNot { it.isPrimary }
                     .map {
-                        val constructor = createSecondaryConstructor(irClass, it)
+                        val constructor = createSecondaryConstructor(it)
                         irClass.addMember(constructor)
                     }
                 descriptor.unsubstitutedMemberScope
@@ -87,61 +87,11 @@ internal class CStructVarClassGenerator(
         }
     }
 
-    private fun createSecondaryConstructor(irClass: IrClass, descriptor: ClassConstructorDescriptor): IrConstructor {
-        val primaryConstructor = irClass.primaryConstructor!!.symbol
-
-        val alloc = symbols.interopAllocType
-
-        val nativeheap = symbolTable.referenceClass(
-            interopBuiltIns.nativeHeap
-        )
-
-        val interopGetPtr = symbolTable.referenceSimpleFunction(
-            interopBuiltIns.interopGetPtr
-        )
-
-        val irConstructor = createConstructor(descriptor)
-
-        val correspondingInit = irClass.companionObject()!!
-            .declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .filter { it.name.toString() == "__init__"}
-            .filter { it.valueParameters.size == irConstructor.valueParameters.size + 1}
-            .single {
-                it.valueParameters.drop(1).mapIndexed() { index, initParameter ->
-                    initParameter.type == irConstructor.valueParameters[index].type
-                }.all{ it }
-            }
-
-        postLinkageSteps.add {
-            irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                    startOffset, endOffset,
-                    context.irBuiltIns.unitType, primaryConstructor
-                ).also {
-                    val nativePointed = irCall(alloc).apply {
-                        extensionReceiver = irGetObject(nativeheap)
-                        putValueArgument(0, irGetObject(irClass.companionObject()!!.symbol))
-                    }
-                    val nativePtr = irCall(symbols.interopNativePointedGetRawPointer).apply {
-                        extensionReceiver = nativePointed
-                    }
-                    it.putValueArgument(0, nativePtr)
-                }
-
-                +irCall(correspondingInit.symbol).apply {
-                    dispatchReceiver = irGetObject(irClass.companionObject()!!.symbol)
-                    putValueArgument(0,
-                        irCall(interopGetPtr).apply {
-                            extensionReceiver = irGet(irClass.thisReceiver!!)
-                        }
-                    )
-                    irConstructor.valueParameters.forEachIndexed { index, it ->
-                        putValueArgument(index+1, irGet(it))
-                    }
-                }
+    private fun createSecondaryConstructor(descriptor: ClassConstructorDescriptor): IrConstructor {
+        return createConstructor(descriptor).also {
+            postLinkageSteps.add {
+                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody { }
             }
         }
-        return irConstructor
     }
 }
