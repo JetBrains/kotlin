@@ -46,9 +46,10 @@ fun markRange(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     originalNode: LighterASTNode
 ): List<TextRange> {
-    val betterFrom = from.nonFillerChildOrSelf(tree)
+    val betterFrom = from.nonFillerFirstChildOrSelf(tree)
+    val betterTo = to.nonFillerLastChildOrSelf(tree)
     val startDelta = tree.getStartOffset(betterFrom) - tree.getStartOffset(originalNode)
-    val endDelta = tree.getEndOffset(to) - tree.getEndOffset(originalNode)
+    val endDelta = tree.getEndOffset(betterTo) - tree.getEndOffset(originalNode)
     return listOf(TextRange(startDelta + startOffset, endDelta + endOffset))
 }
 
@@ -65,8 +66,11 @@ private val FILLER_TOKENS = setOf(
     KtTokens.DOC_COMMENT,
 )
 
-private fun LighterASTNode.nonFillerChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
+private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
     getChildren(tree).firstOrNull { it != null && it.tokenType !in FILLER_TOKENS } ?: this
+
+private fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
+    getChildren(tree).lastOrNull { it != null && it.tokenType !in FILLER_TOKENS } ?: this
 
 
 private fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
