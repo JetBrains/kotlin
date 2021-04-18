@@ -180,9 +180,11 @@ class ExpressionsConverter(
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
-                                    source = expressionSource
+                                    source = expressionSource.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
                                     this.target = target
-                                    result = buildUnitExpression { source = expressionSource }
+                                    result = buildUnitExpression {
+                                        source = expressionSource.fakeElement(FirFakeSourceElementKind.ImplicitUnit)
+                                    }
                                 }
                             )
                         }
