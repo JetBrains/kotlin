@@ -485,7 +485,14 @@ class DeclarationsConverter(
                         //parse properties
                         properties += primaryConstructorWrapper.valueParameters
                             .filter { it.hasValOrVar() }
-                            .map { it.toFirProperty(baseSession, callableIdForName(it.firValueParameter.name), classWrapper.hasExpect()) }
+                            .map {
+                                it.toFirProperty(
+                                    baseSession,
+                                    callableIdForName(it.firValueParameter.name),
+                                    classWrapper.hasExpect(),
+                                    currentDispatchReceiverType()
+                                )
+                            }
                         addDeclarations(properties)
                     }
 
@@ -676,7 +683,8 @@ class DeclarationsConverter(
                         null,
                         enumEntry.toFirSourceElement(),
                         enumClassWrapper,
-                        superTypeCallEntry?.toFirSourceElement()
+                        superTypeCallEntry?.toFirSourceElement(),
+                        isEnumEntry = true
                     )?.let { declarations += it.firConstructor }
                     classBodyNode?.also {
                         // Use ANONYMOUS_OBJECT_NAME for the owner class id of enum entry declarations
@@ -735,6 +743,7 @@ class DeclarationsConverter(
         selfTypeSource: FirSourceElement?,
         classWrapper: ClassWrapper,
         delegatedConstructorSource: FirLightSourceElement?,
+        isEnumEntry: Boolean = false
     ): PrimaryConstructor? {
         if (primaryConstructor == null && !classWrapper.isEnumEntry() && classWrapper.hasSecondaryConstructor) return null
         if (classWrapper.isInterface()) return null
@@ -754,12 +763,16 @@ class DeclarationsConverter(
             constructedTypeRef = classWrapper.delegatedSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
             isThis = false
             calleeReference = buildExplicitSuperReference {
-                //[dirty] if there is not explicit constructor call source, don't take delegatedSuperTypeRef.source
-                source = if (delegatedConstructorSource != null) {
+                //[dirty] in case of enum classWrapper.delegatedSuperTypeRef.source is whole enum source
+                source = if (!isEnumEntry) {
                     classWrapper.delegatedSuperTypeRef.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                         ?: this@buildDelegatedConstructorCall.source?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                 } else {
-                    this@buildDelegatedConstructorCall.source
+                    delegatedConstructorSource
+                        ?.lighterASTNode
+                        ?.getChildNodeByType(CONSTRUCTOR_CALLEE)
+                        ?.toFirSourceElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                        ?: this@buildDelegatedConstructorCall.source
                 }
 
                 superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
@@ -1007,12 +1020,17 @@ class DeclarationsConverter(
             this.isVar = isVar
             initializer = propertyInitializer
 
+            //probably can do this for delegateExpression itself
+            val delegateSource = delegateExpression?.let {
+                (it.getExpressionInParentheses() ?: it).toFirSourceElement()
+            }
+
             if (isLocal) {
                 this.isLocal = true
                 symbol = FirPropertySymbol(propertyName)
                 val delegateBuilder = delegateExpression?.let {
                     FirWrappedDelegateExpressionBuilder().apply {
-                        source = it.toFirSourceElement()
+                        source = delegateSource
                         expression = expressionConverter.getAsFirExpression(it, "Incorrect delegate expression")
                     }
                 }
@@ -1042,7 +1060,7 @@ class DeclarationsConverter(
 
                     val delegateBuilder = delegateExpression?.let {
                         FirWrappedDelegateExpressionBuilder().apply {
-                            source = it.toFirSourceElement()
+                            source = delegateSource
                             expression = expressionConverter.getAsFirExpression(it, "Should have delegate")
                         }
                     }

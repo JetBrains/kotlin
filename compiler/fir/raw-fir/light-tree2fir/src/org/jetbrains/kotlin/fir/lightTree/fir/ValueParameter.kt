@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
@@ -32,7 +33,12 @@ class ValueParameter(
         return isVal || isVar
     }
 
-    fun toFirProperty(session: FirSession, callableId: CallableId, isExpect: Boolean): FirProperty {
+    fun toFirProperty(
+        session: FirSession,
+        callableId: CallableId,
+        isExpect: Boolean,
+        currentDispatchReceiver: ConeClassLikeType?
+    ): FirProperty {
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
@@ -58,6 +64,7 @@ class ValueParameter(
             }
             isVar = this@ValueParameter.isVar
             symbol = FirPropertySymbol(callableId)
+            dispatchReceiverType = currentDispatchReceiver
             isLocal = false
             status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
                 this.isExpect = isExpect
