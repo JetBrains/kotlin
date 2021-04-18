@@ -1,5 +1,5 @@
-// ERROR: Conflicting overloads: public open fun foo(): Unit defined in C, public open fun foo(): Unit defined in C
-// ERROR: Conflicting overloads: public open fun foo(): Unit defined in C, public open fun foo(): Unit defined in C
+// ERROR: [CONFLICTING_OVERLOADS] Conflicting overloads: public open fun foo(): Unit defined in C, public open fun foo(): Unit defined in C
+// ERROR: [CONFLICTING_OVERLOADS] Conflicting overloads: public open fun foo(): Unit defined in C, public open fun foo(): Unit defined in C
 interface I {
     open fun foo(){}
 }

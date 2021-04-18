@@ -1,0 +1,8 @@
+
+import java.util.stream.Stream
+
+abstract class A : List<String> {
+    override fun stream(): Stream<String?> {
+        <selection><caret>return super.stream()</selection>
+    }
+}

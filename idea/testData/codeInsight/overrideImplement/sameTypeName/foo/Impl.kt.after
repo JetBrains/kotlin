@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-1602
 import lib.ArrayFactory
 

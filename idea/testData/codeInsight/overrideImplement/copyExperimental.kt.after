@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DISABLE-ERRORS
 
 @RequiresOptIn

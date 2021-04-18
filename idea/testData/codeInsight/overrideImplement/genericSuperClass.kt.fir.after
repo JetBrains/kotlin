@@ -1,0 +1,9 @@
+
+import org.jetbrains.annotations.NotNull
+
+abstract class X : java.util.ArrayList<String>(), Runnable {
+    @NotNull
+    override fun iterator(): MutableIterator<String?> {
+        <selection><caret>return super.iterator()</selection>
+    }
+}

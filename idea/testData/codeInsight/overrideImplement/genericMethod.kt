@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface G<T> {
     fun foo(t : T) : T
 }

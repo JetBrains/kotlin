@@ -1,0 +1,8 @@
+// ERROR: Unexpected token
+package foo
+
+class Impl: B() {
+    override fun foo(r: Runnable!) {
+        <selection><caret>super.foo(r)</selection>
+    }
+}

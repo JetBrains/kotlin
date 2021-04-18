@@ -1,0 +1,31 @@
+// ERROR: [CONFLICTING_OVERLOADS] Conflicting overloads: [/C.foo]
+// ERROR: [CONFLICTING_OVERLOADS] Conflicting overloads: [/C.foo]
+interface I {
+    open fun foo(){}
+}
+
+open class A {
+    open fun foo(){}
+}
+
+class C : A(), I {
+    override fun equals(other: Any?): Boolean {
+        <selection><caret>return super.equals(other)</selection>
+    }
+
+    override fun foo() {
+        super<A>.foo()
+    }
+
+    override fun foo() {
+        super<I>.foo()
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+
+    override fun toString(): String {
+        return super.toString()
+    }
+}

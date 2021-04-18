@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class C<A> {
     abstract fun f(a: A)
 }

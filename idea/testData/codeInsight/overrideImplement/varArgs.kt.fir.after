@@ -1,0 +1,9 @@
+open class S {
+    open fun s(vararg v: Int) {}
+}
+
+class D : S() {
+    override fun s(vararg v: Int) {
+        <selection><caret>super.s(*v)</selection>
+    }
+}

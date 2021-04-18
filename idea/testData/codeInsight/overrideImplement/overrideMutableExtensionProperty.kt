@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A {
     var Int.foo : Double
 }

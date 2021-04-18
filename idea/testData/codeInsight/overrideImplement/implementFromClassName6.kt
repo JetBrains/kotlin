@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A {
     fun a1()
     fun a2()

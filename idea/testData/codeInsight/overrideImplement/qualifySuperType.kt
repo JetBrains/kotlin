@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Outer {
     interface Inner1 {
         fun f() { }

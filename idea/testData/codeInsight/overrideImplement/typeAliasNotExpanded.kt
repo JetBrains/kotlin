@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 typealias Foo = Int
 
 interface Bar {

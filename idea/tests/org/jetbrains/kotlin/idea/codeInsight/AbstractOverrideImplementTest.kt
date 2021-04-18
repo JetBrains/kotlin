@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.codeInsight.generation.ClassMember
 import com.intellij.codeInsight.generation.OverrideImplementUtil
 import com.intellij.codeInsight.generation.PsiMethodMember
 import com.intellij.psi.JavaPsiFacade
@@ -16,59 +17,57 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
-import org.jetbrains.kotlin.idea.core.overrideImplement.GenerateMembersHandler
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.AbstractGenerateMembersHandler
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
+import org.jetbrains.kotlin.idea.test.dumpErrorLines
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TagsTestDataUtil
+import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import org.jetbrains.kotlin.utils.rethrow
 import org.junit.Assert
 import java.io.File
+import java.nio.charset.StandardCharsets
 import kotlin.test.assertEquals
 
-abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractOverrideImplementTest<T : ClassMember> : KotlinLightCodeInsightFixtureTestCase(), OverrideImplementTestMixIn<T> {
+
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected fun doImplementFileTest(memberToOverride: String? = null) {
-        doFileTest(ImplementMembersHandler(), memberToOverride)
+        doFileTest(createImplementMembersHandler(), memberToOverride)
     }
 
     protected fun doOverrideFileTest(memberToOverride: String? = null) {
-        doFileTest(OverrideMembersHandler(), memberToOverride)
+        doFileTest(createOverrideMembersHandler(), memberToOverride)
     }
 
     protected fun doMultiImplementFileTest() {
-        doMultiFileTest(ImplementMembersHandler())
+        doMultiFileTest(createImplementMembersHandler())
     }
 
     protected fun doMultiOverrideFileTest() {
-        doMultiFileTest(OverrideMembersHandler())
+        doMultiFileTest(createOverrideMembersHandler())
     }
 
     protected fun doImplementDirectoryTest(memberToOverride: String? = null) {
-        doDirectoryTest(ImplementMembersHandler(), memberToOverride)
+        doDirectoryTest(createImplementMembersHandler(), memberToOverride)
     }
 
     protected fun doOverrideDirectoryTest(memberToImplement: String? = null) {
-        doDirectoryTest(OverrideMembersHandler(), memberToImplement)
+        doDirectoryTest(createOverrideMembersHandler(), memberToImplement)
     }
 
     protected fun doMultiImplementDirectoryTest() {
-        doMultiDirectoryTest(ImplementMembersHandler())
+        doMultiDirectoryTest(createImplementMembersHandler())
     }
 
     protected fun doMultiOverrideDirectoryTest() {
-        doMultiDirectoryTest(OverrideMembersHandler())
+        doMultiDirectoryTest(createOverrideMembersHandler())
     }
 
     protected fun doImplementJavaDirectoryTest(className: String, methodName: String) {
@@ -88,33 +87,33 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
         myFixture.checkResultByFile(getTestName(true) + "/foo/JavaClass.java.after")
     }
 
-    private fun doFileTest(handler: GenerateMembersHandler, memberToOverride: String? = null) {
+    private fun doFileTest(handler: AbstractGenerateMembersHandler<T>, memberToOverride: String? = null) {
         myFixture.configureByFile(getTestName(true) + ".kt")
         doOverrideImplement(handler, memberToOverride)
-        checkResultByFile(getTestName(true) + ".kt.after")
+        checkResultByFile(getTestName(true))
     }
 
-    private fun doMultiFileTest(handler: GenerateMembersHandler) {
+    private fun doMultiFileTest(handler: AbstractGenerateMembersHandler<T>) {
         myFixture.configureByFile(getTestName(true) + ".kt")
         doMultiOverrideImplement(handler)
-        checkResultByFile(getTestName(true) + ".kt.after")
+        checkResultByFile(getTestName(true))
     }
 
-    private fun doDirectoryTest(handler: GenerateMembersHandler, memberToOverride: String? = null) {
+    private fun doDirectoryTest(handler: AbstractGenerateMembersHandler<T>, memberToOverride: String? = null) {
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/Impl.kt")
         doOverrideImplement(handler, memberToOverride)
-        checkResultByFile(getTestName(true) + "/foo/Impl.kt.after")
+        checkResultByFile(getTestName(true) + "/foo/Impl")
     }
 
-    private fun doMultiDirectoryTest(handler: GenerateMembersHandler) {
+    private fun doMultiDirectoryTest(handler: AbstractGenerateMembersHandler<T>) {
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/Impl.kt")
         doMultiOverrideImplement(handler)
-        checkResultByFile(getTestName(true) + "/foo/Impl.kt.after")
+        checkResultByFile(getTestName(true) + "/foo/Impl")
     }
 
-    private fun doOverrideImplement(handler: GenerateMembersHandler, memberToOverride: String?) {
+    private fun doOverrideImplement(handler: AbstractGenerateMembersHandler<T>, memberToOverride: String?) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
         val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, KtClassOrObject::class.java)
             ?: error("Caret should be inside class or object")
@@ -122,30 +121,26 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
         val chooserObjects = handler.collectMembersToGenerate(classOrObject)
 
         val singleToOverride = if (memberToOverride == null) {
-            val filtered = chooserObjects.filter {
-                (it.descriptor.containingDeclaration as? ClassDescriptor)?.let {
-                    !KotlinBuiltIns.isAny(it)
-                } ?: true
-            }
+            val filtered = chooserObjects.filter { !isMemberOfAny(classOrObject, it) }
             assertEquals(1, filtered.size, "Invalid number of available chooserObjects for override")
             filtered.single()
         } else {
             chooserObjects.single { chooserObject ->
-                chooserObject.descriptor.name.asString() == memberToOverride
+                getMemberName(classOrObject, chooserObject) == memberToOverride
             }
         }
 
-        performGenerateCommand(classOrObject, listOf(singleToOverride))
+        performGenerateCommand(handler, classOrObject, listOf(singleToOverride))
     }
 
-    private fun doMultiOverrideImplement(handler: GenerateMembersHandler) {
+    private fun doMultiOverrideImplement(handler: AbstractGenerateMembersHandler<T>) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
         val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, KtClassOrObject::class.java)
             ?: error("Caret should be inside class or object")
 
         val chooserObjects = handler.collectMembersToGenerate(classOrObject)
-            .sortedBy { it.descriptor.name.asString() + " in " + it.immediateSuper.containingDeclaration.name.asString() }
-        performGenerateCommand(classOrObject, chooserObjects)
+            .sortedBy { getMemberName(classOrObject, it) + " in " + getContainingClassName(classOrObject, it) }
+        performGenerateCommand(handler, classOrObject, chooserObjects)
     }
 
     private fun generateImplementation(method: PsiMethod) {
@@ -161,13 +156,14 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
     }
 
     private fun performGenerateCommand(
+        handler: AbstractGenerateMembersHandler<T>,
         classOrObject: KtClassOrObject,
-        selectedElements: List<OverrideMemberChooserObject>
+        selectedElements: List<T>
     ) {
         try {
             val copyDoc = InTextDirectivesUtils.isDirectiveDefined(classOrObject.containingFile.text, "// COPY_DOC")
             myFixture.project.executeWriteCommand("") {
-                GenerateMembersHandler.generateMembers(myFixture.editor, classOrObject, selectedElements, copyDoc)
+                handler.generateMembers(myFixture.editor, classOrObject, selectedElements, copyDoc)
             }
         } catch (throwable: Throwable) {
             throw rethrow(throwable)
@@ -175,18 +171,60 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
 
     }
 
-    private fun checkResultByFile(fileName: String) {
-        val expectedFile = File(myFixture.testDataPath, fileName)
-        try {
-            Assert.assertTrue(expectedFile.exists())
-            val file = myFixture.file as KtFile
-            val document = myFixture.getDocument(file)
-            myFixture.project.executeWriteCommand("") {
-                document.replaceString(0, document.textLength, file.dumpTextWithErrors())
+    private fun checkResultByFile(fileNameWithoutExtension: String) {
+        val goldenResultFile = File(myFixture.testDataPath, "$fileNameWithoutExtension.kt.after")
+        val firIdenticalIsPresent = InTextDirectivesUtils.isDirectiveDefined(
+            goldenResultFile.readText(StandardCharsets.UTF_8),
+            IgnoreTests.DIRECTIVES.FIR_IDENTICAL
+        )
+
+        val resultFile = if (isFirPlugin) {
+            if (InTextDirectivesUtils.isDirectiveDefined(
+                    goldenResultFile.readText(StandardCharsets.UTF_8),
+                    IgnoreTests.DIRECTIVES.IGNORE_FIR
+                )
+            ) {
+                return
             }
-            myFixture.checkResultByFile(fileName)
+
+            if (firIdenticalIsPresent) {
+                goldenResultFile
+            } else {
+                val firResultFile = File(myFixture.testDataPath, "$fileNameWithoutExtension.kt.fir.after")
+                if (!firResultFile.exists()) {
+                    goldenResultFile.copyTo(firResultFile)
+                }
+                firResultFile
+            }
+        } else {
+            goldenResultFile
+        }
+        try {
+            Assert.assertTrue(resultFile.exists())
+            val errorLines = myFixture.dumpErrorLines()
+            val file = myFixture.file as KtFile
+            val fileLines = file.text.split(System.lineSeparator())
+            val newTextContent = if (firIdenticalIsPresent) {
+                // Ensure the directive is the first line
+                val fileLinesWithoutFirIdentical = fileLines.filter { it != IgnoreTests.DIRECTIVES.FIR_IDENTICAL }
+                (listOf(IgnoreTests.DIRECTIVES.FIR_IDENTICAL) + errorLines + fileLinesWithoutFirIdentical).joinToString("\n")
+            } else {
+                (errorLines + fileLines).joinToString("\n")
+            }
+            myFixture.project.executeWriteCommand("") {
+                val document = myFixture.getDocument(file)
+                document.replaceString(0, document.textLength, newTextContent)
+            }
+            myFixture.checkResultByFile(resultFile.relativeTo(File(myFixture.testDataPath)).path)
         } catch (error: AssertionError) {
-            KotlinTestUtils.assertEqualsToFile(expectedFile, TagsTestDataUtil.generateTextWithCaretAndSelection(myFixture.editor))
+            KotlinTestUtils.assertEqualsToFile(resultFile, TagsTestDataUtil.generateTextWithCaretAndSelection(myFixture.editor))
+        }
+        if (resultFile != goldenResultFile) {
+            IgnoreTests.cleanUpIdenticalFirTestFile(
+                goldenResultFile,
+                resultFile,
+                File(myFixture.testDataPath, "$fileNameWithoutExtension.kt"),
+            )
         }
     }
 }

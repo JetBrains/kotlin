@@ -1,0 +1,8 @@
+// ERROR: Unexpected token
+import foo.A
+
+class B : A() {
+    override fun foo(s: String!): String? {
+        <selection><caret>return super.foo(s)</selection>
+    }
+}
