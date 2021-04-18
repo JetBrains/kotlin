@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
@@ -229,6 +228,29 @@ internal val Name.localHash: LocalHash
 internal val FqName.localHash: LocalHash
     get() = this.toString().localHash
 
+internal class InitializersGenerationState {
+    val fileGlobalInitStates = mutableMapOf<IrFile, LLVMValueRef>()
+    val fileThreadLocalInitStates = mutableMapOf<IrFile, AddressAccess>()
+
+    val topLevelFields = mutableListOf<IrField>()
+    val moduleInitializers = mutableListOf<IrFunction>()
+    var globalInitFunction: IrFunction? = null
+    var globalInitState: LLVMValueRef? = null
+    var threadLocalInitFunction: IrFunction? = null
+    var threadLocalInitState: AddressAccess? = null
+
+    fun reset() {
+        moduleInitializers.clear()
+        topLevelFields.clear()
+        globalInitFunction = null
+        globalInitState = null
+        threadLocalInitFunction = null
+        threadLocalInitState = null
+    }
+
+    fun isEmpty() = topLevelFields.isEmpty() && moduleInitializers.isEmpty()
+            && globalInitState == null && threadLocalInitState == null
+}
 
 internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
@@ -574,14 +596,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val otherStaticInitializers = mutableListOf<LLVMValueRef>()
     var fileUsesThreadLocalObjects = false
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
-    val topLevelFields = mutableListOf<IrField>()
-    val moduleInitializers = mutableListOf<IrFunction>()
-    var fileGlobalInitFunction: IrFunction? = null
-    var fileGlobalInitState: LLVMValueRef? = null
-    val fileGlobalInitStates = mutableMapOf<IrFile, LLVMValueRef>()
-    var fileThreadLocalInitFunction: IrFunction? = null
-    var fileThreadLocalInitState: AddressAccess? = null
-    val fileThreadLocalInitStates = mutableMapOf<IrFile, AddressAccess>()
+    val initializersGenerationState = InitializersGenerationState()
 
     private object lazyRtFunction {
         operator fun provideDelegate(
