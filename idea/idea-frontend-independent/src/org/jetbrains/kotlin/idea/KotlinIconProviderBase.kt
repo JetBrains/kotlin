@@ -12,22 +12,21 @@ import com.intellij.openapi.util.Iconable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import com.intellij.ui.RowIcon
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.KotlinIconsIndependent.ACTUAL
 import org.jetbrains.kotlin.idea.KotlinIconsIndependent.EXPECT
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclarationBase
 import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.psi.psiUtil.isAbstract
+import org.jetbrains.kotlin.psi.psiUtil.*
 import javax.swing.Icon
 
 open class KotlinIconProviderBase : IconProvider(), DumbAware {
@@ -120,7 +119,7 @@ open class KotlinIconProviderBase : IconProvider(), DumbAware {
 
         fun PsiElement.getBaseIcon(): Icon? = when (this) {
             is KtPackageDirective -> PlatformIcons.PACKAGE_ICON
-            is KtLightClassForFacade -> KotlinIconsIndependent.FILE
+            is KtFile, is KtLightClassForFacade -> KotlinIconsIndependent.FILE
             is KtLightClassForSourceDeclaration -> navigationElement.getBaseIcon()
             is KtNamedFunction -> when {
                 receiverTypeReference != null ->
@@ -149,6 +148,16 @@ open class KotlinIconProviderBase : IconProvider(), DumbAware {
             is KtProperty -> if (isVar) KotlinIconsIndependent.FIELD_VAR else KotlinIconsIndependent.FIELD_VAL
             is KtClassInitializer -> KotlinIconsIndependent.CLASS_INITIALIZER
             is KtTypeAlias -> KotlinIconsIndependent.TYPE_ALIAS
+            is KtAnnotationEntry -> {
+                (shortName?.asString() == JvmFileClassUtil.JVM_NAME_SHORT).ifTrue {
+                    val grandParent = parent.parent
+                    if (grandParent is KtPropertyAccessor) {
+                        grandParent.parentOfType<KtProperty>()?.getBaseIcon()
+                    } else {
+                        grandParent.getBaseIcon()
+                    }
+                }
+            }
             is PsiClass -> (this is KtLightClassForDecompiledDeclarationBase).ifTrue {
                 val origin = (this as? KtLightClass)?.kotlinOrigin
                 //TODO (light classes for decompiled files): correct presentation

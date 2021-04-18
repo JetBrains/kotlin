@@ -11,12 +11,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.stubindex.*
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import java.util.*
 
@@ -56,7 +54,8 @@ class KotlinGotoSymbolContributor : GotoClassContributor {
         KotlinFunctionShortNameIndex.getInstance(),
         KotlinPropertyShortNameIndex.getInstance(),
         KotlinClassShortNameIndex.getInstance(),
-        KotlinTypeAliasShortNameIndex.getInstance()
+        KotlinTypeAliasShortNameIndex.getInstance(),
+        KotlinJvmNameAnnotationIndex.getInstance()
     ).flatMap {
         StubIndex.getInstance().getAllKeys(it.key, project)
     }.toTypedArray()
@@ -78,6 +77,7 @@ class KotlinGotoSymbolContributor : GotoClassContributor {
             it is KtEnumEntry || it.containingFile.virtualFile?.fileType == KotlinBuiltInFileType
         }
         result += KotlinTypeAliasShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
+        result += KotlinJvmNameAnnotationIndex.getInstance().get(name, project, noLibrarySourceScope)
 
         return result.toTypedArray()
     }
@@ -87,6 +87,10 @@ class KotlinGotoSymbolContributor : GotoClassContributor {
             val receiverType = (item.receiverTypeReference?.typeElement as? KtUserType)?.referencedName
             if (receiverType != null) {
                 return "$receiverType.${item.name}"
+            }
+        } else if (item is KtAnnotationEntry) {
+            if (item.shortName?.asString() == JvmFileClassUtil.JVM_NAME_SHORT) {
+                return JvmFileClassUtil.getLiteralStringFromAnnotation(item)
             }
         }
         return null

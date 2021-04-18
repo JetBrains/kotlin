@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.NamedStub
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
-import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
-import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
-import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
+import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.aliasImportMap
 
@@ -105,6 +104,22 @@ fun indexInternals(stub: KotlinCallableStubBase<*>, sink: IndexSink) {
 
     if (modifierListStub.hasModifier(KtTokens.OPEN_KEYWORD) || modifierListStub.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
         sink.occurrence(KotlinOverridableInternalMembersShortNameIndex.Instance.key, name)
+    }
+}
+
+fun indexJvmNameAnnotation(stub: KotlinAnnotationEntryStub, sink: IndexSink) {
+    if (stub.getShortName() != JvmFileClassUtil.JVM_NAME_SHORT) return
+
+    val jvmName = JvmFileClassUtil.getLiteralStringFromAnnotation(stub.psi) ?: return
+    val annotatedElementName = when (val grandParentStub = stub.parentStub.parentStub) {
+        is KotlinFileStub -> grandParentStub.psi.name
+        is NamedStub -> grandParentStub.getName() ?: ""
+        is KotlinPropertyAccessorStub -> (grandParentStub.parentStub as? KotlinPropertyStub)?.name ?: ""
+        else -> return
+    }
+
+    if (annotatedElementName != jvmName) {
+        sink.occurrence(KotlinJvmNameAnnotationIndex.INSTANCE.key, jvmName)
     }
 }
 

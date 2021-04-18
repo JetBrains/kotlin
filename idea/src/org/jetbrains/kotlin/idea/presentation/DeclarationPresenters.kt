@@ -78,31 +78,36 @@ class KtDefaultDeclarationPresenter : ItemPresentationProvider<KtNamedDeclaratio
     override fun getPresentation(item: KtNamedDeclaration) = KotlinDefaultNamedDeclarationPresentation(item)
 }
 
+open class KotlinFunctionPresentation(
+    private val function: KtFunction,
+    private val name: String? = function.name
+) : KotlinDefaultNamedDeclarationPresentation(function) {
+    override fun getPresentableText(): String {
+        return buildString {
+            name?.let { append(it) }
+
+            append("(")
+            append(function.valueParameters.joinToString {
+                (if (it.isVarArg) "vararg " else "") + (it.typeReference?.text ?: "")
+            })
+            append(")")
+        }
+    }
+
+    override fun getLocationString(): String? {
+        if (function is KtConstructor<*>) {
+            val name = function.getContainingClassOrObject().fqName ?: return null
+            return KotlinBundle.message("presentation.text.in.container.paren", name)
+        }
+
+        return super.getLocationString()
+    }
+}
+
 class KtFunctionPresenter : ItemPresentationProvider<KtFunction> {
     override fun getPresentation(function: KtFunction): ItemPresentation? {
         if (function is KtFunctionLiteral) return null
 
-        return object : KotlinDefaultNamedDeclarationPresentation(function) {
-            override fun getPresentableText(): String {
-                return buildString {
-                    function.name?.let { append(it) }
-
-                    append("(")
-                    append(function.valueParameters.joinToString {
-                        (if (it.isVarArg) "vararg " else "") + (it.typeReference?.text ?: "")
-                    })
-                    append(")")
-                }
-            }
-
-            override fun getLocationString(): String? {
-                if (function is KtConstructor<*>) {
-                    val name = function.getContainingClassOrObject().fqName ?: return null
-                    return KotlinBundle.message("presentation.text.in.container.paren", name)
-                }
-
-                return super.getLocationString()
-            }
-        }
+        return KotlinFunctionPresentation(function)
     }
 }
