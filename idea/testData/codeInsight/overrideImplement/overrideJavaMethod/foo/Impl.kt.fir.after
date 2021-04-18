@@ -1,0 +1,11 @@
+// ERROR: Unexpected tokens
+// ERROR: Unexpected token
+// ERROR: Unexpected token
+// ERROR: Unexpected token
+import foo.A
+
+class C : A() {
+    override fun getAnswer(array: Array<(out) String!>!, number: Int, value: Any!): Int {
+        <selection><caret>return super.getAnswer(array, number, value)</selection>
+    }
+}

@@ -204,22 +204,22 @@ object IgnoreTests {
     }
 
 
-    fun cleanUpIdenticalFirTestFile(originalTestFile: File) {
-        val firTestFile = deriveFirTestFile(originalTestFile)
+    fun cleanUpIdenticalFirTestFile(
+        originalTestFile: File,
+        firTestFile: File = deriveFirTestFile(originalTestFile),
+        additionalFileToMarkFirIdentical: File? = null
+    ) {
         if (firTestFile.exists() && firTestFile.readText().trim() == originalTestFile.readText().trim()) {
             val message = if (isTeamCityBuild) {
-                "Please remove .fir.kt dump and add // FIR_IDENTICAL to test source"
+                "Please remove $firTestFile and add // FIR_IDENTICAL to test source file $originalTestFile"
             } else {
                 // The FIR test file is identical with the original file. We should remove the FIR file and mark "FIR_IDENTICAL" in the
                 // original file
                 firTestFile.delete()
-                val content = originalTestFile.readText()
-                originalTestFile.writer().use {
-                    it.appendLine(DIRECTIVES.FIR_IDENTICAL)
-                    it.append(content)
-                }
+                originalTestFile.prependFirIdentical()
+                additionalFileToMarkFirIdentical?.prependFirIdentical()
 
-                "Deleted .fir.kt dump, added // FIR_IDENTICAL to test source"
+                "Deleted $firTestFile, added // FIR_IDENTICAL to test source file $originalTestFile"
             }
             KtAssert.fail(
                 """
@@ -228,6 +228,14 @@ object IgnoreTests {
                         Please re-run the test now
                     """.trimIndent()
             )
+        }
+    }
+
+    private fun File.prependFirIdentical() {
+        val content = readText()
+        writer().use {
+            it.appendLine(DIRECTIVES.FIR_IDENTICAL)
+            it.append(content)
         }
     }
 

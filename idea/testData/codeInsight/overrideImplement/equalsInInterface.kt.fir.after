@@ -1,0 +1,5 @@
+interface A
+
+interface B : A {
+    override fun equals(other: Any?): Boolean<caret>
+}

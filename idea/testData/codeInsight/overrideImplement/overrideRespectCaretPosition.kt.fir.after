@@ -1,0 +1,34 @@
+open class A() {
+    open fun foo(value : Int) : Unit = println(value)
+    open val bar : Int = 0
+}
+
+class C : A() {
+    val constant = 42
+    // Some comment
+    override val bar: Int
+        get() = <selection><caret>bar</selection>
+
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other)
+    }
+
+    override fun foo(value: Int) {
+        super.foo(value)
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+
+    override fun toString(): String {
+        return super.toString()
+    }
+
+    /*
+            Some another comment
+        */
+    fun someAnotherFunction() {
+
+    }
+}

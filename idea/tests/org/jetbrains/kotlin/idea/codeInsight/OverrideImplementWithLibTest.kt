@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.codeInsight.generation.ClassMember
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
+class OldOverrideImplementWithLibTest : OverrideImplementWithLibTest<OverrideMemberChooserObject>(), OldOverrideImplementTestMixIn
+
+abstract class OverrideImplementWithLibTest<T : ClassMember> : AbstractOverrideImplementTest<T>() {
     private val TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement/withLib"
 
     override fun setUp() {

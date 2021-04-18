@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // COPY_DOC
 
 import foo.A

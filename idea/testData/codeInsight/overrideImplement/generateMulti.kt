@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package something
 
 interface Some<T> {

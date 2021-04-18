@@ -1,0 +1,42 @@
+interface A {
+    fun a1()
+    fun a2()
+    fun a3()
+    fun a4()
+    fun a5()
+    fun a6()
+    fun a7()
+    fun a8()
+}
+
+class Test : A {
+    override fun a6() {
+    }
+
+    override fun a7() {
+        <selection><caret>TODO("Not yet implemented")</selection>
+    }
+
+    override fun a8() {
+        TODO("Not yet implemented")
+    }
+
+    override fun a1() {
+        TODO("Not yet implemented")
+    }
+
+    override fun a2() {
+        TODO("Not yet implemented")
+    }
+
+    override fun a3() {
+    }
+
+    override fun a4() {
+        TODO("Not yet implemented")
+    }
+
+    override fun a5() {
+        TODO("Not yet implemented")
+    }
+}

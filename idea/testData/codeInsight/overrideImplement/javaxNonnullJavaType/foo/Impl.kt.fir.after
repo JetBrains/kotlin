@@ -1,0 +1,9 @@
+import foo.A
+import javax.annotation.Nonnull
+
+class B : A() {
+    @Nonnull
+    override fun foo(@Nonnull s: String): String {
+        <selection><caret>return super.foo(s)</selection>
+    }
+}

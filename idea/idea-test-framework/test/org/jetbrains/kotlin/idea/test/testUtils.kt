@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -17,7 +19,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import java.util.*
 
 fun KtFile.dumpTextWithErrors(ignoreErrors: Set<DiagnosticFactory<*>> = emptySet()): String {
     val text = text
@@ -29,6 +30,13 @@ fun KtFile.dumpTextWithErrors(ignoreErrors: Set<DiagnosticFactory<*>> = emptySet
     if (errors.isEmpty()) return text
     val header = errors.joinToString("\n", postfix = "\n") { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }
     return header + text
+}
+
+fun JavaCodeInsightTestFixture.dumpErrorLines(): List<String> {
+    if (InTextDirectivesUtils.isDirectiveDefined(file.text, "// DISABLE-ERRORS")) return emptyList()
+    return doHighlighting().filter { it.severity == HighlightSeverity.ERROR }.map {
+        "// ERROR: ${it.description.replace('\n', ' ')}"
+    }
 }
 
 fun closeAndDeleteProject() = LightPlatformTestCase.closeAndDeleteProject()

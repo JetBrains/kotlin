@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // COPY_DOC
 abstract class A {
     /**

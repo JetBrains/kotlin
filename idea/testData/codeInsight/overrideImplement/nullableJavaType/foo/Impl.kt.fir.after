@@ -1,0 +1,10 @@
+// ERROR: Unexpected token
+import foo.A
+import org.jetbrains.annotations.Nullable
+
+class B : A() {
+    @Nullable
+    override fun foo(s: String!): String? {
+        <selection><caret>return super.foo(s)</selection>
+    }
+}

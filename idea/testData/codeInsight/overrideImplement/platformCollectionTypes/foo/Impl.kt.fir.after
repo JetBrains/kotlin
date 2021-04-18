@@ -1,0 +1,7 @@
+import foo.A
+
+class B : A {
+    override fun foo(): List<String?>? {
+        <selection><caret>TODO("Not yet implemented")</selection>
+    }
+}

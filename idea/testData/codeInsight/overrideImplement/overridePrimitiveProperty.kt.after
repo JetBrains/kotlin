@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface T {
     val a1: Byte
     val a2: Short

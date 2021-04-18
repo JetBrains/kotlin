@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Test {
     public open fun test()
     public open val testProp : Int

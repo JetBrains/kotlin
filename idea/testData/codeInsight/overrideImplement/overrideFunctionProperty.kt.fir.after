@@ -1,0 +1,12 @@
+open class A() {
+    open val method : () -> Unit? = {println("hello")}
+}
+
+fun some() : A {
+    return object : A() {
+        override val method: () -> kotlin.Unit?
+            get() = <selection><caret>super.method</selection>
+    }
+}
+
+// TODO: need better selection and caret

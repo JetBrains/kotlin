@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class A : I1 {
     open fun a(){}
 }

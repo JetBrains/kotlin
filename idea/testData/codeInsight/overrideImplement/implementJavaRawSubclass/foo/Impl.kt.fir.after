@@ -1,0 +1,12 @@
+// ERROR: Unexpected tokens
+// ERROR: Unexpected token
+// ERROR: Unexpected token
+// ERROR: Unexpected token
+import foo.A
+import foo.B
+
+class C : A() {
+    override fun foo(x: (Mutable)List<String!>!, y: String!): B<String?>? {
+        <selection><caret>TODO("Not yet implemented")</selection>
+    }
+}
