@@ -171,10 +171,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
         val returnType = expression.getTypeArgument(expression.typeArgumentsCount - 1)!!
         mapReturnType(returnType, expression, signature = null)
     } else {
-        mapReturnType(callee.returnType, expression, signature = callee,
-            managedTypeAnnotation =
-                expression.symbol.owner.hasCCallAnnotation("ManagedTypeReturn")
-        )
+        mapReturnType(callee.returnType, expression, signature = callee)
     }
 
     val result = callBuilder.buildCall(targetFunctionName, returnValuePassing)
@@ -472,8 +469,7 @@ private fun CCallbackBuilder.build(function: IrSimpleFunction, signature: IrSimp
     val valueReturning = stubs.mapReturnType(
             signature.returnType,
             location = if (isObjCMethod) function else location,
-            signature = signature,
-            managedTypeAnnotation = function.hasCCallAnnotation("ManagedTypeReturn")
+            signature = signature
     )
     buildValueReturn(function, valueReturning)
     return buildCFunction()
@@ -667,11 +663,11 @@ private fun KotlinStubs.mapFunctionParameterType(
 private fun KotlinStubs.mapReturnType(
         type: IrType,
         location: IrElement,
-        signature: IrSimpleFunction?,
-        managedTypeAnnotation: Boolean = false
+        signature: IrSimpleFunction?
 ): ValueReturning = when {
     type.isUnit() -> VoidReturning
-    else -> mapType(type, retained = signature?.objCReturnsRetained() ?: false, variadic = false, location = location, managedTypeAnnotation = managedTypeAnnotation)
+    else -> mapType(type, retained = signature?.objCReturnsRetained() ?: false, variadic = false, location = location,
+            managedTypeAnnotation = signature?.symbol?.owner?.hasCCallAnnotation("ManagedTypeReturn") ?: false)
 }
 
 private fun KotlinStubs.mapBlockType(
