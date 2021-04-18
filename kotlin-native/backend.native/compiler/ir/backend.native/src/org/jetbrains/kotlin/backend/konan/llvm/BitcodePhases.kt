@@ -227,7 +227,9 @@ internal val removeRedundantCallsToFileInitializersPhase = makeKonanModuleOpPhas
         name = "RemoveRedundantCallsToFileInitializersPhase",
         description = "Redundant file initializers calls removal",
         prerequisite = setOf(devirtualizationAnalysisPhase),
-        op = { context, _ ->
+        op = op@{ context, _ ->
+            if (!context.useLazyFileInitializers()) return@op
+
             val moduleDFG = context.moduleDFG!!
             val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
 

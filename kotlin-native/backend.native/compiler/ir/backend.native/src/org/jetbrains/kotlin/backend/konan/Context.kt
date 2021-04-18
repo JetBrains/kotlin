@@ -420,6 +420,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
+    fun useLazyFileInitializers() = fileInitializersPhase in config.phaseConfig.enabled
 
     val memoryModel = config.memoryModel
 

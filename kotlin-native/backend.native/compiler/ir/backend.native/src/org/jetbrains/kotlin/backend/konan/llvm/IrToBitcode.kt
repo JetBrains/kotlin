@@ -326,6 +326,35 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.cAdapterGenerator.generateBindings(codegen)
     }
 
+    private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
+        val initializer = irField.initializer ?: return
+        val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(this)
+        storeAny(evaluateExpression(initializer.expression), address, false)
+    }
+
+    private fun FunctionGenerationContext.initGlobalField(irField: IrField) {
+        val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(this)
+        val initialValue = if (irField.initializer?.expression !is IrConst<*>?) {
+            val initialization = evaluateExpression(irField.initializer!!.expression)
+            if (irField.storageKind == FieldStorageKind.SHARED_FROZEN)
+                freeze(initialization, currentCodeContext.exceptionHandler)
+            initialization
+        } else {
+            null
+        }
+        val needRegistration =
+                context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
+                        irField.type.binaryTypeIsReference() && // only for references
+                        (initialValue != null || // which are initialized from heap object
+                                !irField.isFinal) // or are not final
+        if (needRegistration) {
+            call(context.llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
+                    ?: kNullObjHeaderPtr))
+        } else if (initialValue != null) {
+            storeAny(initialValue, address, false)
+        }
+    }
+
     private fun runAndProcessInitializers(konanLibrary: KotlinLibrary?, f: () -> Unit) {
         // TODO: collect those two in one place.
         context.llvm.fileUsesThreadLocalObjects = false
@@ -346,31 +375,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val parameterScope = ParameterScope(fileInitFunction, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
-                            context.llvm.topLevelFields.forEach { irField ->
-                                if (irField.storageKind == FieldStorageKind.THREAD_LOCAL) return@forEach
-                                val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
-                                        functionGenerationContext
-                                )
-                                val initialValue = if (irField.initializer?.expression !is IrConst<*>?) {
-                                    val initialization = evaluateExpression(irField.initializer!!.expression)
-                                    if (irField.storageKind == FieldStorageKind.SHARED_FROZEN)
-                                        freeze(initialization, currentCodeContext.exceptionHandler)
-                                    initialization
-                                } else {
-                                    null
-                                }
-                                val needRegistration =
-                                        context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
-                                                irField.type.binaryTypeIsReference() && // only for references
-                                                (initialValue != null || // which are initialized from heap object
-                                                        !irField.isFinal) // or are not final
-                                if (needRegistration) {
-                                    call(context.llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
-                                            ?: kNullObjHeaderPtr))
-                                } else if (initialValue != null) {
-                                    storeAny(initialValue, address, false)
-                                }
-                            }
+                            context.llvm.topLevelFields
+                                    .filterNot { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                                    .forEach { initGlobalField(it) }
                             ret(null)
                         }
                     }
@@ -384,14 +391,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val parameterScope = ParameterScope(fileInitFunction, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
-                            context.llvm.topLevelFields.forEach { irField ->
-                                val initializer = irField.initializer
-                                if (irField.storageKind != FieldStorageKind.THREAD_LOCAL || initializer == null) return@forEach
-                                val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
-                                        functionGenerationContext
-                                )
-                                storeAny(evaluateExpression(initializer.expression), address, false)
-                            }
+                            context.llvm.topLevelFields
+                                    .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                                    .forEach { initThreadLocalField(it) }
                             ret(null)
                         }
                     }
@@ -399,7 +401,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
-        if (!context.llvm.fileUsesThreadLocalObjects
+        if (!context.llvm.fileUsesThreadLocalObjects && context.llvm.topLevelFields.isEmpty()
                 && context.llvm.globalSharedObjects.isEmpty() && context.llvm.moduleInitializers.isEmpty()
                 && context.llvm.fileGlobalInitState == null && context.llvm.fileThreadLocalInitState == null) {
             return
@@ -484,8 +486,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                Int32(DEINIT_GLOBALS).llvm              to bbGlobalDeinit),
                         bbDefault)
 
-                // Globals initalizers may contain accesses to objects, so visit them first.
+                // Globals initializers may contain accesses to objects, so visit them first.
                 appendingTo(bbInit) {
+                    if (!context.useLazyFileInitializers()) {
+                        context.llvm.topLevelFields
+                                .filterNot { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                                .forEach { initGlobalField(it) }
+                    }
                     ret(null)
                 }
 
@@ -494,7 +501,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         store(kImmInt32Zero, it.getAddress(functionGenerationContext))
                         LLVMSetInitializer(it.getAddress(functionGenerationContext), kImmInt32Zero)
                     }
+                    if (!context.useLazyFileInitializers()) {
+                        context.llvm.topLevelFields
+                                .filter { it.storageKind == FieldStorageKind.THREAD_LOCAL }
+                                .forEach { initThreadLocalField(it) }
+                    }
                     context.llvm.moduleInitializers.forEach {
+                        if (context.shouldContainLocationDebugInfo())
+                            debugLocation(it.startLocation!!, it.endLocation)
                         evaluateSimpleFunctionCall(it, emptyList(), Lifetime.IRRELEVANT)
                     }
                     ret(null)
