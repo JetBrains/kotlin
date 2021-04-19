@@ -79,6 +79,8 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
         FinalClass("class", true),
         OpenClass("open class", true),
         AbstractClass("abstract class", false),
+        SealedClass("sealed class", false),
+        SealedInterface("sealed interface", false),
         Object("object", false)
     }
 }

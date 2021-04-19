@@ -35,10 +35,22 @@ interface AbstractElement : FieldContainer, KindOwner {
     val overridenFields: Map<Field, Map<Importable, Boolean>>
     val useNullableForReplace: Set<Field>
 
+    val isSealed: Boolean
+        get() = false
+
     override val allParents: List<KindOwner> get() = parents
 }
 
 class Element(val name: String, kind: Kind) : AbstractElement {
+    companion object {
+        private val allowedKinds = setOf(
+            Implementation.Kind.Interface,
+            Implementation.Kind.SealedInterface,
+            Implementation.Kind.AbstractClass,
+            Implementation.Kind.SealedClass
+        )
+    }
+
     override val fields = mutableSetOf<Field>()
     override val type: String = "Fir$name"
     override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }
@@ -50,12 +62,14 @@ class Element(val name: String, kind: Kind) : AbstractElement {
     override val parentsArguments = mutableMapOf<AbstractElement, MutableMap<Importable, Importable>>()
     override var kind: Implementation.Kind? = null
         set(value) {
-            if (value != Implementation.Kind.Interface && value != Implementation.Kind.AbstractClass) {
+            if (value !in allowedKinds) {
                 throw IllegalArgumentException(value.toString())
             }
             field = value
         }
     var _needTransformOtherChildren: Boolean = false
+
+    override var isSealed: Boolean = false
 
     override var baseTransformerType: Element? = null
     override val transformerType: Element get() = baseTransformerType ?: this

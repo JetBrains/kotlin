@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import java.io.File
 
@@ -85,7 +86,7 @@ private fun List<String>.filterRedundantImports(
 
 
 val KindOwner.needPureAbstractElement: Boolean
-    get() = (kind != Implementation.Kind.Interface) && !allParents.any { it.kind == Implementation.Kind.AbstractClass }
+    get() = (kind != Kind.Interface && kind != Kind.SealedInterface) && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }
 
 
 val Field.isVal: Boolean get() = this is FieldList || (this is FieldWithDefault && origin is FieldList) || !isMutable
@@ -126,9 +127,9 @@ fun Element.multipleUpperBoundsList(): String {
     } ?: " "
 }
 
-fun Implementation.Kind?.braces(): String = when (this) {
-    Implementation.Kind.Interface -> ""
-    Implementation.Kind.OpenClass, Implementation.Kind.AbstractClass -> "()"
+fun Kind?.braces(): String = when (this) {
+    Kind.Interface, Kind.SealedInterface -> ""
+    Kind.OpenClass, Kind.AbstractClass, Kind.SealedClass -> "()"
     else -> throw IllegalStateException(this.toString())
 }
 

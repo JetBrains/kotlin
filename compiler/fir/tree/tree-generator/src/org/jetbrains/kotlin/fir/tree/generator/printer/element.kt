@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
 import org.jetbrains.kotlin.util.SmartPrinter
@@ -35,7 +36,7 @@ fun Element.generateCode(generationPath: File): GeneratedFile {
 
 fun SmartPrinter.printElement(element: Element) {
     with(element) {
-        val isInterface = kind == Implementation.Kind.Interface
+        val isInterface = kind == Kind.Interface || kind == Kind.SealedInterface
 
         fun abstract() {
             if (!isInterface) {
@@ -53,7 +54,7 @@ fun SmartPrinter.printElement(element: Element) {
         if (typeArguments.isNotEmpty()) {
             print(typeArguments.joinToString(", ", "<", ">") { it.toString() })
         }
-        val needPureAbstractElement = !isInterface && !allParents.any { it.kind == Implementation.Kind.AbstractClass }
+        val needPureAbstractElement = !isInterface && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }
 
         if (parents.isNotEmpty() || needPureAbstractElement) {
             print(" : ")

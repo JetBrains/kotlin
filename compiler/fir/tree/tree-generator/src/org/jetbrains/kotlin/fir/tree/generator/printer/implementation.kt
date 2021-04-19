@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
@@ -57,8 +58,8 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
         print("${kind!!.title} $type")
         print(element.typeParameters)
 
-        val isInterface = kind == Implementation.Kind.Interface
-        val isAbstract = kind == Implementation.Kind.AbstractClass
+        val isInterface = kind == Kind.Interface || kind == Kind.SealedInterface
+        val isAbstract = kind == Kind.AbstractClass || kind == Kind.SealedClass
 
         fun abstract() {
             if (isAbstract) {
@@ -80,7 +81,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
         }
 
         print(" : ")
-        if (!isInterface && !allParents.any { it.kind == Implementation.Kind.AbstractClass }) {
+        if (!isInterface && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }) {
             print("${pureAbstractElementType.type}(), ")
         }
         print(allParents.joinToString { "${it.typeWithArguments}${it.kind.braces()}" })
