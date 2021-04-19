@@ -9,7 +9,7 @@ fun foo(k: KotlinClass) {
     if (k.something == null) return
 
     k.setSomething(1)
-    k.something = 1
+    k.something = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
 }
 
 fun useString(i: String) {}

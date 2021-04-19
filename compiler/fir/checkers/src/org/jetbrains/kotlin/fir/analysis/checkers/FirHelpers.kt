@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
@@ -33,8 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
@@ -519,3 +519,45 @@ private val FirSimpleFunction.matchesHashCodeSignature: Boolean
 
 private val FirSimpleFunction.matchesToStringSignature: Boolean
     get() = valueParameters.isEmpty()
+
+fun checkTypeMismatch(
+    lValueType: ConeKotlinType,
+    rValue: FirExpression,
+    context: CheckerContext,
+    source: FirSourceElement,
+    reporter: DiagnosticReporter,
+    isInitializer: Boolean
+) {
+    val rValueType = rValue.typeRef.coneType
+    val typeContext = context.session.typeContext
+
+    if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
+        if (rValueType is ConeClassLikeType &&
+            rValueType.lookupTag.classId == StandardClassIds.Int &&
+            lValueType.fullyExpandedType(context.session).isIntegerTypeOrNullableIntegerTypeOfAnySize &&
+            rValueType.nullability == ConeNullability.NOT_NULL
+        ) {
+            // val p: Byte = 42 or similar situation
+            // TODO: remove after fix of KT-46047
+            return
+        }
+        if (lValueType.isExtensionFunctionType || rValueType.isExtensionFunctionType) {
+            // TODO: remove after fix of KT-45989
+            return
+        }
+        if (rValue.isNullLiteral && lValueType.nullability == ConeNullability.NOT_NULL) {
+            reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, context)
+        } else {
+            val diagnosticFactory = when {
+                isInitializer ->
+                    FirErrors.INITIALIZER_TYPE_MISMATCH
+                source.kind is FirFakeSourceElementKind.DesugaredIncrementOrDecrement ->
+                    FirErrors.RESULT_TYPE_MISMATCH
+                else ->
+                    FirErrors.ASSIGNMENT_TYPE_MISMATCH
+            }
+
+            reporter.report(diagnosticFactory.on(source, lValueType, rValueType), context)
+        }
+    }
+}

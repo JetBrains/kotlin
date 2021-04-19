@@ -22,10 +22,10 @@ class WrongIncDec() {
 
 fun testWrongIncDec() {
   var x = WrongIncDec()
-  x++
-  ++x
-  x--
-  --x
+  <error descr="[RESULT_TYPE_MISMATCH] WrongIncDec, kotlin/Int">x++</error>
+  <error descr="[RESULT_TYPE_MISMATCH] WrongIncDec, kotlin/Int">++x</error>
+  <error descr="[RESULT_TYPE_MISMATCH] WrongIncDec, kotlin/Int">x--</error>
+  <error descr="[RESULT_TYPE_MISMATCH] WrongIncDec, kotlin/Int">--x</error>
 }
 
 class UnitIncDec() {
@@ -35,12 +35,12 @@ class UnitIncDec() {
 
 fun testUnitIncDec() {
   var x = UnitIncDec()
-  x++
-  ++x
-  x--
-  --x
-  x = x++
-  x = x--
-  x = ++x
-  x = --x
+  <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">x++</error>
+  <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">++x</error>
+  <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">x--</error>
+  <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">--x</error>
+  x = <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">x++</error>
+  x = <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">x--</error>
+  x = <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">++x</error>
+  x = <error descr="[RESULT_TYPE_MISMATCH] UnitIncDec, kotlin/Unit">--x</error>
 }

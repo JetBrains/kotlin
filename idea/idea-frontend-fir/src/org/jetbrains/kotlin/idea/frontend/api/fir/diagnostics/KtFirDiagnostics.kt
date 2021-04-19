@@ -649,6 +649,18 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val name: String
     }
 
+    abstract class AssignmentTypeMismatch : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = AssignmentTypeMismatch::class
+        abstract val expected: KtType
+        abstract val actual: KtType
+    }
+
+    abstract class ResultTypeMismatch : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ResultTypeMismatch::class
+        abstract val expected: KtType
+        abstract val actual: KtType
+    }
+
     abstract class ManyLambdaExpressionArguments : KtFirDiagnostic<KtValueArgument>() {
         override val diagnosticClass get() = ManyLambdaExpressionArguments::class
     }

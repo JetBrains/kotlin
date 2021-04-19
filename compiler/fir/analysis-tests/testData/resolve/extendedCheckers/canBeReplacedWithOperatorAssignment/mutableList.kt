@@ -5,5 +5,5 @@ fun foo() {
     // now, Idea hightlights this code like error (cuz listVar
     // is mutable and listVar + 4 is immutable) and like warning
     // (cuz can be replaced with +=)
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>listVar<!> = listVar + 4
+    <!ASSIGNED_VALUE_IS_NEVER_READ!>listVar<!> = <!ASSIGNMENT_TYPE_MISMATCH!>listVar + 4<!>
 }

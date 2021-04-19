@@ -34,8 +34,8 @@ fun foo(c: C) {
     c.z checkType { _<String>() }
 
     c.y = ""
-    c.y = 1
+    c.y = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
 
     c.z = ""
-    c.z = 1
+    c.z = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
 }

@@ -1046,6 +1046,24 @@ internal class NamedParameterNotFoundImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class AssignmentTypeMismatchImpl(
+    override val expected: KtType,
+    override val actual: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AssignmentTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ResultTypeMismatchImpl(
+    override val expected: KtType,
+    override val actual: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ResultTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ManyLambdaExpressionArgumentsImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

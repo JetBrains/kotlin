@@ -19,5 +19,5 @@ private fun foo() = run {
 
 fun test() {
     var x = foo(1)
-    x = foo()
+    x = <!ASSIGNMENT_TYPE_MISMATCH!>foo()<!>
 }

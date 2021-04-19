@@ -107,7 +107,7 @@ fun foo() {
     if (bool) <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 4 else <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 42
     val <!VARIABLE_NEVER_READ!>b<!>: String
 
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>b<!> = false
+    <!ASSIGNED_VALUE_IS_NEVER_READ!>b<!> = <!ASSIGNMENT_TYPE_MISMATCH!>false<!>
 }
 
 fun cycles() {

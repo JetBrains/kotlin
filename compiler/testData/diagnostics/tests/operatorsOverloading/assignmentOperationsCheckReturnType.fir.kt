@@ -3,15 +3,15 @@ fun intBinEq() {
     x <!UNRESOLVED_REFERENCE!>+=<!> 'a'
     x += 1.toByte()
     x += 1.toShort()
-    x += 1L
-    x += 1f
-    x += 1.0
+    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1L<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1f<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.0<!>
     x <!UNRESOLVED_REFERENCE!>*=<!> 'a'
-    x *= 1.toByte()
-    x *= 1.toShort()
-    x *= 1L
-    x *= 1f
-    x *= 1.0
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toByte()<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toShort()<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1L<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1f<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.0<!>
 }
 
 fun shortBinEq() {
@@ -19,16 +19,16 @@ fun shortBinEq() {
     x <!UNRESOLVED_REFERENCE!>+=<!> 'a'
     x += 1.toByte()
     x += 1.toShort()
-    x += 1L
-    x += 1f
-    x += 1.0
+    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1L<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1f<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.0<!>
 
     x <!UNRESOLVED_REFERENCE!>*=<!> 'a'
-    x *= 1.toByte()
-    x *= 1.toShort()
-    x *= 1L
-    x *= 1f
-    x *= 1.0
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toByte()<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toShort()<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1L<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1f<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.0<!>
 }
 
 class A {
@@ -44,5 +44,5 @@ fun overloading() {
     var y = A()
     x += y
     var z = B()
-    z += x
+    <!ASSIGNMENT_TYPE_MISMATCH!>z += x<!>
 }

@@ -1,5 +1,5 @@
 private var x = object {}
 
 fun test() {
-    x = object {}
+    x = <!ASSIGNMENT_TYPE_MISMATCH!>object<!> {}
 }

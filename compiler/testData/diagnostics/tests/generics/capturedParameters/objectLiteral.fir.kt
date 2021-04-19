@@ -13,7 +13,7 @@ class Q {
     private var y = foo<String>()
 
     fun bar() {
-        x = y
+        x = <!ASSIGNMENT_TYPE_MISMATCH!>y<!>
         x = foo<CharSequence>()
         y = foo<String>()
 

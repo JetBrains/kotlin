@@ -4,7 +4,7 @@ fun foo(o: JavaClass2) {
     useString(o.something)
     o.something = ""
     o.setSomething(1)
-    o.something = 1 // we generate extension property for JavaClass2 with more specific type
+    o.something = <!ASSIGNMENT_TYPE_MISMATCH!>1<!> // we generate extension property for JavaClass2 with more specific type
     o.something += "1"
 }
 

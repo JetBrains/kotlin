@@ -24,10 +24,10 @@ class A<T : CharSequence?, E1 : T, E2: T?> {
         }
 
         if (1 == 1) {
-            t = tN
+            t = <!ASSIGNMENT_TYPE_MISMATCH!>tN<!>
         }
 
-        t = y
+        t = <!ASSIGNMENT_TYPE_MISMATCH!>y<!>
 
         if (y != null) {
             t = y

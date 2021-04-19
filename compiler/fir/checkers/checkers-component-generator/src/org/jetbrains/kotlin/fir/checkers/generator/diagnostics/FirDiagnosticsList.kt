@@ -272,6 +272,16 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("name")
         }
 
+        val ASSIGNMENT_TYPE_MISMATCH by error<KtExpression> {
+            parameter<ConeKotlinType>("expected")
+            parameter<ConeKotlinType>("actual")
+        }
+
+        val RESULT_TYPE_MISMATCH by error<KtExpression> {
+            parameter<ConeKotlinType>("expected")
+            parameter<ConeKotlinType>("actual")
+        }
+
         val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error<KtValueArgument>()
     }
 
