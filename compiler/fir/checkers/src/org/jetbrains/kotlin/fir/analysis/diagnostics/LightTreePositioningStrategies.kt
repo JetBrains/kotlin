@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.impl.source.tree.ElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -19,8 +18,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object LightTreePositioningStrategies {
@@ -644,19 +643,22 @@ internal fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
 
-private val EXPRESSION_NODE_TYPES = setOf(
+private val EXPRESSIONS_SET = listOf(
     KtNodeTypes.REFERENCE_EXPRESSION,
-    KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE,
-    KtNodeTypes.SUPER_EXPRESSION,
-    KtNodeTypes.ARRAY_ACCESS_EXPRESSION,
-    KtNodeTypes.CALL_EXPRESSION,
-    KtNodeTypes.LABELED_EXPRESSION,
     KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
-    KtNodeTypes.FUN,
-    KtNodeTypes.IF,
-    KtNodeTypes.STRING_TEMPLATE,
     KtNodeTypes.LAMBDA_EXPRESSION,
+    KtNodeTypes.FUN
 )
+
+fun LighterASTNode.isExpression(): Boolean {
+    return when (this.tokenType) {
+        is KtNodeType,
+        is KtConstantExpressionElementType,
+        is KtStringTemplateExpressionElementType,
+        in EXPRESSIONS_SET -> true
+        else -> false
+    }
+}
 
 /**
  * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for diagnostics
@@ -678,9 +680,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     var result = childrenRef.get()?.firstOrNull {
-        it?.tokenType in EXPRESSION_NODE_TYPES ||
-                it?.tokenType is KtConstantExpressionElementType ||
-                it?.tokenType == KtNodeTypes.PARENTHESIZED
+        it?.isExpression() == true || it?.tokenType == KtNodeTypes.PARENTHESIZED
     }
     while (locateReferencedName && result != null && result.tokenType == KtNodeTypes.PARENTHESIZED) {
         result = referenceExpression(result, locateReferencedName = true)
@@ -689,7 +689,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findReferenceExpressionDeep(node: LighterASTNode): LighterASTNode? =
-    findDescendantByTypes(node, EXPRESSION_NODE_TYPES)
+    findFirstDescendant(node) { it.isExpression() }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RPAR)
@@ -800,6 +800,16 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByTypes(node: Li
     getChildren(node, childrenRef)
     return childrenRef.get()?.firstOrNull { types.contains(it?.tokenType) } ?: childrenRef.get()
         ?.firstNotNullResult { child -> child?.let { findDescendantByTypes(it, types) } }
+}
+
+fun FlyweightCapableTreeStructure<LighterASTNode>.findFirstDescendant(
+    node: LighterASTNode,
+    predicate: (LighterASTNode) -> Boolean
+): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get()?.firstOrNull { it != null && predicate(it) }
+        ?: childrenRef.get()?.firstNotNullResult { child -> child?.let { findFirstDescendant(it, predicate) } }
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: TokenSet): LighterASTNode? {

@@ -48,12 +48,12 @@ private class LightTreeErrorsCollector(private val tree: Tree) {
 
 }
 
-private data class OffsetTree(val tree: Tree, val offset: Int)
+private data class TreeWithOffset(val tree: Tree, val offset: Int)
 
 private data class VisitorState(
     val lastTree: Tree? = null,
     val visitedTrees: MutableSet<Tree> = mutableSetOf(),
-    val result: MutableList<OffsetTree> = mutableListOf()
+    val result: MutableList<TreeWithOffset> = mutableListOf()
 )
 
 private object FirTreesExtractVisitor : FirVisitor<Unit, VisitorState>() {
@@ -62,7 +62,7 @@ private object FirTreesExtractVisitor : FirVisitor<Unit, VisitorState>() {
         val currentTree = source.treeStructure
         val (lastTree, visitedTrees, result) = data
         val newData = if (lastTree !== currentTree && visitedTrees.add(currentTree)) {
-            val newTreeWithOffset = OffsetTree(currentTree, element.source?.startOffset ?: 0)
+            val newTreeWithOffset = TreeWithOffset(currentTree, element.source?.startOffset ?: 0)
             result.add(newTreeWithOffset)
             data.copy(lastTree = lastTree)
         } else {

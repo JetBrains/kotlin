@@ -759,7 +759,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CyclicGenericUpperBound::class
     }
 
-    abstract class DeprecatedTypeParameterSyntax : KtFirDiagnostic<KtTypeParameterList>() {
+    abstract class DeprecatedTypeParameterSyntax : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = DeprecatedTypeParameterSyntax::class
     }
 

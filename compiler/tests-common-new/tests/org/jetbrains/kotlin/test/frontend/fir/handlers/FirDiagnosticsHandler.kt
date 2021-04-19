@@ -113,8 +113,8 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 FirErrors.SYNTAX.on(FirRealPsiSourceElement(it)).toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
         } else {
-            collectLightTreeSyntaxErrors(firFile).map { node ->
-                FirErrors.SYNTAX.on(node).toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+            collectLightTreeSyntaxErrors(firFile).map { sourceElement ->
+                FirErrors.SYNTAX.on(sourceElement).toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
         }
 
