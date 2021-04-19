@@ -169,6 +169,6 @@ abstract class B3(i: Int) {
 }
 
 fun foo(a: B3) {
-    val a = B3(1)
-    val b = B1(2, "s")
+    val a = <error descr="[CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS] Cannot create an instance of an abstract class">B3(1)</error>
+    val b = <error descr="[CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS] Cannot create an instance of an abstract class">B1(2, "s")</error>
 }

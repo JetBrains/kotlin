@@ -2,8 +2,8 @@
 
 abstract class AbstractClass
 typealias Test1 = AbstractClass
-val test1 = Test1()
-val test1a = AbstractClass()
+val test1 = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Test1()<!>
+val test1a = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>AbstractClass()<!>
 
 annotation class AnnotationClass
 typealias Test2 = AnnotationClass

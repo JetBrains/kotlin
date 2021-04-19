@@ -82,6 +82,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val NO_THIS by error<PsiElement>()
     }
 
+    val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
+        val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS by error<KtExpression>()
+    }
+
     val SUPER by object : DiagnosticGroup("Super") {
         val SUPER_IS_NOT_AN_EXPRESSION by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val SUPER_NOT_AVAILABLE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
