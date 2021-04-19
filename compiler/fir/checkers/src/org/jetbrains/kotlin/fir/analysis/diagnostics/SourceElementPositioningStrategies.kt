@@ -178,6 +178,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.SAFE_ACCESS
     )
 
+    val USELESS_ELVIS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.USELESS_ELVIS,
+        PositioningStrategies.USELESS_ELVIS
+    )
+
     val RETURN_WITH_LABEL = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.RETURN_WITH_LABEL,
         PositioningStrategies.RETURN_WITH_LABEL

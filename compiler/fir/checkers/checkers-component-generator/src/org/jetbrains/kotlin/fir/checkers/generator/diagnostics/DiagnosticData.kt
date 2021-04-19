@@ -52,6 +52,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     CONST_MODIFIER,
     ARRAY_ACCESS,
     SAFE_ACCESS,
+    USELESS_ELVIS,
     NAME_OF_NAMED_ARGUMENT,
     VALUE_ARGUMENTS,
     SUPERTYPES_LIST,

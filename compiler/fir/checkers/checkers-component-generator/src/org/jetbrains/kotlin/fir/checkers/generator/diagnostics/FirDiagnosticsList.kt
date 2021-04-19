@@ -638,6 +638,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
         val NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION by warning<KtExpression>(PositioningStrategy.OPERATOR)
         val NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE by warning<KtExpression>(PositioningStrategy.OPERATOR)
+        val USELESS_ELVIS by warning<KtBinaryExpression>(PositioningStrategy.USELESS_ELVIS) {
+            parameter<ConeKotlinType>("receiverType")
+        }
+        val USELESS_ELVIS_RIGHT_IS_NULL by warning<KtBinaryExpression>(PositioningStrategy.USELESS_ELVIS)
     }
 
     val WHEN_EXPRESSIONS by object : DiagnosticGroup("When expressions") {

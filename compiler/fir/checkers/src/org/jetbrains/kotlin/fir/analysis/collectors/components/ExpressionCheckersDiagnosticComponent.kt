@@ -77,6 +77,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBasicExpressionCheckers.check(checkNotNullCall, data, reporter)
     }
 
+    override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(elvisExpression, data, reporter)
+    }
+
     override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: CheckerContext) {
         checkers.basicExpressionCheckers.check(safeCallExpression, data, reporter)
     }

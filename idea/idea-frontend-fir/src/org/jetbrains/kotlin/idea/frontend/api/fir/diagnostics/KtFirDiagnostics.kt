@@ -1265,6 +1265,15 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NotNullAssertionOnCallableReference::class
     }
 
+    abstract class UselessElvis : KtFirDiagnostic<KtBinaryExpression>() {
+        override val diagnosticClass get() = UselessElvis::class
+        abstract val receiverType: KtType
+    }
+
+    abstract class UselessElvisRightIsNull : KtFirDiagnostic<KtBinaryExpression>() {
+        override val diagnosticClass get() = UselessElvisRightIsNull::class
+    }
+
     abstract class NoElseInWhen : KtFirDiagnostic<KtWhenExpression>() {
         override val diagnosticClass get() = NoElseInWhen::class
         abstract val missingWhenCases: List<WhenMissingCase>

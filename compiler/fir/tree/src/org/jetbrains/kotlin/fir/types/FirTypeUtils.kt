@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -43,7 +42,12 @@ val FirTypeRef.isArrayType: Boolean
     get() =
         isBuiltinType(StandardClassIds.Array, false) ||
                 StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
-val FirExpression.isNullLiteral: Boolean get() = this is FirConstExpression<*> && this.value == null && this.source != null
+
+val FirExpression.isNullLiteral: Boolean
+    get() = this is FirConstExpression<*> &&
+            this.kind == ConstantValueKind.Null &&
+            this.value == null &&
+            this.source != null
 
 private val FirTypeRef.classLikeTypeOrNull: ConeClassLikeType?
     get() = when (this) {

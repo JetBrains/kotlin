@@ -24,8 +24,8 @@ fun main() {
     val x17 = <!UNRESOLVED_REFERENCE!>logger<!>::info<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>?::<!UNRESOLVED_REFERENCE!>print<!>?::<!UNRESOLVED_REFERENCE!>print<!>
 
     // It must be OK
-    val x18 = String?::hashCode ?: ::foo
-    val x19 = String::hashCode ?: ::foo
+    val x18 = String?::hashCode <!USELESS_ELVIS!>?: ::foo<!>
+    val x19 = String::hashCode <!USELESS_ELVIS!>?: ::foo<!>
     val x20 = String?::hashCode::hashCode
     val x21 = kotlin.String?::hashCode::hashCode
 }

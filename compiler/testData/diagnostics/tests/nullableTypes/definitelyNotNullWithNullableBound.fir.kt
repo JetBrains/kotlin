@@ -4,7 +4,7 @@
 fun <D> makeDefinitelyNotNull(arg: D?): D = TODO()
 
 fun <N : Number?> test(arg: N) {
-    makeDefinitelyNotNull(arg) ?: 1
+    makeDefinitelyNotNull(arg) <!USELESS_ELVIS!>?: 1<!>
 
     makeDefinitelyNotNull(arg)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 

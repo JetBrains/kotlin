@@ -62,5 +62,5 @@ fun k() {
 fun invokeTest(goodArgs: Array<String>) {
     J.staticFun(*goodArgs)
     J.staticFun(*args)
-    J.staticFun(*args ?: null)
+    J.staticFun(*args <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 }

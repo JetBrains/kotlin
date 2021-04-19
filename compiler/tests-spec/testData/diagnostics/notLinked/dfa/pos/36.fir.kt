@@ -137,7 +137,7 @@ fun case_10(x: Any?, z: Any, b: Boolean?) {
 // TESTCASE NUMBER: 11
 fun case_11(x: Any?, z: Any, b: Boolean?) {
     while (true) {
-        var y = x ?: if (b == true) continue<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> else if (!(b != false)) return else break ?: break::class
+        var y = x ?: if (b == true) continue<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> else if (!(b != false)) return else break <!USELESS_ELVIS!>?: break::class<!>
         z !== y && if (b == true) return else if (b === false) null!!else throw Exception()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
@@ -148,7 +148,7 @@ fun case_11(x: Any?, z: Any, b: Boolean?) {
 // TESTCASE NUMBER: 12
 fun case_12(x: Any?, z: Any, b: Boolean?) {
     while (true) {
-        var y = select(x) ?: if (b == true) continue<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> else if (!(b != false)) return else break ?: break::class
+        var y = select(x) ?: if (b == true) continue<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> else if (!(b != false)) return else break <!USELESS_ELVIS!>?: break::class<!>
         select(z) !== y && if (b == true) return else if (b === false) null!!else throw Exception()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
