@@ -234,7 +234,8 @@ public actual fun Char.isTitleCase(): Boolean {
 /**
  * Returns `true` if this character is an ISO control character.
  *
- * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL].
+ * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL],
+ * meaning the Char is in the range `'\u0000'..'\u001F'` or in the range `'\u007F'..'\u009F'`.
  *
  * @sample samples.text.Chars.isISOControl
  */
