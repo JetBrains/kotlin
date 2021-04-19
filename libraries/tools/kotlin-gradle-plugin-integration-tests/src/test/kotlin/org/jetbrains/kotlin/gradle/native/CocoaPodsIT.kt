@@ -20,11 +20,14 @@ import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.junit.AfterClass
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -45,6 +48,9 @@ class CocoaPodsIT : BaseGradleIT() {
 
     // We use Kotlin DSL. Earlier Gradle versions fail at accessors codegen.
     private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
+
+    override fun defaultBuildOptions(): BuildOptions =
+        super.defaultBuildOptions().copy(customEnvironmentVariables = mapOf("PATH" to getPathEnv()))
 
     val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
 
@@ -764,7 +770,8 @@ class CocoaPodsIT : BaseGradleIT() {
             hooks.addHook {
                 // Check that a built universal framework includes both device and simulator architectures.
                 val framework = fileInWorkingDir("build/cocoapods/framework/cocoapods.framework/cocoapods")
-                with(runProcess(listOf("file", framework.absolutePath), projectDir)) {
+                val env = mapOf("PATH" to getPathEnv())
+                with(runProcess(listOf("file", framework.absolutePath), projectDir, environmentVariables = env)) {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("\\(for architecture x86_64\\):\\s+current ar archive".toRegex()))
                     assertTrue(output.contains("\\(for architecture arm64\\):\\s+current ar archive".toRegex()))
@@ -943,7 +950,6 @@ class CocoaPodsIT : BaseGradleIT() {
         taskName: String,
         vararg args: String
     ) {
-        assumeTrue(KotlinCocoapodsPlugin.isAvailableToProduceSynthetic)
         testWithWrapper(taskName, *args)
     }
 
@@ -1214,6 +1220,7 @@ class CocoaPodsIT : BaseGradleIT() {
     ) {
         val process = ProcessBuilder(command, *args).apply {
             directory(workingDir)
+            environment()["PATH"] = getPathEnv()
             if (inheritIO) {
                 inheritIO()
             }
@@ -1390,6 +1397,120 @@ class CocoaPodsIT : BaseGradleIT() {
         @JvmStatic
         fun assumeItsMac() {
             assumeTrue(HostManager.hostIsMac)
+        }
+
+        @BeforeClass
+        @JvmStatic
+        fun installPodGen() {
+            if (cocoapodsInstallationRequired) {
+                if (cocoapodsInstallationAllowed) {
+                    WorkaroundForXcode12_3.apply()
+                    gem("install", "--user-install", "cocoapods", "cocoapods-generate")
+                    cocoapodsInstallationPath = File(getGemUserInstallationPath()).resolve("bin")
+                } else {
+                    fail(
+                        """
+                            Running CocoaPods integration tests requires cocoapods and cocoapods-generate to be installed.
+                            Please install them manually:
+                                gem install cocoapods cocoapods-generate
+                            Or re-run the tests with the 'installCocoapods=true' Gradle property.
+                        """.trimIndent()
+                    )
+                }
+            }
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun uninstallPodGen() {
+            // Do not remove CocoaPods if we didn't install it.
+            if (cocoapodsInstallationRequired && cocoapodsInstallationAllowed) {
+                val packagesToRemove = gem("list", "--no-versions").lineSequence().filter {
+                    it.startsWith("cocoapods")
+                }.toList()
+                try {
+                    gem("uninstall", "--user-install", "-x", *packagesToRemove.toTypedArray())
+                } finally {
+                    WorkaroundForXcode12_3.dispose()
+                }
+            }
+        }
+
+        private val cocoapodsInstallationRequired: Boolean = !isCocoapodsInstalled()
+        private val cocoapodsInstallationAllowed: Boolean = System.getProperty("installCocoapods").toBoolean()
+        private var cocoapodsInstallationPath: File? = null
+
+        private fun getPathEnv(): String {
+            val oldPath = System.getenv("PATH")
+            return cocoapodsInstallationPath?.let {
+                it.absolutePath + File.pathSeparator + oldPath
+            } ?: oldPath
+        }
+
+        private fun isCocoapodsInstalled(): Boolean {
+            val installed = gem("list", "--no-versions").lines()
+            return "cocoapods-generate" in installed && "cocoapods" in installed
+        }
+
+        private fun getGemUserInstallationPath(): String {
+            val installationDirLine = gem("environment").lineSequence().first {
+                it.contains("USER INSTALLATION DIRECTORY:")
+            }
+            return installationDirLine.substringAfter("USER INSTALLATION DIRECTORY:").trim()
+        }
+
+        private fun gem(vararg args: String): String {
+            val process = ProcessBuilder("gem", *args).start()
+            val finished = process.waitFor(30, TimeUnit.MINUTES)
+            val output = process.inputStream.use { it.reader().readText() }
+
+            check(finished && process.exitValue() == 0) {
+                if (!finished) {
+                    process.destroyForcibly()
+                }
+
+                val argsString = args.joinToString(separator = " ")
+                val errors = process.errorStream.use { it.reader().readText() }
+                println("'gem $argsString' stdout:\n$errors")
+                println("'gem $argsString' stderr:\n$output")
+
+                if (finished) {
+                    "Process 'gem $argsString' exited with error code ${process.exitValue()}. See log for details."
+                } else {
+                    "Process 'gem $argsString ' killed by timeout. See log for details"
+                }
+            }
+            return output
+        }
+
+        // Workaround the issue with Ruby paths for Xcode 12.3.
+        // See: https://github.com/CocoaPods/CocoaPods/issues/10286#issuecomment-750403566
+        private object WorkaroundForXcode12_3 {
+            private val xcodeRubyRoot = File(
+                "/Applications/Xcode.app/Contents/Developer/Platforms/" +
+                        "MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library" +
+                        "/Frameworks/Ruby.framework/Versions/2.6/usr/include/ruby-2.6.0"
+            )
+            private val original = xcodeRubyRoot.resolve("universal-darwin20").toPath()
+            private var link: Path? = null
+
+            fun apply() {
+                val linkFile = xcodeRubyRoot.resolve("universal-darwin19")
+                if (!linkFile.exists() && Files.exists(original)) {
+                    Files.createSymbolicLink(linkFile.toPath(), original)
+                    linkFile.deleteOnExit()
+                    link = linkFile.toPath()
+                }
+            }
+
+            fun dispose() {
+                link?.let { link ->
+                    // We created the link, so now we should delete it.
+                    if (Files.isSymbolicLink(link) && Files.readSymbolicLink(link) == original) {
+                        Files.delete(link)
+                    }
+                }
+            }
         }
     }
 }
