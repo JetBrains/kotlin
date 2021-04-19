@@ -144,9 +144,6 @@ inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapToNullable(des
     return destination
 }
 
-fun <E : Enum<E>> min(a: E, b: E): E = if (a < b) a else b
-fun <E : Comparable<E>> min(a: E, b: E): E = if (a < b) a else b
-
 inline fun <T, R> Iterable<T>.same(extractor: (T) -> R): Boolean {
     val iterator = iterator()
     val firstValue = extractor(iterator.next())

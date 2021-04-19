@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.repl.*
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicitsExceptInnermost
-import org.jetbrains.kotlin.utils.addToStdlib.min
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -301,7 +300,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
                 .map { KotlinType(it.get().scriptClassFQName) }
                 .toList()
 
-        val skipFirstTime = allPreviousLines.subList(0, min(1, allPreviousLines.size))
+        val skipFirstTime = allPreviousLines.subList(0, minOf(1, allPreviousLines.size))
         val skipAlways =
             if (allPreviousLines.isEmpty()) emptyList()
             else allPreviousLines.subList(1, allPreviousLines.size)

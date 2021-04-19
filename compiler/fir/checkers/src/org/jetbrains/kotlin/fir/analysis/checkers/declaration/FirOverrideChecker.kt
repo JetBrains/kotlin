@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.utils.addToStdlib.min
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirOverrideChecker : FirClassChecker() {
@@ -69,7 +68,7 @@ object FirOverrideChecker : FirClassChecker() {
             ?: return this
 
         val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-        val size = min(overrideDeclaration.typeParameters.size, parametersOwner.typeParameters.size)
+        val size = minOf(overrideDeclaration.typeParameters.size, parametersOwner.typeParameters.size)
 
         for (it in 0 until size) {
             val to = overrideDeclaration.typeParameters[it]

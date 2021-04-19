@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.addToStdlib.min
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
@@ -36,7 +35,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             ?.fir.safeAs<FirTypeParameterRefsOwner>()
             ?: return
 
-        val count = min(calleeFir.typeParameters.size, expression.typeArguments.size)
+        val count = minOf(calleeFir.typeParameters.size, expression.typeArguments.size)
 
         if (count == 0) {
             return
@@ -125,7 +124,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             ?.safeAs<ConeClassLikeType>()
             ?: return
 
-        val count = min(protoConstructor.typeParameters.size, actualConstructor.typeArguments.size)
+        val count = minOf(protoConstructor.typeParameters.size, actualConstructor.typeArguments.size)
 
         if (count == 0) {
             return
@@ -191,7 +190,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             ?.fir.safeAs<FirRegularClass>()
             ?: return false
 
-        val count = min(prototypeClass.typeParameters.size, type.typeArguments.size)
+        val count = minOf(prototypeClass.typeParameters.size, type.typeArguments.size)
 
         if (count == 0) {
             return false
