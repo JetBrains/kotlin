@@ -101,6 +101,20 @@ class KotlinNativeCompilation(
 
     val binariesTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "binaries")
+
+    override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+        with(target.project) {
+            // Kotlin native does not support either 'compileOnly' or 'runtimeOnly' configurations
+            dependencies.add(
+                implementationConfigurationName,
+                project.files({ other.output.classesDirs })
+            )
+
+            configurations.named(implementationConfigurationName).configure {
+                it.extendsFrom(configurations.findByName(other.implementationConfigurationName))
+            }
+        }
+    }
 }
 
 class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, val konanTargets: List<KonanTarget>, name: String) :
