@@ -21,7 +21,7 @@ val a = <!TYPE_ARGUMENTS_NOT_ALLOWED!>rest<Int><!>.<!UNRESOLVED_REFERENCE!>MyCla
 val b = Best.<!UNRESOLVED_REFERENCE!>MyClass<!><String>
 
 class B<E>
-class C<F<!SYNTAX{PSI}!><<!><!SYNTAX{PSI}!>Boolean<!><!SYNTAX{PSI}!>><!><!SYNTAX{PSI}!>><!> <!SYNTAX{PSI}!>:<!> <!SYNTAX{PSI}!>B<!><!SYNTAX{PSI}!><<!><!SYNTAX{PSI}!>F<!><!SYNTAX{PSI}!><<!><!SYNTAX{PSI}!>Boolean<!><!SYNTAX{PSI}!>><!><!SYNTAX{PSI}!>><!><!SYNTAX{PSI}!>(<!><!SYNTAX{PSI}!>)<!>
+class C<F<!SYNTAX!><<!><!SYNTAX!>Boolean<!><!SYNTAX!>><!><!SYNTAX!>><!> <!SYNTAX!>:<!> <!SYNTAX!>B<!><!SYNTAX!><<!><!SYNTAX!>F<!><!SYNTAX!><<!><!SYNTAX!>Boolean<!><!SYNTAX!>><!><!SYNTAX!>><!><!SYNTAX!>(<!><!SYNTAX!>)<!>
 
 fun <G> gest() {}
 
