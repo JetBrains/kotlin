@@ -34,7 +34,7 @@ fun case_2(x: Any?) {
  */
 fun case_3(x: Any?) {
     while (true) {
-        x ?: return ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        x ?: return <!USELESS_ELVIS!>?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!><!>
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>

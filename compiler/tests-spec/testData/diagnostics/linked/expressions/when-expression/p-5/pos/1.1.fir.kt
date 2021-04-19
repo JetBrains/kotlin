@@ -125,7 +125,7 @@ fun case_10(value_1: Int, value_2: String?, value_3: String?) {
     when (value_1) {
         1 -> value_2 ?: true
         2 -> value_2 ?: value_3 ?: true
-        3 -> value_2!! ?: true
+        3 -> value_2!! <!USELESS_ELVIS!>?: true<!>
     }
 }
 

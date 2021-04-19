@@ -555,6 +555,17 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val USELESS_ELVIS = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markRange(tree.operationReference(node) ?: node, tree.lastChild(node) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
+
     val RETURN_WITH_LABEL = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

@@ -8,9 +8,9 @@ fun test() {
     use({ }<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>);
 
     // KT-KT-9070
-    { } ?: 1
-    use({ 2 } ?: 1);
+    { } <!USELESS_ELVIS!>?: 1<!>
+    use({ 2 } <!USELESS_ELVIS!>?: 1<!>);
 
-    1 ?: { }
-    use(1 ?: { })
+    1 <!USELESS_ELVIS!>?: { }<!>
+    use(1 <!USELESS_ELVIS!>?: { }<!>)
 }

@@ -36,28 +36,28 @@ fun test() {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    val v0 = platformNN ?: J()
-    platformNN ?: J()
+    val v0 = platformNN <!USELESS_ELVIS!>?: J()<!>
+    platformNN <!USELESS_ELVIS!>?: J()<!>
     platformN ?: J()
     platformJ ?: J()
 
     if (platformNN != null) {
-        platformNN ?: J()
+        platformNN <!USELESS_ELVIS!>?: J()<!>
     }
 
     if (platformN != null) {
-        platformN ?: J()
+        platformN <!USELESS_ELVIS!>?: J()<!>
     }
 
     if (platformJ != null) {
-        platformJ ?: J()
+        platformJ <!USELESS_ELVIS!>?: J()<!>
     }
 
-    takeNotNull(J.staticNN ?: J())
+    takeNotNull(J.staticNN <!USELESS_ELVIS!>?: J()<!>)
     takeNotNull(J.staticN ?: J())
     takeNotNull(J.staticJ ?: J())
     takeNotNull(J.getAny() ?: J())
-    takeNotNull(J.getNNAny() ?: J())
+    takeNotNull(J.getNNAny() <!USELESS_ELVIS!>?: J()<!>)
     takeNotNull(J.getNAny() ?: J())
 
     val x = <!UNRESOLVED_REFERENCE!>unresolved<!> ?: null

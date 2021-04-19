@@ -5,12 +5,12 @@ fun <T: Any?> test1(t: Any?): Any {
 }
 
 fun <T: Any> test2(t: Any?): Any {
-    return t as T ?: ""
+    return t as T <!USELESS_ELVIS!>?: ""<!>
 }
 
 fun <T: Any?> test3(t: Any?): Any {
     if (t != null) {
-        return t ?: ""
+        return t <!USELESS_ELVIS!>?: ""<!>
     }
 
     return 1
@@ -28,11 +28,11 @@ fun test() {
     val x: String? = null
     takeNotNull(dependOn(x) ?: "")
     takeNotNull(dependOn(dependOn(x)) ?: "")
-    takeNotNull(dependOn(dependOn(x as String)) ?: "")
+    takeNotNull(dependOn(dependOn(x as String)) <!USELESS_ELVIS!>?: ""<!>)
 
     if (x != null) {
-        takeNotNull(dependOn(x) ?: "")
-        takeNotNull(dependOn(dependOn(x)) ?: "")
+        takeNotNull(dependOn(x) <!USELESS_ELVIS!>?: ""<!>)
+        takeNotNull(dependOn(dependOn(x)) <!USELESS_ELVIS!>?: ""<!>)
         takeNotNull(dependOn(dependOn(x) as? String) ?: "")
     }
 
