@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.DeclarationCopyBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
@@ -79,7 +80,7 @@ internal class ReanalyzableFunctionStructureElement(
         towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzableFunctionStructureElement {
         val originalFunction = firSymbol.fir as FirSimpleFunction
-        val newFunction = firIdeProvider.buildFunctionWithBody(newKtDeclaration, originalFunction) as FirSimpleFunction
+        val newFunction = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalFunction) as FirSimpleFunction
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalFunction, newFunction) {
             firLazyDeclarationResolver.lazyResolveDeclaration(
@@ -121,7 +122,7 @@ internal class ReanalyzablePropertyStructureElement(
         towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzablePropertyStructureElement {
         val originalProperty = firSymbol.fir
-        val newProperty = firIdeProvider.buildPropertyWithBody(newKtDeclaration, originalProperty)
+        val newProperty = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalProperty) as FirProperty
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalProperty, newProperty) {
             firLazyDeclarationResolver.lazyResolveDeclaration(

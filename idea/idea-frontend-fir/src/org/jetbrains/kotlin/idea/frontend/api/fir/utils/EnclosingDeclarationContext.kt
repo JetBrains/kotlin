@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
@@ -13,30 +14,30 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import kotlin.reflect.KClass
 
 internal sealed class EnclosingDeclarationContext {
+    abstract val fakeKtEnclosingDeclaration: KtDeclaration
+    abstract val originalKtEnclosingDeclaration: KtDeclaration
+
     companion object {
+        private fun KtDeclaration.canBeEnclosingDeclaration(): Boolean = when (this) {
+            is KtNamedFunction -> isTopLevel || containingClassOrObject?.isLocal == false
+            is KtProperty -> isTopLevel || containingClassOrObject?.isLocal == false
+            is KtClassOrObject -> !isLocal
+            is KtTypeAlias -> isTopLevel() || containingClassOrObject?.isLocal == false
+            else -> false
+        }
+
         fun detect(originalFile: KtFile, positionInFakeFile: KtElement): EnclosingDeclarationContext {
-            val fakeFunction = positionInFakeFile.parentsOfType<KtNamedFunction>().firstOrNull {
-                it.isTopLevel || it.containingClassOrObject?.isLocal == false
+            val fakeKtDeclaration = positionInFakeFile.parentsOfType<KtNamedDeclaration>().firstOrNull { ktDeclaration ->
+                ktDeclaration.canBeEnclosingDeclaration()
             }
-            if (fakeFunction != null) {
-                val originalFunction = originalFile.findDeclarationOfTypeAt<KtNamedFunction>(fakeFunction.textOffset)
-                    ?: error("Cannot find original function matching to ${fakeFunction.getElementTextInContext()} in $originalFile")
-                recordOriginalDeclaration(originalFunction, fakeFunction)
-                return FunctionContext(fakeFunction, originalFunction)
-            }
-
-            val fakeProperty = positionInFakeFile.parentsOfType<KtProperty>().firstOrNull {
-                it.isTopLevel || it.containingClassOrObject?.isLocal == false
-            }
-
-            if (fakeProperty != null) {
-                val originalProperty = originalFile.findDeclarationOfTypeAt<KtProperty>(fakeProperty.textOffset)
-                    ?: error("Cannot find original property matching to ${fakeProperty.getElementTextInContext()} in $originalFile")
-                recordOriginalDeclaration(originalProperty, fakeProperty)
-                return PropertyContext(fakeProperty, originalProperty)
+            if (fakeKtDeclaration != null) {
+                val originalDeclaration = originalFile.findDeclarationOfTypeAt(fakeKtDeclaration.textOffset, fakeKtDeclaration::class)
+                    ?: error("Cannot find original function matching to ${fakeKtDeclaration.getElementTextInContext()} in $originalFile")
+                recordOriginalDeclaration(originalDeclaration, fakeKtDeclaration)
+                return EnclosingDeclarationContextImpl(fakeKtDeclaration, originalDeclaration)
             }
 
             error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextInContext()}")
@@ -55,41 +56,24 @@ internal sealed class EnclosingDeclarationContext {
     }
 }
 
-internal class FunctionContext(
-    val fakeEnclosingFunction: KtNamedFunction,
-    val originalEnclosingFunction: KtNamedFunction
+internal class EnclosingDeclarationContextImpl(
+    override val fakeKtEnclosingDeclaration: KtDeclaration,
+    override val originalKtEnclosingDeclaration: KtDeclaration
 ) : EnclosingDeclarationContext()
 
-internal class PropertyContext(
-    val fakeEnclosingProperty: KtProperty,
-    val originalEnclosingProperty: KtProperty
-) : EnclosingDeclarationContext()
 
-internal val EnclosingDeclarationContext.fakeEnclosingDeclaration: KtCallableDeclaration
-    get() = when (this) {
-        is FunctionContext -> fakeEnclosingFunction
-        is PropertyContext -> fakeEnclosingProperty
-    }
 
 internal fun EnclosingDeclarationContext.recordCompletionContext(originalFirFile: FirFile, firResolveState: FirModuleResolveState) {
-    when (this) {
-        is FunctionContext -> LowLevelFirApiFacadeForCompletion.recordCompletionContextForFunction(
-            originalFirFile,
-            fakeEnclosingFunction,
-            originalEnclosingFunction,
-            state = firResolveState
-        )
-
-        is PropertyContext -> LowLevelFirApiFacadeForCompletion.recordCompletionContextForProperty(
-            originalFirFile,
-            fakeEnclosingProperty,
-            originalEnclosingProperty,
-            state = firResolveState
-        )
-    }
+    LowLevelFirApiFacadeForCompletion.recordCompletionContextForDeclaration(
+        originalFirFile,
+        fakeKtEnclosingDeclaration,
+        originalKtEnclosingDeclaration,
+        state = firResolveState,
+        fakeContainingFile = fakeKtEnclosingDeclaration.containingKtFile
+    )
 }
 
-private inline fun <reified T : KtElement> KtFile.findDeclarationOfTypeAt(offset: Int): T? =
-    findElementAt(offset)
-        ?.getNonStrictParentOfType<T>()
-        ?.takeIf { it.textOffset == offset }
+private fun <T : KtElement> KtFile.findDeclarationOfTypeAt(offset: Int, declarationType: KClass<T>): T? {
+    val elementAtOffset = findElementAt(offset) ?: return null
+    return PsiTreeUtil.getParentOfType(elementAtOffset, declarationType.java, false)?.takeIf { it.textOffset == offset }
+}

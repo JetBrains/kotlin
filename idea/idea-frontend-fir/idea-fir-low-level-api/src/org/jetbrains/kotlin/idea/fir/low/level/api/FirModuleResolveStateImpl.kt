@@ -157,19 +157,17 @@ internal class FirModuleResolveStateImpl(
     }
 
     override fun lazyResolveDeclarationForCompletion(
-        firFunction: FirDeclaration,
+        firDeclaration: FirDeclaration,
         containerFirFile: FirFile,
-        firIdeProvider: FirProvider,
-        toPhase: FirResolvePhase,
     ) {
         firFileBuilder.runCustomResolveWithPCECheck(containerFirFile, rootModuleSession.cache) {
             firLazyDeclarationResolver.runLazyResolveWithoutLock(
-                firFunction,
+                firDeclaration,
                 rootModuleSession.cache,
                 containerFirFile,
-                firIdeProvider,
-                fromPhase = firFunction.resolvePhase,
-                toPhase,
+                containerFirFile.session.firIdeProvider,
+                fromPhase = firDeclaration.resolvePhase,
+                toPhase = FirResolvePhase.BODY_RESOLVE,
                 towerDataContextCollector = collector,
                 checkPCE = true
             )

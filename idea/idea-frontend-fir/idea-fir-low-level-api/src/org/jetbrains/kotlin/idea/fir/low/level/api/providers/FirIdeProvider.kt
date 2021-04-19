@@ -91,32 +91,6 @@ internal class FirIdeProvider(
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
 
-    // TODO move out of here
-    // used only for completion
-    fun buildFunctionWithBody(
-        ktNamedFunction: KtNamedFunction,
-        original: FirFunction<*>,
-    ): FirFunction<*> {
-        return RawFirFragmentForLazyBodiesBuilder.build(
-            session = original.session,
-            baseScopeProvider = original.session.firIdeProvider.kotlinScopeProvider,
-            designation = original.collectDesignation().fullDesignation,
-            declaration = ktNamedFunction
-        ) as FirFunction<*>
-    }
-
-    fun buildPropertyWithBody(
-        ktNamedFunction: KtProperty,
-        original: FirProperty,
-    ): FirProperty {
-        return RawFirFragmentForLazyBodiesBuilder.build(
-            session = original.session,
-            baseScopeProvider = original.session.firIdeProvider.kotlinScopeProvider,
-            designation = original.collectDesignation().fullDesignation,
-            declaration = ktNamedFunction
-        ) as FirProperty
-    }
-
     @FirProviderInternals
     override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
         TODO()

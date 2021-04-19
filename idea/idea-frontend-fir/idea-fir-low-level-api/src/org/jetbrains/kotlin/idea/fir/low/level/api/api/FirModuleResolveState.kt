@@ -83,10 +83,8 @@ abstract class FirModuleResolveState {
 
     // todo temporary, used only in completion
     internal abstract fun lazyResolveDeclarationForCompletion(
-        firFunction: FirDeclaration,
+        firDeclaration: FirDeclaration,
         containerFirFile: FirFile,
-        firIdeProvider: FirProvider,
-        toPhase: FirResolvePhase,
     )
 
     internal abstract fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
