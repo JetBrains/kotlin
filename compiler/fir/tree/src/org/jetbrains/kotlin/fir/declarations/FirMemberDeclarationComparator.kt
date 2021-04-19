@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.Name
 object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
     // Comparing different kinds of callable members by assigning distinct priorities to those members.
     object TypeAndNameComparator : Comparator<FirMemberDeclaration> {
-        private val FirMemberDeclaration.priority : Int
+        private val FirMemberDeclaration.priority: Int
             get() = when (this) {
                 is FirEnumEntry -> 7
                 is FirConstructor -> 6
@@ -21,10 +21,9 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                 is FirFunction<*> -> 3
                 is FirClass<*> -> 2
                 is FirTypeAlias -> 1
-                else -> 0
             }
 
-        private val FirMemberDeclaration.name : Name
+        private val FirMemberDeclaration.name: Name
             get() = when (this) {
                 is FirCallableMemberDeclaration<*> ->
                     this.symbol.callableId.callableName
@@ -32,8 +31,6 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                     this.classId.shortClassName
                 is FirTypeAlias ->
                     this.name
-                else ->
-                    error("Unsupported name retrieval for ${render()}")
             }
 
         override fun compare(a: FirMemberDeclaration, b: FirMemberDeclaration): Int {

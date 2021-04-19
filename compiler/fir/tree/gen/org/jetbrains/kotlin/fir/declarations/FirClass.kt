@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirClass<F : FirClass<F>> : FirClassLikeDeclaration<F>, FirStatement, FirTypeParameterRefsOwner {
+sealed interface FirClass<F : FirClass<F>> : FirClassLikeDeclaration<F>, FirStatement, FirTypeParameterRefsOwner {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase

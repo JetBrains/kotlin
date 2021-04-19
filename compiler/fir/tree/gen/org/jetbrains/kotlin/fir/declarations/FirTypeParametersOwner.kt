@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirTypeParametersOwner : FirTypeParameterRefsOwner {
+sealed interface FirTypeParametersOwner : FirTypeParameterRefsOwner {
     override val source: FirSourceElement?
     override val typeParameters: List<FirTypeParameter>
 

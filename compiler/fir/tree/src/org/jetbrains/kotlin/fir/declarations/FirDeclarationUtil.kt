@@ -180,7 +180,6 @@ val FirMemberDeclaration.containerSource: SourceElement?
         is FirCallableMemberDeclaration<*> -> containerSource
         is FirRegularClass -> sourceElement
         is FirTypeAlias -> sourceElement
-        else -> null
     }
 
 private object IsFromVarargKey : FirDeclarationDataKey()

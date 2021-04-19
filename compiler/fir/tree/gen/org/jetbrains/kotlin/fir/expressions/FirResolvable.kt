@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirResolvable : FirElement {
+sealed interface FirResolvable : FirElement {
     override val source: FirSourceElement?
     val calleeReference: FirReference
 

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTargetElement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirStatement {
+sealed interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTargetElement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirStatement {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase

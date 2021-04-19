@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirContractDescriptionOwner : FirElement {
+sealed interface FirContractDescriptionOwner : FirElement {
     override val source: FirSourceElement?
     val contractDescription: FirContractDescription
 

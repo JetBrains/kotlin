@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirJump<E : FirTargetElement> : FirExpression() {
+sealed class FirJump<E : FirTargetElement> : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>

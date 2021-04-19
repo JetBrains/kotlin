@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirCall : FirStatement {
+sealed interface FirCall : FirStatement {
     override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
     val argumentList: FirArgumentList
