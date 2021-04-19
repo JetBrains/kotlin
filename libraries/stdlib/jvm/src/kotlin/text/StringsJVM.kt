@@ -58,6 +58,8 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): B
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ *
+ * @sample samples.text.Strings.replace
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
@@ -74,6 +76,8 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
+ *
+ * @sample samples.text.Strings.replace
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {

@@ -131,10 +131,21 @@ public actual fun CharSequence.repeat(n: Int): String {
     }
 }
 
+/**
+ * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
+ * with the specified [newValue] string.
+ *
+ * @sample samples.text.Strings.replace
+ */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
     nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "gui" else "gu"), Regex.escapeReplacement(newValue))
 
+/**
+ * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ *
+ * @sample samples.text.Strings.replace
+ */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
     nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "gui" else "gu"), newChar.toString())
