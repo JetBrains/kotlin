@@ -266,7 +266,7 @@ fun inForLoop(x: Any?) {
     if (x is Array<*>) {
         for (i in x) {}
     }
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: hasNext"><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: iterator"><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: next">for (i in x) {}</error></error></error>
+    for (i in <error descr="[ITERATOR_MISSING] ">x</error>) {}
 }
 
 class ExplicitAccessorForAnnotation {

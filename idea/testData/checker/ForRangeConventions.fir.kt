@@ -68,10 +68,10 @@ abstract class Range1() {
 }
 
 fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRange4: NotRange4, notRange5: NotRange5, notRange6: NotRange6, notRange7: NotRange7, range0: Range0, range1: Range1) {
-  <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: hasNext"><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: iterator"><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: next">for (i in notRange1)</error></error></error>;
-  <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: hasNext"><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: next">for (i in notRange2)</error></error>;
-  <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: next">for (i in notRange3)</error>;
-  <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: hasNext">for (i in notRange4)</error>;
+  for (i in <error descr="[ITERATOR_MISSING] ">notRange1</error>);
+  for (i in <error descr="[HAS_NEXT_MISSING] "><error descr="[NEXT_MISSING] ">notRange2</error></error>);
+  for (i in <error descr="[NEXT_MISSING] ">notRange3</error>);
+  for (i in <error descr="[HAS_NEXT_MISSING] ">notRange4</error>);
   for (i in notRange5);
   for (i in notRange6);
   for (i in notRange7);
