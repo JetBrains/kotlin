@@ -50,7 +50,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val ILLEGAL_CONST_EXPRESSION by error<PsiElement>()
         val ILLEGAL_UNDERSCORE by error<PsiElement>()
         val EXPRESSION_EXPECTED by error<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
-        val ASSIGNMENT_IN_EXPRESSION_CONTEXT by error<FirSourceElement, KtBinaryExpression>()
+        val ASSIGNMENT_IN_EXPRESSION_CONTEXT by error<KtBinaryExpression>()
         val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error<PsiElement>()
         val NOT_A_LOOP_LABEL by error<PsiElement>()
         val VARIABLE_EXPECTED by error<PsiElement>()
@@ -185,7 +185,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<KtModifierKeywordToken>("modifier")
             parameter<String>("target")
         }
-        val OPERATOR_MODIFIER_REQUIRED by error<FirSourceElement, PsiElement> {
+        val OPERATOR_MODIFIER_REQUIRED by error<PsiElement> {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
             parameter<String>("name")
         }
@@ -260,13 +260,13 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val ASSIGN_OPERATOR_AMBIGUITY by error<PsiElement> {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
-        val ITERATOR_AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val ITERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
-        val HAS_NEXT_FUNCTION_AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val HAS_NEXT_FUNCTION_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
-        val NEXT_AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val NEXT_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
     }
@@ -484,7 +484,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
 
         val FUNCTION_DECLARATION_WITH_NO_NAME by error<KtFunction>(PositioningStrategy.DECLARATION_SIGNATURE)
-        val ANONYMOUS_FUNCTION_WITH_NAME by error<FirSourceElement, KtFunction>()
+        val ANONYMOUS_FUNCTION_WITH_NAME by error<KtFunction>()
 
         // TODO: val ANONYMOUS_FUNCTION_WITH_NAME by error1<PsiElement, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
         val ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE by error<KtParameter>(PositioningStrategy.PARAMETER_DEFAULT_VALUE)
@@ -625,7 +625,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("operator")
             parameter<FirExpression>("rhs")
         }
-        val ITERATOR_ON_NULLABLE by error<FirSourceElement, KtExpression>()
+        val ITERATOR_ON_NULLABLE by error<KtExpression>()
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {
             parameter<ConeKotlinType>("receiverType")
         }
@@ -662,25 +662,25 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val CONVENTIONS by object : DiagnosticGroup("Conventions") {
         val NO_GET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
         val NO_SET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
-        val ITERATOR_MISSING by error<FirSourceElement, KtExpression>()
-        val HAS_NEXT_MISSING by error<FirSourceElement, KtExpression>()
-        val NEXT_MISSING by error<FirSourceElement, KtExpression>()
-        val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
+        val ITERATOR_MISSING by error<KtExpression>()
+        val HAS_NEXT_MISSING by error<KtExpression>()
+        val NEXT_MISSING by error<KtExpression>()
+        val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error<KtExpression> {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
-        val NEXT_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
+        val NEXT_NONE_APPLICABLE by error<KtExpression> {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
-        val DELEGATE_SPECIAL_FUNCTION_MISSING by error<FirSourceElement, KtExpression> {
+        val DELEGATE_SPECIAL_FUNCTION_MISSING by error<KtExpression> {
             parameter<String>("expectedFunctionSignature")
             parameter<ConeKotlinType>("delegateType")
             parameter<String>("description")
         }
-        val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error<FirSourceElement, KtExpression> {
+        val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error<KtExpression> {
             parameter<String>("expectedFunctionSignature")
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
-        val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
+        val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error<KtExpression> {
             parameter<String>("expectedFunctionSignature")
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }

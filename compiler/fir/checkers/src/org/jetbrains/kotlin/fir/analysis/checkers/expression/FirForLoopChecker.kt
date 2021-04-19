@@ -86,10 +86,10 @@ object FirForLoopChecker : FirBlockChecker() {
         reporter: DiagnosticReporter,
         reportSource: FirSourceElement?,
         context: CheckerContext,
-        ambiguityFactory: FirDiagnosticFactory1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>,
-        missingFactory: FirDiagnosticFactory0<FirSourceElement, KtExpression>,
-        noneApplicableFactory: FirDiagnosticFactory1<FirSourceElement, KtExpression, Collection<AbstractFirBasedSymbol<*>>>? = null,
-        unsafeCallFactory: FirDiagnosticFactory0<FirSourceElement, KtExpression>? = null,
+        ambiguityFactory: FirDiagnosticFactory1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>,
+        missingFactory: FirDiagnosticFactory0<KtExpression>,
+        noneApplicableFactory: FirDiagnosticFactory1<KtExpression, Collection<AbstractFirBasedSymbol<*>>>? = null,
+        unsafeCallFactory: FirDiagnosticFactory0<KtExpression>? = null,
     ): Boolean {
         when (val calleeReference = call.calleeReference) {
             is FirErrorNamedReference -> {

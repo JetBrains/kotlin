@@ -78,7 +78,7 @@ object FirErrors {
     val ILLEGAL_CONST_EXPRESSION by error0<PsiElement>()
     val ILLEGAL_UNDERSCORE by error0<PsiElement>()
     val EXPRESSION_EXPECTED by error0<PsiElement>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
-    val ASSIGNMENT_IN_EXPRESSION_CONTEXT by error0<FirSourceElement, KtBinaryExpression>()
+    val ASSIGNMENT_IN_EXPRESSION_CONTEXT by error0<KtBinaryExpression>()
     val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error0<PsiElement>()
     val NOT_A_LOOP_LABEL by error0<PsiElement>()
     val VARIABLE_EXPECTED by error0<PsiElement>()
@@ -174,7 +174,7 @@ object FirErrors {
     val INCOMPATIBLE_MODIFIERS by error2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val REDUNDANT_OPEN_IN_INTERFACE by warning0<KtModifierListOwner>(SourceElementPositioningStrategies.OPEN_MODIFIER)
     val WRONG_MODIFIER_TARGET by error2<PsiElement, KtModifierKeywordToken, String>()
-    val OPERATOR_MODIFIER_REQUIRED by error2<FirSourceElement, PsiElement, FirNamedFunctionSymbol, String>()
+    val OPERATOR_MODIFIER_REQUIRED by error2<PsiElement, FirNamedFunctionSymbol, String>()
 
     // Inline classes
     val INLINE_CLASS_NOT_TOP_LEVEL by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
@@ -210,9 +210,9 @@ object FirErrors {
     // Ambiguity
     val OVERLOAD_RESOLUTION_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val ASSIGN_OPERATOR_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>()
-    val ITERATOR_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val HAS_NEXT_FUNCTION_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val NEXT_AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val ITERATOR_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val HAS_NEXT_FUNCTION_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val NEXT_AMBIGUITY by error1<PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
 
     // Types & type parameters
     val TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
@@ -297,7 +297,7 @@ object FirErrors {
     val PRIVATE_FUNCTION_WITH_NO_BODY by error1<KtFunction, FirMemberDeclaration>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val NON_MEMBER_FUNCTION_NO_BODY by error1<KtFunction, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val FUNCTION_DECLARATION_WITH_NO_NAME by error0<KtFunction>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
-    val ANONYMOUS_FUNCTION_WITH_NAME by error0<FirSourceElement, KtFunction>()
+    val ANONYMOUS_FUNCTION_WITH_NAME by error0<KtFunction>()
     val ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE by error0<KtParameter>(SourceElementPositioningStrategies.PARAMETER_DEFAULT_VALUE)
     val USELESS_VARARG_ON_PARAMETER by warning0<KtParameter>()
     val MULTIPLE_VARARG_PARAMETERS by error0<KtParameter>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
@@ -367,7 +367,7 @@ object FirErrors {
     val UNSAFE_IMPLICIT_INVOKE_CALL by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNSAFE_INFIX_CALL by error3<KtExpression, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNSAFE_OPERATOR_CALL by error3<KtExpression, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val ITERATOR_ON_NULLABLE by error0<FirSourceElement, KtExpression>()
+    val ITERATOR_ON_NULLABLE by error0<KtExpression>()
     val UNNECESSARY_SAFE_CALL by warning1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.SAFE_ACCESS)
     val UNEXPECTED_SAFE_CALL by error0<PsiElement>(SourceElementPositioningStrategies.SAFE_ACCESS)
     val UNNECESSARY_NOT_NULL_ASSERTION by warning1<KtExpression, ConeKotlinType>(SourceElementPositioningStrategies.OPERATOR)
@@ -388,14 +388,14 @@ object FirErrors {
     // Conventions
     val NO_GET_METHOD by error0<KtArrayAccessExpression>(SourceElementPositioningStrategies.ARRAY_ACCESS)
     val NO_SET_METHOD by error0<KtArrayAccessExpression>(SourceElementPositioningStrategies.ARRAY_ACCESS)
-    val ITERATOR_MISSING by error0<FirSourceElement, KtExpression>()
-    val HAS_NEXT_MISSING by error0<FirSourceElement, KtExpression>()
-    val NEXT_MISSING by error0<FirSourceElement, KtExpression>()
-    val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error1<FirSourceElement, KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
-    val NEXT_NONE_APPLICABLE by error1<FirSourceElement, KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
-    val DELEGATE_SPECIAL_FUNCTION_MISSING by error3<FirSourceElement, KtExpression, String, ConeKotlinType, String>()
-    val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error2<FirSourceElement, KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
-    val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error2<FirSourceElement, KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
+    val ITERATOR_MISSING by error0<KtExpression>()
+    val HAS_NEXT_MISSING by error0<KtExpression>()
+    val NEXT_MISSING by error0<KtExpression>()
+    val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error1<KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
+    val NEXT_NONE_APPLICABLE by error1<KtExpression, Collection<AbstractFirBasedSymbol<*>>>()
+    val DELEGATE_SPECIAL_FUNCTION_MISSING by error3<KtExpression, String, ConeKotlinType, String>()
+    val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error2<KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
+    val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error2<KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
 
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY by error0<KtTypeAlias>()
