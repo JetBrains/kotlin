@@ -750,6 +750,9 @@ private fun KotlinStubs.mapType(
         require(cStructType != null) { renderCompilerError(location) }
 
         if (managedTypeAnnotation) {
+            // TODO: this should probably be better abstracted in a plugin.
+            // For Skia plugin we release sk_sp on the C++ side passing just the raw pointer.
+            // So managed by value is handled as voidPtr here for now.
             TrivialValuePassing(type, CTypes.voidPtr)
         } else {
             StructValuePassing(kotlinClass, cStructType)
