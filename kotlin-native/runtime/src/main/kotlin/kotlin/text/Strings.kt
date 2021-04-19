@@ -51,6 +51,8 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean {
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ *
+ * @sample samples.text.Strings.replace
  */
 public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String {
     return if (!ignoreCase)
@@ -81,6 +83,8 @@ private fun String.replaceIgnoreCase(oldChar: Char, newChar: Char): String {
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
+ *
+ * @sample samples.text.Strings.replace
  */
 public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String =
         splitToSequence(oldValue, ignoreCase = ignoreCase).joinToString(separator = newValue)
