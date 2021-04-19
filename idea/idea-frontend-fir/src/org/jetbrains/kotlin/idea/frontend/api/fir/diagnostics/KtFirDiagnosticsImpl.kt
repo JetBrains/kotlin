@@ -212,11 +212,11 @@ internal class DivisionByZeroImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
-internal class HiddenImpl(
-    override val hidden: KtSymbol,
+internal class InvisibleReferenceImpl(
+    override val reference: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.Hidden(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.InvisibleReference(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

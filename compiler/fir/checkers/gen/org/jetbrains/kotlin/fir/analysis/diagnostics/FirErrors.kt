@@ -96,7 +96,7 @@ object FirErrors {
     val DIVISION_BY_ZERO by warning0<KtExpression>()
 
     // Unresolved
-    val HIDDEN by error1<PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val INVISIBLE_REFERENCE by error1<PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNRESOLVED_REFERENCE by error1<PsiElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val UNRESOLVED_LABEL by error0<PsiElement>()
     val DESERIALIZATION_ERROR by error0<PsiElement>()

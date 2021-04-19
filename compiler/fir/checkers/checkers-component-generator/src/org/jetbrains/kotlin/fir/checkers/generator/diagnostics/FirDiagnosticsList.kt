@@ -69,8 +69,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
-        val HIDDEN by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<AbstractFirBasedSymbol<*>>("hidden")
+        val INVISIBLE_REFERENCE by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<AbstractFirBasedSymbol<*>>("reference")
         }
         val UNRESOLVED_REFERENCE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("reference")

@@ -8,11 +8,11 @@ package b
 import a.A
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-<!HIDDEN!>@kotlin.internal.HidesMembers<!>
+@kotlin.internal.HidesMembers
 fun A.forEach(i: Int) = i
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-<!HIDDEN!>@kotlin.internal.HidesMembers<!>
+@kotlin.internal.HidesMembers
 fun A.forEach(s: String) {}
 
 
@@ -30,11 +30,11 @@ class A {
 }
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-<!HIDDEN!>@kotlin.internal.HidesMembers<!>
+@kotlin.internal.HidesMembers
 fun A.forEach() = ""
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-<!HIDDEN!>@kotlin.internal.HidesMembers<!>
+@kotlin.internal.HidesMembers
 fun A.forEach(s: String) {}
 
 fun test(a: A) {

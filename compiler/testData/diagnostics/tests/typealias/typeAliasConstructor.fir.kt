@@ -20,5 +20,5 @@ typealias TO = AnObject
 val test6 = <!UNRESOLVED_REFERENCE!>TI<!>()
 val test6a = <!UNRESOLVED_REFERENCE!>Interface<!>()
 
-val test7 = <!HIDDEN!>TO<!>()
-val test7a = <!HIDDEN!>AnObject<!>()
+val test7 = <!INVISIBLE_REFERENCE!>TO<!>()
+val test7a = <!INVISIBLE_REFERENCE!>AnObject<!>()

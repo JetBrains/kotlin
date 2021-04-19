@@ -2,7 +2,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> S> select(a1: S, a2: S): S = TODO()
+fun <@kotlin.internal.OnlyInputTypes S> select(a1: S, a2: S): S = TODO()
 
 interface Common
 class First : Common

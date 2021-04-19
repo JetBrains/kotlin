@@ -5,6 +5,6 @@ fun test() {
     Int(<!NO_VALUE_FOR_PARAMETER!>)<!>
     Short(<!NO_VALUE_FOR_PARAMETER!>)<!>
     Byte(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    <!HIDDEN!>Char<!>()
+    <!INVISIBLE_REFERENCE!>Char<!>()
     Boolean(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }

@@ -35,14 +35,14 @@ import a.D
 
 fun test() {
     f(A)
-    f(<!HIDDEN!>B<!>)
+    f(<!INVISIBLE_REFERENCE!>B<!>)
     f(C)
-    f(<!HIDDEN!>D<!>)
+    f(<!INVISIBLE_REFERENCE!>D<!>)
 
     A.foo()
-    <!HIDDEN!>B<!>.bar()
+    <!INVISIBLE_REFERENCE!>B<!>.bar()
     C.baz()
-    <!HIDDEN!>D<!>.quux()
+    <!INVISIBLE_REFERENCE!>D<!>.quux()
 
     a.A.foo()
     a.C.baz()

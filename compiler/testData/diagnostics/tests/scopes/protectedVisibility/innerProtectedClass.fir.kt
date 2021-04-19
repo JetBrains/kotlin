@@ -8,6 +8,6 @@ class Foo : BaseClass() {
     fun bar() {
         val f = foo()
         f.x
-        f.<!HIDDEN!>y<!>
+        f.<!INVISIBLE_REFERENCE!>y<!>
     }
 }

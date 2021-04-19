@@ -148,9 +148,9 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DivisionByZero::class
     }
 
-    abstract class Hidden : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = Hidden::class
-        abstract val hidden: KtSymbol
+    abstract class InvisibleReference : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InvisibleReference::class
+        abstract val reference: KtSymbol
     }
 
     abstract class UnresolvedReference : KtFirDiagnostic<PsiElement>() {

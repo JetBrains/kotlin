@@ -12,13 +12,13 @@ val test2a = AnnotationClass()
 
 enum class EnumClass { VALUE1, VALUE2 }
 typealias Test3 = EnumClass
-val test3 = <!HIDDEN!>Test3<!>()
-val test3a = <!HIDDEN!>EnumClass<!>()
+val test3 = <!INVISIBLE_REFERENCE!>Test3<!>()
+val test3a = <!INVISIBLE_REFERENCE!>EnumClass<!>()
 
 sealed class SealedClass
 typealias Test4 = SealedClass
-val test4 = <!HIDDEN!>Test4<!>()
-val test4a = <!HIDDEN!>SealedClass<!>()
+val test4 = <!INVISIBLE_REFERENCE!>Test4<!>()
+val test4a = <!INVISIBLE_REFERENCE!>SealedClass<!>()
 
 class Outer {
     inner class Inner

@@ -38,5 +38,5 @@ open class B3 {
 
 class A3 : B3 {
     constructor()
-    constructor(x: Int) : <!HIDDEN!>super<!>()
+    constructor(x: Int) : <!INVISIBLE_REFERENCE!>super<!>()
 }

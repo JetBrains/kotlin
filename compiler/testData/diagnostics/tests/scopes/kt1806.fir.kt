@@ -8,7 +8,7 @@ object MyObject {
 
 fun test1() {
 
-    doSmth(MyObject.<!HIDDEN!>message<!>)
+    doSmth(MyObject.<!INVISIBLE_REFERENCE!>message<!>)
 }
 
 class Test {
@@ -17,7 +17,7 @@ class Test {
   }
 
   fun test2() {
-      doSmth(MyObject1.<!HIDDEN!>message<!>)
+      doSmth(MyObject1.<!INVISIBLE_REFERENCE!>message<!>)
   }
 }
 

@@ -15,8 +15,8 @@ class InB<in C : Bound>(v: C)
 class Out<out O>(val v: O)
 class OutB<out O : Bound>(val v: O)
 
-fun <<!HIDDEN!>@OnlyInputTypes<!> M> strictId(arg: M): M = arg
-fun <<!HIDDEN!>@OnlyInputTypes<!> S> strictSelect(arg1: S, arg2: S): S = arg1
+fun <@OnlyInputTypes M> strictId(arg: M): M = arg
+fun <@OnlyInputTypes S> strictSelect(arg1: S, arg2: S): S = arg1
 
 fun testOK(first: First, bound: Bound, second: Second) {
     strictId(Inv(15))

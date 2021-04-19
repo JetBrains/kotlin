@@ -183,8 +183,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.HIDDEN) { firDiagnostic ->
-        HiddenImpl(
+    add(FirErrors.INVISIBLE_REFERENCE) { firDiagnostic ->
+        InvisibleReferenceImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,

@@ -7,6 +7,6 @@ fun bar(arg: String) = arg
 class Derived : Base("123") {
 
     private inline fun foo() {
-        bar(<!HIDDEN!>v<!>)
+        bar(<!INVISIBLE_REFERENCE!>v<!>)
     }
 }

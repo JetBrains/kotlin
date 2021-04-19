@@ -2,7 +2,7 @@
 // !WITH_NEW_INFERENCE
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> T> assertEquals1(t1: T, t2: T) {}
+fun <@kotlin.internal.OnlyInputTypes T> assertEquals1(t1: T, t2: T) {}
 
 open class A
 class B: A()
@@ -18,7 +18,7 @@ fun test1(a: A, b: B, c: C) {
 }
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-public fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> T> expect1(expected: T, block: () -> T) {}
+public fun <@kotlin.internal.OnlyInputTypes T> expect1(expected: T, block: () -> T) {}
 
 fun test() {
     expect1(2) { byteArrayOf(1, 2, 3).indexOf(3) }

@@ -9,4 +9,4 @@ fun <T> foo(i: Inv<in T>, o: Out<T>) {
     bar(i, o)
 }
 
-fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K> bar(r: Inv<out K>, o: Out<K>): K = TODO()
+fun <@kotlin.internal.OnlyInputTypes K> bar(r: Inv<out K>, o: Out<K>): K = TODO()

@@ -17,5 +17,5 @@ public class A {
 package bar
 
 fun main() {
-    foo.A.<!HIDDEN!>f<!> {}
+    foo.A.<!INVISIBLE_REFERENCE!>f<!> {}
 }

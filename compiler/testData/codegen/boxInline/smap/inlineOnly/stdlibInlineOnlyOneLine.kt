@@ -1,5 +1,5 @@
-// IGNORE_FIR_DIAGNOSTICS
 // FILE: 1.kt
+
 package test
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")

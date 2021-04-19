@@ -17,11 +17,11 @@ class C1
 // FILE: 2.kt
 package pp
 
-<!HIDDEN!>@A(<!HIDDEN!>foo<!>)<!>
+<!INVISIBLE_REFERENCE!>@A(<!INVISIBLE_REFERENCE!>foo<!>)<!>
 fun f2() {}
 
-<!HIDDEN!>@A(<!HIDDEN!>foo<!>)<!>
+<!INVISIBLE_REFERENCE!>@A(<!INVISIBLE_REFERENCE!>foo<!>)<!>
 val p2 = ""
 
-<!HIDDEN!>@A(<!HIDDEN!>foo<!>)<!>
+<!INVISIBLE_REFERENCE!>@A(<!INVISIBLE_REFERENCE!>foo<!>)<!>
 class C2

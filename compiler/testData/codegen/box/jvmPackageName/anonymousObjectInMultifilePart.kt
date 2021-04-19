@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
-// IGNORE_FIR_DIAGNOSTICS
 
 // FILE: anonymousObject.kt
 import x.*
