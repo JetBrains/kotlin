@@ -117,7 +117,17 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val CreateNSStringFromKString = packageScope.getContributedFunctions("CreateNSStringFromKString").single()
     val nativeHeap = packageScope.getContributedClass("nativeHeap")
-    val interopGetPtr = packageScope.getContributedVariables("ptr").single().getter!!
+    val cPointed = packageScope.getContributedClass("CPointed")
+    val interopGetPtr = packageScope.getContributedVariables("ptr").single {
+        val singleTypeParameter = it.typeParameters.singleOrNull()
+        val singleTypeParameterUpperBound = singleTypeParameter?.upperBounds?.singleOrNull()
+        val extensionReceiverParameter = it.extensionReceiverParameter
+
+        singleTypeParameterUpperBound != null &&
+        extensionReceiverParameter != null &&
+        TypeUtils.getClassDescriptor(singleTypeParameterUpperBound) == cPointed &&
+        extensionReceiverParameter.type == singleTypeParameter.defaultType
+    }.getter!!
 }
 
 private fun MemberScope.getContributedVariables(name: String) =
