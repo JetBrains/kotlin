@@ -4,7 +4,7 @@
 
 import kotlin.reflect.KProperty
 
-@Suppress("INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 public operator fun <V, V1 : V> Map<in String, @kotlin.internal.Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1 = null!!
 
 val m2: Map<String, *>  = mapOf("baz" to "bat")

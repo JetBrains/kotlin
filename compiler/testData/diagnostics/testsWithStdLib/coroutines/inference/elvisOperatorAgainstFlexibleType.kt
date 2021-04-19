@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
@@ -16,5 +17,5 @@ fun test(properties: Map<String, String>, nullableProperties: Map<String, String
 
 fun <T, R> myEmptyMap(): Map<T, R> = TODO()
 
-@Suppress("INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "HIDDEN")
 fun <S> select1(x: S, y: S): @kotlin.internal.Exact S = y

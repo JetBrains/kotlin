@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isError
@@ -191,6 +192,14 @@ class AnnotationChecker(
         for (entry in entries) {
             checkAnnotationEntry(entry, actualTargets, trace)
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
+            if (descriptor is LazyAnnotationDescriptor) {
+                /*
+                 * There are no users of type annotations until backend, so if there are errors
+                 *  in annotation call then we should force resolve of it to detect and
+                 *  report them
+                 */
+                descriptor.forceResolveAllContents()
+            }
             val classDescriptor = descriptor.annotationClass ?: continue
 
             val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget() ?: annotated.getDefaultUseSiteTarget(descriptor)

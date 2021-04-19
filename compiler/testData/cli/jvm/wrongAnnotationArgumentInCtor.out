@@ -1,3 +1,9 @@
+compiler/testData/cli/jvm/wrongAnnotationArgumentInCtor.kt:4:32: error: too many arguments for public constructor Anno() defined in Anno
+class UnresolvedArgument(@Anno(BLA) val s: Int)
+                               ^
+compiler/testData/cli/jvm/wrongAnnotationArgumentInCtor.kt:4:32: error: unresolved reference: BLA
+class UnresolvedArgument(@Anno(BLA) val s: Int)
+                               ^
 compiler/testData/cli/jvm/wrongAnnotationArgumentInCtor.kt:6:25: error: no value passed for parameter 'message'
 class WithoutArguments(@Deprecated val s: Int)
                         ^

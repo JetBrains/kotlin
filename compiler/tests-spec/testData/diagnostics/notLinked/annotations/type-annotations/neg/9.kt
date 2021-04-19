@@ -18,4 +18,4 @@ annotation class Ann
 
 var <T> T.test
     get() = 11
-    set(value: @Ann(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) Int) {}
+    set(value: @Ann(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>unresolved_reference<!>) Int) {}
