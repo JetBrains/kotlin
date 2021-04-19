@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.checkNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.gradle.api.logging.configuration.WarningMode
@@ -693,8 +694,9 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testLanguageSettingsClosureForKotlinDsl() = with(transformNativeTestProjectWithPluginDsl("sample-lib-gradle-kotlin-dsl", gradleVersion, "new-mpp-lib-and-app")) {
-        gradleBuildScript().appendText(
+    fun testLanguageSettingsClosureForKotlinDsl() =
+        with(transformNativeTestProjectWithPluginDsl("sample-lib-gradle-kotlin-dsl", gradleVersion, "new-mpp-lib-and-app")) {
+            gradleBuildScript().appendText(
                 "\n" + """
             kotlin.sourceSets.all {
                 languageSettings {
@@ -703,16 +705,16 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
             }
         """.trimIndent()
-        )
+            )
 
-        listOf("compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs").forEach {
-            build(it) {
-                assertSuccessful()
-                assertTasksExecuted(":$it")
-                assertContains("-language-version 1.3", "-api-version 1.3")
+            listOf("compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs").forEach {
+                build(it) {
+                    assertSuccessful()
+                    assertTasksExecuted(":$it")
+                    assertContains("-language-version 1.3", "-api-version 1.3")
+                }
             }
         }
-    }
 
     @Test
     fun testLanguageSettingsApplied() = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
@@ -1409,19 +1411,19 @@ class NewMultiplatformIT : BaseGradleIT() {
             )
 
             assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
-                assertEquals(
-                    1,
-                    (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output)
-                        .count()
-                )
+            assertEquals(
+                1,
+                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output)
+                    .count()
+            )
 
-                assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
-                assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
-                assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.2.70.jar")
-                assertContains(">> :app:testExplicitKotlinVersionRuntimeOnlyDependenciesMetadata --> kotlin-reflect-1.2.60.jar")
+            assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
+            assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
+            assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.2.70.jar")
+            assertContains(">> :app:testExplicitKotlinVersionRuntimeOnlyDependenciesMetadata --> kotlin-reflect-1.2.60.jar")
 
-                assertContains(">> :app:testProjectWithConfigurationApiDependenciesMetadata --> output.txt")
-            }
+            assertContains(">> :app:testProjectWithConfigurationApiDependenciesMetadata --> output.txt")
+        }
 
         testDependencies()
 
@@ -1711,5 +1713,56 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
             assertEquals("org.sample.one:foo", jsManifest[KLIB_PROPERTY_UNIQUE_NAME])
         }
+    }
+
+    @Test
+    fun testNativeCompilationShouldNotProduceAnyWarningsForAssociatedCompilations() {
+        with(Project("native-common-dependencies-warning", minLogLevel = LogLevel.INFO)) {
+            setupWorkingDir()
+            build("help") {
+                assertSuccessful()
+                assertNotContains("A compileOnly dependency is used in the Kotlin/Native target '${detectNativeEnabledCompilation()}':")
+            }
+        }
+    }
+
+    @Test
+    fun testNativeCompilationShouldProduceWarningOnCompileOnlyCommonDependency() {
+        with(Project("native-common-dependencies-warning", minLogLevel = LogLevel.INFO)) {
+            setupWorkingDir()
+            gradleBuildScript().modify {
+                it.replaceFirst("//compileOnly:", "")
+            }
+            build("help") {
+                assertSuccessful()
+                assertContains("A compileOnly dependency is used in the Kotlin/Native target '${detectNativeEnabledCompilation()}':")
+            }
+        }
+    }
+
+    @Test
+    fun testNativeCompilationCompileOnlyDependencyWarningCouldBeDisabled() {
+        with(Project("native-common-dependencies-warning", minLogLevel = LogLevel.INFO)) {
+            setupWorkingDir()
+            gradleBuildScript().modify {
+                it.replaceFirst("//compileOnly:", "")
+            }
+            projectDir.resolve("gradle.properties").writeText(
+                """
+                kotlin.native.ignoreIncorrectDependencies = true
+                """.trimIndent()
+            )
+            build("help") {
+                assertSuccessful()
+                assertNotContains("A compileOnly dependency is used in the Kotlin/Native target '${detectNativeEnabledCompilation()}':")
+            }
+        }
+    }
+
+    private fun detectNativeEnabledCompilation(): String = when {
+        HostManager.hostIsLinux -> "linuxX64"
+        HostManager.hostIsMingw -> "mingwX64"
+        HostManager.hostIsMac -> "macosX64"
+        else -> throw AssertionError("Host ${HostManager.host} is not supported for this test")
     }
 }

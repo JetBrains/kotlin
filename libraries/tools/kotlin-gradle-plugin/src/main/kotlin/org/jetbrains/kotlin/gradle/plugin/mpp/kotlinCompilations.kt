@@ -254,7 +254,6 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
         with(target.project) {
-
             dependencies.add(
                 compileOnlyConfigurationName,
                 project.files(Callable { other.output.classesDirs })
