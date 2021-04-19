@@ -15,7 +15,6 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
@@ -402,6 +401,7 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
+            //PSI counterpart simply search for first RPAR descendant, but this one is more correct
             return tree.findDescendantByType(node, KtNodeTypes.VALUE_ARGUMENT_LIST)?.let { valueArgumentList ->
                 tree.findLastChildByType(valueArgumentList, KtTokens.RPAR)?.let { rpar ->
                     markElement(rpar, startOffset, endOffset, tree, node)
@@ -621,7 +621,7 @@ internal fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
 
-private val REFERENCE_EXPRESSIONS = setOf(
+private val EXPRESSION_NODE_TYPES = setOf(
     KtNodeTypes.REFERENCE_EXPRESSION,
     KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE,
     KtNodeTypes.SUPER_EXPRESSION,
@@ -630,6 +630,9 @@ private val REFERENCE_EXPRESSIONS = setOf(
     KtNodeTypes.LABELED_EXPRESSION,
     KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
     KtNodeTypes.FUN,
+    KtNodeTypes.IF,
+    KtNodeTypes.STRING_TEMPLATE,
+    KtNodeTypes.LAMBDA_EXPRESSION,
 )
 
 /**
@@ -652,7 +655,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     var result = childrenRef.get()?.firstOrNull {
-        it?.tokenType in REFERENCE_EXPRESSIONS ||
+        it?.tokenType in EXPRESSION_NODE_TYPES ||
                 it?.tokenType is KtConstantExpressionElementType ||
                 it?.tokenType == KtNodeTypes.PARENTHESIZED
     }
@@ -663,7 +666,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findReferenceExpressionDeep(node: LighterASTNode): LighterASTNode? =
-    findDescendantByTypes(node, REFERENCE_EXPRESSIONS)
+    findDescendantByTypes(node, EXPRESSION_NODE_TYPES)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RPAR)

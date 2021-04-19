@@ -28,8 +28,8 @@ fun <T> fooT2() : (t : T) -> T {
 
 fun main(args : Array<String>) {
     args.foo()()
-    args.foo1(<!NO_VALUE_FOR_PARAMETER!>)<!>()
-    <!UNRESOLVED_REFERENCE!>a<!>.foo1(<!NO_VALUE_FOR_PARAMETER!>)<!>()
+    args.foo1(<!NO_VALUE_FOR_PARAMETER{PSI}!>)<!>(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+    <!UNRESOLVED_REFERENCE!>a<!>.foo1(<!NO_VALUE_FOR_PARAMETER{PSI}!>)<!>(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     args.foo1()(1)

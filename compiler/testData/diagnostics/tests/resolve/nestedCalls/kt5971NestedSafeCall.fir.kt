@@ -5,5 +5,5 @@
 fun foo(i: Int) {}
 
 fun test(s: String?) {
-    foo(<!ARGUMENT_TYPE_MISMATCH!>s?.length<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH{PSI}!>s?.<!ARGUMENT_TYPE_MISMATCH{LT}!>length<!><!>)
 }

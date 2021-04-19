@@ -957,7 +957,7 @@ class ExpressionsConverter(
             source = fakeSource
             val iteratorVal = generateTemporaryVariable(
                 this@ExpressionsConverter.baseSession,
-                rangeExpression.source,
+                rangeExpression.source?.fakeElement(FirFakeSourceElementKind.DesugaredForLoop),
                 ITERATOR_NAME,
                 buildFunctionCall {
                     source = fakeSource
