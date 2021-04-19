@@ -90,7 +90,12 @@ public open class $progression
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /**
+     * Checks if the progression is empty.
+     *
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
@@ -104,7 +109,7 @@ public open class $progression
     companion object {
         /**
          * Creates $progression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *
