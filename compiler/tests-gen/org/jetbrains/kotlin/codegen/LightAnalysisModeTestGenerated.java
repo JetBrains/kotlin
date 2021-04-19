@@ -17448,6 +17448,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/memberRef.kt");
                 }
 
+                @TestMetadata("multifileClassMemberFromStdlib.kt")
+                public void testMultifileClassMemberFromStdlib() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/multifileClassMemberFromStdlib.kt");
+                }
+
                 @TestMetadata("nonTrivialReceiver.kt")
                 public void testNonTrivialReceiver() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/nonTrivialReceiver.kt");
