@@ -3001,12 +3001,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
-                @TestMetadata("propertyAccessors.kt")
-                public void testPropertyAccessors() throws Exception {
-                    runTest("compiler/testData/codegen/box/callableReference/bound/equals/propertyAccessors.kt");
-                }
-
-                @Test
                 @TestMetadata("receiverInEquals.kt")
                 public void testReceiverInEquals() throws Exception {
                     runTest("compiler/testData/codegen/box/callableReference/bound/equals/receiverInEquals.kt");
@@ -35533,6 +35527,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("parametersToString.kt")
             public void testParametersToString() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/methodsFromAny/parametersToString.kt");
+            }
+
+            @Test
+            @TestMetadata("propertyAccessorEqualsHashCode.kt")
+            public void testPropertyAccessorEqualsHashCode() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/methodsFromAny/propertyAccessorEqualsHashCode.kt");
             }
 
             @Test

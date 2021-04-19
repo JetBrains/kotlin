@@ -2630,11 +2630,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/callableReference/bound/equals/nullableReceiverInEquals.kt");
                 }
 
-                @TestMetadata("propertyAccessors.kt")
-                public void testPropertyAccessors() throws Exception {
-                    runTest("compiler/testData/codegen/box/callableReference/bound/equals/propertyAccessors.kt");
-                }
-
                 @TestMetadata("receiverInEquals.kt")
                 public void testReceiverInEquals() throws Exception {
                     runTest("compiler/testData/codegen/box/callableReference/bound/equals/receiverInEquals.kt");
@@ -28159,6 +28154,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("parametersToString.kt")
             public void testParametersToString() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/methodsFromAny/parametersToString.kt");
+            }
+
+            @TestMetadata("propertyAccessorEqualsHashCode.kt")
+            public void testPropertyAccessorEqualsHashCode() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/methodsFromAny/propertyAccessorEqualsHashCode.kt");
             }
 
             @TestMetadata("propertyEqualsHashCode.kt")
