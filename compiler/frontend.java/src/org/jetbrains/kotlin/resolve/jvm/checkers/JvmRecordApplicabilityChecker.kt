@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class JvmRecordApplicabilityChecker(private val jvmTarget: JvmTarget) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -161,7 +160,7 @@ class JvmRecordApplicabilityChecker(private val jvmTarget: JvmTarget) : Declarat
 }
 
 private fun KtModifierList.findOneOfModifiers(vararg modifierTokens: KtModifierKeywordToken): PsiElement? =
-    modifierTokens.firstNotNullResult(this::getModifier)
+    modifierTokens.firstNotNullOfOrNull(this::getModifier)
 
 private fun JvmTarget.areRecordsAllowed(enableJvmPreview: Boolean): Boolean {
     if (majorVersion < JvmTarget.JVM_15.majorVersion) return false

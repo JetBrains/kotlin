@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object LightTreePositioningStrategies {
     val DEFAULT = object : LightTreePositioningStrategy() {
@@ -900,14 +899,14 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByType(node: Lig
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     return childrenRef.get()?.firstOrNull { it?.tokenType == type } ?: childrenRef.get()
-        ?.firstNotNullResult { child -> child?.let { findDescendantByType(it, type) } }
+        ?.firstNotNullOfOrNull { child -> child?.let { findDescendantByType(it, type) } }
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByTypes(node: LighterASTNode, types: TokenSet): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     return childrenRef.get()?.firstOrNull { types.contains(it?.tokenType) } ?: childrenRef.get()
-        ?.firstNotNullResult { child -> child?.let { findDescendantByTypes(it, types) } }
+        ?.firstNotNullOfOrNull { child -> child?.let { findDescendantByTypes(it, types) } }
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.findFirstDescendant(
@@ -917,7 +916,7 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findFirstDescendant(
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     return childrenRef.get()?.firstOrNull { it != null && predicate(it) }
-        ?: childrenRef.get()?.firstNotNullResult { child -> child?.let { findFirstDescendant(it, predicate) } }
+        ?: childrenRef.get()?.firstNotNullOfOrNull { child -> child?.let { findFirstDescendant(it, predicate) } }
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantsOfType(

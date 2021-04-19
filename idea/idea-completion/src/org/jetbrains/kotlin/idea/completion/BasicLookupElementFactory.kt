@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.awt.Font
 
 class BasicLookupElementFactory(
@@ -277,7 +276,7 @@ class BasicLookupElementFactory(
     }
 
     fun appendContainerAndReceiverInformation(descriptor: CallableDescriptor, appendTailText: (String) -> Unit) {
-        val information = CompletionInformationProvider.EP_NAME.extensions.firstNotNullResult {
+        val information = CompletionInformationProvider.EP_NAME.extensions.firstNotNullOfOrNull {
             it.getContainerAndReceiverInformation(descriptor)
         }
 

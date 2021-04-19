@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class FunctionIntrinsics {
 
@@ -46,7 +45,7 @@ class FunctionIntrinsics {
     fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {
         if (descriptor in intrinsicCache) return intrinsicCache[descriptor]
 
-        return factories.firstNotNullResult { it.getIntrinsic(descriptor, context) }.also {
+        return factories.firstNotNullOfOrNull { it.getIntrinsic(descriptor, context) }.also {
             intrinsicCache[descriptor] = it
         }
     }

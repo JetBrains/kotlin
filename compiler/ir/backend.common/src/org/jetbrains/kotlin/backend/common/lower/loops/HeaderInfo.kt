@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal enum class ProgressionDirection {
     DECREASING {
@@ -282,21 +281,21 @@ internal abstract class HeaderInfoBuilder(
     override fun visitCall(expression: IrCall, data: IrCall?): HeaderInfo? {
         // Return the HeaderInfo from the first successful match.
         // First, try to match a `reversed()` or `withIndex()` call.
-        val callHeaderInfo = callHandlers.firstNotNullResult { it.handle(expression, data, null, scopeOwnerSymbol()) }
+        val callHeaderInfo = callHandlers.firstNotNullOfOrNull { it.handle(expression, data, null, scopeOwnerSymbol()) }
         if (callHeaderInfo != null)
             return callHeaderInfo
 
         // Try to match a call to build a progression (e.g., `.indices`, `downTo`).
         val progressionType = ProgressionType.fromIrType(expression.type, symbols, allowUnsignedBounds)
         val progressionHeaderInfo =
-            progressionType?.run { progressionHandlers.firstNotNullResult { it.handle(expression, data, this, scopeOwnerSymbol()) } }
+            progressionType?.run { progressionHandlers.firstNotNullOfOrNull { it.handle(expression, data, this, scopeOwnerSymbol()) } }
 
         return progressionHeaderInfo ?: super.visitCall(expression, data)
     }
 
     /** Builds a [HeaderInfo] for iterable expressions not handled in [visitCall]. */
     override fun visitExpression(expression: IrExpression, data: IrCall?): HeaderInfo? {
-        return expressionHandlers.firstNotNullResult { it.handle(expression, data, null, scopeOwnerSymbol()) }
+        return expressionHandlers.firstNotNullOfOrNull { it.handle(expression, data, null, scopeOwnerSymbol()) }
             ?: super.visitExpression(expression, data)
     }
 }

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class PrimitiveConeNumericComparisonInfo(
     val comparisonType: ConeClassLikeType,
@@ -61,7 +60,7 @@ private fun ConeClassLikeType.promoteIntegerTypeToIntIfRequired(): ConeClassLike
 private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =
     when {
         this is ConeTypeParameterType ->
-            this.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullResult {
+            this.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullOfOrNull {
                 it.coneType.getPrimitiveTypeOrSupertype()
             }
         this is ConeClassLikeType && isPrimitiveNumberType() ->

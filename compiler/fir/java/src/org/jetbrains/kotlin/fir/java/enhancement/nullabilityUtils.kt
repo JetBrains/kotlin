@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 fun List<FirAnnotationCall>.extractNullability(
     annotationTypeQualifierResolver: FirAnnotationTypeQualifierResolver,
     javaTypeEnhancementState: JavaTypeEnhancementState
 ): NullabilityQualifierWithMigrationStatus? =
-    this.firstNotNullResult { annotationCall ->
+    this.firstNotNullOfOrNull { annotationCall ->
         annotationCall.extractNullability(annotationTypeQualifierResolver, javaTypeEnhancementState)
     }
 

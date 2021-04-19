@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.findDeclarationByName
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi2ir.generators.DeclarationGenerator
 import org.jetbrains.kotlin.psi2ir.generators.EnumClassMembersGenerator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 private fun extractConstantValue(descriptor: DeclarationDescriptor, type: String): ConstantValue<*>? =
         descriptor.annotations
@@ -148,7 +147,7 @@ internal class CEnumClassGenerator(
      * This function extracts value from the annotation.
      */
     private fun extractEnumEntryValue(entryDescriptor: ClassDescriptor): IrExpression =
-            cEnumEntryValueTypes.firstNotNullResult { extractConstantValue(entryDescriptor, it) } ?.let {
+            cEnumEntryValueTypes.firstNotNullOfOrNull { extractConstantValue(entryDescriptor, it) }?.let {
                 context.constantValueGenerator.generateConstantValueAsExpression(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, it)
             } ?: error("Enum entry $entryDescriptor has no appropriate @$cEnumEntryValueAnnotationName annotation!")
 

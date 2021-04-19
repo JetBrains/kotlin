@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.konan.KotlinResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal object TopDownAnalyzerFacadeForKonan {
 
@@ -102,14 +101,14 @@ internal object TopDownAnalyzerFacadeForKonan {
         // Mimic the behavior in the jvm frontend. The extensions have 2 chances to override the normal analysis:
         // * If any of the extensions returns a non-null result, use it. Otherwise do the normal analysis.
         // * `analysisCompleted` can be used to override the result, too.
-        var result = analysisHandlerExtensions.firstNotNullResult { extension ->
+        var result = analysisHandlerExtensions.firstNotNullOfOrNull { extension ->
             extension.doAnalysis(project, moduleDescriptor, projectContext, files, trace, container)
         } ?: run {
             analyzerForKonan.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
             AnalysisResult.success(trace.bindingContext, moduleDescriptor)
         }
 
-        result = analysisHandlerExtensions.firstNotNullResult { extension ->
+        result = analysisHandlerExtensions.firstNotNullOfOrNull { extension ->
             extension.analysisCompleted(project, moduleDescriptor, trace, files)
         } ?: result
 

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
     abstract fun supportsTargetPlatform(platform: TargetPlatform): Boolean
@@ -66,7 +65,7 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
 
 
         fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): TargetPlatform? =
-            ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) }
+            ALL_KINDS.firstNotNullOfOrNull { it.platformByCompilerArguments(arguments) }
 
     }
 }

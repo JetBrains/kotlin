@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class TestProcessor (val context: Context) {
 
@@ -203,7 +202,7 @@ internal class TestProcessor (val context: Context) {
 
             return (owner as? IrSimpleFunction)
                 ?.overriddenSymbols
-                ?.firstNotNullResult {
+                ?.firstNotNullOfOrNull {
                     it.findAnnotatedFunction(testAnnotation)
                 }
         }

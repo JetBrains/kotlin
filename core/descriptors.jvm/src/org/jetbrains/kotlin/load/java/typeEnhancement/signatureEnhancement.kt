@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SignatureEnhancement(
@@ -461,7 +460,7 @@ class SignatureEnhancement(
             areImprovementsEnabled: Boolean,
             typeParameterBounds: Boolean
         ): NullabilityQualifierWithMigrationStatus? =
-            this.firstNotNullResult { extractNullability(it, areImprovementsEnabled, typeParameterBounds) }
+            this.firstNotNullOfOrNull { extractNullability(it, areImprovementsEnabled, typeParameterBounds) }
 
         private fun computeIndexedQualifiersForOverride(): (Int) -> JavaTypeQualifiers {
 

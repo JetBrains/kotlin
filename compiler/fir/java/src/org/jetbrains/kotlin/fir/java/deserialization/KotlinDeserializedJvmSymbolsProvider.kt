@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 @ThreadSafeMutableState
 class KotlinDeserializedJvmSymbolsProvider(
@@ -142,9 +141,9 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     private fun findAndDeserializeTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
-        return getPackageParts(classId.packageFqName).firstNotNullResult { part ->
+        return getPackageParts(classId.packageFqName).firstNotNullOfOrNull { part ->
             val ids = part.typeAliasNameIndex[classId.shortClassName]
-            if (ids == null || ids.isEmpty()) return@firstNotNullResult null
+            if (ids == null || ids.isEmpty()) return@firstNotNullOfOrNull null
             val aliasProto = ids.map { part.proto.getTypeAlias(it) }.single()
             part.context.memberDeserializer.loadTypeAlias(aliasProto).symbol
         }

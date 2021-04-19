@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsR
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class JavaClassUseSiteMemberScope(
     klass: FirJavaClass,
@@ -151,7 +150,7 @@ class JavaClassUseSiteMemberScope(
     ): FirNamedFunctionSymbol? {
         val propertyFromSupertype = fir
         val expectedReturnType = propertyFromSupertype.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-        return scope.getFunctions(Name.identifier(getterName)).firstNotNullResult factory@{ candidateSymbol ->
+        return scope.getFunctions(Name.identifier(getterName)).firstNotNullOfOrNull factory@{ candidateSymbol ->
             val candidate = candidateSymbol.fir
             if (candidate.valueParameters.isNotEmpty()) return@factory null
 
@@ -168,7 +167,7 @@ class JavaClassUseSiteMemberScope(
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
         val propertyType = fir.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return null
-        return scope.getFunctions(Name.identifier(JvmAbi.setterName(fir.name.asString()))).firstNotNullResult factory@{ candidateSymbol ->
+        return scope.getFunctions(Name.identifier(JvmAbi.setterName(fir.name.asString()))).firstNotNullOfOrNull factory@{ candidateSymbol ->
             val candidate = candidateSymbol.fir
             if (candidate.valueParameters.size != 1) return@factory null
 

@@ -93,20 +93,17 @@ fun <T : Any> constant(calculator: () -> T): T {
 private val constantMap = ConcurrentHashMap<Function0<*>, Any>()
 
 fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
-        indexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
+    indexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
 fun String.lastIndexOfOrNull(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int? =
-        lastIndexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
+    lastIndexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
+@Deprecated(
+    message = "Use firstNotNullOfOrNull from stdlib instead",
+    replaceWith = ReplaceWith("firstNotNullOfOrNull(transform)"),
+    level = DeprecationLevel.ERROR
+)
 inline fun <T, R : Any> Iterable<T>.firstNotNullResult(transform: (T) -> R?): R? {
-    for (element in this) {
-        val result = transform(element)
-        if (result != null) return result
-    }
-    return null
-}
-
-inline fun <T, R : Any> Array<T>.firstNotNullResult(transform: (T) -> R?): R? {
     for (element in this) {
         val result = transform(element)
         if (result != null) return result
@@ -126,7 +123,7 @@ inline fun <T, C : Collection<T>, O> C.ifNotEmpty(body: C.() -> O?): O? = if (is
 
 inline fun <T, O> Array<out T>.ifNotEmpty(body: Array<out T>.() -> O?): O? = if (isNotEmpty()) this.body() else null
 
-inline fun <T> measureTimeMillisWithResult(block: () -> T) : Pair<Long, T> {
+inline fun <T> measureTimeMillisWithResult(block: () -> T): Pair<Long, T> {
     val start = System.currentTimeMillis()
     val result = block()
     return Pair(System.currentTimeMillis() - start, result)

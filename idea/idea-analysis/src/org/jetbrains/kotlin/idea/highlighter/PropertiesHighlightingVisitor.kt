@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class PropertiesHighlightingVisitor(holder: HighlightInfoHolder, bindingContext: BindingContext) :
     AfterAnalysisHighlightingVisitor(holder, bindingContext) {
@@ -43,7 +42,7 @@ internal class PropertiesHighlightingVisitor(holder: HighlightInfoHolder, bindin
 
         val attributesKey = resolvedCall?.let { call ->
             @Suppress("DEPRECATION")
-            Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
+            Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullOfOrNull { extension ->
                 extension.highlightCall(expression, call)
             }
         } ?: attributeKeyByPropertyType(target)

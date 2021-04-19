@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
@@ -434,7 +433,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             //  should be replaced there properly
             val returnType =
                 dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(result)
-                    .firstNotNullResult { (it as? FirExpression)?.resultType?.coneTypeSafe() }
+                    .firstNotNullOfOrNull { (it as? FirExpression)?.resultType?.coneTypeSafe() }
 
             if (returnType != null) {
                 result.transformReturnTypeRef(transformer, withExpectedType(returnType))

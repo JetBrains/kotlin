@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object SourceNavigationHelper {
     private val LOG = Logger.getInstance(SourceNavigationHelper::class.java)
@@ -213,7 +212,7 @@ object SourceNavigationHelper {
         index: StringStubIndexExtension<T>
     ): T? {
         val classFqName = entity.fqName ?: return null
-        return targetScopes(entity, navigationKind).firstNotNullResult { scope ->
+        return targetScopes(entity, navigationKind).firstNotNullOfOrNull { scope ->
             index.get(classFqName.asString(), entity.project, scope).minByOrNull { it.isExpectDeclaration() }
         }
     }

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 import java.io.InputStream
 
@@ -72,7 +71,7 @@ open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
-        return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
+        return allPackageFragments[classId.packageFqName]?.firstNotNullOfOrNull {
             it.getClassLikeSymbolByFqName(classId)
         } ?: trySyntheticFunctionalInterface(classId)
     }

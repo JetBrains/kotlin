@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.js.translate.utils.getPrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class BinaryOperationIntrinsics {
 
@@ -59,7 +58,7 @@ class BinaryOperationIntrinsics {
     private fun computeAndCache(key: IntrinsicKey): BinaryOperationIntrinsic? {
         if (key in intrinsicCache) return intrinsicCache[key]
 
-        val result = factories.firstNotNullResult { factory ->
+        val result = factories.firstNotNullOfOrNull { factory ->
             if (factory.getSupportTokens().contains(key.token)) {
                 factory.getIntrinsic(key.function, key.leftType, key.rightType)
             } else null

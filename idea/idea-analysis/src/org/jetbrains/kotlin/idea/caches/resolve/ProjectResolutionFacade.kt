@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.storage.CancellableSimpleLock
 import org.jetbrains.kotlin.storage.guarded
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.concurrent.locks.ReentrantLock
 
 internal class ProjectResolutionFacade(
@@ -132,7 +131,7 @@ internal class ProjectResolutionFacade(
 
     internal fun resolverForElement(element: PsiElement): ResolverForModule {
         val infos = element.getModuleInfos()
-        return infos.asIterable().firstNotNullResult { cachedResolverForProject.tryGetResolverForModule(it) }
+        return infos.asIterable().firstNotNullOfOrNull { cachedResolverForProject.tryGetResolverForModule(it) }
             ?: cachedResolverForProject.tryGetResolverForModule(NotUnderContentRootModuleInfo)
             ?: cachedResolverForProject.diagnoseUnknownModuleInfo(infos.toList())
     }

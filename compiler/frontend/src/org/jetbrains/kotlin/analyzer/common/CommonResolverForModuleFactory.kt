@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class CommonAnalysisParameters(
     val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider
@@ -176,14 +175,14 @@ class CommonResolverForModuleFactory(
             // Mimic the behavior in the jvm frontend. The extensions have 2 chances to override the normal analysis:
             // * If any of the extensions returns a non-null result, it. Otherwise do the normal analysis.
             // * `analysisCompleted` can be used to override the result, too.
-            var result = analysisHandlerExtensions.firstNotNullResult { extension ->
+            var result = analysisHandlerExtensions.firstNotNullOfOrNull { extension ->
                 extension.doAnalysis(project, moduleDescriptor, projectContext, files, trace, container)
             } ?: run {
                 container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
                 AnalysisResult.success(trace.bindingContext, moduleDescriptor)
             }
 
-            result = analysisHandlerExtensions.firstNotNullResult { extension ->
+            result = analysisHandlerExtensions.firstNotNullOfOrNull { extension ->
                 extension.analysisCompleted(project, moduleDescriptor, trace, files)
             } ?: result
 

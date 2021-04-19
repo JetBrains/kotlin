@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class AfterAnalysisHighlightingVisitor protected constructor(
     holder: HighlightInfoHolder, protected var bindingContext: BindingContext
@@ -33,7 +32,7 @@ abstract class AfterAnalysisHighlightingVisitor protected constructor(
 
     protected fun attributeKeyForDeclarationFromExtensions(element: PsiElement, descriptor: DeclarationDescriptor): TextAttributesKey? {
         @Suppress("DEPRECATION")
-        return Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
+        return Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullOfOrNull { extension ->
             extension.highlightDeclaration(element, descriptor)
         }
     }
@@ -43,7 +42,7 @@ abstract class AfterAnalysisHighlightingVisitor protected constructor(
         resolvedCall: ResolvedCall<out CallableDescriptor>
     ): TextAttributesKey? {
         @Suppress("DEPRECATION")
-        return Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
+        return Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullOfOrNull { extension ->
             extension.highlightCall(expression, resolvedCall)
         }
     }

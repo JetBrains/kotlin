@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class FirModuleWithDependenciesSymbolProvider(
     session: FirSession,
@@ -30,7 +29,7 @@ internal class FirModuleWithDependenciesSymbolProvider(
 
 
     fun getClassLikeSymbolByFqNameWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullResult { it.getClassLikeSymbolByFqName(classId) }
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByFqName(classId) }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -75,12 +74,12 @@ internal class FirModuleWithDependenciesSymbolProvider(
 
 
     fun getPackageWithoutDependencies(fqName: FqName): FqName? =
-        providers.firstNotNullResult { it.getPackage(fqName) }
+        providers.firstNotNullOfOrNull { it.getPackage(fqName) }
 }
 
 private class DependentModuleProviders(session: FirSession, private val providers: List<FirSymbolProvider>) : FirSymbolProvider(session) {
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullResult { provider ->
+        providers.firstNotNullOfOrNull { provider ->
             when (provider) {
                 is FirModuleWithDependenciesSymbolProvider -> provider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
                 else -> provider.getClassLikeSymbolByFqName(classId)
@@ -122,7 +121,7 @@ private class DependentModuleProviders(session: FirSession, private val provider
     }
 
     override fun getPackage(fqName: FqName): FqName? =
-        providers.firstNotNullResult { provider ->
+        providers.firstNotNullOfOrNull { provider ->
             when (provider) {
                 is FirModuleWithDependenciesSymbolProvider -> provider.getPackageWithoutDependencies(fqName)
                 else -> provider.getPackage(fqName)

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class ExternalDependenciesGenerator(
     val symbolTable: SymbolTable,
@@ -57,6 +56,6 @@ class ExternalDependenciesGenerator(
 }
 
 fun List<IrProvider>.getDeclaration(symbol: IrSymbol): IrDeclaration? =
-    firstNotNullResult { provider ->
+    firstNotNullOfOrNull { provider ->
         provider.getDeclaration(symbol)
     }

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.util.getNonPrivateTraitMembersForDelegation
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: Project) : DeclarationChecker {
 
@@ -212,7 +211,7 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
                         getNonPrivateTraitMembersForDelegation(it, true)?.isCompiledToJvmDefaultWithProperMode(jvmDefaultMode) == false
             }
         if (implicitDefaultImplsDelegate != null) return implicitDefaultImplsDelegate
-        return classMembers.firstNotNullResult { findPossibleClashMember(it, jvmDefaultMode) }
+        return classMembers.firstNotNullOfOrNull { findPossibleClashMember(it, jvmDefaultMode) }
     }
 
     private fun checkJvmDefaultsInHierarchy(descriptor: DeclarationDescriptor, jvmDefaultMode: JvmDefaultMode): Boolean {

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
@@ -28,7 +27,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         }
 
         val txtFile =
-            prefixes.firstNotNullResult { File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "$it.txt").takeIf(File::exists) }
+            prefixes.firstNotNullOfOrNull { File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "$it.txt").takeIf(File::exists) }
                 .sure { "No testData file exists: ${wholeFile.nameWithoutExtension}.txt" }
 
         KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)

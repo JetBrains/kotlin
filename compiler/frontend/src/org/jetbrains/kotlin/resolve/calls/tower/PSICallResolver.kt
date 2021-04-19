@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
 
 class PSICallResolver(
@@ -124,7 +123,7 @@ class PSICallResolver(
         resolutionCandidates: Collection<ResolutionCandidate<D>>,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
-        val dispatchReceiver = resolutionCandidates.firstNotNullResult { it.dispatchReceiver }
+        val dispatchReceiver = resolutionCandidates.firstNotNullOfOrNull { it.dispatchReceiver }
 
         val isSpecialFunction = resolutionCandidates.any { it.descriptor.name in SPECIAL_FUNCTION_NAMES }
         val kotlinCall = toKotlinCall(

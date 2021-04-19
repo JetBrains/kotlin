@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal interface Stack {
     fun newFrame(asSubFrame: Boolean = false, initPool: List<Variable> = listOf(), block: () -> ExecutionResult): ExecutionResult
@@ -132,7 +131,7 @@ private class FrameContainer(current: Frame = InterpreterFrame()) {
     fun addAll(variables: List<Variable>) = getTopFrame().addAll(variables)
     fun getAll() = innerStack.flatMap { it.getAll() }
     fun getVariable(symbol: IrSymbol): Variable {
-        return innerStack.firstNotNullResult { it.getVariable(symbol) }
+        return innerStack.firstNotNullOfOrNull { it.getVariable(symbol) }
             ?: throw InterpreterException("$symbol not found") // TODO better message
     }
 

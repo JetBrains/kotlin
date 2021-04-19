@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMB
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class FirAnnotationTypeQualifierResolver(private val session: FirSession, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
 
@@ -40,7 +39,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
     private fun computeTypeQualifierNickname(klass: FirRegularClass): FirAnnotationCall? {
         if (klass.annotations.none { it.classId == TYPE_QUALIFIER_NICKNAME_ID }) return null
 
-        return klass.annotations.firstNotNullResult(this::resolveTypeQualifierAnnotation)
+        return klass.annotations.firstNotNullOfOrNull(this::resolveTypeQualifierAnnotation)
     }
 
     private fun resolveTypeQualifierNickname(klass: FirRegularClass): FirAnnotationCall? {

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class CachedLibraries(
         private val target: KonanTarget,
@@ -57,7 +56,7 @@ class CachedLibraries(
             selectCache(library, File(explicitPath))
                     ?: error("No cache found for library ${library.libraryName} at $explicitPath")
         } else {
-            implicitCacheDirectories.firstNotNullResult { dir ->
+            implicitCacheDirectories.firstNotNullOfOrNull { dir ->
                 selectCache(library, dir.child(getCachedLibraryName(library)))
             }
         }

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier
 import org.jetbrains.kotlin.resolve.sam.getAbstractMembers
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
     override fun getFamilyName() = KotlinBundle.message("convert.to.anonymous.object")
@@ -33,7 +32,7 @@ class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQu
         val nameReference = element ?: return
         val call = nameReference.parent as? KtCallExpression ?: return
         val lambda = SamConversionToAnonymousObjectIntention.getLambdaExpression(call) ?: return
-        val functionDescriptor = nameReference.analyze().diagnostics.forElement(nameReference).firstNotNullResult {
+        val functionDescriptor = nameReference.analyze().diagnostics.forElement(nameReference).firstNotNullOfOrNull {
             if (it.factory == Errors.RESOLUTION_TO_CLASSIFIER) getFunctionDescriptor(Errors.RESOLUTION_TO_CLASSIFIER.cast(it)) else null
         } ?: return
         val functionName = functionDescriptor.name.asString()

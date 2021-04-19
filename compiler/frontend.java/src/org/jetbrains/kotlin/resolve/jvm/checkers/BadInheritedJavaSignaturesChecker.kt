@@ -18,14 +18,13 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.deprecation.DEPRECATED_FUNCTION_KEY
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object BadInheritedJavaSignaturesChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
 
         val badSignatureOverriddenDescriptor =
-            descriptor.unsubstitutedMemberScope.getContributedDescriptors().firstNotNullResult(::findFirstBadJavaSignatureOverridden)
+            descriptor.unsubstitutedMemberScope.getContributedDescriptors().firstNotNullOfOrNull(::findFirstBadJavaSignatureOverridden)
 
         if (badSignatureOverriddenDescriptor != null) {
             val reportOn =

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 fun KtExpression.getKotlinTypeForComparison(bindingContext: BindingContext): KotlinType? =
     when {
@@ -41,7 +40,7 @@ fun KtExpression?.getKotlinTypeWithPossibleSmartCastToFP(
     if (descriptor != null) {
         val dataFlow = dataFlowValueFactory.createDataFlowValue(this, givenType, bindingContext, descriptor)
         val stableTypes = bindingContext.getDataFlowInfoBefore(this).getStableTypes(dataFlow, languageVersionSettings)
-        return stableTypes.firstNotNullResult {
+        return stableTypes.firstNotNullOfOrNull {
             when {
                 KotlinBuiltIns.isDoubleOrNullableDouble(it) -> it
                 KotlinBuiltIns.isFloatOrNullableFloat(it) -> it

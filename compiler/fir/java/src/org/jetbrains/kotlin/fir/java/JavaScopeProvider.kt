@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class JavaScopeProvider(
     val symbolProvider: JavaSymbolProvider
@@ -150,7 +149,7 @@ class JavaScopeProvider(
     }
 
     private tailrec fun FirRegularClass.findJavaSuperClass(useSiteSession: FirSession): FirRegularClass? {
-        val superClass = superConeTypes.firstNotNullResult {
+        val superClass = superConeTypes.firstNotNullOfOrNull {
             (it.lookupTag.toSymbol(useSiteSession)?.fir as? FirRegularClass)?.takeIf { superClass ->
                 superClass.classKind == ClassKind.CLASS
             }

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal fun ClassConstructorDescriptor.isSerializationCtor(): Boolean {
     /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/
@@ -104,7 +103,7 @@ internal fun getSerializationPackageFqn(classSimpleName: String): FqName =
     SerializationPackages.packageFqName.child(Name.identifier(classSimpleName))
 
 internal fun ModuleDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
-    SerializationPackages.allPublicPackages.firstNotNullResult { pkg ->
+    SerializationPackages.allPublicPackages.firstNotNullOfOrNull { pkg ->
         module.findClassAcrossModuleDependencies(ClassId(
             pkg,
             Name.identifier(classSimpleName)

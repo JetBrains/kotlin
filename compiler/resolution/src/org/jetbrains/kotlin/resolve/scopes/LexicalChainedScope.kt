@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateH
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.util.collectionUtils.listOfNonEmptyScopes
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class LexicalChainedScope private constructor(
     parent: LexicalScope,
@@ -50,7 +49,7 @@ class LexicalChainedScope private constructor(
         getFirstClassifierDiscriminateHeaders(memberScopes) { it.getContributedClassifier(name, location) }
 
     override fun getContributedClassifierIncludeDeprecated(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? {
-        val (firstClassifier, isFirstDeprecated) = memberScopes.firstNotNullResult {
+        val (firstClassifier, isFirstDeprecated) = memberScopes.firstNotNullOfOrNull {
             it.getContributedClassifierIncludeDeprecated(name, location)
         } ?: return null
 

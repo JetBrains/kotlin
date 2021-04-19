@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
@@ -220,7 +219,7 @@ internal object FirReferenceResolveHelper {
     }
 
     private fun FirCall.findCorrespondingParameter(ktValueArgument: KtValueArgument): FirValueParameter? =
-        argumentMapping?.entries?.firstNotNullResult { (firArgument, firParameter) ->
+        argumentMapping?.entries?.firstNotNullOfOrNull { (firArgument, firParameter) ->
             if (firArgument.psi == ktValueArgument) firParameter
             else null
         }

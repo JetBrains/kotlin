@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
     class TypeQualifierWithApplicability(
@@ -59,7 +58,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     private fun computeTypeQualifierNickname(classDescriptor: ClassDescriptor): AnnotationDescriptor? {
         if (!classDescriptor.annotations.hasAnnotation(TYPE_QUALIFIER_NICKNAME_FQNAME)) return null
 
-        return classDescriptor.annotations.firstNotNullResult(this::resolveTypeQualifierAnnotation)
+        return classDescriptor.annotations.firstNotNullOfOrNull(this::resolveTypeQualifierAnnotation)
     }
 
     private fun resolveTypeQualifierNickname(classDescriptor: ClassDescriptor): AnnotationDescriptor? {

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 @ThreadSafeMutableState
 open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolProvider(session) {
@@ -54,10 +53,10 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolPro
     }
 
     private fun computePackage(it: FqName): FqName? =
-        dependencyProviders.firstNotNullResult { provider -> provider.getPackage(it) }
+        dependencyProviders.firstNotNullOfOrNull { provider -> provider.getPackage(it) }
 
     private fun computeClass(classId: ClassId): FirClassLikeSymbol<*>? =
-        dependencyProviders.firstNotNullResult { provider -> provider.getClassLikeSymbolByFqName(classId) }
+        dependencyProviders.firstNotNullOfOrNull { provider -> provider.getClassLikeSymbolByFqName(classId) }
 
 
     @FirSymbolProviderInternals

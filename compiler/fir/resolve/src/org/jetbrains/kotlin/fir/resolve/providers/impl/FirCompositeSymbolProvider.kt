@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 @NoMutableState
 class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSymbolProvider>) : FirSymbolProvider(session) {
@@ -44,10 +43,10 @@ class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSym
     }
 
     override fun getPackage(fqName: FqName): FqName? {
-        return providers.firstNotNullResult { it.getPackage(fqName) }
+        return providers.firstNotNullOfOrNull { it.getPackage(fqName) }
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return providers.firstNotNullResult { it.getClassLikeSymbolByFqName(classId) }
+        return providers.firstNotNullOfOrNull { it.getClassLikeSymbolByFqName(classId) }
     }
 }
