@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.IOException
 
 class TestRunner(private val testConfiguration: TestConfiguration) {
@@ -93,7 +94,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         val filteredFailedAssertions = filterFailedExceptions(failedAssertions)
-
+        filteredFailedAssertions.firstIsInstanceOrNull<ExceptionFromTestError>()?.let {
+            throw it
+        }
         services.assertions.assertAll(filteredFailedAssertions)
     }
 
