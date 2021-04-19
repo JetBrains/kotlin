@@ -25,7 +25,7 @@ internal open class FirIdeDiagnosticVisitor(
         super.visitNestedElements(element)
     }
 
-    override fun runComponents(element: FirElement) {
+    override fun checkElement(element: FirElement) {
         beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
         components.forEach {
             checkCanceled()

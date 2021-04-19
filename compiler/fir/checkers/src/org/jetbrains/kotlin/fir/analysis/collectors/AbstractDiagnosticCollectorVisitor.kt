@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
-import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
@@ -26,34 +25,33 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: PersistentCheckerContext,
-    protected val components: List<AbstractDiagnosticCollectorComponent>,
 ) : FirDefaultVisitor<Unit, Nothing?>() {
 
     protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
     protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
     protected abstract fun visitNestedElements(element: FirElement)
-    protected abstract fun runComponents(element: FirElement)
+    protected abstract fun checkElement(element: FirElement)
 
     override fun visitElement(element: FirElement, data: Nothing?) {
         if (element is FirAnnotationContainer) {
             visitAnnotationContainer(element, data)
             return
         }
-        runComponents(element)
+        checkElement(element)
         visitNestedElements(element)
     }
 
     override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: Nothing?) {
         withSuppressedDiagnostics(annotationContainer) {
-            runComponents(annotationContainer)
+            checkElement(annotationContainer)
             visitNestedElements(annotationContainer)
         }
     }
 
     private fun visitJump(loopJump: FirLoopJump) {
         withSuppressedDiagnostics(loopJump) {
-            runComponents(loopJump)
+            checkElement(loopJump)
             loopJump.target.labeledElement.takeIf { it is FirErrorLoop }?.accept(this, null)
         }
     }
@@ -160,7 +158,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
         if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
             withSuppressedDiagnostics(typeRef) {
-                runComponents(typeRef)
+                checkElement(typeRef)
                 visitNestedElements(typeRef)
             }
         }
@@ -188,7 +186,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         block: () -> Unit = { visitNestedElements(declaration) }
     ) {
         if (shouldVisitDeclaration(declaration)) {
-            runComponents(declaration)
+            checkElement(declaration)
             withDeclaration(declaration) {
                 block()
             }
@@ -210,14 +208,14 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     private fun visitWithQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
         return withQualifiedAccess(qualifiedAccess) {
-            runComponents(qualifiedAccess)
+            checkElement(qualifiedAccess)
             visitNestedElements(qualifiedAccess)
         }
     }
 
     private fun visitWithGetClassCall(getClassCall: FirGetClassCall) {
         return withGetClassCall(getClassCall) {
-            runComponents(getClassCall)
+            checkElement(getClassCall)
             visitNestedElements(getClassCall)
         }
     }
