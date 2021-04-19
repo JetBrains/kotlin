@@ -155,14 +155,12 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
         val arguments = (0 until expression.valueArgumentsCount).map {
             expression.getValueArgument(it)
         }
-        // TODO: it's a hack!
-        // We'd better check something like "expression.isCXXMethod", "expression.isCXXConstructor".
-        // But we only have an IR expression.
-        val receiver = expression.dispatchReceiver
+
+        val receiverParameter = expression.symbol.owner.dispatchReceiverParameter
         val self: List<IrExpression> = when {
-            receiver == null -> emptyList()
-            receiver.type.classOrNull?.owner?.isCompanion == true -> emptyList()
-            else -> listOf(receiver)
+            receiverParameter == null -> emptyList()
+            receiverParameter.type.classOrNull?.owner?.isCompanion == true -> emptyList()
+            else -> listOf(expression.dispatchReceiver!!)
         }
         callBuilder.addArguments(self + arguments, callee)
     }
