@@ -37,9 +37,15 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
             originalFileContent = originalFileContent.replace("\r\n", "\n")
             firFileContent = firFileContent.replace("\r\n", "\n")
         }
-        testServices.assertions.assertEquals(originalFileContent, firFileContent) {
-            "Original and fir test data aren't identical. " +
-                    "Please, add changes from ${testData.name} to ${firTestData.name}"
+        if (originalFileContent != firFileContent) {
+            testServices.assertions.assertEqualsToFile(
+                firTestData,
+                originalFileContent,
+                message = {
+                    "Original and fir test data aren't identical. " +
+                            "Please, add changes from ${testData.name} to ${firTestData.name}"
+                }
+            )
         }
     }
 
