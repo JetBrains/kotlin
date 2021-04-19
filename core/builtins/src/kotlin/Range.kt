@@ -27,7 +27,7 @@ public interface ClosedRange<T: Comparable<T>> {
 
     /**
      * Checks whether the range is empty.
-
+     *
      * The range is empty if its start value is greater than the end value.
      */
     public fun isEmpty(): Boolean = start > endInclusive
