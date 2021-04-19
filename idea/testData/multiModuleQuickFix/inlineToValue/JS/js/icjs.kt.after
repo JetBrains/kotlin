@@ -1,0 +1,3 @@
+// "Replace with 'value'" "true"
+
+value class IC1(val i: Int)
