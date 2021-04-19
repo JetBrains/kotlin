@@ -63,7 +63,7 @@ class StubIrBridgeBuilder(
             )
 
     private val mappingBridgeGenerator: MappingBridgeGenerator =
-            MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator, context.libraryForCStubs.language)
+            MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator)
 
     private val propertyAccessorBridgeBodies = mutableMapOf<PropertyAccessor, String>()
     private val functionBridgeBodies = mutableMapOf<FunctionStub, List<String>>()
