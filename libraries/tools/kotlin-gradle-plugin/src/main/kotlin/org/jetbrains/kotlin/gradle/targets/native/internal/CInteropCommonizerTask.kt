@@ -48,10 +48,15 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
     internal var cinterops = setOf<CInteropGist>()
         private set
 
-    @OutputDirectories
-    fun getAllOutputDirectories(): Set<File> {
-        return getCommonizationParameters().map { outputDirectory(it) }.toSet()
-    }
+    @get:OutputDirectories
+    val allOutputDirectories: Set<File>
+        get() = getCommonizationParameters().map { outputDirectory(it) }.toSet()
+
+    @Suppress("unused") // Used for UP-TO-DATE check
+    @get:InputFiles
+    @get:Classpath
+    val commonizedNativeDistributionDependencies: Set<File>
+        get() = getCommonizationParameters().flatMap { nativeDistributionDependencies(it) }.map { it.file }.toSet()
 
     fun from(vararg tasks: CInteropProcess) = from(
         tasks.toList()

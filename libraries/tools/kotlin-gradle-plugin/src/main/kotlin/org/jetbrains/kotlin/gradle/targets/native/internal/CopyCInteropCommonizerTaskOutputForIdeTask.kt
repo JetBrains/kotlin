@@ -18,7 +18,7 @@ internal open class CopyCommonizeCInteropForIdeTask : AbstractCInteropCommonizer
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     val cInteropCommonizerTaskOutputDirectories: Provider<Set<File>> =
-        commonizeCInteropTask.map { it.getAllOutputDirectories() }
+        commonizeCInteropTask.map { it.allOutputDirectories }
 
     @get:OutputDirectory
     override val outputDirectory: File = project.rootDir.resolve(".gradle/kotlin/commonizer")
