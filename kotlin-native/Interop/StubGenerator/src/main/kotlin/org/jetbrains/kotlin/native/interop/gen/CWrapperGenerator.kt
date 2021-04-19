@@ -58,85 +58,116 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
 
     private val Type.stringRepresentation get() = this.getStringRepresentation(context.plugin)
 
+    private fun createCCalleeWrapper(function: FunctionDecl, symbolName: String): List<String> {
+        assert(context.configuration.library.language != Language.CPP)
+
+        val wrapperName = generateFunctionWrapperName(function.name)
+
+        val returnType = function.returnType.stringRepresentation
+
+        val signatureParameters = function.parameters.mapIndexed { index, parameter ->
+            val type = parameter.type.stringRepresentation
+            Parameter(type, "p$index")
+        }
+
+        val bodyParameters = function.parameters.mapIndexed { index, parameter ->
+            val parameterTypeText = parameter.type.stringRepresentation
+            val typeExpression = "($parameterTypeText)"
+            Parameter(typeExpression, "p$index")
+        }
+
+        val callExpression = "${function.name}(${bodyParameters.joinToString {it.name}})"
+
+        val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
+            "$callExpression;"
+        } else {
+            "return (${returnType})($callExpression);"
+        }
+        return createWrapper(symbolName, wrapperName, returnType, signatureParameters, wrapperBody)
+    }
+
+    private fun createCppCalleeWrapper(function: FunctionDecl, symbolName: String): List<String> {
+        assert(context.configuration.library.language == Language.CPP)
+        
+        val wrapperName = generateFunctionWrapperName(function.name)
+
+        val returnType = function.returnType.stringRepresentation
+        val unwrappedReturnType = function.returnType.unwrapTypedefs()
+        val returnTypePrefix =
+                if (unwrappedReturnType is PointerType && unwrappedReturnType.isLVReference) "&" else ""
+        val returnTypePostfix =
+                if (unwrappedReturnType is ManagedType)
+                    with(context.plugin.managedTypePassing) { unwrappedReturnType.returnValue }
+                else ""
+
+        val signatureParameters = function.parameters.mapIndexed { index, parameter ->
+            val type = parameter.type.stringRepresentation
+            Parameter(type, "p$index")
+        }
+        val bodyParameters = function.parameters.mapIndexed { index, parameter ->
+            val parameterTypeText = parameter.type.stringRepresentation
+            val type = parameter.type
+            val unwrappedType = type.unwrapTypedefs()
+            
+            val cppRefTypePrefix =
+                        if (unwrappedType is PointerType && unwrappedType.isLVReference) "*" else ""
+            val typeExpression = when {
+                type is Typedef ->
+                    "(${type.def.name})"
+                type is PointerType && type.spelling != null ->
+                    "(${type.spelling})$cppRefTypePrefix"
+                unwrappedType is EnumType ->
+                    "(${unwrappedType.def.spelling})"
+                unwrappedType is RecordType ->
+                    "*(${unwrappedType.decl.spelling}*)"
+                unwrappedType is ManagedType -> {
+                    with(context.plugin.managedTypePassing) { unwrappedType.passValue }
+                }
+                else ->
+                    "$cppRefTypePrefix($parameterTypeText)"
+            }
+
+            Parameter(typeExpression, "p$index")
+        }
+
+        val callExpression = with (function) {
+            when  {
+                isCxxInstanceMethod -> {
+                    val parametersPart = bodyParameters.drop(1).joinToString {
+                        "${it.type}(${it.name})"
+                    }
+                    "(${bodyParameters[0].name})->${name}($parametersPart)"
+                }
+                isCxxConstructor -> {
+                    val parametersPart = bodyParameters.drop(1).joinToString {
+                        "${it.type}${it.name}"
+                    }
+                    "new(${bodyParameters[0].name}) ${cxxReceiverClass!!.spelling}($parametersPart)"
+                }
+                isCxxDestructor ->
+                    "(${bodyParameters[0].name})->~${cxxReceiverClass!!.spelling.substringAfterLast(':')}()"
+                else ->
+                    "${fullName}(${bodyParameters.joinToString {"${it.type}(${it.name})"}})"
+            }
+        }
+
+        val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
+            "$callExpression;"
+        } else {
+            "return (${returnType})$returnTypePrefix($callExpression)$returnTypePostfix;"
+        }
+        return createWrapper(symbolName, wrapperName, returnType, signatureParameters, wrapperBody)
+    }
+
     fun generateCCalleeWrapper(function: FunctionDecl, symbolName: String): CCalleeWrapper =
             if (function.isVararg) {
                 CCalleeWrapper(bindSymbolToFunction(symbolName, function.name))
             } else {
-                val wrapperName = generateFunctionWrapperName(function.name)
-
-                val returnType = function.returnType.stringRepresentation
-                val unwrappedReturnType = function.returnType.unwrapTypedefs()
-                val returnTypePrefix =
-                    if (unwrappedReturnType is PointerType && unwrappedReturnType.isLVReference) "&" else ""
-                val returnTypePostfix =
-                    if (unwrappedReturnType is ManagedType)
-                        with(context.plugin.managedTypePassing) { unwrappedReturnType.returnValue }
-                    else ""
-
-                val signatureParameters = function.parameters.mapIndexed { index, parameter ->
-                    val type = parameter.type.stringRepresentation
-                    Parameter(type, "p$index")
-                }
-                val bodyParameters = function.parameters.mapIndexed { index, parameter ->
-
-                    val parameterTypeText = parameter.type.stringRepresentation
-                    val type = parameter.type
-                    val unwrappedType = type.unwrapTypedefs()
-
-                    val typeExpression = if (context.configuration.library.language == Language.CPP) {
-                        val cppRefTypePrefix =
-                            if (unwrappedType is PointerType && unwrappedType.isLVReference) "*" else ""
-                        when {
-                            type is Typedef ->
-                                "(${type.def.name})"
-                            type is PointerType && type.spelling != null ->
-                                "(${type.spelling})$cppRefTypePrefix"
-                            unwrappedType is EnumType ->
-                                "(${unwrappedType.def.spelling})"
-                            unwrappedType is RecordType ->
-                                "*(${unwrappedType.decl.spelling}*)"
-                            unwrappedType is ManagedType -> {
-                                with(context.plugin.managedTypePassing) { unwrappedType.passValue }
-                        }
-                        else ->
-                                "$cppRefTypePrefix($parameterTypeText)"
-                        }
-                    } else "($parameterTypeText)"
-
-                    Parameter(typeExpression, "p$index")
-                }
-
-                // val callExpression = "${function.name}(${parameters.joinToString { it.name }});"
-                val callExpression = with (function) {
-                    when  {
-                        isCxxInstanceMethod -> {
-                            val parametersPart = bodyParameters.drop(1).joinToString {
-                                "${it.type}(${it.name})"
-                            }
-                            "(${bodyParameters[0].name})->${name}($parametersPart)"
-                        }
-                        isCxxConstructor -> {
-                            val parametersPart = bodyParameters.drop(1).joinToString {
-                                "${it.type}${it.name}"
-                            }
-                            "new(${bodyParameters[0].name}) ${cxxReceiverClass!!.spelling}($parametersPart)"
-                        }
-                        isCxxDestructor ->
-                            "(${bodyParameters[0].name})->~${cxxReceiverClass!!.spelling.substringAfterLast(':')}()"
-                        else ->
-                            if (context.configuration.library.language == Language.CPP)
-                                "${fullName}(${bodyParameters.joinToString {"${it.type}(${it.name})"}})"
-                            else
-                                "${fullName}(${bodyParameters.joinToString {it.name}})"
-                    }
-                }
-
-                val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
-                    "$callExpression;"
+                val wrapper = if (context.configuration.library.language == Language.CPP) {
+                    createCppCalleeWrapper(function, symbolName)
                 } else {
-                    "return (${returnType})$returnTypePrefix($callExpression)${returnTypePostfix};"
+                    createCCalleeWrapper(function, symbolName)
                 }
-                val wrapper = createWrapper(symbolName, wrapperName, returnType, signatureParameters, wrapperBody)
                 CCalleeWrapper(wrapper)
             }
 
