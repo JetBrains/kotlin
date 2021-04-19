@@ -90,7 +90,9 @@ internal class CStructVarClassGenerator(
     private fun createSecondaryConstructor(descriptor: ClassConstructorDescriptor): IrConstructor {
         return createConstructor(descriptor).also {
             postLinkageSteps.add {
-                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody { }
+                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    // Empty. The real body is constructed at the call site by the interop lowering phase.
+                }
             }
         }
     }
