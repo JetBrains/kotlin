@@ -33,5 +33,5 @@ class Test<in I> {
 }
 
 fun <I> test(t: Test<I>) {
-    t.apply(t.<!HIDDEN!>foo<!>())
+    t.apply(t.<!INVISIBLE_REFERENCE!>foo<!>())
 }

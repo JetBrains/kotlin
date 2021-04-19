@@ -10,7 +10,7 @@ class B : A() {
 }
 
 fun test(b: B) {
-    b.<!HIDDEN!>x<!>()
+    b.<!INVISIBLE_REFERENCE!>x<!>()
 }
 
 

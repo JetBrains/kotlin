@@ -19,15 +19,15 @@ open class A {
 fun fromOutside() {
     devNull(A.internal_val)
     devNull(A.public_val)
-    devNull(A.<!HIDDEN!>private_val<!>)
-    devNull(A.<!HIDDEN!>protected_val<!>)
+    devNull(A.<!INVISIBLE_REFERENCE!>private_val<!>)
+    devNull(A.<!INVISIBLE_REFERENCE!>protected_val<!>)
 }
 
 class B: A() {
     fun fromSubclass() {
         devNull(A.internal_val)
         devNull(A.public_val)
-        devNull(A.<!HIDDEN!>private_val<!>)
+        devNull(A.<!INVISIBLE_REFERENCE!>private_val<!>)
         devNull(A.protected_val)
     }
 }

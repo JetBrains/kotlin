@@ -1,1 +1,1 @@
-val foo = <!HIDDEN!>UInt<!>()
+val foo = <!INVISIBLE_REFERENCE!>UInt<!>()

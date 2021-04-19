@@ -10,19 +10,19 @@ fun newPublishedFun() {}
 annotation class Marker
 
 @SinceKotlin("1.4")
-<!HIDDEN!>@WasExperimental(Marker::class)<!>
+@WasExperimental(Marker::class)
 fun newFunExperimentalInThePast() {}
 
 @SinceKotlin("1.4")
-<!HIDDEN!>@WasExperimental(Marker::class)<!>
+@WasExperimental(Marker::class)
 val newValExperimentalInThePast = ""
 
 @SinceKotlin("1.4")
-<!HIDDEN!>@WasExperimental(Marker::class)<!>
+@WasExperimental(Marker::class)
 class NewClassExperimentalInThePast
 
 @SinceKotlin("1.4")
-<!HIDDEN!>@WasExperimental(Marker::class)<!>
+@WasExperimental(Marker::class)
 typealias TypeAliasToNewClass = NewClassExperimentalInThePast
 
 

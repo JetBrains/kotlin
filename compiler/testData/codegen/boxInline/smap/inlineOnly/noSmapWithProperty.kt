@@ -1,8 +1,8 @@
-// IGNORE_FIR_DIAGNOSTICS
 // WITH_RUNTIME
 // FILE: 1.kt
 
 package test
+
 inline fun stub() {
 
 }

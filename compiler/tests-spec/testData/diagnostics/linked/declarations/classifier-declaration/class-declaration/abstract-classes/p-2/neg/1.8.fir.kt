@@ -40,13 +40,13 @@ abstract class AbstractClassCase1() {
 
 fun case1(){
     val a = Case1()
-    a.<!HIDDEN!>priv<!>()
-    a.<!HIDDEN!>prot<!>()
+    a.<!INVISIBLE_REFERENCE!>priv<!>()
+    a.<!INVISIBLE_REFERENCE!>prot<!>()
     a.int()
     a.pub()
 
-    a.<!HIDDEN!>priv1<!>
-    a.<!HIDDEN!>prot1<!>
+    a.<!INVISIBLE_REFERENCE!>priv1<!>
+    a.<!INVISIBLE_REFERENCE!>prot1<!>
     a.int1
     a.pub1
 }
@@ -59,13 +59,13 @@ import base.*
 // TESTCASE NUMBER: 2
 fun case2() {
     val a = Case1()
-    a.<!HIDDEN!>priv<!>()
-    a.<!HIDDEN!>prot<!>()
-    a.<!HIDDEN!>int<!>()
+    a.<!INVISIBLE_REFERENCE!>priv<!>()
+    a.<!INVISIBLE_REFERENCE!>prot<!>()
+    a.<!INVISIBLE_REFERENCE!>int<!>()
     a.pub()
 
-    a.<!HIDDEN!>priv1<!>
-    a.<!HIDDEN!>prot1<!>
-    a.<!HIDDEN!>int1<!>
+    a.<!INVISIBLE_REFERENCE!>priv1<!>
+    a.<!INVISIBLE_REFERENCE!>prot1<!>
+    a.<!INVISIBLE_REFERENCE!>int1<!>
     a.pub1
 }

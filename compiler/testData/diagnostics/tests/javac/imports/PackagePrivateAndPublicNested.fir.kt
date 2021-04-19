@@ -11,7 +11,7 @@ package a
 import p.Foo
 import p.Foo.Nested
 
-class Bar : <!EXPOSED_SUPER_CLASS, HIDDEN!>Foo<!>() {
+class Bar : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE!>Foo<!>() {
     protected fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>(): Nested? = null
 }
 

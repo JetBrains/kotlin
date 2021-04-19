@@ -4,7 +4,7 @@ package k
 import JavaClass
 
 fun foo(javaClass: JavaClass) {
-    javaClass.<!HIDDEN!>doSomething<!> { }
+    javaClass.<!INVISIBLE_REFERENCE!>doSomething<!> { }
 }
 
 // FILE: KotlinFile2.kt

@@ -11,4 +11,4 @@ package a
 
 import pack1.SomeClass.*
 
-private class X : <!EXPOSED_SUPER_CLASS, HIDDEN!>N<!>()
+private class X : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE!>N<!>()

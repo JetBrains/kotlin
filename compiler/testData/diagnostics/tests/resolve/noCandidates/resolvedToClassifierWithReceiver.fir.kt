@@ -11,7 +11,7 @@ fun testX() {
     val interface_as_fun = X.<!UNRESOLVED_REFERENCE!>A<!>()
     val interface_as_val = X.A
 
-    val object_as_fun = X.<!HIDDEN!>B<!>()
+    val object_as_fun = X.<!INVISIBLE_REFERENCE!>B<!>()
     val class_as_val = X.C
 }
 
@@ -26,7 +26,7 @@ fun testY() {
     val interface_as_fun = Y.<!UNRESOLVED_REFERENCE!>A<!>()
     val interface_as_val = Y.A
 
-    val object_as_fun = Y.<!HIDDEN!>B<!>()
+    val object_as_fun = Y.<!INVISIBLE_REFERENCE!>B<!>()
     val class_as_val = Y.C
 }
 

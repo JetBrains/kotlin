@@ -8,4 +8,4 @@ package a
 
 import pack1.*
 
-private class X : <!HIDDEN!>SomeClass<!>()
+private class X : <!INVISIBLE_REFERENCE!>SomeClass<!>()

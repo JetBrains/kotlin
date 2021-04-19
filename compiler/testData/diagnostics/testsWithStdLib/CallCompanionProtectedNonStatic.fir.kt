@@ -74,20 +74,20 @@ class Derived : Base() {
 
 class Other {
     fun test(base: Base, derived: Derived) {
-        base.<!HIDDEN!>foo<!>()
+        base.<!INVISIBLE_REFERENCE!>foo<!>()
         base.<!UNRESOLVED_REFERENCE!>gav<!>()
         base.<!UNRESOLVED_REFERENCE!>bar<!>()
-        derived.<!HIDDEN!>foo<!>()
+        derived.<!INVISIBLE_REFERENCE!>foo<!>()
         derived.<!UNRESOLVED_REFERENCE!>gav<!>()
         derived.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
 
 fun top(base: Base, derived: Derived) {
-    base.<!HIDDEN!>foo<!>()
+    base.<!INVISIBLE_REFERENCE!>foo<!>()
     base.<!UNRESOLVED_REFERENCE!>bar<!>()
     base.<!UNRESOLVED_REFERENCE!>gav<!>()
-    derived.<!HIDDEN!>foo<!>()
+    derived.<!INVISIBLE_REFERENCE!>foo<!>()
     derived.<!UNRESOLVED_REFERENCE!>bar<!>()
     derived.<!UNRESOLVED_REFERENCE!>gav<!>()
 }

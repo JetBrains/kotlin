@@ -6,7 +6,7 @@
 import kotlin.internal.Exact
 
 class Inv<I>(val arg: I)
-class InvExact<E>(val arg: <!HIDDEN, HIDDEN!>@kotlin.internal.Exact<!> E)
+class InvExact<E>(val arg: @kotlin.internal.Exact E)
 
 interface Base
 class Derived : Base
