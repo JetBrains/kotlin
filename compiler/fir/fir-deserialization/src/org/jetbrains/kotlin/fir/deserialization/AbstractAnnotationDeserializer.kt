@@ -225,29 +225,29 @@ abstract class AbstractAnnotationDeserializer(
         return when (value.type) {
             BYTE -> {
                 val kind = if (isUnsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte
-                const(kind, value.intValue.toByte())
+                const(kind, value.intValue.toByte(), session.builtinTypes.byteType)
             }
 
             SHORT -> {
                 val kind = if (isUnsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short
-                const(kind, value.intValue.toShort())
+                const(kind, value.intValue.toShort(), session.builtinTypes.shortType)
             }
 
             INT -> {
                 val kind = if (isUnsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int
-                const(kind, value.intValue.toInt())
+                const(kind, value.intValue.toInt(), session.builtinTypes.intType)
             }
 
             LONG -> {
                 val kind = if (isUnsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long
-                const(kind, value.intValue)
+                const(kind, value.intValue, session.builtinTypes.longType)
             }
 
-            CHAR -> const(ConstantValueKind.Char, value.intValue.toInt().toChar())
-            FLOAT -> const(ConstantValueKind.Float, value.floatValue)
-            DOUBLE -> const(ConstantValueKind.Double, value.doubleValue)
-            BOOLEAN -> const(ConstantValueKind.Boolean, (value.intValue != 0L))
-            STRING -> const(ConstantValueKind.String, nameResolver.getString(value.stringValue))
+            CHAR -> const(ConstantValueKind.Char, value.intValue.toInt().toChar(), session.builtinTypes.charType)
+            FLOAT -> const(ConstantValueKind.Float, value.floatValue, session.builtinTypes.floatType)
+            DOUBLE -> const(ConstantValueKind.Double, value.doubleValue, session.builtinTypes.doubleType)
+            BOOLEAN -> const(ConstantValueKind.Boolean, (value.intValue != 0L), session.builtinTypes.booleanType)
+            STRING -> const(ConstantValueKind.String, nameResolver.getString(value.stringValue), session.builtinTypes.stringType)
             ANNOTATION -> deserializeAnnotation(value.annotation, nameResolver)
             CLASS -> buildGetClassCall {
                 val classId = nameResolver.getClassId(value.classId)
@@ -296,5 +296,7 @@ abstract class AbstractAnnotationDeserializer(
         }
     }
 
-    private fun <T> const(kind: ConstantValueKind<T>, value: T) = buildConstExpression(null, kind, value)
+    private fun <T> const(kind: ConstantValueKind<T>, value: T, typeRef: FirResolvedTypeRef): FirConstExpression<T> {
+        return buildConstExpression(null, kind, value).apply { this.replaceTypeRef(typeRef) }
+    }
 }
