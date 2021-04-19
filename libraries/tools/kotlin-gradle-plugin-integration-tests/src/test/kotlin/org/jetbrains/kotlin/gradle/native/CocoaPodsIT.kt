@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.junit.AfterClass
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.BeforeClass
@@ -1359,6 +1360,46 @@ class CocoaPodsIT : BaseGradleIT() {
         @JvmStatic
         fun assumeItsMac() {
             assumeTrue(HostManager.hostIsMac)
+        }
+
+        // TODO: Add a check and a meaningful error message
+        @BeforeClass
+        @JvmStatic
+        fun installCocoapodsGenerate() {
+            if (needToInstallCocoapodsGenerate) {
+                gem("install", "cocoapods-generate")
+            }
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun uninstallCocoapodsGenerate() {
+            // Do not remove cocoapods-generate if we didn't install it.
+            if (needToInstallCocoapodsGenerate) {
+                gem("uninstall", "cocoapods-generate")
+            }
+        }
+
+        // TODO: Add flag
+        private val needToInstallCocoapodsGenerate: Boolean = !isCocoapodsGenerateInstalled()
+
+        private fun isCocoapodsGenerateInstalled(): Boolean {
+            return gem("list").contains("cocoapods-generate")
+        }
+
+        private fun gem(vararg args: String): String {
+            val process = ProcessBuilder("gem", *args).start()
+            val returnCode = process.waitFor()
+            val output = process.inputStream.use { it.reader().readText() }
+
+            check(returnCode == 0) {
+                val argsString = args.joinToString(separator = " ")
+                val errors = process.errorStream.use { it.reader().readText() }
+                println("'gem $argsString' stdout:\n$errors")
+                println("'gem $argsString' stderr:\n$output")
+                "Process 'gem $argsString' exited with error code $returnCode. See log for details."
+            }
+            return output
         }
     }
 }
