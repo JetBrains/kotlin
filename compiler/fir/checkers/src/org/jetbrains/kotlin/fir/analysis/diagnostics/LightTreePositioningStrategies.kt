@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -267,7 +268,7 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            val value = tree.lastChild(node) ?: node
+            val value = node.nonFillerLastChildOrSelf(tree)
             return markElement(value, startOffset, endOffset, tree, node)
         }
     }
@@ -573,10 +574,32 @@ object LightTreePositioningStrategies {
     val WHOLE_ELEMENT = object : LightTreePositioningStrategy() { }
 
     val LONG_LITERAL_SUFFIX = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.INTEGER_CONSTANT) {
+                return listOf(TextRange.create(endOffset - 1, endOffset))
+            }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
     }
 
     val REIFIED_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.REIFIED_KEYWORD))
+
+    val TYPE_PARAMETERS_LIST: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.typeParametersList(node) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
@@ -809,7 +832,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.firstChild(node: Light
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.lastChild(node: LighterASTNode): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode>>()
+    val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
-    return childrenRef.get().lastOrNull()
+    return childrenRef.get().lastOrNull { it != null }
 }

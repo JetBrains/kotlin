@@ -1823,6 +1823,47 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/typeUse")
+            @TestDataPath("$PROJECT_ROOT")
+            @Execution(ExecutionMode.SAME_THREAD)
+            public class TypeUse {
+                @Test
+                public void testAllFilesPresentInTypeUse() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/typeUse"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("kt19455.kt")
+                public void testKt19455() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt19455.kt");
+                }
+
+                @Test
+                @TestMetadata("kt25876.kt")
+                public void testKt25876() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt25876.kt");
+                }
+
+                @Test
+                @TestMetadata("kt46173.kt")
+                public void testKt46173() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt46173.kt");
+                }
+
+                @Test
+                @TestMetadata("kt8325.kt")
+                public void testKt8325() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt8325.kt");
+                }
+
+                @Test
+                @TestMetadata("nonTypeUseAnnotationOnType.kt")
+                public void testNonTypeUseAnnotationOnType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/nonTypeUseAnnotationOnType.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget")
             @TestDataPath("$PROJECT_ROOT")
             @Execution(ExecutionMode.SAME_THREAD)
@@ -4265,6 +4306,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             @TestMetadata("resolveFunctionInsideClassObject.kt")
             public void testResolveFunctionInsideClassObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/classObjects/resolveFunctionInsideClassObject.kt");
+            }
+
+            @Test
+            @TestMetadata("selfCallsInCompanionSuperConstructor_error.kt")
+            public void testSelfCallsInCompanionSuperConstructor_error() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/selfCallsInCompanionSuperConstructor_error.kt");
+            }
+
+            @Test
+            @TestMetadata("selfCallsInCompanionSuperConstructor_warning.kt")
+            public void testSelfCallsInCompanionSuperConstructor_warning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/selfCallsInCompanionSuperConstructor_warning.kt");
             }
 
             @Test
@@ -19250,6 +19303,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("newLiteralOperatorsResolution_newResolve.kt")
+            public void testNewLiteralOperatorsResolution_newResolve() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/newLiteralOperatorsResolution_newResolve.kt");
+            }
+
+            @Test
+            @TestMetadata("newLiteralOperatorsResolution_warning.kt")
+            public void testNewLiteralOperatorsResolution_warning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/newLiteralOperatorsResolution_warning.kt");
+            }
+
+            @Test
             @TestMetadata("numberAsUnionAndIntersection.kt")
             public void testNumberAsUnionAndIntersection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/numberAsUnionAndIntersection.kt");
@@ -31217,6 +31282,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
+        @TestMetadata("implicitNothingInDelegate.kt")
+        public void testImplicitNothingInDelegate() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/implicitNothingInDelegate.kt");
+        }
+
+        @Test
         @TestMetadata("InaccessibleInternalClass.kt")
         public void testInaccessibleInternalClass() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/InaccessibleInternalClass.kt");
@@ -32749,6 +32820,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("contractWithDeepGenerics.kt")
+                public void testContractWithDeepGenerics() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractWithDeepGenerics.kt");
+                }
+
+                @Test
                 @TestMetadata("contractsOnMembers.kt")
                 public void testContractsOnMembers() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractsOnMembers.kt");
@@ -34041,6 +34118,23 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 public void testKotlinMembersVsJavaNonVisibleStatics() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/kotlinMembersVsJavaNonVisibleStatics.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/evaluate")
+        @TestDataPath("$PROJECT_ROOT")
+        @Execution(ExecutionMode.SAME_THREAD)
+        public class Evaluate {
+            @Test
+            public void testAllFilesPresentInEvaluate() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/evaluate"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("charCodeExpType.kt")
+            public void testCharCodeExpType() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/evaluate/charCodeExpType.kt");
             }
         }
 

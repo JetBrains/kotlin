@@ -671,25 +671,26 @@ class ExpressionsConverter(
             usedAsExpression = whenExpression.usedAsExpression
             for (entry in whenEntries) {
                 val branch = entry.firBlock
+                val entrySource = entry.node.toFirSourceElement()
                 branches += if (!entry.isElse) {
                     if (hasSubject) {
                         val firCondition = entry.toFirWhenCondition()
                         buildWhenBranch {
-                            source = branch.source
+                            source = entrySource
                             condition = firCondition
                             result = branch 
                         }
                     } else {
                         val firCondition = entry.toFirWhenConditionWithoutSubject()
                         buildWhenBranch {
-                            source = branch.source
+                            source = entrySource
                             condition = firCondition
                             result = branch
                         }
                     }
                 } else {
                     buildWhenBranch {
-                        source = branch.source
+                        source = entrySource
                         condition = buildElseIfTrueCondition()
                         result = branch
                     }
@@ -721,7 +722,7 @@ class ExpressionsConverter(
             }
         }
 
-        return WhenEntry(conditions, firBlock, isElse)
+        return WhenEntry(conditions, firBlock, whenEntry, isElse)
     }
 
     private fun convertWhenConditionExpression(whenCondition: LighterASTNode, whenRefWithSubject: FirExpressionRef<FirWhenExpression>?): FirExpression {
@@ -1179,7 +1180,9 @@ class ExpressionsConverter(
      */
     private fun convertReturn(returnExpression: LighterASTNode): FirExpression {
         var labelName: String? = null
-        var firExpression: FirExpression = buildUnitExpression()
+        var firExpression: FirExpression = buildUnitExpression {
+            source = returnExpression.toFirSourceElement(FirFakeSourceElementKind.ImplicitUnit)
+        }
         returnExpression.forEachChildren {
             when (it.tokenType) {
                 LABEL_QUALIFIER -> labelName = it.getAsStringWithoutBacktick().replace("@", "")

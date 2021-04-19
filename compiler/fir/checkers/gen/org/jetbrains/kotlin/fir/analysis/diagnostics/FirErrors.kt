@@ -245,11 +245,11 @@ object FirErrors {
     val NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER by error2<KtSimpleNameExpression, Name, FirDeclaration>()
     val BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED by error0<KtTypeReference>()
     val REIFIED_TYPE_PARAMETER_NO_INLINE by error0<KtTypeParameter>(SourceElementPositioningStrategies.REIFIED_MODIFIER)
-    val TYPE_PARAMETERS_NOT_ALLOWED by error0<KtDeclaration>()
+    val TYPE_PARAMETERS_NOT_ALLOWED by error0<KtDeclaration>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER by error0<KtTypeParameter>()
     val RETURN_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.WHOLE_ELEMENT)
     val CYCLIC_GENERIC_UPPER_BOUND by error0<PsiElement>()
-    val DEPRECATED_TYPE_PARAMETER_SYNTAX by error0<KtTypeParameterList>()
+    val DEPRECATED_TYPE_PARAMETER_SYNTAX by error0<KtDeclaration>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning0<KtTypeParameter>()
     val DYNAMIC_UPPER_BOUND by error0<KtTypeReference>()
 

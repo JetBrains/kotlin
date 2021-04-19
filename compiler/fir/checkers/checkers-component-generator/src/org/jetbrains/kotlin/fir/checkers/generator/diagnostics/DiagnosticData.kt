@@ -62,6 +62,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     FLOAT_LITERAL_OUT_OF_RANGE,
     LONG_LITERAL_SUFFIX,
     REIFIED_MODIFIER,
+    TYPE_PARAMETERS_LIST,
 
     ;
 

@@ -35,9 +35,9 @@ object FirAnonymousFunctionChecker : FirExpressionChecker<FirStatement>() {
         context: CheckerContext
     ) {
         val source = expression.source ?: return
-        source.treeStructure.typeParametersList(source.lighterASTNode)?.let { typeParamsNode ->
+        source.treeStructure.typeParametersList(source.lighterASTNode)?.let { _ ->
             reporter.reportOn(
-                typeParamsNode.toFirLightSourceElement(source.treeStructure),
+                source,
                 FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
                 context
             )

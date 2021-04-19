@@ -202,4 +202,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.REIFIED_MODIFIER,
         PositioningStrategies.REIFIED_MODIFIER
     )
+
+    val TYPE_PARAMETERS_LIST = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.TYPE_PARAMETERS_LIST,
+        PositioningStrategies.TYPE_PARAMETERS_LIST
+    )
 }

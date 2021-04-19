@@ -338,7 +338,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val REIFIED_TYPE_PARAMETER_NO_INLINE by error<KtTypeParameter>(PositioningStrategy.REIFIED_MODIFIER)
 
-        val TYPE_PARAMETERS_NOT_ALLOWED by error<KtDeclaration>()
+        val TYPE_PARAMETERS_NOT_ALLOWED by error<KtDeclaration>(PositioningStrategy.TYPE_PARAMETERS_LIST)
 
         val TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER by error<KtTypeParameter>()
 
@@ -349,7 +349,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
 
-        val DEPRECATED_TYPE_PARAMETER_SYNTAX by error<KtTypeParameterList>()
+        val DEPRECATED_TYPE_PARAMETER_SYNTAX by error<KtDeclaration>(PositioningStrategy.TYPE_PARAMETERS_LIST)
 
         val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning<KtTypeParameter>()
 

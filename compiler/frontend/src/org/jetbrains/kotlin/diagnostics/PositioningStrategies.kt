@@ -790,6 +790,15 @@ object PositioningStrategies {
 
     val WHOLE_ELEMENT: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {}
 
+    val TYPE_PARAMETERS_LIST: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            if (element is KtTypeParameterListOwner) {
+                return markElement(element.typeParameterList ?: element)
+            }
+            return markElement(element)
+        }
+    }
+
 
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for

@@ -21,7 +21,7 @@ object FirFunctionTypeParametersChecker : FirSimpleFunctionChecker() {
             val nameNode = source.treeStructure.nameIdentifier(source.lighterASTNode)
             if (typeParamsNode != null && nameNode != null && typeParamsNode.startOffset > nameNode.startOffset) {
                 reporter.reportOn(
-                    typeParamsNode.toFirLightSourceElement(source.treeStructure),
+                    source,
                     FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX,
                     context
                 )
