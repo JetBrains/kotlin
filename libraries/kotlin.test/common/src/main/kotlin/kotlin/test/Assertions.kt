@@ -361,6 +361,14 @@ fun <@OnlyInputTypes T> assertContentEquals(expected: Iterable<T>?, actual: Iter
     assertIterableContentEquals("Iterable", message, expected, actual, Iterable<*>::iterator)
 }
 
+
+@SinceKotlin("1.5")
+@Deprecated("'assertContentEquals' for Set arguments is ambiguous. Use 'assertEquals' to compare content with the unordered set equality, or cast one of arguments to Iterable to compare the set elements in order of iteration.",
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("assertContentEquals(expected, actual?.asIterable(), message)"))
+fun <@OnlyInputTypes T> assertContentEquals(expected: Set<T>?, actual: Set<T>?, message: String? = null): Unit =
+    assertContentEquals(expected, actual?.asIterable(), message)
+
 /**
  * Asserts that the [expected] sequence is *structurally* equal to the [actual] sequence,
  * i.e. contains the same number of the same elements in the same order, with an optional [message].

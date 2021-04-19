@@ -34,6 +34,9 @@ class AssertContentEqualsTest {
         testFailureMessage("Iterable lengths differ. Expected length is 3, actual length is bigger than 3.") {
             assertContentEquals(list, 1..4)
         }
+        testFailureMessage("Iterable elements differ at index 0. Expected element <1>, actual element <3>.") {
+            assertContentEquals(setOf(1, 2, 3).asIterable(), setOf(3, 2, 1))
+        }
     }
 
     @Test
