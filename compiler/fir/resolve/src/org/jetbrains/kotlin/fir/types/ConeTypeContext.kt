@@ -285,7 +285,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this
     }
 
-    override fun TypeParameterMarker.doesFormSelfType(selfConstructor: TypeConstructorMarker): Boolean {
+    override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker): Boolean {
         require(this is ConeTypeParameterLookupTag)
         return this.typeParameterSymbol.fir.bounds.any { typeRef ->
             typeRef.coneType.contains { it.typeConstructor() == this.getTypeConstructor() }

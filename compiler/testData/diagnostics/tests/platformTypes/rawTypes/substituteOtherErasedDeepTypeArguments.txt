@@ -1,0 +1,14 @@
+package
+
+public fun test(): kotlin.Unit
+
+public/*package*/ open class X</*0*/ B : I1<P!, P!, P!>!, /*1*/ P : kotlin.Any!, /*2*/ A : I1<I2<B!>!, B!, I1<P!, I2<B!>!, P!>!>!> {
+    public/*package*/ constructor X</*0*/ B : I1<P!, P!, P!>!, /*1*/ P : kotlin.Any!, /*2*/ A : I1<I2<B!>!, B!, I1<P!, I2<B!>!, P!>!>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun getId(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ final val E: E<(X<(raw) I1<kotlin.Any!, kotlin.Any!, kotlin.Any!>!, (raw) kotlin.Any!, (raw) I1<*, I1<kotlin.Any!, kotlin.Any!, kotlin.Any!>!, *>!>..X<out I1<*, *, *>!, *, out I1<*, out I1<*, *, *>!, *>!>?)>!
+}

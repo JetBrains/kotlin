@@ -21137,6 +21137,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("dontSubstituteAnotherErasedRecursiveTypeArgumentAndNonRecursive.kt")
+                public void testDontSubstituteAnotherErasedRecursiveTypeArgumentAndNonRecursive() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/dontSubstituteAnotherErasedRecursiveTypeArgumentAndNonRecursive.kt");
+                }
+
+                @Test
+                @TestMetadata("dontSubstituteAnotherErasedTypeArgumentIfRecursive.kt")
+                public void testDontSubstituteAnotherErasedTypeArgumentIfRecursive() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/dontSubstituteAnotherErasedTypeArgumentIfRecursive.kt");
+                }
+
+                @Test
                 @TestMetadata("errorType.kt")
                 public void testErrorType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/errorType.kt");
@@ -21224,6 +21236,30 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("starProjectionToRaw.kt")
                 public void testStarProjectionToRaw() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/starProjectionToRaw.kt");
+                }
+
+                @Test
+                @TestMetadata("substituteAnotherErasedTypeArgument.kt")
+                public void testSubstituteAnotherErasedTypeArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteAnotherErasedTypeArgument.kt");
+                }
+
+                @Test
+                @TestMetadata("substituteOtherErasedDeepTypeArguments.kt")
+                public void testSubstituteOtherErasedDeepTypeArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteOtherErasedDeepTypeArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("substituteSeveralOtherErasedDependentTypeArguments.kt")
+                public void testSubstituteSeveralOtherErasedDependentTypeArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteSeveralOtherErasedDependentTypeArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("substituteSeveralOtherErasedTypeArguments.kt")
+                public void testSubstituteSeveralOtherErasedTypeArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteSeveralOtherErasedTypeArguments.kt");
                 }
 
                 @Test

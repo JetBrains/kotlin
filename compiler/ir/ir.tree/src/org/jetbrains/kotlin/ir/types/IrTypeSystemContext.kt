@@ -183,7 +183,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return false
     }
 
-    override fun TypeParameterMarker.doesFormSelfType(selfConstructor: TypeConstructorMarker): Boolean {
+    override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker): Boolean {
         for (i in 0 until this.upperBoundCount()) {
             val upperBound = this.getUpperBound(i)
             if (upperBound.containsTypeConstructor(selfConstructor) && upperBound.typeConstructor() == selfConstructor) {
