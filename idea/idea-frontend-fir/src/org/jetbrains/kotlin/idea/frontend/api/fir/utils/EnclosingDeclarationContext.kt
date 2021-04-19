@@ -34,8 +34,8 @@ internal sealed class EnclosingDeclarationContext {
                 ktDeclaration.canBeEnclosingDeclaration()
             }
             if (fakeKtDeclaration != null) {
-                val originalDeclaration = originalFile.findDeclarationOfTypeAt(fakeKtDeclaration.textOffset, fakeKtDeclaration::class)
-                    ?: error("Cannot find original function matching to ${fakeKtDeclaration.getElementTextInContext()} in $originalFile")
+                val originalDeclaration = findMatchingElementInCopy(fakeKtDeclaration, originalFile)
+                    ?: error("Cannot find original declaration matching to ${fakeKtDeclaration.getElementTextInContext()} in $originalFile")
                 recordOriginalDeclaration(originalDeclaration, fakeKtDeclaration)
                 return EnclosingDeclarationContextImpl(fakeKtDeclaration, originalDeclaration)
             }
@@ -62,7 +62,6 @@ internal class EnclosingDeclarationContextImpl(
 ) : EnclosingDeclarationContext()
 
 
-
 internal fun EnclosingDeclarationContext.recordCompletionContext(originalFirFile: FirFile, firResolveState: FirModuleResolveState) {
     LowLevelFirApiFacadeForCompletion.recordCompletionContextForDeclaration(
         originalFirFile,
@@ -73,7 +72,8 @@ internal fun EnclosingDeclarationContext.recordCompletionContext(originalFirFile
     )
 }
 
-private fun <T : KtElement> KtFile.findDeclarationOfTypeAt(offset: Int, declarationType: KClass<T>): T? {
-    val elementAtOffset = findElementAt(offset) ?: return null
-    return PsiTreeUtil.getParentOfType(elementAtOffset, declarationType.java, false)?.takeIf { it.textOffset == offset }
+fun <T : KtElement> findMatchingElementInCopy(element: T, copy: KtFile): T? {
+    val elementOffset = element.textOffset
+    val elementAtOffset = copy.findElementAt(elementOffset) ?: return null
+    return PsiTreeUtil.getParentOfType(elementAtOffset, element::class.java, false)?.takeIf { it.textOffset == elementOffset }
 }

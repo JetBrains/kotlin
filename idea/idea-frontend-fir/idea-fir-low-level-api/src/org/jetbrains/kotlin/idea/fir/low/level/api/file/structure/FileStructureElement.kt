@@ -80,7 +80,7 @@ internal class ReanalyzableFunctionStructureElement(
         towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzableFunctionStructureElement {
         val originalFunction = firSymbol.fir as FirSimpleFunction
-        val newFunction = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalFunction) as FirSimpleFunction
+        val newFunction = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalFunction)
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalFunction, newFunction) {
             firLazyDeclarationResolver.lazyResolveDeclaration(
@@ -122,7 +122,7 @@ internal class ReanalyzablePropertyStructureElement(
         towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzablePropertyStructureElement {
         val originalProperty = firSymbol.fir
-        val newProperty = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalProperty) as FirProperty
+        val newProperty = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalProperty)
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalProperty, newProperty) {
             firLazyDeclarationResolver.lazyResolveDeclaration(

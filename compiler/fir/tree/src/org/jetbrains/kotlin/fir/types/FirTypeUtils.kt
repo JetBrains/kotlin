@@ -28,7 +28,7 @@ inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
     return (this as? FirResolvedTypeRef)?.type as? T
 }
 
-inline val FirTypeRef.coneType: ConeKotlinType
+val FirTypeRef.coneType: ConeKotlinType
     get() = coneTypeSafe()
         ?: error("Expected FirResolvedTypeRef with ConeKotlinType but was ${this::class.simpleName} ${render()}")
 

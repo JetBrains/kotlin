@@ -11,3 +11,4 @@ class A() : My<caret> {
 }
 
 // EXIST: MySecondClass, MyFirstClass
+// FIR_COMPARISON

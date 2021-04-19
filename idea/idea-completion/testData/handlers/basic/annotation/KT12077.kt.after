@@ -5,3 +5,4 @@ annotation class SomeAnnotation
 class Complete(@set:SomeAnnotation<caret> var field: Int)
 
 // ELEMENT: SomeAnnotation
+// FIR_COMPARISON

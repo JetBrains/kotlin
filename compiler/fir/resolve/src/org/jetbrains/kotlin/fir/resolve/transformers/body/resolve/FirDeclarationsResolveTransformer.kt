@@ -365,6 +365,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         doTransformTypeParameters(typeAlias)
         typeAlias.transformAnnotations(transformer, data)
+        transformer.onBeforeDeclarationContentResolve(typeAlias)
         typeAlias.transformExpandedTypeRef(transformer, data)
         return typeAlias
     }

@@ -37,6 +37,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += typeParameterRefsOwnerBuilder
             defaultNull("companionObject")
             openBuilder()
+            withCopy()
         }
 
         val qualifiedAccessBuilder by builder {
@@ -95,6 +96,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(typeAlias) {
             parents += typeParametersOwnerBuilder
+            withCopy()
         }
 
         builder(annotationCall) {
