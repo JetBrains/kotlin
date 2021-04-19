@@ -548,7 +548,7 @@ class ExpressionsConverter(
         val (calleeReference, explicitReceiver, isImplicitInvoke) = when {
             name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
-                    this.source = source
+                    this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
                     this.name = name.nameAsSafeName()
                 }
             )

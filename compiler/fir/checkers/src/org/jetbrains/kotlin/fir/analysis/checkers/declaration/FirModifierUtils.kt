@@ -34,14 +34,15 @@ internal sealed class FirModifierList {
 
     class FirLightModifierList(
         val modifierList: LighterASTNode,
-        val tree: FlyweightCapableTreeStructure<LighterASTNode>
+        val tree: FlyweightCapableTreeStructure<LighterASTNode>,
+        private val offsetDelta: Int
     ) : FirModifierList() {
         override val modifiers: List<FirModifier.FirLightModifier>
             get() {
                 val modifierNodes = modifierList.getChildren(tree)
                 return modifierNodes.filterNotNull()
                     .filter { it.tokenType is KtModifierKeywordToken }
-                    .map { FirModifier.FirLightModifier(it, it.tokenType as KtModifierKeywordToken, tree) }
+                    .map { FirModifier.FirLightModifier(it, it.tokenType as KtModifierKeywordToken, tree, offsetDelta) }
             }
     }
 
@@ -65,10 +66,15 @@ internal sealed class FirModifier<Node : Any>(val node: Node, val token: KtModif
     class FirLightModifier(
         node: LighterASTNode,
         token: KtModifierKeywordToken,
-        val tree: FlyweightCapableTreeStructure<LighterASTNode>
+        val tree: FlyweightCapableTreeStructure<LighterASTNode>,
+        private val offsetDelta: Int
     ) : FirModifier<LighterASTNode>(node, token) {
         override val source: FirSourceElement
-            get() = node.toFirLightSourceElement(tree)
+            get() = node.toFirLightSourceElement(
+                tree,
+                startOffset = node.startOffset + offsetDelta,
+                endOffset = node.endOffset + offsetDelta
+            )
     }
 
     abstract val source: FirSourceElement
@@ -81,7 +87,8 @@ internal fun FirSourceElement?.getModifierList(): FirModifierList? {
         is FirLightSourceElement -> {
             val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it?.tokenType == KtNodeTypes.MODIFIER_LIST }
                 ?: return null
-            FirModifierList.FirLightModifierList(modifierListNode, treeStructure)
+            val offsetDelta = startOffset - lighterASTNode.startOffset
+            FirModifierList.FirLightModifierList(modifierListNode, treeStructure, offsetDelta)
         }
     }
 }

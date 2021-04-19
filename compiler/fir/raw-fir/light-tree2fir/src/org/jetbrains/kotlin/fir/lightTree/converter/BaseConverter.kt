@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.stubs.elements.KtFunctionElementType
 import kotlin.contracts.ExperimentalContracts
 
 abstract class BaseConverter(
@@ -79,6 +78,15 @@ abstract class BaseConverter(
         }
 
         return null
+    }
+
+    protected fun LighterASTNode.getFirstChildExpressionUnwrapped(): LighterASTNode? {
+        val expression = getFirstChildExpression() ?: return null
+        return if (expression.tokenType == KtNodeTypes.PARENTHESIZED) {
+            expression.getFirstChildExpressionUnwrapped()
+        } else {
+            expression
+        }
     }
 
     private fun LighterASTNode.getLastChildExpression(): LighterASTNode? {

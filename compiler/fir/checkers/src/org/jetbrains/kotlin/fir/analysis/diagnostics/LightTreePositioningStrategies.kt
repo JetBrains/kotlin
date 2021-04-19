@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
+import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object LightTreePositioningStrategies {
@@ -625,6 +626,9 @@ private val REFERENCE_EXPRESSIONS = setOf(
     KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE,
     KtNodeTypes.SUPER_EXPRESSION,
     KtNodeTypes.ARRAY_ACCESS_EXPRESSION,
+    KtNodeTypes.CALL_EXPRESSION,
+    KtNodeTypes.LABELED_EXPRESSION,
+    KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
     KtNodeTypes.FUN,
 )
 
@@ -648,7 +652,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     var result = childrenRef.get()?.firstOrNull {
-        it?.tokenType in REFERENCE_EXPRESSIONS || it?.tokenType == KtNodeTypes.PARENTHESIZED
+        it?.tokenType in REFERENCE_EXPRESSIONS ||
+                it?.tokenType is KtConstantExpressionElementType ||
+                it?.tokenType == KtNodeTypes.PARENTHESIZED
     }
     while (locateReferencedName && result != null && result.tokenType == KtNodeTypes.PARENTHESIZED) {
         result = referenceExpression(result, locateReferencedName = true)
