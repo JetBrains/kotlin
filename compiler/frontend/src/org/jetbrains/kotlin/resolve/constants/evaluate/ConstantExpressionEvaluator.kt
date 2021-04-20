@@ -12,6 +12,7 @@ import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -401,7 +402,7 @@ private class ConstantExpressionEvaluatorVisitor(
             return when (constantValue) {
                 is ErrorValue, is EnumValue -> return null
                 is NullValue -> StringValue("null")
-                else -> StringValue(constantValue.stringTemplateValue())
+                else -> StringValue(constantValue.boxedValue().toString())
             }.wrap(compileTimeConstant.parameters)
         }
 
@@ -984,7 +985,8 @@ private class ConstantExpressionEvaluatorVisitor(
     ): OperationArgument? {
         val compileTimeConstant = constantExpressionEvaluator.evaluateExpression(expression, trace, parameterType) ?: return null
         if (compileTimeConstant is TypedCompileTimeConstant && !compileTimeConstant.type.isSubtypeOf(parameterType)) return null
-        val evaluationResult = compileTimeConstant.getValue(parameterType) ?: return null
+        val constantValue = compileTimeConstant.toConstantValue(parameterType)
+        val evaluationResult = (if (compileTimeType == ANY) constantValue.boxedValue() else constantValue.value) ?: return null
         return OperationArgument(evaluationResult, compileTimeType, expression)
     }
 

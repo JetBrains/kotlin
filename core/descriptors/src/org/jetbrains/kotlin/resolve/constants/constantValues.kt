@@ -43,7 +43,7 @@ abstract class ConstantValue<out T>(open val value: T) {
 
     override fun toString(): String = value.toString()
 
-    open fun stringTemplateValue(): String = value.toString()
+    open fun boxedValue(): Any? = value
 }
 
 abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
@@ -269,7 +269,7 @@ class UByteValue(byteValue: Byte) : UnsignedValueConstant<Byte>(byteValue) {
 
     override fun toString() = "$value.toUByte()"
 
-    override fun stringTemplateValue(): String = (value.toInt() and 0xFF).toString()
+    override fun boxedValue(): Any = value.toUByte()
 }
 
 class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) {
@@ -282,7 +282,7 @@ class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) 
 
     override fun toString() = "$value.toUShort()"
 
-    override fun stringTemplateValue(): String = (value.toInt() and 0xFFFF).toString()
+    override fun boxedValue(): Any = value.toUShort()
 }
 
 class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
@@ -295,7 +295,7 @@ class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
 
     override fun toString() = "$value.toUInt()"
 
-    override fun stringTemplateValue(): String = (value.toLong() and 0xFFFFFFFFL).toString()
+    override fun boxedValue(): Any = value.toUInt()
 }
 
 class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
@@ -308,12 +308,5 @@ class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
 
     override fun toString() = "$value.toULong()"
 
-    override fun stringTemplateValue(): String {
-        if (value >= 0) return value.toString()
-
-        val div10 = (value ushr 1) / 5
-        val mod10 = value - 10 * div10
-
-        return "$div10$mod10"
-    }
+    override fun boxedValue(): Any = value.toULong()
 }
