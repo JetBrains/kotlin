@@ -178,8 +178,7 @@ class BinaryJavaAnnotation private constructor(
                 when (typePathKind) {
                     TypePath.TYPE_ARGUMENT -> {
                         require(targetType is JavaClassifierType)
-                        targetType.typeArguments[typeArgumentIndex]
-                            ?: throw IllegalArgumentException("There must be no less than ${typeArgumentIndex + 1} type arguments")
+                        targetType.typeArguments.getOrNull(typeArgumentIndex) // temporary fix for KT-46131
                     }
                     TypePath.WILDCARD_BOUND -> {
                         require(targetType is JavaWildcardType)
