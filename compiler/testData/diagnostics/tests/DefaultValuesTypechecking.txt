@@ -3,6 +3,7 @@ package
 public val x: kotlin.String = ""
 public val z: kotlin.Int = 3
 public fun bar(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.Int = ..., /*2*/ z: kotlin.String = ...): kotlin.Unit
+public fun foo(/*0*/ x: () -> kotlin.Int = ..., /*1*/ y: kotlin.Int = ..., /*2*/ i: kotlin.Int = ...): kotlin.Int
 public fun foo(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.Int = ..., /*2*/ i: kotlin.Int = ...): kotlin.Int
 
 public final class A {

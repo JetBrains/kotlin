@@ -1896,6 +1896,14 @@ internal class UninitializedVariableImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class UninitializedParameterImpl(
+    override val parameter: KtVariableLikeSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UninitializedParameter(), KtAbstractFirDiagnostic<KtSimpleNameExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class UninitializedEnumEntryImpl(
     override val enumEntry: KtVariableLikeSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,

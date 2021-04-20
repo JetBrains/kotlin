@@ -1664,6 +1664,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNINITIALIZED_PARAMETER) { firDiagnostic ->
+        UninitializedParameterImpl(
+            firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.UNINITIALIZED_ENUM_ENTRY) { firDiagnostic ->
         UninitializedEnumEntryImpl(
             firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol(firDiagnostic.a.fir),

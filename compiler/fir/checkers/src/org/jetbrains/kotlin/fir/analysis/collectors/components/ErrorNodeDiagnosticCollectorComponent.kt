@@ -11,17 +11,20 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 
 class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
@@ -45,7 +48,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         val qualifiedAccess = data.qualifiedAccesses.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccessExpression if it is exactly the call to the erroneous callee.
             it is FirQualifiedAccessExpression && it.calleeReference == errorNamedReference
-        }
+        } as? FirQualifiedAccessExpression
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
         // Already reported in FirConventionFunctionCallChecker
@@ -54,15 +57,55 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         ) return
 
         // If the receiver cannot be resolved, we skip reporting any further problems for this call.
-        if (qualifiedAccess?.dispatchReceiver.hasUnresolvedNameError() || qualifiedAccess?.extensionReceiver.hasUnresolvedNameError() || qualifiedAccess?.explicitReceiver.hasUnresolvedNameError()) return
+        if (qualifiedAccess?.dispatchReceiver.hasUnresolvedNameError() ||
+            qualifiedAccess?.extensionReceiver.hasUnresolvedNameError() ||
+            qualifiedAccess?.explicitReceiver.hasUnresolvedNameError()
+        ) return
+
+        if (reportUninitializedParameter(qualifiedAccess, data)) {
+            return
+        }
 
         reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccess?.source)
     }
 
     private fun FirExpression?.hasUnresolvedNameError(): Boolean {
-        return when ((this?.typeRef as? FirErrorTypeRef)?.diagnostic) {
-            is ConeUnresolvedNameError -> true
-            else -> false
+        return this?.unresolvedNameError != null
+    }
+
+    private val FirExpression.unresolvedNameError: ConeUnresolvedNameError?
+        get() {
+            val typeRef = if (this is FirAnonymousFunction) this.returnTypeRef else this.typeRef
+            return (typeRef as? FirErrorTypeRef)?.diagnostic as? ConeUnresolvedNameError
+        }
+
+    private fun reportUninitializedParameter(qualifiedAccess: FirQualifiedAccessExpression?, context: CheckerContext): Boolean {
+        if (qualifiedAccess == null) return false
+        val unresolvedNameError = qualifiedAccess.unresolvedNameError ?: return false
+
+        val valueParameter = context.containingDeclarations.lastOrNull { valueParameter ->
+            valueParameter is FirValueParameter &&
+                    valueParameter.defaultValue?.unresolvedNameError == unresolvedNameError
+        } as? FirValueParameter ?: return false
+
+        val function = context.containingDeclarations.lastOrNull { function ->
+            function is FirFunction<*> &&
+                    valueParameter in function.valueParameters &&
+                    unresolvedNameError.name in function.valueParameters.map { it.name }
+        } as? FirFunction<*> ?: return false
+
+        val valueParameterIndex = function.valueParameters.indexOf(valueParameter)
+        val referredParameterIndex = function.valueParameters.map { it.name }.indexOf(unresolvedNameError.name)
+        return if (valueParameterIndex <= referredParameterIndex) {
+            reporter.reportOn(
+                qualifiedAccess.source,
+                FirErrors.UNINITIALIZED_PARAMETER,
+                function.valueParameters[referredParameterIndex].symbol,
+                context
+            )
+            true
+        } else {
+            false
         }
     }
 
