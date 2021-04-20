@@ -6,7 +6,6 @@ val embedded by configurations
 
 dependencies {
     embedded(commonDep("com.android.tools:r8"))
-    embedded(commonDep("junit:junit"))
     embedded(intellijCoreDep()){ includeJars("intellij-core") }
     embedded(intellijDep()) { includeJars("platform-concurrency") }
     embedded(intellijDep()) {
@@ -33,6 +32,7 @@ dependencies {
             "jdom",
             "streamex",
             "bootstrap",
+            "jna",
             rootProject = rootProject
         )
         isTransitive = false
