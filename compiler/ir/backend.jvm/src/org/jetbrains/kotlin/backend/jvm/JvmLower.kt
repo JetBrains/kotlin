@@ -266,7 +266,8 @@ private val syntheticAccessorPhase = makeIrFilePhase(
 private val tailrecPhase = makeIrFilePhase(
     ::JvmTailrecLowering,
     name = "Tailrec",
-    description = "Handle tailrec calls"
+    description = "Handle tailrec calls",
+    prerequisite = setOf(localDeclarationsPhase)
 )
 
 private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendContext>(
@@ -342,17 +343,13 @@ private val jvmFilePhases = listOf(
     propertiesPhase,
     remapObjectFieldAccesses,
     anonymousObjectSuperConstructorPhase,
-    tailrecPhase,
-    makePatchParentsPhase(1),
-
     jvmStandardLibraryBuiltInsPhase,
 
     rangeContainsLoweringPhase,
     forLoopsPhase,
     collectionStubMethodLowering,
     jvmInlineClassPhase,
-
-    makePatchParentsPhase(2),
+    makePatchParentsPhase(1),
 
     enumWhenPhase,
     singletonReferencesPhase,
@@ -362,6 +359,10 @@ private val jvmFilePhases = listOf(
     returnableBlocksPhase,
     sharedVariablesPhase,
     localDeclarationsPhase,
+
+    tailrecPhase,
+    makePatchParentsPhase(2),
+
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,
 
