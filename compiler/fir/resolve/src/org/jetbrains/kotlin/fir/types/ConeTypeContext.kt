@@ -262,6 +262,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeClassLikeLookupTag
     }
 
+    override fun TypeConstructorMarker.isInterface(): Boolean {
+        return ((this as? ConeClassLikeLookupTag)?.toClassLikeSymbol()?.fir as? FirClass)?.classKind == ClassKind.INTERFACE
+    }
+
     override fun TypeParameterMarker.getVariance(): TypeVariance {
         require(this is ConeTypeParameterLookupTag)
         return this.symbol.fir.variance.convertVariance()

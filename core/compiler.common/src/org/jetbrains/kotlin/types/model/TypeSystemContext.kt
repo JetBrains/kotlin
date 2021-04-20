@@ -286,6 +286,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker>
     fun TypeConstructorMarker.isIntersection(): Boolean
     fun TypeConstructorMarker.isClassTypeConstructor(): Boolean
+    fun TypeConstructorMarker.isInterface(): Boolean
     fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
 
     val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
