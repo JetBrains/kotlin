@@ -272,16 +272,6 @@ open class SerializerIrGenerator(
             })
             +irInvoke(null, writeSelfFunction.symbol, typeArgs, args)
         } else {
-            // No write$Self, old behaviour:
-            // Ignore comparing to default values of properties from superclass,
-            // because we do not have access to their fields (and initializers), if superclass is in another module.
-            val superClass = serializableIrClass.getSuperClassOrAny().descriptor
-            val ignoreIndexTo = if (superClass.isInternalSerializable) {
-                bindingContext.serializablePropertiesFor(superClass).size
-            } else {
-                -1
-            }
-
             val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
                 createPropertyByParamReplacer(serializableIrClass, serializableProperties, objectToSerialize, bindingContext)
 
@@ -291,7 +281,7 @@ open class SerializerIrGenerator(
 
             serializeAllProperties(
                 this@SerializerIrGenerator, serializableIrClass, serializableProperties, objectToSerialize,
-                localOutput, localSerialDesc, kOutputClass, ignoreIndexTo, initializerAdapter
+                localOutput, localSerialDesc, kOutputClass, ignoreIndexTo = -1, initializerAdapter
             ) { it, _ ->
                 val (_, ir) = localSerializersFieldsDescriptors[it]
                 irGetField(irGet(saveFunc.dispatchReceiverParameter!!), ir.backingField!!)
