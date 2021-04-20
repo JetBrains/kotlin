@@ -74,7 +74,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirInterfaceWithSuperclassChecker,
             FirLocalEntityNotAllowedChecker,
             FirManyCompanionObjectsChecker,
-            FirMethodOfAnyImplementedInInterfaceChecker(),
+            FirMethodOfAnyImplementedInInterfaceChecker,
             FirDataClassPrimaryConstructorChecker,
             FirPrimaryConstructorSuperTypeChecker,
             FirTypeParametersInObjectChecker,
