@@ -12,6 +12,7 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-core"))
     compile(project(":plugins:uast-kotlin"))
+    compile(project(":plugins:uast-kotlin-fir"))
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("java"))
 }

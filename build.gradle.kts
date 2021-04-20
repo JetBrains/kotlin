@@ -336,7 +336,9 @@ extra["tasksWithWarnings"] = listOf(
     ":kotlin-stdlib-jdk7:compileTestKotlin",
     ":kotlin-stdlib-jdk8:compileTestKotlin",
     ":plugins:uast-kotlin:compileKotlin",
-    ":plugins:uast-kotlin:compileTestKotlin"
+    ":plugins:uast-kotlin:compileTestKotlin",
+    ":plugins:uast-kotlin-fir:compileKotlin",
+    ":plugins:uast-kotlin-fir:compileTestKotlin"
 )
 
 val tasksWithWarnings: List<String> by extra
@@ -847,10 +849,10 @@ tasks {
             ":idea:idea-fir:test",
             ":idea:idea-frontend-api:test",
             ":idea:idea-frontend-fir:test",
-            ":idea:idea-frontend-fir:idea-fir-low-level-api:test"
+            ":idea:idea-frontend-fir:idea-fir-low-level-api:test",
+            ":plugins:uast-kotlin-fir:test"
         )
     }
-
 
     register("android-ide-tests") {
         dependsOn("dist")
@@ -896,7 +898,6 @@ tasks {
             )
         }
     }
-
 
     register("kaptIdeTest") {
         dependsOn(":kotlin-annotation-processing:test")

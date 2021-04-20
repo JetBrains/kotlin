@@ -1,0 +1,46 @@
+public final class A {
+    private final var str: java.lang.String
+    public fun A(str: java.lang.String) = UastEmptyExpression
+    public fun A(i: int) = UastEmptyExpression
+    public final fun getStr() : java.lang.String = UastEmptyExpression
+}
+
+public final class AWithInit {
+    private final var str: java.lang.String
+    public fun AWithInit(str: java.lang.String) = UastEmptyExpression
+    public fun AWithInit(i: int) = UastEmptyExpression
+    public final fun getStr() : java.lang.String = UastEmptyExpression
+}
+
+public final class AWith2Init {
+    private final var str: java.lang.String
+    public fun AWith2Init(str: java.lang.String) = UastEmptyExpression
+    public fun AWith2Init(i: int) = UastEmptyExpression
+    public final fun getStr() : java.lang.String = UastEmptyExpression
+}
+
+public final class AOnlyInit {
+    public fun AOnlyInit() = UastEmptyExpression
+}
+
+public final class AWithSecondary {
+    private var a: java.lang.String
+    public fun AWithSecondary(i: int) = [!] FirUnknownKotlinExpression (BLOCK)
+    public fun AWithSecondary(s: java.lang.String) = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun getA() : java.lang.String = UastEmptyExpression
+    public final fun setA(value: java.lang.String) : void = UastEmptyExpression
+}
+
+public final class AWithSecondaryInit {
+    private var a: java.lang.String
+    public fun AWithSecondaryInit(i: int) = [!] FirUnknownKotlinExpression (BLOCK)
+    public fun AWithSecondaryInit(s: java.lang.String) = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun getA() : java.lang.String = UastEmptyExpression
+    public final fun setA(value: java.lang.String) : void = UastEmptyExpression
+}
+
+public final class AWithFieldInit {
+    private final var a: java.lang.String
+    public fun AWithFieldInit(i: int) = UastEmptyExpression
+    public final fun getA() : java.lang.String = UastEmptyExpression
+}

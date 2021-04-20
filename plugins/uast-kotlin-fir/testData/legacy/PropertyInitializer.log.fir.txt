@@ -1,0 +1,8 @@
+UFile (package = )
+    UClass (name = TestPropertyInitializer)
+        UMethod (name = TestPropertyInitializer)
+        UMethod (name = getWithSetter)
+            [!] FirUnknownKotlinExpression (REFERENCE_EXPRESSION)
+        UMethod (name = setWithSetter)
+            UParameter (name = p)
+            [!] FirUnknownKotlinExpression (BLOCK)

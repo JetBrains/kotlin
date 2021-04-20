@@ -1,0 +1,8 @@
+UFile (package = )
+    UClass (name = Simple)
+        UField (name = property)
+            [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
+        UMethod (name = Simple)
+        UMethod (name = method)
+            [!] FirUnknownKotlinExpression (BLOCK)
+        UMethod (name = getProperty)
