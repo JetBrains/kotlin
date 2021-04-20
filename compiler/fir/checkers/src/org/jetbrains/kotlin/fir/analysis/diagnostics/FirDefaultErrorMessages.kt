@@ -114,6 +114,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_THROWABLE_SUBCLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HIDDEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
@@ -281,6 +282,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
 
 @Suppress("unused")
 class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
@@ -742,6 +744,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 RENDER_TYPE
             )
             map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
+            map.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility")
+            map.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit")
 
             map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects")
             map.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter")
