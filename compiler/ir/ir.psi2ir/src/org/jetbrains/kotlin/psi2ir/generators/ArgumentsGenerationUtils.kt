@@ -96,11 +96,6 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 generateThisOrSuperReceiver(receiver, receiver.thisType.constructor.declarationDescriptor as ClassDescriptor)
             is ExpressionReceiver ->
                 generateExpression(receiver.expression)
-            is ClassValueReceiver ->
-                IrGetObjectValueImpl(
-                    receiver.expression.startOffsetSkippingComments, receiver.expression.endOffset, irReceiverType,
-                    context.symbolTable.referenceClass(receiver.classQualifier.descriptor as ClassDescriptor)
-                )
             is ExtensionReceiver ->
                 IrGetValueImpl(
                     defaultStartOffset, defaultStartOffset, irReceiverType,
