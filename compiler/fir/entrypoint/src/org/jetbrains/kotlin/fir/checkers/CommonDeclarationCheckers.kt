@@ -45,7 +45,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
-            FirInapplicableLateinitChecker(),
+            FirInapplicableLateinitChecker,
             FirDestructuringDeclarationChecker,
             FirConstPropertyChecker,
             FirPropertyAccessorChecker,
