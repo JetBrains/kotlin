@@ -75,6 +75,9 @@ private fun String.toSetupBuildTaskName(pod: CocoapodsDependency): String = lowe
     this
 )
 
+fun KotlinNativeTarget.toSetupBuildTaskName(pod: CocoapodsDependency) =
+    this.toValidSDK.toSetupBuildTaskName(pod)
+
 private fun String.toBuildDependenciesTaskName(pod: CocoapodsDependency): String = lowerCamelCaseName(
     KotlinCocoapodsPlugin.POD_BUILD_TASK_NAME,
     pod.name.asValidTaskName(),
@@ -87,22 +90,23 @@ private val CocoapodsDependency.toPodDownloadTaskName: String
         name.asValidTaskName()
     )
 
+
+private val KotlinNativeTarget.toValidSDK: String
+    get() = when (konanTarget) {
+        IOS_X64 -> "iphonesimulator"
+        IOS_ARM32, IOS_ARM64 -> "iphoneos"
+        WATCHOS_X86, WATCHOS_X64 -> "watchsimulator"
+        WATCHOS_ARM32, WATCHOS_ARM64 -> "watchos"
+        TVOS_X64 -> "appletvsimulator"
+        TVOS_ARM64 -> "appletvos"
+        MACOS_X64 -> "macosx"
+        else -> throw IllegalArgumentException("Bad target ${konanTarget.name}.")
+    }
+
 open class KotlinCocoapodsPlugin : Plugin<Project> {
-    private fun KotlinMultiplatformExtension.supportedTargets() = targets
+    fun KotlinMultiplatformExtension.supportedTargets() = targets
         .withType(KotlinNativeTarget::class.java)
         .matching { it.konanTarget.family.isAppleFamily }
-
-    private val KotlinNativeTarget.toValidSDK: String
-        get() = when (konanTarget) {
-            IOS_X64 -> "iphonesimulator"
-            IOS_ARM32, IOS_ARM64 -> "iphoneos"
-            WATCHOS_X86, WATCHOS_X64 -> "watchsimulator"
-            WATCHOS_ARM32, WATCHOS_ARM64 -> "watchos"
-            TVOS_X64 -> "appletvsimulator"
-            TVOS_ARM64 -> "appletvos"
-            MACOS_X64 -> "macosx"
-            else -> throw IllegalArgumentException("Bad target ${konanTarget.name}.")
-        }
 
     /**
      * Splits a string using a whitespace characters as delimiters.
@@ -527,7 +531,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project): Unit = with(project) {
-
         pluginManager.withPlugin("kotlin-multiplatform") {
             val kotlinExtension = project.multiplatformExtension
             val cocoapodsExtension = CocoapodsExtension(this)
