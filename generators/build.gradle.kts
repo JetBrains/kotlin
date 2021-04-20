@@ -73,6 +73,8 @@ dependencies {
     testCompile(projectTests(":kotlinx-serialization-compiler-plugin"))
     testCompile(projectTests(":kotlinx-serialization-ide-plugin"))
     testCompile(projectTests(":plugins:fir:fir-plugin-prototype"))
+    testCompile(projectTests(":plugins:uast-kotlin"))
+    testCompile(projectTests(":plugins:uast-kotlin-fir"))
     testCompile(projectTests(":idea:jvm-debugger:jvm-debugger-test"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(projectTests(":idea"))

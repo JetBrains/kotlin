@@ -1,0 +1,91 @@
+public final class A {
+    @org.jetbrains.annotations.NotNull private final var str: java.lang.String
+    public final fun getStr() : java.lang.String = UastEmptyExpression
+    public fun A(@org.jetbrains.annotations.NotNull str: java.lang.String) = UastEmptyExpression
+    public fun A(@org.jetbrains.annotations.NotNull i: int) {
+        <init>(i.toString())
+    }
+}
+
+public final class AWithInit {
+    @org.jetbrains.annotations.NotNull private final var str: java.lang.String
+    public final fun getStr() : java.lang.String = UastEmptyExpression
+    public fun AWithInit(@org.jetbrains.annotations.NotNull str: java.lang.String) {
+        {
+            println()
+        }
+    }
+    public fun AWithInit(@org.jetbrains.annotations.NotNull i: int) {
+        <init>(i.toString())
+    }
+}
+
+public final class AWith2Init {
+    @org.jetbrains.annotations.NotNull private final var str: java.lang.String
+    public final fun getStr() : java.lang.String = UastEmptyExpression
+    public fun AWith2Init(@org.jetbrains.annotations.NotNull str: java.lang.String) {
+        {
+            println(1)
+        }
+        {
+            println(2)
+        }
+    }
+    public fun AWith2Init(@org.jetbrains.annotations.NotNull i: int) {
+        <init>(i.toString())
+    }
+}
+
+public final class AOnlyInit {
+    public fun AOnlyInit() {
+        {
+            println(1)
+        }
+        {
+            println(2)
+        }
+    }
+}
+
+public final class AWithSecondary {
+    @org.jetbrains.annotations.NotNull public var a: java.lang.String
+    public final fun getA() : java.lang.String = UastEmptyExpression
+    public final fun setA(@org.jetbrains.annotations.NotNull a: java.lang.String) : void = UastEmptyExpression
+    public fun AWithSecondary(@org.jetbrains.annotations.NotNull i: int) {
+        <init>()
+        a = i.toString()
+    }
+    public fun AWithSecondary(@org.jetbrains.annotations.NotNull s: java.lang.String) {
+        <init>()
+        a = s
+    }
+}
+
+public final class AWithSecondaryInit {
+    @org.jetbrains.annotations.NotNull public var a: java.lang.String
+    public final fun getA() : java.lang.String = UastEmptyExpression
+    public final fun setA(@org.jetbrains.annotations.NotNull a: java.lang.String) : void = UastEmptyExpression
+    public fun AWithSecondaryInit(@org.jetbrains.annotations.NotNull i: int) {
+        <init>()
+        {
+            println()
+        }
+        a = i.toString()
+    }
+    public fun AWithSecondaryInit(@org.jetbrains.annotations.NotNull s: java.lang.String) {
+        <init>()
+        a = s
+        var local: java.lang.String = s
+        local.toString()
+    }
+}
+
+public final class AWithFieldInit {
+    @org.jetbrains.annotations.NotNull private final var a: java.lang.String
+    public final fun getA() : java.lang.String = UastEmptyExpression
+    public fun AWithFieldInit(@org.jetbrains.annotations.NotNull i: int) {
+        {
+            a = i.toString()
+        }
+    }
+}

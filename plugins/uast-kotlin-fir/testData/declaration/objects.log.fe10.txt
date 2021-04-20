@@ -1,0 +1,62 @@
+UFile (package = )
+    UImportStatement (isOnDemand = false)
+    UImportStatement (isOnDemand = false)
+    UClass (name = ObjectsKt)
+        UField (name = topRunnable)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UObjectLiteralExpression
+                UClass (name = null)
+                    UMethod (name = run)
+                        UBlockExpression
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                UIdentifier (Identifier (println))
+                                USimpleNameReferenceExpression (identifier = println, resolvesTo = null)
+                                ULiteralExpression (value = "I'm running")
+                    UMethod (name = )
+        UMethod (name = getTopRunnable)
+        UMethod (name = main)
+            UBlockExpression
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = RunnableManager)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (register))
+                        USimpleNameReferenceExpression (identifier = register, resolvesTo = null)
+                        USimpleNameReferenceExpression (identifier = topRunnable)
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = RunnableManager)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (runAll))
+                        USimpleNameReferenceExpression (identifier = runAll, resolvesTo = null)
+    UClass (name = RunnableManager)
+        UField (name = tasks)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                UIdentifier (Identifier (mutableListOf))
+                USimpleNameReferenceExpression (identifier = mutableListOf, resolvesTo = null)
+        UField (name = INSTANCE)
+            UAnnotation (fqName = null)
+        UMethod (name = getTasks)
+        UMethod (name = register)
+            UParameter (name = runnable)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = tasks)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (add))
+                        USimpleNameReferenceExpression (identifier = add, resolvesTo = null)
+                        USimpleNameReferenceExpression (identifier = runnable)
+        UMethod (name = runAll)
+            UBlockExpression
+                UForEachExpression
+                    UastEmptyExpression
+                    UBlockExpression
+                        UQualifiedReferenceExpression
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                UIdentifier (Identifier (Thread))
+                                USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                                USimpleNameReferenceExpression (identifier = t)
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                UIdentifier (Identifier (start))
+                                USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+        UMethod (name = RunnableManager)

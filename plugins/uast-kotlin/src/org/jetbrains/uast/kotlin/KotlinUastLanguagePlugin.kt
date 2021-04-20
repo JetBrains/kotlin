@@ -739,7 +739,10 @@ private fun convertVariablesDeclaration(
     return declarationsExpression.apply { declarations = listOf(variable) }
 }
 
-val kotlinUastPlugin get() = UastLanguagePlugin.getInstances().find { it.language == KotlinLanguage.INSTANCE } ?: KotlinUastLanguagePlugin()
+val kotlinUastPlugin: UastLanguagePlugin by lz {
+    UastLanguagePlugin.getInstances().find { it.language == KotlinLanguage.INSTANCE }
+        ?: KotlinUastLanguagePlugin()
+}
 
 private fun expressionTypes(requiredType: Class<out UElement>?) = requiredType?.let { arrayOf(it) } ?: DEFAULT_EXPRESSION_TYPES_LIST
 

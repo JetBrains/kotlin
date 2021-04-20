@@ -1,0 +1,30 @@
+import java.lang.Runnable
+import java.lang.Thread
+
+public final class ObjectsKt {
+    @org.jetbrains.annotations.NotNull private static final var topRunnable: java.lang.Runnable = anonymous object : Runnable {
+        override fun run() {
+            println("I'm running")
+        }
+    }
+    public static final fun getTopRunnable() : java.lang.Runnable = UastEmptyExpression
+    public static final fun main() : void {
+        RunnableManager.register(topRunnable)
+        RunnableManager.runAll()
+    }
+}
+
+public final class RunnableManager {
+    @org.jetbrains.annotations.NotNull private static final var tasks: java.util.List<java.lang.Runnable> = mutableListOf()
+    @null public static final var INSTANCE: RunnableManager
+    public final fun getTasks() : java.util.List<java.lang.Runnable> = UastEmptyExpression
+    public final fun register(@org.jetbrains.annotations.NotNull runnable: java.lang.Runnable) : void {
+        tasks.add(runnable)
+    }
+    public final fun runAll() : void {
+        for (t : UastEmptyExpression) {
+            <anonymous class>(t).<anonymous class>()
+        }
+    }
+    private fun RunnableManager() = UastEmptyExpression
+}

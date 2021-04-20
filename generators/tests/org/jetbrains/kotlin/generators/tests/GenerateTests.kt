@@ -198,6 +198,8 @@ import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeLi
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
 import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationPluginIdeDiagnosticTest
 import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationQuickFixTest
+import org.jetbrains.uast.test.kotlin.AbstractFE1UastDeclarationTest
+import org.jetbrains.uast.test.kotlin.AbstractFirUastDeclarationTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -1809,6 +1811,20 @@ fun main(args: Array<String>) {
         testGroup("plugins/fir/fir-plugin-prototype/tests", "plugins/fir/fir-plugin-prototype/testData") {
             testClass<AbstractFirAllOpenDiagnosticTest> {
                 model("")
+            }
+        }
+
+        testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin-fir/testData") {
+            testClass<AbstractFirUastDeclarationTest> {
+                model("declaration")
+                model("legacy")
+            }
+        }
+
+        testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin-fir/testData") {
+            testClass<AbstractFE1UastDeclarationTest> {
+                model("declaration")
+                model("legacy")
             }
         }
 
