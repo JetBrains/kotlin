@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.diagnostics.ConeNotAnnotationContainer
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -411,10 +412,10 @@ class ExpressionsConverter(
             }
         }
 
-        return firExpression?.also {
-            require(it is FirAnnotationContainer)
-            (it.annotations as MutableList<FirAnnotationCall>) += firAnnotationList
-        } ?: buildErrorExpression(null, ConeSimpleDiagnostic("Strange annotated expression: ${firExpression?.render()}", DiagnosticKind.Syntax))
+        val result = firExpression ?: buildErrorExpression(null, ConeNotAnnotationContainer(firExpression?.render() ?: "???"))
+        require(result is FirAnnotationContainer)
+        (result.annotations as MutableList<FirAnnotationCall>) += firAnnotationList
+        return result
     }
 
     /**

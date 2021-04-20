@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_ERRORS_BEFORE
 
 annotation class X(val value: Y, val y: Y)

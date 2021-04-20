@@ -63,6 +63,7 @@ private fun ConeDiagnostic.toFirDiagnostic(
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.on(source, this.reason)
     is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.on(source, this.reason)
     is ConeTypeParameterInQualifiedAccess -> null // reported in various checkers instead
+    is ConeNotAnnotationContainer -> null
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 

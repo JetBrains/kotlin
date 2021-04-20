@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.fir.diagnostics
 
 class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic()
 
+class ConeNotAnnotationContainer(val text: String) : ConeDiagnostic() {
+    override val reason: String get() = "Strange annotated expression: $text"
+}
+
 enum class DiagnosticKind {
     Syntax,
     ExpressionExpected,

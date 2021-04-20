@@ -21,21 +21,24 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirErrorExpressionImpl(
     override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorExpression() {
     override var typeRef: FirTypeRef = FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic))
-    override val annotations: List<FirAnnotationCall> get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorExpressionImpl {
         typeRef = typeRef.transform(transformer, data)
+        transformAnnotations(transformer, data)
         return this
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorExpressionImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

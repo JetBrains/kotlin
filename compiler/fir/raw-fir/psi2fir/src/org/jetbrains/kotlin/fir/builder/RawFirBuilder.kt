@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.diagnostics.ConeNotAnnotationContainer
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -2083,15 +2084,10 @@ open class RawFirBuilder(
 
         override fun visitAnnotatedExpression(expression: KtAnnotatedExpression, data: Unit): FirElement {
             val rawResult = expression.baseExpression?.accept(this, data)
-//            return rawResult ?: buildErrorExpression(
-//                    expression.toFirSourceElement(),
-//                    FirSimpleDiagnostic("Strange annotated expression: ${rawResult?.render()}", DiagnosticKind.Syntax),
-//                )
-            // TODO !!!!!!!!
             val result = rawResult as? FirAnnotationContainer
-                ?: return buildErrorExpression(
+                ?: buildErrorExpression(
                     expression.toFirSourceElement(),
-                    ConeSimpleDiagnostic("Strange annotated expression: ${rawResult?.render()}", DiagnosticKind.Syntax),
+                    ConeNotAnnotationContainer(rawResult?.render() ?: "???")
                 )
             expression.extractAnnotationsTo(result.annotations as MutableList<FirAnnotationCall>)
             return result
