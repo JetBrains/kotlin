@@ -1,17 +1,18 @@
 // WITH_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: WASM
 
-val a = "INT " + 0x8fffffffU
-val b = "BYTE " + 0x8ffU
-val c = "LONG " + 0xffff_ffff_ffffU
+const val a = "INT " + 0x8fffffffU
+const val b = "BYTE " + 0x8ffU
+const val c = "LONG " + 0xffff_ffff_ffffU
 
-val uint = 0x8fffffffU
-val ubyte = 0x8ffU
-val ulong = 0xffff_ffff_ffffU
+const val uint = 0x8fffffffU
+const val ubyte = 0x8ffU
+const val ulong = 0xffff_ffff_ffffU
 
-val aa = "INT " + uint
-val bb = "BYTE " + ubyte
-val cc = "LONG " + ulong
+const val aa = "INT " + uint
+const val bb = "BYTE " + ubyte
+const val cc = "LONG " + ulong
 
 
 fun box(): String {

@@ -7155,6 +7155,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("foldingBinaryOpsUnsignedConst.kt")
+        public void testFoldingBinaryOpsUnsignedConst() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/foldingBinaryOpsUnsignedConst.kt");
+        }
+
+        @Test
         @TestMetadata("kt9532.kt")
         public void testKt9532() throws Exception {
             runTest("compiler/testData/codegen/box/constants/kt9532.kt");
