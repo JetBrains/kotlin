@@ -633,7 +633,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
             is ResolutionMode.LambdaResolution -> {
                 context.withAnonymousFunction(anonymousFunction, components, data) {
-                    transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).addReturn()
+                    withFullBodyResolve {
+                        transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).addReturn()
+                    }
                 }
             }
             is ResolutionMode.WithExpectedType, is ResolutionMode.ContextIndependent -> {
@@ -695,7 +697,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
                 val bodyExpectedType = returnTypeRefFromResolvedAtom ?: expectedTypeRef
                 context.withAnonymousFunction(lambda, components, data) {
-                    lambda = transformFunction(lambda, withExpectedType(bodyExpectedType)) as FirAnonymousFunction
+                    withFullBodyResolve {
+                        lambda = transformFunction(lambda, withExpectedType(bodyExpectedType)) as FirAnonymousFunction
+                    }
                 }
                 // To separate function and separate commit
                 val writer = FirCallCompletionResultsWriterTransformer(
