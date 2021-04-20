@@ -13,7 +13,7 @@ import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 
-internal class ModuleLibrariesSearchScope(private val module: Module) : GlobalSearchScope(module.project) {
+private class ModuleLibrariesSearchScope(private val module: Module) : GlobalSearchScope(module.project) {
     override fun contains(file: VirtualFile): Boolean {
         val orderEntry = ModuleRootManager.getInstance(module).fileIndex.getOrderEntryForFile(file)
         return orderEntry is JdkOrderEntry || orderEntry is LibraryOrderEntry
@@ -28,3 +28,5 @@ internal class ModuleLibrariesSearchScope(private val module: Module) : GlobalSe
 
     override fun isSearchInLibraries(): Boolean = true
 }
+
+fun createScopeForModuleLibraries(module: Module): GlobalSearchScope = ModuleLibrariesSearchScope(module)

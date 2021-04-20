@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeLibrariesSess
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirThreadSafeSymbolProviderWrapper
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.ModuleLibrariesSearchScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.createScopeForModuleLibraries
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -161,7 +161,7 @@ internal object FirIdeSessionFactory {
         configureSession: (FirIdeSession.() -> Unit)?,
     ): FirIdeLibrariesSession = librariesCache.cached(moduleInfo) {
         checkCanceled()
-        val searchScope = ModuleLibrariesSearchScope(moduleInfo.module)
+        val searchScope = createScopeForModuleLibraries(moduleInfo.module)
         val javaClassFinder = JavaClassFinderImpl().apply {
             setProjectInstance(project)
             setScope(searchScope)
