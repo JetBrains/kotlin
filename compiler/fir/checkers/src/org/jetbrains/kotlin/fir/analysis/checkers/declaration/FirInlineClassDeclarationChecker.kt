@@ -16,17 +16,19 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.isPotentiallyArray
-import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 
-class FirInlineClassDeclarationChecker : FirRegularClassChecker() {
+object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
-    private val reservedFunctionNames = setOf("box", "unbox", "equals", "hashCode")
-    private val kotlinCloneableType = ClassId.fromString("kotlin/Cloneable").constructClassLikeType(emptyArray(), false)
-    private val javaCloneableType = ClassId.fromString("java/lang/Cloneable").constructClassLikeType(emptyArray(), false)
+    private val reservedFunctionNames = mutableSetOf("box", "unbox", "equals", "hashCode")
+    private val javaLangFqName = FqName("java.lang")
+    private val cloneableFqName = FqName("Cloneable")
 
     @Suppress("NAME_SHADOWING")
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -48,7 +50,7 @@ class FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
-        if (declaration.isSubtypeOfCloneable(context)) {
+        if (declaration.isSubtypeOfCloneable()) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE, context)
         }
 
@@ -208,11 +210,15 @@ class FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     ?.isRecursiveInlineClassType(visited, session) == true
     }
 
-    private fun FirRegularClass.isSubtypeOfCloneable(context: CheckerContext): Boolean {
-        val coneType = this.defaultType()
-        val typeContext = context.session.typeContext
+    private fun FirRegularClass.isSubtypeOfCloneable(): Boolean {
+        if (classId.isCloneableId()) return true
 
-        return AbstractTypeChecker.isSubtypeOf(typeContext, coneType, kotlinCloneableType) ||
-                AbstractTypeChecker.isSubtypeOf(typeContext, coneType, javaCloneableType)
+        return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session).any { superType ->
+            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isCloneableId() == true
+        }
     }
+
+    private fun ClassId.isCloneableId(): Boolean =
+        relativeClassName == cloneableFqName &&
+                packageFqName == StandardClassIds.BASE_KOTLIN_PACKAGE || packageFqName == javaLangFqName
 }

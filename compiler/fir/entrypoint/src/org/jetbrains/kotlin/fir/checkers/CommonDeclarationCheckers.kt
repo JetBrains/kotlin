@@ -81,7 +81,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirMemberFunctionsChecker,
             FirMemberPropertiesChecker,
             FirNestedClassChecker,
-            FirInlineClassDeclarationChecker(),
+            FirInlineClassDeclarationChecker,
         )
 
     override val constructorCheckers: Set<FirConstructorChecker>
