@@ -124,8 +124,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractFirDiagnosticsWithLightTreeTest>(
-                suiteTestClassName = "FirOldFrontendDiagnosticsWithLightTreeTestGenerated",
-                annotations = listOf(annotation(Execution::class.java, ExecutionMode.SAME_THREAD))
+                suiteTestClassName = "FirOldFrontendDiagnosticsWithLightTreeTestGenerated"
             ) {
                 model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
@@ -148,9 +147,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
 
-            testClass<AbstractFirDiagnosticsWithLightTreeTest>(
-                annotations = listOf(annotation(Execution::class.java, ExecutionMode.SAME_THREAD))
-            ) {
+            testClass<AbstractFirDiagnosticsWithLightTreeTest> {
                 model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
                 model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
