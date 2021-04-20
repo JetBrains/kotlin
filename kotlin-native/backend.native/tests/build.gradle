@@ -528,14 +528,9 @@ task sum_3const(type: KonanLocalTest) {
     source = "codegen/function/sum_3const.kt"
 }
 
-standaloneTest("function_nothingN_returning_safe_call1") {
-    flags = ["-g", "-entry", "codegen.function.nothingN_returning_safe_call1.main"]
-    source = "codegen/function/nothingNReturningSafeCall1.kt"
-}
-
-standaloneTest("function_nothingN_returning_safe_call2") {
-    flags = ["-g", "-entry", "codegen.function.nothingN_returning_safe_call2.main"]
-    source = "codegen/function/nothingNReturningSafeCall2.kt"
+standaloneTest("function_nothingN_returning_safe_call") {
+    flags = ["-g", "-entry", "codegen.function.nothingN_returning_safe_call.main"]
+    source = "codegen/function/nothingNReturningSafeCall.kt"
 }
 
 task codegen_controlflow_for_loops(type: KonanLocalTest) {
