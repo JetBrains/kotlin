@@ -11,15 +11,15 @@ val test3: Byte
   get
 
 val test4: Long
-  field = 42.unaryMinus()
+  field = -42L
   get
 
 val test5: Short
-  field = 42.unaryMinus()
+  field = -42S
   get
 
 val test6: Byte
-  field = 42.unaryMinus()
+  field = -42B
   get
 
 fun test() {
