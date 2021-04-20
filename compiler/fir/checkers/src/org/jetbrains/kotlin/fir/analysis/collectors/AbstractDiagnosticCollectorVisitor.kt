@@ -162,7 +162,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?) {
-        super.visitResolvedTypeRef(resolvedTypeRef, data)
+        // Assuming no errors, the children of FirResolvedTypeRef (currently this can be FirAnnotationCalls) will also be present
+        // as children in delegatedTypeRef. We should make sure those elements are only visited once, otherwise diagnostics will be
+        // collected twice: once through resolvedTypeRef's children and another through resolvedTypeRef.delegatedTypeRef's children.
+        if (resolvedTypeRef.type is ConeClassErrorType) {
+            super.visitResolvedTypeRef(resolvedTypeRef, data)
+        }
         resolvedTypeRef.delegatedTypeRef?.accept(this, data)
     }
 
