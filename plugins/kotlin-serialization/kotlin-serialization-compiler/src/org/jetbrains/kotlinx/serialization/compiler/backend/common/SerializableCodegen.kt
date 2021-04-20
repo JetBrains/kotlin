@@ -26,7 +26,7 @@ abstract class SerializableCodegen(
     }
 
     private inline fun ClassDescriptor.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> FunctionDescriptor?) =
-        !isInlineClass() && (isAbstractSerializableClass() || isSealedSerializableClass() || functionPresenceChecker() != null)
+        !isInlineClass() && (isAbstractOrSealedSerializableClass() || functionPresenceChecker() != null)
 
     private fun generateSyntheticInternalConstructor() {
         val serializerDescriptor = serializableDescriptor.classSerializer ?: return

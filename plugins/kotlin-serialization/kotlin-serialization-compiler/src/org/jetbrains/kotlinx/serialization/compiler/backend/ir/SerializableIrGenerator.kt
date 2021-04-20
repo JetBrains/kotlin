@@ -110,7 +110,7 @@ class SerializableIrGenerator(
 
             if (useFieldMissingOptimization() &&
                 // for abstract classes fields MUST BE checked in child classes
-                !serializableDescriptor.isAbstractSerializableClass() && !serializableDescriptor.isSealedSerializableClass()
+                !serializableDescriptor.isAbstractOrSealedSerializableClass()
             ) {
                 val getDescriptorExpr = if (serializableDescriptor.isStaticSerializable) {
                     getStaticSerialDescriptorExpr()

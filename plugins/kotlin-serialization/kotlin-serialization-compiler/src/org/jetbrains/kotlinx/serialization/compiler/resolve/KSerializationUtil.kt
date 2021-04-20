@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.resolve
@@ -156,17 +145,14 @@ internal fun Annotated.findSerializableAnnotationDeclaration(): KtAnnotationEntr
 // For abstract classes marked with @Serializable,
 // methods are generated anyway although they shouldn't have
 // generated $serializer and use Polymorphic one.
-internal fun ClassDescriptor.isAbstractSerializableClass(): Boolean =
-    isInternalSerializable && modality == Modality.ABSTRACT
-
-internal fun ClassDescriptor.isSealedSerializableClass(): Boolean =
-    isInternalSerializable && modality == Modality.SEALED
+internal fun ClassDescriptor.isAbstractOrSealedSerializableClass(): Boolean =
+    isInternalSerializable && (modality == Modality.ABSTRACT || modality == Modality.SEALED)
 
 internal fun ClassDescriptor.polymorphicSerializerIfApplicableAutomatically(): ClassDescriptor? {
     val serializer = when {
-        this.isAbstractSerializableClass()
-                || kind == ClassKind.INTERFACE -> SpecialBuiltins.polymorphicSerializer
-        this.isSealedSerializableClass() -> SpecialBuiltins.sealedSerializer
+        kind == ClassKind.INTERFACE -> SpecialBuiltins.polymorphicSerializer
+        isInternalSerializable && modality == Modality.ABSTRACT -> SpecialBuiltins.polymorphicSerializer
+        isInternalSerializable && modality == Modality.SEALED -> SpecialBuiltins.sealedSerializer
         else -> null
     }
     return serializer?.let { module.getClassFromSerializationPackage(it) }
@@ -217,6 +203,7 @@ internal fun ClassDescriptor.needSerializerFactory(): Boolean {
     if (!(this.platform?.isNative() == true || this.platform.isJs())) return false
     val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
     if (serializableClass.isSerializableObject) return true
+    if (serializableClass.isAbstractOrSealedSerializableClass()) return true
     if (serializableClass.declaredTypeParameters.isEmpty()) return false
     return true
 }
