@@ -13,11 +13,8 @@ fun tryRenderStructOrUnion(def: StructDef): String? = when (def.kind) {
 private fun tryRenderStruct(def: StructDef): String? {
     val isPackedStruct = def.fields.any { !it.isAligned }
 
-    // Account for C++ vtable size.
-    var offset = if (def.members.isEmpty())
-        8L
-    else
-        (def.members.first() as? Field)?.offsetBytes ?: 0L
+    // The offset of the first field can be non-zero in case of C++ vtable presence.
+    var offset = (def.members.firstOrNull() as? Field)?.offsetBytes ?: 0L
 
     return buildString {
         append("struct")
