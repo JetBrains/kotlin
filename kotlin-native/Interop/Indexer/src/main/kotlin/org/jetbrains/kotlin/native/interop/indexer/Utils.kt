@@ -36,7 +36,7 @@ internal val CValue<CXType>.name: String get() = clang_getTypeSpelling(this).con
 internal val CXTypeKind.spelling: String get() = clang_getTypeKindSpelling(this).convertAndDispose()
 internal val CXCursorKind.spelling: String get() = clang_getCursorKindSpelling(this).convertAndDispose()
 
-internal val CValue<CXCursor>.isPublic: Boolean get() {
+internal val CValue<CXCursor>.isCxxPublic: Boolean get() {
     val access = clang_getCXXAccessSpecifier(this)
     return access != CX_CXXAccessSpecifier.CX_CXXProtected && access != CX_CXXAccessSpecifier.CX_CXXPrivate
 }
@@ -58,7 +58,7 @@ internal fun CValue<CXCursor>.isRecursivelyPublic(): Boolean {
     when {
         clang_isDeclaration(kind) == 0 ->
             return true  // got the topmost declaration already
-        !isPublic ->
+        !isCxxPublic ->
             return false
         kind == CXCursorKind.CXCursor_Namespace && getCursorSpelling(this).isEmpty() ->
             return false

@@ -225,7 +225,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
         // TODO skip method (function) when encounter UnsupportedType in params or ret value. Otherwise all class methods will be lost due to exception (?)
         visitChildren(classCursor) { cursor, _ ->
-            if (cursor.isPublic) {
+            if (cursor.isCxxPublic) {
                 // TODO If a kotlin class is _conceptually_ derived from its c++ counterpart, then it shall be able to override virtual private and access protected
                 when (cursor.kind) {
                     CXCursorKind.CXCursor_CXXMethod -> {
@@ -283,7 +283,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun addDeclaredFields(result: MutableList<StructMember>, structType: CValue<CXType>, containerType: CValue<CXType>) {
-        getFields(containerType).filter { it.isPublic }.forEach { fieldCursor ->
+        getFields(containerType).filter { library.language != Language.CPP || it.isCxxPublic }.forEach { fieldCursor ->
             val name = getCursorSpelling(fieldCursor)
             if (name.isNotEmpty()) {
                 val fieldType = convertCursorType(fieldCursor)
