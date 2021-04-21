@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 
 object FirAnnotationUsedAsAnnotationArgumentChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val args = expression.argumentList.arguments
         for (arg in args) {
-            for (ann in ((arg as? FirWrappedArgumentExpression)?.expression ?: arg).annotations) {
+            for (ann in arg.unwrapArgument().annotations) {
                 reporter.reportOn(ann.source, FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, context)
             }
         }

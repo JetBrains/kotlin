@@ -459,11 +459,7 @@ class Fir2IrVisitor(
                 )
             }
             else -> {
-                val unwrappedExpression = if (expression is FirWrappedArgumentExpression) {
-                    expression.expression
-                } else {
-                    expression
-                }
+                val unwrappedExpression = expression.unwrapArgument()
                 if (annotationMode && unwrappedExpression is FirFunctionCall) {
                     convertToIrCall(unwrappedExpression, annotationMode)
                 } else {

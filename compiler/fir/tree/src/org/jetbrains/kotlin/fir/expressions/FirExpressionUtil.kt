@@ -108,3 +108,5 @@ fun FirBlock.replaceFirstStatement(statement: FirStatement): FirStatement {
     statements[0] = statement
     return existed
 }
+
+fun FirExpression.unwrapArgument(): FirExpression = (this as? FirWrappedArgumentExpression)?.expression ?: this

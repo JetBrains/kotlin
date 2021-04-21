@@ -755,11 +755,6 @@ private fun ExpectedArgumentType.getExpectedType(argument: FirExpression): ConeK
 
 fun ConeKotlinType.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ExpectedType(this)
 
-private fun FirExpression.unwrapArgument(): FirExpression = when (this) {
-    is FirWrappedArgumentExpression -> expression
-    else -> this
-}
-
 class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSubstitutor) : FirDefaultTransformer<Any?>() {
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element

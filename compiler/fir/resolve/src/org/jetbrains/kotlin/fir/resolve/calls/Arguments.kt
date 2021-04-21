@@ -494,7 +494,7 @@ fun FirExpression.isFunctional(
     scopeSession: ScopeSession,
     expectedFunctionType: ConeKotlinType?,
 ): Boolean {
-    when ((this as? FirWrappedArgumentExpression)?.expression ?: this) {
+    when (unwrapArgument()) {
         is FirAnonymousFunction, is FirCallableReferenceAccess -> return true
         else -> {
             // Either a functional type or a subtype of a class that has a contributed `invoke`.
