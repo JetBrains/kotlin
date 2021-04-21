@@ -84,6 +84,7 @@
         <module>tools/kotlin-maven-noarg</module>
         <module>tools/kotlin-maven-sam-with-receiver</module>
         <module>tools/kotlin-maven-serialization</module>
+        <module>tools/kotlin-maven-lombok</module>
 
         <module>tools/kotlin-bom</module>
 
