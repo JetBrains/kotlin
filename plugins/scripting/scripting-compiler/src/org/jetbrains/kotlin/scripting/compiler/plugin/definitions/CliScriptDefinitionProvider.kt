@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 import org.jetbrains.kotlin.scripting.definitions.LazyScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
-import kotlin.concurrent.write
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
+    private val definitionsLock = ReentrantLock()
     private val definitionsFromSources: MutableList<Sequence<ScriptDefinition>> = arrayListOf()
     private val definitions: MutableList<ScriptDefinition> = arrayListOf()
     private var defaultDefinition: ScriptDefinition? = null
@@ -22,7 +24,7 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
         }
 
     fun setScriptDefinitions(newDefinitions: List<ScriptDefinition>) {
-        lock.write {
+        definitionsLock.withLock {
             definitions.clear()
             val (withoutStdDef, stdDef) = newDefinitions.partition { !it.isDefault }
             definitions.addAll(withoutStdDef)
@@ -33,7 +35,7 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
     }
 
     fun setScriptDefinitionsSources(newSources: List<ScriptDefinitionsSource>) {
-        lock.write {
+        definitionsLock.withLock {
             definitionsFromSources.clear()
             for (it in newSources) {
                 definitionsFromSources.add(it.definitions.constrainOnce())
