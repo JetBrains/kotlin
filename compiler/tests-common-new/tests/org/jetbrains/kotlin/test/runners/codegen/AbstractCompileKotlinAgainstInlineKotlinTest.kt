@@ -7,12 +7,21 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.util.allUnbound
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
 import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
+import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.bind
@@ -77,11 +86,56 @@ open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrC
         // call super
         configurationImpl()
         useConfigurators(::SerializeSetter)
+        useBackendHandlers(::CheckInlineBodies)
     }
 
     private class SerializeSetter(testServices: TestServices) : EnvironmentConfigurator(testServices) {
         override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
             configuration.put(JVMConfigurationKeys.SERIALIZE_IR, true)
         }
+    }
+
+    private class CheckInlineBodies(testServices: TestServices) : AbstractIrHandler(testServices) {
+        val declaredInlineFunctions = mutableSetOf<IrSimpleFunction>()
+
+        override fun processModule(module: TestModule, info: IrBackendInput) {
+            val irModule = info.backendInput.irModuleFragment
+            irModule.acceptChildrenVoid(InlineFunctionsCollector())
+            irModule.acceptChildrenVoid(InlineCallBodiesCheck())
+            assertions.assertTrue(info.backendInput.symbolTable.allUnbound.isEmpty())
+        }
+
+        override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+            // TODO("Not yet implemented")
+        }
+
+        inner class InlineFunctionsCollector : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                if (declaration.isInline) declaredInlineFunctions.add(declaration)
+                super.visitSimpleFunction(declaration)
+            }
+        }
+
+        inner class InlineCallBodiesCheck : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
+                val symbol = expression.symbol
+                assertions.assertTrue(symbol.isBound)
+                val callee = symbol.owner
+                if (callee in declaredInlineFunctions) {
+                    val trueCallee = (callee as IrSimpleFunction).resolveFakeOverride()!!
+                    assertions.assertNotNull(trueCallee.body)
+                }
+                super.visitMemberAccess(expression)
+            }
+        }
+
     }
 }
