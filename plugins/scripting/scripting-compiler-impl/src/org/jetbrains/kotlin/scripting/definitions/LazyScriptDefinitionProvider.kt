@@ -61,7 +61,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
         }
     }
 
-    protected fun dispose() {
+    protected open fun dispose() {
         disposed = true
         clearCache()
     }
