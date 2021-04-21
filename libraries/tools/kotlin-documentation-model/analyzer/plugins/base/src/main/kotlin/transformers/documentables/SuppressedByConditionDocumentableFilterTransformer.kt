@@ -4,7 +4,8 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
-abstract class SuppressedByConditionDocumentableFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
+abstract class SuppressedByConditionDocumentableFilterTransformer(val context: DokkaContext) :
+    PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> =
         modules.map { module ->
             val (documentable, wasChanged) = processModule(module)
@@ -82,7 +83,7 @@ abstract class SuppressedByConditionDocumentableFilterTransformer(val context: D
             }
             is DEnum -> {
                 val constructors = classlike.constructors.map { processMember(it) }
-                val entries = classlike.entries.map { processMember(it) }
+                val entries = classlike.entries.map { processEnumEntry(it) }
                 val wasClassChange =
                     wasClasslikeChanged || (constructors + entries).any { it.changed }
                 (classlike.takeIf { !wasClassChange } ?: classlike.copy(
@@ -95,6 +96,21 @@ abstract class SuppressedByConditionDocumentableFilterTransformer(val context: D
                 )).let { DocumentableWithChanges(it, wasClassChange) }
             }
         }
+    }
+
+    private fun processEnumEntry(dEnumEntry: DEnumEntry): DocumentableWithChanges<DEnumEntry> {
+        if (shouldBeSuppressed(dEnumEntry)) return DocumentableWithChanges.filteredDocumentable()
+
+        val functions = dEnumEntry.functions.map { processMember(it) }
+        val properties = dEnumEntry.properties.map { processMember(it) }
+        val classlikes = dEnumEntry.classlikes.map { processClassLike(it) }
+
+        val wasChanged = (functions + properties + classlikes).any { it.changed }
+        return (dEnumEntry.takeIf { !wasChanged } ?: dEnumEntry.copy(
+            functions = functions.mapNotNull { it.documentable },
+            classlikes = classlikes.mapNotNull { it.documentable },
+            properties = properties.mapNotNull { it.documentable },
+        )).let { DocumentableWithChanges(it, wasChanged) }
     }
 
     private fun <T : Documentable> processMember(member: T): DocumentableWithChanges<T> =

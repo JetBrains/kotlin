@@ -1,8 +1,10 @@
 package transformers
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.model.DEnum
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
     val suppressingInheritedConfiguration = dokkaConfiguration {
@@ -106,6 +108,48 @@ class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
             preMergeDocumentablesTransformationStage = { modules ->
                 val properties = modules.flatMap { it.packages }.flatMap { it.classlikes }.first { it.name == "Child" }.properties
                 assertEquals(listOf("parentValue"), properties.map { it.name })
+            }
+        }
+    }
+
+    @Test
+    fun `should work with enum entries`(){
+        testInline(
+            """
+            /src/suppressed/Suppressed.kt
+            package suppressed
+            enum class Suppressed {
+                ENTRY_SUPPRESSED
+            }
+            """.trimIndent(),
+            suppressingInheritedConfiguration
+        ) {
+            preMergeDocumentablesTransformationStage = { modules ->
+                val entry = (modules.flatMap { it.packages }.flatMap { it.classlikes }.first { it.name == "Suppressed" } as DEnum).entries.first()
+                assertEquals(emptyList(), entry.properties)
+                assertEquals(emptyList(), entry.functions)
+                assertEquals(emptyList(), entry.classlikes)
+            }
+        }
+    }
+
+    @Test
+    fun `should work with enum entries when not suppressing`(){
+        testInline(
+            """
+            /src/suppressed/Suppressed.kt
+            package suppressed
+            enum class Suppressed {
+                ENTRY_SUPPRESSED
+            }
+            """.trimIndent(),
+            nonSuppressingInheritedConfiguration
+        ) {
+            preMergeDocumentablesTransformationStage = { modules ->
+                val entry = (modules.flatMap { it.packages }.flatMap { it.classlikes }.first { it.name == "Suppressed" } as DEnum).entries.first()
+                assertEquals(listOf("name", "ordinal"), entry.properties.map { it.name })
+                assertTrue(entry.functions.map { it.name }.containsAll(listOf("compareTo", "equals", "hashCode", "toString")))
+                assertEquals(emptyList(), entry.classlikes)
             }
         }
     }
