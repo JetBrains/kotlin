@@ -210,6 +210,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/importsKt22083.kt");
     }
 
+    @TestMetadata("incorrectDelegate.kt")
+    public void testIncorrectDelegate() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/incorrectDelegate.kt");
+    }
+
     @TestMetadata("inheritanceSimple.kt")
     public void testInheritanceSimple() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/inheritanceSimple.kt");
