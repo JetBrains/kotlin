@@ -5,29 +5,19 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
-import org.jetbrains.kotlin.fir.checkers.CommonDeclarationCheckers
-import org.jetbrains.kotlin.fir.checkers.CommonExpressionCheckers
-import org.jetbrains.kotlin.fir.checkers.ExtendedDeclarationCheckers
-import org.jetbrains.kotlin.fir.checkers.ExtendedExpressionCheckers
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
+import org.jetbrains.kotlin.fir.checkers.*
 
 internal abstract class AbstractFirIdeDiagnosticsCollector(
     session: FirSession,
@@ -38,11 +28,13 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
     init {
         val declarationCheckers = CheckersFactory.createDeclarationCheckers(useExtendedCheckers)
         val expressionCheckers = CheckersFactory.createExpressionCheckers(useExtendedCheckers)
+        val typeCheckers = CheckersFactory.createTypeCheckers(useExtendedCheckers)
 
         @Suppress("LeakingThis")
         initializeComponents(
             DeclarationCheckersDiagnosticComponent(this, declarationCheckers),
             ExpressionCheckersDiagnosticComponent(this, expressionCheckers),
+            TypeCheckersDiagnosticComponent(this, typeCheckers),
             ErrorNodeDiagnosticCollectorComponent(this),
             ControlFlowAnalysisDiagnosticComponent(this, declarationCheckers),
         )
@@ -82,6 +74,8 @@ private object CheckersFactory {
 
     fun createExpressionCheckers(useExtendedCheckers: Boolean): ExpressionCheckers =
         if (useExtendedCheckers) ExtendedExpressionCheckers else CommonExpressionCheckers
+
+    fun createTypeCheckers(useExtendedCheckers: Boolean): TypeCheckers = CommonTypeCheckers
 
     // TODO hack to have all checkers present in DeclarationCheckers.memberDeclarationCheckers and similar
     // If use ExtendedDeclarationCheckers directly when DeclarationCheckers.memberDeclarationCheckers will not contain basicDeclarationCheckers

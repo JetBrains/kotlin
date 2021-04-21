@@ -72,6 +72,7 @@ fun AbstractDiagnosticCollector.registerAllComponents() {
     initializeComponents(
         DeclarationCheckersDiagnosticComponent(this),
         ExpressionCheckersDiagnosticComponent(this),
+        TypeCheckersDiagnosticComponent(this),
         ErrorNodeDiagnosticCollectorComponent(this),
         ControlFlowAnalysisDiagnosticComponent(this),
     )

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
@@ -50,6 +51,10 @@ object FirSessionFactory {
         }
 
         fun useCheckers(checkers: DeclarationCheckers) {
+            session.checkersComponent.register(checkers)
+        }
+
+        fun useCheckers(checkers: TypeCheckers) {
             session.checkersComponent.register(checkers)
         }
 

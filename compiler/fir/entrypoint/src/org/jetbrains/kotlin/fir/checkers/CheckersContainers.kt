@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactory
 fun FirSessionFactory.FirSessionConfigurator.registerCommonCheckers() {
     useCheckers(CommonDeclarationCheckers)
     useCheckers(CommonExpressionCheckers)
+    useCheckers(CommonTypeCheckers)
 }
 
 fun FirSessionFactory.FirSessionConfigurator.registerExtendedCommonCheckers() {

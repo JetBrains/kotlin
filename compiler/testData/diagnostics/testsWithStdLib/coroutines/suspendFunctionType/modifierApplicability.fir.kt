@@ -22,7 +22,8 @@ typealias Test15 = (@A() suspend () -> Unit)?
 typealias Test16 = (@A suspend () -> Unit)?
 typealias Test17 = @A suspend RS.() -> Unit
 typealias Test18 = (suspend () -> Unit)?
-typealias Test19 = (@A({ val x: <!WRONG_MODIFIER_TARGET!>suspend<!> String? = null; "" }()) suspend () -> Unit)?
+typealias Test19 = (@A({ val x: <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>suspend<!> String? = null; "" }()) suspend () -> Unit)?
+typealias Test20 = (@A("".let { val x: <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>suspend<!> String? = null; it }) suspend () -> Unit)?
 
 interface Supertype1 : suspend () -> Unit {
 
