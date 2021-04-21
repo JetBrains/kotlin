@@ -14299,6 +14299,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("initEntriesInCompanionObject2.kt")
+        public void testInitEntriesInCompanionObject2() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/initEntriesInCompanionObject2.kt");
+        }
+
+        @Test
         @TestMetadata("initEntriesInValueOf.kt")
         public void testInitEntriesInValueOf() throws Exception {
             runTest("compiler/testData/codegen/box/enum/initEntriesInValueOf.kt");
