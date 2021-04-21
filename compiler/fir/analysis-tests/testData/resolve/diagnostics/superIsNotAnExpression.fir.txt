@@ -13,7 +13,7 @@ FILE: superIsNotAnExpression.kt
         public final fun act(): R|kotlin/Unit| {
             <Super cannot be a callee>#()
             <Unresolved name: invoke>#()
-            <Super cannot be a callee>#(<L> = <Super cannot be a callee>@fun <anonymous>(): R|ERROR CLASS: Unresolved name: println| <inline=Unknown>  {
+            <Super cannot be a callee>#(<L> = <Super cannot be a callee>@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: println> <inline=Unknown>  {
                 ^ <Unresolved name: println>#(ERROR_EXPR(Incorrect character: 'weird'))
             }
             )

@@ -15,4 +15,4 @@ val z = 3
 
 fun foo(x: Int = <!UNINITIALIZED_PARAMETER!>y<!>, y: Int = x, i : Int = z): Int = x + y
 
-fun foo(x: () -> Int = { <!UNRESOLVED_REFERENCE!>y<!> }, y: Int = x(), i : Int = z): Int = x() + y
+fun foo(x: () -> Int = { <!UNINITIALIZED_PARAMETER!>y<!> }, y: Int = x(), i : Int = z): Int = x() + y

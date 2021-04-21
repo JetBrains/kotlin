@@ -727,8 +727,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType }
                         ) ?: session.builtinTypes.unitType.type
                     }
+                val returnTypeRef = if (returnType is ConeKotlinErrorType)
+                    lambda.returnTypeRef.errorTypeFromPrototype(returnType.diagnostic)
+                else
+                    lambda.returnTypeRef.resolvedTypeFromPrototype(returnType)
                 lambda.replaceReturnTypeRef(
-                    lambda.returnTypeRef.resolvedTypeFromPrototype(returnType).also {
+                    returnTypeRef.also {
                         session.lookupTracker?.recordTypeResolveAsLookup(it, lambda.source, null)
                     }
                 )
