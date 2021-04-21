@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
@@ -249,15 +250,15 @@ fun extractLambdaInfoFromFunctionalType(
     }
     if (!expectedType.isBuiltinFunctionalType(session)) return null
 
-    val lastStatement = argument.body?.statements?.singleOrNull()
-    val returnType =
+    val singleStatement = argument.body?.statements?.singleOrNull() as? FirReturnExpression
+    if (argument.returnType == null && singleStatement != null &&
+        singleStatement.target.labeledElement == argument && singleStatement.result is FirUnitExpression
+    ) {
         // Simply { }, i.e., function literals without body. Raw FIR added an implicit return with an implicit unit type ref.
-        if (lastStatement?.source?.kind is FirFakeSourceElementKind.ImplicitReturn &&
-            (lastStatement as? FirReturnExpression)?.result?.source?.kind is FirFakeSourceElementKind.ImplicitUnit
-        )
-            session.builtinTypes.unitType.type
-        else
-            argument.returnType ?: expectedType.returnType(session)
+        argument.replaceReturnTypeRef(session.builtinTypes.unitType)
+    }
+    val returnType = argument.returnType ?: expectedType.returnType(session)
+
     // `fun (x: T) = ...` and `fun T.() = ...` are both instances of `T.() -> V` and `(T) -> V`; `fun () = ...` is not.
     // For lambdas, the existence of the receiver is always implied by the expected type, and a value parameter
     // can never fill its role.
@@ -269,8 +270,11 @@ fun extractLambdaInfoFromFunctionalType(
         expectedParameters // Infer existence of a parameter named `it` of an appropriate type.
     } else {
         argument.valueParameters.mapIndexed { index, parameter ->
-            parameter.returnTypeRef.coneTypeSafe() ?: expectedParameters.getOrNull(index)
-                ?: ConeClassErrorType(ConeSimpleDiagnostic("Cannot infer type for parameter ${parameter.name}", DiagnosticKind.CannotInferParameterType))
+            parameter.returnTypeRef.coneTypeSafe()
+                ?: expectedParameters.getOrNull(index)
+                ?: ConeClassErrorType(
+                    ConeSimpleDiagnostic("Cannot infer type for parameter ${parameter.name}", DiagnosticKind.CannotInferParameterType)
+                )
         }
     }
 
