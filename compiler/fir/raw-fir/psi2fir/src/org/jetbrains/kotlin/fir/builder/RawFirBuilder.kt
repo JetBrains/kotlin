@@ -329,7 +329,7 @@ open class RawFirBuilder(
                     val accessorTarget = FirFunctionTarget(labelName = null, isLambda = false)
                     buildPropertyAccessor {
                         this.source = source
-                        session = baseSession
+                        declarationSiteSession = baseSession
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = if (isGetter) {
                             returnTypeReference?.convertSafe() ?: propertyTypeRef
@@ -344,7 +344,7 @@ open class RawFirBuilder(
                         if (!isGetter && valueParameters.isEmpty()) {
                             valueParameters += buildDefaultSetterValueParameter {
                                 this.source = source.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
-                                session = baseSession
+                                declarationSiteSession = baseSession
                                 origin = FirDeclarationOrigin.Source
                                 returnTypeRef = propertyTypeRef
                                 symbol = FirVariableSymbol(NAME_FOR_DEFAULT_VALUE_PARAMETER)
@@ -396,7 +396,7 @@ open class RawFirBuilder(
             val name = nameAsSafeName
             return buildValueParameter {
                 source = toFirSourceElement()
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = when {
                     typeReference != null -> typeReference.toFirOrErrorType()
@@ -429,7 +429,7 @@ open class RawFirBuilder(
             val propertyName = nameAsSafeName
             return buildProperty {
                 source = propertySource
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
                 receiverTypeRef = null
@@ -568,7 +568,7 @@ open class RawFirBuilder(
                         val delegateSource = superTypeListEntry.delegateExpression?.toFirSourceElement()
                         val delegateField = buildField {
                             source = delegateSource
-                            session = baseSession
+                            declarationSiteSession = baseSession
                             origin = FirDeclarationOrigin.Synthetic
                             name = delegateName
                             returnTypeRef = type
@@ -678,7 +678,7 @@ open class RawFirBuilder(
             }
             return buildPrimaryConstructor {
                 source = constructorSource
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = delegatedSelfTypeRef
                 this.status = status
@@ -697,7 +697,7 @@ open class RawFirBuilder(
             context.packageFqName = file.packageFqName
             return buildFile {
                 source = file.toFirSourceElement()
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 name = file.name
                 packageFqName = context.packageFqName
@@ -725,7 +725,7 @@ open class RawFirBuilder(
             val ktEnumEntry = this@toFirEnumEntry
             return buildEnumEntry {
                 source = toFirSourceElement()
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = delegatedEnumSelfTypeRef
                 name = nameAsSafeName
@@ -743,7 +743,7 @@ open class RawFirBuilder(
                 initializer = withChildClassName(nameAsSafeName) {
                     buildAnonymousObject {
                         source = toFirSourceElement(FirFakeSourceElementKind.EnumInitializer)
-                        session = baseSession
+                        declarationSiteSession = baseSession
                         origin = FirDeclarationOrigin.Source
                         classKind = ClassKind.ENUM_ENTRY
                         scopeProvider = this@RawFirBuilder.baseScopeProvider
@@ -828,7 +828,7 @@ open class RawFirBuilder(
 
                     buildRegularClass {
                         source = classOrObject.toFirSourceElement()
-                        session = baseSession
+                        declarationSiteSession = baseSession
                         origin = FirDeclarationOrigin.Source
                         name = classOrObject.nameAsSafeName
                         this.status = status
@@ -923,7 +923,7 @@ open class RawFirBuilder(
             return withChildClassName(ANONYMOUS_OBJECT_NAME) {
                 buildAnonymousObject {
                     source = objectDeclaration.toFirSourceElement()
-                    session = baseSession
+                    declarationSiteSession = baseSession
                     origin = FirDeclarationOrigin.Source
                     classKind = ClassKind.OBJECT
                     scopeProvider = baseScopeProvider
@@ -959,7 +959,7 @@ open class RawFirBuilder(
             return withChildClassName(typeAlias.nameAsSafeName) {
                 buildTypeAlias {
                     source = typeAlias.toFirSourceElement()
-                    session = baseSession
+                    declarationSiteSession = baseSession
                     origin = FirDeclarationOrigin.Source
                     name = typeAlias.nameAsSafeName
                     status = FirDeclarationStatusImpl(typeAlias.visibility, Modality.FINAL).apply {
@@ -1019,7 +1019,7 @@ open class RawFirBuilder(
             val target = FirFunctionTarget(labelName, isLambda = false)
             return functionBuilder.apply {
                 source = function.toFirSourceElement()
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = returnType
 
@@ -1082,7 +1082,7 @@ open class RawFirBuilder(
             val target: FirFunctionTarget
             return buildAnonymousFunction {
                 source = literalSource
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = returnType
                 receiverTypeRef = receiverType
@@ -1096,7 +1096,7 @@ open class RawFirBuilder(
                         val name = DESTRUCTURING_NAME
                         val multiParameter = buildValueParameter {
                             source = valueParameter.toFirSourceElement()
-                            session = baseSession
+                            declarationSiteSession = baseSession
                             origin = FirDeclarationOrigin.Source
                             returnTypeRef = valueParameter.typeReference?.convertSafe() ?: buildImplicitTypeRef {
                                 source = multiDeclaration.toFirSourceElement(FirFakeSourceElementKind.ImplicitTypeRef)
@@ -1167,7 +1167,7 @@ open class RawFirBuilder(
             val target = FirFunctionTarget(labelName = null, isLambda = false)
             return buildConstructor {
                 source = this@toFirConstructor.toFirSourceElement()
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = delegatedSelfTypeRef
                 val explicitVisibility = visibility
@@ -1254,7 +1254,7 @@ open class RawFirBuilder(
 
             return buildProperty {
                 source = propertySource
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = propertyType
                 name = propertyName
@@ -1339,7 +1339,7 @@ open class RawFirBuilder(
         override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: Unit): FirElement {
             return buildAnonymousInitializer {
                 source = initializer.toFirSourceElement()
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 body = if (stubMode) buildEmptyExpressionBlock() else initializer.body.toFirBlock()
             }
@@ -1446,7 +1446,7 @@ open class RawFirBuilder(
             val parameterName = parameter.nameAsSafeName
             return buildTypeParameter {
                 source = parameter.toFirSourceElement()
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 name = parameterName
                 symbol = FirTypeParameterSymbol()
@@ -1602,7 +1602,7 @@ open class RawFirBuilder(
                     val name = ktSubjectExpression.nameAsSafeName
                     buildProperty {
                         source = ktSubjectExpression.toFirSourceElement()
-                        session = baseSession
+                        declarationSiteSession = baseSession
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = ktSubjectExpression.typeReference.toFirOrImplicitType()
                         receiverTypeRef = null

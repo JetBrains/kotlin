@@ -74,7 +74,7 @@ fun FirAnonymousFunction.copy(
 ): FirAnonymousFunction {
     return buildAnonymousFunction {
         this.source = source
-        this.session = session
+        declarationSiteSession = session
         this.origin = origin
         this.returnTypeRef = returnTypeRef
         this.receiverTypeRef = receiverTypeRef
@@ -116,7 +116,7 @@ fun FirTypeParameter.copy(
 ): FirTypeParameter {
     return buildTypeParameter {
         source = this@copy.source
-        session = this@copy.declarationSiteSession
+        declarationSiteSession = this@copy.declarationSiteSession
         name = this@copy.name
         symbol = this@copy.symbol
         variance = this@copy.variance

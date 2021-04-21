@@ -140,7 +140,7 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
     override fun build(): FirJavaClass {
         return FirJavaClass(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             name,
             annotations,

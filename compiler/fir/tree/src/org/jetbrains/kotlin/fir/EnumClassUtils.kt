@@ -36,7 +36,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source
-        this.session = session
+        declarationSiteSession = session
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
@@ -67,7 +67,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source
-        this.session = session
+        declarationSiteSession = session
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
@@ -85,7 +85,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         valueParameters += buildValueParameter vp@{
             source = sourceElement
             origin = FirDeclarationOrigin.Source
-            this@vp.session = session
+            declarationSiteSession = session
             returnTypeRef = FirImplicitStringTypeRef(source)
             name = VALUE
             this@vp.symbol = FirVariableSymbol(VALUE)

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    override lateinit var session: FirSession
+    override lateinit var declarationSiteSession: FirSession
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -60,7 +60,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override fun build(): FirPropertyAccessor {
         return FirPropertyAccessorImpl(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             origin,
             attributes,
@@ -95,7 +95,7 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     }
     val copyBuilder = FirPropertyAccessorBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.declarationSideSession
+    copyBuilder.declarationSiteSession = original.declarationSiteSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

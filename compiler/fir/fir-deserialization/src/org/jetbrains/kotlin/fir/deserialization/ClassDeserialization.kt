@@ -102,7 +102,7 @@ fun deserializeClassToSymbol(
         }
     }
     buildRegularClass {
-        this.session = session
+        declarationSiteSession = session
         this.origin = origin
         name = classId.shortClassName
         this.status = status
@@ -159,7 +159,7 @@ fun deserializeClassToSymbol(
 
                 val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
                 val property = buildEnumEntry {
-                    this.session = session
+                    declarationSiteSession = session
                     this.origin = FirDeclarationOrigin.Library
                     returnTypeRef = buildResolvedTypeRef { type = enumType }
                     name = enumEntryName
@@ -255,7 +255,7 @@ private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, di
         )
     }
     declarations += buildSimpleFunction {
-        session = this@addCloneForArrayIfNeeded.session
+        declarationSiteSession = this@addCloneForArrayIfNeeded.declarationSiteSession
         origin = FirDeclarationOrigin.Library
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         returnTypeRef = buildResolvedTypeRef {

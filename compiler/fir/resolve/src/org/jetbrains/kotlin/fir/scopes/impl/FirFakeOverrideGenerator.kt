@@ -101,7 +101,7 @@ object FirFakeOverrideGenerator {
     ): FirSimpleFunction {
         return buildSimpleFunction {
             source = baseFunction.source
-            this.session = session
+            declarationSiteSession = session
             this.origin = origin
             name = baseFunction.name
             status = baseFunction.status.copy(isExpect, newModality, newVisibility)
@@ -130,7 +130,7 @@ object FirFakeOverrideGenerator {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
-            this.session = session
+            declarationSiteSession = session
             origin = FirDeclarationOrigin.SubstitutionOverride
             receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
             status = baseConstructor.status.copy(isExpect)
@@ -282,7 +282,7 @@ object FirFakeOverrideGenerator {
     ): FirProperty {
         return buildProperty {
             source = baseProperty.source
-            this.session = session
+            declarationSiteSession = session
             this.origin = origin
             name = baseProperty.name
             isVar = baseProperty.isVar
@@ -389,7 +389,7 @@ object FirFakeOverrideGenerator {
             CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseField.name)
         )
         buildField {
-            this.session = session
+            declarationSiteSession = session
             this.symbol = symbol
             origin = FirDeclarationOrigin.SubstitutionOverride
             returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
@@ -445,7 +445,7 @@ object FirFakeOverrideGenerator {
             fakeOverrideSubstitution = fakeOverrideSubstitution
         )
         return buildSyntheticProperty {
-            this.session = session
+            declarationSiteSession = session
             name = baseProperty.name
             symbol = FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId)
             delegateGetter = getter
@@ -465,7 +465,7 @@ object FirFakeOverrideGenerator {
             if (typeParameter !is FirTypeParameter) return@map null
             FirTypeParameterBuilder().apply {
                 source = typeParameter.source
-                session = typeParameter.declarationSiteSession
+                declarationSiteSession = typeParameter.declarationSiteSession
                 origin = FirDeclarationOrigin.SubstitutionOverride
                 name = typeParameter.name
                 symbol = FirTypeParameterSymbol()

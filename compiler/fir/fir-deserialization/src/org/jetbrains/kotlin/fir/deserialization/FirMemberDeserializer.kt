@@ -175,7 +175,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val local = c.childContext(proto.typeParameterList)
         val classId = ClassId(c.packageFqName, name)
         return buildTypeAlias {
-            session = c.session
+            declarationSiteSession = c.session
             origin = FirDeclarationOrigin.Library
             this.name = name
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
@@ -236,7 +236,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
             if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
                 buildPropertyAccessor {
-                    session = c.session
+                    declarationSiteSession = c.session
                     origin = FirDeclarationOrigin.Library
                     this.returnTypeRef = returnTypeRef
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -272,7 +272,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
             if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
                 buildPropertyAccessor {
-                    session = c.session
+                    declarationSiteSession = c.session
                     origin = FirDeclarationOrigin.Library
                     this.returnTypeRef = FirImplicitUnitTypeRef(source)
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -310,7 +310,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
         val isVar = Flags.IS_VAR.get(flags)
         return buildProperty {
-            session = c.session
+            declarationSiteSession = c.session
             origin = FirDeclarationOrigin.Library
             this.returnTypeRef = returnTypeRef
             receiverTypeRef = proto.receiverType(c.typeTable)?.toTypeRef(local).apply {
@@ -378,7 +378,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val local = c.childContext(proto.typeParameterList)
 
         val simpleFunction = buildSimpleFunction {
-            session = c.session
+            declarationSiteSession = c.session
             origin = FirDeclarationOrigin.Library
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
             receiverTypeRef = proto.receiverType(local.typeTable)?.toTypeRef(local).apply {
@@ -453,7 +453,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         } else {
             FirConstructorBuilder()
         }.apply {
-            session = c.session
+            declarationSiteSession = c.session
             origin = FirDeclarationOrigin.Library
             returnTypeRef = delegatedSelfType
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
@@ -506,7 +506,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             val flags = if (proto.hasFlags()) proto.flags else 0
             val name = c.nameResolver.getName(proto.name)
             buildValueParameter {
-                session = c.session
+                declarationSiteSession = c.session
                 origin = FirDeclarationOrigin.Library
                 returnTypeRef = proto.type(c.typeTable).toTypeRef(c)
                 this.name = name

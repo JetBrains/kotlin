@@ -107,7 +107,7 @@ class FirSyntheticPropertiesScope(
         val className = classLookupTag?.classId?.relativeClassName
 
         val property = buildSyntheticProperty {
-            session = this@FirSyntheticPropertiesScope.session
+            declarationSiteSession = session
             name = propertyName
             symbol = FirSyntheticPropertySymbol(
                 accessorId = getterSymbol.callableId,

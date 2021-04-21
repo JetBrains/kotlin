@@ -62,7 +62,7 @@ class JavaClassUseSiteMemberScope(
     ): FirAccessorSymbol {
         return accessorByNameMap.getOrPut(property.name) {
             buildSyntheticProperty {
-                session = this@JavaClassUseSiteMemberScope.session
+                declarationSiteSession = session
                 name = property.name
                 symbol = FirAccessorSymbol(
                     accessorId = getterSymbol.callableId,

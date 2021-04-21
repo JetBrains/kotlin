@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirSyntheticPropertyBuilder {
-    lateinit var session: FirSession
+    lateinit var declarationSiteSession: FirSession
     lateinit var name: Name
     lateinit var symbol: FirAccessorSymbol
     lateinit var delegateGetter: FirSimpleFunction
@@ -24,7 +24,7 @@ class FirSyntheticPropertyBuilder {
     var delegateSetter: FirSimpleFunction? = null
 
     fun build(): FirSyntheticProperty = FirSyntheticProperty(
-        session, name, isVar = delegateSetter != null, symbol = symbol,
+        declarationSiteSession, name, isVar = delegateSetter != null, symbol = symbol,
         status = status ?: delegateGetter.status,
         resolvePhase = delegateGetter.resolvePhase,
         getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true),

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    lateinit var session: FirSession
+    lateinit var declarationSiteSession: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -53,7 +53,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirEnumEntry {
         return FirEnumEntryImpl(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             origin,
             attributes,

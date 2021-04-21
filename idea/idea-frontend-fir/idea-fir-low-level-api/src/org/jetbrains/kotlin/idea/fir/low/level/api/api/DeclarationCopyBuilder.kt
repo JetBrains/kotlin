@@ -131,7 +131,7 @@ object DeclarationCopyBuilder {
     ) {
         resolvePhase = minOf(originalDeclaration.resolvePhase, FirResolvePhase.DECLARATIONS)
         source = builtDeclaration.source
-        session = state.rootModuleSession
+        declarationSiteSession = state.rootModuleSession
     }
 
     internal inline fun <reified T : FirDeclaration> createCopy(
@@ -139,8 +139,8 @@ object DeclarationCopyBuilder {
         originalFirDeclaration: T,
     ): T {
         return RawFirFragmentForLazyBodiesBuilder.build(
-            session = originalFirDeclaration.session,
-            baseScopeProvider = originalFirDeclaration.session.firIdeProvider.kotlinScopeProvider,
+            session = originalFirDeclaration.declarationSiteSession,
+            baseScopeProvider = originalFirDeclaration.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
             designation = originalFirDeclaration.collectDesignation().fullDesignation,
             declaration = fakeKtDeclaration
         ) as T

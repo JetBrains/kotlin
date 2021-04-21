@@ -156,7 +156,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     override fun build(): FirJavaField {
         return FirJavaField(
             source,
-            session,
+            declarationSiteSession,
             symbol as FirFieldSymbol,
             name,
             resolvePhase,

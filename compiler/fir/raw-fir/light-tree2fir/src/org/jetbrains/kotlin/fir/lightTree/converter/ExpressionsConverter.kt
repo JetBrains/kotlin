@@ -135,7 +135,7 @@ class ExpressionsConverter(
         val target: FirFunctionTarget
         return buildAnonymousFunction {
             source = expressionSource
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = implicitType
             receiverTypeRef = implicitType
@@ -153,7 +153,7 @@ class ExpressionsConverter(
                     val name = DESTRUCTURING_NAME
                     val multiParameter = buildValueParameter {
                         source = valueParameter.firValueParameter.source
-                        session = baseSession
+                        declarationSiteSession = baseSession
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = valueParameter.firValueParameter.returnTypeRef
                         this.name = name
@@ -642,7 +642,7 @@ class ExpressionsConverter(
                     buildProperty {
                         source = it.toFirSourceElement()
                         origin = FirDeclarationOrigin.Source
-                        session = baseSession
+                        declarationSiteSession = baseSession
                         returnTypeRef = variable.returnTypeRef
                         name = variable.name
                         initializer = variable.initializer

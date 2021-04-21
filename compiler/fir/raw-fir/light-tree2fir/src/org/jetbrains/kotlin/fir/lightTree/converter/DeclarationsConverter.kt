@@ -107,7 +107,7 @@ class DeclarationsConverter(
         return buildFile {
             source = file.toFirSourceElement()
             origin = FirDeclarationOrigin.Source
-            session = baseSession
+            declarationSiteSession = baseSession
             name = fileName
             packageFqName = context.packageFqName
             annotations += fileAnnotationList
@@ -411,7 +411,7 @@ class DeclarationsConverter(
 
                 buildRegularClass {
                     source = classNode.toFirSourceElement()
-                    session = baseSession
+                    declarationSiteSession = baseSession
                     origin = FirDeclarationOrigin.Source
                     name = className
                     this.status = status
@@ -548,7 +548,7 @@ class DeclarationsConverter(
                 val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
                 source = objectDeclaration.toFirSourceElement()
                 origin = FirDeclarationOrigin.Source
-                session = baseSession
+                declarationSiteSession = baseSession
                 classKind = ClassKind.OBJECT
                 scopeProvider = baseScopeProvider
                 symbol = FirAnonymousObjectSymbol()
@@ -639,7 +639,7 @@ class DeclarationsConverter(
         val enumEntryName = identifier.nameAsSafeName()
         return buildEnumEntry {
             source = enumEntry.toFirSourceElement()
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = classWrapper.delegatedSelfTypeRef
             name = enumEntryName
@@ -657,7 +657,7 @@ class DeclarationsConverter(
             initializer = withChildClassName(enumEntryName) {
                 buildAnonymousObject {
                     source = enumEntry.toFirSourceElement(FirFakeSourceElementKind.EnumInitializer)
-                    session = baseSession
+                    declarationSiteSession = baseSession
                     origin = FirDeclarationOrigin.Source
                     classKind = ClassKind.ENUM_ENTRY
                     scopeProvider = baseScopeProvider
@@ -795,7 +795,7 @@ class DeclarationsConverter(
             buildPrimaryConstructor {
                 source = primaryConstructor?.toFirSourceElement()
                     ?: selfTypeSource?.fakeElement(FirFakeSourceElementKind.ImplicitConstructor)
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = classWrapper.delegatedSelfTypeRef
                 this.status = status
@@ -825,7 +825,7 @@ class DeclarationsConverter(
 
         return buildAnonymousInitializer {
             source = anonymousInitializer.toFirSourceElement()
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             body = if (stubMode) buildEmptyExpressionBlock() else firBlock ?: buildEmptyExpressionBlock()
         }
@@ -863,7 +863,7 @@ class DeclarationsConverter(
         val target = FirFunctionTarget(labelName = null, isLambda = false)
         return buildConstructor {
             source = secondaryConstructor.toFirSourceElement()
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = delegatedSelfTypeRef
             this.status = status
@@ -955,7 +955,7 @@ class DeclarationsConverter(
         return withChildClassName(typeAliasName) {
             return@withChildClassName buildTypeAlias {
                 source = typeAlias.toFirSourceElement()
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Source
                 name = typeAliasName
                 status = FirDeclarationStatusImpl(modifiers.getVisibility(), Modality.FINAL).apply {
@@ -1013,7 +1013,7 @@ class DeclarationsConverter(
 
         return buildProperty {
             source = propertySource
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = returnType
             name = propertyName
@@ -1077,7 +1077,7 @@ class DeclarationsConverter(
                     val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility, modifiers) }
                     this.getter = convertedAccessors.find { it.isGetter }
                         ?: FirDefaultPropertyGetter(
-                            null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                            null, declarationSiteSession, FirDeclarationOrigin.Source, returnType, propertyVisibility
                         ).also {
                             it.status = defaultAccessorStatus()
                             it.initContainingClassAttr()
@@ -1086,7 +1086,7 @@ class DeclarationsConverter(
                     this.setter = convertedAccessors.find { it.isSetter }
                         ?: if (isVar) {
                             FirDefaultPropertySetter(
-                                null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                                null, declarationSiteSession, FirDeclarationOrigin.Source, returnType, propertyVisibility
                             ).also {
                                 it.status = defaultAccessorStatus()
                                 it.initContainingClassAttr()
@@ -1165,7 +1165,7 @@ class DeclarationsConverter(
         val name = identifier.nameAsSafeName()
         return buildProperty {
             source = entry.toFirSourceElement()
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = firType ?: implicitType
             this.name = name
@@ -1190,7 +1190,7 @@ class DeclarationsConverter(
         var isGetter = true
         var returnType: FirTypeRef? = null
         var firValueParameters: FirValueParameter = buildDefaultSetterValueParameter {
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = propertyTypeRef
             symbol = FirVariableSymbol(NAME_FOR_DEFAULT_VALUE_PARAMETER)
@@ -1241,7 +1241,7 @@ class DeclarationsConverter(
         val target = FirFunctionTarget(labelName = null, isLambda = false)
         return buildPropertyAccessor {
             source = sourceElement
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = returnType ?: if (isGetter) propertyTypeRef else implicitUnitType
             symbol = FirPropertyAccessorSymbol()
@@ -1311,7 +1311,7 @@ class DeclarationsConverter(
 
         return buildValueParameter {
             source = setterParameter.toFirSourceElement()
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef
             name = firValueParameter.name
@@ -1405,7 +1405,7 @@ class DeclarationsConverter(
         }
 
         return functionBuilder.apply {
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = returnType!!
 
@@ -1573,7 +1573,7 @@ class DeclarationsConverter(
         delegateFields.add(
             buildField {
                 source = firExpression!!.source
-                session = baseSession
+                declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Synthetic
                 name = delegateName
                 returnTypeRef = firTypeRef
@@ -1649,7 +1649,7 @@ class DeclarationsConverter(
 
         return buildTypeParameter {
             source = typeParameter.toFirSourceElement()
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             name = identifier.nameAsSafeName()
             symbol = FirTypeParameterSymbol()
@@ -1889,7 +1889,7 @@ class DeclarationsConverter(
         val name = identifier.nameAsSafeName()
         val firValueParameter = buildValueParameter {
             source = valueParameter.toFirSourceElement()
-            session = baseSession
+            declarationSiteSession = baseSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = firType ?: implicitType
             this.name = name

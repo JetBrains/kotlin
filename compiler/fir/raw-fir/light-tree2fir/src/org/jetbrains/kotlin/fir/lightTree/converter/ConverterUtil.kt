@@ -120,7 +120,7 @@ fun generateDestructuringBlock(
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
             if (entry == null) continue
             statements += buildProperty {
-                this.session = session
+                declarationSiteSession = session
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = entry.returnTypeRef
                 name = entry.name

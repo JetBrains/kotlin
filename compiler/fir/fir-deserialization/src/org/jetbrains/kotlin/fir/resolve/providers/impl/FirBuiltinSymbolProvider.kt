@@ -86,7 +86,7 @@ open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider
             syntheticFunctionalInterfaceSymbols.getOrPut(SyntheticFunctionalInterfaceSymbolKey(kind, arity)) {
                 FirRegularClassSymbol(this).apply symbol@{
                     buildRegularClass klass@{
-                        session = this@FirBuiltinSymbolProvider.session
+                        declarationSiteSession = session
                         origin = FirDeclarationOrigin.BuiltIns
                         name = relativeClassName.shortName()
                         status = FirResolvedDeclarationStatusImpl(
@@ -108,7 +108,7 @@ open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider
                         typeParameters.addAll(
                             (1..arity).map {
                                 buildTypeParameter {
-                                    session = this@FirBuiltinSymbolProvider.session
+                                    declarationSiteSession = session
                                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                     origin = FirDeclarationOrigin.BuiltIns
                                     name = Name.identifier("P$it")
@@ -121,7 +121,7 @@ open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider
                         )
                         typeParameters.add(
                             buildTypeParameter {
-                                session = this@FirBuiltinSymbolProvider.session
+                                declarationSiteSession = session
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 origin = FirDeclarationOrigin.BuiltIns
                                 name = Name.identifier("R")
@@ -197,7 +197,7 @@ open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider
                         }
                         addDeclaration(
                             buildSimpleFunction {
-                                session = this@FirBuiltinSymbolProvider.session
+                                declarationSiteSession = session
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 origin = FirDeclarationOrigin.BuiltIns
                                 returnTypeRef = typeArguments.last()
@@ -210,7 +210,7 @@ open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider
                                 valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
                                     val parameterName = Name.identifier("p${index + 1}")
                                     buildValueParameter {
-                                        session = this@FirBuiltinSymbolProvider.session
+                                        declarationSiteSession = session
                                         origin = FirDeclarationOrigin.BuiltIns
                                         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                         returnTypeRef = typeArgument

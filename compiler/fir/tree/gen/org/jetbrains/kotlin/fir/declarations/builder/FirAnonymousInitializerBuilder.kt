@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirAnonymousInitializerBuilder : FirDeclarationBuilder {
     override var source: FirSourceElement? = null
-    override lateinit var session: FirSession
+    override lateinit var declarationSiteSession: FirSession
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -38,7 +38,7 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder {
     override fun build(): FirAnonymousInitializer {
         return FirAnonymousInitializerImpl(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             origin,
             attributes,

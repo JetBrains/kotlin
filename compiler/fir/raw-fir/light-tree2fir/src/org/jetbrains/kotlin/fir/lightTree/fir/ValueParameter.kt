@@ -51,7 +51,7 @@ class ValueParameter(
             source = parameterNode?.toFirLightSourceElement(
                 parameterSource.treeStructure, FirFakeSourceElementKind.PropertyFromParameter
             )
-            this.session = session
+            declarationSiteSession = session
             origin = FirDeclarationOrigin.Source
             returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
             this.name = name

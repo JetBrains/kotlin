@@ -181,7 +181,7 @@ val ALL_JAVA_OPERATION_NAMES =
 @FirBuilderDsl
 class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    override lateinit var session: FirSession
+    override lateinit var declarationSiteSession: FirSession
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
@@ -209,7 +209,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override fun build(): FirJavaMethod {
         return FirJavaMethod(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             attributes,
             returnTypeRef as FirJavaTypeRef,
@@ -235,7 +235,7 @@ inline fun buildJavaMethodCopy(original: FirSimpleFunction, init: FirJavaMethodB
     }
     val copyBuilder = FirJavaMethodBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.declarationSiteSession
+    copyBuilder.declarationSiteSession = original.declarationSiteSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef

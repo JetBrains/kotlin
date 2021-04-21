@@ -33,7 +33,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
         val file = owners.first() as FirFile
         val klass = annotatedDeclaration as? FirRegularClass ?: return emptyList()
         val newClass = buildRegularClass {
-            session = this@AllOpenTopLevelDeclarationsGenerator.session
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
@@ -52,7 +52,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
     override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
         val klass = generatedClass.klass
         val function = buildSimpleFunction {
-            session = klass.declarationSiteSession
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType

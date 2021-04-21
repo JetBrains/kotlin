@@ -165,7 +165,7 @@ open class FirContractResolveTransformer(
             contractDescription: FirRawContractDescription
         ): T {
             val effectsBlock = buildAnonymousFunction {
-                session = this@FirDeclarationsContractResolveTransformer.session
+                declarationSiteSession = session
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
                 receiverTypeRef = buildImplicitTypeRef()

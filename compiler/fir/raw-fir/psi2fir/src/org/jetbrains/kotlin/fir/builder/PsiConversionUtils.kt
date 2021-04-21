@@ -101,7 +101,7 @@ internal fun generateDestructuringBlock(
             val name = entry.nameAsSafeName
             statements += buildProperty {
                 source = entrySource
-                this.session = session
+                declarationSiteSession = session
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = entry.typeReference.toFirOrImplicitTypeRef()
                 this.name = name

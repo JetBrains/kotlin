@@ -103,7 +103,7 @@ class JavaSymbolProvider(
         javaTypeParameterStack: JavaTypeParameterStack
     ): FirTypeParameter {
         return FirTypeParameterBuilder().apply {
-            this.session = this@JavaSymbolProvider.session
+            declarationSiteSession = session
             origin = FirDeclarationOrigin.Java
             this.name = this@toFirTypeParameter.name
             symbol = firSymbol
@@ -230,7 +230,7 @@ class JavaSymbolProvider(
         val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
         return buildJavaClass {
             source = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-            session = this@JavaSymbolProvider.session
+            declarationSiteSession = session
             symbol = classSymbol
             name = javaClass.name
             val visibility = javaClass.visibility
@@ -373,7 +373,7 @@ class JavaSymbolProvider(
         return when {
             javaField.isEnumEntry -> buildEnumEntry {
                 source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-                session = this@JavaSymbolProvider.session
+                declarationSiteSession = session
                 symbol = FirVariableSymbol(fieldId)
                 name = fieldName
                 status = FirResolvedDeclarationStatusImpl(
@@ -395,7 +395,7 @@ class JavaSymbolProvider(
             }
             else -> buildJavaField {
                 source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-                session = this@JavaSymbolProvider.session
+                declarationSiteSession = session
                 symbol = FirFieldSymbol(fieldId)
                 name = fieldName
                 status = FirResolvedDeclarationStatusImpl(
@@ -443,7 +443,7 @@ class JavaSymbolProvider(
         val methodSymbol = FirNamedFunctionSymbol(methodId)
         val returnType = javaMethod.returnType
         return buildJavaMethod {
-            session = this@JavaSymbolProvider.session
+            declarationSiteSession = session
             source = (javaMethod as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
             symbol = methodSymbol
             name = methodName
@@ -491,7 +491,7 @@ class JavaSymbolProvider(
         buildJavaValueParameter {
             source = (javaMethod as? JavaElementImpl<*>)?.psi
                 ?.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
-            session = this@JavaSymbolProvider.session
+            declarationSiteSession = session
             returnTypeRef = firJavaMethod.returnTypeRef
             name = javaMethod.name
             isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == VALUE_METHOD_NAME
@@ -509,7 +509,7 @@ class JavaSymbolProvider(
         val constructorSymbol = FirConstructorSymbol(constructorId)
         return buildJavaConstructor {
             source = (javaConstructor as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-            session = this@JavaSymbolProvider.session
+            declarationSiteSession = session
             symbol = constructorSymbol
             isInner = javaClass.outerClass != null && !javaClass.isStatic
             val isThisInner = this.isInner
@@ -555,7 +555,7 @@ class JavaSymbolProvider(
     ): FirJavaConstructor {
         return buildJavaConstructor {
             source = classSource
-            session = this@JavaSymbolProvider.session
+            declarationSiteSession = session
             symbol = FirConstructorSymbol(constructorId)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {

@@ -94,7 +94,7 @@ class FirSignatureEnhancement(
                 val symbol = FirFieldSymbol(original.callableId)
                 buildJavaField {
                     source = firElement.source
-                    session = this@FirSignatureEnhancement.session
+                    declarationSiteSession = session
                     this.symbol = symbol
                     this.name = name
                     returnTypeRef = newReturnTypeRef
@@ -131,7 +131,7 @@ class FirSignatureEnhancement(
                     setterDelegate?.symbol
                 }
                 return buildSyntheticProperty {
-                    session = this@FirSignatureEnhancement.session
+                    declarationSiteSession = session
                     this.name = name
                     symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId)
                     delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
@@ -207,7 +207,7 @@ class FirSignatureEnhancement(
 
             buildValueParameter {
                 source = valueParameter.source
-                session = this@FirSignatureEnhancement.session
+                declarationSiteSession = session
                 origin = FirDeclarationOrigin.Enhancement
                 returnTypeRef = enhancedReturnType
                 this.name = valueParameter.name
@@ -255,7 +255,7 @@ class FirSignatureEnhancement(
                     }
                 }.apply {
                     source = firMethod.source
-                    session = this@FirSignatureEnhancement.session
+                    declarationSiteSession = session
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = FirDeclarationOrigin.Enhancement
                     this.valueParameters += newValueParameters
@@ -265,7 +265,7 @@ class FirSignatureEnhancement(
             is FirJavaMethod -> {
                 FirSimpleFunctionBuilder().apply {
                     source = firMethod.source
-                    session = this@FirSignatureEnhancement.session
+                    declarationSiteSession = session
                     origin = FirDeclarationOrigin.Enhancement
                     returnTypeRef = newReturnTypeRef
                     receiverTypeRef = newReceiverTypeRef

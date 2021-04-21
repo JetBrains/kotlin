@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 interface FirClassBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     abstract override var source: FirSourceElement?
-    abstract override var session: FirSession
+    abstract override var declarationSiteSession: FirSession
     abstract override var resolvePhase: FirResolvePhase
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes

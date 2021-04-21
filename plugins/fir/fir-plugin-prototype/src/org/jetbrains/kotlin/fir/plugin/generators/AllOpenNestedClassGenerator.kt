@@ -37,7 +37,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
     ): List<GeneratedDeclaration<FirRegularClass>> {
         val owner = annotatedDeclaration as? FirRegularClass ?: return emptyList()
         val newClass = buildRegularClass {
-            session = this@AllOpenNestedClassGenerator.session
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
@@ -60,7 +60,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
 
         val classId = klass.symbol.classId
         val constructor = buildConstructor {
-            session = klass.declarationSiteSession
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = buildResolvedTypeRef {
@@ -75,7 +75,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
         }
 
         val function = buildSimpleFunction {
-            session = klass.declarationSiteSession
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType

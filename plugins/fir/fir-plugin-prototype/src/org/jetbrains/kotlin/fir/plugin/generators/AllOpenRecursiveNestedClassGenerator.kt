@@ -35,7 +35,7 @@ class AllOpenRecursiveNestedClassGenerator(session: FirSession) : FirDeclaration
         if (owners.size > 2) return emptyList()
         val owner = annotatedDeclaration as? FirRegularClass ?: return emptyList()
         val newClass = buildRegularClass {
-            session = this@AllOpenRecursiveNestedClassGenerator.session
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(

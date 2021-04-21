@@ -70,7 +70,7 @@ class FirSyntheticCallGenerator(
         return whenExpression.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateCalleeForTryExpression(tryExpression: FirTryExpression, context: ResolutionContext): FirTryExpression? {
+    fun generateCalleeForTryExpression(tryExpression: FirTryExpression, context: ResolutionContext): FirTryExpression {
         val stubReference = tryExpression.calleeReference
         assert(stubReference is FirStubReference)
 
@@ -220,7 +220,7 @@ class FirSyntheticCallGenerator(
         val typeParameterSymbol = FirTypeParameterSymbol()
         val typeParameter =
             buildTypeParameter {
-                session = this@FirSyntheticCallGenerator.session
+                declarationSiteSession = session
                 origin = FirDeclarationOrigin.Library
                 name = Name.identifier("K")
                 symbol = typeParameterSymbol
@@ -321,7 +321,7 @@ class FirSyntheticCallGenerator(
         symbol: FirNamedFunctionSymbol, name: Name, returnType: FirTypeRef
     ): FirSimpleFunctionBuilder {
         return FirSimpleFunctionBuilder().apply {
-            session = this@FirSyntheticCallGenerator.session
+            declarationSiteSession = session
             origin = FirDeclarationOrigin.Synthetic
             this.symbol = symbol
             this.name = name
@@ -346,7 +346,7 @@ class FirSyntheticCallGenerator(
     ): FirValueParameter {
         val name = Name.identifier(nameAsString)
         return buildValueParameter {
-            session = this@FirSyntheticCallGenerator.session
+            declarationSiteSession = session
             origin = FirDeclarationOrigin.Library
             this.name = name
             returnTypeRef = this@toValueParameter

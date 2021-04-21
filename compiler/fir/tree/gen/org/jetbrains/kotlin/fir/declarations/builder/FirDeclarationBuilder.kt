@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 interface FirDeclarationBuilder {
     abstract var source: FirSourceElement?
-    abstract var session: FirSession
+    abstract var declarationSiteSession: FirSession
     abstract var resolvePhase: FirResolvePhase
     abstract var origin: FirDeclarationOrigin
     abstract var attributes: FirDeclarationAttributes

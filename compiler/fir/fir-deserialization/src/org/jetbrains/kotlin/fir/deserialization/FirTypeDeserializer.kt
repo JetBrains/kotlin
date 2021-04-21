@@ -66,7 +66,7 @@ class FirTypeDeserializer(
                     typeParameterNames[name.asString()] = it
                 }
                 builders += FirTypeParameterBuilder().apply {
-                    session = this@FirTypeDeserializer.session
+                    declarationSiteSession = session
                     origin = FirDeclarationOrigin.Library
                     this.name = name
                     this.symbol = symbol

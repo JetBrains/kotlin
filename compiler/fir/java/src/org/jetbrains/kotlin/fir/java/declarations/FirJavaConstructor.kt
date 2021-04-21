@@ -151,7 +151,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     override fun build(): FirJavaConstructor {
         return FirJavaConstructor(
             source,
-            session,
+            declarationSiteSession,
             symbol,
             isPrimary,
             returnTypeRef,
