@@ -35,18 +35,16 @@ import org.jetbrains.kotlin.name.Name
 private class EnumSyntheticFunctionsBuilder(val context: Context) {
     fun IrBuilderWithScope.enumValues(enumClass: IrClass): IrExpression {
         val loweredEnum = this@EnumSyntheticFunctionsBuilder.context.specialDeclarationsFactory.getLoweredEnum(enumClass)
-        val values = loweredEnum.getValuesField(startOffset, endOffset)
         return irCall(genericValuesSymbol, listOf(enumClass.defaultType)).apply {
-            putValueArgument(0, values)
+            putValueArgument(0, loweredEnum.getValuesField(startOffset, endOffset))
         }
     }
 
     fun IrBuilderWithScope.enumValueOf(enumClass: IrClass, value: IrExpression): IrExpression {
         val loweredEnum = this@EnumSyntheticFunctionsBuilder.context.specialDeclarationsFactory.getLoweredEnum(enumClass)
-        val values = loweredEnum.getValuesField(startOffset, endOffset)
         return irCall(genericValueOfSymbol, listOf(enumClass.defaultType)).apply {
             putValueArgument(0, value)
-            putValueArgument(1, values)
+            putValueArgument(1, loweredEnum.getValuesField(startOffset, endOffset))
         }
     }
 
@@ -184,6 +182,16 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
 
             implObject.declarations += createSyntheticValuesPropertyDeclaration(enumEntries)
 
+            val companion = irClass.companionObject()
+            if (companion != null) {
+                // The initialization order is the following:
+                // - first all enum entries in their declaration order
+                // - then companion object if it exists
+                val constructor = implObject.constructors.single()
+                context.createIrBuilder(constructor.symbol).run {
+                    (constructor.body as IrBlockBody).statements += irGetObject(companion.symbol)
+                }
+            }
 
             irClass.declarations += implObject
         }
