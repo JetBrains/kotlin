@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.hasUnresolvedNameError
+import org.jetbrains.kotlin.fir.analysis.checkers.unresolvedNameError
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -68,16 +69,6 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
 
         reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccess?.source)
     }
-
-    private fun FirExpression?.hasUnresolvedNameError(): Boolean {
-        return this?.unresolvedNameError != null
-    }
-
-    private val FirExpression.unresolvedNameError: ConeUnresolvedNameError?
-        get() {
-            val typeRef = if (this is FirAnonymousFunction) this.returnTypeRef else this.typeRef
-            return (typeRef as? FirErrorTypeRef)?.diagnostic as? ConeUnresolvedNameError
-        }
 
     private fun reportUninitializedParameter(qualifiedAccess: FirQualifiedAccessExpression?, context: CheckerContext): Boolean {
         if (qualifiedAccess == null) return false

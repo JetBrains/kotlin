@@ -23,8 +23,9 @@ fun foo() {
                 10
             }
             fun bar(x: Exception = `_`) {}
-            class Bar(`_`: Exception = `_`) {
+            class Bar(`_`: Exception = <!UNINITIALIZED_PARAMETER!>`_`<!>) {
                 inner class Bar2(x: Exception = `_`) { }
+                inner class Bar3(x: Exception = <!UNINITIALIZED_PARAMETER!>`_`<!>, `_`: Exception) { }
             }
         }
     } catch (_: Exception) {

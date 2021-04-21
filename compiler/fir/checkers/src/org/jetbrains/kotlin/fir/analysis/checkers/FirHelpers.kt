@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
@@ -451,3 +452,13 @@ fun isSubtypeOfForFunctionalTypeReturningUnit(context: ConeInferenceContext, sub
     }
     return false
 }
+
+internal fun FirExpression?.hasUnresolvedNameError(): Boolean {
+    return this?.unresolvedNameError != null
+}
+
+internal val FirExpression.unresolvedNameError: ConeUnresolvedNameError?
+    get() {
+        val typeRef = if (this is FirAnonymousFunction) this.returnTypeRef else this.typeRef
+        return (typeRef as? FirErrorTypeRef)?.diagnostic as? ConeUnresolvedNameError
+    }

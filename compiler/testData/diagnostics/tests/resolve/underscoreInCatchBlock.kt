@@ -25,6 +25,7 @@ fun foo() {
             fun bar(x: Exception = <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>) {}
             class Bar(`_`: Exception = <!UNINITIALIZED_PARAMETER!>`_`<!>) {
                 inner class Bar2(x: Exception = <!RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER!>`_`<!>) { }
+                inner class Bar3(x: Exception = <!UNINITIALIZED_PARAMETER!>`_`<!>, `_`: Exception) { }
             }
         }
     } catch (_: Exception) {

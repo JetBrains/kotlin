@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.hasUnresolvedNameError
 import org.jetbrains.kotlin.fir.analysis.checkers.isInline
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -14,17 +16,22 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnsignedTypeOrNullableUnsignedType
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirFunctionParameterChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         checkVarargParameters(declaration, context, reporter)
         checkParameterTypes(declaration, context, reporter)
+        checkUninitializedParameterWithEscapedUnderscoreAsName(declaration, context, reporter)
     }
 
     private fun checkParameterTypes(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -70,4 +77,45 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             }
         }
     }
+
+    private fun checkUninitializedParameterWithEscapedUnderscoreAsName(
+        function: FirFunction<*>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        // Corner case: fun foo(`_` : ... = `_`)
+        val parameterNames = function.valueParameters.map { it.name }
+        if (parameterNames.none { it.isEscapedUnderscore }) return
+
+        for ((index, parameter) in function.valueParameters.withIndex()) {
+            // If a parameter's default value refers to another parameter that appears later, it would be unresolved.
+            // Such case is handled in [ErrorNodeDiagnosticCollectorComponent#visitErrorNamedReference].
+            if (parameter.defaultValue == null || parameter.defaultValue?.hasUnresolvedNameError() == true) continue
+
+            // Alas, CheckerContext.qualifiedAccesses stack is not available at this point.
+            // Thus, manually visit default value expression and report the diagnostic on qualified accesses of interest.
+            parameter.defaultValue?.accept(object : FirVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+                    val namedReference = qualifiedAccessExpression.calleeReference as? FirResolvedNamedReference ?: return
+                    if (!namedReference.name.isEscapedUnderscore) return
+                    val referredParameterIndex = parameterNames.indexOf(namedReference.name)
+                    if (index <= referredParameterIndex) {
+                        reporter.reportOnWithSuppression(
+                            qualifiedAccessExpression,
+                            FirErrors.UNINITIALIZED_PARAMETER,
+                            function.valueParameters[referredParameterIndex].symbol,
+                            context
+                        )
+                    }
+                }
+            })
+        }
+    }
+
+    private val Name.isEscapedUnderscore: Boolean
+        get() = !isSpecial && identifier == "_"
 }
