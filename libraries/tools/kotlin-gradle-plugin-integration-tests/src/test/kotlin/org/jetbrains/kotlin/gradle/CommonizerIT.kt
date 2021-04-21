@@ -242,6 +242,57 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-46234 intermediate source set with only one native target`() {
+
+        val posixInImplementationMetadataConfigurationRegex = Regex(""".*implementationMetadataConfiguration:.*([pP])osix""")
+        val posixInIntransitiveMetadataConfigurationRegex = Regex(""".*intransitiveMetadataConfiguration:.*([pP])osix""")
+
+        fun CompiledProject.containsPosixInImplementationMetadataConfiguration(): Boolean =
+            output.lineSequence().any { line ->
+                line.matches(posixInImplementationMetadataConfigurationRegex)
+            }
+
+        fun CompiledProject.containsPosixInIntransitiveMetadataConfiguration(): Boolean =
+            output.lineSequence().any { line ->
+                line.matches(posixInIntransitiveMetadataConfigurationRegex)
+            }
+
+        with(Project("commonize-kt-46234-singleNativeTarget")) {
+            build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=false") {
+                assertSuccessful()
+
+                assertTrue(
+                    containsPosixInImplementationMetadataConfiguration(),
+                    "Expected dependency on posix in implementationMetadataConfiguration"
+                )
+
+                assertFalse(
+                    containsPosixInIntransitiveMetadataConfiguration(),
+                    "Expected **no** dependency on posix in intransitiveMetadataConfiguration"
+                )
+            }
+
+            build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=true") {
+                assertSuccessful()
+
+                assertFalse(
+                    containsPosixInImplementationMetadataConfiguration(),
+                    "Expected **no** posix dependency in implementationMetadataConfiguration"
+                )
+
+                assertTrue(
+                    containsPosixInIntransitiveMetadataConfiguration(),
+                    "Expected dependency on posix in intransitiveMetadataConfiguration"
+                )
+            }
+
+            build("assemble") {
+                assertSuccessful()
+            }
+        }
+    }
+
     private fun preparedProject(name: String): Project {
         return Project(name).apply {
             setupWorkingDir()
