@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
-    private val reservedFunctionNames = mutableSetOf("box", "unbox", "equals", "hashCode")
+    private val reservedFunctionNames = setOf("box", "unbox", "equals", "hashCode")
     private val javaLangFqName = FqName("java.lang")
     private val cloneableFqName = FqName("Cloneable")
 
