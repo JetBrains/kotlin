@@ -119,7 +119,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
                 library.library.unresolvedDependencies(resolveManifestDependenciesLenient).asSequence()
 
                         .filterNot { searchPathResolver.isProvidedByDefault(it) }
-                        .mapNotNull { KotlinResolvedLibraryImpl(searchPathResolver.resolve(it) ?: return@mapNotNull null) }
+                        .mapNotNull { searchPathResolver.resolve(it)?.let(::KotlinResolvedLibraryImpl) }
                         .map { resolved ->
                             val absoluteFile = resolved.library.libraryFile.absoluteFile
                             if (absoluteFile in cache) {
