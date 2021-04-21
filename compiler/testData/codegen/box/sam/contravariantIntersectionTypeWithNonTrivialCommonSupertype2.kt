@@ -1,8 +1,9 @@
 // TARGET_BACKEND: JVM
 
-// CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
-// 2 java/lang/invoke/LambdaMetafactory
+// TODO support different bytecode text templates for FIR?
+// --CHECK_BYTECODE_TEXT
+// --JVM_IR_TEMPLATES
+// --2 java/lang/invoke/LambdaMetafactory
 
 // FILE: test.kt
 
