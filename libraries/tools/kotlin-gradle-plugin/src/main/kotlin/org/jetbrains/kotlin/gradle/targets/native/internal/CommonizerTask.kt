@@ -20,11 +20,15 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import java.nio.file.*
-import java.nio.file.attribute.*
-import java.time.*
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.attribute.FileTime
+import java.time.Duration
+import java.time.Instant
+import java.time.ZoneOffset
 import java.util.*
-import javax.inject.Inject
 
 internal const val COMMONIZER_TASK_NAME = "runCommonizer"
 
@@ -100,11 +104,19 @@ internal open class CommonizerTask : DefaultTask() {
         val arguments = mutableListOf<String>()
 
         targetGroups.forEach { targets ->
-            // no need to commonize, just use the libraries from the distribution
-            if (targets.size <= 1) return@forEach
+            // Nothing to commonize
+            if (targets.isEmpty()) return@forEach
+
             val orderedTargetNames = targets.map { it.name }.sorted()
             val successMarker = project.getSuccessMarker(targets)
             if (successMarker.isSuccess) return@forEach
+
+            // No need to commonize: Just copy the single target into the destination
+            if (targets.size == 1) {
+                copySingleTarget(targets.single())
+                successMarker.writeSuccess()
+                return@forEach
+            }
 
             val stagedDirectory = TemporaryStagedDirectory(
                 temporaryDirectoryFile = project.createTempNativeDistributionCommonizerOutputDirectory(targets),
@@ -127,6 +139,19 @@ internal open class CommonizerTask : DefaultTask() {
             successMarkers = successMarkers,
             stagedDirectories = stagedDirectories
         )
+    }
+
+    private fun copySingleTarget(target: KonanTarget) {
+        val platformLibraries = konanHome
+            .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+            .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
+            .resolve(target.name)
+
+        val targetDirectoryFile = project.nativeDistributionCommonizerOutputDirectory(setOf(target))
+            .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
+            .resolve(target.name)
+
+        platformLibraries.copyRecursively(targetDirectoryFile, true)
     }
 }
 
