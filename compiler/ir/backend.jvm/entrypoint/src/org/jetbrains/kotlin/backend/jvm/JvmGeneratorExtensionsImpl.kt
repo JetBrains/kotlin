@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
+import org.jetbrains.kotlin.backend.jvm.serialization.deserializeClassFromByteArray
+import org.jetbrains.kotlin.backend.jvm.serialization.deserializeIrFileFromByteArray
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -16,11 +18,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
@@ -91,6 +96,32 @@ open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = tru
             it.createParameterDeclarations()
             classNameOverride[it] = facadeName
         }
+    }
+
+    override fun deserializeLazyClass(
+        irClass: IrLazyClass,
+        moduleDescriptor: ModuleDescriptor,
+        irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
+        parent: IrDeclarationParent,
+        allowErrorNodes: Boolean
+    ): Boolean {
+        val serializedIr = (irClass.source as? KotlinJvmBinarySourceElement)?.binaryClass?.classHeader?.serializedIr ?: return false
+        deserializeClassFromByteArray(serializedIr, moduleDescriptor, irBuiltIns, symbolTable, parent, allowErrorNodes)
+        return true
+    }
+
+    override fun deserializeFacadeClass(
+        irClass: IrClass,
+        moduleDescriptor: ModuleDescriptor,
+        irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
+        parent: IrDeclarationParent,
+        allowErrorNodes: Boolean
+    ): Boolean {
+        val serializedIr = (irClass.source as? JvmPackagePartSource)?.knownJvmBinaryClass?.classHeader?.serializedIr ?: return false
+        deserializeIrFileFromByteArray(serializedIr, moduleDescriptor, irBuiltIns, symbolTable, irClass, allowErrorNodes)
+        return true
     }
 
     override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =

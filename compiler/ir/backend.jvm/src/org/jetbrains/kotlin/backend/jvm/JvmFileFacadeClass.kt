@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.DeserializableClass
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.name.Name
 
 class JvmFileFacadeClass(
@@ -37,6 +38,7 @@ class JvmFileFacadeClass(
             parent,
             allowErrorNodes = false
         )
+        ExternalDependenciesGenerator(stubGenerator.symbolTable, listOf(stubGenerator)).generateUnboundSymbolsAsDependencies()
         return irLoaded as Boolean
     }
 }
