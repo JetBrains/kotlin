@@ -29871,6 +29871,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/sam/samConstructorGenericSignature.kt");
         }
 
+        @TestMetadata("samInterfaceTypeParameterErasure.kt")
+        public void testSamInterfaceTypeParameterErasure() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/samInterfaceTypeParameterErasure.kt");
+        }
+
         @TestMetadata("smartCastSamConversion.kt")
         public void testSmartCastSamConversion() throws Exception {
             runTest("compiler/testData/codegen/box/sam/smartCastSamConversion.kt");
