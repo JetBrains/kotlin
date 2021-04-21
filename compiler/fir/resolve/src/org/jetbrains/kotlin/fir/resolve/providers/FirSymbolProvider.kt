@@ -53,7 +53,7 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
 
 fun FirSymbolProvider.getClassDeclaredPropertySymbols(classId: ClassId, name: Name): List<FirVariableSymbol<*>> {
     val classSymbol = getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return emptyList()
-    val declaredMemberScope = declaredMemberScope(classSymbol.fir)
+    val declaredMemberScope = session.declaredMemberScope(classSymbol.fir)
     val result = mutableListOf<FirVariableSymbol<*>>()
     declaredMemberScope.processPropertiesByName(name, result::add)
 

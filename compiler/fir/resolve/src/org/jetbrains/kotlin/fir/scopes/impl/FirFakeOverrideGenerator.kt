@@ -111,7 +111,7 @@ object FirFakeOverrideGenerator {
             dispatchReceiverType = newDispatchReceiverType
             attributes = baseFunction.attributes.copy()
             typeParameters += configureAnnotationsTypeParametersAndSignature(
-                baseFunction, newParameterTypes, newTypeParameters, newReceiverType, newReturnType, fakeOverrideSubstitution
+                session, baseFunction, newParameterTypes, newTypeParameters, newReceiverType, newReturnType, fakeOverrideSubstitution
             ).filterIsInstance<FirTypeParameter>()
         }
     }
@@ -137,7 +137,7 @@ object FirFakeOverrideGenerator {
             symbol = fakeOverrideSymbol
 
             typeParameters += configureAnnotationsTypeParametersAndSignature(
-                baseConstructor, newParameterTypes, newTypeParameters, newReceiverType = null, newReturnType, fakeOverrideSubstitution
+                session, baseConstructor, newParameterTypes, newTypeParameters, newReceiverType = null, newReturnType, fakeOverrideSubstitution
             )
 
             dispatchReceiverType = newDispatchReceiverType
@@ -151,6 +151,7 @@ object FirFakeOverrideGenerator {
     }
 
     private fun FirFunctionBuilder.configureAnnotationsTypeParametersAndSignature(
+        useSiteSession: FirSession,
         baseFunction: FirFunction<*>,
         newParameterTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameterRef>?,
@@ -171,7 +172,7 @@ object FirFakeOverrideGenerator {
             }
             newTypeParameters == null -> {
                 val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
-                    baseFunction, ConeSubstitutor.Empty
+                    useSiteSession, baseFunction, ConeSubstitutor.Empty
                 )
                 val copiedParameterTypes = baseFunction.valueParameters.map {
                     substitutor.substituteOrNull(it.returnTypeRef.coneType)
@@ -294,6 +295,7 @@ object FirFakeOverrideGenerator {
             dispatchReceiverType = newDispatchReceiverType
             attributes = baseProperty.attributes.copy()
             typeParameters += configureAnnotationsTypeParametersAndSignature(
+                session,
                 baseProperty,
                 newTypeParameters,
                 newReceiverType,
@@ -304,6 +306,7 @@ object FirFakeOverrideGenerator {
     }
 
     private fun FirPropertyBuilder.configureAnnotationsTypeParametersAndSignature(
+        useSiteSession: FirSession,
         baseProperty: FirProperty,
         newTypeParameters: List<FirTypeParameter>?,
         newReceiverType: ConeKotlinType?,
@@ -317,7 +320,7 @@ object FirFakeOverrideGenerator {
             }
             newTypeParameters == null -> {
                 val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
-                    baseProperty, ConeSubstitutor.Empty
+                    useSiteSession, baseProperty, ConeSubstitutor.Empty
                 )
                 val (copiedReceiverType, possibleReturnType) = substituteReceiverAndReturnType(
                     baseProperty, newReceiverType, newReturnType, substitutor
@@ -456,6 +459,7 @@ object FirFakeOverrideGenerator {
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types
     fun createNewTypeParametersAndSubstitutor(
+        useSiteSession: FirSession,
         member: FirTypeParameterRefsOwner,
         substitutor: ConeSubstitutor,
         forceTypeParametersRecreation: Boolean = true
@@ -481,7 +485,7 @@ object FirFakeOverrideGenerator {
             else null
         }.toMap()
 
-        val additionalSubstitutor = substitutorByMap(substitutionMapForNewParameters)
+        val additionalSubstitutor = substitutorByMap(substitutionMapForNewParameters, useSiteSession)
 
         var wereChangesInTypeParameters = forceTypeParametersRecreation
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(member.typeParameters)) {

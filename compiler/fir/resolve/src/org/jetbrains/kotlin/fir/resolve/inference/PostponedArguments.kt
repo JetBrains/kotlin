@@ -77,7 +77,7 @@ private fun extraLambdaInfo(
             ?: expectedType?.typeArguments?.singleOrNull()?.safeAs<ConeKotlinTypeProjection>()?.type?.takeIf { isFunctionSupertype }
             ?: typeVariable.defaultType
 
-    val nothingType = argument.declarationSiteSession.builtinTypes.nothingType.type
+    val nothingType = session.builtinTypes.nothingType.type
     val parameters = argument.valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: nothingType
     }

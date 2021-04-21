@@ -44,6 +44,7 @@ import kotlin.contracts.contract
 object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
+        val session = context.session
         val function = (graph.declaration as? FirFunction<*>) ?: return
         if (function !is FirContractDescriptionOwner) return
         if (function.contractDescription.coneEffects?.any { it is ConeCallsEffectDeclaration } != true) return
@@ -51,13 +52,13 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         val functionalTypeEffects = mutableMapOf<AbstractFirBasedSymbol<*>, ConeCallsEffectDeclaration>()
 
         function.valueParameters.forEachIndexed { index, parameter ->
-            if (parameter.returnTypeRef.isFunctionalTypeRef(function.declarationSiteSession)) {
+            if (parameter.returnTypeRef.isFunctionalTypeRef(session)) {
                 val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(index)
                 if (effectDeclaration != null) functionalTypeEffects[parameter.symbol] = effectDeclaration
             }
         }
 
-        if (function.receiverTypeRef.isFunctionalTypeRef(function.declarationSiteSession)) {
+        if (function.receiverTypeRef.isFunctionalTypeRef(session)) {
             val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(-1)
             if (effectDeclaration != null) functionalTypeEffects[function.symbol] = effectDeclaration
         }

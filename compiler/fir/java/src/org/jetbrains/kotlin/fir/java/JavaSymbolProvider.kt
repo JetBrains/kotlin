@@ -213,7 +213,7 @@ class JavaSymbolProvider(
     ) {
         replaceSuperTypeRefs(
             javaClass.supertypes.map { supertype ->
-                supertype.toFirResolvedTypeRef(declarationSiteSession, javaTypeParameterStack, isForSupertypes = true, forTypeParameterBounds = false)
+                supertype.toFirResolvedTypeRef(session, javaTypeParameterStack, isForSupertypes = true, forTypeParameterBounds = false)
             }
         )
     }
@@ -354,7 +354,7 @@ class JavaSymbolProvider(
                 valueParametersForAnnotationConstructor.forEach { javaMethod, firValueParameter ->
                     javaMethod.annotationParameterDefaultValue?.let { javaDefaultValue ->
                         firValueParameter.defaultValue =
-                            javaDefaultValue.toFirExpression(declarationSiteSession, javaTypeParameterStack, firValueParameter.returnTypeRef)
+                            javaDefaultValue.toFirExpression(session, javaTypeParameterStack, firValueParameter.returnTypeRef)
                     }
                 }
             }

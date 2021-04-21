@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.fir.types.intersectTypesOrNull
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
@@ -50,7 +48,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
         if (effects.isNullOrEmpty()) return
 
-        val logicSystem = object : PersistentLogicSystem(function.declarationSiteSession.typeContext) {
+        val logicSystem = object : PersistentLogicSystem(context.session.typeContext) {
             override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) =
                 throw IllegalStateException("Receiver variable update is not possible for this logic system")
 
@@ -84,8 +82,8 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         context: CheckerContext
     ): Boolean {
         val effect = effectDeclaration.effect as ConeReturnsEffectDeclaration
-        val builtinTypes = function.declarationSiteSession.builtinTypes
-        val typeContext = function.declarationSiteSession.typeContext
+        val builtinTypes = context.session.builtinTypes
+        val typeContext = context.session.typeContext
         val flow = dataFlowInfo.flowOnNodes.getValue(node) as PersistentFlow
 
         val isReturn = node is JumpNode && node.fir is FirReturnExpression
@@ -104,7 +102,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
         if (effect.value != ConeConstantReference.WILDCARD) {
             val operation = effect.value.toOperation()
-            if (expressionType != null && expressionType.isInapplicableWith(operation, function.declarationSiteSession)) return false
+            if (expressionType != null && expressionType.isInapplicableWith(operation, context.session)) return false
 
             if (resultExpression is FirConstExpression<*>) {
                 if (!resultExpression.isApplicableWith(operation)) return false
@@ -179,7 +177,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         is ConeIsNullPredicate -> {
             val fir = function.getParameterSymbol(arg.parameterIndex, context).fir
             val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
-            realVar?.to(simpleTypeStatement(realVar, isNegated, function.declarationSiteSession.builtinTypes.anyType.type))?.let { mutableMapOf(it) }
+            realVar?.to(simpleTypeStatement(realVar, isNegated, context.session.builtinTypes.anyType.type))?.let { mutableMapOf(it) }
         }
         is ConeLogicalNot -> arg.buildTypeStatements(function, logicSystem, variableStorage, flow, context)
             ?.mapValuesTo(mutableMapOf()) { (_, value) -> value.invert() }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -22,7 +23,8 @@ abstract class FirAbstractOverrideChecker : FirOverrideChecker {
 
 fun buildSubstitutorForOverridesCheck(
     overrideCandidate: FirCallableMemberDeclaration<*>,
-    baseDeclaration: FirCallableMemberDeclaration<*>
+    baseDeclaration: FirCallableMemberDeclaration<*>,
+    useSiteSession: FirSession
 ): ConeSubstitutor? {
     if (overrideCandidate.typeParameters.size != baseDeclaration.typeParameters.size) return null
 
@@ -30,5 +32,5 @@ fun buildSubstitutorForOverridesCheck(
     val types = baseDeclaration.typeParameters.map {
         ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
     }
-    return substitutorByMap(overrideCandidate.typeParameters.map { it.symbol }.zip(types).toMap())
+    return substitutorByMap(overrideCandidate.typeParameters.map { it.symbol }.zip(types).toMap(), useSiteSession)
 }

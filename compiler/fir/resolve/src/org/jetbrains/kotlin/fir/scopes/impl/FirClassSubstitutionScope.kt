@@ -204,6 +204,7 @@ class FirClassSubstitutionScope(
 
     private fun createSubstitutedData(member: FirCallableMemberDeclaration<*>): SubstitutedData {
         val (newTypeParameters, substitutor) = FirFakeOverrideGenerator.createNewTypeParametersAndSubstitutor(
+            session,
             member as FirTypeParameterRefsOwner,
             substitutor,
             forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != member.dispatchReceiverClassOrNull()

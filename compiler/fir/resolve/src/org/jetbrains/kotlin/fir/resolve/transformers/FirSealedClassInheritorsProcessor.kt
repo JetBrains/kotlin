@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
@@ -30,11 +29,12 @@ class FirSealedClassInheritorsProcessor(
 ) : FirGlobalResolveProcessor(session, scopeSession) {
     override fun process(files: Collection<FirFile>) {
         val sealedClassInheritorsMap = mutableMapOf<FirRegularClass, MutableList<ClassId>>()
-        files.forEach { it.accept(InheritorsCollector, sealedClassInheritorsMap) }
+        val inheritorsCollector = InheritorsCollector(session)
+        files.forEach { it.accept(inheritorsCollector, sealedClassInheritorsMap) }
         files.forEach { it.transformSingle(InheritorsTransformer(sealedClassInheritorsMap), null) }
     }
 
-    object InheritorsCollector : FirDefaultVisitor<Unit, MutableMap<FirRegularClass, MutableList<ClassId>>>() {
+    class InheritorsCollector(val session: FirSession) : FirDefaultVisitor<Unit, MutableMap<FirRegularClass, MutableList<ClassId>>>() {
         override fun visitElement(element: FirElement, data: MutableMap<FirRegularClass, MutableList<ClassId>>) {}
 
         override fun visitFile(file: FirFile, data: MutableMap<FirRegularClass, MutableList<ClassId>>) {
@@ -48,7 +48,7 @@ class FirSealedClassInheritorsProcessor(
                 data.computeIfAbsent(regularClass) { mutableListOf() }
             }
 
-            val symbolProvider = regularClass.declarationSiteSession.symbolProvider
+            val symbolProvider = session.symbolProvider
 
             for (typeRef in regularClass.superTypeRefs) {
                 val parent = extractClassFromTypeRef(symbolProvider, typeRef).takeIf { it?.modality == Modality.SEALED } ?: continue

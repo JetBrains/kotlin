@@ -40,7 +40,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings))
     register(InferenceComponents::class, InferenceComponents(this))
 
-    register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
+    register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider(this))
     register(FirCorrespondingSupertypesCache::class, FirCorrespondingSupertypesCache(this))
     register(FirDefaultParametersResolver::class, FirDefaultParametersResolver())
 

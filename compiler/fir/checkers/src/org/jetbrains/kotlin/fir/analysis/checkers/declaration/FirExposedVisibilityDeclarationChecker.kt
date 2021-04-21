@@ -44,7 +44,7 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
         val isInterface = declaration.classKind == ClassKind.INTERFACE
         for (supertypeRef in supertypes) {
             val supertype = supertypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-            val clazz = supertype.toRegularClass(declaration.declarationSiteSession) ?: continue
+            val clazz = supertype.toRegularClass(context.session) ?: continue
             val superIsInterface = clazz.classKind == ClassKind.INTERFACE
             if (superIsInterface != isInterface) {
                 continue

@@ -59,7 +59,8 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         // we substitute actual values to the
         // type parameters from the declaration
         val substitutor = substitutorByMap(
-            parameterPairs.mapValues { it.value.coneType }
+            parameterPairs.mapValues { it.value.coneType },
+            context.session
         )
 
         parameterPairs.forEach { (proto, actual) ->
@@ -147,7 +148,8 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         // parameters to the ones used in the
         // typealias target
         val declarationSiteSubstitutor = substitutorByMap(
-            constructorsParameterPairs.toMap().mapValues { it.value.type }
+            constructorsParameterPairs.toMap().mapValues { it.value.type },
+            context.session
         )
 
         constructorsParameterPairs.forEach { (proto, actual) ->
@@ -209,7 +211,8 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         }
 
         val substitutor = substitutorByMap(
-            parameterPairs.toMap().mapValues { it.value.type }
+            parameterPairs.toMap().mapValues { it.value.type },
+            context.session
         )
 
         parameterPairs.forEach { (proto, actual) ->

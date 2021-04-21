@@ -143,9 +143,9 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
             // to determine parameter types properly (e.g. String, String instead of K, V)
             val platformTypeParameters = platformClass.typeParameters
             val platformSubstitution = createSubstitution(platformTypeParameters, this, session)
-            substitutorByMap(originalSubstitution + platformSubstitution)
+            substitutorByMap(originalSubstitution + platformSubstitution, session)
         } else {
-            substitutorByMap(originalSubstitution)
+            substitutorByMap(originalSubstitution, session)
         }
         FirClassSubstitutionScope(
             session, useSiteMemberScope, substitutor,

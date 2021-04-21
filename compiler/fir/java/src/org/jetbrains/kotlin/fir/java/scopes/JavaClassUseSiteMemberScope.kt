@@ -382,13 +382,13 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun FirFunction<*>.computeJvmSignature(): String? {
-        return computeJvmSignature { it.toConeKotlinTypeProbablyFlexible(declarationSiteSession, typeParameterStack) }
+        return computeJvmSignature { it.toConeKotlinTypeProbablyFlexible(session, typeParameterStack) }
     }
 
     private fun FirFunction<*>.computeJvmDescriptor(customName: String? = null, includeReturnType: Boolean = false): String {
         return computeJvmDescriptor(customName, includeReturnType) {
             it.toConeKotlinTypeProbablyFlexible(
-                declarationSiteSession,
+                session,
                 typeParameterStack
             )
         }

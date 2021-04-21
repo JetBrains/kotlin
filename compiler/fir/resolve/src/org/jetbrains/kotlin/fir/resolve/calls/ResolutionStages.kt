@@ -195,7 +195,7 @@ internal object CheckVisibility : CheckerStage() {
 
         if (declaration is FirConstructor) {
             // TODO: Should be some other form
-            val classSymbol = declaration.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.toSymbol(declaration.declarationSiteSession)
+            val classSymbol = declaration.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.toSymbol(context.session)
 
             if (classSymbol is FirRegularClassSymbol) {
                 if (classSymbol.fir.classKind.isSingleton) {

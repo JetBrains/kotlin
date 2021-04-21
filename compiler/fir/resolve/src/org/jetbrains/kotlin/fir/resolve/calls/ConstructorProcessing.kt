@@ -156,7 +156,7 @@ private fun prepareSubstitutorForTypeAliasConstructors(
         it as? ConeKotlinType ?: return null
     }
     return substitutorByMap(
-        expandedClass.typeParameters.map { it.symbol }.zip(resultingTypeArguments).toMap()
+        expandedClass.typeParameters.map { it.symbol }.zip(resultingTypeArguments).toMap(), session
     )
 }
 

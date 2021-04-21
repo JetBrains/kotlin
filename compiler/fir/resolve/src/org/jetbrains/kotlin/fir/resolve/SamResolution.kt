@@ -94,6 +94,7 @@ class FirSamResolverImpl(
                         Pair(parameterSymbol, typeArgument)
                     }
                     .toMap(),
+                firSession
             )
 
         val result =
@@ -148,6 +149,7 @@ class FirSamResolverImpl(
             firRegularClass.typeParameters
                 .map { it.symbol }
                 .zip(newTypeParameterTypes).toMap(),
+            firSession
         )
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {

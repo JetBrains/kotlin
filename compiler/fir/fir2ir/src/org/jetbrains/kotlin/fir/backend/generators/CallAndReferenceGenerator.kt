@@ -470,7 +470,7 @@ class CallAndReferenceGenerator(
             val type = typeProjection.typeRef.coneTypeSafe<ConeKotlinType>() ?: continue
             map[typeParameter.symbol] = type
         }
-        return ConeSubstitutorByMap(map)
+        return ConeSubstitutorByMap(map, session)
     }
 
     internal fun IrExpression.applyCallArguments(call: FirCall?, annotationMode: Boolean): IrExpression {

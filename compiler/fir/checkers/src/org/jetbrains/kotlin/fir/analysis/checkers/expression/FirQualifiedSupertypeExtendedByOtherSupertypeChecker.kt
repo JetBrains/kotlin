@@ -44,7 +44,7 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
                 ?.followAllAlias(context.session).safeAs<FirClass<*>>()
                 ?: continue
 
-            val isSupertype = explicitType.isSupertypeOf(that)
+            val isSupertype = explicitType.isSupertypeOf(that, context.session)
 
             if (explicitType == that || isSupertype) {
                 if (isSupertype) {

@@ -210,8 +210,8 @@ class FirJvmSerializerExtension(
     private fun FirFunction<*>.needsInlineParameterNullCheckRequirement(): Boolean =
         this is FirSimpleFunction && isInline && !isSuspend && !isParamAssertionsDisabled &&
                 !Visibilities.isPrivate(visibility) &&
-                (valueParameters.any { it.returnTypeRef.coneType.isBuiltinFunctionalType(declarationSiteSession) } ||
-                        receiverTypeRef?.coneType?.isBuiltinFunctionalType(declarationSiteSession) == true)
+                (valueParameters.any { it.returnTypeRef.coneType.isBuiltinFunctionalType(session) } ||
+                        receiverTypeRef?.coneType?.isBuiltinFunctionalType(session) == true)
 
     override fun serializeProperty(
         property: FirProperty,
@@ -256,7 +256,7 @@ class FirJvmSerializerExtension(
 
         val container =
             dispatchReceiverType?.classId?.let {
-                declarationSiteSession.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
+                session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
             }
         if (container == null || !container.isCompanion) {
             return false
@@ -264,7 +264,7 @@ class FirJvmSerializerExtension(
 
         val grandParent =
             container.classId.outerClassId?.let {
-                declarationSiteSession.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
+                session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
             }
         return grandParent != null &&
                 (grandParent.classKind == ClassKind.INTERFACE || grandParent.classKind == ClassKind.ANNOTATION_CLASS)

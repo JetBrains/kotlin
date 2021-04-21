@@ -28,7 +28,7 @@ object FirNotASupertypeChecker : FirQualifiedAccessChecker() {
             ?: return
 
         val surrounding = context.findClosestClass(superReference.labelName) ?: return
-        if (!targetClass.isSupertypeOf(surrounding)) {
+        if (!targetClass.isSupertypeOf(surrounding, context.session)) {
             reporter.reportOn(expression.source, FirErrors.NOT_A_SUPERTYPE, context)
         }
     }

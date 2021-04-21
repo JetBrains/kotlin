@@ -402,7 +402,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 } else {
                     val position = if (isLowerBound) TypeComponentPosition.FLEXIBLE_LOWER else TypeComponentPosition.FLEXIBLE_UPPER
 
-                    classSymbol?.fir?.createRawArguments(defaultArgs, position) ?: defaultArgs
+                    classSymbol?.fir?.createRawArguments(session, defaultArgs, position) ?: defaultArgs
                 }
             } else {
                 val typeParameters = runIf(!forTypeParameterBounds && !isForSupertypes) { classSymbol?.fir?.typeParameters } ?: emptyList()
@@ -429,13 +429,14 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 }
 
 private fun FirRegularClass.createRawArguments(
+    session: FirSession,
     defaultArgs: List<ConeStarProjection>,
     position: TypeComponentPosition
-) = typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
+): List<ConeTypeProjection> = typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
     val erasedUpperBound = typeParameter.getErasedUpperBound {
         defaultType().withArguments(defaultArgs.toTypedArray())
     }
-    computeRawProjection(declarationSiteSession, typeParameter, position, erasedUpperBound)
+    computeRawProjection(session, typeParameter, position, erasedUpperBound)
 }
 
 private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Name?) =

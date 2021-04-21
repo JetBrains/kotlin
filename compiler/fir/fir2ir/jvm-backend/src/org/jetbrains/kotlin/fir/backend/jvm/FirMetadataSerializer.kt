@@ -155,17 +155,18 @@ class FirMetadataSerializer(
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> FirElementSerializer.create(
+                components.session,
                 components.scopeSession,
                 metadata.fir, serializerExtension, (parent as? FirMetadataSerializer)?.serializer, approximator
             )
             is FirMetadataSource.File -> FirElementSerializer.createTopLevel(
-                metadata.session,
+                components.session,
                 components.scopeSession,
                 serializerExtension,
                 approximator
             )
             is FirMetadataSource.Function -> FirElementSerializer.createForLambda(
-                metadata.session,
+                components.session,
                 components.scopeSession,
                 serializerExtension,
                 approximator

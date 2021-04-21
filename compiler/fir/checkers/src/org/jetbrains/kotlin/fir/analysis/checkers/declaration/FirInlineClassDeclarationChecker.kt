@@ -50,7 +50,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
-        if (declaration.isSubtypeOfCloneable()) {
+        if (declaration.isSubtypeOfCloneable(context.session)) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE, context)
         }
 
@@ -210,7 +210,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     ?.isRecursiveInlineClassType(visited, session) == true
     }
 
-    private fun FirRegularClass.isSubtypeOfCloneable(): Boolean {
+    private fun FirRegularClass.isSubtypeOfCloneable(session: FirSession): Boolean {
         if (classId.isCloneableId()) return true
 
         return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session).any { superType ->

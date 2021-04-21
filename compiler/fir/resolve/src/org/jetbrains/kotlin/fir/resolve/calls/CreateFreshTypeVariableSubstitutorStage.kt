@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.renderWithType
@@ -31,7 +32,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         }
         val csBuilder = candidate.system.getBuilder()
         val (substitutor, freshVariables) =
-            createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder)
+            createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder, context.session)
         candidate.substitutor = substitutor
         candidate.freshVariables = freshVariables
 
@@ -110,14 +111,15 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
 private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     declaration: FirTypeParameterRefsOwner,
-    csBuilder: ConstraintSystemOperation
+    csBuilder: ConstraintSystemOperation,
+    session: FirSession
 ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {
 
     val typeParameters = declaration.typeParameters
 
     val freshTypeVariables = typeParameters.map { ConeTypeParameterBasedTypeVariable(it.symbol) }
 
-    val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType })
+    val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, session)
 
     for (freshVariable in freshTypeVariables) {
         csBuilder.registerVariable(freshVariable)

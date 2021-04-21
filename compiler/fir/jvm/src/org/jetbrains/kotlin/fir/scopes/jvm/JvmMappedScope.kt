@@ -35,7 +35,8 @@ class JvmMappedScope(
     private val substitutor = ConeSubstitutorByMap(
         firJavaClass.typeParameters.zip(firKotlinClass.typeParameters).map { (javaParameter, kotlinParameter) ->
             javaParameter.symbol to ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(kotlinParameter.symbol), isNullable = false)
-        }.toMap()
+        }.toMap(),
+        session
     )
     private val kotlinDispatchReceiverType = firKotlinClass.defaultType()
 

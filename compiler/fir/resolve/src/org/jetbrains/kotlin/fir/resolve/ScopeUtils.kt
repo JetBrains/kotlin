@@ -47,7 +47,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
 
             val substitution = createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession)
 
-            fir.scopeForClass(substitutorByMap(substitution), useSiteSession, scopeSession)
+            fir.scopeForClass(substitutorByMap(substitution, useSiteSession), useSiteSession, scopeSession)
         }
         is ConeTypeParameterType -> {
             val symbol = lookupTag.symbol

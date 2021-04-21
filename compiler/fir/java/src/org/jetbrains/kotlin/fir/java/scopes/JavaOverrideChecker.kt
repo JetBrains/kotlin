@@ -134,14 +134,14 @@ class JavaOverrideChecker internal constructor(
     override fun buildTypeParametersSubstitutorIfCompatible(
         overrideCandidate: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirCallableMemberDeclaration<*>
-    ): ConeSubstitutor? {
+    ): ConeSubstitutor {
         if (!overrideCandidate.isTypeParameterDependent() && !baseDeclaration.isTypeParameterDependent()) {
             return ConeSubstitutor.Empty
         }
         val typeParameters = linkedSetOf<FirTypeParameterRef>()
         overrideCandidate.extractTypeParametersTo(typeParameters)
         baseDeclaration.extractTypeParametersTo(typeParameters)
-        return substitutorByMap(typeParameters.buildErasure())
+        return substitutorByMap(typeParameters.buildErasure(), session)
     }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {

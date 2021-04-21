@@ -59,6 +59,7 @@ object FirOverrideChecker : FirClassChecker() {
     private fun ConeKotlinType.substituteAllTypeParameters(
         overrideDeclaration: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirCallableDeclaration<*>,
+        context: CheckerContext
     ): ConeKotlinType {
         if (overrideDeclaration.typeParameters.isEmpty()) {
             return this
@@ -77,7 +78,7 @@ object FirOverrideChecker : FirClassChecker() {
             map[from.symbol] = to.toConeType()
         }
 
-        return substitutorByMap(map).substituteOrSelf(this)
+        return substitutorByMap(map, context.session).substituteOrSelf(this)
     }
 
     private fun checkModality(
@@ -144,7 +145,7 @@ object FirOverrideChecker : FirClassChecker() {
         for (it in bounds.indices) {
             val overriddenDeclaration = overriddenSymbols[it].fir
 
-            val overriddenReturnType = bounds[it].substituteAllTypeParameters(this, overriddenDeclaration)
+            val overriddenReturnType = bounds[it].substituteAllTypeParameters(this, overriddenDeclaration, context)
 
             val isReturnTypeOkForOverride =
                 if (overriddenDeclaration is FirProperty && overriddenDeclaration.isVar)

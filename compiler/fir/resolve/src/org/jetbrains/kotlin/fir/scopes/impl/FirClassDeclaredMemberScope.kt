@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirClassDeclaredMemberScope(
+    val useSiteSession: FirSession,
     klass: FirClass<*>,
     useLazyNestedClassifierScope: Boolean = false,
     existingNames: List<Name>? = null,
@@ -24,7 +26,7 @@ class FirClassDeclaredMemberScope(
     private val nestedClassifierScope: FirScope? = if (useLazyNestedClassifierScope) {
         lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
     } else {
-        nestedClassifierScope(klass)
+        useSiteSession.nestedClassifierScope(klass)
     }
 
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
@@ -65,7 +67,7 @@ class FirClassDeclaredMemberScope(
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is D) {
-                symbol.ensureResolvedForCalls(symbol.fir.declarationSiteSession)
+                symbol.ensureResolvedForCalls(useSiteSession)
                 processor(symbol)
             }
         }

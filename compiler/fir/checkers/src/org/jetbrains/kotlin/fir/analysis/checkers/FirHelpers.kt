@@ -54,50 +54,16 @@ internal fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
     this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
 
 /**
- * Returns true if this is a superclass of other.
- */
-fun FirClass<*>.isSuperclassOf(other: FirClass<*>): Boolean {
-    /**
-     * Hides additional parameters.
-     */
-    fun FirClass<*>.isSuperclassOf(other: FirClass<*>, exclude: MutableSet<FirClass<*>>): Boolean {
-        for (it in other.superTypeRefs) {
-            val that = it.firClassLike(declarationSiteSession)
-                ?.followAllAlias(declarationSiteSession)
-                ?.safeAs<FirClass<*>>()
-                ?: continue
-
-            if (that in exclude) {
-                continue
-            }
-
-            if (that.classKind == ClassKind.CLASS) {
-                if (that == this) {
-                    return true
-                }
-
-                exclude.add(that)
-                return this.isSuperclassOf(that, exclude)
-            }
-        }
-
-        return false
-    }
-
-    return isSuperclassOf(other, mutableSetOf())
-}
-
-/**
  * Returns true if this is a supertype of other.
  */
-fun FirClass<*>.isSupertypeOf(other: FirClass<*>): Boolean {
+fun FirClass<*>.isSupertypeOf(other: FirClass<*>, session: FirSession): Boolean {
     /**
      * Hides additional parameters.
      */
     fun FirClass<*>.isSupertypeOf(other: FirClass<*>, exclude: MutableSet<FirClass<*>>): Boolean {
         for (it in other.superTypeRefs) {
-            val candidate = it.firClassLike(declarationSiteSession)
-                ?.followAllAlias(declarationSiteSession)
+            val candidate = it.firClassLike(session)
+                ?.followAllAlias(session)
                 ?.safeAs<FirClass<*>>()
                 ?: continue
 

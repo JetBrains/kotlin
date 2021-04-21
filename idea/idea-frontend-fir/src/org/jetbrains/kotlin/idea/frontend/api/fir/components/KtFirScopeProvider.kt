@@ -91,7 +91,7 @@ internal class KtFirScopeProvider(
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope = withValidityAssertion {
         declaredMemberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope {
-                declaredMemberScope(it)
+                analysisSession.rootModuleSession.declaredMemberScope(it)
             } ?: return@getOrPut KtFirEmptyMemberScope(classSymbol)
 
             firScopeStorage.register(firScope)

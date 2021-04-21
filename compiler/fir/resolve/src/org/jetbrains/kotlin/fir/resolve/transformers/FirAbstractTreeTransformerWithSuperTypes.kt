@@ -75,11 +75,11 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
                 firClass.addTypeParametersScope()
                 val companionObject = firClass.companionObject
                 if (companionObject != null) {
-                    nestedClassifierScope(companionObject)?.let(scopes::add)
+                    session.nestedClassifierScope(companionObject)?.let(scopes::add)
                 }
             }
 
-            nestedClassifierScope(firClass)?.let(scopes::add)
+            session.nestedClassifierScope(firClass)?.let(scopes::add)
 
             // Note that annotations are still visited here
             // again, although there's no need in it
@@ -100,5 +100,5 @@ fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: F
         it as? ConeKotlinType ?: ConeClassErrorType(ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage))
     }
     val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
-    return ConeSubstitutorByMap(mapping)
+    return ConeSubstitutorByMap(mapping, session)
 }

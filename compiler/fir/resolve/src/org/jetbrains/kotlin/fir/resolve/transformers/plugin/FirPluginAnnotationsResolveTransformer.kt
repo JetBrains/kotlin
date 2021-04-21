@@ -43,7 +43,7 @@ class FirPluginAnnotationsResolveTransformer(
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
         if (!extensionService.hasPredicateBasedExtensions) return file
-        val registeredPluginAnnotations = file.declarationSiteSession.registeredPluginAnnotations
+        val registeredPluginAnnotations = session.registeredPluginAnnotations
         file.replaceResolvePhase(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS)
         val newAnnotations = file.resolveAnnotations(registeredPluginAnnotations.annotations, registeredPluginAnnotations.metaAnnotations)
         if (!newAnnotations.isEmpty) {

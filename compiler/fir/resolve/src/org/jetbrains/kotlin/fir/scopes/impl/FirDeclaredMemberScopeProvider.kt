@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.getOrPutNullable
 
 @ThreadSafeMutableState
-class FirDeclaredMemberScopeProvider : FirSessionComponent {
+class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessionComponent {
     private val declaredMemberCache = mutableMapOf<FirClass<*>, FirClassDeclaredMemberScope>()
     private val nestedClassifierCache = mutableMapOf<FirClass<*>, FirNestedClassifierScope?>()
 
@@ -46,39 +47,33 @@ class FirDeclaredMemberScopeProvider : FirSessionComponent {
         symbolProvider: FirSymbolProvider?
     ): FirClassDeclaredMemberScope {
         return declaredMemberCache.getOrPut(klass) {
-            FirClassDeclaredMemberScope(klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
+            FirClassDeclaredMemberScope(useSiteSession, klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
         }
     }
 
     fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope? {
         return nestedClassifierCache.getOrPutNullable(klass) {
-            FirNestedClassifierScope(klass).takeUnless { it.isEmpty() }
+            FirNestedClassifierScope(klass, useSiteSession).takeUnless { it.isEmpty() }
         }
     }
 }
 
-fun declaredMemberScope(klass: FirClass<*>): FirClassDeclaredMemberScope {
-    return klass
-        .declarationSiteSession
-        .declaredMemberScopeProvider
+fun FirSession.declaredMemberScope(klass: FirClass<*>): FirClassDeclaredMemberScope {
+    return declaredMemberScopeProvider
         .declaredMemberScope(klass, useLazyNestedClassifierScope = false, existingNames = null, symbolProvider = null)
 }
 
-fun declaredMemberScopeWithLazyNestedScope(
+fun FirSession.declaredMemberScopeWithLazyNestedScope(
     klass: FirClass<*>,
     existingNames: List<Name>,
     symbolProvider: FirSymbolProvider
 ): FirScope {
-    return klass
-        .declarationSiteSession
-        .declaredMemberScopeProvider
+    return declaredMemberScopeProvider
         .declaredMemberScope(klass, useLazyNestedClassifierScope = true, existingNames = existingNames, symbolProvider = symbolProvider)
 }
 
-fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope? {
-    return klass
-        .declarationSiteSession
-        .declaredMemberScopeProvider
+fun FirSession.nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope? {
+    return declaredMemberScopeProvider
         .nestedClassifierScope(klass)
 }
 
