@@ -38061,6 +38061,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("samInterfaceTypeParameterErasure.kt")
+        public void testSamInterfaceTypeParameterErasure() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/samInterfaceTypeParameterErasure.kt");
+        }
+
+        @Test
         @TestMetadata("smartCastSamConversion.kt")
         public void testSmartCastSamConversion() throws Exception {
             runTest("compiler/testData/codegen/box/sam/smartCastSamConversion.kt");

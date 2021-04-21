@@ -14,10 +14,6 @@ interface A : Top, Unrelated
 interface B : Top, Unrelated
 
 fun box(): String {
-    // TODO: https://youtrack.jetbrains.com/issue/KT-46238
-    val version = System.getProperty("java.specification.version")
-    if (version != "1.6" && version != "1.8") return "OK"
-
     val g = when ("".length) {
         0 -> G<A>()
         else -> G<B>()

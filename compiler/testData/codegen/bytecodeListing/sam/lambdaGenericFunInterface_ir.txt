@@ -5,7 +5,7 @@ public interface<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Sam {
 }
 
 @kotlin.Metadata
-final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam<TT;>;>  TKt$genericSamGet$1 {
+final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam;>  TKt$genericSamGet$1 {
     // source: 't.kt'
     public final <()TT;> method get(): java.lang.Object
     <(Lkotlin/jvm/functions/Function0<+TT;>;)V> method <init>(p0: kotlin.jvm.functions.Function0): void

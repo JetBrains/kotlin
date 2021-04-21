@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class LambdaMetafactoryArguments(
@@ -103,6 +104,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
         if (implFun.parents.any { it.isInlineFunction() || it.isCrossinlineLambda() })
+            return null
+
+        // Don't try to use indy on SAM types with non-invariant projections because buildFakeOverrideMember doesn't support such supertypes
+        // (and rightly so: supertypes in Kotlin can't have projections in immediate type arguments). This can happen for example in case
+        // the SAM type is instantiated with an intersection type in arguments, which is approximated to an out-projection in psi2ir.
+        if (samType is IrSimpleType && samType.arguments.any { it is IrTypeProjection && it.variance != Variance.INVARIANT })
             return null
 
         // Do the hard work of matching Kotlin functional interface hierarchy against LambdaMetafactory constraints.
