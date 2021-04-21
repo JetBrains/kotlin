@@ -36,10 +36,14 @@ abstract class KtAnalysisSessionProvider : Disposable {
     abstract fun getAnalysisSession(contextElement: KtElement, factory: ValidityTokenFactory): KtAnalysisSession
 
     @InvalidWayOfUsingAnalysisSession
-    inline fun <R> analyseInFakeAnalysisSession(originalFile: KtFile, fakeExpresion: KtElement, action: KtAnalysisSession.() -> R): R {
-        val fakeAnalysisSession = getAnalysisSession(originalFile, ReadActionConfinementValidityTokenFactory)
-            .createContextDependentCopy(originalFile, fakeExpresion)
-        return analyse(fakeAnalysisSession, ReadActionConfinementValidityTokenFactory, action)
+    inline fun <R> analyseInDependedAnalysisSession(
+        originalFile: KtFile,
+        dependencyExpression: KtElement,
+        action: KtAnalysisSession.() -> R
+    ): R {
+        val dependedAnalysisSession = getAnalysisSession(originalFile, ReadActionConfinementValidityTokenFactory)
+            .createContextDependentCopy(originalFile, dependencyExpression)
+        return analyse(dependedAnalysisSession, ReadActionConfinementValidityTokenFactory, action)
     }
 
     @InvalidWayOfUsingAnalysisSession
@@ -89,8 +93,12 @@ inline fun <R> analyseWithCustomToken(
     contextElement.project.service<KtAnalysisSessionProvider>().analyse(contextElement, tokenFactory, action)
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
-inline fun <R> analyseInFakeAnalysisSession(originalFile: KtFile, fakeExpresion: KtElement, action: KtAnalysisSession.() -> R): R =
-    originalFile.project.service<KtAnalysisSessionProvider>().analyseInFakeAnalysisSession(originalFile, fakeExpresion, action)
+inline fun <R> analyseInDependedAnalysisSession(
+    originalFile: KtFile,
+    dependencyExpression: KtElement,
+    action: KtAnalysisSession.() -> R
+): R =
+    originalFile.project.service<KtAnalysisSessionProvider>().analyseInDependedAnalysisSession(originalFile, dependencyExpression, action)
 
 /**
  * Execute given [action] in [KtAnalysisSession] context like [analyse] does but execute it in read action

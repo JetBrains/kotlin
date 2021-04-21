@@ -18,31 +18,31 @@ import org.jetbrains.kotlin.psi.*
 object DeclarationCopyBuilder {
     fun createDeclarationCopy(
         originalFirDeclaration: FirDeclaration,
-        fakeKtDeclaration: KtDeclaration,
+        copiedKtDeclaration: KtDeclaration,
         state: FirModuleResolveState,
     ): FirDeclaration {
-        return when (fakeKtDeclaration) {
+        return when (copiedKtDeclaration) {
             is KtNamedFunction -> createFunctionCopy(
-                fakeKtDeclaration,
+                copiedKtDeclaration,
                 originalFirDeclaration as FirSimpleFunction,
                 state
             )
             is KtProperty -> createPropertyCopy(
-                fakeKtDeclaration,
+                copiedKtDeclaration,
                 originalFirDeclaration as FirProperty,
                 state
             )
             is KtClassOrObject -> createClassCopy(
-                fakeKtDeclaration,
+                copiedKtDeclaration,
                 originalFirDeclaration as FirRegularClass,
                 state
             )
             is KtTypeAlias -> createTypeAliasCopy(
-                fakeKtDeclaration,
+                copiedKtDeclaration,
                 originalFirDeclaration as FirTypeAlias,
                 state
             )
-            else -> error("Unsupported declaration ${fakeKtDeclaration::class.simpleName}")
+            else -> error("Unsupported declaration ${copiedKtDeclaration::class.simpleName}")
         }
     }
 
@@ -64,11 +64,11 @@ object DeclarationCopyBuilder {
     }
 
     private fun createClassCopy(
-        fakeKtClassOrObject: KtClassOrObject,
+        copiedKtClassOrObject: KtClassOrObject,
         originalFirClass: FirRegularClass,
         state: FirModuleResolveState,
     ): FirRegularClass {
-        val builtClass = createCopy(fakeKtClassOrObject, originalFirClass)
+        val builtClass = createCopy(copiedKtClassOrObject, originalFirClass)
 
         return buildRegularClassCopy(originalFirClass) {
             declarations.clear()
@@ -79,11 +79,11 @@ object DeclarationCopyBuilder {
     }
 
     private fun createTypeAliasCopy(
-        fakeKtTypeAlias: KtTypeAlias,
+        copiedKtTypeAlias: KtTypeAlias,
         originalFirTypeAlias: FirTypeAlias,
         state: FirModuleResolveState,
     ): FirTypeAlias {
-        val builtTypeAlias = createCopy(fakeKtTypeAlias, originalFirTypeAlias)
+        val builtTypeAlias = createCopy(copiedKtTypeAlias, originalFirTypeAlias)
 
         return buildTypeAliasCopy(originalFirTypeAlias) {
             expandedTypeRef = builtTypeAlias.expandedTypeRef
@@ -135,14 +135,14 @@ object DeclarationCopyBuilder {
     }
 
     internal inline fun <reified T : FirDeclaration> createCopy(
-        fakeKtDeclaration: KtDeclaration,
+        copiedKtDeclaration: KtDeclaration,
         originalFirDeclaration: T,
     ): T {
         return RawFirFragmentForLazyBodiesBuilder.build(
             session = originalFirDeclaration.moduleData.session,
             baseScopeProvider = originalFirDeclaration.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = originalFirDeclaration.collectDesignation().fullDesignation,
-            declaration = fakeKtDeclaration
+            declaration = copiedKtDeclaration
         ) as T
     }
 

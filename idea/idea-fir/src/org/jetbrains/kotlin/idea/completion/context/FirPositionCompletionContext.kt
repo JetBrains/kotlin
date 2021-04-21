@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.idea.completion.context
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
-import org.jetbrains.kotlin.idea.frontend.api.analyseInFakeAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.analyseInDependedAnalysisSession
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 internal sealed class FirPositionCompletionContext {
     abstract val position: PsiElement
@@ -51,7 +48,7 @@ internal object FirPositionCompletionContextDetector {
         action: KtAnalysisSession.() -> Unit
     ) {
         return when (positionContext) {
-            is FirNameReferencePositionContext -> analyseInFakeAnalysisSession(
+            is FirNameReferencePositionContext -> analyseInDependedAnalysisSession(
                 basicContext.originalKtFile,
                 positionContext.nameExpression,
                 action

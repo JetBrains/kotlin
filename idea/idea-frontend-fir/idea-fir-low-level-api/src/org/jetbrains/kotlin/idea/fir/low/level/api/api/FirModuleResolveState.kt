@@ -34,8 +34,6 @@ abstract class FirModuleResolveState {
 
     internal abstract fun getFirFile(ktFile: KtFile): FirFile
 
-    internal abstract fun isFirFileBuilt(ktFile: KtFile): Boolean
-
     internal abstract fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>>
 
     internal abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>>
@@ -56,14 +54,6 @@ abstract class FirModuleResolveState {
         }
     }
 
-    @TestOnly
-    internal abstract fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile?
-
-    @InternalForInline
-    abstract fun findNonLocalSourceFirDeclaration(
-        ktDeclaration: KtDeclaration,
-    ): FirDeclaration
-
     @InternalForInline
     abstract fun findSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
@@ -74,17 +64,7 @@ abstract class FirModuleResolveState {
         ktDeclaration: KtLambdaExpression,
     ): FirDeclaration
 
-
-    // todo temporary, used only in completion
-    internal abstract fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile)
-
     internal abstract fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D
-
-    // todo temporary, used only in completion
-    internal abstract fun lazyResolveDeclarationForCompletion(
-        firDeclaration: FirDeclaration,
-        containerFirFile: FirFile,
-    )
 
     internal abstract fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
 
