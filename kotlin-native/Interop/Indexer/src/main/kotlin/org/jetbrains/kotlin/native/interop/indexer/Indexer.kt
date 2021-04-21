@@ -222,6 +222,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun visitClass(classCursor: CValue<CXCursor>, clazz: StructDefImpl)  {
+        if (library.language != Language.CPP) return
 
         // TODO skip method (function) when encounter UnsupportedType in params or ret value. Otherwise all class methods will be lost due to exception (?)
         visitChildren(classCursor) { cursor, _ ->
