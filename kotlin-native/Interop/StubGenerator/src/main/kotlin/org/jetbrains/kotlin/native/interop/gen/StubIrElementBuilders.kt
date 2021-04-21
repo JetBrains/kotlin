@@ -802,6 +802,24 @@ internal class GlobalStubBuilder(
                     }
                     kind = PropertyStub.Kind.Val(getter)
                 }
+                is TypeMirror.Managed -> {
+                    kotlinType = mirror.argType
+
+                    val cCallGetterAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
+                    val getter = PropertyAccessor.Getter.ExternalGetter(listOf(cCallGetterAnnotation)).also {
+                        context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
+
+                    }
+                    kind = if (global.isConst) {
+                        PropertyStub.Kind.Val(getter)
+                    } else {
+                        val cCallSetterAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_setter")
+                        val setter = PropertyAccessor.Setter.ExternalSetter(listOf(cCallSetterAnnotation)).also {
+                            context.wrapperComponentsBuilder.setterToWrapperInfo[it] = WrapperGenerationInfo(global)
+                        }
+                        PropertyStub.Kind.Var(getter, setter)
+                    }
+                }
             }
         }
         return listOf(PropertyStub(global.name, kotlinType.toStubIrType(), kind, origin = origin))
@@ -828,6 +846,10 @@ internal class TypedefStubBuilder(
                 )
             }
             is TypeMirror.ByRef -> {
+                val varTypeAliasee = baseMirror.pointedType
+                listOf(TypealiasStub(varType, varTypeAliasee.toStubIrType(), origin))
+            }
+            is TypeMirror.Managed -> {
                 val varTypeAliasee = baseMirror.pointedType
                 listOf(TypealiasStub(varType, varTypeAliasee.toStubIrType(), origin))
             }

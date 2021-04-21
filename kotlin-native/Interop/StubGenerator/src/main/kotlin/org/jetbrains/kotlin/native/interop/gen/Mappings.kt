@@ -123,6 +123,18 @@ sealed class TypeMirror(val pointedType: KotlinClassifierType, val info: TypeInf
     class ByRef(pointedType: KotlinClassifierType, info: TypeInfo) : TypeMirror(pointedType, info) {
         override val argType: KotlinType get() = KotlinTypes.cValue.typeWith(pointedType)
     }
+    /**
+     * Mirror for C++ Managed type.
+     */
+
+    class Managed(
+            pointedType: KotlinClassifierType,
+            info: TypeInfo
+    ) : TypeMirror(pointedType, info) {
+
+        override val argType: KotlinType
+            get() = pointedType
+    }
 }
 
 /**
@@ -401,9 +413,9 @@ private fun byRefTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.ByRe
     return TypeMirror.ByRef(pointedType, info)
 }
 
-private fun managedTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.ByValue {
-    val info = TypeInfo.ByRef(pointedType) // There are all error() anyways.
-    return TypeMirror.ByValue(pointedType, info, pointedType, nullable = true)
+private fun managedTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.Managed {
+    val info = TypeInfo.ByRef(pointedType) // These are all errors anyways.
+    return TypeMirror.Managed(pointedType, info)
 }
 
 fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when (type) {
@@ -495,6 +507,11 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
             }
 
             is TypeMirror.ByRef -> TypeMirror.ByRef(
+                    Classifier.topLevel(pkg, name).typeAbbreviation(baseType.pointedType),
+                    baseType.info
+            )
+
+            is TypeMirror.Managed -> TypeMirror.Managed(
                     Classifier.topLevel(pkg, name).typeAbbreviation(baseType.pointedType),
                     baseType.info
             )
