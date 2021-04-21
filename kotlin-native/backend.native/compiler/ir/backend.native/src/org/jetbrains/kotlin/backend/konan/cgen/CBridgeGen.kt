@@ -118,6 +118,7 @@ private fun IrType.isCStructCompanion(): Boolean {
 }
 
 private fun IrType.isCStruct(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.cStruct) ?: false
+private fun IrType.isManagedType(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.managedType) ?: false
 
 internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
                                        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default): IrExpression {
@@ -455,8 +456,7 @@ private fun CCallbackBuilder.addParameter(it: IrValueParameter, functionParamete
             it.type,
             retained = it.isObjCConsumed(),
             variadic = false,
-            location = location,
-            managedTypeAnnotation = it.hasCCallAnnotation("ManagedTypeParameter")
+            location = location
     )
 
     val kotlinArgument = with(valuePassing) { receiveValue() }
@@ -641,8 +641,7 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
                 type,
                 retained = parameter?.isObjCConsumed() ?: false,
                 variadic = variadic,
-                location = argument,
-                managedTypeAnnotation = parameter?.hasCCallAnnotation("ManagedTypeParameter") ?: false
+                location = argument
         )
     }
 }
@@ -651,11 +650,10 @@ private fun KotlinStubs.mapFunctionParameterType(
         type: IrType,
         retained: Boolean,
         variadic: Boolean,
-        location: IrElement,
-        managedTypeAnnotation: Boolean = false
+        location: IrElement
 ): ArgumentPassing = when {
     type.isUnit() && !variadic -> IgnoredUnitArgumentPassing
-    else -> mapType(type, retained = retained, variadic = variadic, location = location, managedTypeAnnotation = managedTypeAnnotation)
+    else -> mapType(type, retained = retained, variadic = variadic, location = location)
 }
 
 private fun KotlinStubs.mapReturnType(
@@ -664,8 +662,7 @@ private fun KotlinStubs.mapReturnType(
         signature: IrSimpleFunction?
 ): ValueReturning = when {
     type.isUnit() -> VoidReturning
-    else -> mapType(type, retained = signature?.objCReturnsRetained() ?: false, variadic = false, location = location,
-            managedTypeAnnotation = signature?.symbol?.owner?.hasCCallAnnotation("ManagedTypeReturn") ?: false)
+    else -> mapType(type, retained = signature?.objCReturnsRetained() ?: false, variadic = false, location = location)
 }
 
 private fun KotlinStubs.mapBlockType(
@@ -705,8 +702,7 @@ private fun KotlinStubs.mapType(
         type: IrType,
         retained: Boolean,
         variadic: Boolean,
-        location: IrElement,
-        managedTypeAnnotation: Boolean = false
+        location: IrElement
 ): ValuePassing = when {
     type.isBoolean() -> {
         val cBoolType = cBoolType(target)
@@ -749,7 +745,7 @@ private fun KotlinStubs.mapType(
         val cStructType = getNamedCStructType(kotlinClass)
         require(cStructType != null) { renderCompilerError(location) }
 
-        if (managedTypeAnnotation) {
+        if (type.isManagedType()) {
             // TODO: this should probably be better abstracted in a plugin.
             // For Skia plugin we release sk_sp on the C++ side passing just the raw pointer.
             // So managed by value is handled as voidPtr here for now.

@@ -14,6 +14,7 @@ object RuntimeNames {
     val cStructArrayMemberAt = FqName("kotlinx.cinterop.internal.CStruct.ArrayMemberAt")
     val cStructBitField = FqName("kotlinx.cinterop.internal.CStruct.BitField")
     val cStruct = FqName("kotlinx.cinterop.internal.CStruct")
+    val managedType = FqName("kotlinx.cinterop.internal.CStruct.ManagedType")
     val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
     val objCMethodImp = FqName("kotlinx.cinterop.ObjCMethodImp")
     val independent = FqName("kotlin.native.internal.Independent")

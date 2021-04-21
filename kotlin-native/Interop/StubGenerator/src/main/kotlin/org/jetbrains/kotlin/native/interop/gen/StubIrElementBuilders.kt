@@ -78,6 +78,14 @@ internal class StructStubBuilder(
                 AnnotationStub.CStruct(it)
             }
         }
+        val managedAnnotation = if (context.configuration.library.language == Language.CPP
+                && def.kind == StructDef.Kind.CLASS) {
+            AnnotationStub.CStruct.ManagedType
+        } else {
+            null
+        }
+        val structAnnotations = listOfNotNull(structAnnotation, managedAnnotation)
+
         val classifier = context.getKotlinClassForPointed(decl)
 
         val methods: List<FunctionStub> =
@@ -233,7 +241,7 @@ internal class StructStubBuilder(
                 constructors = listOf(primaryConstructor) + secondaryConstructors,
                 methods = methods,
                 modality = ClassStubModality.NONE,
-                annotations = listOfNotNull(structAnnotation),
+                annotations = structAnnotations,
                 superClassInit = superClassInit,
                 companion = companion
         ))
@@ -551,11 +559,6 @@ internal abstract class FunctionalStubBuilder(
                 representAsValuesRef != null -> {
                     FunctionParameterStub(parameterName, representAsValuesRef.toStubIrType())
                 }
-                parameter.type is ManagedType  -> {
-                    val mirror = context.mirror(parameter.type)
-                    val type = mirror.argType.toStubIrType()
-                    FunctionParameterStub(parameterName, type, annotations = listOf(AnnotationStub.CCall.ManagedTypeParameter))
-                }
                 else -> {
                     val mirror = context.mirror(parameter.type)
                     val type = mirror.argType.toStubIrType()
@@ -566,10 +569,8 @@ internal abstract class FunctionalStubBuilder(
         return hasStableParameterNames
     }
 
-    protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) = listOfNotNull(
-            AnnotationStub.CCall.ManagedTypeReturn.takeIf { func.returnType is ManagedType },
-            AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}")
-        )
+    protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) =
+            listOf(AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}"))
 
     protected fun FunctionDecl.returnsVoid(): Boolean = this.returnType.unwrapTypedefs() is VoidType
 

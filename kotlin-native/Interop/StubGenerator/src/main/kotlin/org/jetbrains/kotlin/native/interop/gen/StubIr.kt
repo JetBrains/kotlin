@@ -197,8 +197,6 @@ sealed class AnnotationStub(val classifier: Classifier) {
         object CString : CCall(cCallClassifier.nested("CString"))
         object WCString : CCall(cCallClassifier.nested("WCString"))
         class Symbol(val symbolName: String) : CCall(cCallClassifier)
-        object ManagedTypeReturn : CCall(cCallClassifier.nested("ManagedTypeReturn"))
-        object ManagedTypeParameter : CCall(cCallClassifier.nested("ManagedTypeParameter"))
         object CppClassConstructor : CCall(cCallClassifier.nested("CppClassConstructor"))
     }
 
@@ -210,6 +208,8 @@ sealed class AnnotationStub(val classifier: Classifier) {
         class BitField(val offset: Long, val size: Int) : AnnotationStub(cStructClassifier.nested("BitField"))
 
         class VarType(val size: Long, val align: Int) : AnnotationStub(cStructClassifier.nested("VarType"))
+
+        object ManagedType : AnnotationStub(cStructClassifier.nested("ManagedType"))
     }
 
     class CNaturalStruct(val members: List<StructMember>) :

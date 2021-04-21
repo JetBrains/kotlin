@@ -23,6 +23,10 @@ annotation class CStruct(val spelling: String) {
 
     @Retention(AnnotationRetention.BINARY)
     annotation class VarType(val size: Long, val align: Int)
+
+    @Target(AnnotationTarget.CLASS)
+    @Retention(AnnotationRetention.BINARY)
+    annotation class ManagedType
 }
 
 @Target(
@@ -59,14 +63,6 @@ public annotation class CCall(val id: String) {
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.BINARY)
     annotation class Consumed
-
-    @Target(AnnotationTarget.FUNCTION)
-    @Retention(AnnotationRetention.BINARY)
-    annotation class ManagedTypeReturn
-
-    @Target(AnnotationTarget.VALUE_PARAMETER)
-    @Retention(AnnotationRetention.BINARY)
-    annotation class ManagedTypeParameter
 
     @Target(AnnotationTarget.CONSTRUCTOR)
     @Retention(AnnotationRetention.BINARY)
