@@ -188,6 +188,12 @@ class JvmRuntimeTypes(
             else -> if (isMutable) mutablePropertyReferences else propertyReferences
         }
 
-        return classes[arity].defaultType
+        return if (arity >= 0) {
+            classes[arity].defaultType
+        } else {
+            //in case of ErrorUtils.ERROR_PROPERTY there would be no dispatchReceiverParameter and arity becomes negative
+            //so we just take zero argument reference class (because it is incorrect anyway)
+            classes[0].defaultType
+        }
     }
 }
