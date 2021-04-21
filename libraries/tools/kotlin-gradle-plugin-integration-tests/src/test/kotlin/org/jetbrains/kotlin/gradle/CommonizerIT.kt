@@ -19,4 +19,30 @@ class CommonizerIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun `test KT-46234 intermediate source set with only one native target`() {
+
+        val posixInImplementationMetadataConfigurationRegex = Regex(""".*implementationMetadataConfiguration:.*([pP])osix""")
+
+        fun CompiledProject.containsPosixInImplementationMetadataConfiguration(): Boolean =
+            output.lineSequence().any { line ->
+                line.matches(posixInImplementationMetadataConfigurationRegex)
+            }
+
+        with(Project("commonize-kt-46234-singleNativeTarget")) {
+            build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=false") {
+                assertSuccessful()
+
+                assertTrue(
+                    containsPosixInImplementationMetadataConfiguration(),
+                    "Expected dependency on posix in implementationMetadataConfiguration"
+                )
+            }
+
+            build("assemble") {
+                assertSuccessful()
+            }
+        }
+    }
 }
