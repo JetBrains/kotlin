@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.extensions.AbstractFirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionPointName
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
@@ -19,6 +20,7 @@ abstract class FirAdditionalCheckersExtension(session: FirSession) : AbstractFir
 
     open val declarationCheckers: DeclarationCheckers = DeclarationCheckers.EMPTY
     open val expressionCheckers: ExpressionCheckers = ExpressionCheckers.EMPTY
+    open val typeCheckers: TypeCheckers = TypeCheckers.EMPTY
 
     final override val name: FirExtensionPointName
         get() = NAME

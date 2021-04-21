@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
@@ -27,11 +27,13 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
     init {
         val declarationCheckers = CheckersFactory.createDeclarationCheckers(useExtendedCheckers)
         val expressionCheckers = CheckersFactory.createExpressionCheckers(useExtendedCheckers)
+        val typeCheckers = CheckersFactory.createTypeCheckers(useExtendedCheckers)
 
         @Suppress("LeakingThis")
         initializeComponents(
             DeclarationCheckersDiagnosticComponent(this, declarationCheckers),
             ExpressionCheckersDiagnosticComponent(this, expressionCheckers),
+            TypeCheckersDiagnosticComponent(this, typeCheckers),
             ErrorNodeDiagnosticCollectorComponent(this),
             ControlFlowAnalysisDiagnosticComponent(this, declarationCheckers),
         )
@@ -112,6 +114,8 @@ private object CheckersFactory {
 
     fun createExpressionCheckers(useExtendedCheckers: Boolean): ExpressionCheckers =
         if (useExtendedCheckers) ExtendedExpressionCheckers else CommonExpressionCheckers
+
+    fun createTypeCheckers(useExtendedCheckers: Boolean): TypeCheckers = CommonTypeCheckers
 
     // TODO hack to have all checkers present in DeclarationCheckers.memberDeclarationCheckers and similar
     // If use ExtendedDeclarationCheckers directly when DeclarationCheckers.memberDeclarationCheckers will not contain basicDeclarationCheckers
