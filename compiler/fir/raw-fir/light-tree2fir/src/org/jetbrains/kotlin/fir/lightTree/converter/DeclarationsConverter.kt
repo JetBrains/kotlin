@@ -1673,8 +1673,12 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRef
      */
     fun convertType(type: LighterASTNode): FirTypeRef {
+        val typeRefSource = type.toFirSourceElement()
         if (type.asText.isEmpty()) {
-            return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax) }
+            return buildErrorTypeRef {
+                source = typeRefSource
+                diagnostic = ConeSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax)
+            }
         }
 
         // There can be MODIFIER_LIST children on the TYPE_REFERENCE node AND the descendant NULLABLE_TYPE nodes.
@@ -1693,21 +1697,27 @@ class DeclarationsConverter(
         // TODO: Report MODIFIER_LIST_NOT_ALLOWED error when there are multiple modifier lists. How do we report on each of them?
         val allTypeModifiers = mutableListOf<TypeModifier>()
 
-        var firType: FirTypeRef = buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax) }
+        var firType: FirTypeRef = buildErrorTypeRef {
+            source = typeRefSource
+            diagnostic = ConeSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax)
+        }
         type.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firType = convertType(it)
                 MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
-                USER_TYPE -> firType = convertUserType(it)
-                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, allTypeModifiers)
-                NULLABLE_TYPE -> firType = convertNullableType(it, allTypeModifiers)
-                FUNCTION_TYPE -> firType = convertFunctionType(it, isSuspend = allTypeModifiers.hasSuspend())
+                USER_TYPE -> firType = convertUserType(typeRefSource, it)
+                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(typeRefSource, it, allTypeModifiers)
+                NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
+                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isSuspend = allTypeModifiers.hasSuspend())
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
-                    source = type.toFirSourceElement()
+                    source = typeRefSource
                     isMarkedNullable = false
                 }
                 TokenType.ERROR_ELEMENT -> firType =
-                    buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax) }
+                    buildErrorTypeRef {
+                        source = typeRefSource
+                        diagnostic = ConeSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax)
+                    }
             }
         }
 
@@ -1737,6 +1747,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseNullableTypeSuffix
      */
     private fun convertNullableType(
+        typeRefSource: FirSourceElement,
         nullableType: LighterASTNode,
         allTypeModifiers: MutableList<TypeModifier>,
         isNullable: Boolean = true
@@ -1745,12 +1756,13 @@ class DeclarationsConverter(
         nullableType.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
-                USER_TYPE -> firType = convertUserType(it, isNullable)
-                FUNCTION_TYPE -> firType = convertFunctionType(it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
-                NULLABLE_TYPE -> firType = convertNullableType(it, allTypeModifiers)
-                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, allTypeModifiers, isNullable = true)
+                USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
+                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
+                NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers)
+                DEFINITELY_NOT_NULL_TYPE -> firType =
+                    unwrapDefinitelyNotNullableType(typeRefSource, it, allTypeModifiers, isNullable = true)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
-                    source = nullableType.toFirSourceElement()
+                    source = typeRefSource
                     isMarkedNullable = true
                 }
             }
@@ -1760,6 +1772,7 @@ class DeclarationsConverter(
     }
 
     private fun unwrapDefinitelyNotNullableType(
+        typeRefSource: FirSourceElement,
         definitelyNotNullType: LighterASTNode,
         allTypeModifiers: MutableList<TypeModifier>,
         isNullable: Boolean = false
@@ -1769,12 +1782,12 @@ class DeclarationsConverter(
         definitelyNotNullType.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> allTypeModifiers += convertTypeModifierList(it)
-                USER_TYPE -> firType = convertUserType(it, isNullable)
-                FUNCTION_TYPE -> firType = convertFunctionType(it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
-                NULLABLE_TYPE -> firType = convertNullableType(it, allTypeModifiers, isNullable = false)
-                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(it, allTypeModifiers, isNullable)
+                USER_TYPE -> firType = convertUserType(typeRefSource, it, isNullable)
+                FUNCTION_TYPE -> firType = convertFunctionType(typeRefSource, it, isNullable, isSuspend = allTypeModifiers.hasSuspend())
+                NULLABLE_TYPE -> firType = convertNullableType(typeRefSource, it, allTypeModifiers, isNullable = false)
+                DEFINITELY_NOT_NULL_TYPE -> firType = unwrapDefinitelyNotNullableType(typeRefSource, it, allTypeModifiers, isNullable)
                 DYNAMIC_TYPE -> firType = buildDynamicTypeRef {
-                    source = definitelyNotNullType.toFirSourceElement()
+                    source = typeRefSource
                     isMarkedNullable = false
                 }
             }
@@ -1786,32 +1799,37 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseUserType
      */
-    private fun convertUserType(userType: LighterASTNode, isNullable: Boolean = false): FirTypeRef {
+    private fun convertUserType(
+        typeRefSource: FirSourceElement,
+        userType: LighterASTNode,
+        isNullable: Boolean = false
+    ): FirTypeRef {
         var simpleFirUserType: FirUserTypeRef? = null
         var identifier: String? = null
         val firTypeArguments = mutableListOf<FirTypeProjection>()
         userType.forEachChildren {
             when (it.tokenType) {
-                USER_TYPE -> simpleFirUserType = convertUserType(it) as? FirUserTypeRef //simple user type
+                USER_TYPE -> simpleFirUserType = convertUserType(typeRefSource, it) as? FirUserTypeRef //simple user type
                 REFERENCE_EXPRESSION -> identifier = it.asText
                 TYPE_ARGUMENT_LIST -> firTypeArguments += convertTypeArguments(it)
             }
         }
 
         if (identifier == null)
-            return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Incomplete user type", DiagnosticKind.Syntax) }
+            return buildErrorTypeRef {
+                source = typeRefSource
+                diagnostic = ConeSimpleDiagnostic("Incomplete user type", DiagnosticKind.Syntax)
+            }
 
-        // Note: we take TYPE_REFERENCE, not USER_TYPE, as the source (to be consistent with RawFirBuilder)
-        val theSource = tree.getParent(userType)!!.toFirSourceElement()
         val qualifierPart = FirQualifierPartImpl(
             identifier.nameAsSafeName(),
-            FirTypeArgumentListImpl(theSource).apply {
+            FirTypeArgumentListImpl(typeRefSource).apply {
                 typeArguments += firTypeArguments
             }
         )
 
         return buildUserTypeRef {
-            source = theSource
+            source = typeRefSource
             isMarkedNullable = isNullable
             qualifier.add(qualifierPart)
             simpleFirUserType?.qualifier?.let { this.qualifier.addAll(0, it) }
@@ -1856,7 +1874,12 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionType
      */
-    private fun convertFunctionType(functionType: LighterASTNode, isNullable: Boolean = false, isSuspend: Boolean = false): FirTypeRef {
+    private fun convertFunctionType(
+        typeRefSource: FirSourceElement,
+        functionType: LighterASTNode,
+        isNullable: Boolean = false,
+        isSuspend: Boolean = false
+    ): FirTypeRef {
         var receiverTypeReference: FirTypeRef? = null
         lateinit var returnTypeReference: FirTypeRef
         val valueParametersList = mutableListOf<ValueParameter>()
@@ -1869,7 +1892,7 @@ class DeclarationsConverter(
         }
 
         return buildFunctionTypeRef {
-            source = functionType.toFirSourceElement()
+            source = typeRefSource
             isMarkedNullable = isNullable
             receiverTypeRef = receiverTypeReference
             returnTypeRef = returnTypeReference
