@@ -2,6 +2,7 @@
 // IGNORE_BACKEND: ANDROID
 // WITH_RUNTIME
 // FULL_JDK
+// JVM_TARGET: 1.8
 // FILE: 1.kt
 
 inline fun foo(crossinline init: (String) -> String): String =
