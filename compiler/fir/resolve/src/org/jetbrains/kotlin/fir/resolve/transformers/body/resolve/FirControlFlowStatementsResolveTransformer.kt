@@ -142,22 +142,15 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         dataFlowAnalyzer.exitTryMainBlock()
         tryExpression.transformCatches(this, ResolutionMode.ContextDependent)
 
-        var callCompleted = false
+        var callCompleted: Boolean
 
         @Suppress("NAME_SHADOWING")
-        var result = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression, resolutionContext)?.let {
+        var result = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression, resolutionContext).let {
             val expectedTypeRef = data.expectedType
             val completionResult = callCompleter.completeCall(it, expectedTypeRef)
             callCompleted = completionResult.callCompleted
             completionResult.result
-        } ?: run {
-            tryExpression.resultType = buildErrorTypeRef {
-                diagnostic = ConeSimpleDiagnostic("Can't resolve try expression", DiagnosticKind.InferenceError)
-            }
-            callCompleted = true
-            tryExpression
         }
-
         result = if (result.finallyBlock != null) {
             result.also { dataFlowAnalyzer.enterFinallyBlock() }
                 .transformFinallyBlock(transformer, ResolutionMode.ContextIndependent)
