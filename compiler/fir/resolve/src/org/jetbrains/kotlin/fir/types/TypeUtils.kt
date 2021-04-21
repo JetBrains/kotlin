@@ -204,11 +204,7 @@ fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
     require(this is FirResolvedTypeRef || newType == null)
     if (newType == null) return this
 
-    return buildResolvedTypeRef {
-        source = this@withReplacedReturnType.source
-        type = newType
-        annotations += this@withReplacedReturnType.annotations
-    }
+    return resolvedTypeFromPrototype(newType)
 }
 
 fun FirTypeRef.withReplacedConeType(
@@ -218,14 +214,24 @@ fun FirTypeRef.withReplacedConeType(
     require(this is FirResolvedTypeRef)
     if (newType == null) return this
 
-    return buildResolvedTypeRef {
-        source = if (firFakeSourceElementKind != null)
-            this@withReplacedConeType.source?.fakeElement(firFakeSourceElementKind)
+    val newSource =
+        if (firFakeSourceElementKind != null)
+            this.source?.fakeElement(firFakeSourceElementKind)
         else
-            this@withReplacedConeType.source
-        type = newType
-        annotations += this@withReplacedConeType.annotations
-        delegatedTypeRef = this@withReplacedConeType.delegatedTypeRef
+            this.source
+
+    return if (newType is ConeKotlinErrorType) {
+        buildErrorTypeRef {
+            source = newSource
+            diagnostic = newType.diagnostic
+        }
+    } else {
+        buildResolvedTypeRef {
+            source = newSource
+            type = newType
+            annotations += this@withReplacedConeType.annotations
+            delegatedTypeRef = this@withReplacedConeType.delegatedTypeRef
+        }
     }
 }
 

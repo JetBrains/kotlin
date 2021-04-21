@@ -29,8 +29,8 @@ FILE: CallBasedInExpressionGenerator.kt
         public final val codegen: R|org/jetbrains/kotlin/codegen/range/inExpression/ExpressionCodegen| = R|<local>/codegen|
             public get(): R|org/jetbrains/kotlin/codegen/range/inExpression/ExpressionCodegen|
 
-        private final val resolvedCall: R|ERROR CLASS: Unresolved name: getResolvedCallWithAssert| = R|<local>/operatorReference|.<Unresolved name: getResolvedCallWithAssert>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: bindingContext>#)
-            private get(): R|ERROR CLASS: Unresolved name: getResolvedCallWithAssert|
+        private final val resolvedCall: <ERROR TYPE REF: Unresolved name: getResolvedCallWithAssert> = R|<local>/operatorReference|.<Unresolved name: getResolvedCallWithAssert>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: bindingContext>#)
+            private get(): <ERROR TYPE REF: Unresolved name: getResolvedCallWithAssert>
 
         private final val isInverted: R|kotlin/Boolean| = ==(R|<local>/operatorReference|.<Unresolved name: getReferencedNameElementType>#(), <Unresolved name: KtTokens>#.<Unresolved name: NOT_IN>#)
             private get(): R|kotlin/Boolean|
@@ -75,7 +75,7 @@ FILE: CallBasedInExpressionGenerator.kt
                 }
 
                 private final fun invokeFunction(v: R|org/jetbrains/kotlin/codegen/range/inExpression/InstructionAdapter|): R|kotlin/Unit| {
-                    lval result: R|ERROR CLASS: Unresolved name: invokeFunction| = this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: invokeFunction>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|.<Unresolved name: call>#, this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|, <Unresolved name: none>#())
+                    lval result: <ERROR TYPE REF: Unresolved name: invokeFunction> = this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: invokeFunction>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|.<Unresolved name: call>#, this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|, <Unresolved name: none>#())
                     R|<local>/result|.<Unresolved name: put>#(R|<local>/result|.<Unresolved name: type>#, R|<local>/result|.<Unresolved name: kotlinType>#, R|<local>/v|)
                 }
 

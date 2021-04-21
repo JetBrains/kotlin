@@ -25,7 +25,7 @@ FILE: instanceAccessBeforeSuperCall.kt
         }
 
         public constructor(x: R|kotlin/Int|): R|C| {
-            this<R|C|>(fun <anonymous>(): R|ERROR CLASS: Cannot access ''<this>'' before superclass constructor has been called| <inline=Unknown>  {
+            this<R|C|>(fun <anonymous>(): <ERROR TYPE REF: Cannot access ''<this>'' before superclass constructor has been called> <inline=Unknown>  {
                 lval a: R|kotlin/Int| = Int(10)
                 ^ this@R|/C|
             }
@@ -63,8 +63,8 @@ FILE: instanceAccessBeforeSuperCall.kt
     }
     public final fun test(f: R|F|): R|kotlin/Unit| {
     }
-    public final val a: R|ERROR CLASS: 'this' is not defined in this context| = this#
-        public get(): R|ERROR CLASS: 'this' is not defined in this context|
+    public final val a: <ERROR TYPE REF: 'this' is not defined in this context> = this#
+        public get(): <ERROR TYPE REF: 'this' is not defined in this context>
     public final class F : R|kotlin/Any| {
         public constructor(a: R|kotlin/Int|, b: R|kotlin/Int|, closure: R|() -> kotlin/Unit|, instance: R|F?|): R|F| {
             super<R|kotlin/Any|>()

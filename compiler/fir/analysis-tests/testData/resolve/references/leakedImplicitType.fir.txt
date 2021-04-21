@@ -7,7 +7,7 @@ FILE: leakedImplicitType.kt
         public final fun bar(): R|kotlin/Unit| {
         }
 
-        public final fun f(): R|ERROR CLASS: Unresolved reference: bar| {
+        public final fun f(): <ERROR TYPE REF: Unresolved reference: bar> {
             ^f <Unresolved name: Unresolved>#()::<Unresolved reference: bar>#
         }
 

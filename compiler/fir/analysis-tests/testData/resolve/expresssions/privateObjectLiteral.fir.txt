@@ -33,7 +33,7 @@ FILE: privateObjectLiteral.kt
 
             internal get(): R|kotlin/Any|
 
-        public final val w: R|ERROR CLASS: Unresolved name: foo| = this@R|/C|.R|/C.z|.<Unresolved name: foo>#()
-            public get(): R|ERROR CLASS: Unresolved name: foo|
+        public final val w: <ERROR TYPE REF: Unresolved name: foo> = this@R|/C|.R|/C.z|.<Unresolved name: foo>#()
+            public get(): <ERROR TYPE REF: Unresolved name: foo>
 
     }

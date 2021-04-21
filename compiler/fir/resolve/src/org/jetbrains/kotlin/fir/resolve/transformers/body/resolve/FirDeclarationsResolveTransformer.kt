@@ -673,10 +673,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                     if (param.returnTypeRef is FirResolvedTypeRef) {
                                         param
                                     } else {
-                                        val resolvedType = buildResolvedTypeRef {
-                                            source = param.source
-                                            type = resolvedLambdaAtom.parameters[index]
-                                        }
+                                        val resolvedType =
+                                            param.returnTypeRef.resolvedTypeFromPrototype(resolvedLambdaAtom.parameters[index])
                                         param.replaceReturnTypeRef(resolvedType)
                                         param
                                     }
@@ -808,6 +806,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 val expectedType = when (resultType) {
                     is FirImplicitTypeRef -> buildErrorTypeRef {
                         diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
+                    }
+                    is FirErrorTypeRef -> buildErrorTypeRef {
+                        diagnostic = resultType.diagnostic
+                        resultType.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)?.let {
+                            source = it
+                        }
                     }
                     else -> {
                         buildResolvedTypeRef {
