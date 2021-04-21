@@ -25,7 +25,7 @@ FILE: instanceAccessBeforeSuperCall.kt
         }
 
         public constructor(x: R|kotlin/Int|): R|C| {
-            this<R|C|>(fun <anonymous>(): R|ERROR CLASS: Cannot access ''<this>'' before superclass constructor has been called| <inline=Unknown>  {
+            this<R|C|>(fun <anonymous>(): <ERROR TYPE REF: Cannot access ''<this>'' before superclass constructor has been called> <inline=Unknown>  {
                 lval a: R|kotlin/Int| = Int(10)
                 ^ this@R|/C|
             }
