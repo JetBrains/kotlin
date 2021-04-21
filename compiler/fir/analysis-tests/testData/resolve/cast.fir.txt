@@ -18,7 +18,7 @@ FILE: cast.kt
     }
 
         public get(): R|(kotlin/String) -> kotlin/Boolean|
-    public final val hError: R|(ERROR CLASS: No type for parameter) -> kotlin/Boolean| = fun <anonymous>(_: R|ERROR CLASS: No type for parameter|): R|kotlin/Boolean| <inline=Unknown>  {
+    public final val hError: R|(ERROR CLASS: No type for parameter) -> kotlin/Boolean| = fun <anonymous>(_: <ERROR TYPE REF: No type for parameter>): R|kotlin/Boolean| <inline=Unknown>  {
         ^ Boolean(true)
     }
 

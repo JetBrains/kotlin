@@ -58,7 +58,10 @@ class ErrorNodeDiagnosticCollectorComponent(
         ) return
 
         // If the receiver cannot be resolved, we skip reporting any further problems for this call.
-        if (qualifiedAccess?.dispatchReceiver.hasUnresolvedNameError() || qualifiedAccess?.extensionReceiver.hasUnresolvedNameError() || qualifiedAccess?.explicitReceiver.hasUnresolvedNameError()) return
+        if (qualifiedAccess?.dispatchReceiver.hasUnresolvedNameError() ||
+            qualifiedAccess?.extensionReceiver.hasUnresolvedNameError() ||
+            qualifiedAccess?.explicitReceiver.hasUnresolvedNameError()
+        ) return
 
         reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccess?.source)
     }

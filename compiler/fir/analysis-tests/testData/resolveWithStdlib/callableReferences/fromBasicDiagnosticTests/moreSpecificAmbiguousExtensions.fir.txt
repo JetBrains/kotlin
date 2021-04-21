@@ -9,7 +9,7 @@ FILE: moreSpecificAmbiguousExtensions.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval extFun1: R|@ExtensionFunctionType kotlin/reflect/KFunction2<IA, IB, kotlin/Unit>| = Q|IA|::R|/extFun|
-        lval extFun2: R|ERROR CLASS: Ambiguity: extFun, [/extFun, /extFun]| = Q|IB|::<Ambiguity: extFun, [/extFun, /extFun]>#
+        lval extFun2: <ERROR TYPE REF: Ambiguity: extFun, [/extFun, /extFun]> = Q|IB|::<Ambiguity: extFun, [/extFun, /extFun]>#
     }
     public final fun testWithExpectedType(): R|kotlin/Unit| {
         lval extFun_AB_A: R|IA.(IB) -> kotlin/Unit| = Q|IA|::R|/extFun|

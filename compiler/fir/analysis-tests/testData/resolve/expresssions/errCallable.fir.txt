@@ -18,10 +18,10 @@ FILE: errCallable.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            lval x: R|ERROR CLASS: Unresolved reference: Nested| = ::<Unresolved reference: Nested>#
+            lval x: <ERROR TYPE REF: Unresolved reference: Nested> = ::<Unresolved reference: Nested>#
         }
 
     }
     public final fun R|Your|.foo(): R|kotlin/Unit| {
-        lval x: R|ERROR CLASS: Unresolved reference: Nested| = ::<Unresolved reference: Nested>#
+        lval x: <ERROR TYPE REF: Unresolved reference: Nested> = ::<Unresolved reference: Nested>#
     }

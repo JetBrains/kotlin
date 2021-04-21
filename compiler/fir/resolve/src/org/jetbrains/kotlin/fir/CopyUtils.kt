@@ -90,14 +90,20 @@ fun FirAnonymousFunction.copy(
     }
 }
 
-
 fun FirTypeRef.resolvedTypeFromPrototype(
     type: ConeKotlinType
 ): FirResolvedTypeRef {
-    return buildResolvedTypeRef {
-        source = this@resolvedTypeFromPrototype.source
-        this.type = type
-        annotations += this@resolvedTypeFromPrototype.annotations
+    return if (type is ConeKotlinErrorType) {
+        buildErrorTypeRef {
+            source = this@resolvedTypeFromPrototype.source
+            diagnostic = type.diagnostic
+        }
+    } else {
+        buildResolvedTypeRef {
+            source = this@resolvedTypeFromPrototype.source
+            this.type = type
+            annotations += this@resolvedTypeFromPrototype.annotations
+        }
     }
 }
 
