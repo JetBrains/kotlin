@@ -5,5 +5,5 @@ fun <E : Enum<E>> createMap(enumClass: Class<E>) {}
 
 fun reproduce() {
     val enumClass: Class<Enum<*>> = "any" as Class<Enum<*>>
-    <!INAPPLICABLE_CANDIDATE!>createMap<!>(enumClass)
+    createMap(enumClass)
 }
