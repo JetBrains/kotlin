@@ -51,13 +51,13 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         val functionalTypeEffects = mutableMapOf<AbstractFirBasedSymbol<*>, ConeCallsEffectDeclaration>()
 
         function.valueParameters.forEachIndexed { index, parameter ->
-            if (parameter.returnTypeRef.isFunctionalTypeRef(function.session)) {
+            if (parameter.returnTypeRef.isFunctionalTypeRef(function.declarationSiteSession)) {
                 val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(index)
                 if (effectDeclaration != null) functionalTypeEffects[parameter.symbol] = effectDeclaration
             }
         }
 
-        if (function.receiverTypeRef.isFunctionalTypeRef(function.session)) {
+        if (function.receiverTypeRef.isFunctionalTypeRef(function.declarationSiteSession)) {
             val effectDeclaration = function.contractDescription.getParameterCallsEffectDeclaration(-1)
             if (effectDeclaration != null) functionalTypeEffects[function.symbol] = effectDeclaration
         }

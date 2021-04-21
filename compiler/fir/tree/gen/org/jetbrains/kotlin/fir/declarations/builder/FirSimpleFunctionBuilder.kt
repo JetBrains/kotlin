@@ -96,7 +96,7 @@ inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleF
     }
     val copyBuilder = FirSimpleFunctionBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.session
+    copyBuilder.session = original.declarationSideSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

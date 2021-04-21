@@ -98,7 +98,7 @@ inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBu
     }
     val copyBuilder = FirConstructorBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.session
+    copyBuilder.session = original.declarationSideSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

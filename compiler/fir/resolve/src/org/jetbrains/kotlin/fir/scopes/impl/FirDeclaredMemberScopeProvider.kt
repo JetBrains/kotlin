@@ -59,7 +59,7 @@ class FirDeclaredMemberScopeProvider : FirSessionComponent {
 
 fun declaredMemberScope(klass: FirClass<*>): FirClassDeclaredMemberScope {
     return klass
-        .session
+        .declarationSiteSession
         .declaredMemberScopeProvider
         .declaredMemberScope(klass, useLazyNestedClassifierScope = false, existingNames = null, symbolProvider = null)
 }
@@ -70,14 +70,14 @@ fun declaredMemberScopeWithLazyNestedScope(
     symbolProvider: FirSymbolProvider
 ): FirScope {
     return klass
-        .session
+        .declarationSiteSession
         .declaredMemberScopeProvider
         .declaredMemberScope(klass, useLazyNestedClassifierScope = true, existingNames = existingNames, symbolProvider = symbolProvider)
 }
 
 fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope? {
     return klass
-        .session
+        .declarationSiteSession
         .declaredMemberScopeProvider
         .nestedClassifierScope(klass)
 }

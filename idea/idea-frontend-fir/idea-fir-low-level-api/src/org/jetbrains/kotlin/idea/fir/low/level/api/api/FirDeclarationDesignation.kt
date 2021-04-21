@@ -28,10 +28,10 @@ class FirDeclarationDesignation(
 
 object DeclarationDesignationCollector {
     fun collectDesignation(declaration: FirDeclaration): FirDeclarationDesignation {
-        val firProvider = declaration.session.firProvider
+        val firProvider = declaration.declarationSiteSession.firProvider
 
         val containingClass = when (declaration) {
-            is FirCallableDeclaration<*> -> declaration.containingClass()?.toFirRegularClass(declaration.session)
+            is FirCallableDeclaration<*> -> declaration.containingClass()?.toFirRegularClass(declaration.declarationSiteSession)
             is FirClassLikeDeclaration<*> -> declaration.symbol.classId.outerClassId?.let(firProvider::getFirClassifierByFqName)
             else -> error("Invalid declaration ${declaration.renderWithType()}")
         } ?: return FirDeclarationDesignation(emptyList(), declaration, isLocalDesignation = false)
@@ -54,7 +54,7 @@ object DeclarationDesignationCollector {
 
     private fun FirRegularClass.collectForNonLocal(): List<FirClassLikeDeclaration<*>> {
         require(!isLocal)
-        val firProvider = session.firProvider
+        val firProvider = declarationSiteSession.firProvider
         var containingClassId = classId.outerClassId
         val designation = mutableListOf<FirClassLikeDeclaration<*>>(this)
         while (containingClassId != null) {
@@ -70,7 +70,7 @@ object DeclarationDesignationCollector {
         var containingClassLookUp = containingClassForLocal()
         val designation = mutableListOf<FirClassLikeDeclaration<*>>(this)
         while (containingClassLookUp != null && containingClassLookUp.classId.isLocal) {
-            val currentClass = containingClassLookUp.toFirRegularClass(session) ?: break
+            val currentClass = containingClassLookUp.toFirRegularClass(declarationSiteSession) ?: break
             designation.add(currentClass)
             containingClassLookUp = currentClass.containingClassForLocal()
         }

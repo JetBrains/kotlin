@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirTypeAliasImpl(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,

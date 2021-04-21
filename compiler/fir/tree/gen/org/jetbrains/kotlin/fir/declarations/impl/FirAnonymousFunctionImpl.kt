@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirAnonymousFunctionImpl(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val annotations: MutableList<FirAnnotationCall>,

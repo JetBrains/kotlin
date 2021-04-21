@@ -95,7 +95,7 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     }
     val copyBuilder = FirPropertyAccessorBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.session
+    copyBuilder.session = original.declarationSideSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

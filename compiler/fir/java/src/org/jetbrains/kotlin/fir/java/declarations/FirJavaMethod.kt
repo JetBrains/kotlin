@@ -51,7 +51,7 @@ import kotlin.properties.Delegates
 @OptIn(FirImplementationDetail::class)
 class FirJavaMethod @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
@@ -235,7 +235,7 @@ inline fun buildJavaMethodCopy(original: FirSimpleFunction, init: FirJavaMethodB
     }
     val copyBuilder = FirJavaMethodBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.session
+    copyBuilder.session = original.declarationSiteSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef

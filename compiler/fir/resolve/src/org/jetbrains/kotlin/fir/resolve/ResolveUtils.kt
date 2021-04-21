@@ -361,7 +361,7 @@ private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTyp
 
 inline val FirCallableDeclaration<*>.containingClass: FirRegularClass?
     get() = this.containingClassAttr?.let { lookupTag ->
-        session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
+        declarationSiteSession.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
     }
 
 val FirFunction<*>.asForbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget?

@@ -81,7 +81,7 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     }
     val copyBuilder = FirValueParameterBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.session
+    copyBuilder.session = original.declarationSideSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

@@ -28,7 +28,7 @@ internal class IdeFirPhaseManager(
         try {
             lazyDeclarationResolver.lazyResolveDeclaration(fir, cache, requiredPhase, checkPCE = true)
         } catch (e: Throwable) {
-            sessionInvalidator.invalidate(fir.session)
+            sessionInvalidator.invalidate(fir.declarationSiteSession)
             throw e
         }
     }

@@ -27,7 +27,7 @@ import kotlin.contracts.contract
 @OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
@@ -182,7 +182,7 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     }
     val copyBuilder = FirJavaValueParameterBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.session
+    copyBuilder.session = original.declarationSiteSession
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.name = original.name

@@ -52,7 +52,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
     override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
         val klass = generatedClass.klass
         val function = buildSimpleFunction {
-            session = klass.session
+            session = klass.declarationSiteSession
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType

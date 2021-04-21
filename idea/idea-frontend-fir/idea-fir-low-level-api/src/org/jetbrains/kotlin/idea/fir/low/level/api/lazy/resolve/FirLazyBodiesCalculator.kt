@@ -30,8 +30,8 @@ internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesForFunction(simpleFunction: FirSimpleFunction, designation: List<FirDeclaration>) {
         if (simpleFunction.body !is FirLazyBlock) return
         val newFunction = RawFirFragmentForLazyBodiesBuilder.build(
-            session = simpleFunction.session,
-            baseScopeProvider = simpleFunction.session.firIdeProvider.kotlinScopeProvider,
+            session = simpleFunction.declarationSiteSession,
+            baseScopeProvider = simpleFunction.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
             designation = designation,
             declaration = simpleFunction.psi as KtNamedFunction
         ) as FirSimpleFunction
@@ -46,8 +46,8 @@ internal object FirLazyBodiesCalculator {
         if (secondaryConstructor.body !is FirLazyBlock) return
 
         val newFunction = RawFirFragmentForLazyBodiesBuilder.build(
-            session = secondaryConstructor.session,
-            baseScopeProvider = secondaryConstructor.session.firIdeProvider.kotlinScopeProvider,
+            session = secondaryConstructor.declarationSiteSession,
+            baseScopeProvider = secondaryConstructor.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
             designation = designation,
             declaration = secondaryConstructor.psi as KtSecondaryConstructor
         ) as FirSimpleFunction
@@ -61,8 +61,8 @@ internal object FirLazyBodiesCalculator {
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
         val newProperty = RawFirFragmentForLazyBodiesBuilder.build(
-            session = firProperty.session,
-            baseScopeProvider = firProperty.session.firIdeProvider.kotlinScopeProvider,
+            session = firProperty.declarationSiteSession,
+            baseScopeProvider = firProperty.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
             designation = designation,
             declaration = firProperty.psi as KtProperty
         ) as FirProperty

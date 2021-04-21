@@ -75,7 +75,7 @@ internal class KtFirScopeProvider(
         memberScopeCache.getOrPut(classSymbol) {
 
             val firScope = classSymbol.withFirForScope { fir ->
-                val firSession = fir.session
+                val firSession = fir.declarationSiteSession
                 fir.unsubstitutedScope(
                     firSession,
                     ScopeSession(),

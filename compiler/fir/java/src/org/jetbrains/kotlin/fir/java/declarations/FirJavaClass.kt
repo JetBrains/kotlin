@@ -31,7 +31,7 @@ import kotlin.properties.Delegates
 @OptIn(FirImplementationDetail::class)
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val name: Name,
     override val annotations: MutableList<FirAnnotationCall>,

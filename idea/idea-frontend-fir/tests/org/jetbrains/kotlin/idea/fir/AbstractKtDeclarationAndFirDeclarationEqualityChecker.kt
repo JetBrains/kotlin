@@ -26,7 +26,7 @@ abstract class AbstractKtDeclarationAndFirDeclarationEqualityChecker : KotlinLig
             if (!KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(ktFunction, firFunction)) {
                 throw FileComparisonFailure(
                     /* message= */          null,
-                                            KtDeclarationAndFirDeclarationEqualityChecker.renderPsi(ktFunction, firFunction.session),
+                                            KtDeclarationAndFirDeclarationEqualityChecker.renderPsi(ktFunction, firFunction.declarationSiteSession),
                                             KtDeclarationAndFirDeclarationEqualityChecker.renderFir(firFunction),
                     /* expectedFilePath= */ null
                 )

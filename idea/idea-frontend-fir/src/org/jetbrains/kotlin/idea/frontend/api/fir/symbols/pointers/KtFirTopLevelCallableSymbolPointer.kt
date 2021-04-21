@@ -21,7 +21,7 @@ internal abstract class KtTopLevelCallableSymbolPointer<S : KtCallableSymbol>(
         require(analysisSession is KtFirAnalysisSession)
         val candidates = analysisSession.getCallableSymbols(callableId)
         if (candidates.isEmpty()) return null
-        val session = candidates.first().fir.session
+        val session = candidates.first().fir.declarationSiteSession
         return analysisSession.chooseCandidateAndCreateSymbol(candidates, session)
     }
 

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirAnonymousObject : FirClass<FirAnonymousObject>, FirControlFlowGraphOwner, FirExpression() {
     abstract override val source: FirSourceElement?
-    abstract override val session: FirSession
+    abstract override val declarationSiteSession: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes

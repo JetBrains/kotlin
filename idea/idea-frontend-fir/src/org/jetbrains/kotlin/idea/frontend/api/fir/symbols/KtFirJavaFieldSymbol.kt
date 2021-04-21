@@ -32,7 +32,7 @@ internal class KtFirJavaFieldSymbol(
 ) : KtJavaFieldSymbol(), KtFirSymbol<FirField> {
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
 
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.TYPES, builder)

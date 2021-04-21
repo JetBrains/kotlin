@@ -58,7 +58,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                 !visibility.visibleFromPackage(classPackage, symbol.callableId.packageName)
             ) return true
             if (visibility == Visibilities.Internal &&
-                session !== declaration.session
+                declarationSiteSession !== declaration.declarationSiteSession
             ) return true
             return false
         }

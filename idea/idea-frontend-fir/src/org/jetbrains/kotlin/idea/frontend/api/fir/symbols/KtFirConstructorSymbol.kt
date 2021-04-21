@@ -42,7 +42,7 @@ internal class KtFirConstructorSymbol(
 ) : KtConstructorSymbol(), KtFirSymbol<FirConstructor> {
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
 
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)

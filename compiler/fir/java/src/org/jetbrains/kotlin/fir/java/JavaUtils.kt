@@ -435,7 +435,7 @@ private fun FirRegularClass.createRawArguments(
     val erasedUpperBound = typeParameter.getErasedUpperBound {
         defaultType().withArguments(defaultArgs.toTypedArray())
     }
-    computeRawProjection(session, typeParameter, position, erasedUpperBound)
+    computeRawProjection(declarationSiteSession, typeParameter, position, erasedUpperBound)
 }
 
 private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Name?) =

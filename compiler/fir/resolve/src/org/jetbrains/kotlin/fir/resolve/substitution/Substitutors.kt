@@ -156,7 +156,7 @@ data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, Co
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
         val result = substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type) ?: return null
-        val session = type.lookupTag.symbol.fir.session
+        val session = type.lookupTag.symbol.fir.declarationSiteSession
         if (type.isUnsafeVarianceType(session)) {
             return session.inferenceComponents.approximator.approximateToSuperType(
                 result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference

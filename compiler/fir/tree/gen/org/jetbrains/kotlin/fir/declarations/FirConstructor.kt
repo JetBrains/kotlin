@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirConstructor : FirPureAbstractElement(), FirFunction<FirConstructor>, FirCallableMemberDeclaration<FirConstructor>, FirTypeParameterRefsOwner {
     abstract override val source: FirSourceElement?
-    abstract override val session: FirSession
+    abstract override val declarationSiteSession: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes

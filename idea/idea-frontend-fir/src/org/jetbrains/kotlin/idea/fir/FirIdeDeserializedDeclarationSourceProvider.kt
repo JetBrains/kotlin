@@ -160,4 +160,4 @@ fun FirElement.findPsi(session: FirSession): PsiElement? =
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
 fun FirDeclaration.findReferencePsi(): PsiElement? =
-    psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (session as FirIdeSession).project)
+    psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (declarationSiteSession as FirIdeSession).project)

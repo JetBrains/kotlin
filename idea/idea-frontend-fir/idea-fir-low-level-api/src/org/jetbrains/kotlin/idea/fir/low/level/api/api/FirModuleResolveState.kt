@@ -43,7 +43,7 @@ abstract class FirModuleResolveState {
 
     internal inline fun <D : FirDeclaration, R> withLock(declaration: D, declarationLockType: DeclarationLockType, action: (D) -> R): R {
         val originalDeclaration = (declaration as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: declaration
-        val session = originalDeclaration.session
+        val session = originalDeclaration.declarationSiteSession
         return when {
             originalDeclaration.origin == FirDeclarationOrigin.Source
                     && session is FirIdeSourcesSession

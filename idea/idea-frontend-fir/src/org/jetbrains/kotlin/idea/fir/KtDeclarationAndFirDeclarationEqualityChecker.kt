@@ -30,7 +30,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             && !isTheSameTypes(
                 psi.receiverTypeReference!!,
                 fir.receiverTypeRef!!,
-                fir.session,
+                fir.declarationSiteSession,
                 isVararg = false
             )
         ) {
@@ -44,7 +44,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             if (!isTheSameTypes(
                     candidateParameterType,
                     expectedParameter.returnTypeRef,
-                    fir.session,
+                    fir.declarationSiteSession,
                     isVararg = expectedParameter.isVararg
                 )
             ) {

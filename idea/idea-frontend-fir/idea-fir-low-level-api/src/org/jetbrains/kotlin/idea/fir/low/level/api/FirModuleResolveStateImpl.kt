@@ -115,7 +115,7 @@ internal class FirModuleResolveStateImpl(
             sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
         )
         if (container.resolvePhase < FirResolvePhase.BODY_RESOLVE) {
-            val cache = (container.session as FirIdeSourcesSession).cache
+            val cache = (container.declarationSiteSession as FirIdeSourcesSession).cache
             firLazyDeclarationResolver.lazyResolveDeclaration(
                 container,
                 cache,
@@ -142,7 +142,7 @@ internal class FirModuleResolveStateImpl(
     }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
-        val fileCache = when (val session = declaration.session) {
+        val fileCache = when (val session = declaration.declarationSiteSession) {
             is FirIdeSourcesSession -> session.cache
             else -> return declaration
         }
@@ -165,7 +165,7 @@ internal class FirModuleResolveStateImpl(
                 firDeclaration,
                 rootModuleSession.cache,
                 containerFirFile,
-                containerFirFile.session.firIdeProvider,
+                containerFirFile.declarationSiteSession.firIdeProvider,
                 fromPhase = firDeclaration.resolvePhase,
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 towerDataContextCollector = collector,

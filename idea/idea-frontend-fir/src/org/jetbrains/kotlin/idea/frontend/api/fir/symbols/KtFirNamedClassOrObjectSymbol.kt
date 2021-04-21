@@ -38,7 +38,7 @@ internal class KtFirNamedClassOrObjectSymbol(
 ) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
     override val name: Name get() = firRef.withFir { it.name }
     override val classIdIfNonLocal: ClassId?
         get() = firRef.withFir { fir ->

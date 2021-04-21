@@ -62,8 +62,8 @@ fun FirClass<*>.isSuperclassOf(other: FirClass<*>): Boolean {
      */
     fun FirClass<*>.isSuperclassOf(other: FirClass<*>, exclude: MutableSet<FirClass<*>>): Boolean {
         for (it in other.superTypeRefs) {
-            val that = it.firClassLike(session)
-                ?.followAllAlias(session)
+            val that = it.firClassLike(declarationSiteSession)
+                ?.followAllAlias(declarationSiteSession)
                 ?.safeAs<FirClass<*>>()
                 ?: continue
 
@@ -96,8 +96,8 @@ fun FirClass<*>.isSupertypeOf(other: FirClass<*>): Boolean {
      */
     fun FirClass<*>.isSupertypeOf(other: FirClass<*>, exclude: MutableSet<FirClass<*>>): Boolean {
         for (it in other.superTypeRefs) {
-            val candidate = it.firClassLike(session)
-                ?.followAllAlias(session)
+            val candidate = it.firClassLike(declarationSiteSession)
+                ?.followAllAlias(declarationSiteSession)
                 ?.safeAs<FirClass<*>>()
                 ?: continue
 

@@ -39,7 +39,7 @@ internal class KtFirPropertyGetterSymbol(
 
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
 
     override val isDefault: Boolean get() = firRef.withFir { it is FirDefaultPropertyAccessor }
     override val isInline: Boolean get() = firRef.withFir { it.isInline }

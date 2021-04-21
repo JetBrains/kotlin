@@ -266,7 +266,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         val collectors = mutableMapOf<FirSession, AbstractDiagnosticCollector>()
         val result = mutableMapOf<FirFile, List<FirDiagnostic<*>>>()
         for (firFile in firFiles) {
-            val session = firFile.session
+            val session = firFile.declarationSiteSession
             val collector = collectors.computeIfAbsent(session) { createCollector(session) }
             result[firFile] = collector.collectDiagnostics(firFile).toList()
         }

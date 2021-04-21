@@ -79,7 +79,7 @@ class FirMetadataSerializer(
         val function = this
         return buildAnonymousFunction {
             val typeParameterSet = function.typeParameters.filterIsInstanceTo(mutableSetOf<FirTypeParameter>())
-            session = function.session
+            session = function.declarationSiteSession
             origin = FirDeclarationOrigin.Source
             symbol = FirAnonymousFunctionSymbol()
             returnTypeRef = function.returnTypeRef.approximated(toSuper = true, typeParameterSet)
@@ -98,7 +98,7 @@ class FirMetadataSerializer(
         val accessor = this
         return buildPropertyAccessor {
             val typeParameterSet = accessor.typeParameters.toMutableSet()
-            session = accessor.session
+            session = accessor.declarationSiteSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = accessor.returnTypeRef.approximated(toSuper = true, typeParameterSet)
             symbol = FirPropertyAccessorSymbol()
@@ -118,7 +118,7 @@ class FirMetadataSerializer(
         val property = this
         return buildProperty {
             val typeParameterSet = property.typeParameters.toMutableSet()
-            session = property.session
+            session = property.declarationSiteSession
             origin = FirDeclarationOrigin.Source
             symbol = FirPropertySymbol(property.symbol.callableId)
             returnTypeRef = property.returnTypeRef.approximated(toSuper = true, typeParameterSet)

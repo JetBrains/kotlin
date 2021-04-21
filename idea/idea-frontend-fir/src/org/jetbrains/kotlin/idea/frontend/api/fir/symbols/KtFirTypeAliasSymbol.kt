@@ -23,7 +23,7 @@ internal class KtFirTypeAliasSymbol(
     override val token: ValidityToken
 ) : KtTypeAliasSymbol(), KtFirSymbol<FirTypeAlias> {
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
     override val name: Name get() = firRef.withFir { it.name }
     override val classIdIfNonLocal: ClassId get() = firRef.withFir { it.symbol.classId }
 

@@ -465,7 +465,7 @@ object FirFakeOverrideGenerator {
             if (typeParameter !is FirTypeParameter) return@map null
             FirTypeParameterBuilder().apply {
                 source = typeParameter.source
-                session = typeParameter.session
+                session = typeParameter.declarationSiteSession
                 origin = FirDeclarationOrigin.SubstitutionOverride
                 name = typeParameter.name
                 symbol = FirTypeParameterSymbol()

@@ -28,8 +28,8 @@ class FirSyntheticPropertyAccessor(
     override val source: FirSourceElement?
         get() = delegate.source
 
-    override val session: FirSession
-        get() = delegate.session
+    override val declarationSiteSession: FirSession
+        get() = delegate.declarationSiteSession
 
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Synthetic

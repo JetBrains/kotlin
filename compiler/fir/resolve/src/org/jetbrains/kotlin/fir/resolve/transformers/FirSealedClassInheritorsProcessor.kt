@@ -48,7 +48,7 @@ class FirSealedClassInheritorsProcessor(
                 data.computeIfAbsent(regularClass) { mutableListOf() }
             }
 
-            val symbolProvider = regularClass.session.symbolProvider
+            val symbolProvider = regularClass.declarationSiteSession.symbolProvider
 
             for (typeRef in regularClass.superTypeRefs) {
                 val parent = extractClassFromTypeRef(symbolProvider, typeRef).takeIf { it?.modality == Modality.SEALED } ?: continue

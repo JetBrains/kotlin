@@ -64,7 +64,7 @@ abstract class AbstractFirContextCollectionTest : KotlinLightCodeInsightFixtureT
             }
             if (declaration in elementsToCheckContext) {
                 val collectedContext = PersistenceContextCollector.collectContext(
-                    SessionHolderImpl.createWithEmptyScopeSession(declaration.session),
+                    SessionHolderImpl.createWithEmptyScopeSession(declaration.declarationSiteSession),
                     firFile,
                     declaration
                 )

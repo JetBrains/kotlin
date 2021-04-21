@@ -21,7 +21,7 @@ internal class FileStructureElementDiagnosticsCollector private constructor(priv
         createVisitor: (components: List<AbstractDiagnosticCollectorComponent>) -> CheckerRunningDiagnosticCollectorVisitor,
     ): FileStructureElementDiagnosticList =
         FirIdeStructureElementDiagnosticsCollector(
-            firDeclaration.session,
+            firDeclaration.declarationSiteSession,
             createVisitor,
             useExtendedCheckers,
         ).let { collector ->

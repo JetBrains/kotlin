@@ -60,7 +60,7 @@ internal fun KtTypeAndAnnotations.asPsiType(
     val type = this.type
     require(type is KtFirType)
     require(context is KtFirSymbol<*>)
-    val session = context.firRef.withFir(phase) { it.session }
+    val session = context.firRef.withFir(phase) { it.declarationSiteSession }
     return type.coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
 }
 
@@ -72,7 +72,7 @@ internal fun KtNamedClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElemen
     }
     require(types is KtFirType)
 
-    val session = firRef.withFir { it.session }
+    val session = firRef.withFir { it.declarationSiteSession }
     return types.coneType.asPsiType(session, firRef.resolveState, TypeMappingMode.DEFAULT, psiElement)
 }
 
@@ -167,7 +167,7 @@ internal fun KtType.mapSupertype(
     val contextSymbol = classSymbol
     require(contextSymbol is KtFirSymbol<*>)
 
-    val session = contextSymbol.firRef.withFir { it.session }
+    val session = contextSymbol.firRef.withFir { it.declarationSiteSession }
 
     return mapSupertype(
         psiContext,
@@ -297,7 +297,7 @@ internal fun KtType.getTypeNullability(context: KtSymbol, phase: FirResolvePhase
     if (coneType.classId?.shortClassName?.asString() == SpecialNames.ANONYMOUS) return NullabilityType.NotNull
 
     val canonicalSignature = context.firRef.withFir(phase) {
-        it.session.jvmTypeMapper.mapType(coneType, TypeMappingMode.DEFAULT).descriptor
+        it.declarationSiteSession.jvmTypeMapper.mapType(coneType, TypeMappingMode.DEFAULT).descriptor
     }
 
     if (canonicalSignature == "[L<error>;") return NullabilityType.NotNull

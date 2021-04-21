@@ -70,11 +70,11 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val symbol = declaration.symbol
         return when (declaration.visibility) {
             Visibilities.Internal -> {
-                declaration.session == session || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
+                declaration.declarationSiteSession == session || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
             }
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerId = symbol.getOwnerId()
-                if (declaration.session == session) {
+                if (declaration.declarationSiteSession == session) {
                     when {
                         ownerId == null -> {
                             val candidateFile = when (symbol) {

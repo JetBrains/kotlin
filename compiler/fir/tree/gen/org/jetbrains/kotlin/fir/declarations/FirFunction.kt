@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 sealed interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTargetElement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirStatement {
     override val source: FirSourceElement?
-    override val session: FirSession
+    override val declarationSiteSession: FirSession
     override val resolvePhase: FirResolvePhase
     override val origin: FirDeclarationOrigin
     override val attributes: FirDeclarationAttributes

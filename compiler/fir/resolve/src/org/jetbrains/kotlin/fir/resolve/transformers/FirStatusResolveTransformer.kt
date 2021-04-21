@@ -390,7 +390,7 @@ abstract class AbstractFirStatusResolveTransformer(
             return
         }
         if (regularClass.resolvePhase > FirResolvePhase.STATUS) return
-        val firProvider = regularClass.session.firProvider
+        val firProvider = regularClass.declarationSiteSession.firProvider
         val statusComputationStatus = statusComputationSession[regularClass]
         if (!statusComputationStatus.requiresComputation) return
 
