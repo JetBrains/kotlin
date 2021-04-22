@@ -8126,6 +8126,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/invokeOperator.kt");
                 }
 
+                @TestMetadata("multifileBridge.kt")
+                public void testMultifileBridge() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/multifileBridge.kt");
+                }
+
                 @TestMetadata("overrideSuspendFun.kt")
                 public void testOverrideSuspendFun() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun.kt");
@@ -8154,6 +8159,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("returnResult.kt")
                 public void testReturnResult() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/returnResult.kt");
+                }
+
+                @TestMetadata("syntheticAccessor.kt")
+                public void testSyntheticAccessor() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/syntheticAccessor.kt");
                 }
             }
 
