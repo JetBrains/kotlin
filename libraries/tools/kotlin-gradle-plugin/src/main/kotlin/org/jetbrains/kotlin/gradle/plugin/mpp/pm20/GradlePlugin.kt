@@ -118,12 +118,11 @@ fun rootPublicationComponentName(module: KotlinGradleModule) =
     module.disambiguateName("root")
 
 open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
-    val modules: NamedDomainObjectContainer<KotlinGradleModule> by lazy {
+    val modules: NamedDomainObjectContainer<KotlinGradleModule> =
         project.objects.domainObjectContainer(
             KotlinGradleModule::class.java,
             KotlinGradleModuleFactory(project)
         )
-    }
 
     @Suppress("unused") // DSL function
     fun mainAndTest(configure: KotlinGradleModule.() -> Unit) {
