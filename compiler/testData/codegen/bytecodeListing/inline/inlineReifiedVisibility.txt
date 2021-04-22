@@ -2,7 +2,7 @@
 public final class Foo {
     // source: 'inlineReifiedVisibility.kt'
     public method <init>(): void
-    public synthetic final method f$test_module(): void
+    public synthetic final method f$main(): void
     protected synthetic final method g(): void
     private synthetic final method h(): void
 }

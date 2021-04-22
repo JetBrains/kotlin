@@ -10,8 +10,8 @@ public annotation class Anno {
 public final class C {
     // source: 'internalPropertyOrTypealias.kt'
     public method <init>(): void
-    public synthetic deprecated static @Anno method getProperty$test_module$annotations(): void
-    public final method getProperty$test_module(): int
+    public synthetic deprecated static @Anno method getProperty$main$annotations(): void
+    public final method getProperty$main(): int
 }
 
 @kotlin.Metadata

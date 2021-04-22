@@ -31,4 +31,3 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
     }
 }
-

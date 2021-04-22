@@ -113,6 +113,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
                 model("codegen/boxInline")
             }
+
+            testClass<AbstractBytecodeListingTest> {
+                model("codegen/bytecodeListing")
+            }
+
+            testClass<AbstractIrBytecodeListingTest> {
+                model("codegen/bytecodeListing")
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------

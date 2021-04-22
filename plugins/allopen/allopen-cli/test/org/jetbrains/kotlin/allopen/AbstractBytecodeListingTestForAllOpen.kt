@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.allopen
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.AbstractBytecodeListingTest
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.test.TargetBackend
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractBytecodeListingTestForAllOpen : AbstractBytecodeListingTest() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         val annotations = AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS +
