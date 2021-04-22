@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object Host {
     val `____` = { -> }
     fun testFunTypeVal() {

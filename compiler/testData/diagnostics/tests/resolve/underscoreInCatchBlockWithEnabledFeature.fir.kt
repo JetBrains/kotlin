@@ -29,7 +29,7 @@ fun foo() {
         }
     } catch (_: Exception) {
         `_`.stackTrace
-        val y1 = _
+        val y1 = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
         val y2 = (`_`)
     }
     try {

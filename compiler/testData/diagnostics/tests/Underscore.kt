@@ -44,3 +44,7 @@ fun doIt(f: (Any?) -> Any?) = f(null)
 
 val something = doIt { <!UNDERSCORE_IS_RESERVED!>__<!> -> <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__<!> }
 val something2 = doIt { _ -> 1 }
+
+var p: Int?
+    get() = null
+    set(_) {}

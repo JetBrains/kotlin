@@ -1371,6 +1371,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtSymbol>
     }
 
+    abstract class UnderscoreIsReserved : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = UnderscoreIsReserved::class
+    }
+
+    abstract class UnderscoreUsageWithoutBackticks : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = UnderscoreUsageWithoutBackticks::class
+    }
+
     abstract class ToplevelTypealiasesOnly : KtFirDiagnostic<KtTypeAlias>() {
         override val diagnosticClass get() = ToplevelTypealiasesOnly::class
     }

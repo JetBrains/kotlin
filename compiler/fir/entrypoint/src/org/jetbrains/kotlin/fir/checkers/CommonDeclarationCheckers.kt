@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
 import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirReservedUnderscoreDeclarationChecker
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
@@ -20,6 +21,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirConflictsChecker,
             FirConflictingProjectionChecker,
             FirTypeConstraintsChecker,
+            FirReservedUnderscoreDeclarationChecker
         )
 
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker>

@@ -1,46 +1,50 @@
 // !DIAGNOSTICS: -DEPRECATION -TOPLEVEL_TYPEALIASES_ONLY
 
-import kotlin.Deprecated as ___
+import kotlin.Deprecated as <!UNDERSCORE_IS_RESERVED!>___<!>
 
 @___("") data class Pair(val x: Int, val y: Int)
 
-class _<________>
-val ______ = _<Int>()
+class <!UNDERSCORE_IS_RESERVED, UNDERSCORE_IS_RESERVED!>_<!><<!UNDERSCORE_IS_RESERVED!>________<!>>
+val <!UNDERSCORE_IS_RESERVED!>______<!> = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!><Int>()
 
-fun __(___: Int, y: _<Int>?): Int {
-    val (_, z) = Pair(___ - 1, 42)
-    val (x, __________) = Pair(___ - 1, 42)
-    val ____ = x
+fun <!UNDERSCORE_IS_RESERVED!>__<!>(<!UNDERSCORE_IS_RESERVED!>___<!>: Int, y: <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!><Int>?): Int {
+    val (_, z) = Pair(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>___<!> - 1, 42)
+    val (x, <!UNDERSCORE_IS_RESERVED!>__________<!>) = Pair(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>___<!> - 1, 42)
+    val <!UNDERSCORE_IS_RESERVED!>____<!> = x
     // in backquotes: allowed
-    val `_` = __________
+    val `_` = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__________<!>
 
-    val q = fun(_: Int, __: Int) {}
+    val q = fun(_: Int, <!UNDERSCORE_IS_RESERVED!>__<!>: Int) {}
     q(1, 2)
 
-    val _ = 56
+    val <!UNDERSCORE_IS_RESERVED!>_<!> = 56
 
-    fun localFun(_: String) = 1
+    fun localFun(<!UNDERSCORE_IS_RESERVED!>_<!>: String) = 1
 
-    __@ return if (y != null) __(____, y) else __(`_`, ______)
+    <!UNDERSCORE_IS_RESERVED!>__<!>@ return if (y != null) <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__<!>(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>____<!>, y) else <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__<!>(`_`, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>______<!>)
 }
 
 
-class A1(val _: String)
-class A2(_: String) {
+class A1(val <!UNDERSCORE_IS_RESERVED, UNDERSCORE_IS_RESERVED!>_<!>: String)
+class A2(<!UNDERSCORE_IS_RESERVED!>_<!>: String) {
     class B {
-        typealias _ = CharSequence
+        typealias <!UNDERSCORE_IS_RESERVED!>_<!> = CharSequence
     }
-    val _: Int = 1
+    val <!UNDERSCORE_IS_RESERVED!>_<!>: Int = 1
 
-    fun _() {}
+    fun <!UNDERSCORE_IS_RESERVED!>_<!>() {}
 
-    fun foo(_: Double) {}
+    fun foo(<!UNDERSCORE_IS_RESERVED!>_<!>: Double) {}
 }
 
 // one underscore parameters for named function are still prohibited
-fun oneUnderscore(_: Int) {}
+fun oneUnderscore(<!UNDERSCORE_IS_RESERVED!>_<!>: Int) {}
 
 fun doIt(f: (Any?) -> Any?) = f(null)
 
-val something = doIt { __ -> __ }
+val something = doIt { <!UNDERSCORE_IS_RESERVED!>__<!> -> <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__<!> }
 val something2 = doIt { _ -> 1 }
+
+var p: Int?
+    get() = null
+    set(_) {}

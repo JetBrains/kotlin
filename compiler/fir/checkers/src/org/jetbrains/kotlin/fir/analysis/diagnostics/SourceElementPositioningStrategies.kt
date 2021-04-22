@@ -228,4 +228,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.TYPE_PARAMETERS_LIST,
         PositioningStrategies.TYPE_PARAMETERS_LIST
     )
+
+    val RESERVED_UNDERSCORE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.RESERVED_UNDERSCORE,
+        PositioningStrategies.RESERVED_UNDERSCORE
+    )
 }

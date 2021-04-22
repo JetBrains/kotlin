@@ -11,39 +11,39 @@ class C {
 
 fun test() {
     for ((x, _) in C()) {
-        foo(x, <!UNRESOLVED_REFERENCE!>_<!>)
+        foo(x, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     }
 
     for ((_, y) in C()) {
-        foo(<!UNRESOLVED_REFERENCE!>_<!>, y)
+        foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, y)
     }
 
     for ((_, _) in C()) {
-        foo(<!UNRESOLVED_REFERENCE!>_<!>, <!UNRESOLVED_REFERENCE!>_<!>)
+        foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     }
 
     for ((_ : Int, _ : String) in C()) {
-        foo(<!UNRESOLVED_REFERENCE!>_<!>, <!UNRESOLVED_REFERENCE!>_<!>)
+        foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     }
 
     for ((_ : String, _ : Int) in C()) {
-        foo(<!UNRESOLVED_REFERENCE!>_<!>, <!UNRESOLVED_REFERENCE!>_<!>)
+        foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     }
 
     val (x, _) = A()
     val (_, y) = A()
 
     foo(x, y)
-    foo(x, <!UNRESOLVED_REFERENCE!>_<!>)
-    foo(<!UNRESOLVED_REFERENCE!>_<!>, y)
+    foo(x, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
+    foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, y)
 
     val (`_`, z) = A()
 
-    foo(_, z)
+    foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, z)
 
     val (_, `_`) = A()
 
-    foo(<!ARGUMENT_TYPE_MISMATCH!>_<!>, y)
+    foo(<!ARGUMENT_TYPE_MISMATCH, UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, y)
 
     val (unused, _) = A()
 }

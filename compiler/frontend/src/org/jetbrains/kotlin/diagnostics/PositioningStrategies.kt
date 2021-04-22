@@ -10,6 +10,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.cfg.UnreachableCode
@@ -144,10 +145,10 @@ object PositioningStrategies {
                 ClassKind -> {
                     val startElement =
                         element.modifierList?.getModifier(KtTokens.ENUM_KEYWORD)
-                                ?: element.modifierList?.getModifier(KtTokens.ANNOTATION_KEYWORD)
+                            ?: element.modifierList?.getModifier(KtTokens.ANNOTATION_KEYWORD)
                     val endElement =
                         element.node.findChildByType(classKindTokens)?.psi
-                                ?: element.nameIdentifier
+                            ?: element.nameIdentifier
                     if (startElement != null && endElement != null) {
                         return markRange(startElement, endElement)
                     } else {
@@ -160,7 +161,7 @@ object PositioningStrategies {
                 }
                 CallableKind -> {
                     (callableDeclaration as? KtNamedFunction)?.funKeyword
-                            ?: (callableDeclaration as? KtProperty)?.valOrVarKeyword
+                        ?: (callableDeclaration as? KtProperty)?.valOrVarKeyword
                 }
                 ParameterShape -> {
                     callableDeclaration?.let { it.receiverTypeReference ?: it.valueParameterList }
@@ -239,7 +240,7 @@ object PositioningStrategies {
                     val startElement =
                         element.getModifierList()?.getModifier(KtTokens.ENUM_KEYWORD)
                             ?: element.node.findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))?.psi
-                                ?: element
+                            ?: element
 
                     return markRange(startElement, nameIdentifier)
                 }
@@ -264,13 +265,13 @@ object PositioningStrategies {
                 is KtFunction -> {
                     val endOfSignatureElement =
                         element.typeReference
-                                ?: element.valueParameterList
-                                ?: element.nameIdentifier
-                                ?: element
+                            ?: element.valueParameterList
+                            ?: element.nameIdentifier
+                            ?: element
                     val startElement = if (element is KtFunctionLiteral) {
                         element.getReceiverTypeReference()
-                                ?: element.getValueParameterList()
-                                ?: element
+                            ?: element.getValueParameterList()
+                            ?: element
                     } else element
                     return markRange(startElement, endOfSignatureElement)
                 }
@@ -281,8 +282,8 @@ object PositioningStrategies {
                 is KtPropertyAccessor -> {
                     val endOfSignatureElement =
                         element.returnTypeReference
-                                ?: element.rightParenthesis
-                                ?: element.namePlaceholder
+                            ?: element.rightParenthesis
+                            ?: element.namePlaceholder
 
                     return markRange(element, endOfSignatureElement)
                 }
@@ -390,6 +391,7 @@ object PositioningStrategies {
             return markElement(nameIdentifier ?: element)
         }
     }
+
     @JvmField
     val FOR_UNRESOLVED_REFERENCE: PositioningStrategy<KtReferenceExpression> = object : PositioningStrategy<KtReferenceExpression>() {
         override fun mark(element: KtReferenceExpression): List<TextRange> {
@@ -777,6 +779,31 @@ object PositioningStrategies {
             if (element is KtQualifiedExpression) {
                 when (val selectorExpression = element.selectorExpression) {
                     is KtElement -> return mark(selectorExpression)
+                }
+            }
+            return super.mark(element)
+        }
+    }
+
+    val RESERVED_UNDERSCORE: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            if (element is PsiNameIdentifierOwner) {
+                val nameIdentifier = element.nameIdentifier
+                if (nameIdentifier != null) {
+                    return super.mark(nameIdentifier)
+                }
+            } else if (element is KtImportDirective) {
+                return super.mark(element.alias?.nameIdentifier ?: element)
+            } else if (element is KtReturnExpression) {
+                val prevSibling = element.getPrevSiblingIgnoringWhitespace()
+                if (prevSibling is KtContainerNode) {
+                    return mark(prevSibling)
+                }
+            } else if (element !is LeafPsiElement) {
+                val ranges = element.collectDescendantsOfType<LeafPsiElement> { descendant -> descendant.text.all { it == '_' } }
+                    .map { markSingleElement(it) }
+                if (ranges.isNotEmpty()) {
+                    return ranges
                 }
             }
             return super.mark(element)

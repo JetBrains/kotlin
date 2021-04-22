@@ -43,6 +43,10 @@ fun markElement(element: PsiElement): List<TextRange> {
     return listOf(TextRange(getStartOffset(element), getEndOffset(element)))
 }
 
+fun markSingleElement(element: PsiElement): TextRange {
+    return TextRange(getStartOffset(element), getEndOffset(element))
+}
+
 fun markNode(node: ASTNode): List<TextRange> {
     return markElement(node.psi)
 }

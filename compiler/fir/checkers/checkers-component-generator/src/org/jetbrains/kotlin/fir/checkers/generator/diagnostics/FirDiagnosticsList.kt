@@ -696,6 +696,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("expectedFunctionSignature")
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
+        val UNDERSCORE_IS_RESERVED by error<KtExpression>(PositioningStrategy.RESERVED_UNDERSCORE)
+        val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error<KtExpression>(PositioningStrategy.RESERVED_UNDERSCORE)
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {

@@ -642,6 +642,9 @@ object LightTreePositioningStrategies {
             return markElement(tree.typeParametersList(node) ?: node, startOffset, endOffset, tree, node)
         }
     }
+
+    val RESERVED_UNDERSCORE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =

@@ -409,6 +409,8 @@ object FirErrors {
     val DELEGATE_SPECIAL_FUNCTION_MISSING by error3<KtExpression, String, ConeKotlinType, String>()
     val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error2<KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
     val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error2<KtExpression, String, Collection<AbstractFirBasedSymbol<*>>>()
+    val UNDERSCORE_IS_RESERVED by error0<KtExpression>(SourceElementPositioningStrategies.RESERVED_UNDERSCORE)
+    val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error0<KtExpression>(SourceElementPositioningStrategies.RESERVED_UNDERSCORE)
 
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY by error0<KtTypeAlias>()
