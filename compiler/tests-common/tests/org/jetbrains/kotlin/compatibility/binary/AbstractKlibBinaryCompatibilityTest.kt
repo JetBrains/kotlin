@@ -64,7 +64,7 @@ abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment()
                         TestFile(module, fileName, text, directives)
                     } ?: error("Expected a module for $fileName in $filePath")
 
-                override fun createModule(name: String, dependencies: List<String>, friends: List<String>) =
+                override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>) =
                     TestModule(name, dependencies, friends)
 
             },

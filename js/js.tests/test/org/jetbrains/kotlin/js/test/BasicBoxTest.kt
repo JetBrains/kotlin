@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.util.TextOutputImpl
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -187,6 +188,7 @@ abstract class BasicBoxTest(
                 val outputFileName = module.outputFileName(outputDir) + ".js"
                 val dceOutputFileName = module.outputFileName(dceOutputDir) + ".js"
                 val pirOutputFileName = module.outputFileName(pirOutputDir) + ".js"
+                val abiVersion = module.abiVersion
                 val isMainModule = mainModuleName == module.name
 
                 logger.logFile("Output JS", File(outputFileName))
@@ -213,7 +215,8 @@ abstract class BasicBoxTest(
                     skipDceDriven,
                     splitPerModule,
                     errorPolicy,
-                    propertyLazyInitialization
+                    propertyLazyInitialization,
+                    abiVersion
                 )
 
                 when {
@@ -467,6 +470,7 @@ abstract class BasicBoxTest(
         splitPerModule: Boolean,
         errorIgnorancePolicy: ErrorTolerancePolicy,
         propertyLazyInitialization: Boolean,
+        abiVersion: KotlinAbiVersion
     ) {
         val kotlinFiles = module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -517,6 +521,7 @@ abstract class BasicBoxTest(
             skipDceDriven,
             splitPerModule,
             propertyLazyInitialization,
+            abiVersion
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
@@ -607,10 +612,11 @@ abstract class BasicBoxTest(
             testPackage,
             testFunction,
             needsFullIrRuntime,
-           isMainModule = false,
-           skipDceDriven = true,
-           splitPerModule = false,
+            isMainModule = false,
+            skipDceDriven = true,
+            splitPerModule = false,
             propertyLazyInitialization = false,
+            abiVersion = KotlinAbiVersion.CURRENT
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -690,6 +696,7 @@ abstract class BasicBoxTest(
         skipDceDriven: Boolean,
         splitPerModule: Boolean,
         propertyLazyInitialization: Boolean,
+        abiVersion: KotlinAbiVersion
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -953,7 +960,7 @@ abstract class BasicBoxTest(
     private inner class TestFileFactoryImpl() : TestFiles.TestFileFactory<TestModule, TestFile>, Closeable {
         var testPackage: String? = null
         val tmpDir = KtTestUtil.tmpDir("js-tests")
-        val defaultModule = TestModule(TEST_MODULE, emptyList(), emptyList())
+        val defaultModule = TestModule(TEST_MODULE, emptyList(), emptyList(), KotlinAbiVersion.CURRENT)
         var languageVersionSettings: LanguageVersionSettings? = null
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile? {
@@ -1016,8 +1023,13 @@ abstract class BasicBoxTest(
             )
         }
 
-        override fun createModule(name: String, dependencies: List<String>, friends: List<String>) =
-            TestModule(name, dependencies, friends)
+        override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>): TestModule {
+            val abiVersion = if (abiVersions.isEmpty()) KotlinAbiVersion.CURRENT else {
+                assert(abiVersions.size == 3)
+                KotlinAbiVersion(abiVersions[0], abiVersions[1], abiVersions[2])
+            }
+            return TestModule(name, dependencies, friends, abiVersion)
+        }
 
         override fun close() {
             FileUtil.delete(tmpDir)
@@ -1033,7 +1045,8 @@ abstract class BasicBoxTest(
     private class TestModule(
         name: String,
         dependencies: List<String>,
-        friends: List<String>
+        friends: List<String>,
+        val abiVersion: KotlinAbiVersion
     ) : KotlinBaseTest.TestModule(name, dependencies, friends) {
         var moduleKind = ModuleKind.PLAIN
         var inliningDisabled = false
@@ -1088,6 +1101,7 @@ abstract class BasicBoxTest(
         private val EXPECT_ACTUAL_LINKER = Pattern.compile("^// EXPECT_ACTUAL_LINKER *$", Pattern.MULTILINE)
         private val SKIP_DCE_DRIVEN = Pattern.compile("^// *SKIP_DCE_DRIVEN *$", Pattern.MULTILINE)
         private val SPLIT_PER_MODULE = Pattern.compile("^// *SPLIT_PER_MODULE *$", Pattern.MULTILINE)
+        private val USE_OLD_SIGNATURES = Pattern.compile("^// *USE_OLD_SIGNATURES *$", Pattern.MULTILINE)
 
         private val ERROR_POLICY_PATTERN = Pattern.compile("^// *ERROR_POLICY: *(.+)$", Pattern.MULTILINE)
 

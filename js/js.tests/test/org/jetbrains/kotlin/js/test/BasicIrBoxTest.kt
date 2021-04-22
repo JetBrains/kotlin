@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.TargetBackend
@@ -93,6 +94,7 @@ abstract class BasicIrBoxTest(
         skipDceDriven: Boolean,
         splitPerModule: Boolean,
         propertyLazyInitialization: Boolean,
+        abiVersion: KotlinAbiVersion
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
@@ -188,7 +190,8 @@ abstract class BasicIrBoxTest(
                 friendDependencies = emptyList(),
                 irFactory = IrFactoryImpl,
                 outputKlibPath = actualOutputFile,
-                nopack = true
+                nopack = true,
+                abiVersion = abiVersion
             )
 
             logger.logFile("Output klib", File(actualOutputFile))
