@@ -1223,7 +1223,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 if (getContainingFile(cursor) in headers) {
                     nativeIndex.indexCxxDeclaration(cursor)
                 }
-                CXChildVisitResult.CXChildVisit_Recurse
+                CXChildVisitResult.CXChildVisit_Continue
             }
 
             visitChildren(clang_getTranslationUnitCursor(translationUnit)) { cursor, _ ->
