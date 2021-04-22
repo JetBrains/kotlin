@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
@@ -34,6 +35,7 @@ abstract class FirDefaultPropertyAccessor(
     valueParameters: MutableList<FirValueParameter>,
     isGetter: Boolean,
     visibility: Visibility,
+    effectiveVisibility: EffectiveVisibility? = null,
     symbol: FirPropertyAccessorSymbol
 ) : FirPropertyAccessorImpl(
     source,
@@ -44,7 +46,10 @@ abstract class FirDefaultPropertyAccessor(
     propertyTypeRef,
     valueParameters,
     body = null,
-    FirDeclarationStatusImpl(visibility, Modality.FINAL),
+    status = if (effectiveVisibility == null)
+        FirDeclarationStatusImpl(visibility, Modality.FINAL)
+    else
+        FirResolvedDeclarationStatusImpl(visibility, Modality.FINAL, effectiveVisibility),
     containerSource = null,
     dispatchReceiverType = null,
     contractDescription = FirEmptyContractDescription,
@@ -85,6 +90,7 @@ class FirDefaultPropertyGetter(
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
+    effectiveVisibility: EffectiveVisibility? = null,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
 ) : FirDefaultPropertyAccessor(
     source,
@@ -94,6 +100,7 @@ class FirDefaultPropertyGetter(
     valueParameters = mutableListOf(),
     isGetter = true,
     visibility = visibility,
+    effectiveVisibility = effectiveVisibility,
     symbol = symbol
 )
 
@@ -103,6 +110,7 @@ class FirDefaultPropertySetter(
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
+    effectiveVisibility: EffectiveVisibility? = null,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
 ) : FirDefaultPropertyAccessor(
     source,
@@ -120,5 +128,6 @@ class FirDefaultPropertySetter(
     ),
     isGetter = false,
     visibility,
+    effectiveVisibility,
     symbol
 )

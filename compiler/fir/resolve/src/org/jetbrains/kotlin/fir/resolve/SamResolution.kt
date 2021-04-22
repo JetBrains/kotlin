@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassAttr
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -167,7 +169,12 @@ class FirSamResolverImpl(
             source = firRegularClass.source
             name = classId.shortClassName
             origin = FirDeclarationOrigin.SamConstructor
-            status = FirDeclarationStatusImpl(firRegularClass.visibility, Modality.FINAL).apply {
+            val visibility = firRegularClass.visibility
+            status = FirResolvedDeclarationStatusImpl(
+                visibility,
+                Modality.FINAL,
+                EffectiveVisibility.Local
+            ).apply {
                 isExpect = firRegularClass.isExpect
                 isActual = firRegularClass.isActual
                 isOverride = false
