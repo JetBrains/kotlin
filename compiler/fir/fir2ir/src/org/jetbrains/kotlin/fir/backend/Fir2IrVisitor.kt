@@ -839,10 +839,30 @@ class Fir2IrVisitor(
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Any?): IrElement {
         return stringConcatenationCall.convertWithOffsets { startOffset, endOffset ->
-            IrStringConcatenationImpl(
-                startOffset, endOffset, irBuiltIns.stringType,
-                stringConcatenationCall.arguments.map { convertToIrExpression(it) }
-            )
+            val arguments = mutableListOf<IrExpression>()
+            val sb = StringBuilder()
+            var startArgumentOffset = -1
+            var endArgumentOffset = -1
+            for (firArgument in stringConcatenationCall.arguments) {
+                val argument = convertToIrExpression(firArgument)
+                if (argument is IrConst<*>) {
+                    if (sb.isEmpty()) {
+                        startArgumentOffset = argument.startOffset
+                    }
+                    sb.append(argument.value)
+                    endArgumentOffset = argument.endOffset
+                } else {
+                    if (sb.isNotEmpty()) {
+                        arguments += IrConstImpl.string(startArgumentOffset, endArgumentOffset, irBuiltIns.stringType, sb.toString())
+                        sb.clear()
+                    }
+                    arguments += argument
+                }
+            }
+            if (sb.isNotEmpty()) {
+                arguments += IrConstImpl.string(startArgumentOffset, endArgumentOffset, irBuiltIns.stringType, sb.toString())
+            }
+            IrStringConcatenationImpl(startOffset, endOffset, irBuiltIns.stringType, arguments)
         }
     }
 
