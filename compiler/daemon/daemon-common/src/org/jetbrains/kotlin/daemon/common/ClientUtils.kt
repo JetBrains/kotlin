@@ -55,7 +55,7 @@ fun walkDaemons(registryDir: File,
                 filter: (File, Int) -> Boolean = { _, _ -> true },
                 report: (DaemonReportCategory, String) -> Unit = { _, _ -> }
 ): Sequence<DaemonWithMetadata> {
-    val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
+    val classPathDigest = compilerId.digest()
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
             .map { Pair(it, portExtractor(it.name)) }

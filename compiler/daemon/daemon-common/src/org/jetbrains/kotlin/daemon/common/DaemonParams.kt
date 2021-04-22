@@ -238,6 +238,11 @@ data class CompilerId(
         get() = listOf(PropMapper(this, CompilerId::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trimQuotes().split(File.pathSeparator) }),
                        StringPropMapper(this, CompilerId::compilerVersion))
 
+    fun digest(): String = compilerClasspath
+        .map { File(it).absolutePath }
+        .distinctStringsDigest()
+        .toHexString()
+
     companion object {
         @JvmStatic
         fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
