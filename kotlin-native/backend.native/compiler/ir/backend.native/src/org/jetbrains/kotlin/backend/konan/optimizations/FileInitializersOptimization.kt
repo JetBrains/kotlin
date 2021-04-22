@@ -133,9 +133,16 @@ internal object FileInitializersOptimization {
             val functionsRequiringInitializerCall = mutableSetOf<IrFunction>()
             initializedFiles.beforeCall.forEach { (function, functionInitializedFiles) ->
                 val irFile = function.fileOrNull
+                val backingField = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.backingField
+                val isDefaultAccessor = backingField != null && function.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                 if (irFile == null ||
-                        (!functionInitializedFiles.get(fileIds[irFile]!!) && function !in functionsWhoseInitializerCallCanBeExtractedToCallSites))
+                        (!functionInitializedFiles.get(fileIds[irFile]!!)
+                                && function !in functionsWhoseInitializerCallCanBeExtractedToCallSites
+                                // Extract calls to file initializers off of default accessors to simplify their inlining.
+                                && (!isDefaultAccessor || function in rootSet))
+                ) {
                     functionsRequiringInitializerCall += function
+                }
             }
 
             return AnalysisResult(functionsRequiringInitializerCall, callSitesRequiringInitializerCall)
