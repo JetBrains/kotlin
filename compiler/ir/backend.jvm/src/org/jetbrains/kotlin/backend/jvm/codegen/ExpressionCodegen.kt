@@ -229,20 +229,17 @@ class ExpressionCodegen(
             if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
                 irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
             }
-            if (irFunction.isSuspend && irFunction.origin == IrDeclarationOrigin.BRIDGE) {
-                mv.areturn(OBJECT_TYPE)
+            val unboxedInlineClass =
+                irFunction.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+            if (unboxedInlineClass != null && irFunction.origin !in BRIDGE_ORIGINS) {
+                result.materializeAt(unboxedInlineClass.asmType, unboxedInlineClass)
             } else {
-                var returnType = signature.returnType
-                var returnIrType = if (irFunction !is IrConstructor) irFunction.returnType else context.irBuiltIns.unitType
-                val unboxedInlineClass =
-                    irFunction.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
-                if (unboxedInlineClass != null) {
-                    returnIrType = unboxedInlineClass
-                    returnType = unboxedInlineClass.asmType
-                }
-                result.materializeAt(returnType, returnIrType)
-                mv.areturn(returnType)
+                val returnIrType = if (irFunction !is IrConstructor) irFunction.returnType else context.irBuiltIns.unitType
+                result.materializeAt(signature.returnType, returnIrType)
             }
+            // `signature.returnType` is valid here even if the return value of a suspend function was unboxed,
+            // as it's still a reference type.
+            mv.areturn(signature.returnType)
         }
         val endLabel = markNewLabel()
         writeLocalVariablesInTable(info, endLabel)
@@ -508,7 +505,7 @@ class ExpressionCodegen(
                 wrapJavaClassesIntoKClasses(mv)
                 MaterialValue(this, AsmTypes.K_CLASS_ARRAY_TYPE, expression.type)
             }
-            unboxedInlineClassIrType != null && !irFunction.isInvokeSuspendOfContinuation() ->
+            unboxedInlineClassIrType != null && !irFunction.isInvokeSuspendOfContinuation() && irFunction.origin !in BRIDGE_ORIGINS ->
                 object : PromisedValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType) {
                     override fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
                         mv.checkcast(unboxedInlineClassIrType.asmType)
