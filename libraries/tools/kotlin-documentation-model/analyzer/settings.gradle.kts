@@ -45,10 +45,4 @@ pluginManagement {
         id("com.jfrog.bintray") version "1.8.5"
         id("com.gradle.plugin-publish") version "0.12.0"
     }
-
-    repositories {
-        mavenCentral()
-        jcenter()
-        gradlePluginPortal()
-    }
 }
