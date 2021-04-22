@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
@@ -715,9 +713,32 @@ interface IrBuilderExtension {
             endOffset,
             compilerContext.irBuiltIns.kClassClass.starProjectedType,
             classSymbol,
-            classType.toIrType() // todo: maybe this is jvm-specific behavior
+            classType.approximateJvmErasure.toIrType()
         )
     }
+
+    // It is impossible to use star projections right away, because Array<Int>::class differ from Array<String>::class :
+    // detailed information about type arguments required for class references on jvm
+    private val KotlinType.approximateJvmErasure: KotlinType
+        get() = when (val classifier = constructor.declarationDescriptor) {
+            is TypeParameterDescriptor -> {
+                // Note that if the upper bound is Array, the argument type will be replaced with star here, which is probably incorrect.
+                classifier.classBound.defaultType.replaceArgumentsWithStarProjections()
+            }
+            is ClassDescriptor -> if (KotlinBuiltIns.isArray(this)) {
+                replace(arguments.map { TypeProjectionImpl(Variance.INVARIANT, it.type.approximateJvmErasure) })
+            } else {
+                replaceArgumentsWithStarProjections()
+            }
+            else -> error("Unsupported classifier: $this")
+        }
+
+    private val TypeParameterDescriptor.classBound: ClassDescriptor
+        get() = when (val bound = representativeUpperBound.constructor.declarationDescriptor) {
+            is ClassDescriptor -> bound
+            is TypeParameterDescriptor -> bound.classBound
+            else -> error("Unsupported classifier: $this")
+        }
 
     fun IrBuilderWithScope.classReference(classType: KotlinType): IrClassReference = createClassReference(classType, startOffset, endOffset)
 
