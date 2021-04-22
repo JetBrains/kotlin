@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.native.test.debugger.lldbCommandRunOrContinue
 import org.jetbrains.kotlin.native.test.debugger.lldbComplexTest
 import org.jetbrains.kotlin.native.test.debugger.lldbTest
 import org.junit.Test
@@ -20,7 +21,7 @@ class LldbTests {
         > b main.kt:2
         Breakpoint 1: [..]
 
-        > r
+        > ${lldbCommandRunOrContinue()}
         Process [..] stopped
         [..] stop reason = breakpoint 1.1
         [..] at main.kt:2[..]
@@ -53,7 +54,7 @@ class LldbTests {
         }
     """, """
             > b main.kt:7
-            > r
+            > ${lldbCommandRunOrContinue()}
             > fr var
             (char) a = '\x01'
             (int) b = 2
@@ -76,7 +77,7 @@ class LldbTests {
         }
     """, """
         > b main.kt:4
-        > r
+        > ${lldbCommandRunOrContinue()}
         > fr var
         (ObjHeader *) args = []
         (ObjHeader *) point = [x: ..., y: ...]
@@ -98,7 +99,7 @@ class LldbTests {
         data class Point(val x: Int, val y: Int)
     """, """
         > b main.kt:8
-        > r
+        > ${lldbCommandRunOrContinue()}
         > fr var
         (ObjHeader *) args = []
         (ObjHeader *) xs = [..., ..., ...]
@@ -115,7 +116,7 @@ class LldbTests {
         data class Point(val x: Int, val y: Int)
     """, """
         > b main.kt:3
-        > r
+        > ${lldbCommandRunOrContinue()}
         > fr var xs
         (ObjHeader *) xs = [..., ..., ...]
     """)

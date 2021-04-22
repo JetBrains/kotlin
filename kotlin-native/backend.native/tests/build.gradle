@@ -5,8 +5,7 @@
 
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.UtilsKt
 
 import java.nio.file.Paths
@@ -5248,10 +5247,15 @@ project.tasks.named("test").configure {
 }
 
 project.tasks.register("debugger_test", Test.class) {
-    enabled = (target.family == Family.OSX)  // KT-30366
+    enabled = (target.family.appleFamily)  // KT-30366
     testLogging { exceptionFormat = 'full' }
     UtilsKt.dependsOnDist(it)
-    systemProperties = ['kotlin.native.home': kotlinNativeDist]
+    systemProperties = ['kotlin.native.home': kotlinNativeDist,
+    'kotlin.native.host': HostManager.@Companion.getHost(),
+    'kotlin.native.test.target': target,
+    'kotlin.native.test.debugger.simulator.enabled': findProperty("kotlin.native.test.debugger.simulator.enabled"),
+    'kotlin.native.test.debugger.simulator.delay': findProperty("kotlin.native.test.debugger.simulator.delay")]
+    outputs.upToDateWhen { false }
 }
 
 // Configure build for iOS device targets.

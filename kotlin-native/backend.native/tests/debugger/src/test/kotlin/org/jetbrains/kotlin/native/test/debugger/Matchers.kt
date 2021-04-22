@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.native.test.debugger
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.konan.target.hostTargetSuffix
 import org.junit.Assert.fail
 import java.io.IOException
 import java.nio.file.Files
@@ -63,6 +64,11 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
         return
     }
 
+    if (!targetIsHost() && !simulatorTestEnabled()) {
+        println("simulator tests disabled, check 'kotlin.native.test.debugger.simulator.enabled' property")
+        return
+    }
+
     if (!isOsxDevToolsEnabled) {
         println("""Development tools aren't available.
                    |Please consider to execute:
@@ -96,8 +102,8 @@ private val isOsxDevToolsEnabled: Boolean by lazy {
 }
 
 fun dwarfDumpTest(@Language("kotlin") programText: String, flags: List<String>, test:List<DwarfTag>.()->Unit) {
-    if (!haveDwarfDump) {
-        println("Skipping test: no dwarfdump")
+    if (!haveDwarfDump || !targetIsHost()) {
+        println("Skipping test")
         return
     }
 
@@ -155,8 +161,8 @@ class ToolDriverHelper(private val driver: ToolDriver, val root:Path) {
 }
 
 fun dwarfDumpComplexTest(test:ToolDriverHelper.()->Unit) {
-    if (!haveDwarfDump) {
-        println("Skipping test: no dwarfdump")
+    if (!haveDwarfDump || !targetIsHost()) {
+        println("Skipping test")
         return
     }
 
@@ -168,8 +174,8 @@ fun dwarfDumpComplexTest(test:ToolDriverHelper.()->Unit) {
 }
 
 fun lldbComplexTest(test:ToolDriverHelper.()->Unit) {
-    if (!haveLldb) {
-        println("Skipping test: no lldb")
+    if (!haveLldb || !targetIsHost()) {
+        println("Skipping test")
         return
     }
 
@@ -180,43 +186,6 @@ fun lldbComplexTest(test:ToolDriverHelper.()->Unit) {
     }
 }
 
-
-private val haveDwarfDump: Boolean by lazy {
-    val version = try {
-        subprocess(DistProperties.dwarfDump, "--version")
-                .takeIf { it.process.exitValue() == 0 }
-                ?.stdout
-    } catch (e: IOException) {
-        null
-    }
-
-    if (version == null) {
-        println("No LLDB found")
-    } else {
-        println("Using $version")
-    }
-
-    version != null
-}
-
-private val haveLldb: Boolean by lazy {
-    val lldbVersion = try {
-        subprocess(DistProperties.lldb, "-version")
-                .takeIf { it.process.exitValue() == 0 }
-                ?.stdout
-    } catch (e: IOException) {
-        null
-    }
-
-    if (lldbVersion == null) {
-        println("No LLDB found")
-    } else {
-        println("Using $lldbVersion")
-    }
-
-    lldbVersion != null
-}
-
 private class LldbSessionSpecification private constructor(
         val commands: List<String>,
         val patterns: List<List<String>>
@@ -224,11 +193,17 @@ private class LldbSessionSpecification private constructor(
 
     fun match(output: String) {
         val blocks = output.split("""(?=\(lldb\))""".toRegex()).filterNot(String::isEmpty)
-        check(blocks[0].startsWith("(lldb) target create")) { "Missing block \"target create\". Got: ${blocks[0]}" }
-        check(blocks[1].startsWith("(lldb) command script import")) {
-            "Missing block \"command script import\". Got: ${blocks[0]}"
+        if (targetIsHost()) {
+            check(blocks[0].startsWith("(lldb) target create")) { "Missing block \"target create\". Got: ${blocks[0]}" }
+            check(blocks[1].startsWith("(lldb) command script import")) {
+                "Missing block \"command script import\". Got: ${blocks[0]}"
+            }
         }
-        val responses = blocks.drop(2)
+        val responses = if (targetIsHost())
+            blocks.drop(2)
+        else
+            blocks.drop(2).dropLast(1)
+
         val executedCommands = responses.map { it.lines().first() }
         val bodies = responses.map { it.lines().drop(1) }
         val responsesMatch = executedCommands.size == commands.size
@@ -238,8 +213,8 @@ private class LldbSessionSpecification private constructor(
             val message = """
                 |Responses do not match commands.
                 |
-                |COMMANDS: |$commands
-                |RESPONSES: |$executedCommands
+                |COMMANDS: |$commands (${commands.size})
+                |RESPONSES: |$executedCommands (${executedCommands.size})
                 |
                 |FULL SESSION:
                 |$output
