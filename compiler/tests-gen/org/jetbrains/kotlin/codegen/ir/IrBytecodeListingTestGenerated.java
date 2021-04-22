@@ -185,16 +185,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/kt45934.kt");
     }
 
-    @TestMetadata("localFunction.kt")
-    public void testLocalFunction() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/localFunction.kt");
-    }
-
-    @TestMetadata("localFunctionInInitBlock.kt")
-    public void testLocalFunctionInInitBlock() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/localFunctionInInitBlock.kt");
-    }
-
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
     public void testNoCollectionStubMethodsInInterface() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/noCollectionStubMethodsInInterface.kt");
@@ -1563,6 +1553,29 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
                     runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl/interfaceProperty.kt");
                 }
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/localFunctions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LocalFunctions extends AbstractIrBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLocalFunctions() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("inInitBlock.kt")
+        public void testInInitBlock() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/localFunctions/inInitBlock.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/localFunctions/simple.kt");
         }
     }
 
