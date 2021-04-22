@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElementKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ class JsDataClassGenerator extends JsEqualsHashcodeToStringGenerator {
         JsFunction functionObject = generateJsMethod(function);
         JsExpression returnExpression = JsAstUtils.pureFqn(context.getNameForDescriptor(propertyDescriptor), new JsThisRef());
         JsReturn returnStatement = new JsReturn(returnExpression);
-        returnStatement.setSource(KotlinSourceElementKt.getPsi(parameter.getSource()));
+        returnStatement.setSource(PsiSourceElementKt.getPsi(parameter.getSource()));
         functionObject.getBody().getStatements().add(returnStatement);
     }
 

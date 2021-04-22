@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElementKt;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -74,7 +75,7 @@ public final class TranslationUtils {
         JsExpression functionExpression = function;
         if (InlineUtil.isInline(descriptor)) {
             InlineMetadata metadata = InlineMetadata.compose(function, descriptor, context);
-            PsiElement sourceInfo = KotlinSourceElementKt.getPsi(descriptor.getSource());
+            PsiElement sourceInfo = PsiSourceElementKt.getPsi(descriptor.getSource());
             functionExpression = metadata.functionWithMetadata(context, sourceInfo);
         }
 
