@@ -244,7 +244,15 @@ class CommonizerIT : BaseGradleIT() {
 
     @Test
     fun `test KT-46234 intermediate source set with only one native target`() {
+        `test single native platform`("commonize-kt-46234-singleNativeTarget")
+    }
 
+    @Test
+    fun `test KT-46142 standalone native source set`() {
+        `test single native platform`("commonize-kt-46142-singleNativeTarget")
+    }
+
+    private fun `test single native platform`(project: String) {
         val posixInImplementationMetadataConfigurationRegex = Regex(""".*implementationMetadataConfiguration:.*([pP])osix""")
         val posixInIntransitiveMetadataConfigurationRegex = Regex(""".*intransitiveMetadataConfiguration:.*([pP])osix""")
 
@@ -258,7 +266,7 @@ class CommonizerIT : BaseGradleIT() {
                 line.matches(posixInIntransitiveMetadataConfigurationRegex)
             }
 
-        with(Project("commonize-kt-46234-singleNativeTarget")) {
+        with(Project(project)) {
             build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=false") {
                 assertSuccessful()
 
