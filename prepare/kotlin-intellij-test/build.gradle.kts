@@ -26,7 +26,6 @@ dependencies {
             "idea",
             "idea_rt",
             "guava",
-            "trove4j",
             "asm-all",
             "log4j",
             "jdom",
