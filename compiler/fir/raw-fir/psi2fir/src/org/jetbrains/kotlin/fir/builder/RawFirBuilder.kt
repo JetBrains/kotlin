@@ -566,7 +566,8 @@ open class RawFirBuilder(
                         val delegateExpression = { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
                         container.superTypeRefs += type
                         val delegateName = Name.special("<\$\$delegate_${delegateFields.size}>")
-                        val delegateSource = superTypeListEntry.delegateExpression?.toFirSourceElement()
+                        val delegateSource =
+                            superTypeListEntry.delegateExpression?.toFirSourceElement(FirFakeSourceElementKind.ClassDelegationField)
                         val delegateField = buildField {
                             source = delegateSource
                             declarationSiteSession = baseSession

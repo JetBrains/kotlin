@@ -170,6 +170,10 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // for java annotations constructor implicit parameters are generated
     // with a fake source which refers to declared annotation methods
     object ImplicitAnnotationAnnotationConstructorParameter : FirFakeSourceElementKind()
+
+    // for the implicit field storing the delegated object for class delegation
+    // with a fake source that refers to the KtExpression that creates the delegate
+    object ClassDelegationField : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {

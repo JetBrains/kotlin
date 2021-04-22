@@ -1574,7 +1574,7 @@ class DeclarationsConverter(
         val delegateName = Name.special("<\$\$delegate_${delegateFields.size}>")
         delegateFields.add(
             buildField {
-                source = firExpression!!.source
+                source = firExpression!!.source?.fakeElement(FirFakeSourceElementKind.ClassDelegationField)
                 declarationSiteSession = baseSession
                 origin = FirDeclarationOrigin.Synthetic
                 name = delegateName
