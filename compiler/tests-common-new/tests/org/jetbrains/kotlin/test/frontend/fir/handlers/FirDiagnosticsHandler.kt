@@ -146,8 +146,11 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                         )
                     )
                 }
-
-                element.acceptChildren(this)
+                if (element is FirExpressionWithSmartcast) {
+                    element.originalExpression.acceptChildren(this)
+                } else {
+                    element.acceptChildren(this)
+                }
             }
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {

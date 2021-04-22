@@ -44,7 +44,7 @@ internal class FirExpressionWithSmartcastImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        originalExpression.acceptChildren(visitor, data)
+        originalExpression.accept(visitor, data)
     }
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
