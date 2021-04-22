@@ -301,6 +301,36 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-46248 single supported native target dependency propagation`() {
+        fun CompiledProject.containsPosixDependency(): Boolean = output.lineSequence().any { line ->
+            line.matches(Regex(""".*Dependency:.*[pP]osix"""))
+        }
+
+        with(Project("commonize-kt-46248-singleNativeTargetPropagation")) {
+            build(":p1:listNativeMainDependencies") {
+                assertSuccessful()
+                assertTrue(containsPosixDependency(), "Expected dependency on posix in nativeMain")
+            }
+
+            build(":p1:listNativeMainParentDependencies") {
+                assertSuccessful()
+                assertTrue(containsPosixDependency(), "Expected dependency on posix in nativeMainParent")
+            }
+
+            build(":p1:listCommonMainDependencies") {
+                assertSuccessful()
+                assertFalse(containsPosixDependency(), "Expected **no** dependency on posix in commonMain (because of jvm target)")
+            }
+
+            build("assemble") {
+                assertSuccessful()
+                assertTasksExecuted(":p1:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":p1:compileKotlinNativePlatform")
+            }
+        }
+    }
+
     private fun preparedProject(name: String): Project {
         return Project(name).apply {
             setupWorkingDir()
