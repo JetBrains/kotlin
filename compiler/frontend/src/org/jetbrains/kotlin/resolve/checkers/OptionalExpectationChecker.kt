@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
 object OptionalExpectationChecker {
     fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, trace: BindingTrace) {
@@ -34,6 +35,6 @@ object OptionalExpectationChecker {
     private fun getOptionalExpectationEntry(declaration: KtDeclaration, trace: BindingTrace): KtAnnotationEntry? =
         declaration.annotationEntries.find { entry ->
             val annotationDescriptor = trace.get(BindingContext.ANNOTATION, entry)
-            annotationDescriptor?.fqName == ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME
+            annotationDescriptor?.fqName == OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME
         }
 }

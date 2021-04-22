@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compati
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.multiplatform.ModuleFilter
+import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -171,7 +172,7 @@ class ExpectedActualDeclarationChecker(
         val compatibility = ExpectedActualResolver.findActualForExpected(descriptor, module, moduleVisibilityFilter) ?: return
 
         // Only strong incompatibilities, but this is an OptionalExpectation -- don't report it
-        if (compatibility.allStrongIncompatibilities() && isOptionalAnnotationClass(descriptor)) return
+        if (compatibility.allStrongIncompatibilities() && OptionalAnnotationUtil.isOptionalAnnotationClass(descriptor)) return
 
         // Only strong incompatibilities, or error won't be reported on actual: report NO_ACTUAL_FOR_EXPECT here
         if (compatibility.allStrongIncompatibilities() ||
@@ -389,41 +390,7 @@ class ExpectedActualDeclarationChecker(
     }
 
     companion object {
-        val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
-
-        @JvmStatic
-        fun isOptionalAnnotationClass(descriptor: DeclarationDescriptor): Boolean =
-            descriptor is ClassDescriptor &&
-                    descriptor.kind == ClassKind.ANNOTATION_CLASS &&
-                    descriptor.isExpect &&
-                    descriptor.annotations.hasAnnotation(OPTIONAL_EXPECTATION_FQ_NAME)
-
-        // TODO: move to some other place which is accessible both from backend-common and js.serializer
-        @JvmStatic
-        fun shouldGenerateExpectClass(descriptor: ClassDescriptor): Boolean {
-            assert(descriptor.isExpect) { "Not an expected class: $descriptor" }
-
-            if (isOptionalAnnotationClass(descriptor)) {
-                with(ExpectedActualResolver) {
-                    return descriptor.findCompatibleActualForExpected(descriptor.module).isEmpty()
-                }
-            }
-
-            return false
-        }
-
         fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
             this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
-
-        private fun <K, V> LinkedHashMap<K, List<V>>.merge(other: Map<K, List<V>>): LinkedHashMap<K, List<V>> {
-            for ((key, newValue) in other) {
-                val oldValue = this[key] ?: emptyList()
-                this[key] = oldValue + newValue
-            }
-
-            return this
-        }
-
-        private fun ModuleInfo.unwrapModuleInfo(): List<ModuleInfo> = if (this is CombinedModuleInfo) this.containedModules else listOf(this)
     }
 }

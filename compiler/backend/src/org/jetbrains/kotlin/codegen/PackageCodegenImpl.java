@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.PackageDescriptorUtilKt;
+import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil;
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -91,8 +91,8 @@ public class PackageCodegenImpl implements PackageCodegen {
             if (declaration instanceof KtClassOrObject) {
                 ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
                 if (PsiUtilsKt.hasExpectModifier(declaration)) {
-                    if (descriptor != null && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor)) {
-                        assert ExpectedActualDeclarationChecker.isOptionalAnnotationClass(descriptor) :
+                    if (descriptor != null && OptionalAnnotationUtil.shouldGenerateExpectClass(descriptor)) {
+                        assert OptionalAnnotationUtil.isOptionalAnnotationClass(descriptor) :
                                 "Expect class should be generated only if it's an optional annotation: " + descriptor;
                         state.getFactory().getPackagePartRegistry().getOptionalAnnotations().add(descriptor);
                     }
