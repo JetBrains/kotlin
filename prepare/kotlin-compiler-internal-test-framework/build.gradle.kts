@@ -10,7 +10,6 @@ val embedded by configurations
 dependencies {
     embedded(project(":compiler:serialization")){ isTransitive = false }
     embedded(projectTests(":compiler:tests-common-jvm6")){ isTransitive = false }
-    embedded(project(":kotlin-scripting-compiler-impl")){ isTransitive = false }
     embedded(projectTests(":compiler:test-infrastructure")){ isTransitive = false }
     embedded(projectTests(":compiler:test-infrastructure-utils")){ isTransitive = false }
     embedded(projectTests(":compiler:tests-compiler-utils")){ isTransitive = false }
