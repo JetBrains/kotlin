@@ -1,7 +1,10 @@
+// TARGET_PLATFORM: JVM
 // WITH_RUNTIME
 // WITH_COROUTINES
+// FILE: a.kt
+@file:JvmMultifileClass
+@file:JvmName("A")
 
-import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -13,14 +16,14 @@ suspend fun <T> suspendHere(x: T): T = suspendCoroutineUninterceptedOrReturn {
     COROUTINE_SUSPENDED
 }
 
-class C {
-    private suspend fun f(): I = I(suspendHere("OK"))
+suspend fun f(): I = I(suspendHere("OK"))
 
-    fun g() = suspend { f() }
-}
+// FILE: z.kt
+import helpers.*
+import kotlin.coroutines.*
 
 fun box(): String {
     var result = "fail"
-    suspend { result = C().g()().x as String }.startCoroutine(EmptyContinuation)
+    suspend { result = f().x as String }.startCoroutine(EmptyContinuation)
     return result
 }
