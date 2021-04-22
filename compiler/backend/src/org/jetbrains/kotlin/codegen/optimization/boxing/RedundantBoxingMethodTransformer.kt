@@ -39,7 +39,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
 
     override fun transform(internalClassName: String, node: MethodNode) {
         val interpreter = RedundantBoxingInterpreter(node.instructions, generationState)
-        val frames = MethodTransformer.analyze(internalClassName, node, interpreter)
+        val frames = analyze(internalClassName, node, interpreter)
 
         interpretPopInstructionsForBoxedValues(interpreter, node, frames)
 
@@ -168,7 +168,8 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             val frame = frames[i] ?: continue
             val insn = insnList[i]
             if ((insn.opcode == Opcodes.ASTORE || insn.opcode == Opcodes.ALOAD) &&
-                (insn as VarInsnNode).`var` == localVariableNode.index) {
+                (insn as VarInsnNode).`var` == localVariableNode.index
+            ) {
                 if (insn.getOpcode() == Opcodes.ASTORE) {
                     values.add(frame.top()!!)
                 } else {

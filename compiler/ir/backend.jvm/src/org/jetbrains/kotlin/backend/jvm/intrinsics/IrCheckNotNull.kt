@@ -13,18 +13,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
-private fun ExpressionCodegen.checkTopValueForNull() {
-    mv.dup()
-    if (state.unifiedNullChecks) {
-        mv.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false)
-    } else {
-        val ifNonNullLabel = Label()
-        mv.ifnonnull(ifNonNullLabel)
-        mv.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwNpe", "()V", false)
-        mv.mark(ifNonNullLabel)
-    }
-}
-
 object IrCheckNotNull : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val arg0 = expression.getValueArgument(0)!!.accept(codegen, data)
@@ -35,6 +23,18 @@ object IrCheckNotNull : IntrinsicMethod() {
 
             override fun discard() =
                 arg0.materialized().also { codegen.checkTopValueForNull() }.discard()
+        }
+    }
+
+    private fun ExpressionCodegen.checkTopValueForNull() {
+        mv.dup()
+        if (state.unifiedNullChecks) {
+            mv.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false)
+        } else {
+            val ifNonNullLabel = Label()
+            mv.ifnonnull(ifNonNullLabel)
+            mv.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwNpe", "()V", false)
+            mv.mark(ifNonNullLabel)
         }
     }
 }
