@@ -21,7 +21,7 @@ ext {
 Collection<EndorsedLibraryInfo> endorsedLibrariesList = ext.endorsedLibraries.values()
 
 task clean {
-    doLast {
+    doFirst {
         delete buildDir
     }
 }

@@ -208,7 +208,7 @@ val assemble by tasks.registering {
 }
 
 val clean by tasks.registering {
-    doLast {
+    doFirst {
         delete(buildDir)
     }
 }

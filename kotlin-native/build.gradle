@@ -682,7 +682,7 @@ task teamcityCompilerVersion {
 
 task clean(type: Delete) {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
-    doLast {
+    doFirst {
         delete distDir
         delete buildDir
         delete bundle.outputs.files
