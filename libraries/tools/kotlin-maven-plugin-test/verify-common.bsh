@@ -67,3 +67,10 @@ int findLineThatContains(String[] lines, String content) {
     }
     return -1;
 }
+
+void assertFileExists(String relativePath) {
+    File file = new File(basedir, relativePath);
+    if (!file.exists() || !file.isFile()) {
+        throw new Exception("Expected file not found: " + relativePath);
+    }
+}

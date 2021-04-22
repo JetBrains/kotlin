@@ -56,7 +56,13 @@ class LombokCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
-            CONFIG_FILE_OPTION -> configuration.put(CONFIG_FILE, File(value))
+            CONFIG_FILE_OPTION -> {
+                val file = File(value)
+                if (!file.exists()) {
+                    throw IllegalArgumentException("Config file not found ${file.absolutePath}")
+                }
+                configuration.put(CONFIG_FILE, file)
+            }
             else -> throw IllegalArgumentException("Unknown option $option")
         }
     }
