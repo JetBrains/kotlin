@@ -15303,6 +15303,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsForMaxLongValue.kt");
         }
 
+        @TestMetadata("unsignedLiteralsInApiVersion14.kt")
+        public void testUnsignedLiteralsInApiVersion14() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsInApiVersion14.kt");
+        }
+
         @TestMetadata("unsignedLiteralsWithSignedOverflow.kt")
         public void testUnsignedLiteralsWithSignedOverflow() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");

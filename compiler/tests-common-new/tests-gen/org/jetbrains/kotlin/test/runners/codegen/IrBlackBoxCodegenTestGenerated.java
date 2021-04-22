@@ -41099,6 +41099,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("unsignedLiteralsInApiVersion14.kt")
+        public void testUnsignedLiteralsInApiVersion14() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsInApiVersion14.kt");
+        }
+
+        @Test
         @TestMetadata("unsignedLiteralsWithSignedOverflow.kt")
         public void testUnsignedLiteralsWithSignedOverflow() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");
