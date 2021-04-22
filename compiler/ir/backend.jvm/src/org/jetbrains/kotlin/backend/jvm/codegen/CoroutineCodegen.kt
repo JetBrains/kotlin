@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
-import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -142,16 +141,19 @@ private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
             parentAsClass.declarations.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
                 ?.isStaticInlineClassReplacement == true
 
-internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspendOfContinuation() &&
-        // These are tail-call bridges and do not require any bytecode modifications.
-        origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-        origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
-        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
-        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
-        origin != JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE &&
-        origin != IrDeclarationOrigin.BRIDGE &&
-        origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
+internal val BRIDGE_ORIGINS = setOf(
+    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+    JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
+    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR,
+    JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE,
+    IrDeclarationOrigin.BRIDGE,
+    IrDeclarationOrigin.BRIDGE_SPECIAL,
+)
+
+internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = origin !in BRIDGE_ORIGINS &&
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&
+        !isInvokeSuspendOfContinuation() &&
         !isMultifileBridge() &&
         !isInvokeOfSuspendCallableReference() &&
         !isBridgeToSuspendImplMethod() &&
