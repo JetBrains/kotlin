@@ -11,7 +11,9 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
@@ -23,13 +25,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.dsl.copyFreeCompilerArgsToArgs
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.SourceRoots
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.getAllDependencies
+import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
+import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 import javax.inject.Inject
@@ -55,6 +61,9 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Internal
     internal lateinit var compilation: KotlinCompilation<*>
 
+    @get:Input
+    internal val incrementalJsIr: Boolean = PropertiesProvider(project).incrementalJsIr
+
     // Link tasks are not affected by compiler plugin
     override val pluginClasspath: ConfigurableFileCollection = project.objects.fileCollection()
 
@@ -76,14 +85,49 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val entryModule: DirectoryProperty
 
+    override fun getDestinationDir(): File {
+        return if (kotlinOptions.outputFile == null) {
+            super.getDestinationDir()
+        } else {
+            outputFile.parentFile
+        }
+    }
+
     override fun skipCondition(): Boolean {
         return !entryModule.get().asFile.exists()
     }
 
     override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
-        val cacheArgs = CacheBuilder(
+        if (incrementalJsIr) {
+            val visitedDependencies = mutableSetOf<ResolvedDependency>()
+            val visitedFiles = mutableSetOf<File>()
+            val visitedCompilations = mutableSetOf<KotlinCompilation<*>>()
+
+            val cacheArgs = visitAssociated(compilation, visitedDependencies, visitedFiles, visitedCompilations).distinct()
+
+            args.freeArgs += "-Xcache-directory=${cacheArgs.joinToString(File.pathSeparator) {
+                it.normalize().absolutePath
+            }}"
+        }
+        super.callCompilerAsync(args, sourceRoots, changedFiles)
+    }
+
+    private fun visitAssociated(
+        associated: KotlinCompilation<*>,
+        visitedDependencies: MutableSet<ResolvedDependency>,
+        visitedFiles: MutableSet<File>,
+        visitedCompilations: MutableSet<KotlinCompilation<*>>
+    ): List<File> {
+        if (associated in visitedCompilations) return emptyList()
+        visitedCompilations.add(associated)
+
+        val prevRes = associated.associateWith
+            .flatMap { visitAssociated(it, visitedDependencies, visitedFiles, visitedCompilations) }
+
+        return prevRes + CacheBuilder(
             buildDir,
-            compileClasspathConfiguration,
+            project.configurations.getByName(associated.compileDependencyConfigurationName),
+            associated.output.classesDirs,
             kotlinOptions,
             libraryFilter,
             compilerRunner,
@@ -91,10 +135,10 @@ abstract class KotlinJsIrLink @Inject constructor(
             computedCompilerClasspath,
             logger,
             objects.fileCollection(),
-            reportingSettings
+            reportingSettings,
+            visitedDependencies,
+            visitedFiles
         ).buildCompilerArgs()
-        args.freeArgs += cacheArgs
-        super.callCompilerAsync(args, sourceRoots, changedFiles)
     }
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
@@ -116,10 +160,10 @@ abstract class KotlinJsIrLink @Inject constructor(
     }
 }
 
-
 internal class CacheBuilder(
     private val buildDir: File,
     private val compileClasspath: Configuration,
+    private val additionalForResolve: FileCollection?,
     private val kotlinOptions: KotlinJsOptions,
     private val libraryFilter: (File) -> Boolean,
     private val compilerRunner: GradleCompilerRunner,
@@ -127,42 +171,64 @@ internal class CacheBuilder(
     private val computedCompilerClasspath: List<File>,
     private val logger: Logger,
     private val outputFiles: FileCollection,
-    private val reportingSettings: ReportingSettings
+    private val reportingSettings: ReportingSettings,
+    private val visitedDependencies: MutableSet<ResolvedDependency>,
+    private val visitedFiles: MutableSet<File>
 
 ) {
     val rootCacheDirectory by lazy {
         buildDir.resolve("klib/cache")
     }
 
-    fun buildCompilerArgs(): List<String> {
-        val visitedDependencies = mutableSetOf<ResolvedDependency>()
-        val allCacheDirectories = mutableSetOf<String>()
+    fun buildCompilerArgs(): List<File> {
+
+        val allCacheDirectories = mutableListOf<File>()
 
         compileClasspath.resolvedConfiguration.firstLevelModuleDependencies
             .forEach { dependency ->
-                ensureDependencyCached(dependency, visitedDependencies)
+                ensureDependencyCached(
+                    dependency,
+                    visitedDependencies,
+                    visitedFiles
+                )
                 (listOf(dependency) + getAllDependencies(dependency))
                     .forEach {
-                        val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependency)
+                        val cacheDirectory = getCacheDirectory(rootCacheDirectory, it)
                         if (cacheDirectory.exists()) {
-                            allCacheDirectories.add(cacheDirectory.normalize().absolutePath)
+                            allCacheDirectories.add(cacheDirectory)
                         }
                     }
             }
 
+        additionalForResolve?.files?.forEach { file ->
+            val cacheDirectory = rootCacheDirectory.resolve(file.name)
+            cacheDirectory.mkdirs()
+            runCompiler(
+                file,
+                visitedFiles,
+                compileClasspath.files,
+                cacheDirectory,
+                allCacheDirectories,
+
+
+                file.name
+            )
+            allCacheDirectories.add(cacheDirectory)
+        }
+
         return allCacheDirectories
-            .map { "-Xcache-directory=${it}" }
     }
 
     private fun ensureDependencyCached(
         dependency: ResolvedDependency,
-        visitedDependency: MutableSet<ResolvedDependency>
+        visitedDependency: MutableSet<ResolvedDependency>,
+        visitedFiles: MutableSet<File>
     ) {
         if (dependency in visitedDependency) return
         visitedDependency.add(dependency)
 
         dependency.children
-            .forEach { ensureDependencyCached(it, visitedDependency) }
+            .forEach { ensureDependencyCached(it, visitedDependency, visitedFiles) }
 
         val artifactsToAddToCache = dependency.moduleArtifacts
             .filter { libraryFilter(it.file) }
@@ -178,49 +244,71 @@ internal class CacheBuilder(
         cacheDirectory.mkdirs()
 
         for (library in artifactsToAddToCache) {
-            val compilerArgs = compilerArgsFactory()
-            kotlinOptions.copyFreeCompilerArgsToArgs(compilerArgs)
-            compilerArgs.freeArgs = compilerArgs.freeArgs
-                .filterNot { arg ->
-                    IGNORED_ARGS.any {
-                        arg.startsWith(it)
-                    }
-                }
+            runCompiler(
+                library.file,
+                visitedFiles,
+                getAllDependencies(dependency)
+                    .flatMap { it.moduleArtifacts }
+                    .map { it.file },
+                cacheDirectory,
+                dependenciesCacheDirectories,
 
-            compilerArgs.includes = library.file.normalize().absolutePath
-            compilerArgs.outputFile = cacheDirectory.resolve("${library.name}.js").normalize().absolutePath
-            dependenciesCacheDirectories.forEach {
-                compilerArgs.freeArgs += "-Xcache-directory=${it.absolutePath}"
+                library.name
+            )
+        }
+    }
+
+    fun runCompiler(
+        file: File,
+        visitedFiles: MutableSet<File>,
+        dependencies: Collection<File>,
+        cacheDirectory: File,
+        dependenciesCacheDirectories: Collection<File>,
+
+
+        jsName: String
+    ) {
+        if (file in visitedFiles) return
+        val compilerArgs = compilerArgsFactory()
+        kotlinOptions.copyFreeCompilerArgsToArgs(compilerArgs)
+        compilerArgs.freeArgs = compilerArgs.freeArgs
+            .filterNot { arg ->
+                IGNORED_ARGS.any {
+                    arg.startsWith(it)
+                }
             }
 
-            // Change it for produce caches
-            compilerArgs.irProduceJs = true
+        visitedFiles.add(file)
+        compilerArgs.includes = file.normalize().absolutePath
+        compilerArgs.outputFile = cacheDirectory.resolve("${jsName}.js").normalize().absolutePath
+        compilerArgs.freeArgs += "-Xcache-directory=${dependenciesCacheDirectories.joinToString(File.pathSeparator)}"
 
-            compilerArgs.libraries = getAllDependencies(dependency)
-                .flatMap { it.moduleArtifacts }
-                .map { it.file }
-                .filter { it.exists() && libraryFilter(it) }
-                .distinct()
-                .joinToString(File.pathSeparator) { it.normalize().absolutePath }
+        // Change it for produce caches
+        compilerArgs.irProduceJs = true
 
-            val messageCollector = GradlePrintingMessageCollector(logger, false)
-            val outputItemCollector = OutputItemsCollectorImpl()
-            val environment = GradleCompilerEnvironment(
-                computedCompilerClasspath,
-                messageCollector,
-                outputItemCollector,
-                outputFiles = outputFiles,
-                reportingSettings = reportingSettings
+        compilerArgs.libraries = dependencies
+            .filter { it.exists() && libraryFilter(it) }
+            .distinct()
+            .filterNot { it == file }
+            .joinToString(File.pathSeparator) { it.normalize().absolutePath }
+
+        val messageCollector = GradlePrintingMessageCollector(logger, false)
+        val outputItemCollector = OutputItemsCollectorImpl()
+        val environment = GradleCompilerEnvironment(
+            computedCompilerClasspath,
+            messageCollector,
+            outputItemCollector,
+            outputFiles = outputFiles,
+            reportingSettings = reportingSettings
+        )
+
+        compilerRunner
+            .runJsCompilerAsync(
+                emptyList(),
+                emptyList(),
+                compilerArgs,
+                environment
             )
-
-            compilerRunner
-                .runJsCompilerAsync(
-                    emptyList(),
-                    emptyList(),
-                    compilerArgs,
-                    environment
-                )
-        }
     }
 
     companion object {
