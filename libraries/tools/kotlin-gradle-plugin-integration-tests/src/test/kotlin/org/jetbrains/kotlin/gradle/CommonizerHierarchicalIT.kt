@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.os.OperatingSystem
-import org.junit.Ignore
 import org.junit.Test
 
 class CommonizerHierarchicalIT : BaseGradleIT() {
@@ -87,11 +87,14 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
         }
     }
 
-    @Ignore("Waiting for next bootstrap compiler")
     @Test
     fun `test commonizeHierarchicallyMultiModule`() {
         with(Project("commonizeHierarchicallyMultiModule")) {
-            build("assemble") {
+            build(
+                "assemble",
+                // https://youtrack.jetbrains.com/issue/KT-46279
+                options = BuildOptions(warningMode = WarningMode.All)
+            ) {
                 assertSuccessful()
                 assertTasksExecuted(":p1:commonizeCInterop")
                 assertTasksExecuted(":p2:commonizeCInterop")
