@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
-import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.ICData
-import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
-import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
@@ -104,7 +101,8 @@ fun generateKLib(
     friendDependencies: List<KotlinLibrary>,
     irFactory: IrFactory,
     outputKlibPath: String,
-    nopack: Boolean
+    nopack: Boolean,
+    abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT
 ) {
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
@@ -194,7 +192,8 @@ fun generateKLib(
         icData,
         nopack,
         perFile = false,
-        hasErrors
+        hasErrors,
+        abiVersion
     )
 }
 
@@ -475,15 +474,19 @@ fun serializeModuleIntoKlib(
     cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean,
     perFile: Boolean,
-    containsErrorCode: Boolean = false
+    containsErrorCode: Boolean = false,
+    abiVersion: KotlinAbiVersion
 ) {
     assert(files.size == moduleFragment.files.size)
+
+    val compatibilityMode = CompatibilityMode(abiVersion)
 
     val serializedIr =
         JsIrModuleSerializer(
             messageLogger,
             moduleFragment.irBuiltins,
-            expectDescriptorToSymbol = expectDescriptorToSymbol,
+            expectDescriptorToSymbol,
+            compatibilityMode,
             skipExpects = !configuration.expectActualLinker
         ).serializedIrModule(moduleFragment)
 
@@ -538,7 +541,7 @@ fun serializeModuleIntoKlib(
     val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
 
     val versions = KotlinLibraryVersioning(
-        abiVersion = KotlinAbiVersion.CURRENT,
+        abiVersion = compatibilityMode.abiVersion,
         libraryVersion = null,
         compilerVersion = KotlinCompilerVersion.VERSION,
         metadataVersion = KlibMetadataVersion.INSTANCE.toString(),

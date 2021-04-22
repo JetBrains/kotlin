@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
+import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -19,6 +20,7 @@ class JsIrFileSerializer(
     messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    compatibilityMode: CompatibilityMode,
     skipExpects: Boolean,
     bodiesOnlyForInlines: Boolean = false,
     icMode: Boolean = false,
@@ -26,6 +28,7 @@ class JsIrFileSerializer(
     messageLogger,
     declarationTable,
     expectDescriptorToSymbol,
+    compatibilityMode,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     skipExpects = skipExpects,
     skipMutableState = icMode,

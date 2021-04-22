@@ -14,6 +14,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
@@ -55,7 +56,6 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryOnlyIrWriter
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -492,7 +492,8 @@ class GenerateIrRuntime {
             mutableMapOf(),
             emptyList(),
             true,
-            perFile
+            perFile,
+            abiVersion = KotlinAbiVersion.CURRENT
         )
 
         return tmpKlibDir
@@ -506,7 +507,7 @@ class GenerateIrRuntime {
 
 
     private fun doSerializeIrModule(module: IrModuleFragment): SerializedIrModule {
-        val serializedIr = JsIrModuleSerializer(IrMessageLogger.None, module.irBuiltins, mutableMapOf(), true).serializedIrModule(module)
+        val serializedIr = JsIrModuleSerializer(IrMessageLogger.None, module.irBuiltins, mutableMapOf(), CompatibilityMode.CURRENT, true).serializedIrModule(module)
         return serializedIr
     }
 

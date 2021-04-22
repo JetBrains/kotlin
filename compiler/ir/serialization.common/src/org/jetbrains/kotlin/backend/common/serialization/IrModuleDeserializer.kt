@@ -29,18 +29,21 @@ internal fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     }
 }
 
-class CompatibilityMode(val oldSignatures: Boolean) {
-    companion object {
-        val WITH_PRIVATE_SIG = CompatibilityMode(oldSignatures = true)
-        val WITH_COMMON_SIG = CompatibilityMode(oldSignatures = false)
+class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
 
+    init {
+        assert(abiVersion.isCompatible())
+    }
+
+    val oldSignatures: Boolean = abiVersion.patch <= LAST_PRIVATE_SIG_ABI_VERSION.patch
+
+    companion object {
         val LAST_PRIVATE_SIG_ABI_VERSION = KotlinAbiVersion(1, 4, 2)
 
+        val WITH_PRIVATE_SIG = CompatibilityMode(LAST_PRIVATE_SIG_ABI_VERSION)
+        val WITH_COMMON_SIG = CompatibilityMode(KotlinAbiVersion.CURRENT)
 
-        fun resolveCompatibilityMode(libraryAbiVersion: KotlinAbiVersion): CompatibilityMode {
-            assert(libraryAbiVersion.isCompatible())
-            return if (libraryAbiVersion.patch > LAST_PRIVATE_SIG_ABI_VERSION.patch) WITH_COMMON_SIG else WITH_PRIVATE_SIG
-        }
+        val CURRENT = WITH_COMMON_SIG
     }
 }
 
@@ -81,7 +84,7 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor, val 
 
     open val isCurrent = false
 
-    val compatibilityMode: CompatibilityMode get() = CompatibilityMode.resolveCompatibilityMode(libraryAbiVersion)
+    val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 }
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
