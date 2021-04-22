@@ -31,6 +31,27 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import java.util.*
 
+/*
+ * A data flow analysis to remove or move around calls to file initializers.
+ * The goal is to find for each function and for each call site the set of
+ * definitely initialized files before the corresponding call.
+ *
+ * This is done in three quite similar steps using global interprocedural analysis:
+ * 1. For each function find the set of definitely initialized files after returning from the function.
+ *    Handle all the functions in the reverse topological order.
+ * 2. For each function find the set of definitely initialized files before executing the function's body.
+ *    Handle all the functions in the topological order and use the results of the first step
+ *    for updating the result after some function call.
+ * 3. For each call site find the set of definitely initialized files before the actual call is made.
+ *    Handle all the functions in the arbitrary order and use the results of the first step
+ *    for updating the result. Then use the results from the second step to see if the initializer call
+ *    could be extracted from the callee to the call site.
+ *
+ * All three steps use similar local intraprocedural data flow analysis on IR using an IR visitor
+ * taking the set of already initialized files before evaluating some expression and returning the modified
+ * set after evaluating that expression.
+ */
+
 internal object FileInitializersOptimization {
     private class AnalysisResult(val functionsRequiringInitializerCall: Set<IrFunction>,
                                  val callSitesRequiringInitializerCall: Set<IrFunctionAccessExpression>)
@@ -206,7 +227,8 @@ internal object FileInitializersOptimization {
             val body = caller.body ?: return
             val initializedFilesBeforeCall = BitSet()
             initializedFiles.beforeCall[caller]?.let { initializedFilesBeforeCall.or(it) }
-            initializedFilesBeforeCall.set(initializedFiles.fileIds[caller.file]!!) // Since the function has been called, the file is bound to be initialized.
+            // Since the function has been called, the file is bound to be initialized.
+            initializedFilesBeforeCall.set(initializedFiles.fileIds[caller.file]!!)
 
             val producerInvocations = mutableMapOf<IrExpression, IrCall>()
             val jobInvocations = mutableMapOf<IrCall, IrCall>()
@@ -238,17 +260,9 @@ internal object FileInitializersOptimization {
                         previous.and(set)
                 }
 
-                override fun visitElement(element: IrElement, data: BitSet): BitSet {
-                    TODO(element.render())
-                }
-
-                override fun visitExpression(expression: IrExpression, data: BitSet): BitSet {
-                    TODO(expression.render())
-                }
-
-                override fun visitDeclaration(declaration: IrDeclarationBase, data: BitSet): BitSet {
-                    TODO(declaration.render())
-                }
+                override fun visitElement(element: IrElement, data: BitSet): BitSet = TODO(element.render())
+                override fun visitExpression(expression: IrExpression, data: BitSet): BitSet = TODO(expression.render())
+                override fun visitDeclaration(declaration: IrDeclarationBase, data: BitSet): BitSet = TODO(declaration.render())
 
                 override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BitSet) = expression.argument.accept(this, data)
                 override fun <T> visitConst(expression: IrConst<T>, data: BitSet) = data
@@ -386,7 +400,8 @@ internal object FileInitializersOptimization {
                     updateResultForFunction(actualCallee, curData)
                     val file = actualCallee.fileOrNull
                     val fileId = file?.let { initializedFiles.fileIds[it]!! } ?: 0
-                    if (analysisGoal == AnalysisGoal.CollectCallSites && file != null && !actualCallee.isOverridable
+                    if (analysisGoal == AnalysisGoal.CollectCallSites && file != null
+                            && !actualCallee.isOverridable // Only extract initializer calls from non-virtual functions.
                             && !initializedFiles.beforeCall[actualCallee]!!.get(fileId)) {
                         if (curData.get(fileId))
                             callSitesNotRequiringInitializerCall += expression
@@ -399,11 +414,13 @@ internal object FileInitializersOptimization {
                 private fun processExecuteImpl(expression: IrCall, data: BitSet): BitSet {
                     var curData = processCall(expression, expression.symbol.owner, data)
                     val producerInvocation = producerInvocations[expression.getValueArgument(2)!!]!!
+                    // Producer is invoked right here in the same thread, so can update the result.
                     // Albeit this call site is a fictitious one, it is always a virtual one, which aren't optimized for now.
                     curData = visitCall(producerInvocation, curData)
                     val jobInvocation = jobInvocations[producerInvocation]!!
                     if (analysisGoal != AnalysisGoal.CollectCallSites) // A fictitious call site - skip it explicitly since it's always non-virtual.
                         visitCall(jobInvocation, curData)
+                    // Actual job could be invoked on another thread, thus can't take the result from that call.
                     return curData
                 }
 

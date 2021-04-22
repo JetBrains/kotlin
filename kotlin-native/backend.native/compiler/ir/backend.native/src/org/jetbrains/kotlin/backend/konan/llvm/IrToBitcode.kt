@@ -455,6 +455,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     val INIT_THREAD_LOCAL_GLOBALS = 2
     val DEINIT_GLOBALS = 3
 
+    val FILE_NOT_INITIALIZED = 0
+    val FILE_INITIALIZED = 2
+    val FILE_THREAD_LOCALS_INITIALIZED = 1
+
     private fun createInitBody(): LLVMValueRef {
         val initFunction = addLlvmFunctionWithDefaultAttributes(
                 context,
@@ -492,8 +496,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
                 appendingTo(bbLocalInit) {
                     context.llvm.initializersGenerationState.threadLocalInitState?.let {
-                        store(kImmInt32Zero, it.getAddress(functionGenerationContext))
-                        LLVMSetInitializer(it.getAddress(functionGenerationContext), kImmInt32Zero)
+                        val address = it.getAddress(functionGenerationContext)
+                        store(Int32(FILE_NOT_INITIALIZED).llvm, address)
+                        LLVMSetInitializer(address, Int32(FILE_NOT_INITIALIZED).llvm)
                     }
                     if (!context.useLazyFileInitializers()) {
                         context.llvm.initializersGenerationState.topLevelFields
@@ -532,7 +537,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         storeHeapRef(codegen.kNullObjHeaderPtr, address)
                     }
                     context.llvm.initializersGenerationState.globalInitState?.let {
-                        store(kImmInt32Zero, it)
+                        store(Int32(FILE_NOT_INITIALIZED).llvm, it)
                     }
                     ret(null)
                 }
@@ -770,14 +775,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun getGlobalInitStateFor(file: IrFile): LLVMValueRef =
             context.llvm.initializersGenerationState.fileGlobalInitStates.getOrPut(file) {
-                codegen.addGlobal("state_global$${file.fqName}", int32Type, false).also {
-                    LLVMSetInitializer(it, kImmInt32Zero)
+                codegen.addGlobal("state_global$${file.fileEntry.name}", int32Type, false).also {
+                    LLVMSetInitializer(it, Int32(FILE_NOT_INITIALIZED).llvm)
                 }
             }
 
     private fun getThreadLocalInitStateFor(file: IrFile): AddressAccess =
             context.llvm.initializersGenerationState.fileThreadLocalInitStates.getOrPut(file) {
-                codegen.addKotlinThreadLocal("state_thread_local$${file.fqName}", int32Type)
+                codegen.addKotlinThreadLocal("state_thread_local$${file.fileEntry.name}", int32Type)
             }
 
     override fun visitFunction(declaration: IrFunction) {
@@ -2267,7 +2272,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         // TODO: Is it ok to use non-volatile read here since once value is FILE_INITIALIZED, it is no longer change?
         val state = load(statePtr)
         LLVMSetVolatile(state, 1)
-        condBr(icmpEq(state, kImmInt32Two /*FILE_INITIALIZED at Runtime.cpp*/), bbExit, bbInit)
+        condBr(icmpEq(state, Int32(FILE_INITIALIZED).llvm), bbExit, bbInit)
         positionAtEnd(bbInit)
         call(context.llvm.callInitPossiblyLock, listOf(statePtr, initializerPtr),
              exceptionHandler = currentCodeContext.exceptionHandler)
@@ -2286,11 +2291,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val bbExit = basicBlock("label_continue", null)
         val globalState = load(globalStatePtr)
         LLVMSetVolatile(globalState, 1)
-        condBr(icmpNe(globalState, kImmInt32Two /*FILE_INITIALIZED at Runtime.cpp*/), bbExit, bbCheckLocalState)
+        condBr(icmpNe(globalState, Int32(FILE_INITIALIZED).llvm), bbExit, bbCheckLocalState)
         positionAtEnd(bbCheckLocalState)
-        condBr(icmpEq(load(localStatePtr), kImmInt32Zero), bbInit, bbExit)
+        condBr(icmpEq(load(localStatePtr), Int32(FILE_NOT_INITIALIZED).llvm), bbInit, bbExit)
         positionAtEnd(bbInit)
-        store(kImmInt32One, localStatePtr)
+        store(Int32(FILE_THREAD_LOCALS_INITIALIZED).llvm, localStatePtr)
         evaluateSimpleFunctionCall(fileInitializer, emptyList(), Lifetime.IRRELEVANT)
         br(bbExit)
         positionAtEnd(bbExit)
@@ -2302,9 +2307,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
         val statePtr = state.getAddress(functionGenerationContext)
-        condBr(icmpEq(load(statePtr), kImmInt32Zero), bbInit, bbExit)
+        condBr(icmpEq(load(statePtr), Int32(FILE_NOT_INITIALIZED).llvm), bbInit, bbExit)
         positionAtEnd(bbInit)
-        store(kImmInt32One, statePtr)
+        store(Int32(FILE_THREAD_LOCALS_INITIALIZED).llvm, statePtr)
         evaluateSimpleFunctionCall(fileInitializer, emptyList(), Lifetime.IRRELEVANT)
         br(bbExit)
         positionAtEnd(bbExit)

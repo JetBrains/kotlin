@@ -58,9 +58,9 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
         irFile.transformChildrenVoid(object: IrElementTransformerVoid() {
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 declaration.transformChildrenVoid(this)
-                // TODO: what about private functions? Can they be called from other file somehow?
                 val body = declaration.body ?: return declaration
-                // TODO: Create a pass to remove redundant calls to [initFile].
+                // The order of calling initializers: first global, then thread-local.
+                // It is ok for a thread local top level property to reference a global, but not vice versa.
                 threadLocalInitFunction?.let {
                     (body as IrBlockBody).statements.add(0, IrCallImpl(
                             SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
