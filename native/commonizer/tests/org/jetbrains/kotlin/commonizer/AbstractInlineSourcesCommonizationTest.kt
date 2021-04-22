@@ -160,8 +160,8 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
                 if (dependencies.isEmpty()) null
                 else MockModulesProvider.create(dependencies)
             },
-            targetProviders = TargetDependent(targets.map { it.target }) { commonizerTarget ->
-                val target = targets.single { it.target == commonizerTarget }
+            targetProviders = TargetDependent(outputTarget.allLeaves()) { commonizerTarget ->
+                val target = targets.singleOrNull { it.target == commonizerTarget } ?: return@TargetDependent null
                 TargetProvider(
                     target = commonizerTarget,
                     modulesProvider = MockModulesProvider.create(target.modules.map { createModuleDescriptor(it) })
