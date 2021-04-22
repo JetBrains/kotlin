@@ -33,7 +33,7 @@
                 <version>${kotlin.version}</version>
                 <configuration>
                     <compilerPlugins>
-                        <plugin>kotlin-lombok</plugin>
+                        <plugin>lombok</plugin>
                     </compilerPlugins>
                 </configuration>
                 <executions>

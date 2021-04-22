@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.maven.*
 
 val LOMBOK_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.lombok"
 
-@Component(role = KotlinMavenPluginExtension::class, hint = "kotlin-lombok")
+@Component(role = KotlinMavenPluginExtension::class, hint = "lombok")
 class KotlinLombokMavenPluginExtension : KotlinMavenPluginExtension {
     @Requirement
     lateinit var logger: Logger

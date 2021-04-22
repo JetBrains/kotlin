@@ -30,11 +30,11 @@
                 <version>${kotlin.version}</version>
                 <configuration>
                     <compilerPlugins>
-                        <plugin>kotlin-lombok</plugin>
+                        <plugin>lombok</plugin>
                     </compilerPlugins>
 
                     <pluginOptions>
-                        <option>kotlin-lombok:config=lombok.config</option>
+                        <option>lombok:config=lombok.config</option>
                     </pluginOptions>
                 </configuration>
                 <executions>
