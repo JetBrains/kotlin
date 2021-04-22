@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
@@ -29,6 +30,9 @@ open class KotlinGradleFragmentInternal @Inject constructor(
 ) : KotlinGradleFragment {
 
     override fun getName(): String = fragmentName
+
+    final override val project: Project // overriding with final to avoid warnings
+        get() = super.project
 
     // TODO pull up to KotlinModuleFragment
     // FIXME apply to compilation
@@ -85,11 +89,10 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
         get() = project.configurations.getByName(apiConfigurationName).allDependencies.map { it.toModuleDependency(project) } // FIXME impl
 
-    override val kotlinSourceRoots: SourceDirectorySet by lazy {
+    override val kotlinSourceRoots: SourceDirectorySet =
         project.objects.sourceDirectorySet(
             "$fragmentName.kotlin", "Kotlin sources for fragment $fragmentName"
         )
-    }
 
     override val transitiveApiConfigurationName: String
         get() = disambiguateName("transitiveApi")

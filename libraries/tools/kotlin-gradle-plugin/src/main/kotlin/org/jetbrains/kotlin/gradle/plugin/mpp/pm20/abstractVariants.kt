@@ -27,9 +27,6 @@ abstract class KotlinGradleVariantInternal(
     override val fragmentName: String
 ) : KotlinGradleFragmentInternal(containingModule, fragmentName), KotlinGradleVariant {
 
-    final override val project: Project // overriding with final to avoid warnings
-        get() = super<KotlinGradleFragmentInternal>.project
-
     override val variantAttributes: Map<KotlinAttributeKey, String>
         get() = mapOf(KotlinPlatformTypeAttribute to kotlinPlatformTypeAttributeFromPlatform(platformType)) // TODO user attributes
 
