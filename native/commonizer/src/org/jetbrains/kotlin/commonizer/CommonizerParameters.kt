@@ -22,7 +22,7 @@ class CommonizerParameters(
 
 fun CommonizerParameters.getCommonModuleNames(): Set<String> {
     val supportedTargets = targetProviders.filterNonNull()
-    if (supportedTargets.size < 2) return emptySet() // too few targets
+    if (supportedTargets.size == 0) return emptySet() // Nothing to do
 
     val allModuleNames: List<Set<String>> = supportedTargets.toList().map { targetProvider ->
         targetProvider.modulesProvider.loadModuleInfos().mapTo(HashSet()) { it.name }

@@ -82,9 +82,6 @@ private fun merge(
     /* Nothing to merge */
     if (availableTrees.size == 0) return null
 
-    /* No propagation from leaves */
-    if (availableTrees.size == 1 && availableTrees.targets.single() is LeafCommonizerTarget) return null
-
     return mergeCirTree(storageManager, classifiers, availableTrees)
 }
 

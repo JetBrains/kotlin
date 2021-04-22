@@ -25,13 +25,6 @@ class CommonizerFacadeTest {
     )
 
     @Test
-    fun nothingToCommonize1() = doTestNothingToCommonize(
-        mapOf(
-            "target1" to listOf("foo")
-        )
-    )
-
-    @Test
     fun commonized1() = doTestSuccessfulCommonization(
         mapOf(
             "target1" to listOf("foo"),
@@ -44,6 +37,13 @@ class CommonizerFacadeTest {
         mapOf(
             "target1" to listOf("foo", "bar"),
             "target2" to listOf("bar", "foo")
+        )
+    )
+
+    @Test
+    fun commonized3() = doTestSuccessfulCommonization(
+        mapOf(
+            "target1" to listOf("foo")
         )
     )
 
