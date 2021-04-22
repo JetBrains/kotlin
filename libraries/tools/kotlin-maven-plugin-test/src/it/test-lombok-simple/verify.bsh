@@ -1,6 +1,4 @@
-import java.io.*;
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
-File file = new File(basedir, "target/test-lombok-simple-1.0-SNAPSHOT.jar");
-if (!file.exists() || !file.isFile()) {
-    throw new FileNotFoundException("Could not find generated JAR: " + file);
-}
+assertBuildLogHasLineThatContains("Applied plugin: 'kotlin-lombok'");
+assertFileExists("target/test-lombok-simple-1.0-SNAPSHOT.jar");

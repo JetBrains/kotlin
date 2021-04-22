@@ -1,0 +1,7 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLineThatContains("Applied plugin: 'kotlin-lombok'");
+assertFileExists("target/test-lombok-with-kapt-1.0-SNAPSHOT.jar");
+assertFileExists("target/kaptStubs/compile/lab2/SomeObj.java");
+assertFileExists("target/generated-sources/kapt/compile/lab2/SomeObjJsonAdapter.kt");
+
