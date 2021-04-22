@@ -367,8 +367,14 @@ object KotlinCompilerClient {
     }
 
 
-    private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, reportingTargets: DaemonReportingTargets): Boolean {
-        val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
+    private fun startDaemon(
+        compilerId: CompilerId,
+        daemonJVMOptions: DaemonJVMOptions,
+        daemonOptions: DaemonOptions,
+        reportingTargets: DaemonReportingTargets
+    ): Boolean {
+        val daemonJavaExecutable = compilerId.javaExecutable
+            ?: File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
         val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value ?: error("${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property} is not set!")
         val platformSpecificOptions = listOf(
                 // hide daemon window
@@ -380,7 +386,7 @@ object KotlinCompilerClient {
                 listOf("--illegal-access=permit")
             else emptyList()
         val args = listOf(
-                   javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
+                   daemonJavaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +
                    daemonJVMOptions.mappers.flatMap { it.toArgs("-") } +
                    javaIllegalAccessWorkaround +
