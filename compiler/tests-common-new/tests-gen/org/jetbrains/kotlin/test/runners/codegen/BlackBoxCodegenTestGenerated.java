@@ -10609,6 +10609,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
+                @TestMetadata("multifileBridge.kt")
+                public void testMultifileBridge() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/multifileBridge.kt");
+                }
+
+                @Test
                 @TestMetadata("overrideSuspendFun.kt")
                 public void testOverrideSuspendFun() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun.kt");

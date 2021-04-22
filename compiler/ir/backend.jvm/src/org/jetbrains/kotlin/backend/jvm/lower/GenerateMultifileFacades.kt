@@ -261,6 +261,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
         }
     }
 
+    function.copyAttributes(target)
     function.copyAnnotationsFrom(target)
     function.copyParameterDeclarationsFrom(target)
     function.returnType = target.returnType.substitute(target.typeParameters, function.typeParameters.map { it.defaultType })
