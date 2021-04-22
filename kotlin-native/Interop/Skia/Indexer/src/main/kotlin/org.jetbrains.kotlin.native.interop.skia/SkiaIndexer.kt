@@ -23,28 +23,44 @@ class SkiaNativeIndexImpl(library: NativeLibrary, verbose: Boolean) : NativeInde
         }
         return super.convertType(type, typeAttributes)
     }
-
-
+    
     // Skip functions which parameter or return type is TemplateRef
-    override fun isFuncDeclEligible(cursor: CValue<CXCursor>): Boolean {
-        var ret = true
-        visitChildren(cursor) { childCursor, _ ->
-            when (childCursor.kind) {
-                CXCursorKind.CXCursor_TemplateRef ->
-                    if (childCursor.spelling.startsWith("sk_sp")) {
-                        CXChildVisitResult.CXChildVisit_Recurse
-                    } else {
-                        ret = false
-                        CXChildVisitResult.CXChildVisit_Break
-                    }
-                else -> CXChildVisitResult.CXChildVisit_Recurse
-            }
-        }
-        return ret
-    }
+    override fun isFuncDeclEligible(cursor: CValue<CXCursor>): Boolean =
+            cursor.containsOnlySkiaSharedPointerTemplates()
 
     override fun String.isUnknownTemplate() = // TODO: this is a hack.
             this.isCppTemplate && !this.isSkiaSharedPointer
+}
+
+fun CValue<CXCursor>.containsTemplates(): Boolean {
+    var ret = false
+    visitChildren(this) { childCursor, _ ->
+        when (childCursor.kind) {
+            CXCursorKind.CXCursor_TemplateRef -> {
+                ret = true
+                CXChildVisitResult.CXChildVisit_Break
+            }
+            else -> CXChildVisitResult.CXChildVisit_Recurse
+        }
+    }
+    return ret
+}
+
+fun CValue<CXCursor>.containsOnlySkiaSharedPointerTemplates(): Boolean {
+    var ret = true
+    visitChildren(this) { childCursor, _ ->
+        when (childCursor.kind) {
+            CXCursorKind.CXCursor_TemplateRef ->
+                if (childCursor.spelling == "sk_sp" && !childCursor.containsTemplates()) {
+                    CXChildVisitResult.CXChildVisit_Continue
+                } else {
+                    ret = false
+                    CXChildVisitResult.CXChildVisit_Break
+                }
+            else -> CXChildVisitResult.CXChildVisit_Recurse
+        }
+    }
+    return ret
 }
 
 val StructDecl.isSkiaSharedPointer: Boolean
