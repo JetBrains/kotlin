@@ -28,6 +28,10 @@ object ExtendedExpressionCheckers : ExpressionCheckers() {
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = setOf(
             EmptyRangeChecker,
+        )
+
+    override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
+        get() = setOf(
             RedundantSingleExpressionStringTemplateChecker,
         )
 }

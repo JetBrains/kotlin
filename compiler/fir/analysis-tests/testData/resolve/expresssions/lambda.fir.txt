@@ -17,11 +17,11 @@ FILE: lambda.kt
         }
         )
         R|/itIs|(<L> = itIs@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
-            ^ <strcat>(String(this is ), R|<local>/it|.R|kotlin/Any.toString|(), String( test))
+            ^ <strcat>(String(this is ), R|<local>/it|, String( test))
         }
         )
         R|/multipleArgs|(<L> = multipleArgs@fun <anonymous>(a: R|kotlin/String|, b: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
-            ^ <strcat>(String(This is test of ), R|<local>/a|.R|kotlin/Any.toString|(), String(, ), R|<local>/b|.R|kotlin/Any.toString|())
+            ^ <strcat>(String(This is test of ), R|<local>/a|, String(, ), R|<local>/b|)
         }
         )
         lval s: R|kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {

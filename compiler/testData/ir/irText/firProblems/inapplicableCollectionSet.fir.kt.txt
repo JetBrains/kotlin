@@ -17,7 +17,7 @@ class Flaf {
     var result: Flaf? = <this>.<get-INSTANCES>().get(key = javaName)
     when {
       EQEQ(arg0 = result, arg1 = null) -> { // BLOCK
-        result = <this>.<get-INSTANCES>().get(key = javaName.toString() + "_alternative")
+        result = <this>.<get-INSTANCES>().get(key = javaName + "_alternative")
         when {
           EQEQ(arg0 = result, arg1 = null) -> { // BLOCK
             result = Flaf(javaName = javaName)

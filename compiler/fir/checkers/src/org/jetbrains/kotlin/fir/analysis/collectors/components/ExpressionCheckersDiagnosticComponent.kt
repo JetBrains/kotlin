@@ -70,7 +70,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(stringConcatenationCall, data, reporter)
+        checkers.allStringConcatenationCallCheckers.check(stringConcatenationCall, data, reporter)
     }
 
     override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: CheckerContext) {

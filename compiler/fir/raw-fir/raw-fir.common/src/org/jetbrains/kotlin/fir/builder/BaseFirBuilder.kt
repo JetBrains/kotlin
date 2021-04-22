@@ -402,16 +402,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         }
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                             hasExpressions = true
-                            val firExpression = entry.convertTemplateEntry("Incorrect template argument")
-                            val source = firExpression.source?.fakeElement(FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry)
-                            buildFunctionCall {
-                                this.source = source
-                                explicitReceiver = firExpression
-                                calleeReference = buildSimpleNamedReference {
-                                    this.source = source
-                                    name = Name.identifier("toString")
-                                }
-                            }
+                            entry.convertTemplateEntry("Incorrect template argument")
                         }
                         else -> {
                             hasExpressions = true

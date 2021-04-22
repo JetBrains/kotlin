@@ -11,7 +11,7 @@ FILE: const.kt
         public get(): R|kotlin/String|
     public final const val f: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(2)).R|kotlin/Int.times|(Int(3)).R|kotlin/Int.div|(Int(4)).R|kotlin/Int.rem|(Int(5)).R|kotlin/Int.minus|(Int(1))
         public get(): R|kotlin/Int|
-    public final const val g: R|kotlin/String| = <strcat>(String(string ), R|/f|.R|kotlin/Any.toString|())
+    public final const val g: R|kotlin/String| = <strcat>(String(string ), R|/f|)
         public get(): R|kotlin/String|
     public final const val h: R|kotlin/String| = String(string).R|kotlin/String.plus|(R|/g|)
         public get(): R|kotlin/String|

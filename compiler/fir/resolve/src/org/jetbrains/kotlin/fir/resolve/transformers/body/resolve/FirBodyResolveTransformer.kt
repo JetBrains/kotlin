@@ -107,6 +107,10 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformFunctionCall(functionCall, data)
     }
 
+    override fun transformStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: ResolutionMode): FirStatement {
+        return expressionsTransformer.transformStringConcatenationCall(stringConcatenationCall, data)
+    }
+
     override fun transformCallableReferenceAccess(
         callableReferenceAccess: FirCallableReferenceAccess,
         data: ResolutionMode

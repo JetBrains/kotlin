@@ -31,6 +31,7 @@ fun main(args: Array<String>) {
         alias<FirSafeCallExpression>("SafeCallExpressionChecker")
         alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
         alias<FirAnonymousFunction>("AnonymousFunctionAsExpressionChecker")
+        alias<FirStringConcatenationCall>("StringConcatenationCallChecker")
     }
 
     val declarationPackage = "org.jetbrains.kotlin.fir.analysis.checkers.declaration"

@@ -843,6 +843,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         callNode.mergeIncomingFlow()
     }
 
+    fun exitStringConcatenationCall(call: FirStringConcatenationCall) {
+        val (callNode, unionNode) = graphBuilder.exitStringConcatenationCall(call)
+        unionNode?.let { unionFlowFromArguments(it) }
+        callNode.mergeIncomingFlow()
+    }
+
 
     private fun unionFlowFromArguments(node: UnionFunctionCallArgumentsNode) {
         node.flow = logicSystem.unionFlow(node.previousNodes.map { it.flow }).also {

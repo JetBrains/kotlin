@@ -5,7 +5,7 @@ class X {}
 val s = java
 val ss = System
 val sss = X
-val x = "${<!UNRESOLVED_REFERENCE!>System<!>}"
+val x = "${System}"
 val xs = java.lang
 val xss = java.lang.System
 val xsss = foo.X

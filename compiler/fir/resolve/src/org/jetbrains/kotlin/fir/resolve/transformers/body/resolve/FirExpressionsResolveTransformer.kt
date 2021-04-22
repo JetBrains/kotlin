@@ -979,6 +979,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return arrayOfCall
     }
 
+    override fun transformStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: ResolutionMode): FirStatement {
+        dataFlowAnalyzer.enterCall()
+        stringConcatenationCall.transformChildren(transformer, ResolutionMode.ContextIndependent)
+        dataFlowAnalyzer.exitStringConcatenationCall(stringConcatenationCall)
+        return stringConcatenationCall
+    }
+
     // ------------------------------------------------------------------------------------------------
 
     internal fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {

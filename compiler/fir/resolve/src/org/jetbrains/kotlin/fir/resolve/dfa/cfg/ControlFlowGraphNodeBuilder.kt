@@ -131,6 +131,9 @@ fun ControlFlowGraphBuilder.createCallableReferenceNode(fir: FirCallableReferenc
 fun ControlFlowGraphBuilder.createDelegatedConstructorCallNode(fir: FirDelegatedConstructorCall): DelegatedConstructorCallNode =
     DelegatedConstructorCallNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createStringConcatenationCallNode(fir: FirStringConcatenationCall): StringConcatenationCallNode =
+    StringConcatenationCallNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createVariableAssignmentNode(fir: FirVariableAssignment): VariableAssignmentNode =
     VariableAssignmentNode(currentGraph, fir, levelCounter, createId())
 

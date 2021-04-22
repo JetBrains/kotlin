@@ -989,6 +989,14 @@ class ControlFlowGraphBuilder {
         return node to unionNode
     }
 
+    fun exitStringConcatenationCall(call: FirStringConcatenationCall): Pair<StringConcatenationCallNode, UnionFunctionCallArgumentsNode?> {
+        levelCounter--
+        val node = createStringConcatenationCallNode(call)
+        val (kind, unionNode) = processUnionOfArguments(node, true)
+        addNewSimpleNode(node, preferredKind = kind)
+        return node to unionNode
+    }
+
     fun exitConstExpression(constExpression: FirConstExpression<*>): ConstExpressionNode {
         return createConstExpressionNode(constExpression).also { addNewSimpleNode(it) }
     }

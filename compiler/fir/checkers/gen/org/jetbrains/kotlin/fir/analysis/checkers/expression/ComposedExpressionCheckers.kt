@@ -43,6 +43,8 @@ internal class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _equalityOperatorCallCheckers
     override val anonymousFunctionAsExpressionCheckers: Set<FirAnonymousFunctionAsExpressionChecker>
         get() = _anonymousFunctionAsExpressionCheckers
+    override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
+        get() = _stringConcatenationCallCheckers
 
     private val _basicExpressionCheckers: MutableSet<FirBasicExpressionChecker> = mutableSetOf()
     private val _qualifiedAccessCheckers: MutableSet<FirQualifiedAccessChecker> = mutableSetOf()
@@ -59,6 +61,7 @@ internal class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _safeCallExpressionCheckers: MutableSet<FirSafeCallExpressionChecker> = mutableSetOf()
     private val _equalityOperatorCallCheckers: MutableSet<FirEqualityOperatorCallChecker> = mutableSetOf()
     private val _anonymousFunctionAsExpressionCheckers: MutableSet<FirAnonymousFunctionAsExpressionChecker> = mutableSetOf()
+    private val _stringConcatenationCallCheckers: MutableSet<FirStringConcatenationCallChecker> = mutableSetOf()
 
     @CheckersComponentInternal
     internal fun register(checkers: ExpressionCheckers) {
@@ -77,5 +80,6 @@ internal class ComposedExpressionCheckers : ExpressionCheckers() {
         _safeCallExpressionCheckers += checkers.safeCallExpressionCheckers
         _equalityOperatorCallCheckers += checkers.equalityOperatorCallCheckers
         _anonymousFunctionAsExpressionCheckers += checkers.anonymousFunctionAsExpressionCheckers
+        _stringConcatenationCallCheckers += checkers.stringConcatenationCallCheckers
     }
 }

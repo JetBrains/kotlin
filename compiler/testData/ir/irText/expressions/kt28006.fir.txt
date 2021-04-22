@@ -60,15 +60,13 @@ FILE fqName:<root> fileName:/kt28006.kt
         STRING_CONCATENATION type=kotlin.String
           CONST String type=kotlin.String value="\uD83E"
           CONST String type=kotlin.String value="\uDD17"
-          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-            $this: GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+          GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Int): kotlin.String declared in <root>'
         STRING_CONCATENATION type=kotlin.String
-          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-            $this: GET_VAR 'x: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
+          GET_VAR 'x: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
           CONST String type=kotlin.String value="\uD83E"
           CONST String type=kotlin.String value="\uDD17"
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
@@ -76,9 +74,7 @@ FILE fqName:<root> fileName:/kt28006.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Int): kotlin.String declared in <root>'
         STRING_CONCATENATION type=kotlin.String
-          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-            $this: GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
+          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
           CONST String type=kotlin.String value="\uD83E"
           CONST String type=kotlin.String value="\uDD17"
-          CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-            $this: GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
+          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null

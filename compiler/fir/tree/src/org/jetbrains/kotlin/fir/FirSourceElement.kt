@@ -136,9 +136,6 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // where a + 2 will have a fake source
     object DesugaredCompoundAssignment : FirFakeSourceElementKind()
 
-    //"$a" --> a.toString() where toString call source is marked as a fake one
-    object GeneratedToStringCallOnTemplateEntry : FirFakeSourceElementKind()
-
     // `a > b` will be wrapped in FirComparisonExpression
     // with real source which points to initial `a > b` expression
     // and inner FirFunctionCall will refer to a fake source

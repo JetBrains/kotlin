@@ -23,14 +23,14 @@ const val testConst4: String
   get
 
 fun test1(x: Int): String {
-  return "\uD83E" + "\uDD17" + x.toString()
+  return "\uD83E" + "\uDD17" + x
 }
 
 fun test2(x: Int): String {
-  return x.toString() + "\uD83E" + "\uDD17"
+  return x + "\uD83E" + "\uDD17"
 }
 
 fun test3(x: Int): String {
-  return x.toString() + "\uD83E" + "\uDD17" + x.toString()
+  return x + "\uD83E" + "\uDD17" + x
 }
 

@@ -295,6 +295,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitStringConcatenationCallNode(node: StringConcatenationCallNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitThrowExceptionNode(node: ThrowExceptionNode, data: D): R {
         return visitNode(node, data)
     }

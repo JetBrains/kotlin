@@ -126,8 +126,7 @@ FILE fqName:<root> fileName:/breakContinueInWhen.kt
               CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
                 $this: GET_VAR 'var s: kotlin.String [var] declared in <root>.testContinueDoWhile' type=kotlin.String origin=null
                 other: STRING_CONCATENATION type=kotlin.String
-                  CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                    $this: GET_VAR 'var k: kotlin.Int [var] declared in <root>.testContinueDoWhile' type=kotlin.Int origin=null
+                  GET_VAR 'var k: kotlin.Int [var] declared in <root>.testContinueDoWhile' type=kotlin.Int origin=null
                   CONST String type=kotlin.String value=";"
           condition: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
             arg0: GET_VAR 'var k: kotlin.Int [var] declared in <root>.testContinueDoWhile' type=kotlin.Int origin=null

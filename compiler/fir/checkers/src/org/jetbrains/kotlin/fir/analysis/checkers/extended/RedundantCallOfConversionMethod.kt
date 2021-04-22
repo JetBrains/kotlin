@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 object RedundantCallOfConversionMethod : FirQualifiedAccessChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall) return
-        if (expression.source?.kind == FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
         val functionName = expression.calleeReference.name.asString()
         val qualifiedType = targetClassMap[functionName] ?: return
 

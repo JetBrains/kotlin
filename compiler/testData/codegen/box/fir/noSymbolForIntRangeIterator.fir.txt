@@ -87,10 +87,9 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
                                   CALL 'public final fun appendLine (value: kotlin.String?): java.lang.StringBuilder [inline] declared in kotlin.text.StringsKt' type=java.lang.StringBuilder origin=null
                                     $receiver: GET_VAR '<this>: java.lang.StringBuilder declared in <root>.test.localFunc.<anonymous>' type=java.lang.StringBuilder origin=null
                                     value: STRING_CONCATENATION type=kotlin.String
-                                      CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                                        $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MUL
-                                          $this: GET_VAR 'val i: kotlin.Int [val] declared in <root>.test.localFunc' type=kotlin.Int origin=null
-                                          other: GET_VAR 'val j: kotlin.Int [val] declared in <root>.test.localFunc.<anonymous>' type=kotlin.Int origin=null
+                                      CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MUL
+                                        $this: GET_VAR 'val i: kotlin.Int [val] declared in <root>.test.localFunc' type=kotlin.Int origin=null
+                                        other: GET_VAR 'val j: kotlin.Int [val] declared in <root>.test.localFunc.<anonymous>' type=kotlin.Int origin=null
                   CALL 'public final fun takeString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     s: GET_VAR 'val s: kotlin.String [val] declared in <root>.test.localFunc' type=kotlin.String origin=null
       CALL 'local final fun localFunc (): kotlin.Unit declared in <root>.test' type=kotlin.Unit origin=null
@@ -108,5 +107,4 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: STRING_CONCATENATION type=kotlin.String
               CONST String type=kotlin.String value="Fail: "
-              CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                $this: CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+              CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
