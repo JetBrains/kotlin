@@ -43,13 +43,13 @@ inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
 
 inline val FirCall.argument: FirExpression get() = argumentList.arguments.first()
 
-inline val FirCall.resolvedArgumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
+inline val FirCall.resolvedArgumentMapping: Map<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
         is FirResolvedArgumentList -> argumentList.mapping
         else -> null
     }
 
-inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
+inline val FirCall.argumentMapping: Map<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
         is FirResolvedArgumentList -> argumentList.mapping
         is FirPartiallyResolvedArgumentList -> argumentList.mapping

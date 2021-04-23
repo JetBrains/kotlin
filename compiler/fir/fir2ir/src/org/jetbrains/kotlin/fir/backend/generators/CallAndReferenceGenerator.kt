@@ -529,7 +529,7 @@ class CallAndReferenceGenerator(
     }
 
     private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
-        argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>,
+        argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
         substitutor: ConeSubstitutor,
         annotationMode: Boolean
