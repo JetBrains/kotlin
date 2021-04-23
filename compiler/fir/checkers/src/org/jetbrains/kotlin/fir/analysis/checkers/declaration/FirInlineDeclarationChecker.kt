@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -196,7 +197,8 @@ object FirInlineDeclarationChecker : FirMemberDeclarationChecker() {
             context: CheckerContext
         ) {
             if (calledDeclaration == null) return
-            val calledFunEffectiveVisibility = calledDeclaration.effectiveVisibility.let {
+            val recordedEffectiveVisibility = calledDeclaration.publishedApiEffectiveVisibility ?: calledDeclaration.effectiveVisibility
+            val calledFunEffectiveVisibility = recordedEffectiveVisibility.let {
                 if (it == EffectiveVisibility.Local) {
                     EffectiveVisibility.Public
                 } else {

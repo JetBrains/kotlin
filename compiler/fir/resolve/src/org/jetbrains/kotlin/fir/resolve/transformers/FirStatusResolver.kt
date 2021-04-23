@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.StandardClassIds
 
 class FirStatusResolver(
     val session: FirSession,
@@ -172,6 +175,22 @@ class FirStatusResolver(
             containingClass?.symbol?.toLookupTag(), forClass = declaration is FirClass<*>
         )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
+        val annotations = ((containingProperty ?: declaration) as? FirAnnotatedDeclaration)?.annotations ?: emptyList()
+        if (annotations.any { it.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == StandardClassIds.PublishedApi }) {
+            val publishedApiSelfEffectiveVisibility = visibility.toEffectiveVisibility(
+                containingClass?.symbol?.toLookupTag(), forClass = declaration is FirClass<*>, ownerIsPublishedApi = true
+            )
+            val parentPublishedEffectiveVisibility = when {
+                containingProperty != null -> containingProperty.publishedApiEffectiveVisibility
+                containingClass is FirRegularClass -> containingClass.publishedApiEffectiveVisibility
+                else -> null
+            } ?: parentEffectiveVisibility
+            declaration.publishedApiEffectiveVisibility = parentPublishedEffectiveVisibility.lowerBound(
+                publishedApiSelfEffectiveVisibility,
+                session.typeContext
+            )
+        }
+
         return status.resolved(visibility, modality, effectiveVisibility)
     }
 
@@ -243,3 +262,6 @@ private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {
         else -> true
     }
 }
+
+private object PublishedApiEffectiveVisibilityKey : FirDeclarationDataKey()
+var FirDeclaration.publishedApiEffectiveVisibility: EffectiveVisibility? by FirDeclarationDataRegistry.data(PublishedApiEffectiveVisibilityKey)

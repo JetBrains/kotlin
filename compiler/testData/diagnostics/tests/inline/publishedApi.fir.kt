@@ -1,13 +1,13 @@
 // !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 inline fun call(a: A) {
-    a.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>test<!>()
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publishedTopLevel<!>()
+    a.test()
+    publishedTopLevel()
 
-    a.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publishedVar<!>
-    a.publishedVar <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>=<!> 1
+    a.publishedVar
+    a.publishedVar = 1
 
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publishedVarTopLevel<!>
-    publishedVarTopLevel <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>=<!> 1
+    publishedVarTopLevel
+    publishedVarTopLevel = 1
 }
 
 inline var inlineVar: Int

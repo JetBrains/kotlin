@@ -110,6 +110,8 @@ object StandardClassIds {
 
     val FlexibleNullability = ClassId(FqName("kotlin.internal.ir"), Name.identifier("FlexibleNullability"))
     val EnhancedNullability = ClassId(FqName("kotlin.jvm.internal"), Name.identifier("EnhancedNullability"))
+
+    val PublishedApi = "PublishedApi".baseId()
 }
 
 private fun <K, V> Map<K, V>.inverseMap() = entries.associate { (k, v) -> v to k }

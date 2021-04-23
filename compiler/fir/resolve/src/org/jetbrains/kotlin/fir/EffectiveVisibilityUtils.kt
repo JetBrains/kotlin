@@ -22,16 +22,16 @@ fun Visibility.toEffectiveVisibility(
 fun Visibility.toEffectiveVisibility(
     owner: ConeClassLikeLookupTag?,
     forClass: Boolean = false,
-    checkPublishedApi: Boolean = false
+    ownerIsPublishedApi: Boolean = false
 ): EffectiveVisibility {
     customEffectiveVisibility()?.let { return it }
     return when (this.normalize()) {
         Visibilities.PrivateToThis, Visibilities.InvisibleFake -> EffectiveVisibility.PrivateInClass
         Visibilities.Private -> if (owner == null && forClass) EffectiveVisibility.PrivateInFile else EffectiveVisibility.PrivateInClass
         Visibilities.Protected -> EffectiveVisibility.Protected(owner)
-        Visibilities.Internal -> when (!checkPublishedApi /*|| !owner.isPublishedApi()*/) { // TODO
-            true -> EffectiveVisibility.Internal
-            false -> EffectiveVisibility.Public
+        Visibilities.Internal -> when (ownerIsPublishedApi) {
+            true -> EffectiveVisibility.Public
+            false -> EffectiveVisibility.Internal
         }
         Visibilities.Public -> EffectiveVisibility.Public
         Visibilities.Local -> EffectiveVisibility.Local
