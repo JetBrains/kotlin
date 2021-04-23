@@ -1,9 +1,10 @@
+// FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-100
  * MAIN LINK: expressions, constant-literals, integer-literals, decimal-integer-literals -> paragraph 1 -> sentence 2
- * NUMBER: 3
+ * NUMBER: 2
  * DESCRIPTION: Integer literals with an underscore in the first position (it's considered as identifiers).
  */
 
@@ -20,10 +21,10 @@ val value_3 = <!UNRESOLVED_REFERENCE!>_____________0000<!>
 val value_4 = <!UNRESOLVED_REFERENCE!>_______________________________________________________________________________________________________________________________________________________0<!>
 
 // TESTCASE NUMBER: 5
-val value_5 = <!UNRESOLVED_REFERENCE!>____________________________________________________<!>
+val value_5 = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>____________________________________________________<!>
 
 // TESTCASE NUMBER: 6
-val value_6 = <!UNRESOLVED_REFERENCE!>_<!>
+val value_6 = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>
 
 // TESTCASE NUMBER: 7
 val value_7 = <!UNRESOLVED_REFERENCE!>_0_<!>

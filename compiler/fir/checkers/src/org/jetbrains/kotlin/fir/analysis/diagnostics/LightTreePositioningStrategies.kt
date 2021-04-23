@@ -644,6 +644,28 @@ object LightTreePositioningStrategies {
     }
 
     val RESERVED_UNDERSCORE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.RETURN) {
+                val parent = tree.getParent(node)
+                if (parent != null) {
+                    val label = tree.findDescendantByType(parent, KtNodeTypes.LABEL)
+                    if (label != null) {
+                        return markElement(label, startOffset, endOffset - 1, tree, node)
+                    }
+                }
+            }
+
+            val descendants =
+                tree.collectDescendantsOfType(node, KtTokens.IDENTIFIER) { descendant -> descendant.toString().all { it == '_' } };
+            if (descendants.isNotEmpty())
+                return descendants.map { markSingleElement(it, it, startOffset, endOffset, tree, node) }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
     }
 }
 
@@ -856,6 +878,35 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findFirstDescendant(
     getChildren(node, childrenRef)
     return childrenRef.get()?.firstOrNull { it != null && predicate(it) }
         ?: childrenRef.get()?.firstNotNullResult { child -> child?.let { findFirstDescendant(it, predicate) } }
+}
+
+fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantsOfType(
+    node: LighterASTNode, type: IElementType,
+    predicate: (LighterASTNode) -> Boolean = { true }
+): List<LighterASTNode> {
+    val result = mutableListOf<LighterASTNode>()
+
+    fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantByType(node: LighterASTNode) {
+        val childrenRef = Ref<Array<LighterASTNode?>>()
+        getChildren(node, childrenRef)
+
+        val childrenRefGet = childrenRef.get()
+        if (childrenRefGet != null) {
+            for (child in childrenRefGet) {
+                if (child?.tokenType == type && predicate(child)) {
+                    result.add(child)
+                }
+
+                if (child != null) {
+                    collectDescendantByType(child)
+                }
+            }
+        }
+    }
+
+    collectDescendantByType(node)
+
+    return result
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: TokenSet): LighterASTNode? {

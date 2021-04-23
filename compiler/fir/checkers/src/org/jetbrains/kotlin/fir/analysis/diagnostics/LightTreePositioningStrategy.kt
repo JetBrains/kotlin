@@ -46,11 +46,22 @@ fun markRange(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     originalNode: LighterASTNode
 ): List<TextRange> {
+    return listOf(markSingleElement(from, to, startOffset, endOffset, tree, originalNode))
+}
+
+fun markSingleElement(
+    from: LighterASTNode,
+    to: LighterASTNode,
+    startOffset: Int,
+    endOffset: Int,
+    tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    originalNode: LighterASTNode
+): TextRange {
     val betterFrom = from.nonFillerFirstChildOrSelf(tree)
     val betterTo = to.nonFillerLastChildOrSelf(tree)
     val startDelta = tree.getStartOffset(betterFrom) - tree.getStartOffset(originalNode)
     val endDelta = tree.getEndOffset(betterTo) - tree.getEndOffset(originalNode)
-    return listOf(TextRange(startDelta + startOffset, endDelta + endOffset))
+    return TextRange(startDelta + startOffset, endDelta + endOffset)
 }
 
 private val DOC_AND_COMMENT_TOKENS = setOf(

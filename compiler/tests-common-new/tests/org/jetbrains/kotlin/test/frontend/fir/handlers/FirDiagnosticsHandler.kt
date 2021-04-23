@@ -74,7 +74,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             val firFile = info.firFiles[file] ?: continue
             var diagnostics = diagnosticsPerFile[firFile] ?: continue
             if (AdditionalFilesDirectives.CHECK_TYPE in module.directives) {
-                diagnostics = diagnostics.filter { it.factory.name != Errors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
+                diagnostics = diagnostics.filter { it.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
             }
             val diagnosticsMetadataInfos = diagnostics.mapNotNull { diagnostic ->
                 if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name)) return@mapNotNull null

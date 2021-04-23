@@ -1,6 +1,7 @@
 package
 
 public val ______: _<kotlin.Int>
+public var p: kotlin.Int?
 public val something: kotlin.Any?
 public val something2: kotlin.Any?
 public fun __(/*0*/ ___: kotlin.Int, /*1*/ y: _<kotlin.Int>?): kotlin.Int
@@ -51,3 +52,4 @@ public final class _</*0*/ ________> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
