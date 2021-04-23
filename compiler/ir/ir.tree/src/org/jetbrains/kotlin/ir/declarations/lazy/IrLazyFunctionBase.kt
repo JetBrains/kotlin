@@ -25,30 +25,24 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
             descriptor.initialSignatureDescriptor?.takeIf { it != descriptor }?.original?.let(stubGenerator::generateFunctionStub)
         }
 
-    fun createValueParameters(): ReadWriteProperty<Any?, List<IrValueParameter>> =
-        lazyVar(stubGenerator.lock) {
-            typeTranslator.buildWithScope(this) {
-                descriptor.valueParameters.mapTo(arrayListOf()) {
-                    stubGenerator.generateValueParameterStub(it).apply { parent = this@IrLazyFunctionBase }
-                }
+    fun createValueParameters(): List<IrValueParameter> =
+        typeTranslator.buildWithScope(this) {
+            descriptor.valueParameters.mapTo(arrayListOf()) {
+                stubGenerator.generateValueParameterStub(it).apply { parent = this@IrLazyFunctionBase }
             }
         }
 
     fun createReceiverParameter(
         parameter: ReceiverParameterDescriptor?,
         functionDispatchReceiver: Boolean = false,
-    ): ReadWriteProperty<Any?, IrValueParameter?> =
-        lazyVar(stubGenerator.lock) {
-            if (functionDispatchReceiver && stubGenerator.extensions.isStaticFunction(descriptor)) null
-            else typeTranslator.buildWithScope(this) {
-                parameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }
-            }
+    ): IrValueParameter? =
+        if (functionDispatchReceiver && stubGenerator.extensions.isStaticFunction(descriptor)) null
+        else typeTranslator.buildWithScope(this) {
+            parameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }
         }
 
-    fun createReturnType(): ReadWriteProperty<Any?, IrType> =
-        lazyVar(stubGenerator.lock) {
-            typeTranslator.buildWithScope(this) {
-                descriptor.returnType!!.toIrType()
-            }
+    fun createReturnType(): IrType =
+        typeTranslator.buildWithScope(this) {
+            descriptor.returnType!!.toIrType()
         }
 }

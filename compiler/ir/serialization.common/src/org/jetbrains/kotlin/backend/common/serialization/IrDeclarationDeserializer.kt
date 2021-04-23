@@ -227,7 +227,7 @@ class IrDeclarationDeserializer(
                 coordinates.startOffset, coordinates.endOffset,
                 deserializeIrDeclarationOrigin(proto.originName), proto.flags
             )
-            result.annotations += deserializeAnnotations(proto.annotationList)
+            result.annotations = deserializeAnnotations(proto.annotationList)
             if (!skipMutableState) {
                 result.parent = currentParent
             }
@@ -327,7 +327,7 @@ class IrDeclarationDeserializer(
                     withExternalValue(isExternal) {
                         proto.declarationList
                             .filterNot { isSkippableFakeOverride(it, this) }
-                            .mapTo(declarations) { deserializeDeclaration(it) }
+                            .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto) }
                     }
 
                     thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
@@ -518,13 +518,15 @@ class IrDeclarationDeserializer(
 
                     withBodyGuard {
                         valueParameters = deserializeValueParameters(proto.valueParameterList)
-                        if (proto.hasDispatchReceiver())
-                            dispatchReceiverParameter = deserializeIrValueParameter(proto.dispatchReceiver, -1)
-                        if (proto.hasExtensionReceiver())
-                            extensionReceiverParameter = deserializeIrValueParameter(proto.extensionReceiver, -1)
-                        if (proto.hasBody()) {
-                            body = deserializeStatementBody(proto.body) as IrBody
-                        }
+                        dispatchReceiverParameter =
+                            if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver, -1)
+                            else null
+                        extensionReceiverParameter =
+                            if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver, -1)
+                            else null
+                        body =
+                            if (proto.hasBody()) deserializeStatementBody(proto.body) as IrBody
+                            else null
                     }
                 }
             }
