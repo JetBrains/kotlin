@@ -174,6 +174,6 @@ object MissingIteratorExclExclFixFactory : KotlinSingleIntentionActionFactory() 
             else -> return null
         }
 
-        return AddExclExclCallFix(element)
+        return AddExclExclCallFix(element, checkImplicitReceivers = false)
     }
 }
