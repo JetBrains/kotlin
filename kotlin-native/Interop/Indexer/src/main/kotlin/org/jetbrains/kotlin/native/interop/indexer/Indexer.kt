@@ -868,16 +868,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             return
         }
 
-        if (!cursor.isRecursivelyCxxPublic()) {
+        if (library.language == Language.CPP && !cursor.isRecursivelyCxxPublic()) {
             // c++ : skip anon namespaces, static functions and variables and private inner classes
             return
         }
-        /**
-         * TODO It may be better to look at CXTypeKind instead of CXIdxEntity to distinguish C++ classes from templates
-         * C++ templates are also CXIdxEntity_CXXClass but CXCursor_ClassTemplate,
-         * while C++ class is CXCursor_ClassDecl
-         * The same for CXCursor_FunctionDecl vs CXCursor_FunctionTemplate
-         */
+
         when (kind) {
             CXIdxEntity_Struct, CXIdxEntity_Union, CXIdxEntity_CXXClass -> {
                 if (entityName == null) {
