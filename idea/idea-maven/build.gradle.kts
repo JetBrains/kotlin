@@ -65,6 +65,7 @@ dependencies {
     testRuntime(project(":plugins:parcelize:parcelize-ide"))
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:lombok:lombok-ide-plugin"))
 
     testRuntime(intellijDep())
     // TODO: the order of the plugins matters here, consider avoiding order-dependency

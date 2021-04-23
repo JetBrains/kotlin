@@ -28,6 +28,7 @@ dependencies {
     testRuntime(project(":kotlinx-serialization-ide-plugin")) { isTransitive = false }
     testRuntime(project(":plugins:parcelize:parcelize-compiler"))
     testRuntime(project(":plugins:parcelize:parcelize-ide")) { isTransitive = false }
+    testRuntime(project(":plugins:lombok:lombok-ide-plugin"))
 
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
 

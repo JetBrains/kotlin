@@ -37,6 +37,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-gradle-statistics"))
     testRuntimeOnly(project(":kotlin-scripting-idea"))
     testRuntimeOnly(project(":plugins:parcelize:parcelize-ide"))
+    testRuntimeOnly(project(":plugins:lombok:lombok-ide-plugin"))
     testRuntimeOnly(intellijRuntimeAnnotations())
 
 

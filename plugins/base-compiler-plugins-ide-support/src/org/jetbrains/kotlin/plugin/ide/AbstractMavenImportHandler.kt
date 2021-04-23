@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.lombok.ide
+package org.jetbrains.kotlin.plugin.ide
 
 import org.jdom.Element
 import org.jdom.Text
@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.idea.maven.MavenProjectImportHandler
 import org.jetbrains.kotlin.idea.maven.KotlinMavenImporter.Companion.KOTLIN_PLUGIN_GROUP_ID
 import org.jetbrains.kotlin.idea.maven.KotlinMavenImporter.Companion.KOTLIN_PLUGIN_ARTIFACT_ID
 import java.io.File
-import org.jetbrains.kotlin.lombok.ide.CompilerPluginSetup.PluginOption
+import org.jetbrains.kotlin.plugin.ide.CompilerPluginSetup.PluginOption
 
 abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
     abstract val compilerPluginId: String
     abstract val pluginName: String
-//    abstract val mavenPluginArtifactName: String
     abstract val pluginJarFileFromIdea: File
 
     override fun invoke(facet: KotlinFacet, mavenProject: MavenProject) {

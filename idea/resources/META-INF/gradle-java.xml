@@ -17,6 +17,7 @@
         <projectResolve implementation="org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension" order="last"/>
         <projectResolve implementation="org.jetbrains.kotlin.allopen.ide.AllOpenProjectResolverExtension" order="last"/>
         <projectResolve implementation="org.jetbrains.kotlin.noarg.ide.NoArgProjectResolverExtension" order="last"/>
+        <projectResolve implementation="org.jetbrains.kotlin.lombok.ide.LombokGradleProjectResolverExtension" order="last"/>
         <projectResolve implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverProjectResolverExtension" order="last"/>
     </extensions>
 
@@ -47,6 +48,7 @@
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.scripting.idea.plugin.ScriptingGradleProjectImportHandler"/>
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.kapt.idea.KaptGradleProjectImportHandler"/>
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.lombok.ide.LombokGradleProjectImportHandler"/>
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverGradleProjectImportHandler"/>
         <gradleProjectImportHandler implementation="org.jetbrains.kotlinx.serialization.idea.KotlinSerializationGradleImportHandler"/>
 

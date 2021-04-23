@@ -44,6 +44,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-scripting-idea"))
     testRuntimeOnly(project(":kotlinx-serialization-ide-plugin"))
     testRuntimeOnly(project(":plugins:parcelize:parcelize-ide"))
+    testRuntimeOnly(project(":plugins:lombok:lombok-ide-plugin"))
     testRuntimeOnly(project(":nj2k:nj2k-services"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":idea:kotlin-gradle-tooling"))
