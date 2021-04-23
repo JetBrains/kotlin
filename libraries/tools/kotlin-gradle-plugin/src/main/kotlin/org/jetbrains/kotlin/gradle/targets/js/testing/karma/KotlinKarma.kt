@@ -194,7 +194,12 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
                 versions.webpack4
             )
         )
-        requiredDependencies.add(versions.webpackCli)
+        requiredDependencies.add(
+            webpackMajorVersion.choose(
+                versions.webpackCli,
+                versions.webpackCli3
+            )
+        )
         requiredDependencies.add(versions.formatUtil)
         requiredDependencies.add(
             webpackMajorVersion.choose(
