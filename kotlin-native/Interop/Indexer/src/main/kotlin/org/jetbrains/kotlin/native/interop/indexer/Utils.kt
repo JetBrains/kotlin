@@ -54,7 +54,7 @@ internal val CValue<CXCursor>.isCxxPublic: Boolean get() {
  *  BTW Such derived C++ proxy class is the only way to allow Kotlin to override the private virtual C++ methods (which is OK in C++)
  *  Without that C++ style callbacks via overriding would be limited or not supported
  */
-internal fun CValue<CXCursor>.isRecursivelyPublic(): Boolean {
+internal fun CValue<CXCursor>.isRecursivelyCxxPublic(): Boolean {
     when {
         clang_isDeclaration(kind) == 0 ->
             return true  // got the topmost declaration already
@@ -71,7 +71,7 @@ internal fun CValue<CXCursor>.isRecursivelyPublic(): Boolean {
             // return false;  // check disabled for a while
 
         else ->
-            return clang_getCursorSemanticParent(this).isRecursivelyPublic()
+            return clang_getCursorSemanticParent(this).isRecursivelyCxxPublic()
     }
 }
 

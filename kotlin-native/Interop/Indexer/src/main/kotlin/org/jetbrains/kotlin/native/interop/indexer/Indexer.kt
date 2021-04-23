@@ -868,7 +868,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             return
         }
 
-        if (!cursor.isRecursivelyPublic()) {
+        if (!cursor.isRecursivelyCxxPublic()) {
             // c++ : skip anon namespaces, static functions and variables and private inner classes
             return
         }
@@ -975,7 +975,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             return
         }
 
-        if (cursor.isRecursivelyPublic()) {
+        if (cursor.isRecursivelyCxxPublic()) {
             when (cursor.kind) {
                 CXCursorKind.CXCursor_ClassDecl, CXCursorKind.CXCursor_StructDecl, CXCursorKind.CXCursor_UnionDecl -> {
                     if (cursor.spelling.isEmpty()) {
@@ -1049,35 +1049,36 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
         // TODO Do the following if clang_getCursorLanguage(cursor) == CXLanguageKind.CXLanguage_CPlusPlus ...
         val parentName = getParentName(cursor)
-        val cxxMethodInfo = receiver?.let { CxxMethodInfo(
-                PointerType(RecordType(receiver),
-                        clang_CXXMethod_isConst(cursor) != 0), // CXCursor_ConversionFunction has constness too
-                when (cursor.kind) {
-                    CXCursorKind.CXCursor_Constructor -> {
-                        returnType = PointerType(RecordType(receiver))
-                        name = "__init__" // It is intended to init preallocated memory with placement new, so it is not "create" factory method. TODO One may want "create" method also.
-                        // Parameter type for placement new is void*, but I want to emphasize that memory block ahall have proper size and alignment
-                        parameters.add(0, Parameter("self", PointerType(RecordType(receiver)), false))
-                        CxxMethodKind.Constructor
-                    }
-                    CXCursorKind.CXCursor_Destructor -> {
-                        name = "__destroy__"
-                        parameters.add(0, Parameter("self", PointerType(RecordType(receiver)), false))
-                        CxxMethodKind.Destructor
-                    }
-                    // CXCursorKind.CXCursor_ConversionFunction -> ...
-                    CXCursorKind.CXCursor_CXXMethod ->
-                        if (clang_CXXMethod_isStatic(cursor) != 0) {
-                            CxxMethodKind.StaticMethod
-                        } else {
-                            parameters.add(0, Parameter("self",
-                                    PointerType(RecordType(receiver), clang_CXXMethod_isConst(cursor) != 0),
-                                    false))
-                            CxxMethodKind.InstanceMethod
+        val cxxMethodInfo = receiver?.let {
+            CxxMethodInfo(
+                    PointerType(RecordType(receiver),
+                            clang_CXXMethod_isConst(cursor) != 0), // CXCursor_ConversionFunction has constness too
+                    when (cursor.kind) {
+                        CXCursorKind.CXCursor_Constructor -> {
+                            returnType = PointerType(RecordType(receiver))
+                            name = "__init__" // It is intended to init preallocated memory with placement new, so it is not "create" factory method. TODO One may want "create" method also.
+                            // Parameter type for placement new is void*, but I want to emphasize that memory block ahall have proper size and alignment
+                            parameters.add(0, Parameter("self", PointerType(RecordType(receiver)), false))
+                            CxxMethodKind.Constructor
                         }
-                    else -> CxxMethodKind.None // Not implemented. Not expected, OK to assert (?)
-                }
-        )
+                        CXCursorKind.CXCursor_Destructor -> {
+                            name = "__destroy__"
+                            parameters.add(0, Parameter("self", PointerType(RecordType(receiver)), false))
+                            CxxMethodKind.Destructor
+                        }
+                        // CXCursorKind.CXCursor_ConversionFunction -> ...
+                        CXCursorKind.CXCursor_CXXMethod ->
+                            if (clang_CXXMethod_isStatic(cursor) != 0) {
+                                CxxMethodKind.StaticMethod
+                            } else {
+                                parameters.add(0, Parameter("self",
+                                        PointerType(RecordType(receiver), clang_CXXMethod_isConst(cursor) != 0),
+                                        false))
+                                CxxMethodKind.InstanceMethod
+                            }
+                        else -> CxxMethodKind.None // Not implemented. Not expected, OK to assert (?)
+                    }
+            )
         }
 
         return FunctionDecl(name, parameters, returnType, binaryName, isDefined, isVararg, parentName, cxxMethodInfo)
