@@ -863,7 +863,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         var result = delegatedConstructorCall
         try {
             val lastDispatchReceiver = implicitReceiverStack.lastDispatchReceiver()
-            context.forDelegatedConstructor(containingConstructor, containingClass as? FirRegularClass, components) {
+            context.forDelegatedConstructorCall(containingConstructor, containingClass as? FirRegularClass, components) {
                 delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
             }
 

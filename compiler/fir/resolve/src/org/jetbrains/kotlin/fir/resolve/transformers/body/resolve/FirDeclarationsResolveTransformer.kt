@@ -594,9 +594,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation)
                 )
             )
-            return context.withValueParameter(valueParameter) {
-                valueParameter
-            }
+            return valueParameter
         }
 
         dataFlowAnalyzer.enterValueParameter(valueParameter)

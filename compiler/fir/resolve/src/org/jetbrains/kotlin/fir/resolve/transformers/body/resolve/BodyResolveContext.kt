@@ -238,7 +238,7 @@ class BodyResolveContext(
         return FirMemberTypeParameterScope(this)
     }
 
-    private fun buildSecondaryConstructorParametersScope(constructor: FirConstructor): FirLocalScope =
+    fun buildSecondaryConstructorParametersScope(constructor: FirConstructor): FirLocalScope =
         constructor.valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
 
     @PrivateForInline
@@ -486,6 +486,12 @@ class BodyResolveContext(
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope())
             if (function is FirSimpleFunction) {
+                // Make all value parameters available in the local scope so that even one parameter that refers to another parameter,
+                // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
+                // if an uninitialized parameter is accessed by a preceding parameter.
+                for (parameter in function.valueParameters) {
+                    storeVariable(parameter)
+                }
                 val receiverTypeRef = function.receiverTypeRef
                 withLabelAndReceiverType(function.name, function, receiverTypeRef?.coneType, holder, f)
             } else {
@@ -665,19 +671,23 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         // Default values of constructor can't access members of constructing class
-        return withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-            if (!constructor.isPrimary) {
-                addInaccessibleImplicitReceiverValue(owningClass, holder)
-            }
-            withTowerDataCleanup {
-                addLocalScope(FirLocalScope())
-                f()
-            }
-        }
+        // But, let them get resolved, then [FirFunctionParameterChecker] will detect and report an error
+        // if an uninitialized parameter is accessed by a preceding parameter.
+        return forConstructorParametersOrDelegatedConstructorCall(constructor, owningClass, holder, f)
     }
 
     @OptIn(PrivateForInline::class)
-    fun <T> forDelegatedConstructor(
+    inline fun <T> forDelegatedConstructorCall(
+        constructor: FirConstructor,
+        owningClass: FirRegularClass?,
+        holder: SessionHolder,
+        f: () -> T
+    ): T {
+        return forConstructorParametersOrDelegatedConstructorCall(constructor, owningClass, holder, f)
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> forConstructorParametersOrDelegatedConstructorCall(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
         holder: SessionHolder,
