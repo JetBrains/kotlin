@@ -463,14 +463,6 @@ internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {
     return tool
 }
 
-private fun isCxxOptions(opts: List<String>) : Boolean {
-    if (opts.size >= 2)  opts.reduce args@{ prev, that ->
-        if (prev == "-x" && that == "c++") return@isCxxOptions true
-        return@args that
-    }
-    return false
-}
-
 internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
