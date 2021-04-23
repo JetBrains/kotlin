@@ -141,10 +141,20 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                     task.description = "start ${type.name.toLowerCase()} webpack dev server"
 
-                    task.devServer = KotlinWebpackConfig.DevServer(
-                        open = true,
-                        contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
-                    )
+                    webpackMajorVersion.choose(
+                        {
+                            task.devServer = KotlinWebpackConfig.DevServer(
+                                open = true,
+                                static = mutableListOf(compilation.output.resourcesDir.canonicalPath)
+                            )
+                        },
+                        {
+                            task.devServer = KotlinWebpackConfig.DevServer(
+                                open = true,
+                                contentBase = mutableListOf(compilation.output.resourcesDir.canonicalPath)
+                            )
+                        }
+                    )()
 
                     task.outputs.upToDateWhen { false }
 
