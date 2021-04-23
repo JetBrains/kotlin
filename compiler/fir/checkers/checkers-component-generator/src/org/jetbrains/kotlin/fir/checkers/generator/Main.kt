@@ -25,6 +25,12 @@ fun main(args: Array<String>) {
         alias<FirReturnExpression>("ReturnExpressionChecker")
         alias<FirBlock>("BlockChecker")
         alias<FirAnnotationCall>("AnnotationCallChecker")
+        alias<FirCheckNotNullCall>("CheckNotNullCallChecker")
+        alias<FirElvisExpression>("ElvisExpressionChecker")
+        alias<FirGetClassCall>("GetClassCallChecker")
+        alias<FirSafeCallExpression>("SafeCallExpressionChecker")
+        alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
+        alias<FirAnonymousFunction>("AnonymousFunctionAsExpressionChecker")
     }
 
     val declarationPackage = "org.jetbrains.kotlin.fir.analysis.checkers.declaration"

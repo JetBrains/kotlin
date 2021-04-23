@@ -21,9 +21,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.QUEST
 
-object FirGetClassCallChecker : FirBasicExpressionChecker() {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression !is FirGetClassCall) return
+object FirClassLiteralChecker : FirGetClassCallChecker() {
+    override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = expression.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
 

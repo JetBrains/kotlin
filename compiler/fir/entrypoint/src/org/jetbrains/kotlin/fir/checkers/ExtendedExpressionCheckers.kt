@@ -5,18 +5,13 @@
 
 package org.jetbrains.kotlin.fir.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirVariableAssignmentChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 
 object ExtendedExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
             ArrayEqualityCanBeReplacedWithEquals,
-            RedundantSingleExpressionStringTemplateChecker,
-            EmptyRangeChecker,
         )
 
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
@@ -28,5 +23,11 @@ object ExtendedExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             RedundantCallOfConversionMethod,
             UselessCallOnNotNullChecker,
+        )
+
+    override val functionCallCheckers: Set<FirFunctionCallChecker>
+        get() = setOf(
+            EmptyRangeChecker,
+            RedundantSingleExpressionStringTemplateChecker,
         )
 }

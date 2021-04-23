@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.checkers
 
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
@@ -18,7 +15,6 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             RedundantVisibilityModifierChecker,
-            RedundantReturnUnitType,
         )
 
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker>
@@ -36,5 +32,10 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = setOf(
             UnusedChecker,
+        )
+
+    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        get() = setOf(
+            RedundantReturnUnitType,
         )
 }

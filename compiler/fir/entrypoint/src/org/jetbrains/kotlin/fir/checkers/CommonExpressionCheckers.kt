@@ -15,11 +15,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
-            FirAnonymousFunctionChecker,
-            FirCheckNotNullCallChecker,
-            FirElvisExpressionChecker,
-            FirGetClassCallChecker,
-            FirSafeCallExpressionChecker,
         )
 
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
@@ -70,5 +65,30 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val blockCheckers: Set<FirBlockChecker>
         get() = setOf(
             FirForLoopChecker
+        )
+
+    override val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker>
+        get() = setOf(
+            FirNotNullAssertionChecker,
+        )
+
+    override val elvisExpressionCheckers: Set<FirElvisExpressionChecker>
+        get() = setOf(
+            FirUselessElvisChecker,
+        )
+
+    override val getClassCallCheckers: Set<FirGetClassCallChecker>
+        get() = setOf(
+            FirClassLiteralChecker,
+        )
+
+    override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>
+        get() = setOf(
+            FirUnnecessarySafeCallChecker,
+        )
+
+    override val anonymousFunctionAsExpressionCheckers: Set<FirAnonymousFunctionAsExpressionChecker>
+        get() = setOf(
+            FirAnonymousFunctionChecker,
         )
 }

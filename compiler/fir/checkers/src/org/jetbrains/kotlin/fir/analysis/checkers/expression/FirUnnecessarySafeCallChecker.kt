@@ -10,16 +10,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 
-object FirSafeCallExpressionChecker : FirBasicExpressionChecker() {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression !is FirSafeCallExpression) return
-
+object FirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker() {
+    override fun check(expression: FirSafeCallExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val receiverType = expression.receiver.typeRef.coneType.fullyExpandedType(context.session)
         if (receiverType.isUnit) {
             reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL, context)

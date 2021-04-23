@@ -26,6 +26,12 @@ abstract class ExpressionCheckers {
     open val returnExpressionCheckers: Set<FirReturnExpressionChecker> = emptySet()
     open val blockCheckers: Set<FirBlockChecker> = emptySet()
     open val annotationCallCheckers: Set<FirAnnotationCallChecker> = emptySet()
+    open val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker> = emptySet()
+    open val elvisExpressionCheckers: Set<FirElvisExpressionChecker> = emptySet()
+    open val getClassCallCheckers: Set<FirGetClassCallChecker> = emptySet()
+    open val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker> = emptySet()
+    open val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker> = emptySet()
+    open val anonymousFunctionAsExpressionCheckers: Set<FirAnonymousFunctionAsExpressionChecker> = emptySet()
 
     @CheckersComponentInternal internal val allBasicExpressionCheckers: Set<FirBasicExpressionChecker> get() = basicExpressionCheckers
     @CheckersComponentInternal internal val allQualifiedAccessCheckers: Set<FirQualifiedAccessChecker> get() = qualifiedAccessCheckers + basicExpressionCheckers
@@ -36,4 +42,10 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allReturnExpressionCheckers: Set<FirReturnExpressionChecker> get() = returnExpressionCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allBlockCheckers: Set<FirBlockChecker> get() = blockCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allAnnotationCallCheckers: Set<FirAnnotationCallChecker> get() = annotationCallCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allCheckNotNullCallCheckers: Set<FirCheckNotNullCallChecker> get() = checkNotNullCallCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allElvisExpressionCheckers: Set<FirElvisExpressionChecker> get() = elvisExpressionCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allGetClassCallCheckers: Set<FirGetClassCallChecker> get() = getClassCallCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allSafeCallExpressionCheckers: Set<FirSafeCallExpressionChecker> get() = safeCallExpressionCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allEqualityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker> get() = equalityOperatorCallCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allAnonymousFunctionAsExpressionCheckers: Set<FirAnonymousFunctionAsExpressionChecker> get() = anonymousFunctionAsExpressionCheckers + basicExpressionCheckers
 }

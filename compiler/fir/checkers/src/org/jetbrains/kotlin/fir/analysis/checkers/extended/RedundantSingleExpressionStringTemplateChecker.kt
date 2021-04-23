@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
@@ -25,12 +25,10 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
-object RedundantSingleExpressionStringTemplateChecker : FirBasicExpressionChecker() {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+object RedundantSingleExpressionStringTemplateChecker : FirFunctionCallChecker() {
+    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.source?.kind != FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
-        if (expression !is FirFunctionCall) return
-        if (
-            expression.explicitReceiver?.typeRef?.coneType?.classId == StandardClassIds.String
+        if (expression.explicitReceiver?.typeRef?.coneType?.classId == StandardClassIds.String
             && expression.stringParentChildrenCount() == 1 // there is no more children in original string template
         ) {
             reporter.reportOn(expression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE, context)
@@ -39,12 +37,8 @@ object RedundantSingleExpressionStringTemplateChecker : FirBasicExpressionChecke
 
     private fun FirStatement.stringParentChildrenCount(): Int? {
         return when (val source = source) {
-            is FirPsiSourceElement<*> -> {
-                source.psi.stringParentChildrenCount()
-            }
-            is FirLightSourceElement -> {
-                source.lighterASTNode.stringParentChildrenCount(source)
-            }
+            is FirPsiSourceElement<*> -> source.psi.stringParentChildrenCount()
+            is FirLightSourceElement -> source.lighterASTNode.stringParentChildrenCount(source)
             else -> null
         }
     }
