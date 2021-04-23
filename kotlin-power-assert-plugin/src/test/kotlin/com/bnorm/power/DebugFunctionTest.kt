@@ -27,6 +27,7 @@ class DebugFunctionTest {
       actual.trim()
     )
   }
+
   @Test
   fun `debug function transformation with message`() {
     val actual = executeMainDebug(
@@ -47,7 +48,7 @@ class DebugFunctionTest {
   }
 }
 
-fun executeMainDebug(mainBody: String): String {
+private fun executeMainDebug(mainBody: String): String {
   val file = SourceFile.kotlin(
     name = "main.kt",
     contents = """
