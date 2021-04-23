@@ -81,9 +81,7 @@ private fun KotlinProjectExtension.getKotlinToolingMetadata(): KotlinToolingMeta
         buildSystem = "Gradle",
         buildSystemVersion = project.gradle.gradleVersion,
         buildPlugin = project.plugins.withType(KotlinBasePluginWrapper::class.java).joinToString(";") { it.javaClass.canonicalName },
-        buildPluginVersion = project.getKotlinPluginVersion() ?: throw IllegalStateException(
-            "Failed to infer Kotlin Plugin version"
-        ),
+        buildPluginVersion = project.getKotlinPluginVersion(),
         projectSettings = buildProjectSettings(),
         projectTargets = buildProjectTargets()
     )

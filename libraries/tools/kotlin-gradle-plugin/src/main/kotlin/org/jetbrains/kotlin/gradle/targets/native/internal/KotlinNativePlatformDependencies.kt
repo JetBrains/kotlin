@@ -31,7 +31,7 @@ private val Project.isNativeDependencyPropagationEnabled: Boolean
 @JvmOverloads
 @JvmName("isAllowCommonizer")
 internal fun Project.isAllowCommonizer(
-    kotlinVersion: String = getKotlinPluginVersion()!!
+    kotlinVersion: String = getKotlinPluginVersion()
 ): Boolean {
     multiplatformExtensionOrNull ?: return false
 
@@ -47,7 +47,7 @@ internal fun Project.setUpKotlinNativePlatformDependencies() {
         // not a multiplatform project, nothing to set up
         return
     }
-    val kotlinVersion = getKotlinPluginVersion()!!
+    val kotlinVersion = getKotlinPluginVersion()
     val allowCommonizer = isAllowCommonizer(kotlinVersion)
     if (allowCommonizer && isHierarchicalCommonizationEnabled) {
         return setUpHierarchicalKotlinNativePlatformDependencies()

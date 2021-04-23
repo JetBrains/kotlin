@@ -27,7 +27,7 @@ internal class KotlinNativeCommonizerToolRunner(project: Project) : KotlinToolRu
         }
     }
 
-    override val isolatedClassLoaderCacheKey get() = project.getKotlinPluginVersion()!!
+    override val isolatedClassLoaderCacheKey get() = project.getKotlinPluginVersion()
 
     override val defaultMaxHeapSize: String get() = "4G"
 

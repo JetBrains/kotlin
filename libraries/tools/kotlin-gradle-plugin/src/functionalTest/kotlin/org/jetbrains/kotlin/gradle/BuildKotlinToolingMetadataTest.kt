@@ -54,7 +54,7 @@ class BuildKotlinToolingMetadataTest {
         assertEquals("Gradle", metadata.buildSystem)
         assertEquals(project.gradle.gradleVersion, metadata.buildSystemVersion)
         assertEquals(KotlinMultiplatformPluginWrapper::class.java.canonicalName, metadata.buildPlugin)
-        assertEquals(project.getKotlinPluginVersion().toString(), metadata.buildPluginVersion)
+        assertEquals(project.getKotlinPluginVersion(), metadata.buildPluginVersion)
         assertEquals(1, metadata.projectTargets.size, "Expected one target (metadata)")
         assertTrue(
             KotlinMetadataTarget::class.java.isAssignableFrom(Class.forName(metadata.projectTargets.single().target)),

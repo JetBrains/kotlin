@@ -166,7 +166,7 @@ private class TemporaryStagedDirectory(val temporaryDirectoryFile: File, private
 }
 
 internal fun Project.nativeDistributionCommonizerOutputDirectory(targets: KonanTargetGroup): File {
-    val kotlinVersion = checkNotNull(project.getKotlinPluginVersion()) { "Failed infering Kotlin Plugin version" }
+    val kotlinVersion = project.getKotlinPluginVersion()
     val orderedTargetNames = targets.map { it.name }.sorted()
     val discriminator = buildString {
         orderedTargetNames.joinTo(this, separator = "-")

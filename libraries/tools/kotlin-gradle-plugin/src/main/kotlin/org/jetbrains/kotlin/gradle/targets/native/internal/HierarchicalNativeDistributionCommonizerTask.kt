@@ -75,7 +75,7 @@ internal open class HierarchicalNativeDistributionCommonizerTask : DefaultTask()
         get() = commonizerRunner.getCustomJvmArgs()
 
     internal fun getRootOutputDirectory(target: SharedCommonizerTarget): File {
-        val kotlinVersion = checkNotNull(project.getKotlinPluginVersion()) { "Missing Kotlin Plugin version" }
+        val kotlinVersion = project.getKotlinPluginVersion()
 
         val discriminator = buildString {
             append(target.identityString)

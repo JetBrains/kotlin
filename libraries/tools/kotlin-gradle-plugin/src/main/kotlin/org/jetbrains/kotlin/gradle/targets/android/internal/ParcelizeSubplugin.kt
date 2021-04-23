@@ -46,10 +46,7 @@ class ParcelizeSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun getPluginArtifact(): SubpluginArtifact = JetBrainsSubpluginArtifact(artifactId = "kotlin-parcelize-compiler")
 
     private fun addParcelizeRuntime(project: Project) {
-        val kotlinPluginVersion = project.getKotlinPluginVersion() ?: run {
-            project.logger.error("Kotlin plugin should be enabled before 'kotlin-parcelize'")
-            return
-        }
+        val kotlinPluginVersion = project.getKotlinPluginVersion()
 
         project.configurations.all { configuration ->
             val name = configuration.name

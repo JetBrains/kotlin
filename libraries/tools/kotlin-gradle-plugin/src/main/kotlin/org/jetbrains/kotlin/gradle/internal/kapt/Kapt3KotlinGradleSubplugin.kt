@@ -11,7 +11,6 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.SourceKind
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.lang.JavaVersion
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
@@ -54,10 +53,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         target.extensions.create("kapt", KaptExtension::class.java)
 
         target.configurations.create(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
-            target.getKotlinPluginVersion()?.let { kotlinPluginVersion ->
-                val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:$kotlinPluginVersion" }
-                dependencies.add(target.dependencies.create(kaptDependency))
-            } ?: throw GradleException("Kotlin plugin should be enabled before 'kotlin-kapt'")
+            val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:${target.getKotlinPluginVersion()}" }
+            dependencies.add(target.dependencies.create(kaptDependency))
         }
 
         registry.register(KaptModelBuilder())

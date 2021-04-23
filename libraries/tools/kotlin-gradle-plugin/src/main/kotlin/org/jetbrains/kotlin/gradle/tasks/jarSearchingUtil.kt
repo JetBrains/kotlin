@@ -21,7 +21,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.initialization.dsl.ScriptHandler
-import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import java.io.File
@@ -133,10 +132,10 @@ internal fun findJarByClass(klass: Class<*>): File? {
 private fun findKotlinModuleJar(project: Project, expectedClassName: String, moduleId: String): List<File> {
     val pluginVersion = project.getKotlinPluginVersion()
 
-    val filesToCheck = sequenceOf(pluginVersion?.let { version -> getModuleFromClassLoader(moduleId, version) }) +
+    val filesToCheck = sequenceOf(getModuleFromClassLoader(moduleId, pluginVersion)) +
             Sequence { findPotentialModuleJars(project, moduleId).iterator() } //call the body only when queried
     val entryToFind = expectedClassName.replace(".", "/") + ".class"
-    return filesToCheck.filterNotNull().firstOrNull { it.hasEntry(entryToFind) }?.let { listOf(it) } ?: emptyList()
+    return filesToCheck.filterNotNull().firstOrNull { it.hasEntry(entryToFind) }?.let { listOf(it) }.orEmpty()
 }
 
 private fun getModuleFromClassLoader(moduleId: String, moduleVersion: String): File? {
