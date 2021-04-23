@@ -40,7 +40,10 @@ fun compileWasm(
     exportedDeclarations: Set<FqName> = emptySet()
 ): WasmCompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
+        loadIr(
+            project, mainModule, analyzer, configuration, allDependencies, friendDependencies,
+            irFactory, true
+        )
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)

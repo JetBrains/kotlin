@@ -148,6 +148,7 @@ abstract class BasicBoxTest(
 
         val skipDceDriven = SKIP_DCE_DRIVEN.matcher(fileContent).find()
         val splitPerModule = SPLIT_PER_MODULE.matcher(fileContent).find()
+        val skipMangleVerification = SKIP_MANGLE_VERIFICATION.matcher(fileContent).find()
 
         val propertyLazyInitialization = PROPERTY_LAZY_INITIALIZATION.matcher(fileContent).find()
 
@@ -216,6 +217,7 @@ abstract class BasicBoxTest(
                     splitPerModule,
                     errorPolicy,
                     propertyLazyInitialization,
+                    skipMangleVerification,
                     abiVersion
                 )
 
@@ -470,6 +472,7 @@ abstract class BasicBoxTest(
         splitPerModule: Boolean,
         errorIgnorancePolicy: ErrorTolerancePolicy,
         propertyLazyInitialization: Boolean,
+        skipMangleVerification: Boolean,
         abiVersion: KotlinAbiVersion
     ) {
         val kotlinFiles = module.files.filter { it.fileName.endsWith(".kt") }
@@ -521,6 +524,7 @@ abstract class BasicBoxTest(
             skipDceDriven,
             splitPerModule,
             propertyLazyInitialization,
+            skipMangleVerification,
             abiVersion
         )
 
@@ -616,6 +620,7 @@ abstract class BasicBoxTest(
             skipDceDriven = true,
             splitPerModule = false,
             propertyLazyInitialization = false,
+            skipMangleVerification = false,
             abiVersion = KotlinAbiVersion.CURRENT
         )
 
@@ -696,6 +701,7 @@ abstract class BasicBoxTest(
         skipDceDriven: Boolean,
         splitPerModule: Boolean,
         propertyLazyInitialization: Boolean,
+        skipMangleVerification: Boolean,
         abiVersion: KotlinAbiVersion
     ) {
         val translator = K2JSTranslator(config, false)
@@ -1101,7 +1107,7 @@ abstract class BasicBoxTest(
         private val EXPECT_ACTUAL_LINKER = Pattern.compile("^// EXPECT_ACTUAL_LINKER *$", Pattern.MULTILINE)
         private val SKIP_DCE_DRIVEN = Pattern.compile("^// *SKIP_DCE_DRIVEN *$", Pattern.MULTILINE)
         private val SPLIT_PER_MODULE = Pattern.compile("^// *SPLIT_PER_MODULE *$", Pattern.MULTILINE)
-        private val USE_OLD_SIGNATURES = Pattern.compile("^// *USE_OLD_SIGNATURES *$", Pattern.MULTILINE)
+        private val SKIP_MANGLE_VERIFICATION = Pattern.compile("^// *SKIP_MANGLE_VERIFICATION *$", Pattern.MULTILINE)
 
         private val ERROR_POLICY_PATTERN = Pattern.compile("^// *ERROR_POLICY: *(.+)$", Pattern.MULTILINE)
 

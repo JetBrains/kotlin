@@ -102,6 +102,7 @@ fun generateKLib(
     irFactory: IrFactory,
     outputKlibPath: String,
     nopack: Boolean,
+    verifySignatures: Boolean = true,
     abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT
 ) {
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
@@ -166,7 +167,9 @@ fun generateKLib(
 
     val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageLogger, expectDescriptorToSymbol)
 
-    moduleFragment.acceptVoid(ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc)))
+    if (verifySignatures) {
+        moduleFragment.acceptVoid(ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc)))
+    }
     if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
@@ -222,6 +225,7 @@ fun loadIr(
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
     irFactory: IrFactory,
+    verifySignatures: Boolean
 ): IrModuleInfo {
     val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
@@ -247,14 +251,18 @@ fun loadIr(
 
             // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
             val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
-            moduleFragment.acceptVoid(mangleChecker)
+            if (verifySignatures) {
+                moduleFragment.acceptVoid(mangleChecker)
+            }
 
             if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
                 val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
                 irLinker.modules.forEach { fakeOverrideChecker.check(it) }
             }
 
-            irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
+            if (verifySignatures) {
+                irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
+            }
 
             return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker)
         }

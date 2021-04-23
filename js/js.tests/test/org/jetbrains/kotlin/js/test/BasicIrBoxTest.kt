@@ -94,6 +94,7 @@ abstract class BasicIrBoxTest(
         skipDceDriven: Boolean,
         splitPerModule: Boolean,
         propertyLazyInitialization: Boolean,
+        skipMangleVerification: Boolean,
         abiVersion: KotlinAbiVersion
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
@@ -149,6 +150,7 @@ abstract class BasicIrBoxTest(
                     es6mode = runEs6Mode,
                     multiModule = splitPerModule || perModule,
                     propertyLazyInitialization = propertyLazyInitialization,
+                    verifySignatures = !skipMangleVerification
                 )
 
                 compiledModule.jsCode!!.writeTo(outputFile, config)
@@ -177,7 +179,8 @@ abstract class BasicIrBoxTest(
                     dceDriven = true,
                     es6mode = runEs6Mode,
                     multiModule = splitPerModule || perModule,
-                    propertyLazyInitialization = propertyLazyInitialization
+                    propertyLazyInitialization = propertyLazyInitialization,
+                    verifySignatures = !skipMangleVerification
                 ).jsCode!!.writeTo(pirOutputFile, config)
             }
         } else {
@@ -191,6 +194,7 @@ abstract class BasicIrBoxTest(
                 irFactory = IrFactoryImpl,
                 outputKlibPath = actualOutputFile,
                 nopack = true,
+                verifySignatures = !skipMangleVerification,
                 abiVersion = abiVersion
             )
 

@@ -52,9 +52,10 @@ fun compile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
+    verifySignatures: Boolean = true
 ): CompilerResult {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
+        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory, verifySignatures)
 
     val moduleDescriptor = moduleFragment.descriptor
 
