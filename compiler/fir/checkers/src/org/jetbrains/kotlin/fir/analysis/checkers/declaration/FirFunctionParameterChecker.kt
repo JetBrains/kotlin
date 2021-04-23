@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInline
@@ -12,19 +13,24 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnsignedTypeOrNullableUnsignedType
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirFunctionParameterChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         checkVarargParameters(declaration, context, reporter)
         checkParameterTypes(declaration, context, reporter)
+        checkUninitializedParameter(declaration, context, reporter)
     }
 
     private fun checkParameterTypes(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -68,6 +74,35 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                     context
                 )
             }
+        }
+    }
+
+    private fun checkUninitializedParameter(function: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+        for ((index, parameter) in function.valueParameters.withIndex()) {
+            // Alas, CheckerContext.qualifiedAccesses stack is not available at this point.
+            // Thus, manually visit default value expression and report the diagnostic on qualified accesses of interest.
+            parameter.defaultValue?.accept(object : FirVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+                    val namedReference = qualifiedAccessExpression.calleeReference as? FirResolvedNamedReference ?: return
+                    val referredParameter = namedReference.resolvedSymbol.fir as? FirValueParameter ?: return
+                    val referredParameterIndex = function.valueParameters.indexOf(referredParameter)
+                    // Skip if the referred parameter is not declared in the same function.
+                    if (referredParameterIndex < 0) return
+
+                    if (index <= referredParameterIndex) {
+                        reporter.reportOnWithSuppression(
+                            qualifiedAccessExpression,
+                            FirErrors.UNINITIALIZED_PARAMETER,
+                            referredParameter.symbol,
+                            context
+                        )
+                    }
+                }
+            })
         }
     }
 }

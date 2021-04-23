@@ -589,6 +589,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val UNINITIALIZED_VARIABLE by error<KtSimpleNameExpression> {
             parameter<FirPropertySymbol>("variable")
         }
+        val UNINITIALIZED_PARAMETER by error<KtSimpleNameExpression> {
+            parameter<FirVariableSymbol<FirValueParameter>>("parameter")
+        }
         val UNINITIALIZED_ENUM_ENTRY by error<KtSimpleNameExpression> {
             parameter<FirVariableSymbol<FirEnumEntry>>("enumEntry")
         }

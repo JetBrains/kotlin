@@ -363,6 +363,7 @@ object FirErrors {
 
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<KtSimpleNameExpression, FirPropertySymbol>()
+    val UNINITIALIZED_PARAMETER by error1<KtSimpleNameExpression, FirVariableSymbol<FirValueParameter>>()
     val UNINITIALIZED_ENUM_ENTRY by error1<KtSimpleNameExpression, FirVariableSymbol<FirEnumEntry>>()
     val UNINITIALIZED_ENUM_COMPANION by error1<KtSimpleNameExpression, FirRegularClassSymbol>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val VAL_REASSIGNMENT by error1<KtExpression, FirVariableSymbol<*>>()

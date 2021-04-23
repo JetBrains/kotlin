@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Inter {
     fun foo(x: Int = <!UNINITIALIZED_PARAMETER!>y<!>, y: Int = x)
 }
