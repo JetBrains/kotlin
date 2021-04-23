@@ -19,10 +19,11 @@ package androidx.compose.compiler.plugins.kotlin
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /* ktlint-disable max-line-length */
-@RunWith(ComposeRobolectricTestRunner::class)
+@RunWith(RobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
     minSdk = 23,
