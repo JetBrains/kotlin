@@ -197,6 +197,298 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addExclExclCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddExclExclCall extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddExclExclCall() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addExclExclCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("array.kt")
+        public void testArray() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/array.kt");
+        }
+
+        @TestMetadata("array2.kt")
+        public void testArray2() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/array2.kt");
+        }
+
+        @TestMetadata("array3.kt")
+        public void testArray3() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/array3.kt");
+        }
+
+        @TestMetadata("array4.kt")
+        public void testArray4() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/array4.kt");
+        }
+
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference.kt");
+        }
+
+        @TestMetadata("functionReference2.kt")
+        public void testFunctionReference2() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference2.kt");
+        }
+
+        @TestMetadata("functionReference3.kt")
+        public void testFunctionReference3() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference3.kt");
+        }
+
+        @TestMetadata("implicit.kt")
+        public void testImplicit() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/implicit.kt");
+        }
+
+        @TestMetadata("implicit2.kt")
+        public void testImplicit2() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/implicit2.kt");
+        }
+
+        @TestMetadata("implicit3.kt")
+        public void testImplicit3() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/implicit3.kt");
+        }
+
+        @TestMetadata("implicitFunctionCall.kt")
+        public void testImplicitFunctionCall() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/implicitFunctionCall.kt");
+        }
+
+        @TestMetadata("iterable.kt")
+        public void testIterable() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/iterable.kt");
+        }
+
+        @TestMetadata("iterableInExtension.kt")
+        public void testIterableInExtension() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/iterableInExtension.kt");
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/normal.kt");
+        }
+
+        @TestMetadata("normal2.kt")
+        public void testNormal2() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/normal2.kt");
+        }
+
+        @TestMetadata("null.kt")
+        public void testNull() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/null.kt");
+        }
+
+        @TestMetadata("nullExpression.kt")
+        public void testNullExpression() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/nullExpression.kt");
+        }
+
+        @TestMetadata("operationIn.kt")
+        public void testOperationIn() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/operationIn.kt");
+        }
+
+        @TestMetadata("idea/testData/quickfix/addExclExclCall/typeMismatch")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeMismatch extends AbstractHighLevelQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeMismatch() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addExclExclCall/typeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("assignmentRValue.kt")
+            public void testAssignmentRValue() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/assignmentRValue.kt");
+            }
+
+            @TestMetadata("memberAccessInExtension.kt")
+            public void testMemberAccessInExtension() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/memberAccessInExtension.kt");
+            }
+
+            @TestMetadata("memberAccessInExtensionAsAssignmentRValue.kt")
+            public void testMemberAccessInExtensionAsAssignmentRValue() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/memberAccessInExtensionAsAssignmentRValue.kt");
+            }
+
+            @TestMetadata("qualifiedArgument.kt")
+            public void testQualifiedArgument() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/qualifiedArgument.kt");
+            }
+
+            @TestMetadata("removeNullability.kt")
+            public void testRemoveNullability() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/removeNullability.kt");
+            }
+
+            @TestMetadata("removeNullabilityDisabledWhenItCannotHelp.kt")
+            public void testRemoveNullabilityDisabledWhenItCannotHelp() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/removeNullabilityDisabledWhenItCannotHelp.kt");
+            }
+
+            @TestMetadata("removeNullabilityForGeneric.kt")
+            public void testRemoveNullabilityForGeneric() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/removeNullabilityForGeneric.kt");
+            }
+
+            @TestMetadata("removeNullabilityForSubclass.kt")
+            public void testRemoveNullabilityForSubclass() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/removeNullabilityForSubclass.kt");
+            }
+
+            @TestMetadata("whenSmartCastImpossible.kt")
+            public void testWhenSmartCastImpossible() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/whenSmartCastImpossible.kt");
+            }
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/addInitializer")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddInitializer extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddInitializer() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("localVar.kt")
+        public void testLocalVar() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/localVar.kt");
+        }
+
+        @TestMetadata("memberExtensionProperty.kt")
+        public void testMemberExtensionProperty() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberExtensionProperty.kt");
+        }
+
+        @TestMetadata("memberExtensionPropertyVarGetterOnly.kt")
+        public void testMemberExtensionPropertyVarGetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberExtensionPropertyVarGetterOnly.kt");
+        }
+
+        @TestMetadata("memberExtensionPropertyVarSetterOnly.kt")
+        public void testMemberExtensionPropertyVarSetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberExtensionPropertyVarSetterOnly.kt");
+        }
+
+        @TestMetadata("memberProperty.kt")
+        public void testMemberProperty() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberProperty.kt");
+        }
+
+        @TestMetadata("memberPropertyVarGetterOnly.kt")
+        public void testMemberPropertyVarGetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberPropertyVarGetterOnly.kt");
+        }
+
+        @TestMetadata("memberPropertyVarSetterOnly.kt")
+        public void testMemberPropertyVarSetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberPropertyVarSetterOnly.kt");
+        }
+
+        @TestMetadata("memberPropertyWithAccessor.kt")
+        public void testMemberPropertyWithAccessor() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberPropertyWithAccessor.kt");
+        }
+
+        @TestMetadata("memberPropertyWithDelegateRuntime.kt")
+        public void testMemberPropertyWithDelegateRuntime() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/memberPropertyWithDelegateRuntime.kt");
+        }
+
+        @TestMetadata("topLevelExtensionProperty.kt")
+        public void testTopLevelExtensionProperty() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelExtensionProperty.kt");
+        }
+
+        @TestMetadata("topLevelExtensionPropertySetterOnly.kt")
+        public void testTopLevelExtensionPropertySetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelExtensionPropertySetterOnly.kt");
+        }
+
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelProperty.kt");
+        }
+
+        @TestMetadata("topLevelPropertyVarClass.kt")
+        public void testTopLevelPropertyVarClass() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarClass.kt");
+        }
+
+        @TestMetadata("topLevelPropertyVarGetterOnly.kt")
+        public void testTopLevelPropertyVarGetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarGetterOnly.kt");
+        }
+
+        @TestMetadata("topLevelPropertyVarSetterOnly.kt")
+        public void testTopLevelPropertyVarSetterOnly() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarSetterOnly.kt");
+        }
+
+        @TestMetadata("topLevelPropertyWithDelegateRuntime.kt")
+        public void testTopLevelPropertyWithDelegateRuntime() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyWithDelegateRuntime.kt");
+        }
+
+        @TestMetadata("topLevelPropertyWithGetter.kt")
+        public void testTopLevelPropertyWithGetter() throws Exception {
+            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyWithGetter.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/addPropertyAccessors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddPropertyAccessors extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddPropertyAccessors() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addPropertyAccessors"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("val.kt")
+        public void testVal() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyAccessors/val.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyAccessors/var.kt");
+        }
+
+        @TestMetadata("varHasGetter.kt")
+        public void testVarHasGetter() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyAccessors/varHasGetter.kt");
+        }
+
+        @TestMetadata("varHasSetter.kt")
+        public void testVarHasSetter() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyAccessors/varHasSetter.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/expressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1178,137 +1470,6 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
             public void testUninitializedWithGetter3() throws Exception {
                 runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/uninitializedWithGetter3.kt");
             }
-        }
-    }
-
-    @TestMetadata("idea/testData/quickfix/addInitializer")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AddInitializer extends AbstractHighLevelQuickFixTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInAddInitializer() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("localVar.kt")
-        public void testLocalVar() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/localVar.kt");
-        }
-
-        @TestMetadata("memberExtensionProperty.kt")
-        public void testMemberExtensionProperty() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/memberExtensionProperty.kt");
-        }
-
-        @TestMetadata("memberExtensionPropertyVarGetterOnly.kt")
-        public void testMemberExtensionPropertyVarGetterOnly() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/memberExtensionPropertyVarGetterOnly.kt");
-        }
-
-        @TestMetadata("memberExtensionPropertyVarSetterOnly.kt")
-        public void testMemberExtensionPropertyVarSetterOnly() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/memberExtensionPropertyVarSetterOnly.kt");
-        }
-
-        @TestMetadata("memberProperty.kt")
-        public void testMemberProperty() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/memberProperty.kt");
-        }
-
-        @TestMetadata("memberPropertyVarGetterOnly.kt")
-        public void testMemberPropertyVarGetterOnly() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/memberPropertyVarGetterOnly.kt");
-        }
-
-        @TestMetadata("memberPropertyVarSetterOnly.kt")
-        public void testMemberPropertyVarSetterOnly() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/memberPropertyVarSetterOnly.kt");
-        }
-
-        @TestMetadata("memberPropertyWithAccessor.kt")
-        public void testMemberPropertyWithAccessor() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/memberPropertyWithAccessor.kt");
-        }
-
-        @TestMetadata("memberPropertyWithDelegateRuntime.kt")
-        public void testMemberPropertyWithDelegateRuntime() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/memberPropertyWithDelegateRuntime.kt");
-        }
-
-        @TestMetadata("topLevelExtensionProperty.kt")
-        public void testTopLevelExtensionProperty() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/topLevelExtensionProperty.kt");
-        }
-
-        @TestMetadata("topLevelExtensionPropertySetterOnly.kt")
-        public void testTopLevelExtensionPropertySetterOnly() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/topLevelExtensionPropertySetterOnly.kt");
-        }
-
-        @TestMetadata("topLevelProperty.kt")
-        public void testTopLevelProperty() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/topLevelProperty.kt");
-        }
-
-        @TestMetadata("topLevelPropertyVarClass.kt")
-        public void testTopLevelPropertyVarClass() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarClass.kt");
-        }
-
-        @TestMetadata("topLevelPropertyVarGetterOnly.kt")
-        public void testTopLevelPropertyVarGetterOnly() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarGetterOnly.kt");
-        }
-
-        @TestMetadata("topLevelPropertyVarSetterOnly.kt")
-        public void testTopLevelPropertyVarSetterOnly() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyVarSetterOnly.kt");
-        }
-
-        @TestMetadata("topLevelPropertyWithDelegateRuntime.kt")
-        public void testTopLevelPropertyWithDelegateRuntime() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyWithDelegateRuntime.kt");
-        }
-
-        @TestMetadata("topLevelPropertyWithGetter.kt")
-        public void testTopLevelPropertyWithGetter() throws Exception {
-            runTest("idea/testData/quickfix/addInitializer/topLevelPropertyWithGetter.kt");
-        }
-    }
-
-    @TestMetadata("idea/testData/quickfix/addPropertyAccessors")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AddPropertyAccessors extends AbstractHighLevelQuickFixTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInAddPropertyAccessors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addPropertyAccessors"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("val.kt")
-        public void testVal() throws Exception {
-            runTest("idea/testData/quickfix/addPropertyAccessors/val.kt");
-        }
-
-        @TestMetadata("var.kt")
-        public void testVar() throws Exception {
-            runTest("idea/testData/quickfix/addPropertyAccessors/var.kt");
-        }
-
-        @TestMetadata("varHasGetter.kt")
-        public void testVarHasGetter() throws Exception {
-            runTest("idea/testData/quickfix/addPropertyAccessors/varHasGetter.kt");
-        }
-
-        @TestMetadata("varHasSetter.kt")
-        public void testVarHasSetter() throws Exception {
-            runTest("idea/testData/quickfix/addPropertyAccessors/varHasSetter.kt");
         }
     }
 

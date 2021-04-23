@@ -711,6 +711,64 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testOperationIn() throws Exception {
             runTest("idea/testData/quickfix/addExclExclCall/operationIn.kt");
         }
+
+        @TestMetadata("idea/testData/quickfix/addExclExclCall/typeMismatch")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeMismatch extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeMismatch() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addExclExclCall/typeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("assignmentRValue.kt")
+            public void testAssignmentRValue() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/assignmentRValue.kt");
+            }
+
+            @TestMetadata("memberAccessInExtension.kt")
+            public void testMemberAccessInExtension() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/memberAccessInExtension.kt");
+            }
+
+            @TestMetadata("memberAccessInExtensionAsAssignmentRValue.kt")
+            public void testMemberAccessInExtensionAsAssignmentRValue() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/memberAccessInExtensionAsAssignmentRValue.kt");
+            }
+
+            @TestMetadata("qualifiedArgument.kt")
+            public void testQualifiedArgument() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/qualifiedArgument.kt");
+            }
+
+            @TestMetadata("removeNullability.kt")
+            public void testRemoveNullability() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/removeNullability.kt");
+            }
+
+            @TestMetadata("removeNullabilityDisabledWhenItCannotHelp.kt")
+            public void testRemoveNullabilityDisabledWhenItCannotHelp() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/removeNullabilityDisabledWhenItCannotHelp.kt");
+            }
+
+            @TestMetadata("removeNullabilityForGeneric.kt")
+            public void testRemoveNullabilityForGeneric() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/removeNullabilityForGeneric.kt");
+            }
+
+            @TestMetadata("removeNullabilityForSubclass.kt")
+            public void testRemoveNullabilityForSubclass() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/removeNullabilityForSubclass.kt");
+            }
+
+            @TestMetadata("whenSmartCastImpossible.kt")
+            public void testWhenSmartCastImpossible() throws Exception {
+                runTest("idea/testData/quickfix/addExclExclCall/typeMismatch/whenSmartCastImpossible.kt");
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/addGenericUpperBound")
@@ -13784,51 +13842,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("addArrayOfTypeForNamedParameter.kt")
         public void testAddArrayOfTypeForNamedParameter() throws Exception {
             runTest("idea/testData/quickfix/typeMismatch/addArrayOfTypeForNamedParameter.kt");
-        }
-
-        @TestMetadata("addExclExclToAssignmentRValue.kt")
-        public void testAddExclExclToAssignmentRValue() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclToAssignmentRValue.kt");
-        }
-
-        @TestMetadata("addExclExclToMemberAccessInExtension.kt")
-        public void testAddExclExclToMemberAccessInExtension() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclToMemberAccessInExtension.kt");
-        }
-
-        @TestMetadata("addExclExclToMemberAccessInExtensionAsAssignmentRValue.kt")
-        public void testAddExclExclToMemberAccessInExtensionAsAssignmentRValue() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclToMemberAccessInExtensionAsAssignmentRValue.kt");
-        }
-
-        @TestMetadata("addExclExclToQualifiedArgument.kt")
-        public void testAddExclExclToQualifiedArgument() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclToQualifiedArgument.kt");
-        }
-
-        @TestMetadata("addExclExclToRemoveNullability.kt")
-        public void testAddExclExclToRemoveNullability() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullability.kt");
-        }
-
-        @TestMetadata("addExclExclToRemoveNullabilityDisabledWhenItCannotHelp.kt")
-        public void testAddExclExclToRemoveNullabilityDisabledWhenItCannotHelp() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullabilityDisabledWhenItCannotHelp.kt");
-        }
-
-        @TestMetadata("addExclExclToRemoveNullabilityForGeneric.kt")
-        public void testAddExclExclToRemoveNullabilityForGeneric() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullabilityForGeneric.kt");
-        }
-
-        @TestMetadata("addExclExclToRemoveNullabilityForSubclass.kt")
-        public void testAddExclExclToRemoveNullabilityForSubclass() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullabilityForSubclass.kt");
-        }
-
-        @TestMetadata("addExclExclWhenSmartCastImpossible.kt")
-        public void testAddExclExclWhenSmartCastImpossible() throws Exception {
-            runTest("idea/testData/quickfix/typeMismatch/addExclExclWhenSmartCastImpossible.kt");
         }
 
         @TestMetadata("addIntArrayOf.kt")
