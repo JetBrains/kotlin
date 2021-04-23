@@ -741,6 +741,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
         return getKFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
     }
+
+    override fun SimpleTypeMarker.createConstraintPartForLowerBoundAndFlexibleTypeVariable(): KotlinTypeMarker =
+        if (this.isMarkedNullable()) {
+            this
+        } else {
+            createFlexibleType(this, this.withNullability(true))
+        }
 }
 
 fun TypeVariance.convertVariance(): Variance {

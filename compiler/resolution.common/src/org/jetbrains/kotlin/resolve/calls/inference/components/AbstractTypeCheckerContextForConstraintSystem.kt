@@ -237,11 +237,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem(override val typeSy
                 when (subType) {
                     is SimpleTypeMarker ->
                         // Foo <: T! -- (Foo!! .. Foo) <: T
-                        if (subType.isMarkedNullable()) {
-                            subType // prefer nullable type to flexible one: `Foo? <: (T..T?)` => lowerConstraint = `Foo?`
-                        } else {
-                            createFlexibleType(subType, subType.withNullability(true))
-                        }
+                        subType.createConstraintPartForLowerBoundAndFlexibleTypeVariable()
 
                     is FlexibleTypeMarker ->
                         // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
