@@ -1,0 +1,21 @@
+FILE: x.kt
+    public final fun f(x: R|kotlin/Byte|): R|kotlin/Unit| {
+    }
+    public final fun f(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun f(x: R|kotlin/Long|): R|kotlin/Unit| {
+    }
+    public final fun g(x: R|kotlin/Byte?|): R|kotlin/Unit| {
+    }
+    public final fun g(x: R|kotlin/Int?|): R|kotlin/Unit| {
+    }
+    public final fun g(x: R|kotlin/Long?|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        Q|J|.R|/J.f|(Int(123))
+        Q|J|.R|/J.f|(Long(123123123123))
+        R|/f|(Int(123))
+        R|/f|(Long(123123123123))
+        R|/g|(Int(123))
+        R|/g|(Long(123123123123))
+    }
