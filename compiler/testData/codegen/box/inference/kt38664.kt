@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS
+// SKIP_MANGLE_VERIFICATION
 
 interface C<A : Any, B : Any> {
     fun foo(a: A): B
