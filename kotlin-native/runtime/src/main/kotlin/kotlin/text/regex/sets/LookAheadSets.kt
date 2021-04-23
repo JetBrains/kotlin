@@ -25,10 +25,10 @@ package kotlin.text.regex
 /**
  * Positive lookahead node.
  */
-internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : AtomicJointSet(children, fSet) {
+internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : LookAroundSet(children, fSet) {
 
     /** Returns startIndex+shift, the next position to match */
-    override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
+    override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         children.forEach {
             val shift = it.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
@@ -39,7 +39,6 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : A
         return -1
     }
 
-    override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
     override val name: String
         get() = "PositiveLookaheadJointSet"
 }
@@ -47,10 +46,10 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : A
 /**
  * Negative look ahead node.
  */
-internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : AtomicJointSet(children, fSet) {
+internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : LookAroundSet(children, fSet) {
 
     /** Returns startIndex+shift, the next position to match */
-    override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
+    override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         children.forEach {
             if (it.matches(startIndex, testString, matchResult) >= 0) {
                 return -1
@@ -60,7 +59,6 @@ internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : A
         return next.matches(startIndex, testString, matchResult)
     }
 
-    override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
     override val name: String
         get() = "NegativeLookaheadJointSet"
 }

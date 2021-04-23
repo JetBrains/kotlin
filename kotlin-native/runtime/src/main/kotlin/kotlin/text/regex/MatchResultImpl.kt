@@ -56,6 +56,26 @@ constructor (internal val input: CharSequence,
     var previousMatch = -1
     var mode = Regex.Mode.MATCH
 
+    private data class MatchResultState(val groupBounds: IntArray, val consumers: IntArray, val enterCounters: IntArray,
+                                        val startIndex: Int, val previousMatch: Int)
+
+    private var state: MatchResultState? = null
+
+    internal fun saveState() {
+        state = MatchResultState(groupBounds.copyOf(), consumers.copyOf(), enterCounters.copyOf(), startIndex, previousMatch)
+    }
+
+    internal fun rollbackState(): Boolean {
+        return state?.let {
+            it.groupBounds.copyInto(groupBounds)
+            it.consumers.copyInto(consumers)
+            it.enterCounters.copyInto(enterCounters)
+            startIndex = it.startIndex
+            previousMatch = it.previousMatch
+            true
+        } ?: false
+    }
+
     // MatchResult interface ===========================================================================================
     /** The range of indices in the original string where match was captured. */
     override val range: IntRange

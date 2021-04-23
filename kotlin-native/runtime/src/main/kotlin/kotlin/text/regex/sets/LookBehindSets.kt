@@ -25,11 +25,10 @@ package kotlin.text.regex
 /**
  * Positive lookbehind node.
  */
-internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : AtomicJointSet(children, fSet) {
+internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : LookAroundSet(children, fSet) {
 
     /** Returns startIndex+shift, the next position to match */
-    override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-
+    override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex)
         children.forEach {
             if (it.findBack(0, startIndex, testString, matchResult) >= 0) {
@@ -41,7 +40,6 @@ internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
          return -1
     }
 
-    override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
     override val name: String
         get() = "PositiveBehindJointSet"
 }
@@ -49,10 +47,10 @@ internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
 /**
  * Negative look behind node.
  */
-internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : AtomicJointSet(children, fSet) {
+internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : LookAroundSet(children, fSet) {
 
     /** Returns startIndex+shift, the next position to match */
-    override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
+    override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex)
 
         children.forEach {
@@ -65,7 +63,6 @@ internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
         return next.matches(startIndex, testString, matchResult)
     }
 
-    override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
     override val name: String
         get() = "NegativeBehindJointSet"
 }
