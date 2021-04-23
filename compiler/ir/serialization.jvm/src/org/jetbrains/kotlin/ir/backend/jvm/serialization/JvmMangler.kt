@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 
-abstract class AbstractJvmManglerIr : IrBasedKotlinManglerImpl() {
-
+object JvmIrMangler : IrBasedKotlinManglerImpl() {
     private class JvmIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
         override fun IrDeclaration.isPlatformSpecificExported() = false
     }
@@ -42,20 +41,12 @@ abstract class AbstractJvmManglerIr : IrBasedKotlinManglerImpl() {
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> = JvmIrExportChecker(compatibleMode)
 
-    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<IrDeclaration> {
-        return JvmIrManglerComputer(StringBuilder(256), mode)
-    }
+    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<IrDeclaration> =
+        JvmIrManglerComputer(StringBuilder(256), mode)
 }
 
-object JvmManglerIr : AbstractJvmManglerIr()
-
-abstract class AbstractJvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : DescriptorBasedKotlinManglerImpl() {
-
-    companion object {
-        private val exportChecker = JvmDescriptorExportChecker()
-    }
-
-    private class JvmDescriptorExportChecker : DescriptorExportCheckerVisitor() {
+class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : DescriptorBasedKotlinManglerImpl() {
+    private object ExportChecker : DescriptorExportCheckerVisitor() {
         override fun DeclarationDescriptor.isPlatformSpecificExported() = false
     }
 
@@ -69,13 +60,11 @@ abstract class AbstractJvmDescriptorMangler(private val mainDetector: MainFuncti
 
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = JvmDescriptorManglerComputer(builder, mainDetector, newMode)
 
-        private fun isMainFunction(descriptor: FunctionDescriptor): Boolean = mainDetector?.isMain(descriptor) ?: false
+        private fun isMainFunction(descriptor: FunctionDescriptor): Boolean =
+            mainDetector != null && mainDetector.isMain(descriptor)
 
-        override fun FunctionDescriptor.platformSpecificSuffix(): String? {
-            return if (isMainFunction(this)) {
-                return source.containingFile.name
-            } else null
-        }
+        override fun FunctionDescriptor.platformSpecificSuffix(): String? =
+            if (isMainFunction(this)) source.containingFile.name else null
 
         override fun PropertyDescriptor.platformSpecificSuffix(): String? {
             // Since LV 1.4 there is a feature PreferJavaFieldOverload which allows to have java and kotlin
@@ -91,11 +80,8 @@ abstract class AbstractJvmDescriptorMangler(private val mainDetector: MainFuncti
         }
     }
 
-    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = exportChecker
+    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = ExportChecker
 
-    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<DeclarationDescriptor> {
-        return JvmDescriptorManglerComputer(StringBuilder(256), mainDetector, mode)
-    }
+    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<DeclarationDescriptor> =
+        JvmDescriptorManglerComputer(StringBuilder(256), mainDetector, mode)
 }
-
-class JvmManglerDesc(mainDetector: MainFunctionDetector? = null) : AbstractJvmDescriptorMangler(mainDetector)

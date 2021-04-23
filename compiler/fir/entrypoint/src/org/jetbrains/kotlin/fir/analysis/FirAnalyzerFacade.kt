@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
@@ -98,7 +98,7 @@ class FirAnalyzerFacade(
 
     override fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
         if (_scopeSession == null) runResolution()
-        val signaturer = JvmIdSignatureDescriptor(JvmManglerDesc())
+        val signaturer = JvmIdSignatureDescriptor(JvmDescriptorMangler(null))
 
         return Fir2IrConverter.createModuleFragment(
             session, _scopeSession!!, firFiles!!,

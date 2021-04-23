@@ -40,10 +40,10 @@ class JvmIrLinker(
     override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
-    private val manglerDesc: JvmManglerDesc
+    private val manglerDesc: JvmDescriptorMangler
 ) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList()) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmManglerIr, typeSystem)
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmIrMangler, typeSystem)
 
     private val javaName = Name.identifier("java")
 

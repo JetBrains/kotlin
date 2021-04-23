@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -143,7 +143,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
                 JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze,
                 JvmGeneratorExtensionsImpl(generateFacades = false),
                 createIdSignatureComposer = { bindingContext ->
-                    JvmIdSignatureDescriptor(JvmManglerDesc(MainFunctionDetector(bindingContext, languageVersionSettings)))
+                    JvmIdSignatureDescriptor(JvmDescriptorMangler(MainFunctionDetector(bindingContext, languageVersionSettings)))
                 }
             )
         }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.repl.BasicReplStageHistory
 import org.jetbrains.kotlin.cli.common.repl.IReplStageState
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -65,7 +65,7 @@ class JvmReplCompilerState<CompilationT : JvmReplCompilerState.Compilation>(
         val environment: KotlinCoreEnvironment
         val analyzerEngine: ReplCodeAnalyzerBase
         val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter
-        val mangler: JvmManglerDesc
+        val mangler: JvmDescriptorMangler
         val symbolTable: SymbolTable
     }
 }
