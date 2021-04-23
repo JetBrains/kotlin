@@ -9,6 +9,13 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
+import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -18,6 +25,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.createResolveStateForNoCaching
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.renderWithClassName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
@@ -54,14 +62,14 @@ abstract class AbstractDiagnosticTraversalCounterTest : KotlinLightCodeInsightFi
                 if (zeroElements.isNotEmpty()) {
                     appendLine(
                         """ |The following elements were not visited 
-                            |${zeroElements.joinToString(separator = "\n\n") { it.first.renderWithClassName() }}
+                            |${zeroElements.joinToString(separator = "\n\n") { it.first.source?.kind.toString() + " <> " + it.first.renderWithClassName() }}
                              """.trimMargin()
                     )
                 }
                 if (nonZeroElements.isNotEmpty()) {
                     appendLine(
                         """ |The following elements were visited more than one time
-                            |${nonZeroElements.joinToString(separator = "\n\n") { it.second.toString() + " times " + it.first.renderWithClassName() }}
+                            |${nonZeroElements.joinToString(separator = "\n\n") { it.second.toString() + " times " + it.first.source?.kind.toString() + " <> " + it.first.renderWithClassName() }}
                              """.trimMargin()
                     )
                 }
@@ -104,12 +112,20 @@ abstract class AbstractDiagnosticTraversalCounterTest : KotlinLightCodeInsightFi
         firFile: FirElement,
     ): Set<FirElement> {
         val elementUsageCount = mutableMapOf<FirElement, Int>()
-        firFile.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                elementUsageCount.compute(element) { _, count -> (count ?: 0) + 1 }
-                element.acceptChildren(this)
+        val sessionHolder = SessionHolderImpl((firFile as FirDeclaration).declarationSiteSession, ScopeSession())
+        val visitor = object : AbstractDiagnosticCollectorVisitor(
+            PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(sessionHolder)
+        ) {
+            override fun visitNestedElements(element: FirElement) {
+                element.acceptChildren(this, null)
             }
-        })
+
+            override fun checkElement(element: FirElement) {
+                elementUsageCount.compute(element) { _, count -> (count ?: 0) + 1 }
+            }
+        }
+
+        firFile.accept(visitor, null)
         return elementUsageCount.filterValues { it == 1 }.keys
     }
 
