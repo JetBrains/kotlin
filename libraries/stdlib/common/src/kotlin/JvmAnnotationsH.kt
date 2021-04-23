@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -121,7 +121,7 @@ public expect annotation class JvmInline()
 @MustBeDocumented
 @OptionalExpectation
 @SinceKotlin("1.5")
-public expect annotation class JvmRecord
+public expect annotation class JvmRecord()
 
 /**
  * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field
