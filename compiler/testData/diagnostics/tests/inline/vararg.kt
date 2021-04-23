@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 
 inline fun inlineFun(s: (p: Int) -> Unit, noinline b: (p: Int) -> Unit) {

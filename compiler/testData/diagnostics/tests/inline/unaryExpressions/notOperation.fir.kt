@@ -16,6 +16,6 @@ operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.not() : B
 }
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: T, l : U) -> V) {
-    !s
-    !ext
+    <!USAGE_IS_NOT_INLINABLE!>!<!>s
+    <!USAGE_IS_NOT_INLINABLE!>!<!>ext
 }

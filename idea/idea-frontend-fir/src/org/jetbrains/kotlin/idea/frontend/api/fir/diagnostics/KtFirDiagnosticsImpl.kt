@@ -2378,3 +2378,80 @@ internal class ReturnInFunctionWithExpressionBodyImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class UsageIsNotInlinableImpl(
+    override val parameter: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UsageIsNotInlinable(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class NonLocalReturnNotAllowedImpl(
+    override val parameter: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NonLocalReturnNotAllowed(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class RecursionInInlineImpl(
+    override val symbol: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.RecursionInInline(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class NonPublicCallFromPublicInlineImpl(
+    override val inlineDeclaration: KtSymbol,
+    override val referencedDeclaration: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NonPublicCallFromPublicInline(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ProtectedConstructorCallFromPublicInlineImpl(
+    override val inlineDeclaration: KtSymbol,
+    override val referencedDeclaration: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ProtectedConstructorCallFromPublicInline(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ProtectedCallFromPublicInlineErrorImpl(
+    override val inlineDeclaration: KtSymbol,
+    override val referencedDeclaration: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ProtectedCallFromPublicInlineError(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ProtectedCallFromPublicInlineImpl(
+    override val inlineDeclaration: KtSymbol,
+    override val referencedDeclaration: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ProtectedCallFromPublicInline(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class PrivateClassMemberFromInlineImpl(
+    override val inlineDeclaration: KtSymbol,
+    override val referencedDeclaration: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.PrivateClassMemberFromInline(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class SuperCallFromPublicInlineImpl(
+    override val symbol: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SuperCallFromPublicInline(), KtAbstractFirDiagnostic<KtElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+

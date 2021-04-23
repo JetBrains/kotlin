@@ -5,6 +5,6 @@ inline public fun reg(converter: (Any) -> Any, flag: Boolean) {
 }
 
 public inline fun register(converter: (Any) -> Any) {
-    converter is (Any) -> Any
-    reg(converter, converter is (Any) -> Any)
+    <!USAGE_IS_NOT_INLINABLE!>converter<!> is (Any) -> Any
+    reg(converter, <!USAGE_IS_NOT_INLINABLE!>converter<!> is (Any) -> Any)
 }

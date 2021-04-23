@@ -1459,4 +1459,54 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ReturnInFunctionWithExpressionBody::class
     }
 
+    abstract class UsageIsNotInlinable : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = UsageIsNotInlinable::class
+        abstract val parameter: KtSymbol
+    }
+
+    abstract class NonLocalReturnNotAllowed : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NonLocalReturnNotAllowed::class
+        abstract val parameter: KtSymbol
+    }
+
+    abstract class RecursionInInline : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = RecursionInInline::class
+        abstract val symbol: KtSymbol
+    }
+
+    abstract class NonPublicCallFromPublicInline : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NonPublicCallFromPublicInline::class
+        abstract val inlineDeclaration: KtSymbol
+        abstract val referencedDeclaration: KtSymbol
+    }
+
+    abstract class ProtectedConstructorCallFromPublicInline : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ProtectedConstructorCallFromPublicInline::class
+        abstract val inlineDeclaration: KtSymbol
+        abstract val referencedDeclaration: KtSymbol
+    }
+
+    abstract class ProtectedCallFromPublicInlineError : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ProtectedCallFromPublicInlineError::class
+        abstract val inlineDeclaration: KtSymbol
+        abstract val referencedDeclaration: KtSymbol
+    }
+
+    abstract class ProtectedCallFromPublicInline : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ProtectedCallFromPublicInline::class
+        abstract val inlineDeclaration: KtSymbol
+        abstract val referencedDeclaration: KtSymbol
+    }
+
+    abstract class PrivateClassMemberFromInline : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = PrivateClassMemberFromInline::class
+        abstract val inlineDeclaration: KtSymbol
+        abstract val referencedDeclaration: KtSymbol
+    }
+
+    abstract class SuperCallFromPublicInline : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = SuperCallFromPublicInline::class
+        abstract val symbol: KtSymbol
+    }
+
 }

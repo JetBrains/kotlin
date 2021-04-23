@@ -20,7 +20,7 @@ inline fun testExtension(s: (p: Int) -> Unit) {
 }
 
 inline fun inlineFunWrongExtension(s: (p: Int) -> Unit) {
-    s.noInlineExt(11)
+    s.<!USAGE_IS_NOT_INLINABLE!>noInlineExt<!>(11)
 }
 
 inline fun inlineFunNoInline(noinline s: (p: Int) -> Unit) {

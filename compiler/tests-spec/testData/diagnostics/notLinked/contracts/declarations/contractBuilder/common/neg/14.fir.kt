@@ -6,7 +6,7 @@ import kotlin.contracts.*
 // TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
     return contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     }
 }
 
@@ -16,7 +16,7 @@ fun case_2() = contract { }
 // TESTCASE NUMBER: 3
 inline fun case_3(block: () -> Unit) {
     val value_1 = contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     }
     block()
 }
@@ -40,13 +40,13 @@ inline fun case_5(block: () -> Unit) {
 // TESTCASE NUMBER: 6
 inline fun case_6(block: () -> Unit) {
     throw Exception(contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     }.toString())
 }
 
 // TESTCASE NUMBER: 7
 inline fun case_7(block: () -> Unit) {
     funWithAnyArg(contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     })
 }

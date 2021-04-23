@@ -17,6 +17,6 @@ operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.get(index
 }
 
 inline fun <T, U, V, W> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: U, l: V) -> W) {
-    s[1]
-    ext[1]
+    <!USAGE_IS_NOT_INLINABLE!>s[1]<!>
+    <!USAGE_IS_NOT_INLINABLE!>ext[1]<!>
 }

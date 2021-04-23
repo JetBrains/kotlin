@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-4341 No resolved call for right-hand side of equals expression
 package g
 

@@ -170,9 +170,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_MEMBER_FUNCTION_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_VARARG_SPREAD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOTHING_TO_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_AN_ANNOTATION_CLASS
@@ -193,6 +195,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERLOAD_RESOLUTI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_PROPERTY_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY
@@ -203,8 +206,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD
@@ -235,6 +242,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_NOT_INITIALIZED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_CALL_FROM_PUBLIC_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_NOT_AVAILABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTAX
@@ -269,6 +277,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USAGE_IS_NOT_INLINABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS_RIGHT_IS_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
@@ -904,6 +913,45 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'"
             )
+
+            // Inline
+            map.put(
+                USAGE_IS_NOT_INLINABLE,
+                "Illegal usage of inline-parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration",
+                SYMBOL
+            )
+            map.put(
+                NON_LOCAL_RETURN_NOT_ALLOWED,
+                "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''",
+                SYMBOL
+            )
+            map.put(RECURSION_IN_INLINE, "Inline function ''{0}'' cannot be recursive", SYMBOL)
+            map.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{1}''", SYMBOL, SYMBOL)
+            map.put(
+                PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE,
+                "Protected constructor call from public-API inline function is deprecated",
+                SYMBOL,
+                SYMBOL
+            )
+            map.put(
+                PROTECTED_CALL_FROM_PUBLIC_INLINE,
+                "Protected function call from public-API inline function is deprecated",
+                SYMBOL,
+                SYMBOL
+            )
+            map.put(
+                PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR,
+                "Protected function call from public-API inline function is prohibited",
+                SYMBOL,
+                SYMBOL
+            )
+            map.put(
+                PRIVATE_CLASS_MEMBER_FROM_INLINE,
+                "Non-private inline function cannot access members of private classes: ''{1}''",
+                SYMBOL,
+                SYMBOL
+            )
+            map.put(SUPER_CALL_FROM_PUBLIC_INLINE, "Accessing super members from public-API inline function is deprecated", SYMBOL)
 
             // Extended checkers group
             map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")

@@ -4,7 +4,7 @@ inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {
     (s)(11)
     (s).invoke(11)
     (s) invoke 11
-    (s)
+    (<!USAGE_IS_NOT_INLINABLE!>s<!>)
 }
 
 inline fun Function1<Int, Unit>.inlineExt() {
@@ -18,7 +18,7 @@ inline fun inlineFunWithInvoke2(s: (p: Int) -> Unit) {
     (((s)))(11)
     (((s))).invoke(11)
     (((s))) invoke 11
-    (((s)))
+    (((<!USAGE_IS_NOT_INLINABLE!>s<!>)))
 }
 
 inline fun propagation(s: (p: Int) -> Unit) {

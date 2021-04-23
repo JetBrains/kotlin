@@ -24,7 +24,7 @@ suspend inline fun test(c: suspend () -> Unit) {
         }
     }
     val l: suspend () -> Unit = { c() }
-    c.startCoroutine(EmptyContinuation)
+    c.<!USAGE_IS_NOT_INLINABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 fun builder(c: suspend () -> Unit) {

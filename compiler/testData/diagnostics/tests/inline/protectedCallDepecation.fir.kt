@@ -18,10 +18,10 @@ open class A {
         protected set(value) {}
 
     inline fun call() {
-        test()
-        z
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>z<!>
         zVar
-        zVar = "123"
+        zVar <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>=<!> "123"
     }
 
     internal inline fun callFromInternal() {
@@ -48,13 +48,13 @@ open class A {
 
 class B : A() {
     inline fun testB() {
-        test()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>test<!>()
     }
 }
 
 class C : JavaClass() {
     inline fun call() {
-        bind()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>bind<!>()
     }
 
     internal inline fun callFromInternal() {

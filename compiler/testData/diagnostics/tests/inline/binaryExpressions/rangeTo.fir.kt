@@ -21,9 +21,9 @@ operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.rangeTo(e
 }
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T, l: U) -> U, ext: T.(p: U, l: U) -> V) {
-    s..s
-    s..s
+    s<!USAGE_IS_NOT_INLINABLE!>..<!><!USAGE_IS_NOT_INLINABLE!>s<!>
+    s<!USAGE_IS_NOT_INLINABLE!>..<!><!USAGE_IS_NOT_INLINABLE!>s<!>
 
-    ext..ext
-    ext..ext
+    ext<!USAGE_IS_NOT_INLINABLE!>..<!><!USAGE_IS_NOT_INLINABLE!>ext<!>
+    ext<!USAGE_IS_NOT_INLINABLE!>..<!><!USAGE_IS_NOT_INLINABLE!>ext<!>
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 public class Z {
     internal val privateProperty = 11;

@@ -14,13 +14,13 @@ operator fun <T, U, V> Function2<T, U, V>.compareTo(index : Function2<T, U, V>) 
 operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.compareTo(index : @ExtensionFunctionType Function3<T, U, V, W>) = 1
 
 inline fun <T, U, V, W> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: U, l: V) -> W) {
-    s < s
-    s <= s
-    s > s
-    s >= s
+    s <!USAGE_IS_NOT_INLINABLE!><<!> <!USAGE_IS_NOT_INLINABLE!>s<!>
+    s <!USAGE_IS_NOT_INLINABLE!><=<!> <!USAGE_IS_NOT_INLINABLE!>s<!>
+    s <!USAGE_IS_NOT_INLINABLE!>><!> <!USAGE_IS_NOT_INLINABLE!>s<!>
+    s <!USAGE_IS_NOT_INLINABLE!>>=<!> <!USAGE_IS_NOT_INLINABLE!>s<!>
 
-    ext < ext
-    ext > ext
-    ext <= ext
-    ext >= ext
+    ext <!USAGE_IS_NOT_INLINABLE!><<!> <!USAGE_IS_NOT_INLINABLE!>ext<!>
+    ext <!USAGE_IS_NOT_INLINABLE!>><!> <!USAGE_IS_NOT_INLINABLE!>ext<!>
+    ext <!USAGE_IS_NOT_INLINABLE!><=<!> <!USAGE_IS_NOT_INLINABLE!>ext<!>
+    ext <!USAGE_IS_NOT_INLINABLE!>>=<!> <!USAGE_IS_NOT_INLINABLE!>ext<!>
 }

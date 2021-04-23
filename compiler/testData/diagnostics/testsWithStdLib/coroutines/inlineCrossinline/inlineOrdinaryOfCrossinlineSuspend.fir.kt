@@ -25,7 +25,7 @@ inline fun test(crossinline c: suspend () -> Unit)  {
         }
     }
     val l: suspend () -> Unit = { c() }
-    c.startCoroutine(EmptyContinuation)
+    c.<!USAGE_IS_NOT_INLINABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 suspend fun calculate() = "OK"

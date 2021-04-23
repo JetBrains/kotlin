@@ -186,7 +186,8 @@ internal val FirDeclaration.isEnumEntryInitializer: Boolean
         return (containingClassAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.fir?.classKind == ClassKind.ENUM_ENTRY
     }
 
-internal val FirMemberDeclaration.isLocalMember: Boolean
+// contract: returns(true) implies (this is FirMemberDeclaration)
+internal val FirDeclaration.isLocalMember: Boolean
     get() = when (this) {
         is FirProperty -> this.isLocal
         is FirRegularClass -> this.isLocal

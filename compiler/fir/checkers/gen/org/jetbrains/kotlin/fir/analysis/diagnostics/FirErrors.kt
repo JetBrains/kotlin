@@ -440,4 +440,15 @@ object FirErrors {
     val RETURN_NOT_ALLOWED by error0<KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
     val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY by error0<KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
 
+    // Inline
+    val USAGE_IS_NOT_INLINABLE by error1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val NON_LOCAL_RETURN_NOT_ALLOWED by error1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val RECURSION_IN_INLINE by error1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val NON_PUBLIC_CALL_FROM_PUBLIC_INLINE by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val PROTECTED_CALL_FROM_PUBLIC_INLINE by warning2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val PRIVATE_CLASS_MEMBER_FROM_INLINE by error2<KtElement, AbstractFirBasedSymbol<*>, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val SUPER_CALL_FROM_PUBLIC_INLINE by warning1<KtElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+
 }

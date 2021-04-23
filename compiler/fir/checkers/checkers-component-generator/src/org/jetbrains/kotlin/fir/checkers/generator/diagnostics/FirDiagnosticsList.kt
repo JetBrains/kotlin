@@ -731,6 +731,49 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val RETURN_NOT_ALLOWED by error<KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
         val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY by error<KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
     }
+
+    val INLINE by object : DiagnosticGroup("Inline") {
+        val USAGE_IS_NOT_INLINABLE by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("parameter")
+        }
+
+        val NON_LOCAL_RETURN_NOT_ALLOWED by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("parameter")
+        }
+
+        val RECURSION_IN_INLINE by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("symbol")
+        }
+
+        val NON_PUBLIC_CALL_FROM_PUBLIC_INLINE by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("inlineDeclaration")
+            parameter<Symbol>("referencedDeclaration")
+        }
+
+        val PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("inlineDeclaration")
+            parameter<Symbol>("referencedDeclaration")
+        }
+
+        val PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("inlineDeclaration")
+            parameter<Symbol>("referencedDeclaration")
+        }
+
+        val PROTECTED_CALL_FROM_PUBLIC_INLINE by warning<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("inlineDeclaration")
+            parameter<Symbol>("referencedDeclaration")
+        }
+
+        val PRIVATE_CLASS_MEMBER_FROM_INLINE by error<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("inlineDeclaration")
+            parameter<Symbol>("referencedDeclaration")
+        }
+
+        val SUPER_CALL_FROM_PUBLIC_INLINE by warning<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("symbol")
+        }
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

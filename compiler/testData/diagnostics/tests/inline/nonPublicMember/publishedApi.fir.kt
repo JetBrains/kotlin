@@ -2,11 +2,11 @@
 
 
 inline fun call(a: A) {
-    a.test()
+    a.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>test<!>()
 
-    privateFun()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateFun<!>()
 
-    internalFun()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalFun<!>()
 }
 
 @PublishedApi

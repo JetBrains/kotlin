@@ -8,7 +8,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1, 2
 inline fun contractBuilder(block: () -> Unit): ContractBuilder.() -> Unit = {
-    callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
 }
 
 // FILE: main.kt

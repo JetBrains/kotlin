@@ -1,5 +1,5 @@
 inline fun <R> onlyLocal(p: () -> R) {
-    inlineAll(p)
+    inlineAll(<!USAGE_IS_NOT_INLINABLE!>p<!>)
 }
 
 inline fun <R> inlineAll(noinline p: () -> R) {

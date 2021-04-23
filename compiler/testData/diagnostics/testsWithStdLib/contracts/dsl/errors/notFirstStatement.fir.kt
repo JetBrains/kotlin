@@ -15,16 +15,16 @@ fun foo(y: Boolean) {
 inline fun case1(block: () -> Unit) {
     val contracts = listOf(
         contract {
-            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+            callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
         }, contract {
-            callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+            callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
         }
     )
     block()
 }
 
 inline fun case_2(block: () -> Unit) = contract {
-    callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
 }
 
 fun case_3(block: () -> Unit) {

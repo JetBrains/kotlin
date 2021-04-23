@@ -6,5 +6,5 @@ import kotlin.contracts.*
 inline fun case_1(block: () -> Unit) {
     <!WRONG_INVOCATION_KIND!>contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }<!>
     block()
-    case_1(block)
+    <!RECURSION_IN_INLINE!>case_1<!>(block)
 }

@@ -2092,4 +2092,72 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.USAGE_IS_NOT_INLINABLE) { firDiagnostic ->
+        UsageIsNotInlinableImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED) { firDiagnostic ->
+        NonLocalReturnNotAllowedImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.RECURSION_IN_INLINE) { firDiagnostic ->
+        RecursionInInlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE) { firDiagnostic ->
+        NonPublicCallFromPublicInlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE) { firDiagnostic ->
+        ProtectedConstructorCallFromPublicInlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR) { firDiagnostic ->
+        ProtectedCallFromPublicInlineErrorImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE) { firDiagnostic ->
+        ProtectedCallFromPublicInlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE) { firDiagnostic ->
+        PrivateClassMemberFromInlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.SUPER_CALL_FROM_PUBLIC_INLINE) { firDiagnostic ->
+        SuperCallFromPublicInlineImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a.fir as FirDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
 }

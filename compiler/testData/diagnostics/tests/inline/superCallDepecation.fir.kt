@@ -7,7 +7,7 @@ open class AndroidTargetConfigurator :
     AndroidModuleConfigurator {
 
     public inline fun inlineFun(): String {
-        return super.classFun() + super<ModuleConfiguratorWithTests>.getConfiguratorSettings() + super<AndroidModuleConfigurator>.getConfiguratorSettings()
+        return <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<!>.classFun() + <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<ModuleConfiguratorWithTests><!>.getConfiguratorSettings() + <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<AndroidModuleConfigurator><!>.getConfiguratorSettings()
     }
 
     @PublishedApi
@@ -17,11 +17,11 @@ open class AndroidTargetConfigurator :
 
     public inline fun inlineFunAnonymousObjects(): String {
         {
-            super.classFun() + super<ModuleConfiguratorWithTests>.getConfiguratorSettings() + super<AndroidModuleConfigurator>.getConfiguratorSettings()
+            <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<!>.classFun() + <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<ModuleConfiguratorWithTests><!>.getConfiguratorSettings() + <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<AndroidModuleConfigurator><!>.getConfiguratorSettings()
         }()
 
         return object {
-            fun run() = super@AndroidTargetConfigurator.classFun() + super<ModuleConfiguratorWithTests>@AndroidTargetConfigurator.getConfiguratorSettings() + super<AndroidModuleConfigurator>@AndroidTargetConfigurator.getConfiguratorSettings()
+            fun run() = <!SUPER_CALL_FROM_PUBLIC_INLINE!>super@AndroidTargetConfigurator<!>.classFun() + <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<ModuleConfiguratorWithTests>@AndroidTargetConfigurator<!>.getConfiguratorSettings() + <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<AndroidModuleConfigurator>@AndroidTargetConfigurator<!>.getConfiguratorSettings()
         }.run()
     }
 
@@ -94,7 +94,7 @@ sealed class FooSealed : Base() {
     class B: FooSealed()
 
     inline fun test() {
-        super.classFun()
+        <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<!>.classFun()
     }
 
 }
@@ -114,8 +114,8 @@ class FooOuter : Base() {
 
     inner class FooInner: Base() {
         inline fun test() {
-            super@FooOuter.classFun()
-            super.classFun()
+            <!SUPER_CALL_FROM_PUBLIC_INLINE!>super@FooOuter<!>.classFun()
+            <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<!>.classFun()
         }
     }
 

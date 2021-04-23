@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticParameter
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -126,6 +127,14 @@ private object FirToKtConversionCreator {
             KtClassLikeSymbol::class.createType()
         ),
         FirExpression::class to HLFunctionCallConversion(
+            "{0}.source!!.psi as KtExpression",
+            KtExpression::class.createType(),
+            importsToAdd = listOf(
+                "org.jetbrains.kotlin.psi.KtExpression",
+                "org.jetbrains.kotlin.fir.psi"
+            )
+        ),
+        FirQualifiedAccess::class to HLFunctionCallConversion(
             "{0}.source!!.psi as KtExpression",
             KtExpression::class.createType(),
             importsToAdd = listOf(

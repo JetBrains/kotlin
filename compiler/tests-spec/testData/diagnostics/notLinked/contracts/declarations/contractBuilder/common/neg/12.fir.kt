@@ -8,7 +8,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1, 2, 3
 inline fun ContractBuilder.callsInPlaceEffectBuilder(block: () -> Unit) =
-    callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
 
 fun ContractBuilder.returnsEffectBuilder(value_1: Int?) =
     returns(true) implies (value_1 != null)

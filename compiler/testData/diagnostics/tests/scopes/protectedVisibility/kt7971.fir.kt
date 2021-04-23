@@ -18,7 +18,7 @@ fun <T> javaClass(): Class<T> = null!!
 
 public class AppServiceModule : AbstractModule<String>() {
     inline fun <reified T> AbstractModule<Int>.bind() {
-        val x = bind(javaClass<T>())
+        val x = <!PROTECTED_CALL_FROM_PUBLIC_INLINE!>bind<!>(javaClass<T>())
 
         x checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() } // check that Class receiver is used instead of extension one
     }

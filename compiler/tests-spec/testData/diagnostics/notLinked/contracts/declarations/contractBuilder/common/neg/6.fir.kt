@@ -58,6 +58,6 @@ class case_2(value_5: Boolean, val value_1: Boolean) {
 
     inline fun <reified K : Number> K.case_2_5(): Boolean? {
         contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsNotNull() implies (<!UNRESOLVED_REFERENCE!>value_4<!>)<!> }
-        return if (value_4) true else null
+        return if (<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>value_4<!>) true else null
     }
 }
