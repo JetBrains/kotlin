@@ -47,7 +47,7 @@ fun ConeKotlinType.isKMutableProperty(session: FirSession): Boolean {
             classId.shortClassName.identifier.startsWith("KMutableProperty")
 }
 
-private fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
+fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
     return classId(session)?.toFunctionClassKind()
 }
 
@@ -55,29 +55,34 @@ private fun ClassId.toFunctionClassKind(): FunctionClassKind? {
     return FunctionClassKind.byClassNamePrefix(packageFqName, relativeClassName.asString())
 }
 
+// Function, SuspendFunction, KFunction, KSuspendFunction
 fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
     return functionClassKind(session) != null
 }
 
-fun ConeKotlinType.isFunctionalType(session: FirSession): Boolean {
-    val kind = functionClassKind(session) ?: return false
-    return kind == FunctionClassKind.Function
-}
-
+// Function, SuspendFunction, KFunction, KSuspendFunction
 fun ConeClassLikeLookupTag.isBuiltinFunctionalType(): Boolean {
     return classId.toFunctionClassKind() != null
 }
 
-fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
+inline fun ConeKotlinType.isFunctionalType(session: FirSession, predicate: (FunctionClassKind) -> Boolean): Boolean {
     val kind = functionClassKind(session) ?: return false
-    return kind == FunctionClassKind.SuspendFunction ||
-            kind == FunctionClassKind.KSuspendFunction
+    return predicate(kind)
 }
 
+// Function
+fun ConeKotlinType.isFunctionalType(session: FirSession): Boolean {
+    return isFunctionalType(session) { it == FunctionClassKind.Function }
+}
+
+// SuspendFunction, KSuspendFunction
+fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
+    return isFunctionalType(session) { it.isSuspendType }
+}
+
+// KFunction, KSuspendFunction
 fun ConeKotlinType.isKFunctionType(session: FirSession): Boolean {
-    val kind = functionClassKind(session) ?: return false
-    return kind == FunctionClassKind.KFunction ||
-            kind == FunctionClassKind.KSuspendFunction
+    return isFunctionalType(session) { it.isReflectType }
 }
 
 fun ConeKotlinType.kFunctionTypeToFunctionType(session: FirSession): ConeClassLikeType {

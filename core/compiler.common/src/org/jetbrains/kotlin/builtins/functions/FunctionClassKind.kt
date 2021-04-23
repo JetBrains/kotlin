@@ -9,11 +9,16 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-enum class FunctionClassKind(val packageFqName: FqName, val classNamePrefix: String) {
-    Function(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Function"),
-    SuspendFunction(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, "SuspendFunction"),
-    KFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KFunction"),
-    KSuspendFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KSuspendFunction");
+enum class FunctionClassKind(
+    val packageFqName: FqName,
+    val classNamePrefix: String,
+    val isSuspendType: Boolean,
+    val isReflectType: Boolean
+) {
+    Function(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Function", isSuspendType = false, isReflectType = false),
+    SuspendFunction(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, "SuspendFunction", isSuspendType = true, isReflectType = false),
+    KFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KFunction", isSuspendType = false, isReflectType = true),
+    KSuspendFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KSuspendFunction", isSuspendType = true, isReflectType = true);
 
     fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
 
