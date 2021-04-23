@@ -50,14 +50,13 @@ internal class CStructVarCompanionGenerator(
                     .getContributedDescriptors()
                     .filterIsInstance<CallableMemberDescriptor>()
                     .filterNot { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
-                    .map {
+                    .mapNotNull {
                         when (it) {
                             is PropertyDescriptor -> createProperty(it)
                             is SimpleFunctionDescriptor -> createFunction(it)
                             else -> null
                         }
                     }
-                    .filterNotNull()
                     .forEach(companionIrClass::addMember)
             }
 

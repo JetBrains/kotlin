@@ -109,14 +109,6 @@ private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberA
                 transformCall
         )
 
-private fun IrType.isCStructCompanion(): Boolean {
-    val companion = this.classOrNull?.owner ?: return false
-    if (!companion.isCompanion) return false
-    val clazz = companion.parent
-    if (clazz !is IrClass) return false
-    return clazz.hasAnnotation(RuntimeNames.cStruct)
-}
-
 private fun IrType.isCStruct(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.cStruct) ?: false
 private fun IrType.isManagedType(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.managedType) ?: false
 

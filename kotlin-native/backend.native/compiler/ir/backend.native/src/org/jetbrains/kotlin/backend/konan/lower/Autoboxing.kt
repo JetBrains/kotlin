@@ -301,6 +301,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             } else if (declaration.hasCCallAnnotation("CppClassConstructor") && !declaration.isPrimary) {
                 // At this point secondary cpp constructor calls have already been transformed
                 // by interop lowering. So don't mess with them.
+                // Otherwise we could assert having assumptions on (empty at the moment) body of the constructor.
             } else {
                 buildLoweredConstructor(declaration)
             }

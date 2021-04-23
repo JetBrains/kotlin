@@ -221,7 +221,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         return StructDeclImpl(typeSpelling, getLocation(cursor))
     }
 
-    private fun visitClass(classCursor: CValue<CXCursor>, clazz: StructDefImpl)  {
+    private fun addCxxMembers(classCursor: CValue<CXCursor>, clazz: StructDefImpl)  {
         if (library.language != Language.CPP) return
 
         // TODO skip method (function) when encounter UnsupportedType in params or ret value. Otherwise all class methods will be lost due to exception (?)
@@ -278,7 +278,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         )
 
         structDef.members += fields
-        visitClass(cursor, structDef)
+        addCxxMembers(cursor, structDef)
 
         structDecl.def = structDef
     }
@@ -1219,11 +1219,13 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                 }
             })
 
-            visitChildren(clang_getTranslationUnitCursor(translationUnit)) { cursor, _ ->
-                if (getContainingFile(cursor) in headers) {
-                    nativeIndex.indexCxxDeclaration(cursor)
+            if (nativeIndex.library.language == Language.CPP) {
+                visitChildren(clang_getTranslationUnitCursor(translationUnit)) { cursor, _ ->
+                    if (getContainingFile(cursor) in headers) {
+                        nativeIndex.indexCxxDeclaration(cursor)
+                    }
+                    CXChildVisitResult.CXChildVisit_Continue
                 }
-                CXChildVisitResult.CXChildVisit_Continue
             }
 
             visitChildren(clang_getTranslationUnitCursor(translationUnit)) { cursor, _ ->

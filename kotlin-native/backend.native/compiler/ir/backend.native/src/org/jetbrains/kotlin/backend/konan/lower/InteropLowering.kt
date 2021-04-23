@@ -87,14 +87,14 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
             }
 
             override val language: String
-                get() = klib?.manifestProperties?.getProperty("language") ?: ""
+                get() = klib?.manifestProperties?.getProperty("language") ?: "C"
 
             override fun addKotlin(declaration: IrDeclaration) {
                 addTopLevel(declaration)
             }
 
             override fun addC(lines: List<String>) {
-                context.cStubsManager.addStub(location, lines, klib)
+                context.cStubsManager.addStub(location, lines, language)
             }
 
             override fun getUniqueCName(prefix: String) =
@@ -824,7 +824,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     }.all{ it }
                 }
 
-        val irBlock = irBuilder(context.irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+        val irBlock = irBuilder(context.irBuiltIns, irConstructor.symbol, expression.startOffset, expression.endOffset)
                 .irBlock {
                     val call = irCall(primaryConstructor).also {
                         val nativePointed = irCall(alloc).apply {
