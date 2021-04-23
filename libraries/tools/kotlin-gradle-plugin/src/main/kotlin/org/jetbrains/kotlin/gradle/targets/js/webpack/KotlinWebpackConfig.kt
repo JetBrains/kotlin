@@ -103,7 +103,12 @@ data class KotlinWebpackConfig(
                     versions.webpack4
                 )
             )
-            it.add(versions.webpackCli)
+            it.add(
+                webpackMajorVersion.choose(
+                    versions.webpackCli,
+                    versions.webpackCli3
+                )
+            )
             it.add(versions.formatUtil)
 
             if (bundleAnalyzerReportDir != null) {
@@ -120,7 +125,12 @@ data class KotlinWebpackConfig(
             }
 
             if (devServer != null) {
-                it.add(versions.webpackDevServer)
+                it.add(
+                    webpackMajorVersion.choose(
+                        versions.webpackDevServer,
+                        versions.webpackDevServer3
+                    )
+                )
             }
 
             if (!cssSupport.enabled || cssSupport.rules.isEmpty()) return@also
@@ -153,14 +163,11 @@ data class KotlinWebpackConfig(
 
     @Suppress("unused")
     data class DevServer(
-        val inline: Boolean = true,
-        val lazy: Boolean = false,
-        val noInfo: Boolean = true,
-        val open: Any = true,
-        val overlay: Any = false,
-        val port: Int? = null,
-        val proxy: Map<String, Any>? = null,
-        val contentBase: List<String>
+        var open: Any = true,
+        var port: Int? = null,
+        var proxy: MutableMap<String, Any>? = null,
+        var static: MutableList<String>? = null,
+        var contentBase: MutableList<String>? = null
     ) : Serializable
 
     fun save(configFile: File) {
