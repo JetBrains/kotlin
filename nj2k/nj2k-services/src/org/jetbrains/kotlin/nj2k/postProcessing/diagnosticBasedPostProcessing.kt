@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.idea.core.util.range
-import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
-import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.QuickFixFactory
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -22,7 +19,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<DiagnosticBasedProcessing>) : FileBasedPostProcessing() {
     constructor(vararg diagnosticBasedProcessings: DiagnosticBasedProcessing) : this(diagnosticBasedProcessings.toList())
@@ -97,14 +93,3 @@ fun diagnosticBasedProcessing(fixFactory: QuickFixFactory, vararg diagnosticFact
             }
         }
     }
-
-fun addExclExclFactoryNoImplicitReceiver(initialFactory: KotlinSingleIntentionActionFactory) =
-    object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction? =
-            initialFactory.createActions(diagnostic).singleOrNull()
-                ?.safeAs<AddExclExclCallFix>()
-                ?.let {
-                    AddExclExclCallFix(diagnostic.psiElement, checkImplicitReceivers = false)
-                }
-    }
-
