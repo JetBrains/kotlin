@@ -53,3 +53,9 @@ FILE: funInterfaceDeclaration.kt
         public abstract fun test(): R|kotlin/Unit|
 
     }
+    public abstract interface Test14 : R|kotlin/Any| {
+        public abstract suspend fun test(): R|kotlin/Unit|
+
+    }
+    public abstract interface Test15 : R|Test14| {
+    }

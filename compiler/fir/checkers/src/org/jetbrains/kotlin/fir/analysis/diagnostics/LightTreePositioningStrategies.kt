@@ -346,6 +346,9 @@ object LightTreePositioningStrategies {
     val SUSPEND_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.SUSPEND_KEYWORD))
 
+    private val SUSPEND_OR_FUN_MODIFIER: LightTreePositioningStrategy =
+        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.SUSPEND_KEYWORD, KtTokens.FUN_KEYWORD))
+
     val INLINE_OR_VALUE_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD))
 
@@ -449,7 +452,7 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val FUN_INTERFACE_ABSTRACT_PROPERTY: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+    val FUN_INTERFACE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
@@ -459,6 +462,13 @@ object LightTreePositioningStrategies {
             return when (node.tokenType) {
                 KtNodeTypes.CLASS -> FUN_MODIFIER.mark(node, startOffset, endOffset, tree)
                 KtNodeTypes.PROPERTY -> VAL_OR_VAR_NODE.mark(node, startOffset, endOffset, tree)
+                KtNodeTypes.FUN -> {
+                    if (tree.typeParametersList(node) != null) {
+                        TYPE_PARAMETERS_LIST.mark(node, startOffset, endOffset, tree)
+                    } else {
+                        SUSPEND_OR_FUN_MODIFIER.mark(node, startOffset, endOffset, tree)
+                    }
+                }
                 else -> DEFAULT.mark(node, startOffset, endOffset, tree)
             }
         }
@@ -498,7 +508,7 @@ object LightTreePositioningStrategies {
                 when (selector.tokenType) {
                     KtNodeTypes.REFERENCE_EXPRESSION ->
                         return markElement(selector, startOffset, endOffset, tree, node)
-                    KtNodeTypes.CALL_EXPRESSION, KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL,KtNodeTypes.SUPER_TYPE_CALL_ENTRY ->
+                    KtNodeTypes.CALL_EXPRESSION, KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL, KtNodeTypes.SUPER_TYPE_CALL_ENTRY ->
                         return markElement(
                             tree.referenceExpression(selector, locateReferencedName) ?: selector,
                             startOffset,
@@ -603,7 +613,7 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val WHOLE_ELEMENT = object : LightTreePositioningStrategy() { }
+    val WHOLE_ELEMENT = object : LightTreePositioningStrategy() {}
 
     val LONG_LITERAL_SUFFIX = object : LightTreePositioningStrategy() {
         override fun mark(

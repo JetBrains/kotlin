@@ -63,23 +63,33 @@ object FirFunInterfaceDeclarationChecker : FirRegularClassChecker() {
             return
         }
 
+        val inFunInterface = abstractFunction.getContainingClass(context) === declaration
+
         when {
             abstractFunction.typeParameters.isNotEmpty() ->
                 reporter.reportOn(
-                    abstractFunction.typeParameters.first().source,
+                    if (inFunInterface) abstractFunction.source else declaration.source,
                     FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS,
                     context
                 )
 
             abstractFunction.isSuspend ->
                 if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionsInFunInterfaces)) {
-                    reporter.reportOn(abstractFunction.source, FUN_INTERFACE_WITH_SUSPEND_FUNCTION, context)
+                    reporter.reportOn(
+                        if (inFunInterface) abstractFunction.source else declaration.source,
+                        FUN_INTERFACE_WITH_SUSPEND_FUNCTION,
+                        context
+                    )
                 }
         }
 
         abstractFunction.valueParameters.forEach {
             if (it.defaultValue != null) {
-                reporter.reportOn(it.source, FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE, context)
+                reporter.reportOn(
+                    if (inFunInterface) it.source else declaration.source,
+                    FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE,
+                    context
+                )
             }
         }
     }

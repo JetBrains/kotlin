@@ -18,9 +18,9 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.VAL_OR_VAR_NODE
     )
 
-    val FUN_INTERFACE_ABSTRACT_PROPERTY = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.FUN_INTERFACE_ABSTRACT_PROPERTY,
-        PositioningStrategies.FUN_INTERFACE_ABSTRACT_PROPERTY
+    val FUN_INTERFACE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.FUN_INTERFACE,
+        PositioningStrategies.FUN_INTERFACE
     )
 
     val COMPANION_OBJECT = SourceElementPositioningStrategy(

@@ -784,12 +784,20 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val FUN_INTERFACE_ABSTRACT_PROPERTY: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+    val FUN_INTERFACE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
         override fun mark(element: KtDeclaration): List<TextRange> {
             return when (element) {
                 is KtClass -> FUN_MODIFIER.mark(element)
                 is KtProperty -> markElement(element.valOrVarKeyword)
-                else -> error("Expect interface or property, but was " + element.getElementTextWithContext())
+                is KtNamedFunction -> {
+                    val typeParameterList = element.typeParameterList
+                    when {
+                        typeParameterList != null -> markElement(typeParameterList)
+                        element.hasModifier(KtTokens.SUSPEND_KEYWORD) -> SUSPEND_MODIFIER.mark(element)
+                        else -> markElement(element.funKeyword ?: element)
+                    }
+                }
+                else -> markElement(element)
             }
         }
     }

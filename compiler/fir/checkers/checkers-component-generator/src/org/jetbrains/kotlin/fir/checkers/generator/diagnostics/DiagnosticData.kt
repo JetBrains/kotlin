@@ -66,7 +66,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     TYPE_PARAMETERS_LIST,
     FUN_MODIFIER,
     SUSPEND_MODIFIER,
-    FUN_INTERFACE_ABSTRACT_PROPERTY,
+    FUN_INTERFACE,
 
     ;
 

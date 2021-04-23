@@ -55,7 +55,7 @@ fun interface GoodWithPropAndBase : BaseWithSAM {
 }
 
 fun interface Foo8 {
-    fun <<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS!>T<!>> invoke(x: T)
+    fun <!FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS!><T><!> invoke(x: T)
 }
 
 fun interface GoodGeneric<T> {
@@ -63,10 +63,10 @@ fun interface GoodGeneric<T> {
 }
 
 interface BaseWithGeneric {
-    fun <<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS!>T<!>> invoke(x: T)
+    fun <T> invoke(x: T)
 }
 
-fun interface Foo9 : BaseWithGeneric
+<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS!>fun<!> interface Foo9 : BaseWithGeneric
 
 fun interface GoodExtensionGeneric : GoodGeneric<String>
 
@@ -97,8 +97,8 @@ fun interface WithDefaultValue {
 }
 
 interface BaseWithDefaultValue {
-    fun invoke(<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>s: String = ""<!>)
+    fun invoke(s: String = "")
 }
 
-fun interface DeriveDefault : BaseWithDefaultValue
+<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>fun<!> interface DeriveDefault : BaseWithDefaultValue
 
