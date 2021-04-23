@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.project.model
 
+// TODO: Add better Kotlin Variant Attributes management
+//  Ideally we should respect the nature of Attributes and express values in form of Complete Lattice
+//  Moreover we can add support for default and most used Value Types (eg. Enums)
+
 open class KotlinAttributeKey(
     val uniqueName: String
 ) {
@@ -15,6 +19,7 @@ open class KotlinAttributeKey(
         uniqueName.hashCode()
 }
 
+// TODO: Introduce ENUM
 object KotlinPlatformTypeAttribute : KotlinAttributeKey("org.jetbrains.kotlin.platform.type") {
     const val JVM = "jvm"
     const val ANDROID_JVM = "androidJvm"

@@ -45,6 +45,7 @@ val KotlinModuleFragment.refinesClosure: Set<KotlinModuleFragment>
         visit(this@refinesClosure)
     }
 
+val KotlinModuleVariant.platform get() = variantAttributes[KotlinPlatformTypeAttribute]
 
 open class BasicKotlinModuleFragment(
     override val containingModule: KotlinModule,

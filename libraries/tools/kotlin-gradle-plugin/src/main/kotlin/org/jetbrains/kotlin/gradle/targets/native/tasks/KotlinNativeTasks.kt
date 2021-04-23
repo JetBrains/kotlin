@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
@@ -227,6 +226,13 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Kotl
     @Classpath
     var compilerPluginClasspath: FileCollection? = null
 
+    /**
+     * Plugin Data provided by [KpmCompilerPlugin]
+     */
+    @get:Optional
+    @get:Nested
+    var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
+
     // Used by IDE via reflection.
     @get:Internal
     val serializedCompilerArguments: List<String>
@@ -249,16 +255,19 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Kotl
             add("-no-endorsed-libs")
         }
 
-        // Compiler plugins.
-        compilerPluginClasspath?.let { pluginClasspath ->
-            pluginClasspath.map { it.canonicalPath }.sorted().forEach { path ->
+        fun addPluginOptions(classpath: FileCollection, options: CompilerPluginOptions) {
+            classpath.map { it.canonicalPath }.sorted().forEach { path ->
                 add("-Xplugin=$path")
             }
-            compilerPluginOptions.arguments.forEach {
+            options.arguments.forEach {
                 add("-P")
                 add(it)
             }
         }
+
+        // Compiler plugins.
+        compilerPluginClasspath?.let { addPluginOptions(it, compilerPluginOptions) }
+        kotlinPluginData?.orNull?.let { addPluginOptions(it.classpath, it.options) }
 
         // kotlin options
         addKey("-Werror", kotlinOptions.allWarningsAsErrors)

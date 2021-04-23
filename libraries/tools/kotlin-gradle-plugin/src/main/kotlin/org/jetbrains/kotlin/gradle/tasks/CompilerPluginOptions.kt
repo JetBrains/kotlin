@@ -32,4 +32,13 @@ class CompilerPluginOptions {
     fun addPluginArgument(pluginId: String, option: SubpluginOption) {
         subpluginOptionsByPluginId.getOrPut(pluginId) { mutableListOf() }.add(option)
     }
+
+    operator fun plus(options: CompilerPluginOptions?): CompilerPluginOptions {
+        if (options == null) return this
+        val newOptions = CompilerPluginOptions()
+        newOptions.subpluginOptionsByPluginId += subpluginOptionsByPluginId
+        newOptions.subpluginOptionsByPluginId += options.subpluginOptionsByPluginId
+
+        return newOptions
+    }
 }

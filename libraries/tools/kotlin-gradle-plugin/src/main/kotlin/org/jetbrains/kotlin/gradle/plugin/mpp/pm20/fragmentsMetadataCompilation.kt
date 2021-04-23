@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.FileCollection
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
@@ -17,9 +15,9 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
-import org.jetbrains.kotlin.gradle.targets.metadata.NativeSharedCompilationProcessor
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -28,7 +26,6 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
-import java.io.File
 import java.util.concurrent.Callable
 
 internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
@@ -204,7 +201,7 @@ private fun createNativeMetadataCompilation(
             metadataCompilationRegistry,
             lazy { resolvedMetadataProviders(fragment) }
         )
-    MetadataCompilationTasksConfigurator(project).createKotlinNativeCompilationTask(fragment, metadataCompilationData)
+    MetadataCompilationTasksConfigurator(project).createKotlinNativeMetadataCompilationTask(fragment, metadataCompilationData)
     metadataCompilationRegistry.registerNative(fragment, metadataCompilationData)
 }
 
@@ -222,6 +219,29 @@ private class MetadataCompilationTasksConfigurator(project: Project) : KotlinCom
 
         addSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { allSources }
         addCommonSourcesToKotlinCompileTask(project, compilationData.compileKotlinTaskName, emptyList()) { commonSources }
+
+        project.tasks.named(compilationData.compileKotlinTaskName, AbstractKotlinCompile::class.java).configure {
+            it.kotlinPluginData = project.compilerPluginProviderForMetadata(fragment, compilationData)
+        }
+    }
+
+    fun createKotlinNativeMetadataCompilationTask(
+        fragment: KotlinGradleFragment,
+        compilationData: KotlinNativeFragmentMetadataCompilationData
+    ): TaskProvider<KotlinNativeCompile> {
+        val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
+
+        val allSources = getSourcesForFragmentCompilation(fragment)
+        val commonSources = getCommonSourcesForFragmentCompilation(fragment)
+
+        compileTask.configure {
+            it.source(allSources)
+            it.commonSources.from(commonSources)
+
+            it.kotlinPluginData = project.compilerPluginProviderForNativeMetadata(fragment, compilationData)
+        }
+
+        return compileTask
     }
 
     override fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider {

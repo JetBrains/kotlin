@@ -9,9 +9,7 @@ import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
-import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
+import org.jetbrains.kotlin.project.model.*
 import javax.inject.Inject
 
 open class KotlinGradleModuleInternal(
@@ -34,6 +32,15 @@ open class KotlinGradleModuleInternal(
     // TODO DSL & build script model: find a way to create a flexible typed view on fragments?
     override val variants: NamedDomainObjectSet<KotlinGradleVariant> by lazy {
         fragments.withType(KotlinGradleVariant::class.java)
+    }
+
+    override val plugins: Set<KpmCompilerPlugin> by lazy {
+        mutableSetOf<KpmCompilerPlugin>().also { set ->
+            project
+                .plugins
+                .withType(GradleKpmCompilerPlugin::class.java)
+                .mapTo(set, GradleKpmCompilerPlugin::kpmCompilerPlugin)
+        }
     }
 
     override var isPublic: Boolean = false

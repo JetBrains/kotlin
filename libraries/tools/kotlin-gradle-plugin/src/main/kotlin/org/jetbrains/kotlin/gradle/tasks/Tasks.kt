@@ -210,6 +210,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     protected val multiModuleICSettings: MultiModuleICSettings
         get() = MultiModuleICSettings(buildHistoryFile.get().asFile, useModuleDetection.get())
 
+
+    /*
+        @get:InputFiles
+    @get:Classpath
+    open val pluginClasspath: FileCollection by project.provider {
+        (taskData.compilation as? KotlinCompilation<*>?)?.pluginConfigurationName?.let(project.configurations::getByName)
+            ?: project.files()
+    }
+     */
     @get:InputFiles
     @get:Classpath
     open val pluginClasspath: ConfigurableFileCollection = objects.fileCollection()
@@ -219,6 +228,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @get:Input
     val sourceFilesExtensions: ListProperty<String> = objects.listProperty(String::class.java).value(DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS)
+
+    /**
+     * Plugin Data provided by [KpmCompilerPlugin]
+     */
+    @get:Optional
+    @get:Nested
+    internal var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
     // Input is needed to force rebuild even if source files are not changed
     @get:Input
@@ -369,8 +385,9 @@ open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCo
     val coroutines: Provider<Coroutines> = taskProvider.coroutines
     val logger: Logger = taskProvider.logger
     val isMultiplatform: Boolean = taskProvider.multiPlatformEnabled.get()
-    val pluginClasspath: FileCollection = taskProvider.pluginClasspath
-    val pluginOptions: CompilerPluginOptions = taskProvider.pluginOptions
+    val pluginData = taskProvider.kotlinPluginData?.orNull
+    val pluginClasspath: FileCollection = taskProvider.pluginClasspath // TODO: Add pluginData
+    val pluginOptions: CompilerPluginOptions = taskProvider.pluginOptions // TODO: Add pluginData
 }
 
 class KotlinJvmCompilerArgumentsProvider
@@ -767,3 +784,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
         compilerRunner.runJsCompilerAsync(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
     }
 }
+
+data class KotlinCompilerPluginData(
+    @get:InputFiles
+    @get:Classpath
+    val classpath: FileCollection,
+
+    @get:Internal
+    val options: CompilerPluginOptions
+)
