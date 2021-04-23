@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPI
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerAssembleAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
@@ -242,10 +241,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         configureFrameworkExport(target)
         configureCInterops(target)
 
-        if (target.konanTarget.family.isAppleFamily) {
-            registerAssembleAppleFrameworkTasks(target)
-        }
-
         if (PropertiesProvider(target.project).ignoreIncorrectNativeDependencies != true) {
             warnAboutIncorrectDependencies(target)
         }
@@ -357,13 +352,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
                 description = "Dependenceis to be exported in framework ${framework.name} for target ${target.targetName}"
             }
-        }
-    }
-
-    private fun registerAssembleAppleFrameworkTasks(target: KotlinNativeTarget) {
-        val project = target.project
-        target.binaries.withType(Framework::class.java).all { framework ->
-            project.registerAssembleAppleFrameworkTask(framework)
         }
     }
 
