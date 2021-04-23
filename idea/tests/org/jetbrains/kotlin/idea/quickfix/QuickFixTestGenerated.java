@@ -677,6 +677,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addExclExclCall/implicitFunctionCall.kt");
         }
 
+        @TestMetadata("iterable.kt")
+        public void testIterable() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/iterable.kt");
+        }
+
+        @TestMetadata("iterableInExtension.kt")
+        public void testIterableInExtension() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/iterableInExtension.kt");
+        }
+
         @TestMetadata("normal.kt")
         public void testNormal() throws Exception {
             runTest("idea/testData/quickfix/addExclExclCall/normal.kt");
@@ -13774,6 +13784,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("addArrayOfTypeForNamedParameter.kt")
         public void testAddArrayOfTypeForNamedParameter() throws Exception {
             runTest("idea/testData/quickfix/typeMismatch/addArrayOfTypeForNamedParameter.kt");
+        }
+
+        @TestMetadata("addExclExclToAssignmentRValue.kt")
+        public void testAddExclExclToAssignmentRValue() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/addExclExclToAssignmentRValue.kt");
+        }
+
+        @TestMetadata("addExclExclToMemberAccessInExtension.kt")
+        public void testAddExclExclToMemberAccessInExtension() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/addExclExclToMemberAccessInExtension.kt");
+        }
+
+        @TestMetadata("addExclExclToMemberAccessInExtensionAsAssignmentRValue.kt")
+        public void testAddExclExclToMemberAccessInExtensionAsAssignmentRValue() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/addExclExclToMemberAccessInExtensionAsAssignmentRValue.kt");
         }
 
         @TestMetadata("addExclExclToQualifiedArgument.kt")
