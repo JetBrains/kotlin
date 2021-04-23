@@ -7,3 +7,4 @@ org.jetbrains.kotlin.kapt.idea.KaptModelBuilderService
 org.jetbrains.kotlin.noarg.ide.NoArgModelBuilderService
 org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverModelBuilderService
 org.jetbrains.kotlin.parcelize.ide.ParcelizeModelBuilderService
+org.jetbrains.kotlin.lombok.ide.LombokModelBuilderService

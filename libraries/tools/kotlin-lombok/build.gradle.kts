@@ -15,9 +15,7 @@ dependencies {
     api(project(":kotlin-gradle-plugin-model"))
 }
 
-projectTest(parallel = true) {
-    workingDir = projectDir
-}
+projectTest(parallel = true)
 
 publish()
 

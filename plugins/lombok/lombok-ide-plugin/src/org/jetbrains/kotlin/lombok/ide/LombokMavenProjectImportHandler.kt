@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.lombok.ide
 
 import org.jetbrains.kotlin.lombok.LombokCommandLineProcessor
 import org.jetbrains.kotlin.lombok.LombokCommandLineProcessor.Companion.CONFIG_FILE_OPTION
-import org.jetbrains.kotlin.lombok.ide.CompilerPluginSetup.PluginOption
+import org.jetbrains.kotlin.plugin.ide.AbstractMavenImportHandler
+import org.jetbrains.kotlin.plugin.ide.CompilerPluginSetup.PluginOption
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 

@@ -35,6 +35,7 @@ dependencies {
     testRuntime(project(":plugins:parcelize:parcelize-ide"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(project(":plugins:lombok:lombok-ide-plugin"))
     testCompile(intellijDep())
     testCompile(intellijPluginDep("java"))
 }

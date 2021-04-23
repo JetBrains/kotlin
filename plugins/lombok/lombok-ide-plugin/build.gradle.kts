@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":plugins:lombok:lombok-compiler-plugin"))
+    implementation(project(":plugins:base-compiler-plugins-ide-support"))
 
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
