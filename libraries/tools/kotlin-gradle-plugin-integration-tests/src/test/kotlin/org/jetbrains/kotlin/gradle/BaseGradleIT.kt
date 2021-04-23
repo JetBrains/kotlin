@@ -247,8 +247,7 @@ abstract class BaseGradleIT {
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
         val warningMode: WarningMode = WarningMode.Fail,
-        val useFir: Boolean = false,
-        val customEnvironmentVariables: Map<String, String> = mapOf()
+        val useFir: Boolean = false
     )
 
     enum class ConfigurationCacheProblems {
@@ -663,12 +662,6 @@ abstract class BaseGradleIT {
         }
     }
 
-    fun CompiledProject.assertTasksNotRegistered(vararg tasks: String) {
-        for (task in tasks) {
-            assertNotContains("'Register task $task'")
-        }
-    }
-
     fun CompiledProject.assertTasksRegisteredByPrefix(taskPrefixes: Iterable<String>) {
         for (prefix in taskPrefixes) {
             assertContainsRegex("'Register task $prefix\\w*'".toRegex())
@@ -970,7 +963,6 @@ Finished executing task ':$taskName'|
             options.gradleUserHome?.let {
                 put("GRADLE_USER_HOME", it.canonicalPath)
             }
-            putAll(options.customEnvironmentVariables)
         }
 
     private fun String.normalize() = this.lineSequence().joinToString(SYSTEM_LINE_SEPARATOR)
