@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.requireOrDescribe
@@ -69,8 +66,8 @@ abstract class AbstractConeCallConflictResolver(
             val uByte = StandardClassIds.UByte
             val uShort = StandardClassIds.UShort
 
-            val specificClassId = specific.classId ?: return false
-            val generalClassId = general.classId ?: return false
+            val specificClassId = specific.lowerBoundIfFlexible().classId ?: return false
+            val generalClassId = general.upperBoundIfFlexible().classId ?: return false
 
 
             // int >= long, int >= short, short >= byte

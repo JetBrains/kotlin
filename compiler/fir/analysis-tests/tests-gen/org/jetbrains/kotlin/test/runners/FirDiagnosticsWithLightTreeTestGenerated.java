@@ -660,6 +660,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("integerOverloads.kt")
+            public void testIntegerOverloads() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/arguments/integerOverloads.kt");
+            }
+
+            @Test
             @TestMetadata("invoke.kt")
             public void testInvoke() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/arguments/invoke.kt");
