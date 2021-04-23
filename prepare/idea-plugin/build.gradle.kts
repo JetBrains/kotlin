@@ -138,6 +138,7 @@ val libraryProjects = listOf(
     ":kotlin-allopen-compiler-plugin",
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
+    ":plugins:lombok:lombok-compiler-plugin",
     ":plugins:android-extensions-compiler",
     ":plugins:parcelize:parcelize-compiler",
     ":kotlinx-serialization-compiler-plugin",
@@ -193,6 +194,7 @@ dependencies {
     gradleToolingModel(project(":plugins:parcelize:parcelize-ide")) { isTransitive = false }
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
+    gradleToolingModel(project(":plugins:lombok:lombok-ide-plugin")) { isTransitive = false }
 
     jpsPlugin(project(":kotlin-jps-plugin")) { isTransitive = false }
 

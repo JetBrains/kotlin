@@ -6,6 +6,7 @@
     <mavenProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgMavenProjectImportHandler"/>
     <mavenProjectImportHandler implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverMavenProjectImportHandler"/>
     <mavenProjectImportHandler implementation="org.jetbrains.kotlinx.serialization.idea.KotlinSerializationMavenImportHandler"/>
+    <mavenProjectImportHandler implementation="org.jetbrains.kotlin.lombok.ide.LombokMavenProjectImportHandler"/>
     <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.maven.MavenDetector"/>
   </extensions>
 

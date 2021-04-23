@@ -347,6 +347,7 @@ include ":plugins:parcelize:parcelize-compiler",
         ":kotlin-parcelize-compiler"
 
 include ":plugins:lombok:lombok-compiler-plugin",
+        ":plugins:lombok:lombok-ide-plugin",
         ":kotlin-lombok"
 
 include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
@@ -361,6 +362,7 @@ include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for
         ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:tests-common-tests-for-ide",
         ":prepare:ide-plugin-dependencies:compiler-components-for-jps"
 
