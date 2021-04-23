@@ -66,6 +66,9 @@ interface KotlinPaths {
     val noArgPluginJarPath: File
         get() = jar(Jar.NoArgPlugin)
 
+    val lombokPluginJarPath: File
+        get() = jar(Jar.LombokPlugin)
+
 //    @Deprecated("Obsolete API", ReplaceWith("jar(KotlinPaths.Jars.samWithReceiver)"))
     val samWithReceiverJarPath: File
         get() = jar(Jar.SamWithReceiver)
@@ -93,6 +96,7 @@ interface KotlinPaths {
         JsKotlinTest(PathUtil.KOTLIN_TEST_JS_NAME),
         AllOpenPlugin(PathUtil.ALLOPEN_PLUGIN_NAME),
         NoArgPlugin(PathUtil.NOARG_PLUGIN_NAME),
+        LombokPlugin(PathUtil.LOMBOK_PLUGIN_NAME),
         SamWithReceiver(PathUtil.SAM_WITH_RECEIVER_PLUGIN_NAME),
         SerializationPlugin(PathUtil.SERIALIZATION_PLUGIN_NAME),
         Trove4j(PathUtil.TROVE4J_NAME),
