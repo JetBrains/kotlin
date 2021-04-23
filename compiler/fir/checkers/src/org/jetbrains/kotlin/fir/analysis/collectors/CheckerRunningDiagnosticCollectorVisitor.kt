@@ -14,10 +14,6 @@ open class CheckerRunningDiagnosticCollectorVisitor(
     protected val components: List<AbstractDiagnosticCollectorComponent>
 ) : AbstractDiagnosticCollectorVisitor(context) {
 
-    override fun visitNestedElements(element: FirElement) {
-        element.acceptChildren(this, null)
-    }
-
     override fun checkElement(element: FirElement) {
         components.forEach {
             element.accept(it, context)

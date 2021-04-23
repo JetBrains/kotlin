@@ -27,7 +27,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
     protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
     protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
-    protected abstract fun visitNestedElements(element: FirElement)
+    protected open fun visitNestedElements(element: FirElement) {
+        element.acceptChildren(this, null)
+    }
+
     protected abstract fun checkElement(element: FirElement)
 
     override fun visitElement(element: FirElement, data: Nothing?) {
@@ -210,15 +213,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     private fun visitWithQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
         return withQualifiedAccess(qualifiedAccess) {
-            checkElement(qualifiedAccess)
-            visitNestedElements(qualifiedAccess)
+            visitElement(qualifiedAccess, null)
         }
     }
 
     private fun visitWithGetClassCall(getClassCall: FirGetClassCall) {
         return withGetClassCall(getClassCall) {
-            checkElement(getClassCall)
-            visitNestedElements(getClassCall)
+            visitElement(getClassCall, null)
         }
     }
 
