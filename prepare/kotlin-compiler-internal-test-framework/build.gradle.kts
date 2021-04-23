@@ -20,11 +20,6 @@ publish()
 noDefaultJar()
 
 val runtimeJar: TaskProvider<out Jar> = runtimeJar(unshadedCompiler())
-val runtimeConfig by configurations.creating
-artifacts {
-    val jar: Jar = runtimeJar.get()
-    add(runtimeConfig.name, jar)
-}
 publishing {
     publications {
         create<MavenPublication>("maven"){
