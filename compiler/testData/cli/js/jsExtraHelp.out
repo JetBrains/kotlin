@@ -1,5 +1,6 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
+  -Xcache-directories=<path> A path to cache directories
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
   -Xfake-override-validator  Enable IR fake override validator
@@ -7,6 +8,7 @@ where advanced options include:
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
   -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.
+  -Xir-build-cache           Use compiler to build cache
   -Xir-dce                   Perform experimental dead code elimination
   -Xir-dce-driven            Perform a more experimental faster dead code elimination
   -Xir-dce-print-reachability-info

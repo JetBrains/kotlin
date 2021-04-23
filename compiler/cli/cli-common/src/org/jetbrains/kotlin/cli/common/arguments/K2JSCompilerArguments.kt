@@ -162,6 +162,16 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var includes: String? by NullableStringFreezableVar(null)
 
     @Argument(
+        value = "-Xcache-directories",
+        valueDescription = "<path>",
+        description = "A path to cache directories"
+    )
+    var cacheDirectories: String? by NullableStringFreezableVar(null)
+
+    @Argument(value = "-Xir-build-cache", description = "Use compiler to build cache")
+    var irBuildCache: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xgenerate-dts",
         description = "Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only."
     )
