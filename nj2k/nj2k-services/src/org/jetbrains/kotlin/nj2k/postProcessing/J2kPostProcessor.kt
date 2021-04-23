@@ -101,13 +101,13 @@ private val errorsFixingDiagnosticBasedPostProcessingGroup =
         },
 
         diagnosticBasedProcessing(
-            addExclExclFactoryNoImplicitReceiver(AddExclExclCallFix),
+            UnsafeCallExclExclFixFactory,
             Errors.UNSAFE_CALL,
             Errors.UNSAFE_INFIX_CALL,
             Errors.UNSAFE_OPERATOR_CALL
         ),
         diagnosticBasedProcessing(
-            addExclExclFactoryNoImplicitReceiver(MissingIteratorExclExclFixFactory),
+            MissingIteratorExclExclFixFactory,
             Errors.ITERATOR_ON_NULLABLE
         ),
         diagnosticBasedProcessing(

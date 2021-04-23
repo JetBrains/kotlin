@@ -262,9 +262,9 @@ class QuickFixRegistrar : QuickFixContributor {
         UNSAFE_OPERATOR_CALL.registerFactory(WrapWithSafeLetCallFix.UnsafeFactory)
         TYPE_MISMATCH.registerFactory(WrapWithSafeLetCallFix.TypeMismatchFactory)
 
-        UNSAFE_CALL.registerFactory(AddExclExclCallFix)
-        UNSAFE_INFIX_CALL.registerFactory(AddExclExclCallFix)
-        UNSAFE_OPERATOR_CALL.registerFactory(AddExclExclCallFix)
+        UNSAFE_CALL.registerFactory(UnsafeCallExclExclFixFactory)
+        UNSAFE_INFIX_CALL.registerFactory(UnsafeCallExclExclFixFactory)
+        UNSAFE_OPERATOR_CALL.registerFactory(UnsafeCallExclExclFixFactory)
         UNNECESSARY_NOT_NULL_ASSERTION.registerFactory(RemoveExclExclCallFix)
         UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
         UNSAFE_OPERATOR_CALL.registerFactory(ReplaceInfixOrOperatorCallFix)
