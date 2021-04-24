@@ -29,10 +29,10 @@ interface FunctionDelegate {
   val function: IrFunction
 
   fun buildCall(
-      builder: IrBuilderWithScope,
-      original: IrCall,
-      arguments: List<IrExpression?>,
-      message: IrExpression
+    builder: IrBuilderWithScope,
+    original: IrCall,
+    arguments: List<IrExpression?>,
+    message: IrExpression
   ): IrExpression
 
   fun IrBuilderWithScope.irCallCopy(
