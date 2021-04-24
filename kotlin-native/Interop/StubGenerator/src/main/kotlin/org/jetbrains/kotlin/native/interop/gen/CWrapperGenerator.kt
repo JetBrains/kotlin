@@ -65,25 +65,19 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
 
         val returnType = function.returnType.stringRepresentation
 
-        val signatureParameters = function.parameters.mapIndexed { index, parameter ->
+        val parameters = function.parameters.mapIndexed { index, parameter ->
             val type = parameter.type.stringRepresentation
             Parameter(type, "p$index")
         }
 
-        val bodyParameters = function.parameters.mapIndexed { index, parameter ->
-            val parameterTypeText = parameter.type.stringRepresentation
-            val typeExpression = "($parameterTypeText)"
-            Parameter(typeExpression, "p$index")
-        }
-
-        val callExpression = "${function.name}(${bodyParameters.joinToString {it.name}})"
+        val callExpression = "${function.name}(${parameters.joinToString { it.name }})"
 
         val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
             "$callExpression;"
         } else {
             "return (${returnType})($callExpression);"
         }
-        return createWrapper(symbolName, wrapperName, returnType, signatureParameters, wrapperBody)
+        return createWrapper(symbolName, wrapperName, returnType, parameters, wrapperBody)
     }
 
     private fun createCppCalleeWrapper(function: FunctionDecl, symbolName: String): List<String> {
