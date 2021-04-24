@@ -83,16 +83,16 @@ class PowerAssertCallTransformer(
     val delegate = delegates.maxByOrNull { it.function.valueParameters.size }
     if (delegate == null) {
       val valueTypesTruncated = function.valueParameters.subList(0, function.valueParameters.size - 1)
-        .joinToString(", ") { it.type.asString() }
-      val valueTypesAll = function.valueParameters.joinToString(", ") { it.type.asString() }
+        .joinToString("") { it.type.asString() + ", " }
+      val valueTypesAll = function.valueParameters.joinToString("") { it.type.asString() + ", " }
       messageCollector.warn(
         expression = expression,
         message = """
-          |Unable to find overload of function $fqName for power-assert transformation:
-          | - $fqName($valueTypesTruncated, String)
-          | - $fqName($valueTypesTruncated, () -> String)
-          | - $fqName($valueTypesAll, String)
-          | - $fqName($valueTypesAll, () -> String)
+          |Unable to find overload of function $fqName for power-assert transformation callable as:
+          | - $fqName(${valueTypesTruncated}String)
+          | - $fqName($valueTypesTruncated() -> String)
+          | - $fqName(${valueTypesAll}String)
+          | - $fqName($valueTypesAll() -> String)
         """.trimMargin()
       )
       return super.visitCall(expression)
