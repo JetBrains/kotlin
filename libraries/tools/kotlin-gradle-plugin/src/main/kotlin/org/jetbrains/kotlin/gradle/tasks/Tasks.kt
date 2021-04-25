@@ -210,15 +210,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     protected val multiModuleICSettings: MultiModuleICSettings
         get() = MultiModuleICSettings(buildHistoryFile.get().asFile, useModuleDetection.get())
 
-
-    /*
-        @get:InputFiles
-    @get:Classpath
-    open val pluginClasspath: FileCollection by project.provider {
-        (taskData.compilation as? KotlinCompilation<*>?)?.pluginConfigurationName?.let(project.configurations::getByName)
-            ?: project.files()
-    }
-     */
     @get:InputFiles
     @get:Classpath
     open val pluginClasspath: ConfigurableFileCollection = objects.fileCollection()
@@ -234,6 +225,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
      */
     @get:Optional
     @get:Nested
+    // TODO: replace with objects.property and introduce task configurator
     internal var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
     // Input is needed to force rebuild even if source files are not changed
@@ -385,9 +377,9 @@ open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCo
     val coroutines: Provider<Coroutines> = taskProvider.coroutines
     val logger: Logger = taskProvider.logger
     val isMultiplatform: Boolean = taskProvider.multiPlatformEnabled.get()
-    val pluginData = taskProvider.kotlinPluginData?.orNull
-    val pluginClasspath: FileCollection = taskProvider.pluginClasspath // TODO: Add pluginData
-    val pluginOptions: CompilerPluginOptions = taskProvider.pluginOptions // TODO: Add pluginData
+    private val pluginData = taskProvider.kotlinPluginData?.orNull
+    val pluginClasspath: FileCollection = listOfNotNull(taskProvider.pluginClasspath, pluginData?.classpath).reduce(FileCollection::plus)
+    val pluginOptions: CompilerPluginOptions = listOfNotNull(taskProvider.pluginOptions, pluginData?.options).reduce(CompilerPluginOptions::plus)
 }
 
 class KotlinJvmCompilerArgumentsProvider
