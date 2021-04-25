@@ -7,5 +7,3 @@ fun foo() {
     val test: Some? = Some()
     for (i in <caret>test) { }
 }
-
-/* IGNORE_FIR */
