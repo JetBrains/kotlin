@@ -123,7 +123,7 @@ fun makeLazyJavaPackageFragmentFromClassLoaderProvider(
         SignatureEnhancement(annotationTypeQualifierResolver, JavaTypeEnhancementState.DISABLED_JSR_305, JavaTypeEnhancement(JavaResolverSettings.Default)),
         JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default, javaTypeEnhancementState,
         object : JavaModuleAnnotationsProvider {
-            override fun getModuleAnnotations(classId: ClassId): List<JavaAnnotation>? = null
+            override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? = null
         }
     )
 

@@ -16,16 +16,27 @@ import org.jetbrains.kotlin.load.java.structure.impl.convert
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import java.util.concurrent.ConcurrentHashMap
 
 class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
     private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project) }
 
-    override fun getModuleAnnotations(classId: ClassId): List<JavaAnnotation>? {
-        val virtualFile = virtualFileFinder.findVirtualFileWithHeader(classId) ?: return null
+    private val modulesAnnotationCache = ConcurrentHashMap<ClassId, List<JavaAnnotation>>()
 
-        return findJavaModule(virtualFile)?.annotations?.convert(::JavaAnnotationImpl)
+    override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? {
+        if (modulesAnnotationCache.containsKey(classId)) {
+            return modulesAnnotationCache[classId]
+        }
+
+        val virtualFile = virtualFileFinder.findVirtualFileWithHeader(classId) ?: return null
+        val moduleAnnotations = findJavaModule(virtualFile)?.annotations?.convert(::JavaAnnotationImpl)
+
+        if (moduleAnnotations != null && moduleAnnotations.size < MODULE_ANNOTATIONS_CACHE_SIZE) {
+            modulesAnnotationCache[classId] = moduleAnnotations
+        }
+
+        return moduleAnnotations
     }
 
     private fun findJavaModule(file: VirtualFile): PsiJavaModule? = ModuleHighlightUtil2.getModuleDescriptor(file, project)
@@ -65,4 +76,8 @@ class IdeJavaModuleResolver(private val project: Project) : JavaModuleResolver {
     // Returns whether or not [source] exports [packageName] to [target]
     private fun exports(source: PsiJavaModule, packageName: String, target: PsiJavaModule): Boolean =
         source is LightJavaModule || JavaModuleGraphUtil.exports(source, packageName, target)
+
+    companion object {
+        private const val MODULE_ANNOTATIONS_CACHE_SIZE = 10000
+    }
 }

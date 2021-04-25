@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.copyWithNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
@@ -150,8 +151,7 @@ class SignatureEnhancement(
 
     private fun <D : CallableMemberDescriptor> D.getDefaultAnnotations(c: LazyJavaResolverContext): Annotations {
         val topLevelClassifier = getTopLevelContainingClassifier() ?: return annotations
-        val classId = topLevelClassifier.classId ?: return annotations
-        val moduleAnnotations = c.components.javaModuleResolver.getModuleAnnotations(classId)
+        val moduleAnnotations = (topLevelClassifier as? LazyJavaClassDescriptor)?.moduleAnnotations
 
         if (moduleAnnotations.isNullOrEmpty()) return annotations
 

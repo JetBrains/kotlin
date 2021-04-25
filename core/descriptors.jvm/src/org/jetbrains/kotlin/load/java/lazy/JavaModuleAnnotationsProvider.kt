@@ -9,5 +9,5 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.ClassId
 
 interface JavaModuleAnnotationsProvider {
-    fun getModuleAnnotations(classId: ClassId): List<JavaAnnotation>?
+    fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>?
 }
