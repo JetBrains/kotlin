@@ -200,6 +200,31 @@ internal class CompilationSpecificPluginPath {
         assertTrue("shared" !in project.subplugins("jvm"))
     }
 
+    private abstract class FakeSubPlugin(
+        val id: String,
+        val idNative: String? = null,
+        val isApplicablePredicate: KotlinCompilation<*>.() -> Boolean
+    ) : KotlinCompilerPluginSupportPlugin {
+        override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = kotlinCompilation.isApplicablePredicate()
+
+        override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> =
+            kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
+
+        override fun getCompilerPluginId(): String = id
+
+        override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
+            "test",
+            id
+        )
+
+        override fun getPluginArtifactForNative(): SubpluginArtifact? = idNative?.let {
+            SubpluginArtifact(
+                "test",
+                it
+            )
+        }
+    }
+
     private fun pluginClassPathConfiguration(target: String, compilation: String) =
         "kotlinCompilerPluginClasspath${target.capitalize()}${compilation.capitalize()}"
 
@@ -227,48 +252,4 @@ internal class CompilationSpecificPluginPath {
         ?.toSet()
         ?: emptySet()
 
-    private fun buildProject(
-        configBuilder: ProjectBuilder.() -> Unit = { Unit },
-        configProject: Project.() -> Unit
-    ): ProjectInternal = ProjectBuilder
-        .builder()
-        .apply(configBuilder)
-        .build()
-        .apply(configProject)
-        .let { it as ProjectInternal }
-
-    private fun buildProjectWithMPP(code: Project.() -> Unit) = buildProject {
-        project.plugins.apply("kotlin-multiplatform")
-        code()
-    }
-
-    private fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
-        val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
-        kotlin.code()
-    }
-
-    private abstract class FakeSubPlugin(
-        val id: String,
-        val idNative: String? = null,
-        val isApplicablePredicate: KotlinCompilation<*>.() -> Boolean
-    ) : KotlinCompilerPluginSupportPlugin {
-        override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = kotlinCompilation.isApplicablePredicate()
-
-        override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> =
-            kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
-
-        override fun getCompilerPluginId(): String = id
-
-        override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
-            "test",
-            id
-        )
-
-        override fun getPluginArtifactForNative(): SubpluginArtifact? = idNative?.let {
-            SubpluginArtifact(
-                "test",
-                it
-            )
-        }
-    }
 }
