@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 
 abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     abstract val builtinTypes: KtBuiltinTypes
@@ -15,6 +16,8 @@ abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     abstract fun approximateToSuperPublicDenotableType(type: KtType): KtType?
 
     abstract fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType
+
+    abstract fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType
 }
 
 interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
@@ -32,6 +35,9 @@ interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
 
     fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
         analysisSession.typeProvider.buildSelfClassType(this)
+
+    fun KtType.withNullability(newNullability: KtTypeNullability): KtType =
+        analysisSession.typeProvider.withNullability(this, newNullability)
 }
 
 @Suppress("PropertyName")

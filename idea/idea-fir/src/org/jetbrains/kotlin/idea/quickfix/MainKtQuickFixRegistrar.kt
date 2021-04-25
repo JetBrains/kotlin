@@ -103,6 +103,12 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         registerPsiQuickFixes(KtFirDiagnostic.UnnecessarySafeCall::class, ReplaceWithDotCallFix)
         registerPsiQuickFixes(KtFirDiagnostic.UnnecessaryNotNullAssertion::class, RemoveExclExclCallFix)
         registerApplicator(ReplaceCallFixFactories.unsafeCallFactory)
+        registerApplicator(AddExclExclCallFixFactories.unsafeCallFactory)
+        registerApplicator(AddExclExclCallFixFactories.unsafeInfixCallFactory)
+        registerApplicator(AddExclExclCallFixFactories.unsafeOperatorCallFactory)
+        registerApplicator(AddExclExclCallFixFactories.iteratorOnNullableFactory)
+        registerApplicator(TypeMismatchFactories.argumentTypeMismatchFactory)
+        registerApplicator(TypeMismatchFactories.returnTypeMismatchFactory)
 
         // TODO: NON_EXHAUSTIVE_WHEN[_ON_SEALED_CLASS] will be replaced in future. We need to register the fix for those diagnostics as well
         registerPsiQuickFixes(KtFirDiagnostic.NoElseInWhen::class, AddWhenElseBranchFix)

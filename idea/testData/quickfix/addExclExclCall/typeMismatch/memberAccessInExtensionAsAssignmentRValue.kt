@@ -7,3 +7,5 @@ class C {
 fun C.test() {
     val z: String = <caret>s
 }
+// TODO: Enable when FIR reports TYPE_MISMATCH for assignments
+/* IGNORE_FIR */

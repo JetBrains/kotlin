@@ -7,4 +7,3 @@ class SafeType {
 fun safeB(p: SafeType?) {
     val v = <caret>-p
 }
-/* IGNORE_FIR */

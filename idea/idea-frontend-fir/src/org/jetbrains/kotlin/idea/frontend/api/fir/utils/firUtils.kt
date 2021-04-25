@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtUnsupportedConstantValue
+import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeNullability
 
 internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session: FirSession): Map<String, FirExpression> {
 
@@ -55,3 +57,8 @@ internal fun FirExpression.convertConstantExpression(): KtConstantValue =
         is FirConstExpression<*> -> convertConstantExpression()
         else -> KtUnsupportedConstantValue
     }
+
+internal fun KtTypeNullability.toConeNullability() = when (this) {
+    KtTypeNullability.NULLABLE -> ConeNullability.NULLABLE
+    KtTypeNullability.NON_NULLABLE -> ConeNullability.NOT_NULL
+}

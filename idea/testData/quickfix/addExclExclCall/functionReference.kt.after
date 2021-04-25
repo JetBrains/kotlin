@@ -6,3 +6,5 @@ class Foo {
 fun test(foo: Foo?) {
     val f = foo!!::f
 }
+// TODO: Enable when FIR reports UNSAFE_CALL for function reference on nullable (currently UNRESOLVED_REFERENCE)
+/* IGNORE_FIR */

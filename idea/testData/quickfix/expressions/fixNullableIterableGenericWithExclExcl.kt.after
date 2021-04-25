@@ -3,4 +3,3 @@ fun <T: Collection<Int>?> foo(c: T) {
     for (i in c!!) { }
 }
 
-/* IGNORE_FIR */

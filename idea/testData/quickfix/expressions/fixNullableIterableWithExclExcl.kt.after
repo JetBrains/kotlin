@@ -4,4 +4,3 @@ fun foo() {
     for (i in <caret>test!!) { }
 }
 
-/* IGNORE_FIR */

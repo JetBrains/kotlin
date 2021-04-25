@@ -1,4 +1,5 @@
 // "Add non-null asserted (!!) call" "true"
-fun foo(a: Int?) {
-    a<caret>.plus(1)
+
+fun foo(i: Int?) {
+    i <caret>+ 1
 }
