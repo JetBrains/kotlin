@@ -198,7 +198,8 @@ class KotlinCoreEnvironment private constructor(
             jdkHome?.path?.let { path ->
                 jrtFileSystem?.findFileByPath(path + URLUtil.JAR_SEPARATOR)
             },
-            javaFileManager
+            javaFileManager,
+            project
         )
 
         val outputDirectory =

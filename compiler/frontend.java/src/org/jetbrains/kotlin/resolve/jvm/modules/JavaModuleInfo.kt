@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.jvm.modules
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiModifier
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
@@ -60,7 +62,7 @@ class JavaModuleInfo(
             psiJavaModule.annotations.convert(::JavaAnnotationImpl)
         )
 
-        fun read(file: VirtualFile, javaFileManager: KotlinCliJavaFileManager): JavaModuleInfo? {
+        fun read(file: VirtualFile, javaFileManager: KotlinCliJavaFileManager, searchScope: GlobalSearchScope): JavaModuleInfo? {
             val contents = try {
                 file.contentsToByteArray()
             } catch (e: IOException) {
@@ -93,7 +95,7 @@ class JavaModuleInfo(
 
                         val (annotation, visitor) = BinaryJavaAnnotation.createAnnotationAndVisitor(
                             descriptor,
-                            ClassifierResolutionContext(javaFileManager::findClass),
+                            ClassifierResolutionContext { javaFileManager.findClass(JavaClassFinder.Request(it), searchScope) },
                             BinaryClassSignatureParser(),
                             isFreshlySupportedTypeUseAnnotation = true
                         )

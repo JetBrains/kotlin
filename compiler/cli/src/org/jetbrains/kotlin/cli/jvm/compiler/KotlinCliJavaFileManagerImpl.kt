@@ -84,8 +84,6 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope) = findClass(JavaClassFinder.Request(classId), searchScope)
 
-    override fun findClass(classId: ClassId): JavaClass? = findClass(JavaClassFinder.Request(classId), allScope)
-
     override fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
         val (classId, classFileContentFromRequest, outerClassFromRequest) = request
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
@@ -112,7 +110,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 val classContent = classFileContentFromRequest ?: virtualFile.contentsToByteArray()
                 if (virtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) return@getOrPut null
 
-                val resolver = ClassifierResolutionContext { findClass(it) }
+                val resolver = ClassifierResolutionContext { findClass(it, allScope) }
 
                 BinaryJavaClass(
                     virtualFile, classId.asSingleFqName(), resolver, signatureParsingComponent,
