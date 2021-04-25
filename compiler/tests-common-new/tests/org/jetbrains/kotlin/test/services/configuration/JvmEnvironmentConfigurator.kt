@@ -134,13 +134,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         val javaBinaryFiles = if (ALL_JAVA_AS_BINARY !in registeredDirectives) {
             module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY in it.directives }
         } else module.javaFiles
-        val withForeignAnnotations = JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS in registeredDirectives
-
-        assertTrue(javaVersionToCompile == null || javaBinaryFiles.isNotEmpty() || withForeignAnnotations) {
-            "'COMPILE_JAVA_USING' can't be use if there aren't any java files to compile " +
-                    "(mark java files by 'INCLUDE_JAVA_AS_BINARY' or include foreign annotations using 'WITH_FOREIGN_ANNOTATIONS' " +
-                    "which will be compiled by specified version of javac)"
-        }
 
         val useJava9ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_9
 
@@ -159,40 +152,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             configuration.addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
         }
 
-        if (withForeignAnnotations) {
-            val annotationPath = registeredDirectives[ForeignAnnotationsDirectives.ANNOTATIONS_PATH].singleOrNull()
-                ?: JavaForeignAnnotationType.Java8Annotations
-            val javaFilesDir = createTempDirectory().toFile().also {
-                File(annotationPath.path).copyRecursively(it)
-            }
-            val foreignAnnotationsJar = compileJavaFilesLibraryToJar(
-                javaFilesDir.path,
-                "foreign-annotations",
-                assertions = JUnit5Assertions,
-                extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
-                useJava9 = useJava9ToCompileIncludedJavaFiles
-            )
-            configuration.addModularRootIfNotNull(useJava9ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
-            configuration.addJvmClasspathRoot(ForTestCompileRuntime.jvmAnnotationsForTests())
-        } else {
-            // Add jetbrains annotations of an old version, without supporting type use target
-            configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
-        }
-
-        if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {
-            val javaFilesDir = createTempDirectory().toFile().also {
-                File(JSR_305_TEST_ANNOTATIONS_PATH).copyRecursively(it)
-            }
-            configuration.addJvmClasspathRoot(
-                compileJavaFilesLibraryToJar(
-                    javaFilesDir.path,
-                    "jsr-305-test-annotations",
-                    assertions = JUnit5Assertions,
-                    extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath }
-                )
-            )
-            configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
-        }
+        configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
 
         val isIr = module.targetBackend?.isIR == true
         configuration.put(JVMConfigurationKeys.IR, isIr)

@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
 abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest() {
-    protected open val foreignAnnotationsConfigurator: Constructor<JvmForeignAnnotationsConfigurator>? = null
-
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
@@ -51,10 +49,9 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
+            ::JvmForeignAnnotationsConfigurator,
             ::JvmEnvironmentConfigurator
         )
-
-        foreignAnnotationsConfigurator.takeIf { it != null }?.also { useConfigurators(it) }
 
         useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
         useAdditionalSourceProviders(
@@ -96,15 +93,9 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
     }
 }
 
-abstract class AbstractForeignAnnotationsSourceJavaTest : AbstractForeignAnnotationsTestBase() {
-    override val foreignAnnotationsConfigurator: Constructor<JvmForeignAnnotationsConfigurator>
-        get() = ::JvmForeignAnnotationsConfigurator
-}
+abstract class AbstractForeignAnnotationsSourceJavaTest : AbstractForeignAnnotationsTestBase()
 
 abstract class AbstractForeignAnnotationsCompiledJavaTest : AbstractForeignAnnotationsTestBase() {
-    override val foreignAnnotationsConfigurator: Constructor<JvmForeignAnnotationsConfigurator>
-        get() = ::JvmForeignAnnotationsConfigurator
-
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
