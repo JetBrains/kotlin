@@ -377,7 +377,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise"""
 
     )
-    var stringConcat: String? by NullableStringFreezableVar(JvmStringConcat.INLINE.description)
+    var stringConcat: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-Xsam-conversions",

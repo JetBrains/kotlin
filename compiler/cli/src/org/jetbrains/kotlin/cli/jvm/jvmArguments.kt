@@ -54,19 +54,20 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    if (arguments.stringConcat != null) {
-        val runtimeStringConcat = JvmStringConcat.fromString(arguments.stringConcat!!)
+    val stringConcat = arguments.stringConcat
+    if (stringConcat != null) {
+        val runtimeStringConcat = JvmStringConcat.fromString(stringConcat)
         if (runtimeStringConcat != null) {
             put(JVMConfigurationKeys.STRING_CONCAT, runtimeStringConcat)
             if (jvmTarget.majorVersion < JvmTarget.JVM_9.majorVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
                 messageCollector.report(
                     WARNING,
-                    "`-Xstring-concat=${arguments.stringConcat}` does nothing with JVM target `${jvmTarget.description}`."
+                    "`-Xstring-concat=$stringConcat` does nothing with JVM target `${jvmTarget.description}`."
                 )
             }
         } else {
             messageCollector.report(
-                ERROR, "Unknown `-Xstring-concat` mode: ${arguments.stringConcat}\n" +
+                ERROR, "Unknown `-Xstring-concat` mode: $stringConcat\n" +
                         "Supported modes: ${JvmStringConcat.values().joinToString { it.description }}"
             )
         }

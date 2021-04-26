@@ -1,4 +1,3 @@
-// KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=indy-with-constants
 // JVM_TARGET: 9
 class A
 
