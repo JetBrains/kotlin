@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.io.File
@@ -35,6 +36,32 @@ internal fun <T : Any> Project.newProperty(initialize: (() -> T)? = null): Prope
     (project.objects.property(Any::class.java) as Property<T>).apply {
         if (initialize != null)
             set(provider(initialize))
+    }
+
+internal inline fun <reified T : Any?> ObjectFactory.property() = property(T::class.java)
+
+internal inline fun <reified T : Any?> ObjectFactory.property(initialValue: T) = property<T>().value(initialValue)
+
+internal inline fun <reified T : Any?> ObjectFactory.propertyWithConvention(
+    conventionValue: Provider<T>
+) = property<T>().convention(conventionValue)
+
+internal inline fun <reified T : Any?> ObjectFactory.propertyWithConvention(
+    conventionValue: T
+) = property<T>().convention(conventionValue)
+
+internal inline fun <reified T : Any> ObjectFactory.newInstance() = newInstance(T::class.java)
+
+internal inline fun <reified T : Any> ObjectFactory.propertyWithNewInstance(
+    vararg parameters: Any
+) = propertyWithConvention(newInstance(T::class.java, parameters))
+
+internal inline fun <reified T : Any> ObjectFactory.propertyWithNewInstance() =
+    propertyWithConvention(newInstance<T>())
+
+internal fun <PropType : Any?, T : Property<PropType>> T.chainedFinalizeValueOnRead(): T =
+    apply {
+        finalizeValueOnRead()
     }
 
 // Before 5.0 fileProperty is created via ProjectLayout
