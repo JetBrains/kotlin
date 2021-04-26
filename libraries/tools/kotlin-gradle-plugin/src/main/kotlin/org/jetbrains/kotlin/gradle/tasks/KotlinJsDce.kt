@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.gradle.utils.canonicalPathWithoutExtension
 import java.io.File
 
 @CacheableTask
-open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJsDce {
+abstract class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJsDce {
 
     init {
         cacheOnlyIfEnabledForKotlin()
@@ -39,8 +38,6 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
     @get:Internal
     internal val objects = project.objects
-
-    override fun localStateDirectories(): FileCollection = project.files()
 
     override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
 
