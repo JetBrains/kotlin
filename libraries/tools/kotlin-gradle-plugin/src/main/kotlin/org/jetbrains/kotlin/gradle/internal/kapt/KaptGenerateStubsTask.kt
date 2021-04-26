@@ -16,65 +16,75 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.SourceRoots
-import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import java.io.File
-import javax.inject.Inject
+import java.util.concurrent.Callable
 
 @CacheableTask
-open class KaptGenerateStubsTask @Inject constructor(
-    objectFactory: ObjectFactory
-) : KotlinCompile() {
+abstract class KaptGenerateStubsTask : KotlinCompile() {
+
+    class Configurator(private val kotlinCompileTask: KotlinCompile, kotlinCompilation: KotlinCompilationData<*>) :
+        AbstractKotlinCompile.Configurator<KaptGenerateStubsTask>(kotlinCompilation) {
+
+        override fun configure(task: KaptGenerateStubsTask) {
+            super.configure(task)
+            val providerFactory = kotlinCompileTask.project.providers
+            task.useModuleDetection.value(kotlinCompileTask.useModuleDetection).disallowChanges()
+            task.moduleName.value(kotlinCompileTask.moduleName).disallowChanges()
+            task.classpath = task.project.files(Callable { kotlinCompileTask.classpath })
+            task.kotlinTaskPluginClasspath.from(
+                providerFactory.provider { kotlinCompileTask.pluginClasspath }
+            )
+            task.compileKotlinArgumentsContributor.set(
+                providerFactory.provider {
+                    kotlinCompileTask.compilerArgumentsContributor
+                }
+            )
+            task.jvmSourceRoots.set(
+                providerFactory.provider {
+                    kotlinCompileTask.getSourceRoots().let { compileTaskSourceRoots ->
+                        SourceRoots.ForJvm(
+                            compileTaskSourceRoots.kotlinSourceFiles.filterTo(mutableListOf()) { task.isSourceRootAllowed(it) },
+                            javaSourceRootsProvider = { compileTaskSourceRoots.javaSourceRoots.filterTo(mutableSetOf()) { task.isSourceRootAllowed(it) } }
+                        )
+                    }
+                }
+            )
+            task.kotlinOptionsProperty.value(KotlinJvmOptionsImpl()).disallowChanges()
+        }
+    }
+
 
     @field:Transient
-    override val sourceRootsContainer = FilteringSourceRootsContainer(objectFactory, { isSourceRootAllowed(it) })
-
-    override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
-
-    @get:Internal
-    @field:Transient // can't serialize task references in Gradle instant execution state
-    internal lateinit var kotlinCompileTask: KotlinCompile
+    override val sourceRootsContainer = FilteringSourceRootsContainer(objects, { isSourceRootAllowed(it) })
 
     @get:OutputDirectory
-    val stubsDir: DirectoryProperty = objectFactory.directoryProperty()
+    abstract val stubsDir: DirectoryProperty
 
     @get:Internal
     lateinit var generatedSourcesDirs: List<File>
 
     @get:Classpath
     @get:InputFiles
-    val kaptClasspath: FileCollection
-        get() = objects.fileCollection().from(kaptClasspathConfigurations)
-
-    @get:Internal
-    internal lateinit var kaptClasspathConfigurations: List<Configuration>
+    abstract val kaptClasspath: ConfigurableFileCollection
 
     @get:Classpath
     @get:InputFiles
     @Suppress("unused")
-    internal val kotlinTaskPluginClasspath by project.provider {
-        kotlinCompileTask.pluginClasspath
-    }
-
-    @get:Input
-    override var useModuleDetection: Boolean
-        get() = super.useModuleDetection
-        set(_) {
-            error("KaptGenerateStubsTask.useModuleDetection setter should not be called!")
-        }
+    internal abstract val kotlinTaskPluginClasspath: ConfigurableFileCollection
 
     @get:Input
     val verbose = (project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true)
@@ -92,12 +102,11 @@ open class KaptGenerateStubsTask @Inject constructor(
                 !stubsDir.asFile.get().isParentOf(source) &&
                 generatedSourcesDirs.none { it.isParentOf(source) }
 
-    private val compileKotlinArgumentsContributor by project.provider {
-        kotlinCompileTask.compilerArgumentsContributor
-    }
+    @get:Internal
+    internal abstract val compileKotlinArgumentsContributor: Property<CompilerArgumentsContributor<K2JVMCompilerArguments>>
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        compileKotlinArgumentsContributor.contributeArguments(args, compilerArgumentsConfigurationFlags(
+        compileKotlinArgumentsContributor.get().contributeArguments(args, compilerArgumentsConfigurationFlags(
             defaultsOnly,
             ignoreClasspathResolutionErrors
         ))
@@ -106,18 +115,12 @@ open class KaptGenerateStubsTask @Inject constructor(
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
 
         args.verbose = verbose
-        args.classpathAsList = this.compileClasspath.filter { it.exists() }.toList()
+        args.classpathAsList = this.classpath.filter { it.exists() }.toList()
         args.destinationAsFile = this.destinationDir
     }
 
-    private val sourceRoots by project.provider {
-        kotlinCompileTask.getSourceRoots().let { compileTaskSourceRoots ->
-            SourceRoots.ForJvm(
-                compileTaskSourceRoots.kotlinSourceFiles.filterTo(mutableListOf()) { isSourceRootAllowed(it) },
-                javaSourceRootsProvider = { compileTaskSourceRoots.javaSourceRoots.filterTo(mutableSetOf()) { isSourceRootAllowed(it) } }
-            )
-        }
-    }
+    @get:Internal
+    internal abstract val jvmSourceRoots: Property<SourceRoots.ForJvm>
 
-    override fun getSourceRoots(): SourceRoots.ForJvm = sourceRoots
+    override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots.get()
 }
