@@ -24,7 +24,7 @@ constructor(
         javaExecutable: File,
         jdkToolsJar: File?
     ) = GradleCompilerRunnerWithWorkers(
-        GradleCompileTaskProvider(this),
+        gradleCompileTaskProvider,
         javaExecutable,
         jdkToolsJar,
         workerExecutor

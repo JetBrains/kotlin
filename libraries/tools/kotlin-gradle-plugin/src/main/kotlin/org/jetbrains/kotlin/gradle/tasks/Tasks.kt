@@ -332,11 +332,20 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             }
         )
 
+    // Moved creation here to not violate Gradle configuration cache as [compilerRunner] method is called
+    // at execution time
+    // by lazy is added so properties of task extending this one are captured - required for incremental
+    // compilation
+    @get:Internal
+    protected val gradleCompileTaskProvider by lazy {
+        GradleCompileTaskProvider(this)
+    }
+
     internal open fun compilerRunner(
         javaExecutable: File,
         jdkToolsJar: File?
     ): GradleCompilerRunner = GradleCompilerRunner(
-        GradleCompileTaskProvider(this),
+        gradleCompileTaskProvider,
         javaExecutable,
         jdkToolsJar
     )
@@ -623,7 +632,7 @@ internal open class KotlinCompileWithWorkers @Inject constructor(
         javaExecutable: File,
         jdkToolsJar: File?
     ) = GradleCompilerRunnerWithWorkers(
-        GradleCompileTaskProvider(this),
+        gradleCompileTaskProvider,
         javaExecutable,
         jdkToolsJar,
         workerExecutor
@@ -640,7 +649,7 @@ internal open class Kotlin2JsCompileWithWorkers @Inject constructor(
         javaExecutable: File,
         jdkToolsJar: File?
     ) = GradleCompilerRunnerWithWorkers(
-        GradleCompileTaskProvider(this),
+        gradleCompileTaskProvider,
         javaExecutable,
         jdkToolsJar,
         workerExecutor
@@ -655,7 +664,7 @@ internal open class KotlinCompileCommonWithWorkers @Inject constructor(
         javaExecutable: File,
         jdkToolsJar: File?
     ) = GradleCompilerRunnerWithWorkers(
-        GradleCompileTaskProvider(this),
+        gradleCompileTaskProvider,
         javaExecutable,
         jdkToolsJar,
         workerExecutor
