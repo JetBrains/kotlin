@@ -13,6 +13,7 @@ import java.util.*
 interface PropertiesProvider {
     val rootProjectDir: File
     fun getProperty(key: String): Any?
+    fun getSystemProperty(key: String): String?
 }
 
 class KotlinBuildProperties(
@@ -46,16 +47,16 @@ class KotlinBuildProperties(
 
     val isInIdeaSync: Boolean = run {
         // "idea.sync.active" was introduced in 2019.1
-        System.getProperty("idea.sync.active")?.toBoolean() == true || let {
+        propertiesProvider.getSystemProperty("idea.sync.active")?.toBoolean() == true || let {
             // before 2019.1 there is "idea.active" that was true only on sync,
             // but since 2019.1 "idea.active" present in task execution too.
             // So let's check Idea version
-            val majorIdeaVersion = System.getProperty("idea.version")
+            val majorIdeaVersion = propertiesProvider.getSystemProperty("idea.version")
                 ?.split(".")
                 ?.getOrNull(0)
             val isBeforeIdea2019 = majorIdeaVersion == null || majorIdeaVersion.toInt() < 2019
 
-            isBeforeIdea2019 && System.getProperty("idea.active")?.toBoolean() == true
+            isBeforeIdea2019 && propertiesProvider.getSystemProperty("idea.active")?.toBoolean() == true
         }
     }
 
@@ -133,6 +134,8 @@ class ProjectProperties(val project: Project) : PropertiesProvider {
         get() = project.rootProject.projectDir.let { if (it.name == "buildSrc") it.parentFile else it }
 
     override fun getProperty(key: String): Any? = project.findProperty(key)
+
+    override fun getSystemProperty(key: String) = project.providers.systemProperty(key).forUseAtConfigurationTime().orNull
 }
 
 val Project.kotlinBuildProperties: KotlinBuildProperties
@@ -149,6 +152,8 @@ class SettingsProperties(val settings: Settings) : PropertiesProvider {
         val obj = (settings as DynamicObjectAware).asDynamicObject
         return if (obj.hasProperty(key)) obj.getProperty(key) else null
     }
+
+    override fun getSystemProperty(key: String) = settings.providers.systemProperty(key).forUseAtConfigurationTime().orNull
 }
 
 fun getKotlinBuildPropertiesForSettings(settings: Any) = (settings as Settings).kotlinBuildProperties

@@ -14,7 +14,7 @@ dependencies {
     testRuntimeOnly(toolsJar())
     testRuntime(intellijDep())
     testRuntimeOnly(intellijPluginDep("java"))
-    if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+    if (isIdeaActive) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
 }
 
 sourceSets {

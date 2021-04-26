@@ -81,3 +81,6 @@ fun Task.singleOutputFile(): File = when (this) {
     is ProGuardTask -> project.file(outJarFiles.single()!!)
     else -> outputs.files.singleFile
 }
+
+val Project.isIdeaActive
+    get() = providers.systemProperty("idea.active").forUseAtConfigurationTime().isPresent
