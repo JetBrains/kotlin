@@ -87,7 +87,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                         // Luckily, all values in range 0x00 .. 0xff represent valid UTF-16 symbols,
                         // block 0 (Basic Latin) and block 1 (Latin-1 Supplement) in
                         // Basic Multilingual Plane, so we could just append data "as is".
-                        builder.append(value.toChar())
+                        builder.append(value.toInt().toChar())
                     }
                     expression.putValueArgument(0, IrConstImpl(
                             expression.startOffset, expression.endOffset,

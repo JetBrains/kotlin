@@ -30,8 +30,8 @@ internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesForFunction(simpleFunction: FirSimpleFunction, designation: List<FirDeclaration>) {
         if (simpleFunction.body !is FirLazyBlock) return
         val newFunction = RawFirFragmentForLazyBodiesBuilder.build(
-            session = simpleFunction.session,
-            baseScopeProvider = simpleFunction.session.firIdeProvider.kotlinScopeProvider,
+            session = simpleFunction.declarationSiteSession,
+            baseScopeProvider = simpleFunction.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
             designation = designation,
             declaration = simpleFunction.psi as KtNamedFunction
         ) as FirSimpleFunction
@@ -46,8 +46,8 @@ internal object FirLazyBodiesCalculator {
         if (secondaryConstructor.body !is FirLazyBlock) return
 
         val newFunction = RawFirFragmentForLazyBodiesBuilder.build(
-            session = secondaryConstructor.session,
-            baseScopeProvider = secondaryConstructor.session.firIdeProvider.kotlinScopeProvider,
+            session = secondaryConstructor.declarationSiteSession,
+            baseScopeProvider = secondaryConstructor.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
             designation = designation,
             declaration = secondaryConstructor.psi as KtSecondaryConstructor
         ) as FirSimpleFunction
@@ -61,8 +61,8 @@ internal object FirLazyBodiesCalculator {
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
         val newProperty = RawFirFragmentForLazyBodiesBuilder.build(
-            session = firProperty.session,
-            baseScopeProvider = firProperty.session.firIdeProvider.kotlinScopeProvider,
+            session = firProperty.declarationSiteSession,
+            baseScopeProvider = firProperty.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
             designation = designation,
             declaration = firProperty.psi as KtProperty
         ) as FirProperty
@@ -101,14 +101,14 @@ internal object FirLazyBodiesCalculator {
 
 private object FirLazyBodiesCalculatorTransformer : FirTransformer<MutableList<FirDeclaration>>() {
 
-    override fun transformFile(file: FirFile, data: MutableList<FirDeclaration>): CompositeTransformResult<FirDeclaration> {
+    override fun transformFile(file: FirFile, data: MutableList<FirDeclaration>): FirDeclaration {
         file.declarations.forEach {
             it.transformSingle(this, data)
         }
-        return file.compose()
+        return file
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: MutableList<FirDeclaration>): CompositeTransformResult<E> {
+    override fun <E : FirElement> transformElement(element: E, data: MutableList<FirDeclaration>): E {
         if (element is FirRegularClass) {
             data.add(element)
             element.declarations.forEach {
@@ -117,33 +117,33 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<MutableList<F
             element.transformChildren(this, data)
             data.removeLast()
         }
-        return element.compose()
+        return element
     }
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: MutableList<FirDeclaration>
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         if (simpleFunction.body is FirLazyBlock) {
             FirLazyBodiesCalculator.calculateLazyBodiesForFunction(simpleFunction, data)
         }
-        return simpleFunction.compose()
+        return simpleFunction
     }
 
     override fun transformConstructor(
         constructor: FirConstructor,
         data: MutableList<FirDeclaration>
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         if (constructor.body is FirLazyBlock) {
             FirLazyBodiesCalculator.calculateLazyBodyForSecondaryConstructor(constructor, data)
         }
-        return constructor.compose()
+        return constructor
     }
 
-    override fun transformProperty(property: FirProperty, data: MutableList<FirDeclaration>): CompositeTransformResult<FirDeclaration> {
+    override fun transformProperty(property: FirProperty, data: MutableList<FirDeclaration>): FirDeclaration {
         if (FirLazyBodiesCalculator.needCalculatingLazyBodyForProperty(property)) {
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(property, data)
         }
-        return property.compose()
+        return property
     }
 }

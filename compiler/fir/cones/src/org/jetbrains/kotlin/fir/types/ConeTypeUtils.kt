@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
@@ -73,8 +73,14 @@ val ConeKotlinType.isArrayType: Boolean
 val ConeKotlinType.isNonPrimitiveArray: Boolean
     get() = this is ConeClassLikeType && lookupTag.classId == StandardClassIds.Array
 
+val ConeKotlinType.isPrimitiveArray: Boolean
+    get() = this is ConeClassLikeType && lookupTag.classId in StandardClassIds.primitiveArrayTypeByElementType.values
+
 private val builtinUnsignedTypes = setOf(StandardClassIds.UInt, StandardClassIds.UByte, StandardClassIds.ULong, StandardClassIds.UShort)
 val ConeKotlinType.isUnsignedTypeOrNullableUnsignedType: Boolean get() = isAnyOfBuiltinType(builtinUnsignedTypes)
+
+private val builtinIntegerTypes = setOf(StandardClassIds.Int, StandardClassIds.Byte, StandardClassIds.Long, StandardClassIds.Short)
+val ConeKotlinType.isIntegerTypeOrNullableIntegerTypeOfAnySize: Boolean get() = isAnyOfBuiltinType(builtinIntegerTypes)
 
 private fun ConeKotlinType.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
     if (this !is ConeClassLikeType) return false

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
+import java.io.Serializable
 
 val KotlinJsCompilation.npmProject: NpmProject
     get() = NpmProject(this)
@@ -24,19 +25,19 @@ val KotlinJsCompilation.npmProject: NpmProject
  *
  * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
-open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
+open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Serializable {
     val compilationName = compilation.disambiguatedName
 
     val name: String by lazy {
         buildNpmProjectName()
     }
 
-    val nodeJs by lazy {
-        NodeJsRootPlugin.apply(project.rootProject)
-    }
+    @Transient
+    val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-    val dir: File
-        get() = nodeJs.projectPackagesDir.resolve(name)
+    val dir: File by lazy {
+        nodeJs.projectPackagesDir.resolve(name)
+    }
 
     val target: KotlinJsTargetDsl
         get() = compilation.target as KotlinJsTargetDsl
@@ -59,6 +60,10 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
     val packageJsonTask: KotlinPackageJsonTask
         get() = project.tasks.getByName(packageJsonTaskName) as KotlinPackageJsonTask
 
+    val packageJsonTaskPath by lazy {
+        packageJsonTask.path
+    }
+
     val dist: File
         get() = dir.resolve(DIST_FOLDER)
 
@@ -77,8 +82,9 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
 
     internal val modules = NpmProjectModules(dir)
 
-    private val rootNodeModules: NpmProjectModules?
-        get() = NpmProjectModules(nodeJs.rootPackageDir)
+    private val nodeExecutable by lazy {
+        nodeJs.requireConfigured().nodeExecutable
+    }
 
     fun useTool(
         exec: ExecSpec,
@@ -87,7 +93,7 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
         args: List<String>
     ) {
         exec.workingDir = dir
-        exec.executable = nodeJs.requireConfigured().nodeExecutable
+        exec.executable = nodeExecutable
         exec.args = nodeArgs + require(tool) + args
     }
 

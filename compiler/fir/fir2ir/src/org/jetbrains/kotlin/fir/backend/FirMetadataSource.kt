@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.name.Name
 sealed class FirMetadataSource : MetadataSource {
     abstract val fir: FirDeclaration
 
-    val session: FirSession
-        get() = fir.session
+    val declarationSiteSession: FirSession
+        get() = fir.declarationSiteSession
 
     override val name: Name?
         get() = when (val fir = fir) {

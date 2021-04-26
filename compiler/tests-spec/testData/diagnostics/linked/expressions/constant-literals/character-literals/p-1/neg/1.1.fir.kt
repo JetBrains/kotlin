@@ -4,28 +4,28 @@
 
 // TESTCASE NUMBER: 1
 fun case1() {
-    val c = <!ILLEGAL_CONST_EXPRESSION!>''<!>
+    val c = <!EMPTY_CHARACTER_LITERAL!>''<!>
 }
 
 // TESTCASE NUMBER: 2
 
 fun case2() {
-    val c2: Char = <!ILLEGAL_CONST_EXPRESSION!>''<!><!SYNTAX!>'<!>
-    val c3: Char = <!ILLEGAL_CONST_EXPRESSION!>'\'<!>
+    val c2: Char = <!EMPTY_CHARACTER_LITERAL!>''<!><!SYNTAX!>'<!>
+    val c3: Char = <!ILLEGAL_ESCAPE!>'\'<!>
 }
 
 // TESTCASE NUMBER: 3
 
 fun case3() {
-    val c1: Char = <!ILLEGAL_CONST_EXPRESSION!>'B a'<!>
-    val c2: Char = <!ILLEGAL_CONST_EXPRESSION!>'  '<!>
-    val c3: Char = <!ILLEGAL_CONST_EXPRESSION!>'Ba'<!>
+    val c1: Char = <!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'B a'<!>
+    val c2: Char = <!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'  '<!>
+    val c3: Char = <!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'Ba'<!>
 }
 
 // TESTCASE NUMBER: 4
 
 fun case4() {
-    val cOutOfRaneMin = <!ILLEGAL_CONST_EXPRESSION!>'𐀀'<!> //u+10000
+    val cOutOfRaneMin = <!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'𐀀'<!> //u+10000
 
-    val cOutOfRangeAroundMax = <!ILLEGAL_CONST_EXPRESSION!>'󠇿󠇿󟿿'<!> //u+Dfffff
+    val cOutOfRangeAroundMax = <!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'󠇿󠇿󟿿'<!> //u+Dfffff
 }

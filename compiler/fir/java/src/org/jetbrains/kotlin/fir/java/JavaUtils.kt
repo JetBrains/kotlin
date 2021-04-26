@@ -25,12 +25,13 @@ import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolv
 import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -79,13 +80,16 @@ internal val JavaClass.classKind: ClassKind
         else -> ClassKind.CLASS
     }
 
+internal fun ClassId.toLookupTag(): ConeClassLikeLookupTag {
+    return ConeClassLikeLookupTagImpl(this)
+}
+
 internal fun ClassId.toConeKotlinType(
     typeArguments: Array<ConeTypeProjection>,
     isNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
-    val lookupTag = ConeClassLikeLookupTagImpl(this)
-    return ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable, attributes)
+    return ConeClassLikeTypeImpl(toLookupTag(), typeArguments, isNullable, attributes)
 }
 
 internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
@@ -398,7 +402,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 } else {
                     val position = if (isLowerBound) TypeComponentPosition.FLEXIBLE_LOWER else TypeComponentPosition.FLEXIBLE_UPPER
 
-                    classSymbol?.fir?.createRawArguments(defaultArgs, position) ?: defaultArgs
+                    classSymbol?.fir?.createRawArguments(session, defaultArgs, position) ?: defaultArgs
                 }
             } else {
                 val typeParameters = runIf(!forTypeParameterBounds && !isForSupertypes) { classSymbol?.fir?.typeParameters } ?: emptyList()
@@ -425,9 +429,10 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
 }
 
 private fun FirRegularClass.createRawArguments(
+    session: FirSession,
     defaultArgs: List<ConeStarProjection>,
     position: TypeComponentPosition
-) = typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
+): List<ConeTypeProjection> = typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
     val erasedUpperBound = typeParameter.getErasedUpperBound {
         defaultType().withArguments(defaultArgs.toTypedArray())
     }
@@ -582,7 +587,7 @@ internal fun JavaValueParameter.toFirValueParameter(
 ): FirValueParameter {
     return buildJavaValueParameter {
         source = (this@toFirValueParameter as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-        this.session = session
+        declarationSiteSession = session
         name = this@toFirValueParameter.name ?: Name.identifier("p$index")
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack)
         isVararg = this@toFirValueParameter.isVararg

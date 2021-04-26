@@ -29,6 +29,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        b?.foo(1, "")
+        b<!UNNECESSARY_SAFE_CALL!>?.<!>foo(1, "")
     }
 }

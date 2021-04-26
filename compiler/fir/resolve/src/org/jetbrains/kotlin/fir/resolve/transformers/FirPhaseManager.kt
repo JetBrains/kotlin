@@ -17,4 +17,4 @@ abstract class FirPhaseManager : FirSessionComponent {
     )
 }
 
-internal val FirSession.phaseManager: FirPhaseManager? by FirSession.nullableSessionComponentAccessor()
+internal val FirSession.phaseManager: FirPhaseManager by FirSession.sessionComponentAccessor()

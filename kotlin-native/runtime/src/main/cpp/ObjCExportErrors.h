@@ -6,4 +6,5 @@
 #import "Types.h"
 
 extern "C" id Kotlin_ObjCExport_ExceptionAsNSError(KRef exception, const TypeInfo** types);
+extern "C" id Kotlin_ObjCExport_WrapExceptionToNSError(KRef exception);
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_NSErrorAsException, id error);

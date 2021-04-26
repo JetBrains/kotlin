@@ -14,7 +14,7 @@ interface B: A {
 fun test(a: A) {
     if (a is B && a is C) {
         a.foo = ""
-        a.foo = null
+        a.foo = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
         a.foo.checkType { _<String>() }
     }

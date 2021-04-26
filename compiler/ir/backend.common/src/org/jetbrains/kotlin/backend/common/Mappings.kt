@@ -36,18 +36,18 @@ interface Mapping {
     }
 }
 
-open class DefaultMapping : Mapping {
+interface DelegateFactory {
+    fun <K : IrDeclaration, V : IrDeclaration> newDeclarationToDeclarationMapping(): Mapping.Delegate<K, V>
 
-    override val defaultArgumentsDispatchFunction: Mapping.Delegate<IrFunction, IrFunction> = newMapping()
-    override val defaultArgumentsOriginalFunction: Mapping.Delegate<IrFunction, IrFunction> = newMapping()
-    override val suspendFunctionToCoroutineConstructor: Mapping.Delegate<IrFunction, IrConstructor> = newMapping()
-    override val lateInitFieldToNullableField: Mapping.Delegate<IrField, IrField> = newMapping()
-    override val inlineClassMemberToStatic: Mapping.Delegate<IrFunction, IrSimpleFunction> = newMapping()
-    override val capturedFields: Mapping.Delegate<IrClass, Collection<IrField>> = newMapping()
-    override val capturedConstructors: Mapping.Delegate<IrConstructor, IrConstructor> = newMapping()
-    override val reflectedNameAccessor: Mapping.Delegate<IrClass, IrSimpleFunction> = newMapping()
+    fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V>
+}
 
-    protected open fun <K : IrDeclaration, V> newMapping() = object : Mapping.Delegate<K, V>() {
+private object DefaultDelegateFactory : DelegateFactory {
+    override fun <K : IrDeclaration, V : IrDeclaration> newDeclarationToDeclarationMapping(): Mapping.Delegate<K, V> = newMappingImpl()
+
+    override fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V> = newMappingImpl()
+
+    private fun <K : IrDeclaration, V> newMappingImpl() = object : Mapping.Delegate<K, V>() {
         private val map: MutableMap<K, V> = ConcurrentHashMap()
 
         override operator fun get(key: K): V? {
@@ -68,6 +68,17 @@ open class DefaultMapping : Mapping {
         override val values: Collection<V>
             get() = map.values
     }
+}
+
+open class DefaultMapping(delegateFactory: DelegateFactory = DefaultDelegateFactory) : Mapping {
+    override val defaultArgumentsDispatchFunction: Mapping.Delegate<IrFunction, IrFunction> = delegateFactory.newDeclarationToDeclarationMapping()
+    override val defaultArgumentsOriginalFunction: Mapping.Delegate<IrFunction, IrFunction> = delegateFactory.newDeclarationToDeclarationMapping()
+    override val suspendFunctionToCoroutineConstructor: Mapping.Delegate<IrFunction, IrConstructor> = delegateFactory.newDeclarationToDeclarationMapping()
+    override val lateInitFieldToNullableField: Mapping.Delegate<IrField, IrField> = delegateFactory.newDeclarationToDeclarationMapping()
+    override val inlineClassMemberToStatic: Mapping.Delegate<IrFunction, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
+    override val capturedFields: Mapping.Delegate<IrClass, Collection<IrField>> = delegateFactory.newDeclarationToDeclarationCollectionMapping()
+    override val capturedConstructors: Mapping.Delegate<IrConstructor, IrConstructor> = delegateFactory.newDeclarationToDeclarationMapping()
+    override val reflectedNameAccessor: Mapping.Delegate<IrClass, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
 }
 
 fun <V : Any> KMutableProperty0<V?>.getOrPut(fn: () -> V) = this.get() ?: fn().also {

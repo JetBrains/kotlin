@@ -10,17 +10,16 @@ import kotlin.test.*
 @Test fun runTest() {
     val v = Float.POSITIVE_INFINITY
     val i = v.toInt()
-    println("$v $i ${v.toShort()} ${i.toShort()}")
+    println("$v $i ${i.toShort()}")
 
     val a = 42
     val b = Float.MAX_VALUE
     println("${a + b}")
 
-    val s = Float.NaN.toShort()
+    val s = Float.NaN.toInt().toShort()
     println("NAN2SHORT:: $s")
 
     val d: Float = Float.MAX_VALUE
-    println("MAX2SHORT:: ${d.toShort()}")
     val d2i = d.toInt()
     println("$d2i ${d2i.toShort()}")
 

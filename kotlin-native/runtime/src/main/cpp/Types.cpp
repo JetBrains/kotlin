@@ -108,4 +108,8 @@ KVector4f Kotlin_Vector4i32_of(KInt f0, KInt f1, KInt f2, KInt f3) {
 	return (KVector4f)v4i;
 }
 
+long Kotlin_longTypeProvider() {
+    return 0;
+}
+
 }  // extern "C"

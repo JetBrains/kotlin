@@ -20,7 +20,7 @@ internal class WhitespaceRangesWriter : RangesWriter {
          * Returns `true` if this character is a whitespace.
          */
         internal fun Char.isWhitespaceImpl(): Boolean {
-            val ch = this.toInt()
+            val ch = this.code
             return $checks
         }
         """.trimIndent()

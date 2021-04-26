@@ -47,8 +47,8 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val distribution = KonanDistribution(getMandatory<File, NativeDistributionOptionType>())
         val destination = getMandatory<File, OutputOptionType>()
         val targetLibraries = getMandatory<List<File>, InputLibrariesOptionType>()
-        val dependencyLibraries = getOptional<List<File>, DependencyLibrariesOptionType>().orEmpty()
-        val outputCommonizerTarget = getMandatory<SharedCommonizerTarget, OutputCommonizerTargetOptionType>()
+        val dependencyLibraries = getOptional<List<CommonizerDependency>, DependencyLibrariesOptionType>().orEmpty()
+        val outputCommonizerTarget = compatGetOutputTarget()
         val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
 
         val konanTargets = outputCommonizerTarget.konanTargets
@@ -68,16 +68,16 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         }
 
         LibraryCommonizer(
-            commonTarget = outputCommonizerTarget,
+            outputTarget = outputCommonizerTarget,
             repository = repository,
             dependencies = StdlibRepository(distribution, libraryLoader) +
-                    FilesRepository(dependencyLibraries.toSet(), libraryLoader),
+                    CommonizerDependencyRepository(dependencyLibraries.toSet(), libraryLoader),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
             progressLogger = progressLogger
         ).run()
 
-        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
+        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))
     }
 }
 
@@ -87,8 +87,12 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
     override fun execute(logPrefix: String) {
         val distribution = KonanDistribution(getMandatory<File, NativeDistributionOptionType>())
         val destination = getMandatory<File, OutputOptionType>()
-        val konanTargets = getMandatory<List<KonanTarget>, NativeTargetsOptionType>()
-        val commonizerTargets = konanTargets.map(::CommonizerTarget)
+
+        val outputTarget = compatGetOutputTarget()
+        val outputLayout = if (getOptional<SharedCommonizerTarget, OutputCommonizerTargetOptionType>() != null)
+            HierarchicalCommonizerOutputLayout
+        else NativeDistributionCommonizerOutputLayout
+
 
         val copyStdlib = getOptional<Boolean, BooleanOptionType> { it == "copy-stdlib" } ?: false
         val copyEndorsedLibs = getOptional<Boolean, BooleanOptionType> { it == "copy-endorsed-libs" } ?: false
@@ -96,30 +100,24 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
 
         val progressLogger = ProgressLogger(CliLoggerAdapter(2), startImmediately = true)
         val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
-        val repository = KonanDistributionRepository(distribution, commonizerTargets.toSet(), libraryLoader)
-        val existingTargets = commonizerTargets.filter { repository.getLibraries(it).isNotEmpty() }.toSet()
-        val statsCollector = StatsCollector(statsType, commonizerTargets)
+        val repository = KonanDistributionRepository(distribution, outputTarget.konanTargets, libraryLoader)
+        val statsCollector = StatsCollector(statsType, outputTarget.withAllAncestors().toList())
 
         val resultsConsumer = buildResultsConsumer {
-            this add ModuleSerializer(destination, NativeDistributionCommonizerOutputLayout)
-            this add CopyUnconsumedModulesAsIsConsumer(
-                repository, destination, commonizerTargets.toSet(), NativeDistributionCommonizerOutputLayout, progressLogger
-            )
+            this add ModuleSerializer(destination, outputLayout)
+            this add CopyUnconsumedModulesAsIsConsumer(repository, destination, outputTarget.allLeaves(), outputLayout, progressLogger)
             if (copyStdlib) this add CopyStdlibResultsConsumer(distribution, destination, progressLogger)
             if (copyEndorsedLibs) this add CopyEndorsedLibrairesResultsConsumer(distribution, destination, progressLogger)
-
-            SharedCommonizerTarget.ifNotEmpty(existingTargets)?.let { sharedTargetForLogger ->
-                this add LoggingResultsConsumer(sharedTargetForLogger, progressLogger)
-            }
+            this add LoggingResultsConsumer(outputTarget, progressLogger)
         }
 
-        val targetNames = commonizerTargets.joinToString { it.prettyName }
-        val descriptionSuffix = estimateLibrariesCount(repository, commonizerTargets).let { " ($it items)" }
+        val targetNames = outputTarget.allLeaves().joinToString { it.prettyName }
+        val descriptionSuffix = estimateLibrariesCount(repository, outputTarget.allLeaves()).let { " ($it items)" }
         val description = "${logPrefix}Preparing commonized Kotlin/Native libraries for targets $targetNames$descriptionSuffix"
         println(description)
 
         LibraryCommonizer(
-            commonTarget = SharedCommonizerTarget(commonizerTargets.toSet()),
+            outputTarget = outputTarget,
             repository = repository,
             dependencies = StdlibRepository(distribution, libraryLoader),
             resultsConsumer = resultsConsumer,
@@ -127,14 +125,22 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             progressLogger = progressLogger
         ).run()
 
-        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
+        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))
 
         println("$description: Done")
     }
 
     companion object {
-        private fun estimateLibrariesCount(repository: Repository, targets: List<LeafCommonizerTarget>): Int {
+        private fun estimateLibrariesCount(repository: Repository, targets: Iterable<LeafCommonizerTarget>): Int {
             return targets.flatMap { repository.getLibraries(it) }.count()
         }
     }
+}
+
+private fun Task.compatGetOutputTarget(): SharedCommonizerTarget {
+    getOptional<SharedCommonizerTarget, OutputCommonizerTargetOptionType>()?.let { return it }
+    val konanTargets = getOptional<List<KonanTarget>, NativeTargetsOptionType>() ?: throw IllegalArgumentException(
+        "Missing ${OutputCommonizerTargetOptionType.alias} or deprecated ${NativeTargetsOptionType.alias} option was specified"
+    )
+    return SharedCommonizerTarget(konanTargets)
 }

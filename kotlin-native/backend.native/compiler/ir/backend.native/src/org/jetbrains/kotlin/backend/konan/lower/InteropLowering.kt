@@ -289,7 +289,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
         require(property.descriptor.type.isObjCObjectType()) { renderCompilerError(property) }
 
         val name = property.name.asString()
-        val selector = "set${name.capitalize()}:"
+        val selector = "set${name.replaceFirstChar(Char::uppercaseChar)}:"
 
         return generateFunctionImp(selector, property.setter!!)
     }

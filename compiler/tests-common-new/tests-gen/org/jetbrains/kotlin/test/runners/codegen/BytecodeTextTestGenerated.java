@@ -4485,6 +4485,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("safeCallAndElvisChains.kt")
+        public void testSafeCallAndElvisChains() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/safeCallAndElvisChains.kt");
+        }
+
+        @Test
         @TestMetadata("trivialInstanceOf.kt")
         public void testTrivialInstanceOf() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/trivialInstanceOf.kt");

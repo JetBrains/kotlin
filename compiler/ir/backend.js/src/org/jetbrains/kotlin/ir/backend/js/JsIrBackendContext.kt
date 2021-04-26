@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -48,7 +47,6 @@ class JsIrBackendContext(
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
     val propertyLazyInitialization: Boolean = false,
-    override val irFactory: IrFactory = IrFactoryImpl
 ) : JsCommonBackendContext {
     val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
     val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()
@@ -56,6 +54,8 @@ class JsIrBackendContext(
     val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     override val builtIns = module.builtIns
+
+    override val irFactory: IrFactory = symbolTable.irFactory
 
     override var inVerbosePhase: Boolean = false
 
@@ -100,7 +100,7 @@ class JsIrBackendContext(
 
             override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
             override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
-        }, internalPackageFragmentDescriptor).also {
+        }, internalPackageFragmentDescriptor, module).also {
             module.files += it
         }
     }

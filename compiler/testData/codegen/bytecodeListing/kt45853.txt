@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public class MyProblem {
+    // source: 'kt45853.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.Nullable method getCause(): Exceptional
+}

@@ -38,16 +38,16 @@ internal class KtFirNamedClassOrObjectSymbol(
 ) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
     override val name: Name get() = firRef.withFir { it.name }
     override val classIdIfNonLocal: ClassId?
         get() = firRef.withFir { fir ->
             fir.symbol.classId.takeUnless { it.isLocal }
         }
 
-    override val modality: Modality get() = getModality()
-
-    override val visibility: Visibility get() = getVisibility()
+    /* FirRegularClass modality and visibility does not modified by STATUS so it can be taken from RAW */
+    override val modality: Modality get() = getModality(FirResolvePhase.RAW_FIR, Modality.FINAL)
+    override val visibility: Visibility get() = getVisibility(FirResolvePhase.RAW_FIR)
 
     override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
     override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
@@ -65,11 +65,11 @@ internal class KtFirNamedClassOrObjectSymbol(
     }
 
     override val superTypes: List<KtTypeAndAnnotations> by cached {
-        firRef.superTypesAndAnnotationsList(builder)
+        firRef.superTypesAndAnnotationsListForRegularClass(builder)
     }
 
     override val typeParameters by firRef.withFirAndCache { fir ->
-        fir.typeParameters.map { typeParameter ->
+        fir.typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
             builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol.fir)
         }
     }

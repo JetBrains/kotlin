@@ -23,12 +23,15 @@ import org.gradle.api.Project
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20GradlePlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -50,14 +53,15 @@ import kotlin.reflect.KClass
 abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
     private val log = Logging.getLogger(this.javaClass)
-    val kotlinPluginVersion = loadKotlinVersionFromResource(log)
 
-    open val projectExtensionClass: KClass<out KotlinProjectExtension> get() = KotlinProjectExtension::class
+    open val projectExtensionClass: KClass<out KotlinTopLevelExtension> get() = KotlinProjectExtension::class
 
     internal open fun kotlinSourceSetFactory(project: Project): NamedDomainObjectFactory<KotlinSourceSet> =
         DefaultKotlinSourceSetFactory(project)
 
     override fun apply(project: Project) {
+        val kotlinPluginVersion = project.getKotlinPluginVersion()
+
         val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
         val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project, listenerRegistryHolder)
         statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
@@ -88,7 +92,10 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
             fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =
                 project.container(KotlinSourceSet::class.java, factory)
 
-            project.kotlinExtension.sourceSets = kotlinSourceSetContainer(kotlinSourceSetFactory(project))
+            val topLevelExtension = project.topLevelExtension
+            if (topLevelExtension is KotlinProjectExtension) {
+                project.kotlinExtension.sourceSets = kotlinSourceSetContainer(kotlinSourceSetFactory(project))
+            }
         }
 
         project.extensions.add(KotlinTestsRegistry.PROJECT_EXTENSION_NAME, createTestRegistry(project))
@@ -110,7 +117,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
             .maybeCreate(COMPILER_CLASSPATH_CONFIGURATION_NAME)
             .defaultDependencies {
                 it.add(
-                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:$kotlinPluginVersion")
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")
                 )
             }
         project
@@ -145,7 +152,7 @@ open class KotlinPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinPlugin(kotlinPluginVersion, registry)
+        KotlinPlugin(registry)
 
     override val projectExtensionClass: KClass<out KotlinJvmProjectExtension>
         get() = KotlinJvmProjectExtension::class
@@ -155,7 +162,7 @@ open class KotlinCommonPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinCommonPlugin(kotlinPluginVersion, registry)
+        KotlinCommonPlugin(registry)
 
     override val projectExtensionClass: KClass<out KotlinCommonProjectExtension>
         get() = KotlinCommonProjectExtension::class
@@ -165,7 +172,7 @@ open class KotlinAndroidPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinAndroidPlugin(kotlinPluginVersion, registry)
+        KotlinAndroidPlugin(registry)
 
     override val projectExtensionClass: KClass<out KotlinAndroidProjectExtension>
         get() = KotlinAndroidProjectExtension::class
@@ -175,7 +182,7 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        Kotlin2JsPlugin(kotlinPluginVersion, registry)
+        Kotlin2JsPlugin(registry)
 
     override val projectExtensionClass: KClass<out Kotlin2JsProjectExtension>
         get() = Kotlin2JsProjectExtension::class
@@ -184,7 +191,7 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 open class KotlinJsPluginWrapper @Inject constructor(
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinJsPlugin(kotlinPluginVersion)
+        KotlinJsPlugin(project.getKotlinPluginVersion())
 
     override val projectExtensionClass: KClass<out KotlinJsProjectExtension>
         get() = KotlinJsProjectExtension::class
@@ -216,7 +223,7 @@ open class KotlinJsPluginWrapper @Inject constructor(
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinMultiplatformPlugin(kotlinPluginVersion)
+        KotlinMultiplatformPlugin()
 
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
         get() = KotlinMultiplatformExtension::class
@@ -237,12 +244,25 @@ open class KotlinMultiplatformPluginWrapper @Inject constructor(
     }
 }
 
-fun Project.getKotlinPluginVersion(): String? =
-    plugins.asSequence().mapNotNull { (it as? KotlinBasePluginWrapper)?.kotlinPluginVersion }.firstOrNull()
+open class KotlinPm20PluginWrapper @Inject constructor(private val objectFactory: ObjectFactory) : KotlinBasePluginWrapper() {
+    override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
+        objectFactory.newInstance(KotlinPm20GradlePlugin::class.java)
 
-fun Plugin<*>.loadKotlinVersionFromResource(log: Logger): String {
-    log.kotlinDebug("Loading version information")
-    val projectVersion = loadPropertyFromResources("project.properties", "project.version")
-    log.kotlinDebug("Found project version [$projectVersion]")
-    return projectVersion
+    override val projectExtensionClass: KClass<out KotlinPm20ProjectExtension>
+        get() = KotlinPm20ProjectExtension::class
+}
+
+fun Project.getKotlinPluginVersion(): String {
+    if (!kotlinPluginVersionFromResources.isInitialized()) {
+        project.logger.kotlinDebug("Loading version information")
+        project.logger.kotlinDebug("Found project version [${kotlinPluginVersionFromResources.value}")
+    }
+    return kotlinPluginVersionFromResources.value
+}
+
+private fun loadKotlinPluginVersionFromResourcesOf(any: Any) =
+    any.loadPropertyFromResources("project.properties", "project.version")
+
+private val kotlinPluginVersionFromResources = lazy {
+    loadKotlinPluginVersionFromResourcesOf(object {})
 }

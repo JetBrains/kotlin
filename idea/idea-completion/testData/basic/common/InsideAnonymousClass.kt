@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class A(private val xxx1: Int, val xxx2: Int) {
     private val xxx3: Int = 0
 

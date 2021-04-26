@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.references
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -23,4 +24,8 @@ abstract class FirBackingFieldReference : FirResolvedNamedReference() {
     abstract override val resolvedSymbol: FirBackingFieldSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBackingFieldReference(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformBackingFieldReference(this, data) as E
 }

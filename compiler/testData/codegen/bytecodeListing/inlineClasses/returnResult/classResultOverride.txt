@@ -1,0 +1,12 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'classResultOverride.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method foo-d1pmJ48(): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'classResultOverride.kt'
+    public abstract @org.jetbrains.annotations.NotNull method foo-d1pmJ48(): java.lang.Object
+}

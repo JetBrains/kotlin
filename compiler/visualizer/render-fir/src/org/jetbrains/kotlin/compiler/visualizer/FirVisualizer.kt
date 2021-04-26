@@ -316,10 +316,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
     }
 
     inner class FirRendererForVisualizer : FirVisitor<Unit, StringBuilder>() {
-        private val session = firFile.session
+        private val session = firFile.declarationSiteSession
         private val filePackage = firFile.packageFqName.toString()
         private val filePackageWithSlash = filePackage.replace(".", "/")
-        private val symbolProvider = firFile.session.symbolProvider
+        private val symbolProvider = firFile.declarationSiteSession.symbolProvider
 
         private fun ConeTypeProjection.tryToRenderConeAsFunctionType(): String {
             if (this !is ConeKotlinType) return localTypeRenderer()
@@ -827,7 +827,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             val name = arrayOfCall.typeRef.coneType.classId!!.shortClassName.asString()
             val typeArguments = arrayOfCall.typeRef.coneType.typeArguments
             val typeParameters = if (typeArguments.isEmpty()) "" else " <T>"
-            data.append("fun$typeParameters ${name.decapitalize()}Of")
+            data.append("fun$typeParameters ${name.replaceFirstChar(Char::lowercaseChar)}Of")
             typeArguments.firstOrNull()?.let {
                 data.append("<").append(it.tryToRenderConeAsFunctionType()).append(">")
             }

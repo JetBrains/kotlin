@@ -56,6 +56,6 @@ fun fourth(arg: Color) = when (arg) {
 
 fun fifth(arg: Any?) = when (arg) {
     is Any -> "Any"
-    else -> ""
+    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> ""
     else -> null
 }

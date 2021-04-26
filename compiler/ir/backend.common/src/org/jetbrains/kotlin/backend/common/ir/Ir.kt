@@ -204,6 +204,15 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
     val doubleArray = primitiveArrayClass(PrimitiveType.DOUBLE)
     val booleanArray = primitiveArrayClass(PrimitiveType.BOOLEAN)
 
+    val byteArrayType get() = byteArray.owner.defaultType
+    val charArrayType get() = charArray.owner.defaultType
+    val shortArrayType get() = shortArray.owner.defaultType
+    val intArrayType get() = intArray.owner.defaultType
+    val longArrayType get() = longArray.owner.defaultType
+    val floatArrayType get() = floatArray.owner.defaultType
+    val doubleArrayType get() = doubleArray.owner.defaultType
+    val booleanArrayType get() = booleanArray.owner.defaultType
+
     val unsignedArrays = UnsignedType.values().mapNotNull { unsignedType ->
         unsignedArrayClass(unsignedType)?.let { unsignedType to it }
     }.toMap()

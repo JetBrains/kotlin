@@ -104,6 +104,11 @@ public class SymbolByPsiTestGenerated extends AbstractSymbolByPsiTest {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/memberProperties.kt");
     }
 
+    @TestMetadata("outerAndInnerClasses.kt")
+    public void testOuterAndInnerClasses() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/outerAndInnerClasses.kt");
+    }
+
     @TestMetadata("topLevelFunctions.kt")
     public void testTopLevelFunctions() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbols/symbolByPsi/topLevelFunctions.kt");

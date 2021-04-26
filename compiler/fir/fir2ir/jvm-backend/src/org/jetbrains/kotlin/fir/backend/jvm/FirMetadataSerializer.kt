@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
@@ -43,7 +44,7 @@ class FirMetadataSerializer(
     components: Fir2IrComponents,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
-    private val approximator = object : AbstractTypeApproximator(session.typeContext) {
+    private val approximator = object : AbstractTypeApproximator(session.typeContext, session.languageVersionSettings) {
         override fun createErrorType(debugName: String): SimpleTypeMarker {
             return ConeKotlinErrorType(ConeIntermediateDiagnostic(debugName))
         }
@@ -78,7 +79,7 @@ class FirMetadataSerializer(
         val function = this
         return buildAnonymousFunction {
             val typeParameterSet = function.typeParameters.filterIsInstanceTo(mutableSetOf<FirTypeParameter>())
-            session = function.session
+            declarationSiteSession = function.declarationSiteSession
             origin = FirDeclarationOrigin.Source
             symbol = FirAnonymousFunctionSymbol()
             returnTypeRef = function.returnTypeRef.approximated(toSuper = true, typeParameterSet)
@@ -97,7 +98,7 @@ class FirMetadataSerializer(
         val accessor = this
         return buildPropertyAccessor {
             val typeParameterSet = accessor.typeParameters.toMutableSet()
-            session = accessor.session
+            declarationSiteSession = accessor.declarationSiteSession
             origin = FirDeclarationOrigin.Source
             returnTypeRef = accessor.returnTypeRef.approximated(toSuper = true, typeParameterSet)
             symbol = FirPropertyAccessorSymbol()
@@ -117,7 +118,7 @@ class FirMetadataSerializer(
         val property = this
         return buildProperty {
             val typeParameterSet = property.typeParameters.toMutableSet()
-            session = property.session
+            declarationSiteSession = property.declarationSiteSession
             origin = FirDeclarationOrigin.Source
             symbol = FirPropertySymbol(property.symbol.callableId)
             returnTypeRef = property.returnTypeRef.approximated(toSuper = true, typeParameterSet)
@@ -138,7 +139,7 @@ class FirMetadataSerializer(
             annotations += property.annotations
             typeParameters += typeParameterSet
         }.apply {
-            delegateFieldSymbol?.fir = this
+            delegateFieldSymbol?.bind(this)
         }
     }
 
@@ -154,17 +155,18 @@ class FirMetadataSerializer(
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> FirElementSerializer.create(
+                components.session,
                 components.scopeSession,
                 metadata.fir, serializerExtension, (parent as? FirMetadataSerializer)?.serializer, approximator
             )
             is FirMetadataSource.File -> FirElementSerializer.createTopLevel(
-                metadata.session,
+                components.session,
                 components.scopeSession,
                 serializerExtension,
                 approximator
             )
             is FirMetadataSource.Function -> FirElementSerializer.createForLambda(
-                metadata.session,
+                components.session,
                 components.scopeSession,
                 serializerExtension,
                 approximator

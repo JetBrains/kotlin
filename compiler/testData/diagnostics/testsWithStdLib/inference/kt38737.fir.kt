@@ -3,7 +3,7 @@ private const val dateRangeEnd: String = "2020-05-01"
 
 private fun String?.toIconList(): List<String> = when (this) {
     null -> listOf("DATE_IS_NULL")
-    <!INAPPLICABLE_CANDIDATE!>in<!> dateRangeStart..dateRangeEnd -> emptyList()
+    <!ARGUMENT_TYPE_MISMATCH!>in dateRangeStart..dateRangeEnd<!> -> emptyList()
     else -> listOf("DATE_IS_OUT_OF_RANGE")
 }
 

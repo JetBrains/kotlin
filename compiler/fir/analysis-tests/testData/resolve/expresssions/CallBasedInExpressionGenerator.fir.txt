@@ -36,7 +36,7 @@ FILE: CallBasedInExpressionGenerator.kt
             private get(): R|kotlin/Boolean|
 
         public final override fun generate(argument: R|org/jetbrains/kotlin/codegen/range/inExpression/StackValue|): R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| {
-            ^generate this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.gen|(R|<local>/argument|).R|kotlin/let|<R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|, R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|): R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| <kind=EXACTLY_ONCE>  {
+            ^generate this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.gen|(R|<local>/argument|).R|kotlin/let|<R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|, R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|): R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| <inline=Inline, kind=EXACTLY_ONCE>  {
                 ^ when () {
                     this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.isInverted| ->  {
                         <Unresolved name: Invert>#(R|<local>/it|)

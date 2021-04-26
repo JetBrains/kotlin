@@ -12,11 +12,11 @@ import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
-class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
-    @TargetVersions("4.7+")
+class GradleConfiguratorPlatformSpecificTest : MultiplePluginVersionGradleImportingTestCase() {
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportMultiplatform() {
         val files = importProjectFromTestData()
@@ -32,11 +32,11 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportMultiplatformWithXFlag() = testEnableFeatureSupportMultiplatform()
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportMultiplatform2() {
         val files = importProjectFromTestData()
@@ -52,7 +52,7 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportMultiplatformToExistentArguments() {
         val files = importProjectFromTestData()
@@ -68,7 +68,7 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportMultiplatformKts() {
         val files = importProjectFromTestData()
@@ -84,27 +84,27 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testAddLibraryMultiplatform() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testAddLibraryMultiplatformGSK() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testAddLibraryMultiplatformGSK2() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testAddLibraryMultiplatformGSK3() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testAddLibraryMultiplatformGSK4() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testAddLibraryMultiplatformGSK5() = doTestAddLibrary()
 

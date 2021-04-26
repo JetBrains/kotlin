@@ -725,7 +725,6 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      *
      * @sample samples.time.Durations.toIsoString
      */
-    @OptIn(ExperimentalStdlibApi::class)
     public fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
         append("PT")

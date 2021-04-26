@@ -79,7 +79,7 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
                 enumValues<T>().find { e -> e.toString().equals(it, ignoreCase = true) } ?:
                         throw IllegalArgumentException("No enum constant $it")
             },
-            noinline toString: (T) -> kotlin.String = { it.toString().toLowerCase() }): Choice<T> {
+            noinline toString: (T) -> kotlin.String = { it.toString().lowercase() }): Choice<T> {
             return Choice(enumValues<T>().toList(), toVariant, toString)
         }
     }

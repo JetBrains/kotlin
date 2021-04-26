@@ -6,9 +6,9 @@ enum class Enum {
 
         <!NESTED_CLASS_NOT_ALLOWED!>class TestNested<!>
 
-        <!NESTED_CLASS_NOT_ALLOWED!>interface TestInterface<!>
+        <!LOCAL_INTERFACE_NOT_ALLOWED, NESTED_CLASS_NOT_ALLOWED!>interface TestInterface<!>
 
-        object TestObject
+        <!LOCAL_OBJECT_NOT_ALLOWED!>object TestObject<!>
 
         enum class TestEnumClass {
             OTHER_ENTRY

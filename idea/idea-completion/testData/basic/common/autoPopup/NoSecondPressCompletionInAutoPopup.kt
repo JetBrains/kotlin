@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 object O {
     private val zzzz = 0
 }

@@ -8,43 +8,58 @@ actual fun functionMismatchedParameterNames1(arg0: Int) {}
 
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames2(arg0: Int, arg1: String) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames3(arg0: Int, arg1: String) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames4(arg0: Int, arg1: String) {}
 
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames5(arg0: Int, arg1: String, arg2: List<Double>) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames6(arg0: Int, arg1: String, arg2: List<Double>) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames7(arg0: Int, arg1: String, arg2: List<Double>) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames8(arg0: Int, arg1: String, arg2: List<Double>) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames9(arg0: Int, arg1: String, arg2: List<Double>) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames10(arg0: Int, arg1: String, arg2: List<Double>) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames11(arg0: Int, arg1: String, arg2: List<Double>) {}
 
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames12(vararg variadicArguments: Int) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames13(arg0: Int, vararg variadicArguments: Int) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames14(arg0: Int, vararg variadicArguments: Int) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames15(arg0: Int, vararg variadicArguments: Int) {}
 
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames16(i: Int) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames17(i: Int, s: String) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames18(i: Int, s: String, l: List<Double>) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames19(vararg v: Int) {}
+
 // hasStableParameterNames=false
 actual fun functionMismatchedParameterNames20(i: Int, vararg v: Int) {}
 
@@ -62,40 +77,62 @@ actual fun functionMismatchedParameterNames30(arg0: Int, vararg variadicArgument
 
 actual fun functionMismatchedParameterNames31(i: Int, s: String) {}
 fun functionMismatchedParameterNames32(i: Int, s: String) {}
-@kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames33(i: Int, s: String) {}
-@kotlinx.cinterop.ObjCMethod
-actual fun functionMismatchedParameterNames34(i: Int, s: String) {}
 
 @kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames35(arg0: Int, arg1: String) {}
-@kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames36(i: Int, s: String) {}
-@kotlinx.cinterop.ObjCMethod
-actual fun functionMismatchedParameterNames37(arg0: Int, arg1: String) {}
+fun functionMismatchedParameterNames33(i: Int, s: String) {
+}
 
 @kotlinx.cinterop.ObjCMethod
-actual fun functionMismatchedParameterNames38(i: Int, s: String) {}
-// hasStableParameterNames=false
-@kotlinx.cinterop.ObjCMethod
-actual fun functionMismatchedParameterNames39(i: Int, s: String) {}
-// hasStableParameterNames=false
-@kotlinx.cinterop.ObjCMethod
-actual fun functionMismatchedParameterNames40(i: Int, s: String) {}
+actual fun functionMismatchedParameterNames34(i: Int, s: String) {
+}
 
 @kotlinx.cinterop.ObjCMethod
-actual fun functionMismatchedParameterNames41(arg0: Int, arg1: String) {}
-// hasStableParameterNames=false
-@kotlinx.cinterop.ObjCMethod
-actual fun functionMismatchedParameterNames42(arg0: Int, arg1: String) {}
-// hasStableParameterNames=false
-@kotlinx.cinterop.ObjCMethod
-actual fun functionMismatchedParameterNames43(arg0: Int, arg1: String) {}
+fun functionMismatchedParameterNames35(arg0: Int, arg1: String) {
+}
 
 @kotlinx.cinterop.ObjCMethod
-actual fun overloadedFunctionByParameterNames(i: Int, s: String) {}
+fun functionMismatchedParameterNames36(i: Int, s: String) {
+}
+
 @kotlinx.cinterop.ObjCMethod
-actual fun overloadedFunctionByParameterNames(xi: Int, xs: String) {}
+actual fun functionMismatchedParameterNames37(arg0: Int, arg1: String) {
+}
+
+@kotlinx.cinterop.ObjCMethod
+actual fun functionMismatchedParameterNames38(i: Int, s: String) {
+}
+
+// hasStableParameterNames=false
+@kotlinx.cinterop.ObjCMethod
+actual fun functionMismatchedParameterNames39(i: Int, s: String) {
+}
+
+// hasStableParameterNames=false
+@kotlinx.cinterop.ObjCMethod
+actual fun functionMismatchedParameterNames40(i: Int, s: String) {
+}
+
+@kotlinx.cinterop.ObjCMethod
+actual fun functionMismatchedParameterNames41(arg0: Int, arg1: String) {
+}
+
+// hasStableParameterNames=false
+@kotlinx.cinterop.ObjCMethod
+actual fun functionMismatchedParameterNames42(arg0: Int, arg1: String) {
+}
+
+// hasStableParameterNames=false
+@kotlinx.cinterop.ObjCMethod
+actual fun functionMismatchedParameterNames43(arg0: Int, arg1: String) {
+}
+
+@kotlinx.cinterop.ObjCMethod
+actual fun overloadedFunctionByParameterNames(i: Int, s: String) {
+}
+
+@kotlinx.cinterop.ObjCMethod
+actual fun overloadedFunctionByParameterNames(xi: Int, xs: String) {
+}
 
 fun functionMismatchedParameterCount1(i: Int, s: String, l: List<Double>) {}
 fun functionMismatchedParameterCount2(i: Int, s: String) {}

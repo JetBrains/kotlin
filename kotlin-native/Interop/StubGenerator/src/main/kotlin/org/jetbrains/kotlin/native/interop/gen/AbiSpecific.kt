@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.native.interop.indexer.*
 
@@ -16,20 +17,19 @@ import org.jetbrains.kotlin.native.interop.indexer.*
  */
 internal fun Type.isStret(target: KonanTarget): Boolean {
     val unwrappedType = this.unwrapTypedefs()
-    val abiInfo: ObjCAbiInfo = when (target) {
-        KonanTarget.IOS_ARM64,
-        KonanTarget.TVOS_ARM64,
-        KonanTarget.MACOS_ARM64 -> DarwinArm64AbiInfo()
+    val abiInfo: ObjCAbiInfo = when (target.architecture) {
+        Architecture.ARM64 -> {
+            // Currently, cinterop works with watchos_arm64 as with watchos_arm32.
+            // TODO: ABI for watchos_arm64 should be revisited after LLVM update.
+            require(target != KonanTarget.WATCHOS_ARM64)
+            DarwinArm64AbiInfo()
+        }
 
-        KonanTarget.IOS_X64,
-        KonanTarget.MACOS_X64,
-        KonanTarget.WATCHOS_X64,
-        KonanTarget.TVOS_X64 -> DarwinX64AbiInfo()
+        Architecture.X64 -> DarwinX64AbiInfo()
 
-        KonanTarget.WATCHOS_X86 -> DarwinX86AbiInfo()
+        Architecture.X86 -> DarwinX86AbiInfo()
 
-        KonanTarget.IOS_ARM32,
-        KonanTarget.WATCHOS_ARM32 -> DarwinArm32AbiInfo(target)
+        Architecture.ARM32 -> DarwinArm32AbiInfo(target)
 
         else -> error("Cannot generate ObjC stubs for $target.")
     }

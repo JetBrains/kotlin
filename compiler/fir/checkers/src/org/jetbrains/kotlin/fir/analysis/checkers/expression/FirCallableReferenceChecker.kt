@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.containingClass
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 
 object FirCallableReferenceChecker : FirQualifiedAccessChecker() {
@@ -43,7 +43,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessChecker() {
         if (source.kind is FirFakeSourceElementKind) return
 
         val referredDeclaration = reference.resolvedSymbol.fir
-        if (referredDeclaration is FirConstructor && referredDeclaration.containingClass?.classKind == ClassKind.ANNOTATION_CLASS) {
+        if (referredDeclaration is FirConstructor && referredDeclaration.getContainingClass(context.session)?.classKind == ClassKind.ANNOTATION_CLASS) {
             reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, context)
         }
         if ((referredDeclaration as? FirCallableMemberDeclaration<*>)?.isExtensionMember == true &&

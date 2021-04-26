@@ -7,16 +7,60 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.*
 import kotlin.test.*
 
 internal class CompilationSpecificPluginPath {
+    @Test
+    fun `native common sourceset should be compiled with native plugins`() {
+        // Given plugin but with native-specific artifact
+        class NativeSpecificPlugin : FakeSubPlugin("common", "native", { true })
+
+        val project = buildProject {
+            extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
+            project.plugins.apply("kotlin-multiplatform")
+
+            plugins.apply(NativeSpecificPlugin::class.java)
+
+            kotlin {
+
+                linuxX64()
+                mingwX64()
+                jvm()
+
+                sourceSets.apply {
+                    val commonMain = getByName("commonMain")
+                    val nativeMain = create("nativeMain")
+                    val linuxX64 = getByName("linuxX64Main")
+                    val mingwX64 = getByName("mingwX64Main")
+                    val jvm = getByName("jvmMain")
+
+                    // Make nativeMain be common source set for linuxX64 and mingwX64
+                    nativeMain.dependsOn(commonMain)
+                    linuxX64.dependsOn(nativeMain)
+                    mingwX64.dependsOn(nativeMain)
+                    jvm.dependsOn(commonMain)
+                }
+            }
+        }
+        project.evaluate()
+
+        // Then expect native artifact to be used for nativeMain metadata compilation
+        assertEquals(setOf("native"), project.compileTaskSubplugins("compileNativeMainKotlinMetadata"))
+        assertEquals(setOf("common"), project.compileTaskSubplugins("compileKotlinMetadata"))
+        assertEquals(setOf("common"), project.compileTaskSubplugins("compileCommonMainKotlinMetadata"))
+        assertEquals(setOf("common"), project.compileTaskSubplugins("compileKotlinJvm"))
+        assertEquals(setOf("native"), project.compileTaskSubplugins("compileKotlinLinuxX64"))
+    }
+
     @Test
     fun `each compilation should have its own plugin classpath`() {
         val project = buildProjectWithMPP {
@@ -166,12 +210,36 @@ internal class CompilationSpecificPluginPath {
         .map { it.name }
         .minus("kotlin-scripting-compiler-embeddable")
 
+    private fun Project.compileTaskSubplugins(taskName: String) = this
+        .tasks
+        .getByName(taskName)
+        .let {
+            when (it) {
+                is AbstractKotlinNativeCompile<*, *> -> it.compilerPluginClasspath
+                is AbstractKotlinCompile<*> -> it.pluginClasspath
+                else -> error("Unexpected task type with name $taskName. Is it kotlin compile task?")
+            }
+        }
+        ?.let { it as Configuration }
+        ?.allDependencies
+        ?.map { it.name }
+        ?.minus("kotlin-scripting-compiler-embeddable")
+        ?.toSet()
+        ?: emptySet()
 
-    private fun buildProjectWithMPP(code: Project.() -> Unit): ProjectInternal {
-        val project = ProjectBuilder.builder().build()
+    private fun buildProject(
+        configBuilder: ProjectBuilder.() -> Unit = { Unit },
+        configProject: Project.() -> Unit
+    ): ProjectInternal = ProjectBuilder
+        .builder()
+        .apply(configBuilder)
+        .build()
+        .apply(configProject)
+        .let { it as ProjectInternal }
+
+    private fun buildProjectWithMPP(code: Project.() -> Unit) = buildProject {
         project.plugins.apply("kotlin-multiplatform")
-        project.code()
-        return project as ProjectInternal
+        code()
     }
 
     private fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {

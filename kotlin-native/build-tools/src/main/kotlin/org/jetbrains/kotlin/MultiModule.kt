@@ -38,8 +38,7 @@ class MultiModuleCompilerInvocations(
         val klibModulePath = moduleToKlibName(module.name, moduleVersion)
         libs.addAll(module.dependencies)
 
-        // When producing klibs link them against version 1 of multiversioned klibs.
-        val dependencyVersion = 1
+        val dependencyVersion = moduleVersion
 
         val klibs = module.dependencies.flatMap { listOf("-l", moduleToKlibName(it, dependencyVersion)) }
         val repos = listOf("-r", "${executablePath}_version$dependencyVersion", "-r", outputDirectory)
@@ -62,13 +61,13 @@ class MultiModuleCompilerInvocations(
 
     fun produceProgram(compileList: List<TestFile>) {
         val compileMain = compileList.filter {
-            it.module.isDefaultModule() || it.module === TestModule.support
+            it.module.isDefaultModule() || it.module.isSupportModule()
         }
         compileMain.forEach { f ->
             libs.addAll(f.module.dependencies)
         }
 
-        // When producing klibs link them against version 2 of multiversioned klibs.
+        // When producing an executable link them against version 2 of multiversioned klibs.
         val dependencyVersion = 2
 
         val friends = compileMain.flatMap { it.module.friends }.toSet()

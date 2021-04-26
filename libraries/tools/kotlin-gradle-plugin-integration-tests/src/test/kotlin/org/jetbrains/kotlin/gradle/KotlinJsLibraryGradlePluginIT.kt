@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
+import java.util.zip.ZipFile
+import kotlin.test.assertNotNull
 
 class KotlinJsIrLibraryGradlePluginIT : BaseGradleIT() {
     override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.1")
@@ -62,6 +65,26 @@ class KotlinJsIrLibraryGradlePluginIT : BaseGradleIT() {
             assertFileExists("build/productionLibrary/main.js")
 
             assertFileExists("build/distributions/js-library.js")
+        }
+    }
+
+    @Test
+    fun testPublishSourcesJarTaskShouldAlsoIncludeDukatTaskOutputs() {
+        with(
+            Project(
+                "js-library-ir",
+                minLogLevel = LogLevel.INFO
+            )
+        ) {
+            setupWorkingDir()
+            build("sourcesJar") {
+                assertSuccessful()
+                val sourcesJarFilePath = "build/libs/js-library-ir-kotlin-sources.jar"
+                assertFileExists(sourcesJarFilePath)
+                ZipFile(projectDir.resolve(sourcesJarFilePath)).use {
+                    assertNotNull(it.getEntry("jsMain/index.module_decamelize.kt"))
+                }
+            }
         }
     }
 }

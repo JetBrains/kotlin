@@ -20,7 +20,7 @@ private object Letter {
         val toBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
         val fromBase64 = IntArray(128)
         for (i in toBase64.indices) {
-            fromBase64[toBase64[i].toInt()] = i
+            fromBase64[toBase64[i].code] = i
         }
         
         // rangeStartDiff.length = 356
@@ -72,7 +72,7 @@ internal fun Char.isUpperCaseImpl(): Boolean {
  *   - `0` otherwise.
  */
 private fun Char.getLetterType(): Int {
-    val ch = this.toInt()
+    val ch = this.code
     val index = binarySearchRange(Letter.decodedRangeStart, ch)
 
     val rangeStart = Letter.decodedRangeStart[index]

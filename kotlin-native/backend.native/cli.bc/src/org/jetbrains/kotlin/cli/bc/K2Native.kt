@@ -61,7 +61,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         val project = environment.project
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
         configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(toplevelPhase, arguments, messageCollector))
-        val konanConfig = KonanConfig(project, configuration)
 
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
         if (!enoughArguments) {
@@ -75,6 +74,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         try {
+            val konanConfig = KonanConfig(project, configuration)
             runTopLevelPhases(konanConfig, environment)
         } catch (e: KonanCompilationException) {
             return ExitCode.COMPILATION_ERROR
@@ -166,6 +166,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     null -> null
                     else -> {
                         configuration.report(ERROR, "Unsupported -Xadd-light-debug= value: $it. Possible values are 'enable'/'disable'")
+                        null
+                    }
+                })
+                putIfNotNull(GENERATE_INLINED_FUNCTION_BODY_MARKER, when (val it = arguments.generateInlinedFunctionMarkerString) {
+                    "enable" -> true
+                    "disable" -> false
+                    null -> null
+                    else -> {
+                        configuration.report(ERROR, "Unsupported -Xg-generate-inline-function-body-marker= value: $it. Possible values are 'enable'/'disable'")
                         null
                     }
                 })

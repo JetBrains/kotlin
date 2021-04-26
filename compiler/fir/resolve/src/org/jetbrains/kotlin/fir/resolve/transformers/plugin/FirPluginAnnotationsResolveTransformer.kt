@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.FqName
 
 class FirPluginAnnotationsResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
@@ -33,19 +31,19 @@ class FirPluginAnnotationsResolveProcessor(session: FirSession, scopeSession: Sc
 class FirPluginAnnotationsResolveTransformer(
     override val session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractPhaseTransformer<Nothing?>(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS) {
+) : FirAbstractPhaseTransformer<Any?>(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS) {
     private val annotationTransformer = FirAnnotationResolveTransformer(session, scopeSession)
     private val importTransformer = FirPartialImportResolveTransformer(session)
 
     val extensionService = session.extensionService
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         throw IllegalStateException("Should not be here")
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
-        if (!extensionService.hasPredicateBasedExtensions) return file.compose()
-        val registeredPluginAnnotations = file.session.registeredPluginAnnotations
+        if (!extensionService.hasPredicateBasedExtensions) return file
+        val registeredPluginAnnotations = session.registeredPluginAnnotations
         file.replaceResolvePhase(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS)
         val newAnnotations = file.resolveAnnotations(registeredPluginAnnotations.annotations, registeredPluginAnnotations.metaAnnotations)
         if (!newAnnotations.isEmpty) {
@@ -55,7 +53,7 @@ class FirPluginAnnotationsResolveTransformer(
             val newAnnotationsFqns = newAnnotations.values().mapTo(mutableSetOf()) { it.symbol.classId.asSingleFqName() }
             file.resolveAnnotations(newAnnotationsFqns, emptySet())
         }
-        return file.compose()
+        return file
     }
 
     private fun FirFile.resolveAnnotations(
@@ -107,14 +105,14 @@ private class FirAnnotationResolveTransformer(
     override fun transformAnnotationCall(
         annotationCall: FirAnnotationCall,
         data: Multimap<AnnotationFqn, FirRegularClass>
-    ): CompositeTransformResult<FirStatement> {
-        return annotationCall.transformAnnotationTypeRef(typeResolverTransformer, scope).compose()
+    ): FirStatement {
+        return annotationCall.transformAnnotationTypeRef(typeResolverTransformer, scope)
     }
 
     override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: Multimap<AnnotationFqn, FirRegularClass>
-    ): CompositeTransformResult<FirStatement> {
+    ): FirStatement {
         return super.transformRegularClass(regularClass, data).also {
             if (regularClass.classKind == ClassKind.ANNOTATION_CLASS && metaAnnotations.isNotEmpty()) {
                 val annotations = regularClass.annotations.mapNotNull { it.fqName(session) }
@@ -128,7 +126,7 @@ private class FirAnnotationResolveTransformer(
     override fun transformAnnotatedDeclaration(
         annotatedDeclaration: FirAnnotatedDeclaration,
         data: Multimap<AnnotationFqn, FirRegularClass>
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         return super.transformAnnotatedDeclaration(annotatedDeclaration, data).also {
             session.predicateBasedProvider.registerAnnotatedDeclaration(annotatedDeclaration, owners)
         }

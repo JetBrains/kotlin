@@ -118,7 +118,8 @@ fun DependencyHandler.projectArchives(name: String): ProjectDependency = project
 fun Project.testApiJUnit5(
     vintageEngine: Boolean = false,
     runner: Boolean = false,
-    suiteApi: Boolean = false
+    suiteApi: Boolean = false,
+    jupiterParams: Boolean = false
 ) {
     with(dependencies) {
         val platformVersion = commonVer("org.junit", "junit-bom")
@@ -127,6 +128,11 @@ fun Project.testApiJUnit5(
         if (vintageEngine) {
             testApi("org.junit.vintage:junit-vintage-engine:$platformVersion")
         }
+
+        if (jupiterParams) {
+            testApi("org.junit.jupiter:junit-jupiter-params:$platformVersion")
+        }
+
         val componentsVersion = commonVer("org.junit.platform", "")
 
         val components = mutableListOf(

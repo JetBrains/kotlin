@@ -22,7 +22,7 @@ internal class A {
         val i = 10.1.toInt()
         val f = 10.1.toFloat()
         val l = 10.1.toLong()
-        val s = 10.1.toShort()
+        val s = 10.1.toInt().toShort()
 
         try {
             val removed = list.removeAt(10)

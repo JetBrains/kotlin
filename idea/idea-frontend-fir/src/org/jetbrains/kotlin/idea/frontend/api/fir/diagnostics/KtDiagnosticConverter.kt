@@ -27,7 +27,7 @@ internal fun interface KtFirDiagnostic3Creator<A : Any, B : Any, C : Any> : KtFi
     fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters3<*, A, B, C>): KtFirDiagnostic<*>
 }
 
-internal class KtDiagnosticConverter(private val conversions: Map<AbstractFirDiagnosticFactory<*, *, *>, KtFirDiagnosticCreator>) {
+internal class KtDiagnosticConverter(private val conversions: Map<AbstractFirDiagnosticFactory<*, *>, KtFirDiagnosticCreator>) {
     fun convert(analysisSession: KtFirAnalysisSession, diagnostic: FirDiagnostic<*>): KtFirDiagnostic<*> {
         val creator = conversions[diagnostic.factory]
             ?: error("No conversion was found for ${diagnostic.factory}")
@@ -54,21 +54,21 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractFirDia
 }
 
 internal class KtDiagnosticConverterBuilder private constructor() {
-    private val conversions = mutableMapOf<AbstractFirDiagnosticFactory<*, *, *>, KtFirDiagnosticCreator>()
+    private val conversions = mutableMapOf<AbstractFirDiagnosticFactory<*, *>, KtFirDiagnosticCreator>()
 
-    fun add(diagnostic: FirDiagnosticFactory0<*, *>, creator: KtFirDiagnostic0Creator) {
+    fun add(diagnostic: FirDiagnosticFactory0<*>, creator: KtFirDiagnostic0Creator) {
         conversions[diagnostic] = creator
     }
 
-    fun <A : Any> add(diagnostic: FirDiagnosticFactory1<*, *, A>, creator: KtFirDiagnostic1Creator<A>) {
+    fun <A : Any> add(diagnostic: FirDiagnosticFactory1<*, A>, creator: KtFirDiagnostic1Creator<A>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A : Any, B : Any> add(diagnostic: FirDiagnosticFactory2<*, *, A, B>, creator: KtFirDiagnostic2Creator<A, B>) {
+    fun <A : Any, B : Any> add(diagnostic: FirDiagnosticFactory2<*, A, B>, creator: KtFirDiagnostic2Creator<A, B>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A : Any, B : Any, C : Any> add(diagnostic: FirDiagnosticFactory3<*, *, A, B, C>, creator: KtFirDiagnostic3Creator<A, B, C>) {
+    fun <A : Any, B : Any, C : Any> add(diagnostic: FirDiagnosticFactory3<*, A, B, C>, creator: KtFirDiagnostic3Creator<A, B, C>) {
         conversions[diagnostic] = creator
     }
 

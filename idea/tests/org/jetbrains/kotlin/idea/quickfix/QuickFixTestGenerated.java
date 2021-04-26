@@ -7757,6 +7757,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/expressions/unnecessarySafeCall1.kt");
         }
 
+        @TestMetadata("unnecessarySafeCall2.kt")
+        public void testUnnecessarySafeCall2() throws Exception {
+            runTest("idea/testData/quickfix/expressions/unnecessarySafeCall2.kt");
+        }
+
         @TestMetadata("unsafeCall1.kt")
         public void testUnsafeCall1() throws Exception {
             runTest("idea/testData/quickfix/expressions/unsafeCall1.kt");
@@ -8417,6 +8422,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("inlineClassDeprecated_js.kt")
         public void testInlineClassDeprecated_js() throws Exception {
             runTest("idea/testData/quickfix/inlineClass/inlineClassDeprecated_js.kt");
+        }
+
+        @TestMetadata("publicInlineClass.kt")
+        public void testPublicInlineClass() throws Exception {
+            runTest("idea/testData/quickfix/inlineClass/publicInlineClass.kt");
         }
     }
 

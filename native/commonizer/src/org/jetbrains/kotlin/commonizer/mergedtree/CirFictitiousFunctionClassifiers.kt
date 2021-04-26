@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.commonizer.mergedtree
 
 import gnu.trove.THashMap
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.types.Variance
 
 object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {

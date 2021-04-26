@@ -66,6 +66,10 @@ interface ObjCExportNamer {
     val mutableSetName: ClassOrProtocolName
     val mutableMapName: ClassOrProtocolName
     val kotlinNumberName: ClassOrProtocolName
+
+    companion object {
+        internal val kotlinThrowableAsErrorMethodName: String = "asError"
+    }
 }
 
 fun createNamer(moduleDescriptor: ModuleDescriptor,
@@ -155,7 +159,7 @@ private class ObjCExportNamingHelper(
             ObjCExportNamer.ClassOrProtocolName(swiftName, buildString {
                 append(topLevelNamePrefix)
                 swiftName.split('.').forEachIndexed { index, part ->
-                    append(if (index == 0) part else part.capitalize())
+                    append(if (index == 0) part else part.replaceFirstChar(Char::uppercaseChar))
                 }
             })
 
@@ -179,7 +183,7 @@ private class ObjCExportNamingHelper(
             } else {
                 // AB -> ABC
                 // A.B -> A.BC
-                append(ownName.capitalize())
+                append(ownName.replaceFirstChar(Char::uppercaseChar))
             }
         } else {
             // AB, A.B -> ABC
@@ -188,9 +192,9 @@ private class ObjCExportNamingHelper(
                 append(containerName)
             } else {
                 append(containerName.substring(0, dotIndex))
-                append(containerName.substring(dotIndex + 1).capitalize())
+                append(containerName.substring(dotIndex + 1).replaceFirstChar(Char::uppercaseChar))
             }
-            append(ownName.capitalize())
+            append(ownName.replaceFirstChar(Char::uppercaseChar))
         }
     }
 
@@ -421,7 +425,7 @@ internal class ObjCExportNamerImpl(
                 val containingDeclaration = descriptor.containingDeclaration
                 if (containingDeclaration is ClassDescriptor) {
                     append(getClassOrProtocolObjCName(containingDeclaration))
-                            .append(descriptor.name.asString().toIdentifier().capitalize())
+                            .append(descriptor.name.asString().toIdentifier().replaceFirstChar(Char::uppercaseChar))
 
                 } else if (containingDeclaration is PackageFragmentDescriptor) {
                     append(topLevelNamePrefix).appendTopLevelClassBaseName(descriptor)
@@ -473,7 +477,7 @@ internal class ObjCExportNamerImpl(
 
                         else -> ""
                     })
-                    append(name.capitalize())
+                    append(name.replaceFirstChar(Char::uppercaseChar))
                 } else {
                     append(name)
                 }
@@ -551,7 +555,7 @@ internal class ObjCExportNamerImpl(
         assert(descriptor.kind == ClassKind.OBJECT)
 
         return objectInstanceSelectors.getOrPut(descriptor) {
-            val name = descriptor.name.asString().decapitalize().toIdentifier().mangleIfSpecialFamily("get")
+            val name = descriptor.name.asString().replaceFirstChar(Char::lowercaseChar).toIdentifier().mangleIfSpecialFamily("get")
 
             StringBuilder(name).mangledBySuffixUnderscores()
         }
@@ -563,8 +567,8 @@ internal class ObjCExportNamerImpl(
         return enumClassSelectors.getOrPut(descriptor) {
             // FOO_BAR_BAZ -> fooBarBaz:
             val name = descriptor.name.asString().split('_').mapIndexed { index, s ->
-                val lower = s.toLowerCase()
-                if (index == 0) lower else lower.capitalize()
+                val lower = s.lowercase()
+                if (index == 0) lower else lower.replaceFirstChar(Char::uppercaseChar)
             }.joinToString("").toIdentifier().mangleIfSpecialFamily("the")
 
             StringBuilder(name).mangledBySuffixUnderscores()
@@ -655,7 +659,7 @@ internal class ObjCExportNamerImpl(
 
         val candidate = when (this) {
             is PropertyGetterDescriptor -> this.correspondingProperty.name.asString()
-            is PropertySetterDescriptor -> "set${this.correspondingProperty.name.asString().capitalize()}"
+            is PropertySetterDescriptor -> "set${this.correspondingProperty.name.asString().replaceFirstChar(kotlin.Char::uppercaseChar)}"
             else -> this.name.asString()
         }.toIdentifier()
 
@@ -668,7 +672,7 @@ internal class ObjCExportNamerImpl(
             if (trimmed.startsWithWords(family)) {
                 // Then method can be detected as having special family by Objective-C compiler.
                 // mangle the name:
-                return prefix + this.capitalize()
+                return prefix + this.replaceFirstChar(Char::uppercaseChar)
             }
         }
 
@@ -894,7 +898,7 @@ internal val ModuleDescriptor.namePrefix: String get() {
 
 fun abbreviate(name: String): String {
     val normalizedName = name
-            .capitalize()
+            .replaceFirstChar(Char::uppercaseChar)
             .replace("-|\\.".toRegex(), "_")
 
     val uppers = normalizedName.filterIndexed { index, character -> index == 0 || character.isUpperCase() }

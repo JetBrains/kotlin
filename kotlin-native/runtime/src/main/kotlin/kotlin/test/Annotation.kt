@@ -40,8 +40,3 @@ public actual annotation class AfterTest
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 public actual annotation class Ignore
-
-@Deprecated("AfterEach should be replaced with AfterTest to unify usage of kotlin.test", level = DeprecationLevel.ERROR)
-public typealias AfterEach = AfterTest
-@Deprecated("BeforeEach should be replaced with BeforeTest to unify usage of kotlin.test", level = DeprecationLevel.ERROR)
-public typealias BeforeEach = BeforeTest

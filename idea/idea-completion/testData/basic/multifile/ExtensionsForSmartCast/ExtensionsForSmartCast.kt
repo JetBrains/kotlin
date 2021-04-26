@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 val String.extensionProp1: Int get() = 1
 val String.extensionProp2: Int get() = 1
 

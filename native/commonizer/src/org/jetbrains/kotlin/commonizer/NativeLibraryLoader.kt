@@ -21,24 +21,31 @@ internal class DefaultNativeLibraryLoader(
     private val logger: Logger
 ) : NativeLibraryLoader {
     override fun invoke(file: File): NativeLibrary {
-        val library = resolveSingleFileKlib(
-            libraryFile = org.jetbrains.kotlin.konan.file.File(file.path),
-            logger = logger,
-            strategy = ToolingSingleFileKlibResolveStrategy
-        )
+        try {
+            val library = resolveSingleFileKlib(
+                libraryFile = org.jetbrains.kotlin.konan.file.File(file.path),
+                logger = logger,
+                strategy = ToolingSingleFileKlibResolveStrategy
+            )
 
-        if (library.versions.metadataVersion == null)
-            logger.fatal("Library does not have metadata version specified in manifest: $file")
+            if (library.versions.metadataVersion == null)
+                logger.fatal("Library does not have metadata version specified in manifest: $file")
 
-        val metadataVersion = library.metadataVersion
-        if (metadataVersion?.isCompatible() != true)
-            logger.fatal(
-                """
+            val metadataVersion = library.metadataVersion
+            if (metadataVersion?.isCompatible() != true)
+                logger.fatal(
+                    """
                 Library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $file
                 Please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
                 """.trimIndent()
+                )
+            return NativeLibrary(library)
+        } catch (cause: Throwable) {
+            throw NativeLibraryLoadingException(
+                "Failed loading library at ${file.path}", cause
             )
-
-        return NativeLibrary(library)
+        }
     }
 }
+
+internal class NativeLibraryLoadingException(message: String, cause: Throwable? = null) : Exception(message, cause)

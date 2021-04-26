@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.library.SerializedDeclaration
+import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import java.io.ByteArrayOutputStream
 import java.io.DataOutput
 import java.io.DataOutputStream
@@ -62,6 +63,32 @@ class IrMemoryArrayWriter(private val data: List<ByteArray>) : IrMemoryWriter() 
     }
 }
 
+class IrMemoryStringWriter(private val data: List<String>) : IrMemoryWriter() {
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(data.size)
+
+        val transformedData = data.map(WobblyTF8::encode)
+
+        transformedData.forEach { dataOutput.writeInt(it.size) }
+        transformedData.forEach { dataOutput.write(it) }
+    }
+}
+
+class IrMemoryIntArrayWriter(private val data: List<Int>) : IrMemoryWriter() {
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(data.size)
+
+        data.forEach { dataOutput.writeInt(it) }
+    }
+}
+
+class IrMemoryLongArrayWriter(private val data: List<Long>) : IrMemoryWriter() {
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(data.size)
+
+        data.forEach { dataOutput.writeLong(it) }
+    }
+}
 
 class IrByteArrayWriter(private val data: List<ByteArray>) : IrFileWriter() {
     override fun writeData(dataOutput: DataOutput) {

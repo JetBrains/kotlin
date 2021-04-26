@@ -1,5 +1,7 @@
-apply plugin: "groovy"
-apply plugin: "java-library"
+plugins {
+    id "groovy"
+    id "java-library"
+}
 
 repositories {
     mavenCentral()

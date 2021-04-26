@@ -12,6 +12,7 @@ class A1 {
         fun function(value: Any): Any = value
     }
 }
+
 actual class A2<T : Any?> actual constructor() {
     actual val property: T get() = TODO()
     actual fun function(value: T): T = value
@@ -26,6 +27,7 @@ actual class A2<T : Any?> actual constructor() {
         actual fun function(value: T): T = value
     }
 }
+
 class A3<R : Any?> {
     val property: R get() = TODO()
     fun function(value: R): R = value
@@ -40,6 +42,7 @@ class A3<R : Any?> {
         fun function(value: R): R = value
     }
 }
+
 class A4<T : Any> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -54,6 +57,7 @@ class A4<T : Any> {
         fun function(value: T): T = value
     }
 }
+
 class A5<T : CharSequence> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -68,6 +72,7 @@ class A5<T : CharSequence> {
         fun function(value: T): T = value
     }
 }
+
 class A6<T : String> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -82,6 +87,7 @@ class A6<T : String> {
         fun function(value: T): T = value
     }
 }
+
 class A7<String> {
     val property: String get() = TODO()
     fun function(value: String): String = value
@@ -111,6 +117,7 @@ class B1 {
         fun function(value: Any): Any = value
     }
 }
+
 class B2<T : Any?> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -125,6 +132,7 @@ class B2<T : Any?> {
         fun function(value: T): T = value
     }
 }
+
 class B3<R : Any?> {
     val property: R get() = TODO()
     fun function(value: R): R = value
@@ -139,6 +147,7 @@ class B3<R : Any?> {
         fun function(value: R): R = value
     }
 }
+
 actual class B4<T : Any> actual constructor() {
     actual val property: T get() = TODO()
     actual fun function(value: T): T = value
@@ -153,6 +162,7 @@ actual class B4<T : Any> actual constructor() {
         actual fun function(value: T): T = value
     }
 }
+
 class B5<T : CharSequence> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -167,6 +177,7 @@ class B5<T : CharSequence> {
         fun function(value: T): T = value
     }
 }
+
 class B6<T : String> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -181,6 +192,7 @@ class B6<T : String> {
         fun function(value: T): T = value
     }
 }
+
 class B7<String> {
     val property: String get() = TODO()
     fun function(value: String): String = value
@@ -210,11 +222,12 @@ class C1 {
         fun function(value: Any): Any = value
     }
 }
+
 class C2<T : Any?> {
     val property: T get() = TODO()
     fun function(value: T): T = value
 
-    class Nested<T : Any?>{
+    class Nested<T : Any?> {
         val property: T get() = TODO()
         fun function(value: T): T = value
     }
@@ -224,6 +237,7 @@ class C2<T : Any?> {
         fun function(value: T): T = value
     }
 }
+
 class C3<R : Any?> {
     val property: R get() = TODO()
     fun function(value: R): R = value
@@ -238,6 +252,7 @@ class C3<R : Any?> {
         fun function(value: R): R = value
     }
 }
+
 class C4<T : Any> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -252,6 +267,7 @@ class C4<T : Any> {
         fun function(value: T): T = value
     }
 }
+
 actual class C5<T : CharSequence> actual constructor() {
     actual val property: T get() = TODO()
     actual fun function(value: T): T = value
@@ -266,6 +282,7 @@ actual class C5<T : CharSequence> actual constructor() {
         actual fun function(value: T): T = value
     }
 }
+
 class C6<T : String> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -280,6 +297,7 @@ class C6<T : String> {
         fun function(value: T): T = value
     }
 }
+
 class C7<String> {
     val property: String get() = TODO()
     fun function(value: String): String = value
@@ -309,6 +327,7 @@ class D1 {
         fun function(value: Any): Any = value
     }
 }
+
 class D2<T : Any?> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -323,6 +342,7 @@ class D2<T : Any?> {
         fun function(value: T): T = value
     }
 }
+
 class D3<R : Any?> {
     val property: R get() = TODO()
     fun function(value: R): R = value
@@ -337,6 +357,7 @@ class D3<R : Any?> {
         fun function(value: R): R = value
     }
 }
+
 class D4<T : Any> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -351,6 +372,7 @@ class D4<T : Any> {
         fun function(value: T): T = value
     }
 }
+
 class D5<T : CharSequence> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -365,6 +387,7 @@ class D5<T : CharSequence> {
         fun function(value: T): T = value
     }
 }
+
 actual class D6<T : String> actual constructor() {
     actual val property: T get() = TODO()
     actual fun function(value: T): T = value
@@ -379,6 +402,7 @@ actual class D6<T : String> actual constructor() {
         actual fun function(value: T): T = value
     }
 }
+
 class D7<String> {
     val property: String get() = TODO()
     fun function(value: String): String = value
@@ -408,6 +432,7 @@ class E1 {
         fun function(value: Any): Any = value
     }
 }
+
 class E2<T : Any?> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -422,6 +447,7 @@ class E2<T : Any?> {
         fun function(value: T): T = value
     }
 }
+
 class E3<R : Any?> {
     val property: R get() = TODO()
     fun function(value: R): R = value
@@ -436,6 +462,7 @@ class E3<R : Any?> {
         fun function(value: R): R = value
     }
 }
+
 class E4<T : Any> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -450,6 +477,7 @@ class E4<T : Any> {
         fun function(value: T): T = value
     }
 }
+
 class E5<T : CharSequence> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -464,6 +492,7 @@ class E5<T : CharSequence> {
         fun function(value: T): T = value
     }
 }
+
 class E6<T : String> {
     val property: T get() = TODO()
     fun function(value: T): T = value
@@ -478,6 +507,7 @@ class E6<T : String> {
         fun function(value: T): T = value
     }
 }
+
 actual class E7<String> actual constructor() {
     actual val property: String get() = TODO()
     actual fun function(value: String): String = value
@@ -507,6 +537,7 @@ actual class F1<T> actual constructor() {
         actual fun function(value: T): T = value
     }
 }
+
 class F2<in T> {
     val property: String get() = TODO()
     fun function(value: T): Any = TODO()
@@ -521,6 +552,7 @@ class F2<in T> {
         fun function(value: T): Any = TODO()
     }
 }
+
 class F3<out T> {
     val property: T get() = TODO()
     fun function(value: Any): T = TODO()
@@ -553,6 +585,7 @@ actual class G1<T, R> actual constructor() {
         actual fun function(value: T): R = TODO()
     }
 }
+
 class G2<T> {
     val property1: T get() = TODO()
     val property2: T get() = TODO()
@@ -570,6 +603,7 @@ class G2<T> {
         fun function(value: T): T = value
     }
 }
+
 class G3<R> {
     val property1: R get() = TODO()
     val property2: R get() = TODO()
@@ -587,6 +621,7 @@ class G3<R> {
         fun function(value: R): R = value
     }
 }
+
 class G4<R, T> {
     val property1: T get() = TODO()
     val property2: R get() = TODO()
@@ -617,6 +652,7 @@ actual class H1<T> actual constructor() {
     actual val <T> T.independentExtensionProperty: T get() = this
     actual fun <T> T.independentExtensionFunction(): T = this
 }
+
 actual class H2<T> actual constructor() {
     actual val dependentProperty: T get() = TODO()
     actual fun dependentFunction(value: T): T = value
@@ -638,10 +674,12 @@ actual class I<T : I<T>> actual constructor() {
 actual interface J1<A> {
     actual fun a(): A
 }
+
 actual interface J2<A, B> {
     actual fun a(b: B): A
     actual fun b(a: A): B
 }
+
 actual interface J3<A, B, C> {
     actual fun a(b: B, c: C): A
     actual fun b(a: A, c: C): B

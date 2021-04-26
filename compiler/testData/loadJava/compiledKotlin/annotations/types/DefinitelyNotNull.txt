@@ -1,0 +1,3 @@
+package test
+
+public fun </*0*/ T> foo(/*0*/ x: T!!, /*1*/ y: kotlin.collections.List<T!!>, /*2*/ z: (T!!) -> T!!): T!!

@@ -92,7 +92,7 @@ inline fun <reified F : FirDeclaration, R> KtLambdaExpression.withFirDeclaration
 }
 
 /**
- * Executes [action] with given [FirDeclaration]
+ * Executes [action] with given [FirDeclaration] under read action, so resolve **is not possible** inside [action]
  * [FirDeclaration] passed to [action] will be resolved at least to [phase] when executing [action] on it
  */
 fun <D : FirDeclaration, R> D.withFirDeclaration(
@@ -101,20 +101,16 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
     action: (D) -> R,
 ): R {
     resolvedFirToPhase(phase, resolveState)
-    val originalDeclaration = (this as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: this
-    val session = originalDeclaration.session
-    return when {
-        originalDeclaration.origin == FirDeclarationOrigin.Source
-                && session is FirIdeSourcesSession
-        -> {
-            val cache = session.cache
-            val file = resolveState.getFirFile(this, cache)
-                ?: error("Fir file was not found for\n${render()}\n${(psi as? KtElement)?.getElementTextInContext()}")
-            cache.firFileLockProvider.withReadLock(file) { action(this) }
-        }
-        else -> action(this)
-    }
+    return resolveState.withLock(this, DeclarationLockType.READ_LOCK, action)
 }
+
+/**
+ * Executes [action] with given [FirDeclaration] under write lock, so resolve **is possible** inside [action]
+ */
+fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
+    resolveState: FirModuleResolveState,
+    action: (D) -> R,
+): R = resolveState.withLock(this, DeclarationLockType.WRITE_LOCK, action)
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtElement]

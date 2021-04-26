@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import java.io.File
 
 abstract class DukatTask(
@@ -19,20 +20,26 @@ abstract class DukatTask(
     override val compilation: KotlinJsCompilation
 ) : DefaultTask(), RequiresNpmDependencies {
     @get:Internal
+    @Transient
     protected val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+
+    private val resolutionManager = nodeJs.npmResolutionManager
 
     @get:Internal
     val compilationName by lazy {
         compilation.disambiguatedName
     }
 
+    private val npmProject by lazy { compilation.npmProject }
+
     @get:Internal
     override val nodeModulesRequired: Boolean
         get() = true
 
     @get:Internal
-    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = setOf(nodeJs.versions.dukat)
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
+        emptySet<RequiredKotlinJsDependency>()
+    }
 
     /**
      * [ExternalsOutputFormat] what to generate, sources or binaries
@@ -43,11 +50,10 @@ abstract class DukatTask(
     private val projectPath = project.path
 
     private val compilationResolution
-        get() =
-            nodeJs.npmResolutionManager.requireInstalled(
-                services,
-                logger
-            )[projectPath][compilationName]
+        get() = resolutionManager.requireInstalled(
+            services,
+            logger
+        )[projectPath][compilationName]
 
     @get:Internal
     val dts: List<DtsResolver.Dts>
@@ -91,7 +97,7 @@ abstract class DukatTask(
 
     @TaskAction
     open fun run() {
-        nodeJs.npmResolutionManager.checkRequiredDependencies(this, services, logger, projectPath)
+        resolutionManager.checkRequiredDependencies(this, services, logger, projectPath)
 
         destinationDir.deleteRecursively()
 
@@ -100,7 +106,7 @@ abstract class DukatTask(
         }
 
         DukatRunner(
-            compilation,
+            npmProject,
             dTsFiles,
             externalsOutputFormat,
             destinationDir,

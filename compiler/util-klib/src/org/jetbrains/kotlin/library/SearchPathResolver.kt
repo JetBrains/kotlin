@@ -16,11 +16,17 @@ const val KOTLIN_STDLIB_NAME = "stdlib"
 interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     val searchRoots: List<File>
     fun resolutionSequence(givenPath: String): Sequence<File>
-    fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean = false): L
+    fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean = false): L?
+    fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean = false): L
     fun resolve(givenPath: String): L
     fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L>
     fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean
     fun isProvidedByDefault(unresolved: UnresolvedLibrary): Boolean = false
+}
+
+fun <L : KotlinLibrary> SearchPathResolver<L>.resolve(unresolved: UnresolvedLibrary): L? = when (unresolved) {
+    is LenientUnresolvedLibrary -> resolve(unresolved)
+    is RequiredUnresolvedLibrary -> resolve(unresolved)
 }
 
 // This is a simple library resolver that only cares for file names.
@@ -134,27 +140,40 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     // Default libraries could be resolved several times during findLibraries and resolveDependencies.
     // Store already resolved libraries.
-    private val resolvedLibraries = HashMap<UnresolvedLibrary, L>()
+    private inner class ResolvedLibrary(val library: L?)
 
-    override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
+    private val resolvedLibraries = HashMap<UnresolvedLibrary, ResolvedLibrary>()
+
+    private fun resolveOrNull(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L? {
         return resolvedLibraries.getOrPut(unresolved) {
             val givenPath = unresolved.path
             try {
-                val fileSequence = resolutionSequence(givenPath)
-                val matching = fileSequence
-                        .filterOutPre_1_4_libraries()
-                        .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
-                        .map { it.takeIf { libraryMatch(it, unresolved) } }
-                        .filterNotNull()
-
-                matching.firstOrNull() ?: run {
-                    logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}")
-                }
+                resolutionSequence(givenPath)
+                    .filterOutPre_1_4_libraries()
+                    .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
+                    .map { it.takeIf { libraryMatch(it, unresolved) } }
+                    .filterNotNull()
+                    .firstOrNull()
+                    .let(::ResolvedLibrary)
             } catch (e: Throwable) {
                 logger.error("Failed to resolve Kotlin library: $givenPath")
                 throw e
             }
+        }.library
+    }
+
+    override fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean): L? {
+        return resolveOrNull(unresolved, isDefaultLink).also { resolvedLibrary ->
+            if (resolvedLibrary == null) {
+                logger.warning("Could not find \"${unresolved.path}\" in ${searchRoots.map { it.absolutePath }}")
+            }
         }
+    }
+
+    override fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean): L {
+        return resolveOrNull(unresolved, isDefaultLink)
+            ?: logger.fatal("Could not find \"${unresolved.path}\" in ${searchRoots.map { it.absolutePath }}")
+
     }
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true

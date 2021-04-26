@@ -25,7 +25,7 @@ internal class FirExplicitSuperReference(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExplicitSuperReference {
-        superTypeRef = superTypeRef.transformSingle(transformer, data)
+        superTypeRef = superTypeRef.transform(transformer, data)
         return this
     }
 

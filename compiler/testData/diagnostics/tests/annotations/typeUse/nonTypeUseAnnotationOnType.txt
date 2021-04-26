@@ -1,0 +1,35 @@
+package
+
+public val test_2: TypeToken<@Ann kotlin.String>
+public fun test_1(/*0*/ a: kotlin.Any): kotlin.Unit
+public fun test_3(/*0*/ a: kotlin.Any): kotlin.Unit
+public fun </*0*/ T : @Ann kotlin.Any> test_4(): kotlin.Unit where T : @Ann kotlin.CharSequence
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_GETTER}) public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Bar</*0*/ T : @Ann kotlin.Any> {
+    public constructor Bar</*0*/ T : @Ann kotlin.Any>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TypeToken</*0*/ T> {
+    public constructor TypeToken</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

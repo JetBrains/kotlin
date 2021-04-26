@@ -96,7 +96,7 @@ fun case_7() {
 fun case_8(y: MutableList<Boolean>) {
     var x: Boolean? = true
     if (x != null) {
-        <!INAPPLICABLE_CANDIDATE!>y[if (true) {x = null;0} else 0]<!> = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+        y[if (true) {x = null;0} else 0] = <!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
     }
 }
 
@@ -130,6 +130,6 @@ fun case_10() {
 fun case_11(y: MutableList<MutableList<Int>>) {
     var x: Int? = 10
     if (x != null) {
-        <!INAPPLICABLE_CANDIDATE!>y[if (true) {x = null;0} else 0][x]<!> = 10
+        y[if (true) {x = null;0} else 0][<!ARGUMENT_TYPE_MISMATCH!>x<!>] = 10
     }
 }

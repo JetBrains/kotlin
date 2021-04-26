@@ -86,7 +86,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
             jvmArgs "-Xmx4G"
             jvmArgs "-Dkonan.home=${UtilsKt.getKotlinNativeDist(project)}"
             enableAssertions = true
-            def sources = File.createTempFile(name,".lst")
+            def sources = File.createTempFile(name, ".lst")
             sources.deleteOnExit()
             def sourcesWriter = sources.newWriter()
             filesToCompile.each { f ->
@@ -281,7 +281,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
         def vars = new HashSet<String>()  // variables that has the same name as a package
         TestModule mainModule = null
         def testFiles = TestDirectivesKt.buildCompileList(project.rootProject.file(src).toPath(), "$outputDirectory/${project.rootProject.file(src).name}")
-        for (TestFile testFile: testFiles) {
+        for (TestFile testFile : testFiles) {
             def text = testFile.text
             def filePath = testFile.path
             if (text.contains('COROUTINES_PACKAGE')) {
@@ -290,9 +290,11 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
             def pkg
             if (text =~ packagePattern) {
                 pkg = (text =~ packagePattern)[0][1]
-                packages.add(pkg)
-                pkg = "$sourceName.$pkg"
-                text = text.replaceFirst(packagePattern, "package $pkg")
+                if (!pkg.startsWith("kotlin")) {
+                    packages.add(pkg)
+                    pkg = "$sourceName.$pkg"
+                    text = text.replaceFirst(packagePattern, "package $pkg")
+                }
             } else {
                 pkg = sourceName
                 text = insertInTextAfter(text, "\npackage $pkg\n", "@file:")
@@ -308,7 +310,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
             }
             testFile.text = text
         }
-        for (TestFile testFile: testFiles) {
+        for (TestFile testFile : testFiles) {
             def text = testFile.text
             // Find if there are any imports in the file
             def matcher = (text =~ ~/${importRegex}(${fullQualified}*)/)
@@ -373,14 +375,21 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
             testFile.text = res
         }
         def launcherText = createLauncherFileText(src, imports)
-        testFiles.add(new TestFile("_launcher.kt", "$outputDirectory/${project.rootProject.file(src).name}/_launcher.kt".toString(),
-                launcherText, mainModule != null ? mainModule : TestModule.default))
+        testFiles.add(
+                new TestFile(
+                        "_launcher.kt",
+                        "$outputDirectory/$src/_launcher.kt".toString(),
+                        launcherText,
+                        mainModule ?: testFiles.collect { it.module }.find { it.isDefaultModule() }
+                                ?: TestModule.default()
+                )
+        )
         return testFiles
     }
 
     String normalize(String name) {
         return name.replace('.kt', '')
-                .replace('-','_')
+                .replace('-', '_')
                 .replace('.', '_')
     }
 
@@ -420,13 +429,14 @@ fun runTest() {
 
     static def excludeList = [
             "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt", // KT-36880
-            "compiler/testData/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",         // KT-42723
+            "compiler/testData/codegen/box/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",      // KT-42723
             "compiler/testData/codegen/box/collections/kt41123.kt",                                 // KT-42723
             "compiler/testData/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt", // KT-40137
             "compiler/testData/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt",    // KT-33091
             "compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt",          // KT-41901
             "compiler/testData/codegen/box/coroutines/multiModule/",                                // KT-40121
-            "compiler/testData/codegen/box/defaultArguments/recursiveDefaultArguments.kt"           // KT-42684
+            "compiler/testData/codegen/box/compileKotlinAgainstKotlin/clashingFakeOverrideSignatures.kt",   // KT-42020
+            "compiler/testData/codegen/boxInline/complex/kt44429.kt"    // KT-44571
     ]
 
     boolean isEnabledForNativeBackend(String fileName) {
@@ -469,7 +479,8 @@ fun runTest() {
             return false
         } else {
             // No target backend. Check if NATIVE backend is ignored.
-            def ignoredBackends = findLinesWithPrefixesRemoved(text, "// IGNORE_BACKEND: ")
+            def ignoredBackends = findLinesWithPrefixesRemoved(text, "// IGNORE_BACKEND: ") +
+                    findLinesWithPrefixesRemoved(text, "// DONT_TARGET_EXACT_BACKEND: ")
             for (String s : ignoredBackends) {
                 if (s.contains("NATIVE")) { return false }
             }
@@ -524,7 +535,7 @@ fun runTest() {
                     Map<String, TestModule> modules = compileList.stream()
                             .map { it.module }
                             .distinct()
-                            .collect(Collectors.toMap({ it.name }, UnaryOperator.identity() ))
+                            .collect(Collectors.toMap({ it.name }, UnaryOperator.identity()))
 
                     List<TestModule> orderedModules = DFS.INSTANCE.topologicalOrder(modules.values()) { module ->
                         module.dependencies.collect { modules[it] }.findAll { it != null }
@@ -561,8 +572,8 @@ fun runTest() {
                 }
                 if (isEnabledForNativeBackend(src)) {
                     suite.executeTest(file.name) {
-                       project.logger.quiet(src)
-                       runExecutable()
+                        project.logger.quiet(src)
+                        runExecutable()
                     }
                 } else {
                     suite.skipTest(file.name)

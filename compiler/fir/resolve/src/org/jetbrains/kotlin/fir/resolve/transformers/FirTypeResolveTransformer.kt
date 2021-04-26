@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -12,12 +13,12 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.compose
 
 class FirTypeResolveProcessor(
     session: FirSession,
@@ -26,14 +27,14 @@ class FirTypeResolveProcessor(
     override val transformer = FirTypeResolveTransformer(session, scopeSession)
 }
 
-fun <F : FirClass<F>> F.runTypeResolvePhaseForLocalClass(
+fun <F : FirClassLikeDeclaration<F>> F.runTypeResolvePhaseForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
     currentScopeList: List<FirScope>,
 ): F {
     val transformer = FirTypeResolveTransformer(session, scopeSession, currentScopeList)
 
-    return this.transform<F, Nothing?>(transformer, null).single
+    return this.transform<F, Nothing?>(transformer, null)
 }
 
 class FirTypeResolveTransformer(
@@ -52,7 +53,7 @@ class FirTypeResolveTransformer(
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
     private var currentFile: FirFile? = null
 
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
         currentFile = file
         return withScopeCleanup {
@@ -61,7 +62,7 @@ class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         withScopeCleanup {
             regularClass.addTypeParametersScope()
             regularClass.typeParameters.forEach {
@@ -73,33 +74,33 @@ class FirTypeResolveTransformer(
         return resolveNestedClassesSupertypes(regularClass, data)
     }
 
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): CompositeTransformResult<FirStatement> {
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
         return resolveNestedClassesSupertypes(anonymousObject, data)
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformConstructor(constructor: FirConstructor, data: Any?): FirDeclaration {
         return withScopeCleanup {
             constructor.addTypeParametersScope()
             transformDeclaration(constructor, data)
         }
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirDeclaration {
         return withScopeCleanup {
             typeAlias.addTypeParametersScope()
             transformDeclaration(typeAlias, data)
         }
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): FirDeclaration {
         enumEntry.replaceResolvePhase(FirResolvePhase.TYPES)
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformAnnotations(this, data)
-        return enumEntry.compose()
+        return enumEntry
     }
 
-    override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformProperty(property: FirProperty, data: Any?): FirDeclaration {
         return withScopeCleanup {
             property.addTypeParametersScope()
             property.replaceResolvePhase(FirResolvePhase.TYPES)
@@ -117,23 +118,23 @@ class FirTypeResolveTransformer(
 
             unboundCyclesInTypeParametersSupertypes(property)
 
-            property.compose()
+            property
         }
     }
 
-    override fun transformField(field: FirField, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformField(field: FirField, data: Any?): FirDeclaration {
         return withScopeCleanup {
             field.replaceResolvePhase(FirResolvePhase.TYPES)
             field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
-            field.compose()
+            field
         }
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): FirDeclaration {
         return withScopeCleanup {
             simpleFunction.addTypeParametersScope()
             transformDeclaration(simpleFunction, data).also {
-                unboundCyclesInTypeParametersSupertypes(it.single as FirTypeParametersOwner)
+                unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
             }
         }
     }
@@ -142,9 +143,11 @@ class FirTypeResolveTransformer(
         for (typeParameter in typeParametersOwner.typeParameters) {
             if (typeParameter !is FirTypeParameter) continue
             if (hasSupertypePathToParameter(typeParameter, typeParameter, mutableSetOf())) {
-                // TODO: Report diagnostic somewhere
+                val errorType = buildErrorTypeRef {
+                    diagnostic = ConeCyclicTypeBound(typeParameter.symbol, typeParameter.bounds.toImmutableList())
+                }
                 typeParameter.replaceBounds(
-                    listOf(session.builtinTypes.nullableAnyType)
+                    listOf(errorType)
                 )
             }
         }
@@ -165,39 +168,39 @@ class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Any?): FirTypeRef {
         if (implicitTypeRef is FirImplicitBuiltinTypeRef) return transformTypeRef(implicitTypeRef, data)
-        return implicitTypeRef.compose()
+        return implicitTypeRef
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirResolvedTypeRef> {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeResolverTransformer.withFile(currentFile) { typeRef.transform(typeResolverTransformer, towerScope) }
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirStatement> {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement {
         valueParameter.transformReturnTypeRef(this, data)
         valueParameter.transformAnnotations(this, data)
         valueParameter.transformVarargTypeToArrayType()
-        return valueParameter.compose()
+        return valueParameter
     }
 
-    override fun transformBlock(block: FirBlock, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return block.compose()
+    override fun transformBlock(block: FirBlock, data: Any?): FirStatement {
+        return block
     }
 
     override fun transformDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
+        data: Any?
+    ): FirStatement {
         delegatedConstructorCall.replaceConstructedTypeRef(
-            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Nothing?>(this, data).single
+            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Any?>(this, data)
         )
         delegatedConstructorCall.transformCalleeReference(this, data)
-        return delegatedConstructorCall.compose()
+        return delegatedConstructorCall
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): CompositeTransformResult<FirStatement> {
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement {
         annotationCall.transformAnnotationTypeRef(this, data)
-        return annotationCall.compose()
+        return annotationCall
     }
 }

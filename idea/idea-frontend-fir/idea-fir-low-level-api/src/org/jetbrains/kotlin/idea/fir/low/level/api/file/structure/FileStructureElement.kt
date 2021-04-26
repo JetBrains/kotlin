@@ -6,34 +6,35 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarationAction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnosticList
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnosticRetriever
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.DeclarationCopyBuilder
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnostics
-import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnosticsCollector
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.LockProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.hasFqName
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.isGeneratedDeclaration
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
 import org.jetbrains.kotlin.psi.*
 
-internal sealed class FileStructureElement(val firFile: FirFile) {
+internal sealed class FileStructureElement(val firFile: FirFile, protected val lockProvider: LockProvider<FirFile>) {
     abstract val psi: KtAnnotated
     abstract val mappings: Map<KtElement, FirElement>
     abstract val diagnostics: FileStructureElementDiagnostics
 }
 
-internal sealed class ReanalyzableStructureElement<KT : KtDeclaration>(firFile: FirFile) : FileStructureElement(firFile) {
+internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : AbstractFirBasedSymbol<*>>(
+    firFile: FirFile,
+    val firSymbol: S,
+    lockProvider: LockProvider<FirFile>,
+) : FileStructureElement(firFile, lockProvider) {
     abstract override val psi: KtDeclaration
-    abstract val firSymbol: AbstractFirBasedSymbol<*>
     abstract val timestamp: Long
 
     /**
@@ -46,36 +47,15 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration>(firFile: 
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
         towerDataContextCollector: FirTowerDataContextCollector,
-    ): ReanalyzableStructureElement<KT>
+    ): ReanalyzableStructureElement<KT, S>
 
     fun isUpToDate(): Boolean = psi.getModificationStamp() == timestamp
 
-    override val diagnostics = FileStructureElementDiagnostics(firFile, FileStructureElementSingleDeclarationDiagnosticRetriever())
-
-    inner class FileStructureElementSingleDeclarationDiagnosticRetriever : FileStructureElementDiagnosticRetriever() {
-        override fun retrieve(firFile: FirFile, collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList {
-            var inCurrentDeclaration = false
-            val declaration = firSymbol.fir as FirDeclaration
-            return collector.collectForStructureElement(
-                firFile,
-                onDeclarationEnter = { firDeclaration ->
-                    when {
-                        firDeclaration == declaration -> {
-                            inCurrentDeclaration = true
-                            DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                        }
-                        inCurrentDeclaration -> DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                        else -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                    }
-                },
-                onDeclarationExit = { firDeclaration ->
-                    if (declaration == firDeclaration) {
-                        inCurrentDeclaration = false
-                    }
-                }
-            )
-        }
-    }
+    override val diagnostics = FileStructureElementDiagnostics(
+        firFile,
+        lockProvider,
+        SingleNonLocalDeclarationDiagnosticRetriever(firSymbol.fir as FirDeclaration)
+    )
 
     companion object {
         val recorder = FirElementsRecorder()
@@ -85,9 +65,10 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration>(firFile: 
 internal class ReanalyzableFunctionStructureElement(
     firFile: FirFile,
     override val psi: KtNamedFunction,
-    override val firSymbol: FirFunctionSymbol<*>,
-    override val timestamp: Long
-) : ReanalyzableStructureElement<KtNamedFunction>(firFile) {
+    firSymbol: FirFunctionSymbol<*>,
+    override val timestamp: Long,
+    lockProvider: LockProvider<FirFile>,
+) : ReanalyzableStructureElement<KtNamedFunction, FirFunctionSymbol<*>>(firFile, firSymbol, lockProvider) {
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(firSymbol.fir, recorder)
 
@@ -99,7 +80,7 @@ internal class ReanalyzableFunctionStructureElement(
         towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzableFunctionStructureElement {
         val originalFunction = firSymbol.fir as FirSimpleFunction
-        val newFunction = firIdeProvider.buildFunctionWithBody(newKtDeclaration, originalFunction) as FirSimpleFunction
+        val newFunction = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalFunction)
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalFunction, newFunction) {
             firLazyDeclarationResolver.lazyResolveDeclaration(
@@ -116,6 +97,7 @@ internal class ReanalyzableFunctionStructureElement(
                     newKtDeclaration,
                     newFunction.symbol,
                     newKtDeclaration.modificationStamp,
+                    lockProvider,
                 )
             }
         }
@@ -125,9 +107,10 @@ internal class ReanalyzableFunctionStructureElement(
 internal class ReanalyzablePropertyStructureElement(
     firFile: FirFile,
     override val psi: KtProperty,
-    override val firSymbol: FirPropertySymbol,
-    override val timestamp: Long
-) : ReanalyzableStructureElement<KtProperty>(firFile) {
+    firSymbol: FirPropertySymbol,
+    override val timestamp: Long,
+    lockProvider: LockProvider<FirFile>,
+) : ReanalyzableStructureElement<KtProperty, FirPropertySymbol>(firFile, firSymbol, lockProvider) {
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(firSymbol.fir, recorder)
 
@@ -139,7 +122,7 @@ internal class ReanalyzablePropertyStructureElement(
         towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzablePropertyStructureElement {
         val originalProperty = firSymbol.fir
-        val newProperty = firIdeProvider.buildPropertyWithBody(newKtDeclaration, originalProperty)
+        val newProperty = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalProperty)
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalProperty, newProperty) {
             firLazyDeclarationResolver.lazyResolveDeclaration(
@@ -156,6 +139,7 @@ internal class ReanalyzablePropertyStructureElement(
                     newKtDeclaration,
                     newProperty.symbol,
                     newKtDeclaration.modificationStamp,
+                    lockProvider,
                 )
             }
         }
@@ -164,52 +148,14 @@ internal class ReanalyzablePropertyStructureElement(
 
 internal class NonReanalyzableDeclarationStructureElement(
     firFile: FirFile,
-    private val fir: FirDeclaration,
+    val fir: FirDeclaration,
     override val psi: KtDeclaration,
-) : FileStructureElement(firFile) {
+    lockProvider: LockProvider<FirFile>,
+) : FileStructureElement(firFile, lockProvider) {
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(fir, recorder)
 
-    override val diagnostics = FileStructureElementDiagnostics(firFile, DiagnosticRetriever())
-
-    private inner class DiagnosticRetriever : FileStructureElementDiagnosticRetriever() {
-        override fun retrieve(firFile: FirFile, collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList {
-            var inCurrentDeclaration = false
-            return collector.collectForStructureElement(
-                firFile,
-                onDeclarationEnter = { firDeclaration ->
-                    when {
-                        firDeclaration.isGeneratedDeclaration -> when {
-                            // a generated primary constructor need to be checked. For example it may have a delegated super constructor
-                            // call or some annotations
-                            firDeclaration is FirConstructor && firDeclaration.isPrimary ->
-                                DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                            // Some generated declaration contains structures that we need to check. For example the FIR representation of an
-                            // enum entry initializer, when present, is a generated anonymous object of kind `ENUM_ENTRY`.
-                            else -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                        }
-                        firDeclaration is FirFile -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                        firDeclaration == fir -> {
-                            inCurrentDeclaration = true
-                            DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                        }
-                        FileElementFactory.isReanalyzableContainer(firDeclaration.ktDeclaration) -> {
-                            DiagnosticCollectorDeclarationAction.SKIP
-                        }
-                        inCurrentDeclaration -> {
-                            DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                        }
-                        else -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
-                    }
-                },
-                onDeclarationExit = { firDeclaration ->
-                    if (firDeclaration == fir) {
-                        inCurrentDeclaration = false
-                    }
-                },
-            )
-        }
-    }
+    override val diagnostics = FileStructureElementDiagnostics(firFile, lockProvider, SingleNonLocalDeclarationDiagnosticRetriever(fir))
 
 
     companion object {
@@ -235,20 +181,12 @@ internal class NonReanalyzableDeclarationStructureElement(
 internal class RootStructureElement(
     firFile: FirFile,
     override val psi: KtFile,
-) : FileStructureElement(firFile) {
+    lockProvider: LockProvider<FirFile>,
+) : FileStructureElement(firFile, lockProvider) {
     override val mappings: Map<KtElement, FirElement> =
         FirElementsRecorder.recordElementsFrom(firFile, recorder)
 
-    override val diagnostics = FileStructureElementDiagnostics(firFile, DiagnosticRetriever)
-
-    private object DiagnosticRetriever : FileStructureElementDiagnosticRetriever() {
-        override fun retrieve(firFile: FirFile, collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList {
-            return collector.collectForStructureElement(firFile) { firDeclaration ->
-                if (firDeclaration is FirFile) DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_DO_NOT_LOOKUP_FOR_NESTED
-                else DiagnosticCollectorDeclarationAction.SKIP
-            }
-        }
-    }
+    override val diagnostics = FileStructureElementDiagnostics(firFile, lockProvider, FileDiagnosticRetriever)
 
     companion object {
         private val recorder = object : FirElementsRecorder() {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
@@ -181,7 +182,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertNoWarnings()
+            assertNoWarnings { removeFirWarning(it) }
         }
 
         val greeterKt = project.projectDir.getFileByName("Greeter.kt")
@@ -191,13 +192,21 @@ class KotlinGradleIT : BaseGradleIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertNoWarnings()
+            assertNoWarnings { removeFirWarning(it) }
             val affectedSources = project.projectDir.getFilesByNames(
                 "Greeter.kt", "KotlinGreetingJoiner.kt",
                 "TestGreeter.kt", "TestKotlinGreetingJoiner.kt"
             )
             assertCompiledKotlinSources(project.relativize(affectedSources))
         }
+    }
+
+    private fun removeFirWarning(output: String): String {
+        return output.replace(
+            """w: ATTENTION!
+ This build uses in-dev FIR: 
+  -Xuse-fir""", ""
+        )
     }
 
     @Test
@@ -402,7 +411,7 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
         }
 
-        project.build("clean", "assemble", options = options.copy(kotlinVersion = "1.3.41")) {
+        project.build("clean", "assemble", options = options.copy(kotlinVersion = TestVersions.Kotlin.STABLE_RELEASE)) {
             assertSuccessful()
         }
     }
@@ -412,8 +421,10 @@ class KotlinGradleIT : BaseGradleIT() {
         val project = Project("kotlinProject")
         project.setupWorkingDir()
         File(project.projectDir, "build.gradle").modify {
-            it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) } + "\n" + """
-            apply plugin: 'maven-publish'
+            """
+            $it
+            
+            plugins.apply('maven-publish')
             
             group = "com.example"
             version = "1.0"
@@ -441,7 +452,7 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
             val pomLines = File(project.projectDir, "build/publications/myLibrary/pom-default.xml").readLines()
-            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
+            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib-jdk8</artifactId>" in it } + 1
             val versionLine = pomLines[stdlibVersionLineNumber]
             assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
         }
@@ -1115,14 +1126,16 @@ class KotlinGradleIT : BaseGradleIT() {
         }
 
     @Test
-    fun testLoadCompilerEmbeddableAfterOtherKotlinArtifacts() = with(Project("simpleProject")) {
+    fun testLoadCompilerEmbeddableAfterOtherKotlinArtifacts() = with(Project("simpleProjectClasspath")) {
         setupWorkingDir()
         val buildscriptClasspathPrefix = "buildscript-classpath = "
-        gradleBuildScript().appendText(
-            "\n" + """
+        gradleBuildScript()
+            .appendText(
+                """
+               
                 println "$buildscriptClasspathPrefix" + Arrays.toString(buildscript.classLoader.getURLs())
-            """.trimIndent()
-        )
+                """.trimIndent()
+            )
 
         // get the classpath, then reorder it so that kotlin-compiler-embeddable is loaded after all other JARs
         lateinit var classpath: List<String>

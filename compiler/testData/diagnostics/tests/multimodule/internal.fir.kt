@@ -22,14 +22,14 @@ internal class B
 import p.*
 
 fun test() {
-    val _a = <!HIDDEN!>a<!>
-    val _v = <!HIDDEN!>v<!>
-    <!HIDDEN!>a<!>()
-    <!HIDDEN!>B<!>()
+    val _a = <!INVISIBLE_REFERENCE!>a<!>
+    val _v = <!INVISIBLE_REFERENCE!>v<!>
+    <!INVISIBLE_REFERENCE!>a<!>()
+    <!INVISIBLE_REFERENCE!>B<!>()
 
     val inst = A()
-    val ia = inst.<!HIDDEN!>a<!>
-    val iv = inst.<!HIDDEN!>v<!>
-    inst.<!HIDDEN!>a<!>()
-    inst.<!HIDDEN!>B<!>()
+    val ia = inst.<!INVISIBLE_REFERENCE!>a<!>
+    val iv = inst.<!INVISIBLE_REFERENCE!>v<!>
+    inst.<!INVISIBLE_REFERENCE!>a<!>()
+    inst.<!INVISIBLE_REFERENCE!>B<!>()
 }

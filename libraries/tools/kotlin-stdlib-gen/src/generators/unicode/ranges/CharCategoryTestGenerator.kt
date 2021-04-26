@@ -93,7 +93,7 @@ class CharCategoryTest {
                 properties = null
             }
 
-            val charCode = char.toInt().toString(radix = 16).padStart(length = 4, padChar = '0')
+            val charCode = char.code.toString(radix = 16).padStart(length = 4, padChar = '0')
             val expectedCategoryCode = properties?.categoryCode ?: CharCategory.UNASSIGNED.code
 
             fun <T> test(expected: T, actual: T, name: String) {

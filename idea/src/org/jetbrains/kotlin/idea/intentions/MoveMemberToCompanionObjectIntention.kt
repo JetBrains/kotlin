@@ -281,7 +281,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             return
         }
 
-        val description = RefactoringUIUtil.getDescription(element, false).capitalize()
+        val description = RefactoringUIUtil.getDescription(element, false).replaceFirstChar(Char::uppercaseChar)
 
         if (HierarchySearchRequest(element, element.useScope, false).searchOverriders().any()) {
             return CommonRefactoringUtil.showErrorHint(

@@ -31,7 +31,7 @@ internal object FileStructureUtil {
         } else {
             val classLikeLookupTag = from.containingClass()
                 ?: error("Class name should not be null for non-top-level & non-local declarations, but was null for\n${from.render()}")
-            val containingClass = classLikeLookupTag.toSymbol(firFile.session)?.fir as FirRegularClass
+            val containingClass = classLikeLookupTag.toSymbol(firFile.declarationSiteSession)?.fir as FirRegularClass
             containingClass.declarations as MutableList<FirDeclaration>
         }
         declarations.replaceFirst(from, to)

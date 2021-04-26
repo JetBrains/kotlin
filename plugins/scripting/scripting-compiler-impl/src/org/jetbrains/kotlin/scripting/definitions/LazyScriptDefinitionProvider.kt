@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.scripting.definitions
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.idea.KotlinFileType
 import java.net.URI
+import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
+import kotlin.concurrent.withLock
 import kotlin.concurrent.write
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -17,7 +19,10 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
 
-    protected val lock = ReentrantReadWriteLock()
+    @Volatile
+    private var disposed: Boolean = false
+
+    private val cachedDefinitionsLock = ReentrantLock()
 
     protected abstract val currentDefinitions: Sequence<ScriptDefinition>
 
@@ -28,20 +33,37 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
 
     protected val fixedDefinitions: HashMap<URI, ScriptDefinition> = HashMap()
 
+    @Volatile
     private var _cachedDefinitions: Sequence<ScriptDefinition>? = null
+
     private val cachedDefinitions: Sequence<ScriptDefinition>
         get() {
-            assert(lock.readLockCount > 0) { "cachedDefinitions should only be used under the read lock" }
-            if (_cachedDefinitions == null) lock.write {
-                _cachedDefinitions = CachingSequence(currentDefinitions.constrainOnce())
+            return _cachedDefinitions ?: run {
+                assert(cachedDefinitionsLock.holdCount == 0) { "cachedDefinitions should not be used under the lock" }
+                val originalSequence = currentDefinitions.constrainOnce()
+                cachedDefinitionsLock.withLock {
+                    _cachedDefinitions ?: run {
+                        if (!disposed) {
+                            val seq = CachingSequence(originalSequence)
+                            _cachedDefinitions = seq
+                            seq
+                        } else {
+                            emptySequence()
+                        }
+                    }
+                }
             }
-            return _cachedDefinitions!!
         }
 
     protected fun clearCache() {
-        lock.write {
+        cachedDefinitionsLock.withLock {
             _cachedDefinitions = null
         }
+    }
+
+    protected open fun dispose() {
+        disposed = true
+        clearCache()
     }
 
     protected open fun nonScriptId(locationId: String): Boolean =
@@ -50,23 +72,24 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
         }
 
     override fun findDefinition(script: SourceCode): ScriptDefinition? =
-        if (script.locationId == null ||  nonScriptId(script.locationId!!)) null
-        else lock.read {
+        if (script.locationId == null || nonScriptId(script.locationId!!)) {
+            null
+        } else {
             cachedDefinitions.firstOrNull { it.isScript(script) }
         }
 
     @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? =
-        if (nonScriptId(fileName)) null
-        else lock.read {
+        if (nonScriptId(fileName)) {
+            null
+        } else {
             cachedDefinitions.map { it.legacyDefinition }.firstOrNull { it.isScript(fileName) }
         }
 
     override fun isScript(script: SourceCode): Boolean = findDefinition(script) != null
 
-    override fun getKnownFilenameExtensions(): Sequence<String> = lock.read {
+    override fun getKnownFilenameExtensions(): Sequence<String> =
         cachedDefinitions.map { it.fileExtension }
-    }
 
     @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun getDefaultScriptDefinition(): KotlinScriptDefinition = getDefaultDefinition().legacyDefinition

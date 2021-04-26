@@ -316,7 +316,7 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun parseModulePlatformByName(moduleName: String): TargetPlatform? {
-            val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()
+            val nameSuffix = moduleName.substringAfterLast("-", "").uppercase()
             return when {
                 nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
                 nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely

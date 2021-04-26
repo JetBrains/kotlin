@@ -1,14 +1,14 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        R|/MyFunction|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| {
+        R|/MyFunction|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Any.toString|()
         }
         )
-        R|/MyFunction|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/String, kotlin/String?>| {
+        R|/MyFunction|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Any.toString|()
         }
         )
-        R|/MyFunction|<R|kotlin/Nothing|, R|kotlin/Any?|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Nothing, kotlin/Nothing?>|): R|kotlin/Any?| {
+        R|/MyFunction|<R|kotlin/Nothing|, R|kotlin/Any?|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Nothing, kotlin/Nothing?>|): R|kotlin/Any?| <inline=NoInline>  {
             ^ String()
         }
         )

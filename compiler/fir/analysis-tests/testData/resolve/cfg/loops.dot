@@ -118,44 +118,49 @@ digraph loops_kt {
         subgraph cluster_13 {
             color=blue
             37 [label="Enter block"];
-            38 [label="Const: Int(0)"];
-            39 [label="Const: Int(5)"];
-            40 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)"];
-            41 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()"];
-            42 [label="Variable declaration: lval <iterator>: R|kotlin/collections/IntIterator|"];
             subgraph cluster_14 {
                 color=blue
-                43 [label="Enter while loop"];
+                38 [label="Enter block"];
+                39 [label="Const: Int(0)"];
+                40 [label="Const: Int(5)"];
+                41 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)"];
+                42 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()"];
+                43 [label="Variable declaration: lval <iterator>: R|kotlin/collections/IntIterator|"];
                 subgraph cluster_15 {
                     color=blue
-                    44 [label="Enter loop condition"];
-                    45 [label="Access variable R|<local>/<iterator>|"];
-                    46 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
-                    47 [label="Exit loop condition"];
-                }
-                subgraph cluster_16 {
-                    color=blue
-                    48 [label="Enter loop block"];
+                    44 [label="Enter while loop"];
+                    subgraph cluster_16 {
+                        color=blue
+                        45 [label="Enter loop condition"];
+                        46 [label="Access variable R|<local>/<iterator>|"];
+                        47 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
+                        48 [label="Exit loop condition"];
+                    }
                     subgraph cluster_17 {
                         color=blue
-                        49 [label="Enter block"];
-                        50 [label="Access variable R|<local>/<iterator>|"];
-                        51 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()"];
-                        52 [label="Variable declaration: lval i: R|kotlin/Int|"];
-                        53 [label="Access variable R|<local>/x|"];
-                        54 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                        55 [label="Variable declaration: lval y: R|kotlin/Boolean|"];
-                        56 [label="Exit block"];
+                        49 [label="Enter loop block"];
+                        subgraph cluster_18 {
+                            color=blue
+                            50 [label="Enter block"];
+                            51 [label="Access variable R|<local>/<iterator>|"];
+                            52 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()"];
+                            53 [label="Variable declaration: lval i: R|kotlin/Int|"];
+                            54 [label="Access variable R|<local>/x|"];
+                            55 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
+                            56 [label="Variable declaration: lval y: R|kotlin/Boolean|"];
+                            57 [label="Exit block"];
+                        }
+                        58 [label="Exit loop block"];
                     }
-                    57 [label="Exit loop block"];
+                    59 [label="Exit whileloop"];
                 }
-                58 [label="Exit whileloop"];
+                60 [label="Exit block"];
             }
-            59 [label="Access variable R|<local>/x|"];
-            60 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-            61 [label="Exit block"];
+            61 [label="Access variable R|<local>/x|"];
+            62 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
+            63 [label="Exit block"];
         }
-        62 [label="Exit function testFor" style="filled" fillcolor=red];
+        64 [label="Exit function testFor" style="filled" fillcolor=red];
     }
     36 -> {37};
     37 -> {38};
@@ -168,8 +173,8 @@ digraph loops_kt {
     44 -> {45};
     45 -> {46};
     46 -> {47};
-    47 -> {58 48};
-    48 -> {49};
+    47 -> {48};
+    48 -> {59 49};
     49 -> {50};
     50 -> {51};
     51 -> {52};
@@ -178,226 +183,226 @@ digraph loops_kt {
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {44} [color=green style=dashed];
-    58 -> {59};
+    57 -> {58};
+    58 -> {45} [color=green style=dashed];
     59 -> {60};
     60 -> {61};
     61 -> {62};
+    62 -> {63};
+    63 -> {64};
 
-    subgraph cluster_18 {
+    subgraph cluster_19 {
         color=red
-        63 [label="Enter function testWhileTrue" style="filled" fillcolor=red];
-        subgraph cluster_19 {
+        65 [label="Enter function testWhileTrue" style="filled" fillcolor=red];
+        subgraph cluster_20 {
             color=blue
-            64 [label="Enter block"];
-            subgraph cluster_20 {
+            66 [label="Enter block"];
+            subgraph cluster_21 {
                 color=blue
-                65 [label="Enter while loop"];
-                subgraph cluster_21 {
-                    color=blue
-                    66 [label="Enter loop condition"];
-                    67 [label="Const: Boolean(true)"];
-                    68 [label="Exit loop condition"];
-                }
+                67 [label="Enter while loop"];
                 subgraph cluster_22 {
                     color=blue
-                    69 [label="Enter loop block"];
-                    subgraph cluster_23 {
-                        color=blue
-                        70 [label="Enter block"];
-                        71 [label="Const: Int(1)"];
-                        72 [label="Exit block"];
-                    }
-                    73 [label="Exit loop block"];
+                    68 [label="Enter loop condition"];
+                    69 [label="Const: Boolean(true)"];
+                    70 [label="Exit loop condition"];
                 }
-                74 [label="Exit whileloop" style="filled" fillcolor=gray];
+                subgraph cluster_23 {
+                    color=blue
+                    71 [label="Enter loop block"];
+                    subgraph cluster_24 {
+                        color=blue
+                        72 [label="Enter block"];
+                        73 [label="Const: Int(1)"];
+                        74 [label="Exit block"];
+                    }
+                    75 [label="Exit loop block"];
+                }
+                76 [label="Exit whileloop" style="filled" fillcolor=gray];
             }
-            75 [label="Const: Int(1)" style="filled" fillcolor=gray];
-            76 [label="Exit block" style="filled" fillcolor=gray];
+            77 [label="Const: Int(1)" style="filled" fillcolor=gray];
+            78 [label="Exit block" style="filled" fillcolor=gray];
         }
-        77 [label="Exit function testWhileTrue" style="filled" fillcolor=red style="filled" fillcolor=gray];
+        79 [label="Exit function testWhileTrue" style="filled" fillcolor=red style="filled" fillcolor=gray];
     }
-    63 -> {64};
-    64 -> {65};
     65 -> {66};
     66 -> {67};
     67 -> {68};
     68 -> {69};
-    68 -> {74} [style=dotted];
     69 -> {70};
     70 -> {71};
+    70 -> {76} [style=dotted];
     71 -> {72};
     72 -> {73};
-    73 -> {66} [color=green style=dashed];
-    74 -> {75} [style=dotted];
-    75 -> {76} [style=dotted];
+    73 -> {74};
+    74 -> {75};
+    75 -> {68} [color=green style=dashed];
     76 -> {77} [style=dotted];
+    77 -> {78} [style=dotted];
+    78 -> {79} [style=dotted];
 
-    subgraph cluster_24 {
+    subgraph cluster_25 {
         color=red
-        78 [label="Enter function testWhileTrueWithBreak" style="filled" fillcolor=red];
-        subgraph cluster_25 {
+        80 [label="Enter function testWhileTrueWithBreak" style="filled" fillcolor=red];
+        subgraph cluster_26 {
             color=blue
-            79 [label="Enter block"];
-            subgraph cluster_26 {
+            81 [label="Enter block"];
+            subgraph cluster_27 {
                 color=blue
-                80 [label="Enter while loop"];
-                subgraph cluster_27 {
-                    color=blue
-                    81 [label="Enter loop condition"];
-                    82 [label="Const: Boolean(true)"];
-                    83 [label="Exit loop condition"];
-                }
+                82 [label="Enter while loop"];
                 subgraph cluster_28 {
                     color=blue
-                    84 [label="Enter loop block"];
-                    subgraph cluster_29 {
+                    83 [label="Enter loop condition"];
+                    84 [label="Const: Boolean(true)"];
+                    85 [label="Exit loop condition"];
+                }
+                subgraph cluster_29 {
+                    color=blue
+                    86 [label="Enter loop block"];
+                    subgraph cluster_30 {
                         color=blue
-                        85 [label="Enter block"];
-                        subgraph cluster_30 {
+                        87 [label="Enter block"];
+                        subgraph cluster_31 {
                             color=blue
-                            86 [label="Enter when"];
-                            subgraph cluster_31 {
-                                color=blue
-                                87 [label="Enter when branch condition "];
-                                88 [label="Access variable R|<local>/b|"];
-                                89 [label="Exit when branch condition"];
-                            }
-                            90 [label="Synthetic else branch"];
-                            91 [label="Enter when branch result"];
+                            88 [label="Enter when"];
                             subgraph cluster_32 {
                                 color=blue
-                                92 [label="Enter block"];
-                                93 [label="Jump: break@@@[Boolean(true)] "];
-                                94 [label="Stub" style="filled" fillcolor=gray];
-                                95 [label="Exit block" style="filled" fillcolor=gray];
+                                89 [label="Enter when branch condition "];
+                                90 [label="Access variable R|<local>/b|"];
+                                91 [label="Exit when branch condition"];
                             }
-                            96 [label="Exit when branch result" style="filled" fillcolor=gray];
-                            97 [label="Exit when"];
+                            92 [label="Synthetic else branch"];
+                            93 [label="Enter when branch result"];
+                            subgraph cluster_33 {
+                                color=blue
+                                94 [label="Enter block"];
+                                95 [label="Jump: break@@@[Boolean(true)] "];
+                                96 [label="Stub" style="filled" fillcolor=gray];
+                                97 [label="Exit block" style="filled" fillcolor=gray];
+                            }
+                            98 [label="Exit when branch result" style="filled" fillcolor=gray];
+                            99 [label="Exit when"];
                         }
-                        98 [label="Exit block"];
+                        100 [label="Exit block"];
                     }
-                    99 [label="Exit loop block"];
+                    101 [label="Exit loop block"];
                 }
-                100 [label="Exit whileloop"];
+                102 [label="Exit whileloop"];
             }
-            101 [label="Const: Int(1)"];
-            102 [label="Exit block"];
+            103 [label="Const: Int(1)"];
+            104 [label="Exit block"];
         }
-        103 [label="Exit function testWhileTrueWithBreak" style="filled" fillcolor=red];
+        105 [label="Exit function testWhileTrueWithBreak" style="filled" fillcolor=red];
     }
-    78 -> {79};
-    79 -> {80};
     80 -> {81};
     81 -> {82};
     82 -> {83};
     83 -> {84};
-    83 -> {100} [style=dotted];
     84 -> {85};
     85 -> {86};
+    85 -> {102} [style=dotted];
     86 -> {87};
     87 -> {88};
     88 -> {89};
-    89 -> {91 90};
-    90 -> {97};
-    91 -> {92};
-    92 -> {93};
-    93 -> {100};
-    93 -> {94} [style=dotted];
-    94 -> {95} [style=dotted];
+    89 -> {90};
+    90 -> {91};
+    91 -> {93 92};
+    92 -> {99};
+    93 -> {94};
+    94 -> {95};
+    95 -> {102};
     95 -> {96} [style=dotted];
     96 -> {97} [style=dotted];
-    97 -> {98};
-    98 -> {99};
-    99 -> {81} [color=green style=dashed];
+    97 -> {98} [style=dotted];
+    98 -> {99} [style=dotted];
+    99 -> {100};
     100 -> {101};
-    101 -> {102};
+    101 -> {83} [color=green style=dashed];
     102 -> {103};
+    103 -> {104};
+    104 -> {105};
 
-    subgraph cluster_33 {
+    subgraph cluster_34 {
         color=red
-        104 [label="Enter function testWhileFalse" style="filled" fillcolor=red];
-        subgraph cluster_34 {
+        106 [label="Enter function testWhileFalse" style="filled" fillcolor=red];
+        subgraph cluster_35 {
             color=blue
-            105 [label="Enter block"];
-            subgraph cluster_35 {
+            107 [label="Enter block"];
+            subgraph cluster_36 {
                 color=blue
-                106 [label="Enter while loop"];
-                subgraph cluster_36 {
-                    color=blue
-                    107 [label="Enter loop condition"];
-                    108 [label="Const: Boolean(false)"];
-                    109 [label="Exit loop condition"];
-                }
+                108 [label="Enter while loop"];
                 subgraph cluster_37 {
                     color=blue
-                    110 [label="Enter loop block" style="filled" fillcolor=gray];
-                    subgraph cluster_38 {
-                        color=blue
-                        111 [label="Enter block" style="filled" fillcolor=gray];
-                        112 [label="Const: Int(1)" style="filled" fillcolor=gray];
-                        113 [label="Exit block" style="filled" fillcolor=gray];
-                    }
-                    114 [label="Exit loop block" style="filled" fillcolor=gray];
+                    109 [label="Enter loop condition"];
+                    110 [label="Const: Boolean(false)"];
+                    111 [label="Exit loop condition"];
                 }
-                115 [label="Exit whileloop"];
+                subgraph cluster_38 {
+                    color=blue
+                    112 [label="Enter loop block" style="filled" fillcolor=gray];
+                    subgraph cluster_39 {
+                        color=blue
+                        113 [label="Enter block" style="filled" fillcolor=gray];
+                        114 [label="Const: Int(1)" style="filled" fillcolor=gray];
+                        115 [label="Exit block" style="filled" fillcolor=gray];
+                    }
+                    116 [label="Exit loop block" style="filled" fillcolor=gray];
+                }
+                117 [label="Exit whileloop"];
             }
-            116 [label="Const: Int(1)"];
-            117 [label="Exit block"];
+            118 [label="Const: Int(1)"];
+            119 [label="Exit block"];
         }
-        118 [label="Exit function testWhileFalse" style="filled" fillcolor=red];
+        120 [label="Exit function testWhileFalse" style="filled" fillcolor=red];
     }
-    104 -> {105};
-    105 -> {106};
     106 -> {107};
     107 -> {108};
     108 -> {109};
-    109 -> {115};
-    109 -> {110} [style=dotted];
-    110 -> {111} [style=dotted];
+    109 -> {110};
+    110 -> {111};
+    111 -> {117};
     111 -> {112} [style=dotted];
     112 -> {113} [style=dotted];
     113 -> {114} [style=dotted];
-    114 -> {107} [color=green style=dotted];
-    115 -> {116};
-    116 -> {117};
+    114 -> {115} [style=dotted];
+    115 -> {116} [style=dotted];
+    116 -> {109} [color=green style=dotted];
     117 -> {118};
-
-    subgraph cluster_39 {
-        color=red
-        119 [label="Enter function testDoWhileTrue" style="filled" fillcolor=red];
-        subgraph cluster_40 {
-            color=blue
-            120 [label="Enter block"];
-            subgraph cluster_41 {
-                color=blue
-                121 [label="Enter do-while loop"];
-                subgraph cluster_42 {
-                    color=blue
-                    122 [label="Enter loop block"];
-                    subgraph cluster_43 {
-                        color=blue
-                        123 [label="Enter block"];
-                        124 [label="Const: Int(1)"];
-                        125 [label="Exit block"];
-                    }
-                    126 [label="Exit loop block"];
-                }
-                subgraph cluster_44 {
-                    color=blue
-                    127 [label="Enter loop condition"];
-                    128 [label="Const: Boolean(true)"];
-                    129 [label="Exit loop condition"];
-                }
-                130 [label="Exit do-whileloop" style="filled" fillcolor=gray];
-            }
-            131 [label="Const: Int(1)" style="filled" fillcolor=gray];
-            132 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        133 [label="Exit function testDoWhileTrue" style="filled" fillcolor=red style="filled" fillcolor=gray];
-    }
+    118 -> {119};
     119 -> {120};
-    120 -> {121};
+
+    subgraph cluster_40 {
+        color=red
+        121 [label="Enter function testDoWhileTrue" style="filled" fillcolor=red];
+        subgraph cluster_41 {
+            color=blue
+            122 [label="Enter block"];
+            subgraph cluster_42 {
+                color=blue
+                123 [label="Enter do-while loop"];
+                subgraph cluster_43 {
+                    color=blue
+                    124 [label="Enter loop block"];
+                    subgraph cluster_44 {
+                        color=blue
+                        125 [label="Enter block"];
+                        126 [label="Const: Int(1)"];
+                        127 [label="Exit block"];
+                    }
+                    128 [label="Exit loop block"];
+                }
+                subgraph cluster_45 {
+                    color=blue
+                    129 [label="Enter loop condition"];
+                    130 [label="Const: Boolean(true)"];
+                    131 [label="Exit loop condition"];
+                }
+                132 [label="Exit do-whileloop" style="filled" fillcolor=gray];
+            }
+            133 [label="Const: Int(1)" style="filled" fillcolor=gray];
+            134 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        135 [label="Exit function testDoWhileTrue" style="filled" fillcolor=red style="filled" fillcolor=gray];
+    }
     121 -> {122};
     122 -> {123};
     123 -> {124};
@@ -406,128 +411,128 @@ digraph loops_kt {
     126 -> {127};
     127 -> {128};
     128 -> {129};
-    129 -> {130} [style=dotted];
-    129 -> {122} [color=green style=dashed];
-    130 -> {131} [style=dotted];
+    129 -> {130};
+    130 -> {131};
     131 -> {132} [style=dotted];
+    131 -> {124} [color=green style=dashed];
     132 -> {133} [style=dotted];
+    133 -> {134} [style=dotted];
+    134 -> {135} [style=dotted];
 
-    subgraph cluster_45 {
+    subgraph cluster_46 {
         color=red
-        134 [label="Enter function testDoWhileTrueWithBreak" style="filled" fillcolor=red];
-        subgraph cluster_46 {
+        136 [label="Enter function testDoWhileTrueWithBreak" style="filled" fillcolor=red];
+        subgraph cluster_47 {
             color=blue
-            135 [label="Enter block"];
-            subgraph cluster_47 {
+            137 [label="Enter block"];
+            subgraph cluster_48 {
                 color=blue
-                136 [label="Enter do-while loop"];
-                subgraph cluster_48 {
+                138 [label="Enter do-while loop"];
+                subgraph cluster_49 {
                     color=blue
-                    137 [label="Enter loop block"];
-                    subgraph cluster_49 {
+                    139 [label="Enter loop block"];
+                    subgraph cluster_50 {
                         color=blue
-                        138 [label="Enter block"];
-                        subgraph cluster_50 {
+                        140 [label="Enter block"];
+                        subgraph cluster_51 {
                             color=blue
-                            139 [label="Enter when"];
-                            subgraph cluster_51 {
-                                color=blue
-                                140 [label="Enter when branch condition "];
-                                141 [label="Access variable R|<local>/b|"];
-                                142 [label="Exit when branch condition"];
-                            }
-                            143 [label="Synthetic else branch"];
-                            144 [label="Enter when branch result"];
+                            141 [label="Enter when"];
                             subgraph cluster_52 {
                                 color=blue
-                                145 [label="Enter block"];
-                                146 [label="Jump: break@@@[Boolean(true)] "];
-                                147 [label="Stub" style="filled" fillcolor=gray];
-                                148 [label="Exit block" style="filled" fillcolor=gray];
+                                142 [label="Enter when branch condition "];
+                                143 [label="Access variable R|<local>/b|"];
+                                144 [label="Exit when branch condition"];
                             }
-                            149 [label="Exit when branch result" style="filled" fillcolor=gray];
-                            150 [label="Exit when"];
+                            145 [label="Synthetic else branch"];
+                            146 [label="Enter when branch result"];
+                            subgraph cluster_53 {
+                                color=blue
+                                147 [label="Enter block"];
+                                148 [label="Jump: break@@@[Boolean(true)] "];
+                                149 [label="Stub" style="filled" fillcolor=gray];
+                                150 [label="Exit block" style="filled" fillcolor=gray];
+                            }
+                            151 [label="Exit when branch result" style="filled" fillcolor=gray];
+                            152 [label="Exit when"];
                         }
-                        151 [label="Exit block"];
+                        153 [label="Exit block"];
                     }
-                    152 [label="Exit loop block"];
+                    154 [label="Exit loop block"];
                 }
-                subgraph cluster_53 {
+                subgraph cluster_54 {
                     color=blue
-                    153 [label="Enter loop condition"];
-                    154 [label="Const: Boolean(true)"];
-                    155 [label="Exit loop condition"];
+                    155 [label="Enter loop condition"];
+                    156 [label="Const: Boolean(true)"];
+                    157 [label="Exit loop condition"];
                 }
-                156 [label="Exit do-whileloop"];
+                158 [label="Exit do-whileloop"];
             }
-            157 [label="Const: Int(1)"];
-            158 [label="Exit block"];
+            159 [label="Const: Int(1)"];
+            160 [label="Exit block"];
         }
-        159 [label="Exit function testDoWhileTrueWithBreak" style="filled" fillcolor=red];
+        161 [label="Exit function testDoWhileTrueWithBreak" style="filled" fillcolor=red];
     }
-    134 -> {135};
-    135 -> {136};
     136 -> {137};
     137 -> {138};
     138 -> {139};
     139 -> {140};
     140 -> {141};
     141 -> {142};
-    142 -> {144 143};
-    143 -> {150};
-    144 -> {145};
-    145 -> {146};
-    146 -> {156};
-    146 -> {147} [style=dotted];
-    147 -> {148} [style=dotted];
+    142 -> {143};
+    143 -> {144};
+    144 -> {146 145};
+    145 -> {152};
+    146 -> {147};
+    147 -> {148};
+    148 -> {158};
     148 -> {149} [style=dotted];
     149 -> {150} [style=dotted];
-    150 -> {151};
-    151 -> {152};
+    150 -> {151} [style=dotted];
+    151 -> {152} [style=dotted];
     152 -> {153};
     153 -> {154};
     154 -> {155};
-    155 -> {156} [style=dotted];
-    155 -> {137} [color=green style=dashed];
+    155 -> {156};
     156 -> {157};
-    157 -> {158};
+    157 -> {158} [style=dotted];
+    157 -> {139} [color=green style=dashed];
     158 -> {159};
-
-    subgraph cluster_54 {
-        color=red
-        160 [label="Enter function testDoWhileFalse" style="filled" fillcolor=red];
-        subgraph cluster_55 {
-            color=blue
-            161 [label="Enter block"];
-            subgraph cluster_56 {
-                color=blue
-                162 [label="Enter do-while loop"];
-                subgraph cluster_57 {
-                    color=blue
-                    163 [label="Enter loop block"];
-                    subgraph cluster_58 {
-                        color=blue
-                        164 [label="Enter block"];
-                        165 [label="Const: Int(1)"];
-                        166 [label="Exit block"];
-                    }
-                    167 [label="Exit loop block"];
-                }
-                subgraph cluster_59 {
-                    color=blue
-                    168 [label="Enter loop condition"];
-                    169 [label="Const: Boolean(false)"];
-                    170 [label="Exit loop condition"];
-                }
-                171 [label="Exit do-whileloop"];
-            }
-            172 [label="Const: Int(1)"];
-            173 [label="Exit block"];
-        }
-        174 [label="Exit function testDoWhileFalse" style="filled" fillcolor=red];
-    }
+    159 -> {160};
     160 -> {161};
-    161 -> {162};
+
+    subgraph cluster_55 {
+        color=red
+        162 [label="Enter function testDoWhileFalse" style="filled" fillcolor=red];
+        subgraph cluster_56 {
+            color=blue
+            163 [label="Enter block"];
+            subgraph cluster_57 {
+                color=blue
+                164 [label="Enter do-while loop"];
+                subgraph cluster_58 {
+                    color=blue
+                    165 [label="Enter loop block"];
+                    subgraph cluster_59 {
+                        color=blue
+                        166 [label="Enter block"];
+                        167 [label="Const: Int(1)"];
+                        168 [label="Exit block"];
+                    }
+                    169 [label="Exit loop block"];
+                }
+                subgraph cluster_60 {
+                    color=blue
+                    170 [label="Enter loop condition"];
+                    171 [label="Const: Boolean(false)"];
+                    172 [label="Exit loop condition"];
+                }
+                173 [label="Exit do-whileloop"];
+            }
+            174 [label="Const: Int(1)"];
+            175 [label="Exit block"];
+        }
+        176 [label="Exit function testDoWhileFalse" style="filled" fillcolor=red];
+    }
     162 -> {163};
     163 -> {164};
     164 -> {165};
@@ -537,9 +542,11 @@ digraph loops_kt {
     168 -> {169};
     169 -> {170};
     170 -> {171};
-    170 -> {163} [color=green style=dotted];
     171 -> {172};
     172 -> {173};
+    172 -> {165} [color=green style=dotted];
     173 -> {174};
+    174 -> {175};
+    175 -> {176};
 
 }

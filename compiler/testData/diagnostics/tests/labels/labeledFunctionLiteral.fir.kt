@@ -5,13 +5,13 @@ val funLit = lambda@ fun String.() {
 }
 
 fun test() {
-    val funLit = lambda@ fun String.(): String {
+    val funLit = lambda@ fun String.(): <!UNRESOLVED_LABEL!>String<!> {
         return <!UNRESOLVED_LABEL!>this@lambda<!>
     }
 }
 
 fun lambda() {
-    val funLit = lambda@ fun String.(): String {
+    val funLit = lambda@ fun String.(): <!UNRESOLVED_LABEL!>String<!> {
         return <!UNRESOLVED_LABEL!>this@lambda<!>
     }
 }

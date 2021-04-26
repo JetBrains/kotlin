@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,9 +21,13 @@ import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-internal fun KtFirSymbol<FirMemberDeclaration>.getModality() =
-    firRef.withFir(FirResolvePhase.STATUS) { fir ->
+internal fun KtFirSymbol<FirMemberDeclaration>.getModality(
+    phase: FirResolvePhase = FirResolvePhase.STATUS,
+    defaultModality: Modality? = null
+) =
+    firRef.withFir(phase) { fir ->
         fir.modality
+            ?: defaultModality
             ?: fir.invalidModalityError()
     }
 
@@ -38,8 +43,8 @@ private fun FirDeclaration.invalidModalityError(): Nothing {
 }
 
 
-internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(): Visibility =
-    firRef.withFir(FirResolvePhase.STATUS) { fir -> fir.visibility }
+internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(phase: FirResolvePhase = FirResolvePhase.STATUS): Visibility =
+    firRef.withFir(phase) { fir -> fir.visibility }
 
 internal fun KtFirSymbol<FirCallableDeclaration<*>>.getCallableIdIfNonLocal(): CallableId? =
     firRef.withFir { fir -> fir.symbol.callableId.takeUnless { it.isLocal } }

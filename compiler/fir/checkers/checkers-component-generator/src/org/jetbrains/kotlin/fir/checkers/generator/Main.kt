@@ -9,10 +9,16 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.generateDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import java.io.File
 
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) } ?: File("compiler/fir/checkers/gen").absoluteFile
+
+    val typePackage = "org.jetbrains.kotlin.fir.analysis.checkers.type"
+    generateCheckersComponents(generationPath, typePackage, "FirTypeChecker") {
+        alias<FirTypeRef>("TypeRefChecker")
+    }
 
     val expressionPackage = "org.jetbrains.kotlin.fir.analysis.checkers.expression"
     generateCheckersComponents(generationPath, expressionPackage, "FirExpressionChecker") {
@@ -22,6 +28,16 @@ fun main(args: Array<String>) {
         alias<FirVariableAssignment>("VariableAssignmentChecker")
         alias<FirTryExpression>("TryExpressionChecker")
         alias<FirWhenExpression>("WhenExpressionChecker")
+        alias<FirReturnExpression>("ReturnExpressionChecker")
+        alias<FirBlock>("BlockChecker")
+        alias<FirAnnotationCall>("AnnotationCallChecker")
+        alias<FirCheckNotNullCall>("CheckNotNullCallChecker")
+        alias<FirElvisExpression>("ElvisExpressionChecker")
+        alias<FirGetClassCall>("GetClassCallChecker")
+        alias<FirSafeCallExpression>("SafeCallExpressionChecker")
+        alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
+        alias<FirAnonymousFunction>("AnonymousFunctionAsExpressionChecker")
+        alias<FirStringConcatenationCall>("StringConcatenationCallChecker")
     }
 
     val declarationPackage = "org.jetbrains.kotlin.fir.analysis.checkers.declaration"

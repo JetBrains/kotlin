@@ -1,5 +1,5 @@
 @kotlin.Metadata
-final class<<IN:Ljava/lang/Object;KEY:Ljava/lang/Object;>Ljava/lang/Object;LKeySelector<Ljava/lang/Integer;Ljava/lang/Long;>;>  TKt$main$1 {
+final class<<IN:Ljava/lang/Object;KEY:Ljava/lang/Object;>Ljava/lang/Object;LKeySelector;>  TKt$main$1 {
     // source: 't.kt'
     static <null> method <clinit>(): void
     <null> method <init>(): void
@@ -11,7 +11,7 @@ final class<<IN:Ljava/lang/Object;KEY:Ljava/lang/Object;>Ljava/lang/Object;LKeyS
 }
 
 @kotlin.Metadata
-final class<<IN:Ljava/lang/Object;KEY:Ljava/lang/Object;>Ljava/lang/Object;LKeySelector<Ljava/lang/Integer;Ljava/lang/Long;>;>  TKt$main$2 {
+final class<<IN:Ljava/lang/Object;KEY:Ljava/lang/Object;>Ljava/lang/Object;LKeySelector;>  TKt$main$2 {
     // source: 't.kt'
     static <null> method <clinit>(): void
     <null> method <init>(): void

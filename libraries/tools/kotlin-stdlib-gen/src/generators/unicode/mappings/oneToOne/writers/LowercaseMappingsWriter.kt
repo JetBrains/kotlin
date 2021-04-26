@@ -46,7 +46,7 @@ internal class LowercaseMappingsWriter(private val strategy: RangesWritingStrate
 
     private fun lowercaseCharImpl(): String = """
         internal fun Char.lowercaseCharImpl(): Char {
-            return toInt().lowercaseCodePoint().toChar()
+            return code.lowercaseCodePoint().toChar()
         }
     """.trimIndent()
 }

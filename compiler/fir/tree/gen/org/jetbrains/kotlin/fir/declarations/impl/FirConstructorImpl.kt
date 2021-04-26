@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirConstructorImpl(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
@@ -70,7 +70,7 @@ internal class FirConstructorImpl(
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformStatus(transformer, data)
         transformAnnotations(transformer, data)
@@ -80,12 +80,12 @@ internal class FirConstructorImpl(
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
-        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
+        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
         return this
     }
 
@@ -100,7 +100,7 @@ internal class FirConstructorImpl(
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
-        status = status.transformSingle(transformer, data)
+        status = status.transform(transformer, data)
         return this
     }
 
@@ -110,12 +110,12 @@ internal class FirConstructorImpl(
     }
 
     override fun <D> transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
-        delegatedConstructor = delegatedConstructor?.transformSingle(transformer, data)
+        delegatedConstructor = delegatedConstructor?.transform(transformer, data)
         return this
     }
 
     override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
-        body = body?.transformSingle(transformer, data)
+        body = body?.transform(transformer, data)
         return this
     }
 

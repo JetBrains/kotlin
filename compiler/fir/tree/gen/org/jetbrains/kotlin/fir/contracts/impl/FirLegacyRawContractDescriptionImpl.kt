@@ -24,7 +24,7 @@ internal class FirLegacyRawContractDescriptionImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLegacyRawContractDescriptionImpl {
-        contractCall = contractCall.transformSingle(transformer, data)
+        contractCall = contractCall.transform(transformer, data)
         return this
     }
 }

@@ -188,7 +188,7 @@ internal fun Project.createTempNativeDistributionCommonizerOutputDirectory(targe
     ).toFile()
 }
 
-fun callCommonizerCLI(project: Project, commandLineArguments: List<String>) {
+internal fun callCommonizerCLI(project: Project, commandLineArguments: List<String>) {
     if (commandLineArguments.isEmpty()) return
 
     KotlinNativeCommonizerToolRunner(project).run(commandLineArguments)

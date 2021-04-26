@@ -2342,6 +2342,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948v2.kt");
         }
 
+        @TestMetadata("kt9304.kt")
+        public void testKt9304() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt9304.kt");
+        }
+
         @TestMetadata("nestedNonLocals.kt")
         public void testNestedNonLocals() throws Exception {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/nestedNonLocals.kt");
@@ -2993,6 +2998,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @TestMetadata("kt18977.kt")
         public void testKt18977() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt18977.kt");
+        }
+
+        @TestMetadata("kt28234.kt")
+        public void testKt28234() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt28234.kt");
         }
 
         @TestMetadata("kt35511.kt")

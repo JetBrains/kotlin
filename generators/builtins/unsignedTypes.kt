@@ -204,14 +204,12 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
 
     private fun generateUnaryOperators() {
-        for ((name, doc) in GeneratePrimitives.unaryOperators) {
-            if (name in listOf("unaryPlus", "unaryMinus")) continue
-            out.println("    /** $doc */")
+        for (name in listOf("inc", "dec")) {
+            out.println(GeneratePrimitives.incDecOperatorsDoc(name).replaceIndent("    "))
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    public inline operator fun $name(): $className = $className(data.$name())")
-
+            out.println()
         }
-        out.println()
     }
 
     private fun generateRangeTo() {

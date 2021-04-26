@@ -13,12 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinO
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 
 class KotlinMetadataTargetPreset(
-    project: Project,
-    kotlinPluginVersion: String
-) : KotlinOnlyTargetPreset<KotlinMetadataTarget, AbstractKotlinCompilation<*>>(
-    project,
-    kotlinPluginVersion
-) {
+    project: Project
+) : KotlinOnlyTargetPreset<KotlinMetadataTarget, AbstractKotlinCompilation<*>>(project) {
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(
@@ -42,7 +38,7 @@ class KotlinMetadataTargetPreset(
     }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<AbstractKotlinCompilation<*>, KotlinMetadataTarget> =
-        KotlinMetadataTargetConfigurator(kotlinPluginVersion)
+        KotlinMetadataTargetConfigurator()
 
     override fun instantiateTarget(name: String): KotlinMetadataTarget {
         return project.objects.newInstance(KotlinMetadataTarget::class.java, project)

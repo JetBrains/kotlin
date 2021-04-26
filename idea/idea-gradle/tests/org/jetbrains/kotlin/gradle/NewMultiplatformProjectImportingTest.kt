@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestResourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
-import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -45,7 +44,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.10+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.10+")
     fun testProjectDependency() {
         configureByFiles()
         importProject()
@@ -226,7 +225,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testFileCollectionDependency() {
         configureByFiles()
         importProject()
@@ -245,7 +244,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.30+")
     fun testUnresolvedDependency() {
         configureByFiles()
         importProject()
@@ -265,7 +264,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.30+")
     fun testAndroidDependencyOnMPP() {
         configureByFiles()
         createProjectSubFile(
@@ -305,7 +304,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 libraryDependency("Gradle: org.hamcrest:hamcrest-core:1.3@jar", DependencyScope.TEST)
                 libraryDependency("Gradle: org.hamcrest:hamcrest-integration:1.3@jar", DependencyScope.TEST)
                 libraryDependency("Gradle: org.hamcrest:hamcrest-library:1.3@jar", DependencyScope.TEST)
-                if (gradleKotlinPluginVersion != MINIMAL_SUPPORTED_VERSION) {
+                if (gradleKotlinPluginVersion != RELEASED_A_YEAR_AGO_GRADLE_PLUGIN_VERSION) {
                     libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-android-extensions-runtime:${gradleKotlinPluginVersion}@jar", DependencyScope.COMPILE)
                 }
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}@jar", DependencyScope.COMPILE)
@@ -369,7 +368,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testTestTasks() {
         val files = configureByFiles()
         importProject(skipIndexing = true)
@@ -412,7 +411,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.50+")
     fun testImportTestsAndTargets() {
         configureByFiles()
         importProject()
@@ -440,7 +439,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
     @Test
     @Ignore
-    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+")
     fun testSingleAndroidTarget() {
         configureByFiles()
         importProject()
@@ -497,7 +496,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.10+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.10+")
     fun testDependencyOnRoot() {
         configureByFiles()
         importProject()
@@ -546,7 +545,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.10+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.10+")
     fun testNestedDependencies() {
         configureByFiles()
         importProject()
@@ -629,7 +628,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.20+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.20+")
     fun testDetectAndroidSources() {
         configureByFiles()
         createProjectSubFile(
@@ -651,7 +650,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
      * dependencies in multiplatform project included in composite build
      */
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.20+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.20+")
     fun testPlatformToCommonExpByInComposite() {
         configureByFiles()
         importProject(true)
@@ -703,7 +702,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
      * Test case for issue https://youtrack.jetbrains.com/issue/KT-29757
      */
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.40+")
     fun testJavaTransitiveOnMPP() {
         configureByFiles()
         importProject(true)
@@ -769,7 +768,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
      * Test case for issue https://youtrack.jetbrains.com/issue/KT-28822
      */
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.41+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.41+")
     fun testImportBeforeBuild() {
         configureByFiles()
         importProject(true)
@@ -836,7 +835,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.20+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.20+")
     fun testProductionOnTestFlag() {
         configureByFiles()
         importProject(true)
@@ -849,7 +848,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.30+")
     fun testJvmWithJava() {
         configureByFiles()
         importProject(true)
@@ -904,7 +903,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.30+")
     fun testCommonTestTargetPlatform() {
         configureByFiles()
         importProject(true)
@@ -926,7 +925,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.60+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.60+")
     fun testIgnoreIncompatibleNativeTestTasks() {
         configureByFiles()
         importProject()
@@ -981,7 +980,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.30+")
     fun testMutableArtifactLists() {
         configureByFiles()
         importProject(true)

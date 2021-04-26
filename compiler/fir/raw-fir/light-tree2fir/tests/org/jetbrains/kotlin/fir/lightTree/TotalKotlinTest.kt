@@ -82,7 +82,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
             if (file.isDirectory) continue
             /* TODO: fix this, please !!! */
             if (file.path.contains("kotlin-native") ||
-                file.path.toLowerCase().contains("testdata") ||
+                file.path.lowercase().contains("testdata") ||
                 file.path.contains("resources")
             ) continue
             if (file.extension != "kt") continue

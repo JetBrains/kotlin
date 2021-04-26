@@ -117,7 +117,6 @@ include ":benchmarks",
         ":compiler:javac-wrapper",
         ":compiler:cli",
         ":compiler:cli-js",
-        ":compiler:cli-js-klib",
         ":compiler:incremental-compilation-impl",
         ":compiler:android-tests",
         ":compiler:tests-compiler-utils",
@@ -244,6 +243,7 @@ include ":benchmarks",
         ":generators",
         ":generators:test-generator",
         ":tools:kotlinp",
+        ":kotlin-project-model",
         ":kotlin-gradle-plugin-api",
         ":kotlin-gradle-plugin-dsl-codegen",
         ":kotlin-gradle-plugin-npm-versions-codegen",
@@ -345,6 +345,9 @@ include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-ide",
         ":plugins:parcelize:parcelize-runtime",
         ":kotlin-parcelize-compiler"
+
+include ":plugins:lombok:lombok-compiler-plugin",
+        ":kotlin-lombok"
 
 include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
@@ -465,7 +468,6 @@ project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
-project(':compiler:cli-js-klib').projectDir = "$rootDir/compiler/cli/cli-js-klib" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
 project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
@@ -512,6 +514,7 @@ project(':noarg-ide-plugin').projectDir = "$rootDir/plugins/noarg/noarg-ide" as 
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
 project(':sam-with-receiver-ide-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
+project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File
 project(':kotlin-gradle-plugin-npm-versions-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen" as File
@@ -525,6 +528,7 @@ project(':kotlin-tooling-metadata').projectDir = "$rootDir/libraries/tools/kotli
 project(':kotlin-allopen').projectDir = "$rootDir/libraries/tools/kotlin-allopen" as File
 project(':kotlin-noarg').projectDir = "$rootDir/libraries/tools/kotlin-noarg" as File
 project(':kotlin-sam-with-receiver').projectDir = "$rootDir/libraries/tools/kotlin-sam-with-receiver" as File
+project(':kotlin-lombok').projectDir = "$rootDir/libraries/tools/kotlin-lombok" as File
 project(':kotlin-gradle-subplugin-example').projectDir = "$rootDir/libraries/examples/kotlin-gradle-subplugin-example" as File
 project(':examples:annotation-processor-example').projectDir = "$rootDir/libraries/examples/annotation-processor-example" as File
 project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File

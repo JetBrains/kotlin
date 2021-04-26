@@ -18,6 +18,7 @@ fun configureInterfacesAndAbstractClasses(builder: AbstractFirTreeBuilder) {
     val solution = solve2sat(elements, elementMapping)
     processRequirementsFromConfig(solution, elementMapping)
     updateKinds(solution, elementMapping)
+    updateSealedKinds(elements)
 }
 
 private class ElementMapping(elements: Collection<KindOwner>) {
@@ -69,6 +70,20 @@ private fun updateKinds(solution: List<Boolean>, elementMapping: ElementMapping)
             }
         } else {
             element.kind = Implementation.Kind.Interface
+        }
+    }
+}
+
+private fun updateSealedKinds(elements: Collection<KindOwner>) {
+    for (element in elements) {
+        if (element is Element) {
+            if (element.isSealed) {
+                element.kind = when (element.kind) {
+                    Implementation.Kind.AbstractClass -> Implementation.Kind.SealedClass
+                    Implementation.Kind.Interface -> Implementation.Kind.SealedInterface
+                    else -> error("element $element with kind ${element.kind} can not be sealed")
+                }
+            }
         }
     }
 }

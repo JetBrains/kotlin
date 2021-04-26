@@ -35,6 +35,17 @@ abstract class AbstractFirTreeBuilder {
             elements += it
         }
 
+    protected fun sealedElement(
+        name: String,
+        kind: Element.Kind,
+        vararg dependencies: Element,
+        init: Element.() -> Unit = {}
+    ): Element {
+        return element(name, kind, *dependencies, init = init).apply {
+            isSealed = true
+        }
+    }
+
     val configurations: MutableMap<Element, () -> Unit> = mutableMapOf()
 
     fun applyConfigurations() {

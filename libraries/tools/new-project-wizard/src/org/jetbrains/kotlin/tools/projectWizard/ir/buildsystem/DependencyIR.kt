@@ -66,7 +66,7 @@ fun SourcesetType.toDependencyType() = when (this) {
 
 fun DependencyType.getGradleName(kind: DependencyKind) = when (this) {
     DependencyType.MAIN -> kind.text
-    DependencyType.TEST -> "test${kind.text.capitalize(Locale.US)}"
+    DependencyType.TEST -> "test${kind.text.replaceFirstChar(Char::uppercaseChar)}"
 }
 
 data class ArtifactBasedLibraryDependencyIR(

@@ -9,9 +9,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import org.gradle.api.logging.Logger
+import org.gradle.internal.hash.FileHasher
 import java.io.File
-import java.security.MessageDigest
 
 /**
  * Cache for preventing processing some files twice.
@@ -24,7 +23,7 @@ import java.security.MessageDigest
  * @param version When updating logic in `compute`, `version` should be increased to invalidate cache
  */
 internal open class ProcessedFilesCache(
-    val logger: Logger,
+    val fileHasher: FileHasher,
     val projectDir: File,
     val targetDir: File,
     stateFileName: String,
@@ -174,7 +173,8 @@ internal open class ProcessedFilesCache(
             try {
                 GsonBuilder().setPrettyPrinting().create().newJsonReader(stateFile.reader()).use { readFrom(it) }
             } catch (e: Throwable) {
-                logger.warn("Cannot read $stateFile", e)
+                System.err.println("Cannot read $stateFile")
+                e.printStackTrace()
                 if (targetDir.exists()) {
                     targetDir.deleteRecursively()
                 }
@@ -192,31 +192,19 @@ internal open class ProcessedFilesCache(
         file: File,
         compute: () -> File?
     ): String? {
-        val md = MessageDigest.getInstance("MD5")
-        val buffer = ByteArray(4048)
-        file.inputStream().use { input ->
-            while (true) {
-                val len = input.read(buffer)
-                if (len < 0) {
-                    break
-                }
-                md.update(buffer, 0, len)
-            }
-        }
-
-        val hash = md.digest()
+        val hash = fileHasher.hash(file).toByteArray()
         val old = state[hash]
 
         if (old != null) {
             if (checkTarget(old.target)) return old.target
-            else logger.warn("Cannot find ${File(targetDir.relativeTo(projectDir), old.target!!)}, rebuilding")
+            else System.err.println("Cannot find ${File(targetDir.relativeTo(projectDir), old.target!!)}, rebuilding")
         }
 
         val key = compute()?.relativeTo(targetDir)?.toString()
         val existedTarget = state.byTarget[key]
         if (key != null && existedTarget != null) {
             if (!File(existedTarget.src).exists()) {
-                logger.warn("Removing cache for removed source `${existedTarget.src}`")
+                System.err.println("Removing cache for removed source `${existedTarget.src}`")
                 state.remove(existedTarget)
             }
         }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -57,13 +58,28 @@ internal class KtSimpleFirTypeAndAnnotations(
 
 internal fun FirRefWithValidityCheck<FirClass<*>>.superTypesAndAnnotationsList(builder: KtSymbolByFirBuilder): List<KtTypeAndAnnotations> =
     withFir(FirResolvePhase.SUPER_TYPES) { fir ->
-        fir.superTypeRefs.map { typeRef ->
-            val annotations = typeRef.annotations.map { annotation ->
-                KtFirAnnotationCall(this, annotation)
-            }
-            KtSimpleFirTypeAndAnnotations(typeRef.coneType, annotations, builder, token)
-        }
+        fir.superTypeRefs.mapToTypeAndAnnotations(this, builder)
     }
+
+internal fun FirRefWithValidityCheck<FirRegularClass>.superTypesAndAnnotationsListForRegularClass(builder: KtSymbolByFirBuilder): List<KtTypeAndAnnotations> {
+    return withFir { fir ->
+        if (fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
+            fir.superTypeRefs.mapToTypeAndAnnotations(this, builder)
+        } else null
+    } ?: withFirWithPossibleResolveInside { fir ->
+        fir.resolveSupertypesInTheAir(builder.rootSession).mapToTypeAndAnnotations(this, builder)
+    }
+}
+
+private fun List<FirTypeRef>.mapToTypeAndAnnotations(
+    containingDeclaration: FirRefWithValidityCheck<FirClass<*>>,
+    builder: KtSymbolByFirBuilder,
+) = map { typeRef ->
+    val annotations = typeRef.annotations.map { annotation ->
+        KtFirAnnotationCall(containingDeclaration, annotation)
+    }
+    KtSimpleFirTypeAndAnnotations(typeRef.coneType, annotations, builder, containingDeclaration.token)
+}
 
 internal fun FirRefWithValidityCheck<FirTypedDeclaration>.returnTypeAndAnnotations(
     typeResolvePhase: FirResolvePhase,

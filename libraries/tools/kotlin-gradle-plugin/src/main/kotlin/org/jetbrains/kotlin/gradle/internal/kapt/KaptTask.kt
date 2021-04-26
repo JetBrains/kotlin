@@ -53,6 +53,12 @@ abstract class KaptTask @Inject constructor(
     @get:InputFiles
     abstract val kaptClasspath: ConfigurableFileCollection
 
+    //part of kaptClasspath consisting from external artifacts only
+    //basically kaptClasspath = kaptExternalClasspath + artifacts built locally
+    @get:Classpath
+    @get:InputFiles
+    abstract val kaptExternalClasspath: ConfigurableFileCollection
+
     @get:Classpath
     @get:InputFiles
     val compilerClasspath: List<File> by project.provider {
@@ -126,12 +132,16 @@ abstract class KaptTask @Inject constructor(
     @get:Internal
     var useBuildCache: Boolean = false
 
+    private val sourceRootsFromKotlinTask by project.provider {
+        kotlinCompileTask.sourceRootsContainer.sourceRoots
+    }
+
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val source: FileCollection = objectFactory
         .fileCollection()
         .from(
-            { kotlinCompileTask.sourceRootsContainer.sourceRoots },
+            { sourceRootsFromKotlinTask },
             stubsDir
         )
         .asFileTree

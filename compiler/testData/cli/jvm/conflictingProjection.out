@@ -1,3 +1,6 @@
+warning: ATTENTION!
+ This build uses in-dev FIR:
+  -Xuse-fir
 compiler/testData/cli/jvm/conflictingProjection.kt:10:15: error: projection is conflicting with variance of the corresponding type parameter of Out<in kotlin/Int>. Remove the projection or replace it with '*'
 fun a8(value: Out<in Int>) {}
               ^

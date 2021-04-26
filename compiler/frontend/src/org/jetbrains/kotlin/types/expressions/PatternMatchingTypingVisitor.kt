@@ -642,6 +642,10 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
         detectRedundantIs(context, subjectType, targetType, isCheck, negated, subjectDataFlowValue)
 
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProperCheckAnnotationsTargetInTypeUsePositions)) {
+            components.annotationChecker.check(typeReferenceAfterIs, context.trace)
+        }
+
         if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, KotlinTypeChecker.DEFAULT)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType))
         }

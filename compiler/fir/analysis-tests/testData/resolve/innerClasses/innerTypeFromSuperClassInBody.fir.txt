@@ -21,7 +21,7 @@ FILE: innerTypeFromSuperClassInBody.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            lval y: R|A.Inner<kotlin/String>.() -> kotlin/Unit| = fun R|A.Inner<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+            lval y: R|A.Inner<kotlin/String>.() -> kotlin/Unit| = fun R|A.Inner<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 ^ Unit
             }
 

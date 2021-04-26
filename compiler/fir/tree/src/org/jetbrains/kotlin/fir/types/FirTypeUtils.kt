@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -25,7 +27,7 @@ inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
     return (this as? FirResolvedTypeRef)?.type as? T
 }
 
-inline val FirTypeRef.coneType: ConeKotlinType
+val FirTypeRef.coneType: ConeKotlinType
     get() = coneTypeSafe()
         ?: error("Expected FirResolvedTypeRef with ConeKotlinType but was ${this::class.simpleName} ${render()}")
 
@@ -40,6 +42,12 @@ val FirTypeRef.isArrayType: Boolean
     get() =
         isBuiltinType(StandardClassIds.Array, false) ||
                 StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
+
+val FirExpression.isNullLiteral: Boolean
+    get() = this is FirConstExpression<*> &&
+            this.kind == ConstantValueKind.Null &&
+            this.value == null &&
+            this.source != null
 
 private val FirTypeRef.classLikeTypeOrNull: ConeClassLikeType?
     get() = when (this) {
@@ -165,8 +173,8 @@ val ConeKotlinType.canBeNull: Boolean
         return when (this) {
             is ConeFlexibleType -> upperBound.canBeNull
             is ConeDefinitelyNotNullType -> false
-            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.fir.bounds.any { it.canBeNull }
-            is ConeIntersectionType -> intersectedTypes.any { it.canBeNull }
+            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.fir.bounds.all { it.coneType.canBeNull }
+            is ConeIntersectionType -> intersectedTypes.all { it.canBeNull }
             else -> isNullable
         }
     }

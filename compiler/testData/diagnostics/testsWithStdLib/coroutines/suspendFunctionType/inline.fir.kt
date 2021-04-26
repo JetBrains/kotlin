@@ -16,15 +16,15 @@ suspend fun baz() {
     }
 
     foo2 {
-        return@baz
+        <!RETURN_NOT_ALLOWED!>return@baz<!>
     }
 
     foo3 {
-        return@baz
+        <!RETURN_NOT_ALLOWED!>return@baz<!>
     }
 
     foo4 {
-        return@baz
+        <!RETURN_NOT_ALLOWED!>return@baz<!>
     }
 
     bar1 {
@@ -32,14 +32,14 @@ suspend fun baz() {
     }
 
     bar2 {
-        return@baz
+        <!RETURN_NOT_ALLOWED!>return@baz<!>
     }
 
     bar3 {
-        return@baz
+        <!RETURN_NOT_ALLOWED!>return@baz<!>
     }
 
     bar4 {
-        return@baz
+        <!RETURN_NOT_ALLOWED!>return@baz<!>
     }
 }

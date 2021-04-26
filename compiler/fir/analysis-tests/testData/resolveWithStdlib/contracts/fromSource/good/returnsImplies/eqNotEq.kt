@@ -1,6 +1,6 @@
 import kotlin.contracts.*
 
-fun checkNotNull(x: Any?) {
+fun checkNotNull(x: Any?): Boolean {
     contract {
         returns(true) implies (x != null)
         returns(false) implies (x == null)

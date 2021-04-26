@@ -13,7 +13,7 @@ FILE: safeCallInvoke.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val bar: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| {
+        public final val bar: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
 

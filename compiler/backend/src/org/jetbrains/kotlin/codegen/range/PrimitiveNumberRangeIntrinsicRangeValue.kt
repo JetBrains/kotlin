@@ -131,7 +131,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
                 if (isProhibitedCharConstEndValue(step, endCharValue))
                     null
                 else
-                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endCharValue.toInt(), step, isStartInclusive)
+                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endCharValue.code, step, isStartInclusive)
             }
 
             is LongValue -> {

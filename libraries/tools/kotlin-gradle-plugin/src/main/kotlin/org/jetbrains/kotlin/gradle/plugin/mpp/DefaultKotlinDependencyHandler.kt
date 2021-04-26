@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
@@ -69,8 +72,19 @@ class DefaultKotlinDependencyHandler(
     private fun addDependencyByAnyNotation(
         configurationName: String,
         dependencyNotation: Any
-    ): Dependency? =
-        project.dependencies.add(configurationName, dependencyNotation)
+    ): Dependency? {
+        val dependency = when (dependencyNotation) {
+            is KotlinGradleModule -> project.dependencies.create(dependencyNotation.project).apply {
+                (this as ModuleDependency).capabilities {
+                    if (dependencyNotation.moduleClassifier != null) {
+                        it.requireCapability(ComputedCapability.fromModule(dependencyNotation))
+                    }
+                }
+            }
+            else -> dependencyNotation
+        }
+        return project.dependencies.add(configurationName, dependency)
+    }
 
     private fun addDependencyByStringNotation(
         configurationName: String,

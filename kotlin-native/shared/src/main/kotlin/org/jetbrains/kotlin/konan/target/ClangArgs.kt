@@ -33,10 +33,6 @@ internal object Android {
 
 class ClangArgs(private val configurables: Configurables) : Configurables by configurables {
 
-    private val targetArg = if (configurables is TargetableConfigurables)
-        configurables.targetArg
-    else null
-
     private val clangArgsSpecificForKonanSources
         get() = runtimeDefinitions.map { "-D$it" }
 
@@ -53,17 +49,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         if (configurables is GccConfigurables) {
             add(listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}"))
         }
-        if (configurables is TargetableConfigurables) {
-            add(listOf("-target", configurables.targetArg!!))
-        }
         if (configurables is AppleConfigurables) {
-            val arch = when (target) {
-                // TODO: LLVM 8 doesn't support arm64_32.
-                //  We can use armv7k because they are compatible at bitcode level.
-                KonanTarget.WATCHOS_ARM64 -> "armv7k"
-                else -> configurables.arch
-            }
-            add(listOf("-arch", arch))
             add(listOf("-stdlib=libc++"))
             val osVersionMin = when (target) {
                 // Here we workaround Clang 8 limitation: macOS major version should be 10.
@@ -72,7 +58,18 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 KonanTarget.MACOS_ARM64 -> "10.16"
                 else -> configurables.osVersionMin
             }
-            add(listOf("${configurables.osVersionMinFlagClang}=$osVersionMin"))
+            val targetArg = targetTriple.copy(
+                    architecture = when (targetTriple.architecture) {
+                        // TODO: LLVM 8 doesn't support arm64_32.
+                        //  We can use armv7k because they are compatible at bitcode level.
+                        "arm64_32" -> "armv7k"
+                        else -> targetTriple.architecture
+                    },
+                    os = "${targetTriple.os}$osVersionMin"
+            )
+            add(listOf("-target", targetArg.toString()))
+        } else {
+            add(listOf("-target", configurables.targetTriple.toString()))
         }
         val hasCustomSysroot = configurables is ZephyrConfigurables
                 || configurables is WasmConfigurables
@@ -101,7 +98,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
-            val clangTarget = targetArg!!
+            val clangTarget = targetTriple.withoutVendor()
             val architectureDir = Android.architectureDirForTarget(target)
             val toolchainSysroot = "$absoluteTargetToolchain/sysroot"
             listOf(

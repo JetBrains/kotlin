@@ -49,7 +49,9 @@ class KotlinKarma(
     @Transient
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
+    @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeRootPackageDir by lazy { nodeJs.rootPackageDir }
     private val versions = nodeJs.versions
 
     private val config: KarmaConfig = KarmaConfig()
@@ -87,7 +89,7 @@ class KotlinKarma(
         devtool = null,
         export = false,
         progressReporter = true,
-        progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath,
+        progressReporterPathFilter = nodeRootPackageDir.absolutePath,
         webpackMajorVersion = webpackMajorVersion
     )
 

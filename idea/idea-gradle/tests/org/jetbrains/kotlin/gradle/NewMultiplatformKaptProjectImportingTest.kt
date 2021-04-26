@@ -10,7 +10,6 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.ModulesOrderEnumerator
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
-import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
@@ -19,7 +18,7 @@ import java.io.File
 class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.40+")
     fun testKaptPaths() {
         configureByFiles()
         importProject()
@@ -72,7 +71,7 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
     }
 
     @Test
-    @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(pluginVersion = "1.3.40+")
     fun testRuntimeClasspath() {
         configureByFiles()
 

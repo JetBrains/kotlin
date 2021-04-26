@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.repository.Repository
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.utils.ProgressLogger
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal class LibraryCommonizer internal constructor(
+    private val outputTarget: SharedCommonizerTarget,
     private val repository: Repository,
     private val dependencies: Repository,
-    private val commonTarget: SharedCommonizerTarget,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
     private val progressLogger: ProgressLogger
@@ -26,55 +27,66 @@ internal class LibraryCommonizer internal constructor(
         progressLogger.logTotal()
     }
 
-    private fun loadLibraries(): TargetDependent<NativeLibrariesToCommonize> {
-        val librariesByTargets = commonTarget.targets.associateWith { target ->
-            NativeLibrariesToCommonize(repository.getLibraries(target).toList())
+    private fun loadLibraries(): TargetDependent<NativeLibrariesToCommonize?> {
+        val libraries = EagerTargetDependent(outputTarget.allLeaves()) { target ->
+            repository.getLibraries(target).toList().ifNotEmpty { NativeLibrariesToCommonize(target, this) }
         }
 
-        librariesByTargets.forEach { (target, librariesToCommonize) ->
-            if (librariesToCommonize.libraries.isEmpty()) {
-                progressLogger.warning("No platform libraries found for target ${target.prettyName}. This target will be excluded from commonization.")
-            }
+        libraries.forEachWithTarget { target, librariesOrNull ->
+            if (librariesOrNull == null)
+                progressLogger.warning(
+                    "No libraries found for target ${target.prettyName}. This target will be excluded from commonization."
+                )
         }
+
         progressLogger.log("Resolved libraries to be commonized")
-        return librariesByTargets
+        return libraries
     }
 
-    private fun commonizeAndSaveResults(allLibraries: TargetDependent<NativeLibrariesToCommonize>) {
+    private fun commonizeAndSaveResults(libraries: TargetDependent<NativeLibrariesToCommonize?>) {
         val parameters = CommonizerParameters(
+            outputTarget = outputTarget,
+            targetProviders = libraries.map { target, targetLibraries -> createTargetProvider(target, targetLibraries) },
+            manifestProvider = createManifestProvider(libraries),
+            dependenciesProvider = createDependenciesProvider(),
             resultsConsumer = resultsConsumer,
-            manifestDataProvider = TargetedNativeManifestDataProvider(allLibraries),
-            commonDependencyModulesProvider = DefaultModulesProvider.create(dependencies.getLibraries(commonTarget)),
             statsCollector = statsCollector,
             progressLogger = progressLogger::log
         )
-
-        allLibraries.forEach { (target, librariesToCommonize) ->
-            parameters.addTarget(target, librariesToCommonize)
-        }
-
         runCommonization(parameters)
     }
 
-    private fun CommonizerParameters.addTarget(target: CommonizerTarget, libraries: NativeLibrariesToCommonize) {
-        if (libraries.libraries.isEmpty()) return
-
-        val modulesProvider = DefaultModulesProvider.create(libraries)
-        val dependencyModuleProvider = DefaultModulesProvider.create(dependencies.getLibraries(target))
-
-        addTarget(
-            TargetProvider(
-                target = target,
-                modulesProvider = modulesProvider,
-                dependencyModulesProvider = dependencyModuleProvider
-            )
+    private fun createTargetProvider(target: CommonizerTarget, libraries: NativeLibrariesToCommonize?): TargetProvider? {
+        if (libraries == null) return null
+        return TargetProvider(
+            target = target,
+            modulesProvider = DefaultModulesProvider.create(libraries)
         )
     }
 
+    private fun createDependenciesProvider(): TargetDependent<ModulesProvider?> {
+        return TargetDependent(outputTarget.withAllAncestors()) { target ->
+            DefaultModulesProvider.create(dependencies.getLibraries(target))
+        }
+    }
+
+    private fun createManifestProvider(
+        libraries: TargetDependent<NativeLibrariesToCommonize?>
+    ): TargetDependent<NativeManifestDataProvider> {
+        return TargetDependent(outputTarget.withAllAncestors()) { target ->
+            when (target) {
+                is LeafCommonizerTarget -> libraries[target] ?: error("Can't provide manifest for missing target $target")
+                is SharedCommonizerTarget -> NativeManifestDataProvider(
+                    target, target.allLeaves().mapNotNull { leafTarget -> libraries.getOrNull(leafTarget) }
+                )
+            }
+        }
+    }
+
     private fun checkPreconditions() {
-        when (commonTarget.targets.size) {
+        when (outputTarget.allLeaves().size) {
             0 -> progressLogger.fatal("No targets specified")
-            1 -> progressLogger.fatal("Too few targets specified: $commonTarget")
+            1 -> progressLogger.fatal("Too few targets specified: $outputTarget")
         }
     }
 }

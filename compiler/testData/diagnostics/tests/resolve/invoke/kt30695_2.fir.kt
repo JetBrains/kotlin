@@ -31,7 +31,7 @@ fun testNullableReceiver(nullable: Cls?) {
 
 fun testNotNullableReceiver(notNullable: Cls) {
     notNullable.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
-    notNullable?.extensionProperty()
+    notNullable<!UNNECESSARY_SAFE_CALL!>?.<!>extensionProperty()
 }
 
 fun testFlexibleReceiver() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,13 +47,13 @@ fun Char.isAsciiUpperCase() = this in 'A'..'Z'
 
 class StringTest {
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun testStringFromChars(expected: String, chars: CharArray, offset: Int, length: Int) {
         assertEquals(expected, String(chars, offset, length))
         assertEquals(expected, chars.concatToString(startIndex = offset, endIndex = offset + length))
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun testStringFromChars(expected: String, chars: CharArray) {
         assertEquals(expected, String(chars))
         assertEquals(expected, chars.concatToString())
@@ -64,7 +64,7 @@ class StringTest {
         testStringFromChars("Kotlin", chars, 0, chars.size)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test fun stringFromCharArraySlice() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n', ' ', 'r', 'u', 'l', 'e', 's')
         testStringFromChars("rule", chars, 7, 4)
@@ -78,7 +78,7 @@ class StringTest {
         assertTrue(longConcatString.all { it == 'k' })
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test fun stringFromCharArray() {
         val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
         testStringFromChars("Kotlin", chars)
@@ -99,7 +99,7 @@ class StringTest {
         testStringFromChars("Ŭᎍ🀺", chars, 3, 4)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @Test fun stringFromCharArrayOutOfBounds() {
         fun test(chars: CharArray) {
             assertFailsWith<IndexOutOfBoundsException> { String(chars, -1, 1) }
@@ -290,6 +290,7 @@ class StringTest {
 
     @Test fun capitalize() {
         fun testCapitalize(expected: String, string: String) {
+            @Suppress("DEPRECATION")
             assertEquals(expected, string.capitalize())
             assertEquals(expected, string.replaceFirstChar { it.uppercase() })
         }
@@ -301,6 +302,7 @@ class StringTest {
 
     @Test fun decapitalize() {
         fun testDecapitalize(expected: String, string: String) {
+            @Suppress("DEPRECATION")
             assertEquals(expected, string.decapitalize())
             assertEquals(expected, string.replaceFirstChar { it.lowercase() })
         }
@@ -847,7 +849,7 @@ class StringTest {
             val result = v1.compareTo(v2, ignoreCase = ignoreCase).sign
             assertEquals(expectedResult, result, "Comparing '$v1' with '$v2', ignoreCase = $ignoreCase")
             if (expectedResult == 0)
-                assertTrue(v1.equals(v2, ignoreCase = ignoreCase))
+                assertTrue(v1.equals(v2, ignoreCase = ignoreCase), "'$v1'=='$v2' should be consistent with ordering, ignoreCase = $ignoreCase")
             if (!ignoreCase)
                 assertEquals(v1.compareTo(v2).sign, result)
         }
@@ -886,6 +888,16 @@ class StringTest {
                 assertCompareResult(EQ, item1, item2, ignoreCase = true)
             }
         }
+
+        CharTest.equalIgnoreCaseGroups
+            .filterNot { "i" in it }
+            .forEach { equalGroup ->
+                for (char1 in equalGroup) {
+                    for (char2 in equalGroup) {
+                        assertCompareResult(EQ, char1.toString(), char2.toString(), ignoreCase = true)
+                    }
+                }
+            }
     }
 
 
@@ -915,12 +927,14 @@ class StringTest {
                 assertEquals(expectAllReplaced, chars.replace(c, '_', ignoreCase = true), "$message, ignoreCase")
                 assertEquals(expectOneReplaced, chars.replace(c.toString(), "_"), "$message, as string")
                 assertEquals(expectAllReplaced, chars.replace(c.toString(), "_", ignoreCase = true), "$message, as string, ignoreCase")
+                assertEquals(expectOneReplaced, chars.replace(Regex(Regex.escape(c.toString())), "_"), "$message, as regex")
+                assertEquals(expectAllReplaced, chars.replace(Regex(Regex.escape(c.toString()), RegexOption.IGNORE_CASE), "_"), "$message, as regex, ignoreCase")
             }
         }
 
-        testIgnoreCase("üÜ")
-        testIgnoreCase("öÖ")
-        testIgnoreCase("äÄ")
+        CharTest.equalIgnoreCaseGroups
+            .filterNot { "i" in it } // not supported by JS
+            .forEach { testIgnoreCase(it) }
     }
 
     @Test fun replaceFirst() {

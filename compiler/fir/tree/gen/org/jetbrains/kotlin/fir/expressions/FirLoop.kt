@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement {
+sealed class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
     abstract val block: FirBlock
@@ -24,6 +25,10 @@ abstract class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElemen
     abstract val label: FirLabel?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLoop(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformLoop(this, data) as E
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLoop
 

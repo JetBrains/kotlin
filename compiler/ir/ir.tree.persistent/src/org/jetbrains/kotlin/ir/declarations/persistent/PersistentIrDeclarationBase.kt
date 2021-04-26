@@ -13,12 +13,20 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.DeclarationCarrier
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElementBase<T>, IrDeclaration, DeclarationCarrier {
     var removedOn: Int
 
 
     override var parentField: IrDeclarationParent?
+
+    override var parentSymbolField: IrSymbol?
+        get() = parentField?.let { (it as IrSymbolOwner).symbol }
+        set(v) {
+            parentField = v?.owner?.cast()
+        }
 
     override var originField: IrDeclarationOrigin
 
@@ -134,6 +142,15 @@ interface PersistentIrBodyBase<B : PersistentIrBodyBase<B>> : PersistentIrElemen
     var initializer: (B.() -> Unit)?
 
     override var containerField: IrDeclaration?
+
+    override var containerFieldSymbol: IrSymbol?
+        get() = (containerField as? IrSymbolOwner)?.symbol
+        set(s) {
+            containerField = s?.owner?.cast()
+        }
+
+    val hasContainer: Boolean
+        get() = getCarrier().containerField != null
 
     var container: IrDeclaration
         get() = getCarrier().containerField!!

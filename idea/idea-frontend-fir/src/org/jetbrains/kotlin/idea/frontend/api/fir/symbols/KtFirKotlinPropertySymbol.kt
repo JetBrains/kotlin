@@ -51,7 +51,7 @@ internal class KtFirKotlinPropertySymbol(
 
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
 
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
     override val name: Name get() = firRef.withFir { it.name }
@@ -118,6 +118,7 @@ internal class KtFirKotlinPropertySymbol(
                     fir.createSignature()
                 )
             }
+            KtSymbolKind.ACCESSOR -> TODO("Creating symbol for accessors is not supported yet")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
         }
     }

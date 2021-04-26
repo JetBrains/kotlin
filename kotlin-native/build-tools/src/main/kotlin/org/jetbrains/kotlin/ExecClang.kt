@@ -30,13 +30,13 @@ class ExecClang(private val project: Project) {
 
     private val platformManager = project.project(":kotlin-native").findProperty("platformManager") as PlatformManager
 
-    private fun konanArgs(target: KonanTarget): List<String> {
+    private fun clangArgsForCppRuntime(target: KonanTarget): List<String> {
         return platformManager.platform(target).clang.clangArgsForKonanSources.asList()
     }
 
-    fun konanArgs(targetName: String?): List<String> {
+    fun clangArgsForCppRuntime(targetName: String?): List<String> {
         val target = platformManager.targetManager(targetName).target
-        return konanArgs(target)
+        return clangArgsForCppRuntime(target)
     }
 
     fun resolveExecutable(executableOrNull: String?): String {
@@ -82,20 +82,45 @@ class ExecClang(private val project: Project) {
     // (nullable, which means host) target name.
 
     fun execKonanClang(target: String?, action: Action<in ExecSpec>): ExecResult {
-        return this.execClang(konanArgs(target), action)
+        return this.execClang(clangArgsForCppRuntime(target), action)
     }
 
     fun execKonanClang(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
-        return this.execClang(konanArgs(target), action)
+        return this.execClang(clangArgsForCppRuntime(target), action)
     }
 
     fun execKonanClang(target: String?, closure: Closure<in ExecSpec>): ExecResult {
-        return this.execClang(konanArgs(target), closure)
+        return this.execClang(clangArgsForCppRuntime(target), closure)
     }
 
     fun execKonanClang(target: KonanTarget, closure: Closure<in ExecSpec>): ExecResult {
-        return this.execClang(konanArgs(target), closure)
+        return this.execClang(clangArgsForCppRuntime(target), closure)
     }
+
+    /**
+     * Execute Clang the way that produced object file is compatible with
+     * the one that produced by Kotlin/Native for given [target]. It means:
+     * 1. We pass flags that set sysroot.
+     * 2. We call Clang from toolchain in case of Apple target.
+     */
+    fun execClangForCompilerTests(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
+        val defaultArgs = platformManager.platform(target).clang.clangArgs.toList()
+        return project.exec(Action<ExecSpec> {
+            action.execute(this)
+            executable = if (target.family.isAppleFamily) {
+                resolveToolchainExecutable(target, executable)
+            } else {
+                resolveExecutable(executable)
+            }
+            args = defaultArgs + args
+        })
+    }
+
+    /**
+     * @see execClangForCompilerTests
+     */
+    fun execClangForCompilerTests(target: KonanTarget, closure: Closure<in ExecSpec>): ExecResult =
+            execClangForCompilerTests(target, ConfigureUtil.configureUsing(closure))
 
     // The toolchain ones execute clang from the toolchain.
 
@@ -118,8 +143,6 @@ class ExecClang(private val project: Project) {
     fun execToolchainClang(target: KonanTarget, closure: Closure<in ExecSpec>): ExecResult {
         return this.execToolchainClang(target, ConfigureUtil.configureUsing(closure))
     }
-
-    // These ones are private, so one has to choose either Bare or Konan.
 
     private fun execClang(defaultArgs: List<String>, closure: Closure<in ExecSpec>): ExecResult {
         return this.execClang(defaultArgs, ConfigureUtil.configureUsing(closure))

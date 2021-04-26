@@ -11,7 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.internal.FeaturePreviews
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.SourceTask
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -42,10 +43,9 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import java.io.File
 
-class KotlinMultiplatformPlugin(
-    private val kotlinPluginVersion: String
-) : Plugin<Project> {
+class KotlinMultiplatformPlugin : Plugin<Project> {
 
     private class TargetFromPresetExtension(val targetsContainer: KotlinTargetsContainerWithPresets) {
         fun <T : KotlinTarget> fromPreset(preset: KotlinTargetPreset<T>, name: String, configureClosure: Closure<*>): T =
@@ -92,7 +92,7 @@ class KotlinMultiplatformPlugin(
 
         // set up metadata publishing
         targetsFromPreset.fromPreset(
-            KotlinMetadataTargetPreset(project, kotlinPluginVersion),
+            KotlinMetadataTargetPreset(project),
             METADATA_TARGET_NAME
         )
         configurePublishingWithMavenPublish(project)
@@ -106,6 +106,8 @@ class KotlinMultiplatformPlugin(
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 
         exportProjectStructureMetadataForOtherBuilds(project)
+
+        project.registerEmbedAndSignAppleFrameworkTask()
 
         SingleActionPerBuild.run(project.rootProject, "cleanup-processed-metadata") {
             if (isConfigurationCacheAvailable(project.gradle)) {
@@ -173,20 +175,17 @@ class KotlinMultiplatformPlugin(
 
     fun setupDefaultPresets(project: Project) {
         with(project.multiplatformExtension.presets) {
-            add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
-            add(KotlinJsTargetPreset(project, kotlinPluginVersion).apply { irPreset = null })
-            add(KotlinJsIrTargetPreset(project, kotlinPluginVersion).apply { mixedMode = false })
+            add(KotlinJvmTargetPreset(project))
+            add(KotlinJsTargetPreset(project).apply { irPreset = null })
+            add(KotlinJsIrTargetPreset(project).apply { mixedMode = false })
             add(
-                KotlinJsTargetPreset(
-                    project,
-                    kotlinPluginVersion
-                ).apply {
-                    irPreset = KotlinJsIrTargetPreset(project, kotlinPluginVersion)
+                KotlinJsTargetPreset(project).apply {
+                    irPreset = KotlinJsIrTargetPreset(project)
                         .apply { mixedMode = true }
                 }
             )
-            add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
-            add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
+            add(KotlinAndroidTargetPreset(project))
+            add(KotlinJvmWithJavaTargetPreset(project))
 
             // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
             val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MINGW_X64)
@@ -196,10 +195,10 @@ class KotlinMultiplatformPlugin(
                 .forEach { (_, konanTarget) ->
                     val targetToAdd = when (konanTarget) {
                         in nativeTargetsWithHostTests ->
-                            KotlinNativeTargetWithHostTestsPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
+                            KotlinNativeTargetWithHostTestsPreset(konanTarget.presetName, project, konanTarget)
                         in nativeTargetsWithSimulatorTests ->
-                            KotlinNativeTargetWithSimulatorTestsPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
-                        else -> KotlinNativeTargetPreset(konanTarget.presetName, project, konanTarget, kotlinPluginVersion)
+                            KotlinNativeTargetWithSimulatorTestsPreset(konanTarget.presetName, project, konanTarget)
+                        else -> KotlinNativeTargetPreset(konanTarget.presetName, project, konanTarget)
                     }
 
                     add(targetToAdd)
@@ -292,16 +291,21 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
 }
 
 internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String?, artifactNameAppendix: String): TaskProvider<Jar> =
-    sourcesJarTask(compilation.target.project, lazy { compilation.allKotlinSourceSets }, componentName, artifactNameAppendix)
+    sourcesJarTask(compilation.target.project, lazy { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } }, componentName, artifactNameAppendix)
 
 internal fun sourcesJarTask(
     project: Project,
-    sourceSets: Lazy<Set<KotlinSourceSet>>,
+    sourceSets: Lazy<Map<String, Iterable<File>>>,
     componentName: String?,
     artifactNameAppendix: String
-): TaskProvider<Jar> {
-    val taskName = lowerCamelCaseName(componentName, "sourcesJar")
+): TaskProvider<Jar> = sourcesJarTaskNamed(lowerCamelCaseName(componentName, "sourcesJar"), project, sourceSets, artifactNameAppendix)
 
+internal fun sourcesJarTaskNamed(
+    taskName: String,
+    project: Project,
+    sourceSets: Lazy<Map<String, Iterable<File>>>,
+    artifactNameAppendix: String
+): TaskProvider<Jar> {
     project.locateTask<Jar>(taskName)?.let {
         return it
     }
@@ -313,9 +317,9 @@ internal fun sourcesJarTask(
 
     project.whenEvaluated {
         result.configure {
-            sourceSets.value.forEach { sourceSet ->
-                it.from(sourceSet.kotlin) { copySpec ->
-                    copySpec.into(sourceSet.name)
+            sourceSets.value.forEach { (sourceSetName, sourceSetFiles) ->
+                it.from(sourceSetFiles) { copySpec ->
+                    copySpec.into(sourceSetName)
                     // Duplicates are coming from `SourceSets` that `sourceSet` depends on.
                     // Such dependency was added by Kotlin compilation.
                     // TODO: rethink approach for adding dependent `SourceSets` to Kotlin compilation `SourceSet`

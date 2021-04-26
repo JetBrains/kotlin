@@ -20,9 +20,9 @@ class TypeParameterModifier(
     fun addModifier(modifier: LighterASTNode) {
         val tokenType = modifier.tokenType
         when {
-            VARIANCE_MODIFIER.contains(tokenType) -> this.varianceModifiers += VarianceModifier.valueOf(modifier.toString().toUpperCase())
+            VARIANCE_MODIFIER.contains(tokenType) -> this.varianceModifiers += VarianceModifier.valueOf(modifier.toString().uppercase())
             REIFICATION_MODIFIER.contains(tokenType) -> this.reificationModifier =
-                ReificationModifier.valueOf(modifier.toString().toUpperCase())
+                ReificationModifier.valueOf(modifier.toString().uppercase())
         }
     }
 

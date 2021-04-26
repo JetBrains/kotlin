@@ -33,9 +33,9 @@ class C2 : A<String?>() {
 }
 
 fun test() {
-    B1().<!INAPPLICABLE_CANDIDATE!>bar<!>(null)
-    B2().<!INAPPLICABLE_CANDIDATE!>bar<!>(null)
+    B1().bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    B2().bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    C1().<!INAPPLICABLE_CANDIDATE!>bar<!>(null)
+    C1().bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
 

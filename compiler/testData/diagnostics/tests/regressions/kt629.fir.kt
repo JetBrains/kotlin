@@ -13,11 +13,11 @@ fun box() : Boolean {
     var c = A()
     val d = c;
     c %= A();
-    return (c != d) && <!EXPRESSION_REQUIRED!>(c.p = "yeah")<!>
+    return (c != d) && <!EXPRESSION_EXPECTED!>(c.p = "yeah")<!>
 }
 
 
 fun box2() : Boolean {
     var c = A()
-    return <!EXPRESSION_REQUIRED!>(c.p = "yeah")<!> && true
+    return <!EXPRESSION_EXPECTED!>(c.p = "yeah")<!> && true
 }

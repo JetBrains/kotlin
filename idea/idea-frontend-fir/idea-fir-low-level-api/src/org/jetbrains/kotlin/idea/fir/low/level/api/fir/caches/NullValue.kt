@@ -15,10 +15,10 @@ internal inline fun <VALUE> Any.nullValueToNull(): VALUE = when (this) {
     else -> this
 } as VALUE
 
-internal inline fun <KEY : Any, RESULT> ConcurrentMap<KEY, Any>.computeIfAbsentWithNullableValue(
+internal inline fun <KEY : Any, RESULT> ConcurrentMap<KEY, Any>.getOrPutWithNullableValue(
     key: KEY,
     crossinline compute: (KEY) -> Any?
 ): RESULT {
-    val value = computeIfAbsent(key) { k -> compute(k) ?: NullValue }
+    val value = getOrPut(key) { compute(key) ?: NullValue }
     return value.nullValueToNull()
 }

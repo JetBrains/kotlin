@@ -131,7 +131,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
 
         // If script is inside module
-        if (module != null && mainScriptFile.parentFile.name.toLowerCase().contains("module")) {
+        if (module != null && mainScriptFile.parentFile.name.lowercase().contains("module")) {
             module.addDependency(
                 projectLibrary(
                     "script-runtime",

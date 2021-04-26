@@ -2,7 +2,6 @@ idePluginDependency {
     val compilerModules: Array<String> by rootProject.extra
 
     val excludedCompilerModules = listOf(
-        ":compiler:cli-js-klib",
         ":compiler:javac-wrapper",
         ":compiler:backend.js",
         ":compiler:backend.wasm",

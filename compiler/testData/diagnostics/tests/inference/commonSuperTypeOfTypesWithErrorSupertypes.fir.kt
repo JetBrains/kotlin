@@ -7,7 +7,7 @@ interface Foo<F> {
 
 fun <S> select(vararg args: S): S = TODO()
 
-class Bar<B : B> : Foo<B> {
+class Bar<B : <!CYCLIC_GENERIC_UPPER_BOUND!>B<!>> : Foo<B> {
     val v = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(
         getSum(),
         42

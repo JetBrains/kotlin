@@ -3,7 +3,7 @@ package c
 
 import java.util.ArrayList
 
-fun Array<Int>.toIntArray(): IntArray = this.<!INAPPLICABLE_CANDIDATE!>mapTo<!>(IntArray(size), {it})
+fun Array<Int>.toIntArray(): IntArray = this.mapTo(<!ARGUMENT_TYPE_MISMATCH!>IntArray(size)<!>, {it})
 
 fun Array<Int>.toArrayList(): ArrayList<Int> = this.mapTo(ArrayList<Int>(size), {it})
 

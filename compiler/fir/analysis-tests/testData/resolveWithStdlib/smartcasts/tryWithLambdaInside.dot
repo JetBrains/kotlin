@@ -85,7 +85,7 @@ digraph tryWithLambdaInside_kt {
                 26 [label="Try expression exit"];
             }
             27 [label="Jump: ^testInPlace try {
-    R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <kind=UNKNOWN>  {
+    R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
         ^ R|<local>/it|
     }
     )
@@ -176,7 +176,7 @@ finally {
                 51 [label="Try expression exit"];
             }
             52 [label="Jump: ^testNotInPlace try {
-    R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| {
+    R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=NoInline>  {
         ^ R|<local>/it|
     }
     )

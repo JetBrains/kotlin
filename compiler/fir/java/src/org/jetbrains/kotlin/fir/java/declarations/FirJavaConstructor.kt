@@ -29,7 +29,7 @@ import kotlin.properties.Delegates
 @OptIn(FirImplementationDetail::class)
 class FirJavaConstructor @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override val symbol: FirConstructorSymbol,
     override val isPrimary: Boolean,
     override var returnTypeRef: FirTypeRef,
@@ -151,7 +151,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     override fun build(): FirJavaConstructor {
         return FirJavaConstructor(
             source,
-            session,
+            declarationSiteSession,
             symbol,
             isPrimary,
             returnTypeRef,

@@ -60,7 +60,7 @@ FILE: qualifierPriority.kt
     public final fun main(): R|kotlin/Unit| {
         Q|F.foo|.R|/F.foo.a|
         Q|F.foo|
-        R|kotlin/with|<R|F.foo|, R|kotlin/Int|>(Q|F.foo|, <L> = with@fun R|F.foo|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|F.foo|, R|kotlin/Int|>(Q|F.foo|, <L> = with@fun R|F.foo|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ this@R|special/anonymous|.R|/F.foo.a|
         }
         )

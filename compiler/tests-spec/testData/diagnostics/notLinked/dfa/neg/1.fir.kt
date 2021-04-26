@@ -103,8 +103,8 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasNullableString) {
-    if (x !== null === null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
-    if (x !== null != null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+    if (x !== null === null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>get(0)
+    if (x !== null != null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>get(0)
 }
 
 // TESTCASE NUMBER: 9
@@ -169,18 +169,18 @@ fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndire
     else if ((y === null !== null) is Boolean) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.equals(null)
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propT
-    else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!><!UNSAFE_CALL!>.<!>propAny
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propNullableT
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propNullableAny
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.funT()
-    else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!><!UNSAFE_CALL!>.<!>funAny()
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.funNullableT()
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.funNullableAny()
     else "-1"
 
 // TESTCASE NUMBER: 13
 fun case_13(x: <!UNRESOLVED_REFERENCE!>otherpackage.Case13?<!>) =
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Can't resolve when expression")!>if ((x == null !is Boolean) !== true) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>if ((x == null !is Boolean) !== true) {
         throw Exception()
     } else {
         <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>
@@ -256,7 +256,7 @@ fun case_16() {
 
     if (x != null !is Boolean !is Boolean !is Boolean !is Boolean !is Boolean) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>.<!INAPPLICABLE_CANDIDATE!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!><!UNSAFE_CALL!>.<!>java
     }
 }
 

@@ -1,0 +1,7 @@
+package
+
+public val bar: kotlin.String
+public val m2: kotlin.collections.Map<kotlin.String, *>
+public fun foo(): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"}) public operator fun </*0*/ V, /*1*/ V1 : V> kotlin.collections.Map<in kotlin.String, V>.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): V1
+

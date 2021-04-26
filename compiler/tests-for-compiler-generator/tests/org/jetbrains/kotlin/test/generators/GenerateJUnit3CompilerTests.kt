@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
-import org.jetbrains.kotlin.checkers.*
+import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.debugInformation.AbstractIrLocalVariableTest
@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.codegen.debugInformation.AbstractSteppingTest
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.AbstractFirLoadCompiledKotlin
+import org.jetbrains.kotlin.fir.AbstractLazyBodyIsNotTouchedTilContractsPhaseTest
 import org.jetbrains.kotlin.fir.builder.AbstractPartialRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
@@ -144,10 +145,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrSourceRangesTestCase> {
                 model("ir/sourceRanges")
-            }
-
-            testClass<AbstractBytecodeListingTest> {
-                model("codegen/bytecodeListing", targetBackend = TargetBackend.JVM)
             }
 
             testClass<AbstractTopLevelMembersInvocationTest> {
@@ -387,10 +384,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                     testMethod = "doTestWithoutAPT",
                     targetBackend = TargetBackend.JVM_IR
                 )
-            }
-
-            testClass<AbstractIrBytecodeListingTest> {
-                model("codegen/bytecodeListing", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractIrCheckLocalVariablesTableTest> {

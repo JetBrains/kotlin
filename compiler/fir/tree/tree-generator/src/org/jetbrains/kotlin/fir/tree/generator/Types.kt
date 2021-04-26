@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
@@ -26,11 +25,11 @@ val constKindType = type("types", "ConstantValueKind")
 val operationType = type("fir.expressions", "FirOperation")
 val classKindType = type(ClassKind::class)
 val eventOccurrencesRangeType = type(EventOccurrencesRange::class)
+val inlineStatusType = type("fir.declarations", "InlineStatus")
 val varianceType = type(Variance::class)
 val nameType = type(Name::class)
 val visibilityType = type(Visibility::class)
-val effectiveVisibilityType = type("fir", "FirEffectiveVisibility")
-val visibilitiesType = type(Visibilities::class)
+val effectiveVisibilityType = type("descriptors", "EffectiveVisibility")
 val modalityType = type(Modality::class)
 val fqNameType = type(FqName::class)
 val classIdType = type(ClassId::class)
@@ -61,7 +60,6 @@ val implicitStringTypeRefType = generatedType("types.impl", "FirImplicitStringTy
 val implicitUnitTypeRefType = generatedType("types.impl", "FirImplicitUnitTypeRef")
 val resolvePhaseType = type("fir.declarations", "FirResolvePhase")
 val stubReferenceType = generatedType("references.impl", "FirStubReference")
-val compositeTransformResultType = type("fir.visitors", "CompositeTransformResult")
 
 val abstractFirBasedSymbolType = type("fir.symbols", "AbstractFirBasedSymbol")
 val backingFieldSymbolType = type("fir.symbols.impl", "FirBackingFieldSymbol")

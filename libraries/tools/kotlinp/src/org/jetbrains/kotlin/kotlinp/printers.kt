@@ -310,7 +310,7 @@ private fun printType(flags: Flags, output: (String) -> Unit): KmTypeVisitor =
             printType(flags) { argumentTypeString ->
                 arguments += buildString {
                     if (variance != KmVariance.INVARIANT) {
-                        append(variance.name.toLowerCase(Locale.US)).append(" ")
+                        append(variance.name.lowercase()).append(" ")
                     }
                     append(argumentTypeString)
                 }
@@ -400,7 +400,7 @@ private fun printTypeParameter(
                     append("@").append(renderAnnotation(annotation)).append(" ")
                 }
                 if (variance != KmVariance.INVARIANT) {
-                    append(variance.name.toLowerCase(Locale.US)).append(" ")
+                    append(variance.name.lowercase()).append(" ")
                 }
                 append("T#$id")
                 if (settings.isVerbose) {
@@ -484,7 +484,7 @@ private fun String.sanitize(quote: Char): String =
                 '\r' -> append("\\r")
                 '\t' -> append("\\t")
                 quote -> append("\\").append(quote)
-                else -> append(if (c.isISOControl()) "\\u%04x".format(c.toInt()) else c)
+                else -> append(if (c.isISOControl()) "\\u%04x".format(c.code) else c)
             }
         }
     }

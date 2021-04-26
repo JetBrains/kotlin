@@ -42,4 +42,4 @@ private fun CharSequence.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
 
 
 private val UPPER_CASE_CHARS = Regex("[A-Z]+")
-fun String.replaceCamelCaseWithDashedLowerCase() = replace(UPPER_CASE_CHARS) { "-" + it.value.toLowerCase() }
+fun String.replaceCamelCaseWithDashedLowerCase() = replace(UPPER_CASE_CHARS) { "-" + it.value.lowercase() }

@@ -8,7 +8,7 @@ class A<T : CharSequence?, E1 : T, E2: T?> {
         x.bar()
 
         if (1 == 1) {
-            y.<!INAPPLICABLE_CANDIDATE!>bar<!>()
+            y<!UNSAFE_CALL!>.<!>bar()
         }
 
         x?.bar()

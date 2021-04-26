@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.commonizer
 
 import java.io.File
 import java.io.Serializable
-import kotlin.jvm.Throws
 
 public interface Commonizer : Serializable {
     @Throws(Throwable::class)
     public fun commonizeLibraries(
         konanHome: File,
         inputLibraries: Set<File>,
-        dependencyLibraries: Set<File>,
+        dependencyLibraries: Set<CommonizerDependency>,
         outputCommonizerTarget: SharedCommonizerTarget,
         outputDirectory: File
     )

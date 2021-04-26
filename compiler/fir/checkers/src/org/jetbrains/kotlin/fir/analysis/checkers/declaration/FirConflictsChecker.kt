@@ -81,7 +81,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             session: FirSession
         ) {
             val conflicting = conflictingSymbol.fir as? FirDeclaration ?: return
-            if (declaration.session.moduleInfo != conflicting.session.moduleInfo) return
+            if (declaration.declarationSiteSession.moduleInfo != conflicting.declarationSiteSession.moduleInfo) return
             val actualConflictingPresentation = conflictingPresentation ?: presenter.represent(conflicting)
             if (conflicting == declaration || actualConflictingPresentation != declarationPresentation) return
             val actualConflictingFile =

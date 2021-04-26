@@ -24,14 +24,17 @@ import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.gradle.api.tasks.TaskInputs
 import org.gradle.api.tasks.TaskOutputs
 import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.util.GradleVersion
 import java.io.File
+import java.io.Serializable
 
-const val minSupportedGradleVersion = "6.1"
+const val minSupportedGradleVersion = "6.1.1"
 
 internal val Task.inputsCompatible: TaskInputs get() = inputs
 
@@ -73,7 +76,7 @@ internal fun checkGradleCompatibility(
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() = archiveFile.get().asFile
 
-internal class ArchiveOperationsCompat(@Transient private val project: Project) {
+internal class ArchiveOperationsCompat(@Transient private val project: Project) : Serializable {
     private val archiveOperations: Any? = try {
         (project as ProjectInternal).services.get(ArchiveOperations::class.java)
     } catch (e: NoClassDefFoundError) {
@@ -96,7 +99,7 @@ internal class ArchiveOperationsCompat(@Transient private val project: Project) 
     }
 }
 
-internal class FileSystemOperationsCompat(@Transient private val project: Project) {
+internal class FileSystemOperationsCompat(@Transient private val project: Project) : Serializable {
     private val fileSystemOperations: Any? = try {
         (project as ProjectInternal).services.get(FileSystemOperations::class.java)
     } catch (e: NoClassDefFoundError) {
@@ -110,4 +113,16 @@ internal class FileSystemOperationsCompat(@Transient private val project: Projec
             else -> project.copy(action)
         }
     }
+}
+
+// Gradle dropped out getOwnerBuildOperationId. Workaround to build correct plugin for Gradle < 6.8
+// See https://github.com/gradle/gradle/commit/0296f4441ae69ad608cfef6a90fef3fdf314fa2c
+internal interface LegacyTestDescriptorInternal : TestDescriptor {
+    override fun getParent(): TestDescriptorInternal?
+
+    fun getId(): Any?
+
+    fun getOwnerBuildOperationId(): Any?
+
+    fun getClassDisplayName(): String?
 }

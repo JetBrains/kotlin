@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 
-class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope(), FirContainingNamesAwareScope {
+class FirNestedClassifierScope(val klass: FirClass<*>, val useSiteSession: FirSession) : FirScope(), FirContainingNamesAwareScope {
     private val classIndex: Map<Name, FirRegularClassSymbol> = run {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
         for (declaration in klass.declarations) {
@@ -40,7 +41,7 @@ class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope(), FirContaini
         val substitution = klass.typeParameters.associate {
             it.symbol to it.toConeType()
         }
-        processor(matchedClass, ConeSubstitutorByMap(substitution))
+        processor(matchedClass, ConeSubstitutorByMap(substitution, useSiteSession))
     }
 
     override fun getClassifierNames(): Set<Name> = classIndex.keys

@@ -276,7 +276,7 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         if (!makeOverallResult.makeFailed) {
-            if (checkDumpsCaseInsensitively && rebuildResult.mappingsDump?.toLowerCase() == makeOverallResult.mappingsDump?.toLowerCase()) {
+            if (checkDumpsCaseInsensitively && rebuildResult.mappingsDump?.lowercase() == makeOverallResult.mappingsDump?.lowercase()) {
                 // do nothing
             } else {
                 TestCase.assertEquals(rebuildResult.mappingsDump, makeOverallResult.mappingsDump)

@@ -3,7 +3,7 @@
 // JVM_TARGET: 15
 // ENABLE_JVM_PREVIEW
 // WITH_RUNTIME
-// JDK_15
+// JDK_KIND: FULL_JDK_15
 
 // D8 does not yet desugar java records.
 // IGNORE_DEXING

@@ -22,7 +22,7 @@ FILE: delegateWithAnonymousObject.kt
             super<R|DelegateProvider<IssuesListUserProfile>|>()
         }
 
-        public final var issueListView: R|IssueListView|by this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(<L> = delegate@fun <anonymous>(): R|kotlin/properties/ReadWriteProperty<IssuesListUserProfile, IssueListView>| {
+        public final var issueListView: R|IssueListView|by this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(<L> = delegate@fun <anonymous>(): R|kotlin/properties/ReadWriteProperty<IssuesListUserProfile, IssueListView>| <inline=NoInline>  {
             ^ object : R|kotlin/properties/ReadWriteProperty<IssuesListUserProfile, IssueListView>| {
                 private constructor(): R|<anonymous>| {
                     super<R|kotlin/Any|>()

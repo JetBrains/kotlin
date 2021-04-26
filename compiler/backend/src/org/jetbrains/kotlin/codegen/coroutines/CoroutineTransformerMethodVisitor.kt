@@ -999,7 +999,7 @@ class CoroutineTransformerMethodVisitor(
                 else -> next = next.next
             }
         }
-        return next
+        return null
     }
 
     // It's necessary to preserve some sensible invariants like there should be no jump in the middle of try-catch-block
@@ -1329,7 +1329,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                     variable.desc,
                     variable.signature,
                     variable.start,
-                    nextSuspensionPointStartLabel(variable.start),
+                    min(variable.end, nextSuspensionPointStartLabel(variable.start)),
                     variable.index
                 )
             )

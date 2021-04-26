@@ -35,8 +35,14 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
 
     private fun doTestMultiFile(files: List<TestFile>, reportProblems: Boolean) {
         val expectedOccurrencesByOutputFile = LinkedHashMap<String, List<OccurrenceInfo>>()
+        val globalOccurrences = ArrayList<OccurrenceInfo>()
         for (file in files) {
-            readExpectedOccurrencesForMultiFileTest(file.name, file.content, expectedOccurrencesByOutputFile)
+            readExpectedOccurrencesForMultiFileTest(file.name, file.content, expectedOccurrencesByOutputFile, globalOccurrences)
+        }
+
+        if (globalOccurrences.isNotEmpty()) {
+            val generatedText = generateToText()
+            checkGeneratedTextAgainstExpectedOccurrences(generatedText, globalOccurrences, backend, reportProblems, JUnit4Assertions)
         }
 
         val generated = generateEachFileToText()

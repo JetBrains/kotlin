@@ -128,7 +128,7 @@ internal class Int16(val value: Short) : ConstValue {
 }
 
 internal class Char16(val value: Char) : ConstValue {
-    override val llvm = LLVMConstInt(int16Type, value.toLong(), 1)!!
+    override val llvm = LLVMConstInt(int16Type, value.code.toLong(), 1)!!
 }
 
 internal class Int32(val value: Int) : ConstValue {

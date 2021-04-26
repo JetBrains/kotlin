@@ -36,7 +36,7 @@ internal class FirSafeCallExpressionImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
-        typeRef = typeRef.transformSingle(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         transformReceiver(transformer, data)
         transformRegularQualifiedAccess(transformer, data)
@@ -49,12 +49,12 @@ internal class FirSafeCallExpressionImpl(
     }
 
     override fun <D> transformReceiver(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
-        receiver = receiver.transformSingle(transformer, data)
+        receiver = receiver.transform(transformer, data)
         return this
     }
 
     override fun <D> transformRegularQualifiedAccess(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
-        regularQualifiedAccess = regularQualifiedAccess.transformSingle(transformer, data)
+        regularQualifiedAccess = regularQualifiedAccess.transform(transformer, data)
         return this
     }
 

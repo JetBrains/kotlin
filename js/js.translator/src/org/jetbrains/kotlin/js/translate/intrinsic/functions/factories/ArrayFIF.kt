@@ -109,7 +109,7 @@ object ArrayFIF : CompositeFIF() {
     }
 
     private val PrimitiveType.lowerCaseName
-        get() = typeName.asString().toLowerCase(Locale.US)
+        get() = typeName.asString().lowercase()
 
     fun getTag(descriptor: CallableDescriptor, config: JsConfig): String? {
         if (descriptor !is ConstructorDescriptor) return null

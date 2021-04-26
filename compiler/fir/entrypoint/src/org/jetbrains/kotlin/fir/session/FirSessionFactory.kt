@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
@@ -53,6 +54,10 @@ object FirSessionFactory {
             session.checkersComponent.register(checkers)
         }
 
+        fun useCheckers(checkers: TypeCheckers) {
+            session.checkersComponent.register(checkers)
+        }
+
         @SessionConfiguration
         fun configure() {
             session.extensionService.registerExtensions(registeredExtensions.reduce(BunchOfRegisteredExtensions::plus))
@@ -73,11 +78,10 @@ object FirSessionFactory {
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirJavaModuleBasedSession {
         return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
-            registerThreadUnsafeCaches()
+            registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker)
             registerJavaSpecificResolveComponents()
-            registerSealedClassInheritorsProvider()
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
@@ -126,9 +130,8 @@ object FirSessionFactory {
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirLibrarySession {
         return FirLibrarySession(moduleInfo, sessionProvider).apply {
-            registerThreadUnsafeCaches()
+            registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerSealedClassInheritorsProvider()
 
             val javaSymbolProvider = JavaSymbolProvider(this, project, scope)
 

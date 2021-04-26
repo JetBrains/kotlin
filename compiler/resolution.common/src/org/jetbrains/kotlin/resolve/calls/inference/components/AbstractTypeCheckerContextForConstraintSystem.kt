@@ -91,9 +91,6 @@ abstract class AbstractTypeCheckerContextForConstraintSystem(override val typeSy
         val typeMarker = type.asSimpleType()?.asCapturedType() ?: return null
 
         val projection = typeMarker.typeConstructorProjection()
-        if (projection.isStarProjection()) return null
-
-
         return when (projection.getVariance()) {
             TypeVariance.IN -> if (!out) typeMarker.lowerType() ?: projection.getType() else null
             TypeVariance.OUT -> if (out) projection.getType() else null

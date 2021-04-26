@@ -30,7 +30,13 @@ actual val propertyWithBackingField = 3.14
 @delegate:CommonAnnotation("field")
 actual val propertyWithDelegateField: Int by lazy { 42 }
 
-actual val <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") T : CharSequence> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") T.propertyWithExtensionReceiver: Int
+actual val <
+        @JvmAnnotation("type-parameter")
+        @CommonAnnotation("type-parameter")
+        T : CharSequence>
+        @receiver:JvmAnnotation("receiver")
+        @receiver:CommonAnnotation("receiver")
+        T.propertyWithExtensionReceiver: Int
     get() = length
 
 @JvmAnnotation("function")
@@ -39,7 +45,13 @@ actual fun function1(@JvmAnnotation("parameter") @CommonAnnotation("parameter") 
 
 @JvmAnnotation("function")
 @CommonAnnotation("function")
-actual fun <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : Number> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): Q = this
+actual fun <
+        @JvmAnnotation("type-parameter")
+        @CommonAnnotation("type-parameter")
+        Q : Number>
+        @receiver:JvmAnnotation("receiver")
+        @receiver:CommonAnnotation("receiver")
+        Q.function2(): Q = this
 
 @JvmAnnotation("class")
 @CommonAnnotation("class")

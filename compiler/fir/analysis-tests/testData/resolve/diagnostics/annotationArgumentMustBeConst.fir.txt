@@ -50,5 +50,5 @@ FILE: annotationArgumentMustBeConst.kt
             public get(): R|kotlin/Int|
 
     }
-    @R|Ann1|(vararg(R|/foo|, R|/foo|.R|kotlin/String.plus|(R|/bar|), <strcat>(R|/foo|.R|kotlin/Any.toString|(), String( ), R|/bar|.R|kotlin/Any.toString|()), <strcat>(R|/baz|().R|kotlin/Any.toString|(), String( )))) @R|Ann2|(<implicitArrayOf>(R|/bar|, R|/baz|(), R|/bar|.R|kotlin/Int.plus|(R|/cnst|))) @R|Ann3|(R|/arr|) public final fun test(): R|kotlin/Unit| {
+    @R|Ann1|(vararg(R|/foo|, R|/foo|.R|kotlin/String.plus|(R|/bar|), <strcat>(R|/foo|, String( ), R|/bar|), <strcat>(R|/baz|(), String( )))) @R|Ann2|(<implicitArrayOf>(R|/bar|, R|/baz|(), R|/bar|.R|kotlin/Int.plus|(R|/cnst|))) @R|Ann3|(R|/arr|) public final fun test(): R|kotlin/Unit| {
     }

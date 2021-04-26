@@ -15,6 +15,7 @@ public class Flags {
 
     // Types
     public static final BooleanFlagField SUSPEND_TYPE = FlagField.booleanFirst();
+    public static final BooleanFlagField DEFINITELY_NOT_NULL_TYPE = FlagField.booleanAfter(SUSPEND_TYPE);
 
     // Common for declarations
 
@@ -85,8 +86,8 @@ public class Flags {
 
     // ---
 
-    public static int getTypeFlags(boolean isSuspend) {
-        return SUSPEND_TYPE.toFlags(isSuspend);
+    public static int getTypeFlags(boolean isSuspend, boolean isDefinitelyNotNull) {
+        return SUSPEND_TYPE.toFlags(isSuspend) | DEFINITELY_NOT_NULL_TYPE.toFlags(isDefinitelyNotNull);
     }
 
     public static int getClassFlags(

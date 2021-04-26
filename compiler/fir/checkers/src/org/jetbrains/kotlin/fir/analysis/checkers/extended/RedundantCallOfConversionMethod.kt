@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 object RedundantCallOfConversionMethod : FirQualifiedAccessChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall) return
-        if (expression.source?.kind == FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
         val functionName = expression.calleeReference.name.asString()
         val qualifiedType = targetClassMap[functionName] ?: return
 

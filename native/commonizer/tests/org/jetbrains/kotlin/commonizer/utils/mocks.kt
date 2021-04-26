@@ -3,19 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TestFunctionName")
+
 package org.jetbrains.kotlin.commonizer.utils
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeSensitiveManifestData
-import org.jetbrains.kotlin.commonizer.konan.TargetedNativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -51,7 +53,8 @@ private fun createValidClassifierId(classifierId: String): CirEntityId {
 
 internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
     commonizedNodes = object : CirCommonizedClassifierNodes {
-        private val MOCK_CLASS_NODE = CirClassNode(
+        override fun classNode(classId: CirEntityId) = CirClassNode(
+            classId,
             CommonizedGroup(0),
             LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
                 CirClass.create(
@@ -71,7 +74,6 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
             }
         )
 
-        override fun classNode(classId: CirEntityId) = MOCK_CLASS_NODE
         override fun typeAliasNode(typeAliasId: CirEntityId) = error("This method should not be called")
         override fun addClassNode(classId: CirEntityId, node: CirClassNode) = error("This method should not be called")
         override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) = error("This method should not be called")
@@ -127,6 +129,8 @@ internal class MockModulesProvider private constructor(
     }
 }
 
+fun ModuleDescriptor.toMetadata(): SerializedMetadata = MockModulesProvider.SERIALIZER.serializeModule(this)
+
 private typealias ModuleName = String
 private typealias ModuleResults = HashMap<ModuleName, ModuleResult>
 
@@ -144,7 +148,7 @@ internal class MockResultsConsumer : ResultsConsumer {
 
     override fun consume(target: CommonizerTarget, moduleResult: ModuleResult) {
         check(!this::status.isInitialized)
-        check(target !in finishedTargets)
+        check(target !in finishedTargets) { "$target already finished" }
         val moduleResults: ModuleResults = _modulesByTargets.getOrPut(target) { ModuleResults() }
         val oldResult = moduleResults.put(moduleResult.libraryName, moduleResult)
         check(oldResult == null) // to avoid accidental overwriting
@@ -165,6 +169,7 @@ internal class MockResultsConsumer : ResultsConsumer {
 }
 
 fun MockNativeManifestDataProvider(
+    target: CommonizerTarget,
     uniqueName: String = "mock",
     versions: KotlinLibraryVersioning = KotlinLibraryVersioning(null, null, null, null, null),
     dependencies: List<String> = emptyList(),
@@ -173,15 +178,18 @@ fun MockNativeManifestDataProvider(
     exportForwardDeclarations: List<String> = emptyList(),
     nativeTargets: Collection<String> = emptyList(),
     shortName: String? = "mock"
-): TargetedNativeManifestDataProvider = TargetedNativeManifestDataProvider { _, _ ->
-    NativeSensitiveManifestData(
-        uniqueName = uniqueName,
-        versions = versions,
-        dependencies = dependencies,
-        isInterop = isInterop,
-        packageFqName = packageFqName,
-        exportForwardDeclarations = exportForwardDeclarations,
-        nativeTargets = nativeTargets,
-        shortName = shortName
-    )
+): NativeManifestDataProvider = object : NativeManifestDataProvider {
+    override fun buildManifest(libraryName: UniqueLibraryName): NativeSensitiveManifestData {
+        return NativeSensitiveManifestData(
+            uniqueName = uniqueName,
+            versions = versions,
+            dependencies = dependencies,
+            isInterop = isInterop,
+            packageFqName = packageFqName,
+            exportForwardDeclarations = exportForwardDeclarations,
+            nativeTargets = nativeTargets,
+            shortName = shortName,
+            commonizerTarget = target,
+        )
+    }
 }

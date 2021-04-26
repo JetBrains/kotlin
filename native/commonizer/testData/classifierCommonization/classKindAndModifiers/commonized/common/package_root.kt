@@ -36,10 +36,16 @@ expect class W() {
     }
 }
 
-expect class BB1() { companion object }
+expect class BB1() {
+    companion object
+}
+
 expect class BB2()
 
-expect class CC1() { companion object DD1 }
+expect class CC1() {
+    companion object DD1
+}
+
 expect class CC2()
 expect class CC3()
 
@@ -54,15 +60,16 @@ expect class FF1(property1: String) {
     fun function1(): String
     fun function2(): String
 }
+
 expect class FF2()
 
 expect sealed class GG1
 expect sealed class GG2 {
-    class HH1(): GG2
+    class HH1() : GG2
     object HH2 : GG2
 }
 
-expect class HH5(): GG2
+expect class HH5() : GG2
 expect object HH6 : GG2
 
 expect enum class II1
@@ -80,5 +87,10 @@ expect class KK1(property: String) : JJ {
 
 expect class KK2(wrapped: JJ) : JJ
 
-expect class LL1(value: String) { val value: String }
-expect class LL2(value: String) { val value: String }
+expect class LL1(value: String) {
+    val value: String
+}
+
+expect class LL2(value: String) {
+    val value: String
+}

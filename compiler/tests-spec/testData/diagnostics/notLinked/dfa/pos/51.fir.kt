@@ -263,7 +263,7 @@ fun case_22(z: Any?) {
 fun case_23(z: Any?) {
     val y = z.run {
         when (this) {
-            true -> this!!
+            true -> this<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
             0.0 -> this as Any
             else -> this!!
         }
@@ -276,7 +276,7 @@ fun case_23(z: Any?) {
 fun case_24(z: Any?) {
     val y = z.let {
         when (it) {
-            true -> it!!
+            true -> it<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
             0.0 -> it as Any
             else -> it!!
         }
@@ -292,7 +292,7 @@ fun case_25(z: Any?) {
             true -> this
             if (true) this as Int else this as Float -> this
             return@run this as Float -> this
-            else -> this!!
+            else -> this<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
@@ -306,7 +306,7 @@ fun case_26(z: Any?) {
             true -> it
             if (true) it as Int else it as Float -> it
             return@let it as Int -> it
-            else -> it!!
+            else -> it<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>

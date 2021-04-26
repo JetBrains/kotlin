@@ -89,7 +89,7 @@ internal fun Char.isUpperCaseImpl(): Boolean {
  *   - `0` otherwise.
  */
 private fun Char.getLetterType(): Int {
-    val ch = this.toInt()
+    val ch = this.code
     val index = binarySearchRange(rangeStart, ch)
 
     val rangeStart = rangeStart[index]

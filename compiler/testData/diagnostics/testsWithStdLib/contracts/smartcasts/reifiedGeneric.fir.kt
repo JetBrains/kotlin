@@ -22,10 +22,10 @@ inline fun <reified T> cast(value: Any?): T {
 
 fun test_1(x: Any) {
     requireIsInstance<String>(x)
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
 }
 
 fun test_2(x: Any) {
     val s: String = cast(x)
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
 }

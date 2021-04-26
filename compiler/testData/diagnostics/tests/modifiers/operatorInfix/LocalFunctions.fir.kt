@@ -21,10 +21,10 @@ fun a() {
             val b = Example()
 
             consumeString(a + b)
-            <!INAPPLICABLE_CANDIDATE!>consumeInt<!>(a - b)
+            consumeInt(<!ARGUMENT_TYPE_MISMATCH!>a - b<!>)
 
             consumeString(a plus b)
-            <!INAPPLICABLE_CANDIDATE!>consumeInt<!>(a minus b)
+            consumeInt(<!ARGUMENT_TYPE_MISMATCH!>a minus b<!>)
 
             a * b
             a / b

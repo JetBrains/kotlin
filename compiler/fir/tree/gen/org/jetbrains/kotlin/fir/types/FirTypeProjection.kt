@@ -19,4 +19,8 @@ abstract class FirTypeProjection : FirPureAbstractElement(), FirElement {
     abstract override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeProjection(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformTypeProjection(this, data) as E
 }

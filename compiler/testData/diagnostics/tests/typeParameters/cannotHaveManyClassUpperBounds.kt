@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class C1
 open class C2
 open class C3 : C2()

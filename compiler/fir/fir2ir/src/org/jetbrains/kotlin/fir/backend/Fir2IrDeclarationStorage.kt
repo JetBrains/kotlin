@@ -739,7 +739,7 @@ class Fir2IrDeclarationStorage(
         val field = this
         return buildProperty {
             source = field.source
-            session = field.session
+            declarationSiteSession = field.declarationSiteSession
             origin = field.origin
             returnTypeRef = field.returnTypeRef
             name = field.name

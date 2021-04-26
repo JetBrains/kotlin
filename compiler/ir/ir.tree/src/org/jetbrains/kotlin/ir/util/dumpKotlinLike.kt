@@ -283,7 +283,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             else ->
                 Modality.FINAL
         }
-        p(modality, defaultModality) { name.toLowerCase() }
+        p(modality, defaultModality) { name.lowercase() }
         p(isExternal, "external")
         p(isFakeOverride, customModifier("fake"))
         p(isOverride, "override")
@@ -302,7 +302,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(isData, "data")
         p(isCompanion, "companion")
         p(isFunInterface, "fun")
-        p(classKind) { name.toLowerCase().replace('_', ' ') + if (this == ClassKind.ENUM_ENTRY) " class" else "" }
+        p(classKind) { name.lowercase().replace('_', ' ') + if (this == ClassKind.ENUM_ENTRY) " class" else "" }
         p(isInfix, "infix")
         p(isOperator, "operator")
     }

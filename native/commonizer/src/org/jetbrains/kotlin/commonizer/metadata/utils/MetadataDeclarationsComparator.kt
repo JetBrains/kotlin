@@ -8,11 +8,23 @@ package org.jetbrains.kotlin.commonizer.metadata.utils
 import com.intellij.util.containers.FactoryMap
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.*
-import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.AnnotationKind
-import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.TypeKind
-import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.FlagKind
+import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.*
+import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch
+import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
 import org.jetbrains.kotlin.commonizer.utils.KNI_BRIDGE_FUNCTION_PREFIX
 import java.util.*
+import kotlin.Any
+import kotlin.Array
+import kotlin.Boolean
+import kotlin.Int
+import kotlin.String
+import kotlin.Suppress
+import kotlin.Unit
+import kotlin.apply
+import kotlin.arrayOf
+import kotlin.check
+import kotlin.error
+import kotlin.let
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 

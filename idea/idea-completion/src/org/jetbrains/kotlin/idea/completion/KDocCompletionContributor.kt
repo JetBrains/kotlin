@@ -158,7 +158,7 @@ object KDocTagCompletionProvider : CompletionProvider<CompletionParameters>() {
         val resultWithPrefix = result.withPrefixMatcher(prefix)
         KDocKnownTag.values().forEach {
             if (kdocOwner == null || it.isApplicable(kdocOwner)) {
-                resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.toLowerCase(Locale.US)))
+                resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.lowercase()))
             }
         }
     }

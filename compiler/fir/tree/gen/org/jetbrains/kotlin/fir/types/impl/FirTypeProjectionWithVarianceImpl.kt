@@ -26,7 +26,7 @@ internal class FirTypeProjectionWithVarianceImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeProjectionWithVarianceImpl {
-        typeRef = typeRef.transformSingle(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         return this
     }
 }

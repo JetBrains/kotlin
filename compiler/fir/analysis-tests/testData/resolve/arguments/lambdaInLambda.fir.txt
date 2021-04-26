@@ -24,10 +24,10 @@ FILE: lambdaInLambda.kt
     public final fun <U, T : R|Template<U>|> R|U|.insert(template: R|T|, build: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test(ordinal: R|kotlin/Int|): R|kotlin/Unit| {
-        R|/buildString|(<L> = buildString@fun R|StringBuilder|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.R|/insert|<R|StringBuilder|, R|KDocTemplate|>(R|/KDocTemplate.KDocTemplate|(), <L> = insert@fun R|KDocTemplate|.<anonymous>(): R|kotlin/Unit| {
-                this@R|special/anonymous|.R|/KDocTemplate.definition|(<L> = definition@fun R|StringBuilder|.<anonymous>(): R|kotlin/Unit| {
-                    R|<local>/ordinal|?.{ $subj$.R|kotlin/let|<R|kotlin/Int|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|/buildString|(<L> = buildString@fun R|StringBuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/insert|<R|StringBuilder|, R|KDocTemplate|>(R|/KDocTemplate.KDocTemplate|(), <L> = insert@fun R|KDocTemplate|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/KDocTemplate.definition|(<L> = definition@fun R|StringBuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    R|<local>/ordinal|?.{ $subj$.R|kotlin/let|<R|kotlin/Int|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                         ^@let Unit
                     }
                     ) }

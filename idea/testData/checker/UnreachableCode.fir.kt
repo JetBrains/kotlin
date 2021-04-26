@@ -4,7 +4,7 @@ fun t1() : Int{
 }
 
 fun t1a() : Int {
-  return
+  <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/Int, actual kotlin/Unit">return</error>
   return 1
   1
 }
@@ -17,7 +17,7 @@ fun t1b() : Int {
 
 fun t1c() : Int {
   return 1
-  return
+  <error descr="[RETURN_TYPE_MISMATCH] Return type mismatch: expected kotlin/Int, actual kotlin/Unit">return</error>
   1
 }
 

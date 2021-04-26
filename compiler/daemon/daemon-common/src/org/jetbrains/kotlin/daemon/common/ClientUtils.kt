@@ -55,7 +55,7 @@ fun walkDaemons(registryDir: File,
                 filter: (File, Int) -> Boolean = { _, _ -> true },
                 report: (DaemonReportCategory, String) -> Unit = { _, _ -> }
 ): Sequence<DaemonWithMetadata> {
-    val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
+    val classPathDigest = compilerId.digest()
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
             .map { Pair(it, portExtractor(it.name)) }
@@ -107,7 +107,7 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
 private const val validFlagFileKeywordChars = "abcdefghijklmnopqrstuvwxyz0123456789-_"
 
 fun makeAutodeletingFlagFile(keyword: String = "compiler-client", baseDir: File? = null): File {
-    val prefix = "kotlin-${keyword.filter { validFlagFileKeywordChars.contains(it.toLowerCase()) }}-"
+    val prefix = "kotlin-${keyword.filter { validFlagFileKeywordChars.contains(it.lowercaseChar()) }}-"
     val flagFile = if (baseDir?.isDirectory == true)
         Files.createTempFile(baseDir.toPath(), prefix, "-is-running").toFile()
     else

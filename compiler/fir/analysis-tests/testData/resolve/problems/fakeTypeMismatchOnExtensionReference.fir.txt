@@ -1,0 +1,20 @@
+FILE: fakeTypeMismatchOnExtensionReference.kt
+    public abstract interface IrElement : R|kotlin/Any| {
+    }
+    public final fun R|IrElement|.dumpKotlinLike(options: R|kotlin/String| = String()): R|kotlin/String| {
+        ^dumpKotlinLike String()
+    }
+    public final fun R|IrElement|.dump(normalizeNames: R|kotlin/Boolean| = Boolean(false)): R|kotlin/String| {
+        ^dump String()
+    }
+    public final fun foo(dumpStrategy: R|kotlin/String|): R|kotlin/Unit| {
+        lval dump: R|IrElement.() -> kotlin/String| = when () {
+            ==(R|<local>/dumpStrategy|, String(KotlinLike)) ->  {
+                Q|IrElement|::R|/dumpKotlinLike|
+            }
+            else ->  {
+                Q|IrElement|::R|/dump|
+            }
+        }
+
+    }

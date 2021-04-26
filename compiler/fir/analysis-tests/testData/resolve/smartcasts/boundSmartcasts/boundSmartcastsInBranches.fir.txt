@@ -10,17 +10,20 @@ FILE: boundSmartcastsInBranches.kt
     }
     public final fun test_0(list: R|kotlin/collections/List<A>|): R|kotlin/Unit| {
         lvar goodA: R|A?| = Null(null)
-        lval <iterator>: R|kotlin/collections/Iterator<A>| = R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()
-        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
-            lval a: R|A| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|A|>|()
-            when () {
-                ==(R|<local>/goodA|, Null(null)) ->  {
-                    R|<local>/goodA| = R|<local>/a|
-                    continue@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()]
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<A>| = R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()
+            while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+                lval a: R|A| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|A|>|()
+                when () {
+                    ==(R|<local>/goodA|, Null(null)) ->  {
+                        R|<local>/goodA| = R|<local>/a|
+                        continue@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()]
+                    }
                 }
+
+                R|<local>/goodA|.R|/A.s|
             }
 
-            R|<local>/goodA|.R|/A.s|
         }
 
     }
@@ -132,23 +135,23 @@ FILE: boundSmartcastsInBranches.kt
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#
+                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
                 R|<local>/z|.R|kotlin/String.length|
             }
         }
 
         when () {
             !=(R|<local>/y|, Null(null)) ->  {
-                R|<local>/x|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
                 R|<local>/y|.R|kotlin/String.length|
-                R|<local>/z|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#
+                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
             }
         }
 
         when () {
             !=(R|<local>/z|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#
+                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
                 R|<local>/z|.R|kotlin/String.length|
             }
         }

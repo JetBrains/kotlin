@@ -111,8 +111,8 @@ enum class KtorServerEngine(val engineName: String, val dependencyName: String) 
     );
 
     override val text: String
-        get() = engineName.capitalize()
+        get() = engineName.replaceFirstChar(Char::uppercaseChar)
 
     val import: String
-        get() = "io.ktor.server.${engineName.decapitalize(Locale.US)}.${engineName.capitalize(Locale.US)}"
+        get() = "io.ktor.server.${engineName.replaceFirstChar(Char::lowercaseChar)}.${engineName.replaceFirstChar(Char::uppercaseChar)}"
 }

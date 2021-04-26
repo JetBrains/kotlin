@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal class DukatCompilationResolverPlugin(
+    @Transient
     private val resolver: KotlinCompilationNpmResolver
 ) : CompilationResolverPlugin {
     val project get() = resolver.project
     val nodeJs get() = resolver.nodeJs
-    val npmProject get() = resolver.npmProject
+    val versions by lazy { nodeJs.versions }
+    val npmProject by lazy { resolver.npmProject }
     val compilation get() = npmProject.compilation
     val compilationName by lazy {
         compilation.disambiguatedName
@@ -83,7 +85,7 @@ internal class DukatCompilationResolverPlugin(
     }
 
     override fun hookDependencies(
-        internalDependencies: Set<KotlinCompilationNpmResolver>,
+        internalDependencies: Set<KotlinCompilationNpmResolver.InternalDependency>,
         internalCompositeDependencies: Set<KotlinCompilationNpmResolver.CompositeDependency>,
         externalGradleDependencies: Set<KotlinCompilationNpmResolver.ExternalGradleDependency>,
         externalNpmDependencies: Set<NpmDependency>,
@@ -107,7 +109,7 @@ internal class DukatCompilationResolverPlugin(
         }
 
         DukatExecutor(
-            nodeJs,
+            versions,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
             externalsOutputFormat,
             npmProject,
@@ -145,16 +147,12 @@ internal fun gradleModelPostProcess(
     when (externalsOutputFormat) {
         ExternalsOutputFormat.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
         ExternalsOutputFormat.BINARY -> {
-            npmProject.externalsDir
-                .listFiles()
-                ?.filter { it.isCompatibleArchive }
-                ?.forEach {
-                    project.dependencies.add(
-                        compilation.compileDependencyConfigurationName,
-                        project.files(it)
-                    )
+            project.dependencies.add(
+                compilation.compileDependencyConfigurationName,
+                project.fileTree(npmProject.externalsDir).include {
+                    it.file.isCompatibleArchive
                 }
-
+            )
         }
     }
 }

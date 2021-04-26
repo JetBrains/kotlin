@@ -5,7 +5,7 @@ fun foo() {
     val a = Array<Int>(3, {0})
 
     for (p in a) {
-        <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
+        bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         if (x == null) continue
         bar(x)
         for (q in a) {
@@ -15,7 +15,7 @@ fun foo() {
     }
 
     for (p in a) {
-        <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
+        bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         if (x == null) break
         bar(x)
     }

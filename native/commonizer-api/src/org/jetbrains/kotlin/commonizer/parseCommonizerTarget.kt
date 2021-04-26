@@ -9,6 +9,14 @@ import org.jetbrains.kotlin.commonizer.IdentityStringSyntaxNode.LeafTargetSyntax
 import org.jetbrains.kotlin.commonizer.IdentityStringSyntaxNode.SharedTargetSyntaxNode
 import org.jetbrains.kotlin.commonizer.IdentityStringToken.*
 
+public fun parseCommonizerTargetOrNull(identityString: String): CommonizerTarget? {
+    return try {
+        parseCommonizerTarget(identityString)
+    } catch (t: IllegalArgumentException) {
+        null
+    }
+}
+
 public fun parseCommonizerTarget(identityString: String): CommonizerTarget {
     try {
         val tokens = tokenizeIdentityString(identityString)
@@ -46,8 +54,8 @@ private sealed class IdentityStringToken {
         return when (this) {
             is Word -> value
             is Separator -> ", "
-            is SharedTargetStart -> "["
-            is SharedTargetEnd -> "]"
+            is SharedTargetStart -> "("
+            is SharedTargetEnd -> ")"
         }
     }
 }
@@ -118,11 +126,11 @@ private data class AnyOfParser<T : Any>(val parsers: List<Parser<T>>) : Parser<T
     }
 }
 
-private fun <T : Any> Parser<T>.oneOrMore(): Parser<List<T>> {
-    return OneOrMoreParser(this)
+private fun <T : Any> Parser<T>.zeroOrMore(): Parser<List<T>> {
+    return ZeroOrMoreParser(this)
 }
 
-private data class OneOrMoreParser<T : Any>(val parser: Parser<T>) : Parser<List<T>> {
+private data class ZeroOrMoreParser<T : Any>(val parser: Parser<T>) : Parser<List<T>> {
     override fun invoke(tokens: List<IdentityStringToken>): ParserOutput<List<T>>? {
         val outputs = mutableListOf<T>()
         var remainingTokens = tokens
@@ -131,9 +139,6 @@ private data class OneOrMoreParser<T : Any>(val parser: Parser<T>) : Parser<List
             if (output.remaining == remainingTokens) break
             outputs.add(output.value)
             remainingTokens = output.remaining
-        }
-        if (outputs.isEmpty()) {
-            return null
         }
         return ParserOutput(outputs.toList(), remainingTokens)
     }
@@ -162,12 +167,12 @@ private object SharedTargetParser : Parser<SharedTargetSyntaxNode> {
     override fun invoke(tokens: List<IdentityStringToken>): ParserOutput<SharedTargetSyntaxNode>? {
         if (tokens.firstOrNull() !is SharedTargetStart) return null
 
-        val innerParser = anyOf(LeafTargetParser, SharedTargetParser).ignore(Separator).oneOrMore()
+        val innerParser = anyOf(LeafTargetParser, SharedTargetParser).ignore(Separator).zeroOrMore()
         val innerParserOutput = innerParser(tokens.drop(1)) ?: return null
 
         val closingToken = innerParserOutput.remaining.firstOrNull()
         if (closingToken != SharedTargetEnd) {
-            error("Missing ']' at ${tokens.joinToString("")}")
+            error("Missing '${SharedTargetEnd}' at ${tokens.joinToString("")}")
         }
 
         return ParserOutput(SharedTargetSyntaxNode(innerParserOutput.value), innerParserOutput.remaining.drop(1))

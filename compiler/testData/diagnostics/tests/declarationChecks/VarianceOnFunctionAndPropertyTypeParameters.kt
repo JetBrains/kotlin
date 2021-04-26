@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun <<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> T> f() {
     
 }

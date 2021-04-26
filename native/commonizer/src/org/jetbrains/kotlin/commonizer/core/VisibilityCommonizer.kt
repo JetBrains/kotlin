@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty
 import org.jetbrains.kotlin.commonizer.cir.CirHasVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 
 abstract class VisibilityCommonizer : Commonizer<CirHasVisibility, Visibility> {
 

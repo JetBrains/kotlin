@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.compose
 
 class FirAnnotationArgumentsResolveTransformer(
     session: FirSession,
@@ -47,49 +45,49 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     override fun transformWrappedDelegateExpression(
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return wrappedDelegateExpression.compose()
+    ): FirStatement {
+        return wrappedDelegateExpression
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return regularClass.transformAnnotations(this, data).transformDeclarations(this, data).compose()
+    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
+        return regularClass.transformAnnotations(this, data).transformDeclarations(this, data)
     }
 
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode
-    ): CompositeTransformResult<FirDeclaration> {
-        return anonymousInitializer.compose()
+    ): FirDeclaration {
+        return anonymousInitializer
     }
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
-    ): CompositeTransformResult<FirSimpleFunction> {
-        return simpleFunction.transformAnnotations(this, data).compose()
+    ): FirSimpleFunction {
+        return simpleFunction.transformAnnotations(this, data)
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        return constructor.transformAnnotations(this, data).compose()
+    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirDeclaration {
+        return constructor.transformAnnotations(this, data)
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return valueParameter.transformAnnotations(this, data).compose()
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
+        return valueParameter.transformAnnotations(this, data)
     }
 
-    override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
+    override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
         property.transformAnnotations(this, data)
         property.transformGetter(this, data)
         property.transformSetter(this, data)
-        return property.compose()
+        return property
     }
 
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         data: ResolutionMode
-    ): CompositeTransformResult<FirDeclaration> {
+    ): FirDeclaration {
         propertyAccessor.transformAnnotations(this, data)
-        return propertyAccessor.compose()
+        return propertyAccessor
     }
 }
 
@@ -99,16 +97,16 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
 ) : FirExpressionsResolveTransformer(transformer) {
     private var annotationArgumentsMode: Boolean = false
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
         if (annotationArgumentsMode) {
             return resolveAnnotationCall(annotationCall, FirAnnotationResolveStatus.PartiallyResolved)
         }
 
         annotationCall.transformAnnotationTypeRef(transformer, data)
         val classId = annotationCall.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId
-            ?: return annotationCall.compose()
+            ?: return annotationCall
         if (classId.asSingleFqName() !in annotations) {
-            return annotationCall.compose()
+            return annotationCall
         }
         annotationArgumentsMode = true
         return resolveAnnotationCall(annotationCall, FirAnnotationResolveStatus.PartiallyResolved).also {
@@ -116,82 +114,82 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
         }
     }
 
-    override fun transformExpression(expression: FirExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return expression.compose()
+    override fun transformExpression(expression: FirExpression, data: ResolutionMode): FirStatement {
+        return expression
     }
 
     override fun FirQualifiedAccessExpression.isAcceptableResolvedQualifiedAccess(): Boolean {
         return calleeReference !is FirErrorNamedReference
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return functionCall.compose()
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
+        return functionCall
     }
 
-    override fun transformBlock(block: FirBlock, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return block.compose()
+    override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
+        return block
     }
 
     override fun transformThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return thisReceiverExpression.compose()
+    ): FirStatement {
+        return thisReceiverExpression
     }
 
     override fun transformComparisonExpression(
         comparisonExpression: FirComparisonExpression,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return comparisonExpression.compose()
+    ): FirStatement {
+        return comparisonExpression
     }
 
     override fun transformTypeOperatorCall(
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return typeOperatorCall.compose()
+    ): FirStatement {
+        return typeOperatorCall
     }
 
     override fun transformCheckNotNullCall(
         checkNotNullCall: FirCheckNotNullCall,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return checkNotNullCall.compose()
+    ): FirStatement {
+        return checkNotNullCall
     }
 
     override fun transformBinaryLogicExpression(
         binaryLogicExpression: FirBinaryLogicExpression,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return binaryLogicExpression.compose()
+    ): FirStatement {
+        return binaryLogicExpression
     }
 
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return variableAssignment.compose()
+    ): FirStatement {
+        return variableAssignment
     }
 
     override fun transformCallableReferenceAccess(
         callableReferenceAccess: FirCallableReferenceAccess,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return callableReferenceAccess.compose()
+    ): FirStatement {
+        return callableReferenceAccess
     }
 
     override fun transformDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return delegatedConstructorCall.compose()
+    ): FirStatement {
+        return delegatedConstructorCall
     }
 
     override fun transformAugmentedArraySetCall(
         augmentedArraySetCall: FirAugmentedArraySetCall,
         data: ResolutionMode
-    ): CompositeTransformResult<FirStatement> {
-        return augmentedArraySetCall.compose()
+    ): FirStatement {
+        return augmentedArraySetCall
     }
 }

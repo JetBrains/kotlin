@@ -48,7 +48,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         val psiFiles = environment.getSourceFiles()
         files += psiFiles.size
-        lines += psiFiles.sumBy { StringUtil.countNewLines(it.text) }
+        lines += psiFiles.sumOf { StringUtil.countNewLines(it.text) }
         totalTime += time
         measure.time += time
         measure.vmCounters += vmAfter - vmBefore

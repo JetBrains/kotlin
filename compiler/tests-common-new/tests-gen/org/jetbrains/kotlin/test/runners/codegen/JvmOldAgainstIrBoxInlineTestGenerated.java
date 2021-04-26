@@ -299,6 +299,12 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
         }
 
         @Test
+        @TestMetadata("kt41174.kt")
+        public void testKt41174() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt41174.kt");
+        }
+
+        @Test
         @TestMetadata("kt42815.kt")
         public void testKt42815() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt42815.kt");
@@ -2903,6 +2909,12 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
         }
 
         @Test
+        @TestMetadata("kt9304.kt")
+        public void testKt9304() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt9304.kt");
+        }
+
+        @Test
         @TestMetadata("nestedNonLocals.kt")
         public void testNestedNonLocals() throws Exception {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/nestedNonLocals.kt");
@@ -3658,6 +3670,12 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
         @TestMetadata("kt18977.kt")
         public void testKt18977() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt18977.kt");
+        }
+
+        @Test
+        @TestMetadata("kt28234.kt")
+        public void testKt28234() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt28234.kt");
         }
 
         @Test

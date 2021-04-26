@@ -21,6 +21,7 @@
  */
 // TODO: Licenses.
 
+@file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
 // Access to the decomposition tables. =========================================================================

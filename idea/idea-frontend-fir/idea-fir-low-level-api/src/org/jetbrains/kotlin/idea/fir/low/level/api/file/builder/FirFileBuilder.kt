@@ -50,6 +50,7 @@ internal class FirFileBuilder(
         ktFile: KtFile,
         cache: ModuleFileCache,
         @Suppress("SameParameterValue") toPhase: FirResolvePhase,
+        scopeSession: ScopeSession,
         checkPCE: Boolean
     ): FirFile {
         val needResolve = toPhase > FirResolvePhase.RAW_FIR
@@ -57,7 +58,13 @@ internal class FirFileBuilder(
         if (needResolve) {
             cache.firFileLockProvider.withWriteLock(firFile) {
                 if (firFile.resolvePhase >= toPhase) return@withWriteLock
-                runResolveWithoutLock(firFile, fromPhase = firFile.resolvePhase, toPhase = toPhase, checkPCE = checkPCE)
+                runResolveWithoutLock(
+                    firFile,
+                    fromPhase = firFile.resolvePhase,
+                    toPhase = toPhase,
+                    scopeSession = scopeSession,
+                    checkPCE = checkPCE,
+                )
             }
         }
         return firFile
@@ -76,13 +83,13 @@ internal class FirFileBuilder(
         firFile: FirFile,
         fromPhase: FirResolvePhase,
         toPhase: FirResolvePhase,
-        checkPCE: Boolean
+        scopeSession: ScopeSession,
+        checkPCE: Boolean,
     ) {
         assert(fromPhase <= toPhase) {
             "Trying to resolve file ${firFile.name} from $fromPhase to $toPhase"
         }
         var currentPhase = fromPhase
-        val scopeSession = ScopeSession()
         while (currentPhase < toPhase) {
             if (checkPCE) checkCanceled()
             currentPhase = currentPhase.next

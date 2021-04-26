@@ -249,6 +249,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
+    open fun visitStringConcatenationCallNode(node: StringConcatenationCallNode) {
+        visitNode(node)
+    }
+
     open fun visitThrowExceptionNode(node: ThrowExceptionNode) {
         visitNode(node)
     }
@@ -536,6 +540,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode, data: Nothing?) {
         visitDelegatedConstructorCallNode(node)
+    }
+
+    final override fun visitStringConcatenationCallNode(node: StringConcatenationCallNode, data: Nothing?) {
+        visitStringConcatenationCallNode(node)
     }
 
     final override fun visitThrowExceptionNode(node: ThrowExceptionNode, data: Nothing?) {

@@ -50,7 +50,7 @@ fun test() {
   val z = 1
 
   when (z) {
-    else -> 1
+    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> 1
     1 -> 2
   }
 

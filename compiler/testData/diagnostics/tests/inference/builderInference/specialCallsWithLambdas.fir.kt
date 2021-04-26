@@ -119,28 +119,28 @@ fun poll5(): Flow<String> {
 
 fun poll7(): Flow<String> {
     return flow {
-        val inv = {}!!
+        val inv = {}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>
         inv()
     }
 }
 
 fun poll71(): Flow<String> {
     return flow {
-        val inv = {1f}!!
+        val inv = {1f}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>
         inv()
     }
 }
 
 fun poll72(): Flow<String> {
     return flow {
-        val inv = {{}}!!
+        val inv = {{}}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>
         inv()
     }
 }
 
 fun poll73(): Flow<String> {
     return flow {
-        val inv = ({})!!
+        val inv = ({})<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>
         inv
     }
 }
@@ -189,7 +189,7 @@ fun poll85(): Flow<String> {
 
 fun poll86(): Flow<String> {
     return flow {
-        val inv = {({"1"})}!! in setOf({({"1f"})}!!)
+        val inv = {({"1"})}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!> in setOf({({"1f"})}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>)
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }

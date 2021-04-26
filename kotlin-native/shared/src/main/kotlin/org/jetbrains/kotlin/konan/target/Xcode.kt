@@ -35,6 +35,24 @@ interface Xcode {
     val additionalTools: String
     val simulatorRuntimes: String
 
+    /**
+     * TODO: `toLowerCase` is deprecated and should be replaced with `lowercase`, but
+     * this code used in buildSrc which depends on bootstrap version of stdlib, so right version
+     * of this function isn't available, please replace warning suppression with right function
+     * when compatible version of bootstrap will be available.
+     */
+    @Suppress("DEPRECATION")
+    fun pathToPlatformSdk(platformName: String): String = when (platformName.toLowerCase()) {
+        "macosx" -> macosxSdk
+        "iphoneos" -> iphoneosSdk
+        "iphonesimulator" -> iphonesimulatorSdk
+        "appletvos" -> appletvosSdk
+        "appletvsimulator" -> appletvsimulatorSdk
+        "watchos" -> watchosSdk
+        "watchsimulator" -> watchsimulatorSdk
+        else -> error("Unknown Apple platform: $platformName")
+    }
+
     companion object {
         val current: Xcode by lazy {
             CurrentXcode

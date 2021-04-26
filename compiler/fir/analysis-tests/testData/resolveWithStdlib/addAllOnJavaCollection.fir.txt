@@ -1,7 +1,7 @@
 FILE: addAllOnJavaCollection.kt
     public final fun foo(): R|kotlin/Unit| {
         lval y: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(Alpha), String(Beta)))
-        lval x: R|java/util/LinkedHashSet<kotlin/String>| = R|java/util/LinkedHashSet.LinkedHashSet|<R|kotlin/String|>().R|kotlin/apply|<R|java/util/LinkedHashSet<kotlin/String>|>(<L> = apply@fun R|java/util/LinkedHashSet<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        lval x: R|java/util/LinkedHashSet<kotlin/String>| = R|java/util/LinkedHashSet.LinkedHashSet|<R|kotlin/String|>().R|kotlin/apply|<R|java/util/LinkedHashSet<kotlin/String>|>(<L> = apply@fun R|java/util/LinkedHashSet<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|SubstitutionOverride<java/util/LinkedHashSet.addAll: R|kotlin/Boolean|>|(R|<local>/y|)
         }
         )

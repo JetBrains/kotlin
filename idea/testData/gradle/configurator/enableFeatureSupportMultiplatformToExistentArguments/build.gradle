@@ -2,6 +2,7 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        mavenLocal()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}"
@@ -11,8 +12,12 @@ apply plugin: "kotlin-multiplatform"
 repositories {
     jcenter()
     mavenCentral()
+    mavenLocal()
 }
 kotlin {
+    targets {
+        fromPreset(presets.jvm, 'jvm')
+    }
     sourceSets {
         commonMain {
             dependencies {

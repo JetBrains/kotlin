@@ -14,7 +14,7 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
     private val map = ConcurrentHashMap<K, Any>()
 
     override fun getValue(key: K, context: CONTEXT): V =
-        map.computeIfAbsentWithNullableValue(key) { createValue(it, context) }
+        map.getOrPutWithNullableValue(key) { createValue(it, context) }
 
     override fun getValueIfComputed(key: K): V? =
         map[key]?.nullValueToNull()

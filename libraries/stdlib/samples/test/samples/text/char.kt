@@ -35,7 +35,7 @@ class Chars {
         val chars = listOf('\u0000', '\u000E', '\u0009', '1', 'a')
         val (isoControls, notIsoControls) = chars.partition { it.isISOControl() }
         // some ISO-control char codes
-        assertPrints(isoControls.map(Char::toInt), "[0, 14, 9]")
+        assertPrints(isoControls.map(Char::code), "[0, 14, 9]")
         // non-ISO-control chars
         assertPrints(notIsoControls, "[1, a]")
     }
@@ -61,7 +61,7 @@ class Chars {
         val chars = listOf(' ', '\t', '\n', '1', 'a', '\u00A0')
         val (whitespaces, notWhitespaces) = chars.partition { it.isWhitespace() }
         // whitespace char codes
-        assertPrints(whitespaces.map(Char::toInt), "[32, 9, 10, 160]")
+        assertPrints(whitespaces.map(Char::code), "[32, 9, 10, 160]")
         // non-whitespace chars
         assertPrints(notWhitespaces, "[1, a]")
     }

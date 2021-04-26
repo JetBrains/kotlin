@@ -1,7 +1,7 @@
 FILE: contractDescription.kt
     public? final? fun test_1(): R|kotlin/Unit|
         [Contract description] <
-            contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+            contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 callsInPlace#()
             }
             )
@@ -12,7 +12,7 @@ FILE: contractDescription.kt
     }
     public? final? fun test_2(): R|kotlin/Unit|
         [Contract description] <
-            kotlin#.contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+            kotlin#.contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 callsInPlace#()
                 callsInPlace#()
             }
@@ -25,7 +25,7 @@ FILE: contractDescription.kt
     public? final? var test_3: Int = IntegerLiteral(1)
         public? get(): Int
             [Contract description] <
-                contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+                contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     callsInPlace#()
                 }
                 )
@@ -36,7 +36,7 @@ FILE: contractDescription.kt
         }
         public? set(value: Int): R|kotlin/Unit|
             [Contract description] <
-                kotlin#.contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+                kotlin#.contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     callsInPlace#()
                     callsInPlace#()
                 }
@@ -58,21 +58,21 @@ FILE: contractDescription.kt
         contract#()
     }
     public? final? fun test_6(): R|kotlin/Unit| {
-        aaa#.bbb#.ccc#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+        aaa#.bbb#.ccc#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             ^@contract Unit
         }
         )
         test_6#()
     }
     public? final? fun test_7(): R|kotlin/Unit| {
-        contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+        contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             ^@contract Unit
         }
         )
         test_7#()
     }
     public? final? fun test_8(): R|kotlin/Unit| {
-        aaa#.kotlin#.contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+        aaa#.kotlin#.contracts#.contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             ^@contract Unit
         }
         )

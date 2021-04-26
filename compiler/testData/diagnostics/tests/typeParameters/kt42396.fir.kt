@@ -13,5 +13,5 @@ fun <F> wrapAAndBToOut(x: F): Out<F> where F : A, F : B = Out()
 fun main(a: A) {
     val x: Out<A> = materializeOutOfAAndB() // OI: inferred type A is not a subtype of B; `F` is instantiated as `A`, so upper bounds was violated
     val y: Inv<A> = materializeInvOfAAndB() // OI and NI: required B, found A
-    val z: Out<A> = <!INAPPLICABLE_CANDIDATE!>wrapAAndBToOut<!>(a) // OI and NI: required B, found A
+    val z: Out<A> = wrapAAndBToOut(<!ARGUMENT_TYPE_MISMATCH!>a<!>) // OI and NI: required B, found A
 }

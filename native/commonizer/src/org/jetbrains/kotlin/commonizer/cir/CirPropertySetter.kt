@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
+import org.jetbrains.kotlin.commonizer.utils.Interner
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.commonizer.utils.Interner
 
 interface CirPropertySetter : CirDeclaration, CirPropertyAccessor, CirHasVisibility {
     val parameterAnnotations: List<CirAnnotation>

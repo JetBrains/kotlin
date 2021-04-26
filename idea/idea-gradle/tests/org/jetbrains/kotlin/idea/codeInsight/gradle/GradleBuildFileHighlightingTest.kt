@@ -13,14 +13,15 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Ignore
 import org.junit.Test
 
-class GradleBuildFileHighlightingTest : GradleImportingTestCase() {
+class GradleBuildFileHighlightingTest : MultiplePluginVersionGradleImportingTestCase() {
 
-    @TargetVersions("4.8+")
+    @PluginTargetVersions(gradleVersion = "4.8+")
     @Test
     fun testKtsInJsProject() {
         val file = configureByFiles().buildGradleKtsFile()
@@ -30,7 +31,7 @@ class GradleBuildFileHighlightingTest : GradleImportingTestCase() {
     }
 
     @Ignore
-    @TargetVersions("4.8+")
+    @PluginTargetVersions(gradleVersion = "4.8+")
     @Test
     fun testComplexBuildGradleKts() {
         val file = configureByFiles().buildGradleKtsFile()

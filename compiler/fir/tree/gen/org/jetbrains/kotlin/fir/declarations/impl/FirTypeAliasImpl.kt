@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirTypeAliasImpl(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
@@ -51,18 +51,23 @@ internal class FirTypeAliasImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
         transformStatus(transformer, data)
         transformTypeParameters(transformer, data)
-        expandedTypeRef = expandedTypeRef.transformSingle(transformer, data)
+        transformExpandedTypeRef(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
-        status = status.transformSingle(transformer, data)
+        status = status.transform(transformer, data)
         return this
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
         typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformExpandedTypeRef(transformer: FirTransformer<D>, data: D): FirTypeAliasImpl {
+        expandedTypeRef = expandedTypeRef.transform(transformer, data)
         return this
     }
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.TypeAliasCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -54,6 +55,12 @@ internal class PersistentIrTypeAlias(
         get() = symbol.descriptor
 
     override var typeParametersField: List<IrTypeParameter> = emptyList()
+
+    override var typeParametersSymbolField: List<IrTypeParameterSymbol>
+        get() = typeParametersField.map { it.symbol }
+        set(v) {
+            typeParametersField = v.map { it.owner }
+        }
 
     override var typeParameters: List<IrTypeParameter>
         get() = getCarrier().typeParametersField

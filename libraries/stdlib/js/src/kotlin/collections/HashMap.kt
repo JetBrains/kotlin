@@ -32,7 +32,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
         override operator fun iterator(): MutableIterator<MutableEntry<K, V>> = internalMap.iterator()
 
-        override fun remove(element: MutableEntry<K, V>): Boolean {
+        override fun removeEntry(element: Map.Entry<K, V>): Boolean {
             if (contains(element)) {
                 this@HashMap.remove(element.key)
                 return true

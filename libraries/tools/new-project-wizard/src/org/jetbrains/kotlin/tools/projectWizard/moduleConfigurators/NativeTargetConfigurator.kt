@@ -21,7 +21,7 @@ interface NativeTargetConfigurator : TargetConfigurator {
 class RealNativeTargetConfigurator private constructor(
     override val moduleSubType: ModuleSubType
 ) : NativeTargetConfigurator, SimpleTargetConfigurator {
-    override val text: String = moduleSubType.name.capitalize(Locale.US)
+    override val text: String = moduleSubType.name.replaceFirstChar(Char::uppercaseChar)
     override val isDesktopTarget: Boolean
         get() = moduleSubType.isNativeDesktop
 

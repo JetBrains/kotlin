@@ -27,8 +27,9 @@ internal abstract class KotlinToolRunner(
 
     open val execSystemProperties: Map<String, String> = emptyMap()
     open val execSystemPropertiesBlacklist: Set<String> = setOf(
-        "java.endorsed.dirs", // Fix for KT-25887
-        "user.dir"            // Don't propagate the working dir of the current Gradle process
+        "java.endorsed.dirs",       // Fix for KT-25887
+        "user.dir",                 // Don't propagate the working dir of the current Gradle process
+        "java.system.class.loader"  // Don't use custom class loaders
     )
 
     abstract val classpath: Set<File>

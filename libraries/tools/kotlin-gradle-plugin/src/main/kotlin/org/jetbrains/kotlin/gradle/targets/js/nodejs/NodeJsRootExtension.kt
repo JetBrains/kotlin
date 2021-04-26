@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
+import java.io.Serializable
 
-open class NodeJsRootExtension(@Transient val rootProject: Project) : ConfigurationPhaseAware<NodeJsEnv>() {
+open class NodeJsRootExtension(@Transient val rootProject: Project) : ConfigurationPhaseAware<NodeJsEnv>(), Serializable {
     init {
         check(rootProject.rootProject == rootProject)
     }
@@ -64,6 +66,9 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
 
     val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>?
         get() = rootProject?.tasks?.withType(RootPackageJsonTask::class.java)?.named(RootPackageJsonTask.NAME)
+
+    val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>?
+        get() = rootProject?.tasks?.withType(KotlinNpmCachesSetup::class.java)?.named(KotlinNpmCachesSetup.NAME)
 
     val rootPackageDir: File by lazy {
         rootProject.buildDir.resolve("js")

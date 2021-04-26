@@ -32,7 +32,7 @@ class KotlinScopeProvider(
         scopeSession: ScopeSession
     ): FirTypeScope {
         return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
-            val declaredScope = declaredMemberScope(klass)
+            val declaredScope = useSiteSession.declaredMemberScope(klass)
             val decoratedDeclaredMemberScope =
                 declaredMemberScopeDecorator(klass, declaredScope, useSiteSession, scopeSession)
 
@@ -58,13 +58,13 @@ class KotlinScopeProvider(
         scopeSession: ScopeSession
     ): FirScope? {
         return when (klass.classKind) {
-            ClassKind.ENUM_CLASS -> FirOnlyCallablesScope(FirStaticScope(declaredMemberScope(klass)))
+            ClassKind.ENUM_CLASS -> FirOnlyCallablesScope(FirStaticScope(useSiteSession.declaredMemberScope(klass)))
             else -> null
         }
     }
 
     override fun getNestedClassifierScope(klass: FirClass<*>, useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
-        return nestedClassifierScope(klass)
+        return useSiteSession.nestedClassifierScope(klass)
     }
 }
 
@@ -125,7 +125,7 @@ fun ConeKotlinType.scopeForSupertype(
 private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
     if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
     val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type, useSiteSession)
-    return substitutorByMap(originalSubstitution)
+    return substitutorByMap(originalSubstitution, useSiteSession)
 }
 
 fun FirClass<*>.scopeForSupertype(

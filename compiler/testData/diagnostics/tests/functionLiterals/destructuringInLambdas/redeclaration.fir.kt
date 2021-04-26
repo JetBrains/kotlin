@@ -23,7 +23,7 @@ fun bar() {
     }
 
     foo { (a, b), (c, b) ->
-        <!UNRESOLVED_REFERENCE!>a<!> checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+        a checkType { _<Int>() }
         b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
         c checkType { <!INAPPLICABLE_CANDIDATE!>_<!><B>() }
     }

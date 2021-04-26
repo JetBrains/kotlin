@@ -31,7 +31,7 @@ fun test() {
             val t3 = bar(::baz)
             t3
 
-            bar(::<!UNRESOLVED_REFERENCE!>foo<!>)
+            bar(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
         }
     }
 }

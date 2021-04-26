@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -29,6 +30,10 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val calleeReference: FirThisReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReceiverExpression(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformThisReceiverExpression(this, data) as E
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: FirSourceElement?)

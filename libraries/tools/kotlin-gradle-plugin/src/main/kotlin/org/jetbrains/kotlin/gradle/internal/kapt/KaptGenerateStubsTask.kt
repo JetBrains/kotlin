@@ -38,7 +38,9 @@ import javax.inject.Inject
 open class KaptGenerateStubsTask @Inject constructor(
     objectFactory: ObjectFactory
 ) : KotlinCompile() {
-    override val sourceRootsContainer = FilteringSourceRootsContainer(emptyList(), { isSourceRootAllowed(it) })
+
+    @field:Transient
+    override val sourceRootsContainer = FilteringSourceRootsContainer(objectFactory, { isSourceRootAllowed(it) })
 
     override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
 
@@ -109,10 +111,11 @@ open class KaptGenerateStubsTask @Inject constructor(
     }
 
     private val sourceRoots by project.provider {
-        kotlinCompileTask.getSourceRoots().let {
-            val javaSourceRoots = it.javaSourceRoots.filterTo(HashSet()) { isSourceRootAllowed(it) }
-            val kotlinSourceFiles = it.kotlinSourceFiles.filterTo(ArrayList()) { isSourceRootAllowed(it) }
-            SourceRoots.ForJvm(kotlinSourceFiles, javaSourceRoots)
+        kotlinCompileTask.getSourceRoots().let { compileTaskSourceRoots ->
+            SourceRoots.ForJvm(
+                compileTaskSourceRoots.kotlinSourceFiles.filterTo(mutableListOf()) { isSourceRootAllowed(it) },
+                javaSourceRootsProvider = { compileTaskSourceRoots.javaSourceRoots.filterTo(mutableSetOf()) { isSourceRootAllowed(it) } }
+            )
         }
     }
 

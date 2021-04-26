@@ -8,7 +8,7 @@ class Delegate {
 fun foo(): Int {
     val prop: Int by Delegate()
 
-    val prop2: Int by <!UNRESOLVED_REFERENCE!>123<!>
+    val prop2: Int by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>123<!>
 
     val obj = object {
         fun v(): Int {

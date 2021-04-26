@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.analyse
@@ -320,7 +320,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
     // we can't prohibit creating light classes with null names either since they can contain members
 
     analyzeWithSymbolAsContext(this) {
-        getDeclaredMemberScope().getAllSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
+        getDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
             FirLightClassForSymbol(it, manager)
         }
     }

@@ -10,5 +10,5 @@ fun foo(y: MyClass?): Int {
 fun bar(y: MyClass?) {
     y?.x!!.length
     // !! is NOT necessary here, because y?.x != null
-    y!!.x
+    y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.x
 }

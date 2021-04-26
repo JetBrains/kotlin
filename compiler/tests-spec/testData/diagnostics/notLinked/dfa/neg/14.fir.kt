@@ -4,7 +4,7 @@
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Int?) {
-    if ((x is Int) ?: (x is Int)) {
+    if ((x is Int) <!USELESS_ELVIS!>?: (x is Int)<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
     }

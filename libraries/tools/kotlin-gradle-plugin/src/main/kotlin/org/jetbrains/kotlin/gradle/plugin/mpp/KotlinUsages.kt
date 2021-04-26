@@ -19,38 +19,48 @@ object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
+    const val KOTLIN_SOURCES = "kotlin-sources"
 
     val values = setOf(KOTLIN_API, KOTLIN_RUNTIME)
 
     private val jvmPlatformTypes: Set<KotlinPlatformType> = setOf(jvm, androidJvm)
 
-    internal fun consumerApiUsage(target: KotlinTarget) = target.project.usageByName(
-        when (target.platformType) {
+    internal fun consumerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+        when (platformType) {
             in jvmPlatformTypes -> JAVA_API
             else -> KOTLIN_API
         }
     )
 
-    internal fun consumerRuntimeUsage(target: KotlinTarget) = target.project.usageByName(
-        when (target.platformType) {
+    internal fun consumerApiUsage(target: KotlinTarget): Usage =
+        consumerApiUsage(target.project, target.platformType)
+
+    internal fun consumerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+        when (platformType) {
             in jvmPlatformTypes -> JAVA_RUNTIME
             else -> KOTLIN_RUNTIME
         }
     )
 
-    internal fun producerApiUsage(target: KotlinTarget) = target.project.usageByName(
-        when (target.platformType) {
+    internal fun consumerRuntimeUsage(target: KotlinTarget) = consumerRuntimeUsage(target.project, target.platformType)
+
+    internal fun producerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+        when (platformType) {
             in jvmPlatformTypes -> "java-api-jars"
             else -> KOTLIN_API
         }
     )
 
-    internal fun producerRuntimeUsage(target: KotlinTarget) = target.project.usageByName(
-        when (target.platformType) {
+    internal fun producerApiUsage(target: KotlinTarget) = producerApiUsage(target.project, target.platformType)
+
+    internal fun producerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+        when (platformType) {
             in jvmPlatformTypes -> "java-runtime-jars"
             else -> KOTLIN_RUNTIME
         }
     )
+
+    internal fun producerRuntimeUsage(target: KotlinTarget) = producerRuntimeUsage(target.project, target.platformType)
 
     private class KotlinJavaRuntimeJarsCompatibility : AttributeCompatibilityRule<Usage> {
         // When Gradle resolves a plain old JAR dependency with no metadata attached, the Usage attribute of that dependency

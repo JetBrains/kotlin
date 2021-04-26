@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfoCollector
+import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -156,7 +158,6 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
             reporter,
             context
         )
-        checkPropertyAccessors(property, reporter, context)
         checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
 
         val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList

@@ -1,0 +1,11 @@
+package
+
+public fun testArray(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun testMyArray(/*0*/ b: kotlin.Boolean): kotlin.Unit
+
+public final class MyArray</*0*/ T> {
+    public constructor MyArray</*0*/ T>(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> T)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

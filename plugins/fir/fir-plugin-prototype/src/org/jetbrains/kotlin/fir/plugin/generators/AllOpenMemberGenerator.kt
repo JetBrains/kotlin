@@ -40,12 +40,12 @@ class AllOpenMemberGenerator(session: FirSession) : FirDeclarationGenerationExte
         val owner = owners.last() as? FirRegularClass ?: return emptyList()
         val propertyName = annotatedDeclaration.name.identifier
         val function = buildSimpleFunction {
-            session = this@AllOpenMemberGenerator.session
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = annotatedDeclaration.returnTypeRef
             status = annotatedDeclaration.status
-            name = Name.identifier("hello${propertyName.capitalize()}")
+            name = Name.identifier("hello${propertyName.replaceFirstChar(Char::uppercaseChar)}")
             symbol = FirNamedFunctionSymbol(CallableId(owner.classId, name))
         }
         return listOf(GeneratedDeclaration(function, owner))

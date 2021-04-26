@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 
 class KotlinJvmWithJavaTargetPreset(
-    private val project: Project,
-    private val kotlinPluginVersion: String
+    private val project: Project
 ) : KotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions>> {
 
     override fun getName(): String = PRESET_NAME
@@ -36,7 +35,7 @@ class KotlinJvmWithJavaTargetPreset(
         }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
-            Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(name), compilation, kotlinPluginVersion)
+            Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilation)
         }
 
         target.compilations.getByName("test").run {

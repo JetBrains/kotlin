@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.references
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.name.Name
@@ -22,4 +23,8 @@ abstract class FirResolvedNamedReference : FirNamedReference() {
     abstract val resolvedSymbol: AbstractFirBasedSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedNamedReference(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformResolvedNamedReference(this, data) as E
 }

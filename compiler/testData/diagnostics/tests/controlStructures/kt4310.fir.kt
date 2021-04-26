@@ -2,11 +2,11 @@
 package f
 
 fun test(a: Boolean, b: Boolean): Int {
-    return if(a) {
+    return <!RETURN_TYPE_MISMATCH!>if(a) {
         1
     } else {
         if (b) {
             3
         }
-    }
+    }<!>
 }

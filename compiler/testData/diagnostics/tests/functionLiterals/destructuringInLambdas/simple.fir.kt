@@ -36,13 +36,13 @@ fun bar() {
     }
 
     foobar { (a, b), (c, d) ->
-        <!UNRESOLVED_REFERENCE!>a<!> checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
-        <!UNRESOLVED_REFERENCE!>b<!> checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        a checkType { _<Int>() }
+        b checkType { _<String>() }
         c checkType { _<Double>() }
         d checkType { _<Short>() }
     }
 
-    foo { (a: String, b) ->
+    foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b) ->
         a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
         b checkType { _<String>() }
     }

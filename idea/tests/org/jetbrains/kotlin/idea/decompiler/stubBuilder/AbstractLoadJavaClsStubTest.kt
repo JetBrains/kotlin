@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClsStubBuilder
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -43,6 +44,9 @@ abstract class AbstractLoadJavaClsStubTest : TestCaseWithTmpdir() {
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true)
         }
+
+        AbstractLoadJavaTest.updateConfigurationWithDirectives(ktFile.readText(), configuration)
+
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         environment.projectEnvironment.environment.application.registerService(
             IDEKotlinBinaryClassCache::class.java,

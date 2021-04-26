@@ -27,16 +27,20 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
         val script =
             //language=Gradle
             """
-            gradle.taskGraph.beforeTask { Task task ->
-                if (task instanceof Test || task instanceof JavaExec) {
-                    def kotlinxCoroutinesCoreJar = task.classpath.find { it.name.startsWith("kotlinx-coroutines-core") }
-                    if (kotlinxCoroutinesCoreJar) {
-                        def results = (kotlinxCoroutinesCoreJar.getName() =~ /kotlinx-coroutines-core(\-jvm)?-(\d[\w\.\-]+)\.jar${'$'}/).findAll()
-                        if (results) {
-                            def version = results.first()[2]
-                            def referenceVersion = org.gradle.util.VersionNumber.parse('1.3.7-255')
-                            if (org.gradle.util.VersionNumber.parse(version) > referenceVersion) {
-                                task.jvmArgs ("-javaagent:${'$'}{kotlinxCoroutinesCoreJar?.absolutePath}", "-ea")
+            gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
+                taskGraph.allTasks.each { Task task ->
+                    if (task instanceof Test || task instanceof JavaExec) {
+                        task.doFirst { Task forkedTask ->
+                            def kotlinxCoroutinesCoreJar = forkedTask.classpath.find { it.name.startsWith("kotlinx-coroutines-core") }
+                            if (kotlinxCoroutinesCoreJar) {
+                                def results = (kotlinxCoroutinesCoreJar.getName() =~ /kotlinx-coroutines-core(\-jvm)?-(\d[\w\.\-]+)\.jar${'$'}/).findAll()
+                                if (results) {
+                                    def version = results.first()[2]
+                                    def referenceVersion = org.gradle.util.VersionNumber.parse('1.3.7-255')
+                                    if (org.gradle.util.VersionNumber.parse(version) > referenceVersion) {
+                                        forkedTask.jvmArgs ("-javaagent:${'$'}{kotlinxCoroutinesCoreJar?.absolutePath}", "-ea")
+                                    }
+                                }
                             }
                         }
                     }

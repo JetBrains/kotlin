@@ -16,7 +16,7 @@ open enum class Z : Enum<Z> {
     fun test() {
     }
 
-    inner class A {
+    local inner class A {
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
@@ -36,3 +36,4 @@ open enum class Z : Enum<Z> {
   fun valueOf(value: String): Z /* Synthetic body for ENUM_VALUEOF */
 
 }
+

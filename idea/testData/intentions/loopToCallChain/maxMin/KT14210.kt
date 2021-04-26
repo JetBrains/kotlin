@@ -1,6 +1,6 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'filter{}.max()'"
-// INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.max()'"
+// INTENTION_TEXT: "Replace with 'filter{}.maxOrNull()'"
+// INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.maxOrNull()'"
 fun f(list: List<Int>) {
     var result = -1
     <caret>for (item in list)

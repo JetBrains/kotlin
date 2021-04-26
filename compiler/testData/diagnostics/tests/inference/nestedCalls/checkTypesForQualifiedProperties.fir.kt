@@ -1,7 +1,7 @@
 package a
 
 fun test(c: C) {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(c.b)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>c.b<!>)
 }
 
 fun foo(s: String) = s

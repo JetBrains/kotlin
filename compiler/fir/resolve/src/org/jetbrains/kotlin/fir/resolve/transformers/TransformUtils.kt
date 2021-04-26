@@ -14,83 +14,81 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
 
 internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): E {
+        return element
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: FirTypeRef): CompositeTransformResult<FirTypeRef> {
-        return data.compose()
+    override fun transformTypeRef(typeRef: FirTypeRef, data: FirTypeRef): FirTypeRef {
+        return data
     }
 }
 
 internal object TransformImplicitType : FirDefaultTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): E {
+        return element
     }
 
     override fun transformImplicitTypeRef(
         implicitTypeRef: FirImplicitTypeRef,
         data: FirTypeRef
-    ): CompositeTransformResult<FirTypeRef> {
-        return data.compose()
+    ): FirTypeRef {
+        return data
     }
 }
 
 
 internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): E {
+        return element
     }
 
     override fun transformNamedReference(
         namedReference: FirNamedReference,
         data: FirNamedReference
-    ): CompositeTransformResult<FirNamedReference> {
-        return data.compose()
+    ): FirNamedReference {
+        return data
     }
 
-    override fun transformThisReference(thisReference: FirThisReference, data: FirNamedReference): CompositeTransformResult<FirReference> {
-        return data.compose()
+    override fun transformThisReference(thisReference: FirThisReference, data: FirNamedReference): FirReference {
+        return data
     }
 
     override fun transformSuperReference(
         superReference: FirSuperReference,
         data: FirNamedReference
-    ): CompositeTransformResult<FirReference> {
-        return data.compose()
+    ): FirReference {
+        return data
     }
 }
 
 internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): E {
+        return element
     }
 
     override fun transformNamedReference(
         namedReference: FirNamedReference,
         data: FirNamedReference
-    ): CompositeTransformResult<FirNamedReference> {
-        return data.compose()
+    ): FirNamedReference {
+        return data
     }
 
     override fun transformResolvedNamedReference(
         resolvedNamedReference: FirResolvedNamedReference,
         data: FirNamedReference
-    ): CompositeTransformResult<FirNamedReference> {
-        return data.compose()
+    ): FirNamedReference {
+        return data
     }
 }
 
 internal object StoreReceiver : FirTransformer<FirExpression>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirExpression): CompositeTransformResult<E> {
+    override fun <E : FirElement> transformElement(element: E, data: FirExpression): E {
         @Suppress("UNCHECKED_CAST")
-        return (data as E).compose()
+        return (data as E)
     }
 }
 

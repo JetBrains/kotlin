@@ -51,6 +51,8 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean {
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ *
+ * @sample samples.text.Strings.replace
  */
 public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String {
     return if (!ignoreCase)
@@ -63,13 +65,16 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
 private external fun String.replace(oldChar: Char, newChar: Char): String
 
 private fun String.replaceIgnoreCase(oldChar: Char, newChar: Char): String {
-    val charArray = CharArray(length)
-    val oldCharLower = oldChar.lowercaseChar()
+    val charArray = this.toCharArray()
+    val oldCharUpper = oldChar.uppercaseChar()
+    val oldCharLower = oldCharUpper.lowercaseChar()
 
     for (index in 0 until length) {
         val thisChar = this[index]
-        val thisCharLower = thisChar.lowercaseChar()
-        charArray[index] = if (thisCharLower == oldCharLower) newChar else thisChar
+        if (thisChar != oldChar && thisChar.uppercaseChar().let { it != oldCharUpper && it.lowercaseChar() != oldCharLower }) {
+            continue
+        }
+        charArray[index] = newChar
     }
 
     return charArray.concatToString()
@@ -78,6 +83,8 @@ private fun String.replaceIgnoreCase(oldChar: Char, newChar: Char): String {
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
+ *
+ * @sample samples.text.Strings.replace
  */
 public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String =
         splitToSequence(oldValue, ignoreCase = ignoreCase).joinToString(separator = newValue)
@@ -186,9 +193,9 @@ private external fun String.unsafeRangeEquals(thisOffset: Int, other: String, ot
 // Bounds must be checked before calling this method
 private fun String.unsafeRangeEqualsIgnoreCase(thisOffset: Int, other: String, otherOffset: Int, length: Int): Boolean {
     for (index in 0 until length) {
-        val thisCharLower = this[thisOffset + index].lowercaseChar()
-        val otherCharLower = other[otherOffset + index].lowercaseChar()
-        if (thisCharLower != otherCharLower) {
+        val thisCharUpper = this[thisOffset + index].uppercaseChar()
+        val otherCharUpper = other[otherOffset + index].uppercaseChar()
+        if (thisCharUpper != otherCharUpper && thisCharUpper.lowercaseChar() != otherCharUpper.lowercaseChar()) {
             return false
         }
     }
@@ -198,6 +205,8 @@ private fun String.unsafeRangeEqualsIgnoreCase(thisOffset: Int, other: String, o
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
+@Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.toUpperCase(): String = uppercaseImpl()
 
 /**
@@ -215,6 +224,8 @@ public actual fun String.uppercase(): String = uppercaseImpl()
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
+@Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.toLowerCase(): String = lowercaseImpl()
 
 /**
@@ -246,7 +257,10 @@ private external fun toCharArray(string: String, start: Int, size: Int): CharArr
  *
  * @sample samples.text.Strings.capitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.capitalize(): String {
+    @Suppress("DEPRECATION")
     return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
@@ -256,7 +270,10 @@ public actual fun String.capitalize(): String {
  *
  * @sample samples.text.Strings.decapitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
+    @Suppress("DEPRECATION")
     return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
@@ -291,6 +308,7 @@ public actual fun CharSequence.repeat(n: Int): String {
  * Converts the characters in the specified array to a string.
  */
 @Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray): String = chars.concatToString()
 
 /**
@@ -300,6 +318,7 @@ public actual fun String(chars: CharArray): String = chars.concatToString()
  * or `offset + length` is out of [chars] array bounds.
  */
 @Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || offset + length > chars.size)
         throw ArrayIndexOutOfBoundsException()
@@ -327,6 +346,18 @@ public actual fun CharArray.concatToString(startIndex: Int, endIndex: Int): Stri
     checkBoundsIndexes(startIndex, endIndex, size)
     return unsafeStringFromCharArray(this, startIndex, endIndex - startIndex)
 }
+
+internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
+    if (startIndex < 0 || endIndex > size) {
+        throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
+    }
+    if (startIndex > endIndex) {
+        throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
+    }
+}
+
+@SymbolName("Kotlin_String_unsafeStringFromCharArray")
+internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
 
 /**
  * Returns a [CharArray] containing characters of this string or its substring.
@@ -399,12 +430,24 @@ public actual fun String.encodeToByteArray(startIndex: Int, endIndex: Int, throw
         unsafeStringToUtf8(startIndex, endIndex - startIndex)
 }
 
+@SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8")
+internal external fun ByteArray.unsafeStringFromUtf8(start: Int, size: Int) : String
+
+@SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8OrThrow")
+internal external fun ByteArray.unsafeStringFromUtf8OrThrow(start: Int, size: Int) : String
+
+@SymbolName("Kotlin_String_unsafeStringToUtf8")
+internal external fun String.unsafeStringToUtf8(start: Int, size: Int) : ByteArray
+
+@SymbolName("Kotlin_String_unsafeStringToUtf8OrThrow")
+internal external fun String.unsafeStringToUtf8OrThrow(start: Int, size: Int) : ByteArray
+
 internal fun compareToIgnoreCase(thiz: String, other: String): Int {
     val length = minOf(thiz.length, other.length)
 
     for (index in 0 until length) {
-        val thisLowerChar = thiz[index].lowercaseChar()
-        val otherLowerChar = other[index].lowercaseChar()
+        val thisLowerChar = thiz[index].uppercaseChar().lowercaseChar()
+        val otherLowerChar = other[index].uppercaseChar().lowercaseChar()
         if (thisLowerChar != otherLowerChar) {
             return if (thisLowerChar < otherLowerChar) -1 else 1
         }

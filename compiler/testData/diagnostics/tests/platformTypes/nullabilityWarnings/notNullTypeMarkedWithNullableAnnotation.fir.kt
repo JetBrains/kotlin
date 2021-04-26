@@ -13,9 +13,9 @@ public class J {
 fun list(j: J): Any {
     val a = j.n()!!
 
-    a?.get(0)
+    a<!UNNECESSARY_SAFE_CALL!>?.<!>get(0)
     if (a == null) {}
-    a!!
+    a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 
     a.get(0)
     return a

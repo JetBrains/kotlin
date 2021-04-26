@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.konan.library.konanCommonLibraryPath
 import org.jetbrains.kotlin.konan.library.konanPlatformLibraryPath
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Assert.*
 import org.junit.Test
-import org.junit.runners.Parameterized
 import java.io.File
 
 
@@ -30,6 +30,7 @@ class GradleNativeLibrariesInIDENamingTest : TestCaseWithFakeKotlinNative() {
 
     // Test naming of Kotlin/Native libraries
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testLibrariesNaming() {
         configureProject()
         importProject()
@@ -40,13 +41,6 @@ class GradleNativeLibrariesInIDENamingTest : TestCaseWithFakeKotlinNative() {
     override fun getExternalSystemConfigFileName() = GradleConstants.KOTLIN_DSL_SCRIPT_NAME
 
     override fun testDataDirName() = "nativeLibraries"
-
-    companion object {
-        @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
-        @Throws(Throwable::class)
-        @JvmStatic
-        fun data() = listOf(arrayOf("4.10.2"))
-    }
 }
 
 private val NATIVE_LIBRARY_NAME_REGEX = Regex("^Kotlin/Native ([\\d\\w\\.-]+) - ([\\w\\d]+)( \\[([\\w\\d_]+)\\])?$")

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirAnonymousObjectImpl(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
@@ -61,8 +61,8 @@ internal class FirAnonymousObjectImpl(
         transformSuperTypeRefs(transformer, data)
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
-        typeRef = typeRef.transformSingle(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         return this
     }
 

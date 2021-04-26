@@ -53,7 +53,7 @@ private fun processSingleClasspathEntry(rootFile: File): Map<String, DeclaredPro
     for (line in text) {
         val parts = line.split(",")
         if (parts.size == 2) {
-            val kind = parts[1].toUpperCase(Locale.ENGLISH)
+            val kind = parts[1].uppercase()
             if (INCREMENTAL_DECLARED_TYPES.contains(kind)) {
                 nameToType[parts[0]] = enumValueOf(kind)
             }

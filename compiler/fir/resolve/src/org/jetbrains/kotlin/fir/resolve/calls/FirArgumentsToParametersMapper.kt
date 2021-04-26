@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.asForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.fir.resolve.getAsForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
@@ -85,7 +86,7 @@ fun BodyResolveComponents.mapArguments(
         }
     }
 
-    val processor = FirCallArgumentsProcessor(function, this, originScope)
+    val processor = FirCallArgumentsProcessor(session, function, this, originScope)
     processor.processArgumentsInParenthesis(argumentsInParenthesis)
     if (externalArgument != null) {
         processor.processExternalArgument(externalArgument)
@@ -96,6 +97,7 @@ fun BodyResolveComponents.mapArguments(
 }
 
 private class FirCallArgumentsProcessor(
+    private val useSiteSession: FirSession,
     private val function: FirFunction<*>,
     private val bodyResolveComponents: BodyResolveComponents,
     private val originScope: FirScope?,
@@ -109,7 +111,7 @@ private class FirCallArgumentsProcessor(
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
-        function.asForbiddenNamedArgumentsTarget
+        function.getAsForbiddenNamedArgumentsTarget(useSiteSession)
     }
 
     private enum class State {

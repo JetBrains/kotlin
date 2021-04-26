@@ -9,7 +9,7 @@ fun call(x: String) {}
 fun foo(x: Float, y: Float) = {
     var newValue = 1
     newValue += listOf<Int>().asSequence().fold(0) { total, next ->
-        <!INAPPLICABLE_CANDIDATE!>call<!>(11)
+        call(<!ARGUMENT_TYPE_MISMATCH!>11<!>)
         total + next
     }
     newValue += listOf<Int>().asSequence().fold(0, fun(total, next): Int { return total + next })
@@ -26,7 +26,7 @@ fun <T> id(x: T) = x
 
 fun foo2() = {
     var x = A()
-    x <!INAPPLICABLE_CANDIDATE!>+=<!> { "" }
+    x += { <!ARGUMENT_TYPE_MISMATCH!>""<!> }
     var y = A()
     y += 1
 }

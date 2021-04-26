@@ -51,7 +51,7 @@ internal class DigitRangesWriter(private val strategy: RangesWritingStrategy) : 
          * Returns `true` if this character is a digit.
          */
         internal fun Char.isDigitImpl(): Boolean {
-            val ch = this.toInt()
+            val ch = this.code
             val index = binarySearchRange($rangeStart, ch)
             val high = $rangeStart[index] + 9
             return ch <= high

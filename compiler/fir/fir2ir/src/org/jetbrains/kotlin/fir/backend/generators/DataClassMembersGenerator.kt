@@ -263,7 +263,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 this.name = name
                 this.symbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
                 this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
-                this.session = components.session
+                declarationSiteSession = components.session
                 this.returnTypeRef = when (returnType) {
                     components.irBuiltIns.booleanType -> FirImplicitBooleanTypeRef(null)
                     components.irBuiltIns.intType -> FirImplicitIntTypeRef(null)
@@ -275,7 +275,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                         buildValueParameter {
                             this.name = Name.identifier("other")
                             origin = FirDeclarationOrigin.Synthetic
-                            this.session = components.session
+                            declarationSiteSession = components.session
                             this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
                             this.symbol = FirVariableSymbol(this.name)
                             isCrossinline = false

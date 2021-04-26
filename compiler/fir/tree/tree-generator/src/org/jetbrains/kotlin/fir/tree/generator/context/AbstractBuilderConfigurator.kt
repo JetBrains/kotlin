@@ -131,7 +131,7 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
             thisRef: Nothing?,
             prop: KProperty<*>
         ): ReadOnlyProperty<Nothing?, IntermediateBuilder> {
-            val name = name ?: "Fir${prop.name.capitalize()}"
+            val name = name ?: "Fir${prop.name.replaceFirstChar(Char::uppercaseChar)}"
             builder = IntermediateBuilder(name).apply {
                 firTreeBuilder.intermediateBuilders += this
                 IntermediateBuilderConfigurationContext(this).block()

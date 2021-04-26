@@ -4,13 +4,13 @@ fun interface Good {
     fun invoke()
 }
 
-fun interface Foo1
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface Foo1
 
-fun interface Foo2 {
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface Foo2 {
 
 }
 
-fun interface Foo3 {
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface Foo3 {
     fun foo()
     fun bar()
 }
@@ -19,7 +19,7 @@ interface BaseWithSAM {
     fun base()
 }
 
-fun interface Foo4 : BaseWithSAM {
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface Foo4 : BaseWithSAM {
     fun oneMore()
 }
 
@@ -37,17 +37,17 @@ fun interface Foo4WithBaseDefault : BaseWithDefault {
 
 fun interface GoodWithBase : BaseWithSAM
 
-fun interface Foo5 {
-    val prop: Int
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface Foo5 {
+    <!FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES!>val<!> prop: Int
 }
 
 fun interface Foo6 {
     fun foo()
-    val prop: Int
+    <!FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES!>val<!> prop: Int
 }
 
 fun interface Foo7 : BaseWithSAM {
-    val prop: Int
+    <!FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES!>val<!> prop: Int
 }
 
 fun interface GoodWithPropAndBase : BaseWithSAM {
@@ -55,7 +55,7 @@ fun interface GoodWithPropAndBase : BaseWithSAM {
 }
 
 fun interface Foo8 {
-    fun <T> invoke(x: T)
+    fun <!FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS!><T><!> invoke(x: T)
 }
 
 fun interface GoodGeneric<T> {
@@ -66,7 +66,7 @@ interface BaseWithGeneric {
     fun <T> invoke(x: T)
 }
 
-fun interface Foo9 : BaseWithGeneric
+<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS!>fun<!> interface Foo9 : BaseWithGeneric
 
 fun interface GoodExtensionGeneric : GoodGeneric<String>
 
@@ -75,7 +75,7 @@ fun interface GoodSuspend {
 }
 
 class WithNestedFun<K> {
-    fun interface NestedSimple
+    <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface NestedSimple
 
     fun interface GoodFun {
         fun invoke()
@@ -93,12 +93,12 @@ fun <T> local() {
 }
 
 fun interface WithDefaultValue {
-    fun invoke(s: String = "")
+    fun invoke(<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>s: String = ""<!>)
 }
 
 interface BaseWithDefaultValue {
     fun invoke(s: String = "")
 }
 
-fun interface DeriveDefault : BaseWithDefaultValue
+<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>fun<!> interface DeriveDefault : BaseWithDefaultValue
 

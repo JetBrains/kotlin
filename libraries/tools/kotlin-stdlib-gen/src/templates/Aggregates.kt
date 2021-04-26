@@ -221,6 +221,8 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
     } builder {
+        deprecate(Deprecation("Use sumOf instead.", "this.sumOf(selector)", DeprecationLevel.WARNING, warningSince = "1.5"))
+
         inline()
         doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
         returns("Int")
@@ -291,6 +293,8 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
     } builder {
+        deprecate(Deprecation("Use sumOf instead.", "this.sumOf(selector)", DeprecationLevel.WARNING, warningSince = "1.5"))
+
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -326,7 +330,7 @@ object Aggregates : TemplateGroupBase() {
                 val isFloat = primitive?.isFloatingPoint() == true
 
                 if (!nullable) {
-                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull()", DeprecationLevel.WARNING, warningSince = "1.4"))
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull()", warningSince = "1.4", errorSince = "1.5"))
 
                     val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
                     if (isFloat && isGeneric) {
@@ -393,7 +397,7 @@ object Aggregates : TemplateGroupBase() {
                 returns("T?")
 
                 if (!nullable) {
-                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(selector)", DeprecationLevel.WARNING, warningSince = "1.4"))
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(selector)", warningSince = "1.4", errorSince = "1.5"))
                     body { "return ${op}OrNull(selector)" }
                     return@builder
                 }
@@ -460,7 +464,7 @@ object Aggregates : TemplateGroupBase() {
                 returns("T?")
 
                 if (!nullable) {
-                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(comparator)", DeprecationLevel.WARNING, warningSince = "1.4"))
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(comparator)", warningSince = "1.4", errorSince = "1.5"))
                     body { "return ${op}OrNull(comparator)" }
                     return@builder
                 }
@@ -1750,72 +1754,6 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
-
-    val f_scanReduce = fn("scanReduce(operation: (acc: T, T) -> T)") {
-        include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
-    } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.ERROR))
-
-        specialFor(CharSequences) { inline() }
-        specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
-
-        returns("List<T>")
-
-        body { "return runningReduce(operation)" }
-    }
-
-    val f_scanReduceIndexed = fn("scanReduceIndexed(operation: (index: Int, acc: T, T) -> T)") {
-        include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
-    } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.ERROR))
-
-        specialFor(CharSequences) { inline() }
-        specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
-
-        returns("List<T>")
-
-        body { "return runningReduceIndexed(operation)" }
-    }
-
-    val f_scanReduceSuper = fn("scanReduce(operation: (acc: S, T) -> S)") {
-        include(ArraysOfObjects, Iterables, Sequences)
-    } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.ERROR))
-
-        specialFor(ArraysOfObjects, Iterables) { inline() }
-
-        typeParam("S")
-        typeParam("T : S")
-
-        returns("List<S>")
-        specialFor(Sequences) { returns("Sequence<S>") }
-        body { "return runningReduce(operation)" }
-    }
-
-    val f_scanReduceIndexedSuper = fn("scanReduceIndexed(operation: (index: Int, acc: S, T) -> S)") {
-        include(ArraysOfObjects, Iterables, Sequences)
-    } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.ERROR))
-
-        specialFor(ArraysOfObjects, Iterables) { inline() }
-
-        typeParam("S")
-        typeParam("T : S")
-
-        returns("List<S>")
-        specialFor(Sequences) { returns("Sequence<S>") }
-
-        body { "return runningReduceIndexed(operation)" }
-
-    }
 
     val f_onEach = fn("onEach(action: (T) -> Unit)") {
         includeDefault()

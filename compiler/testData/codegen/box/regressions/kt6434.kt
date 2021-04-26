@@ -17,8 +17,8 @@ class C(val nums: Map<E, Int>) {
 
     private fun loadNormalizedNums(): Map<E, Float> {
         val vals = nums.values
-        val min = vals.min()!!
-        val max = vals.max()!!
+        val min = vals.minOrNull()!!
+        val max = vals.maxOrNull()!!
         val rangeDiff = (max - min).toFloat()
         val normalizedNums = nums.map { kvp ->
             val (e, num) = kvp

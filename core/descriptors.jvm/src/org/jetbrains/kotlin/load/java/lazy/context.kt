@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.resolve.jvm.SyntheticJavaPartsProvider
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.StorageManager
@@ -63,7 +64,8 @@ class JavaResolverComponents(
     val javaClassesTracker: JavaClassesTracker,
     val settings: JavaResolverSettings,
     val kotlinTypeChecker: NewKotlinTypeChecker,
-    val javaTypeEnhancementState: JavaTypeEnhancementState
+    val javaTypeEnhancementState: JavaTypeEnhancementState,
+    val syntheticPartsProvider: SyntheticJavaPartsProvider = SyntheticJavaPartsProvider.EMPTY
 ) {
     fun replace(
         javaResolverCache: JavaResolverCache = this.javaResolverCache

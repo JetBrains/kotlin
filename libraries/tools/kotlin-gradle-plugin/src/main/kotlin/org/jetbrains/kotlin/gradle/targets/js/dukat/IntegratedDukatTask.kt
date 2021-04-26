@@ -17,10 +17,19 @@ open class IntegratedDukatTask
 constructor(
     compilation: KotlinJsCompilation
 ) : DukatTask(compilation) {
+    init {
+        onlyIf {
+            dts.isNotEmpty() || npmProject.externalsDirRoot.resolve("inputs.txt").exists()
+        }
+    }
 
     override val considerGeneratingFlag: Boolean = true
 
     private val npmProject = compilation.npmProject
+
+    private val versions by lazy {
+        nodeJs.versions
+    }
 
     @get:OutputDirectory
     override val destinationDir: File by lazy {
@@ -29,7 +38,7 @@ constructor(
 
     private val executor
         get() = DukatExecutor(
-            nodeJs,
+            versions,
             dts,
             externalsOutputFormat,
             npmProject,

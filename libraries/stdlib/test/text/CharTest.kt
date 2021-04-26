@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,16 @@ package test.text
 import kotlin.test.*
 
 class CharTest {
+
+    companion object {
+        val equalIgnoreCaseGroups = listOf(
+            "Aa", "Zz", "üÜ", "öÖ", "äÄ",
+            "KkK", "Ssſ", "µΜμ", "ÅåÅ",
+            "Ǆǅǆ", "Ǉǈǉ", "Ǌǋǌ", "Ǳǲǳ", "ͅΙιι", "Ββϐ", "Εεϵ",
+            "Κκϰ", "Ππϖ", "Ρρϱ", "Σςσ", "Φφϕ", "ΩωΩ", "Ṡṡẛ",
+            "Θθϑϴ", "Iiİı",
+        )
+    }
 
     @Test
     fun charFromIntCode() {
@@ -72,7 +82,7 @@ class CharTest {
 
         for (char in 'A'..'Z') {
             val digit = 10 + (char - 'A')
-            val lower = char.toLowerCase()
+            val lower = char.lowercaseChar()
 
             for (radix in digit + 1..36) {
                 testEquals(digit, char, radix)
@@ -145,6 +155,20 @@ class CharTest {
         testFails(100, radix = 110)
     }
 
+    @Test
+    fun equalsIgnoreCase() {
+        val nonEqual = equalIgnoreCaseGroups.flatMap { allEqualChars ->
+            allEqualChars.flatMap { c1 -> allEqualChars.mapNotNull { c2 ->
+                    if (!c1.equals(c2, ignoreCase = true)) "$c1 != $c2" else null
+                }
+            }
+        }
+        if (nonEqual.isNotEmpty()) {
+            fail("Expected chars to be equal ignoring case:\n${nonEqual.joinToString("\n")}")
+        }
+    }
+
+
     private fun charToCategory() = mapOf(
         '\u0378' to "Cn",
         'A' to "Lu",    // \u0041
@@ -181,7 +205,7 @@ class CharTest {
     @Test
     fun charCategory() {
         for ((char, categoryCode) in charToCategory()) {
-            assertEquals(categoryCode, char.category.code, "char code: ${char.toInt().toString(radix = 16)}")
+            assertEquals(categoryCode, char.category.code, "char code: ${char.code.toString(radix = 16)}")
         }
     }
 

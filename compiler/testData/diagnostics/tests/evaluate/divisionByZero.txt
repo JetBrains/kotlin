@@ -1,6 +1,9 @@
 package
 
 public val a1: kotlin.Int = 0
+public val a10: kotlin.Float = Infinity.toFloat()
+public val a11: kotlin.Double = Infinity.toDouble()
+public val a12: kotlin.Long
 public val a2: kotlin.Int
 public val a3: kotlin.Int
 public val a4: kotlin.Int
@@ -19,3 +22,4 @@ public final annotation class Ann : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

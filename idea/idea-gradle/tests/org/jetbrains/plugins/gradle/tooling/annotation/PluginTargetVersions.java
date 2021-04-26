@@ -16,5 +16,5 @@ public @interface PluginTargetVersions {
 
     String pluginVersion() default "1.3.50+";
 
-    String gradleVersionForLatestPlugin() default "";
+    boolean skipForMaster() default false;
 }

@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.kotlin.TestModule.Companion.default
-import org.jetbrains.kotlin.TestModule.Companion.support
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import java.io.File
 
 private const val MODULE_DELIMITER = ",\\s*"
 // These patterns are copies from
 // kotlin/compiler/tests-common/tests/org/jetbrains/kotlin/test/TestFiles.java
 // kotlin/compiler/tests-common/tests/org/jetbrains/kotlin/test/KotlinTestUtils.java
-private val FILE_OR_MODULE_PATTERN: Pattern = Pattern.compile("(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" +
-        "$MODULE_DELIMITER[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:$MODULE_DELIMITER[^()]+)*)\\))?\\s*)?//\\s*FILE:\\s*(.*)$",
-        Pattern.MULTILINE)
+private val MODULE_PATTERN: Pattern = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" +
+        MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\n")
+private val FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)\n")
+
 private val DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE)
 
 /**
@@ -32,42 +32,66 @@ fun buildCompileList(source: Path, outputDirectory: String): List<TestFile> {
     // Remove diagnostic parameters in external tests.
     val srcText = srcFile.readText().replace(Regex("<!.*?!>(.*?)<!>")) { match -> match.groupValues[1] }
 
+    var supportModule: TestModule? = null
     if (srcText.contains("// WITH_COROUTINES")) {
-        result.add(TestFile("helpers.kt", "$outputDirectory/helpers.kt", createTextForHelpers(), TestModule.support))
+        supportModule = TestModule.support()
+        result.add(TestFile("helpers.kt", "$outputDirectory/helpers.kt",
+                createTextForHelpers(), supportModule))
     }
 
-    val matcher = FILE_OR_MODULE_PATTERN.matcher(srcText)
-    if (!matcher.find()) {
+    val defaultModule = TestModule.default()
+    val moduleMatcher = MODULE_PATTERN.matcher(srcText)
+    val fileMatcher = FILE_PATTERN.matcher(srcText)
+    var nextModuleExists = moduleMatcher.find()
+    var nextFileExists = fileMatcher.find()
+
+    if (!nextModuleExists && !nextFileExists) {
         // There is only one file in the input
-        result.add(TestFile(srcFile.name, "$outputDirectory/${srcFile.name}", srcText))
+        result.add(TestFile(srcFile.name, "$outputDirectory/${srcFile.name}", srcText, defaultModule))
     } else {
         // There are several files
         var processedChars = 0
-        var module: TestModule = TestModule.default
-        var nextFileExists = true
-        while (nextFileExists) {
-            var moduleName = matcher.group(1)
-            val moduleDependencies = matcher.group(2)
-            val moduleFriends = matcher.group(3)
+        var module: TestModule = defaultModule
 
-            if (moduleName != null) {
-                moduleName = moduleName.trim { it <= ' ' }
-                module = TestModule("${srcFile.name}.$moduleName",
-                        moduleDependencies.parseModuleList().map {
-                            if (it != "support") "${srcFile.name}.$it" else it
-                        },
+        while (nextModuleExists || nextFileExists) {
+            if (nextModuleExists) {
+                var moduleName = moduleMatcher.group(1)
+                val moduleDependencies = moduleMatcher.group(2)
+                val moduleFriends = moduleMatcher.group(3)
+
+                if (moduleName != null) {
+                    moduleName = moduleName.trim { it <= ' ' }
+                    val dependencies = mutableListOf<String>().apply {
+                        addAll(moduleDependencies.parseModuleList())
+                        if (supportModule != null && !contains("support")) {
+                            add("support")
+                        }
+                    }.map {
+                        if (it != "support") "${srcFile.name}.$it" else it
+                    }
+                    module = TestModule("${srcFile.name}.$moduleName",
+                        dependencies,
                         moduleFriends.parseModuleList().map { "${srcFile.name}.$it" })
+                }
             }
 
-            val fileName = matcher.group(4)
-            val filePath = "$outputDirectory/$fileName"
-            val start = processedChars
-            nextFileExists = matcher.find()
-            val end = if (nextFileExists) matcher.start() else srcText.length
-            val fileText = srcText.substring(start, end)
-            processedChars = end
-            if (fileName.endsWith(".kt")) {
-                result.add(TestFile(fileName, filePath, fileText, module))
+            nextModuleExists = moduleMatcher.find()
+            while (nextFileExists) {
+                val fileName = fileMatcher.group(1)
+                val filePath = "$outputDirectory/$fileName"
+                val start = processedChars
+                nextFileExists = fileMatcher.find()
+                val end = when {
+                    nextFileExists && nextModuleExists -> Math.min(fileMatcher.start(), moduleMatcher.start())
+                    nextFileExists -> fileMatcher.start()
+                    else -> srcText.length
+                }
+                val fileText = srcText.substring(start, end)
+                processedChars = end
+                if (fileName.endsWith(".kt")) {
+                    result.add(TestFile(fileName, filePath, fileText, module))
+                }
+                if (nextModuleExists && nextFileExists && fileMatcher.start() > moduleMatcher.start()) break
             }
         }
     }
@@ -79,7 +103,7 @@ private fun String?.parseModuleList() = this
         ?: emptyList()
 
 /**
- * Test module from the test source declared by the [FILE_OR_MODULE_PATTERN].
+ * Test module from the test source declared by the [MODULE_PATTERN].
  * Module should have a [name] and could have [dependencies] on other modules and [friends].
  *
  * There are 2 predefined modules:
@@ -92,14 +116,15 @@ data class TestModule(
     val friends: List<String>
 ) {
     val files = mutableListOf<TestFile>()
-    fun isDefaultModule() = this == default || name.endsWith(".main")
+    fun isDefaultModule() = this.name == "default" || name.endsWith(".main")
+    fun isSupportModule() = this.name == "support"
 
     val hasVersions get() = this.files.any { it.version != null }
     fun versionFiles(version: Int) = this.files.filter { it.version == null || it.version == version }
 
     companion object {
-        val default = TestModule("default", emptyList(), emptyList())
-        val support = TestModule("support", emptyList(), emptyList())
+        @JvmStatic fun default() = TestModule("default", emptyList(), emptyList())
+        @JvmStatic fun support() = TestModule("support", emptyList(), emptyList())
     }
 }
 
@@ -110,7 +135,7 @@ data class TestFile(
     val name: String,
     val path: String,
     var text: String = "",
-    val module: TestModule = TestModule.default
+    val module: TestModule
 ) {
     init {
         this.module.files.add(this)
@@ -127,8 +152,8 @@ data class TestFile(
         val directiveMatcher: Matcher = DIRECTIVE_PATTERN.matcher(text)
         while (directiveMatcher.find()) {
             val name = directiveMatcher.group(1)
-            val value = directiveMatcher.group(3)
-            newDirectives.put(name, value)
+            val value = directiveMatcher.group(3) ?: ""
+            newDirectives[name] = value
         }
         return newDirectives
     }

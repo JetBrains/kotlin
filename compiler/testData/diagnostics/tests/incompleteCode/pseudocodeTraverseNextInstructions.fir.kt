@@ -1,8 +1,8 @@
 package b
 
 fun foo() {
-    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (i in <!UNRESOLVED_REFERENCE!>collection<!>) {
+    for (i in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>collection<!>) {
         {
          break
     }
-}<!><!SYNTAX!><!>
+}<!SYNTAX!><!>

@@ -3,7 +3,7 @@ fun foo(n: Number) = n
 
 fun test() {
     foo(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>'a'<!>)
-    
+
     val c = 'c'
     foo(<!TYPE_MISMATCH!>c<!>)
 

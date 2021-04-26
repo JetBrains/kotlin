@@ -611,7 +611,7 @@ internal class PreviousResolutionError(candidateLevel: CandidateApplicability) :
 internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResolutionError? {
     val level = when (status) {
         ResolutionStatus.SUCCESS, ResolutionStatus.INCOMPLETE_TYPE_INFERENCE -> return null
-        ResolutionStatus.UNSAFE_CALL_ERROR -> CandidateApplicability.MAY_THROW_RUNTIME_ERROR
+        ResolutionStatus.UNSAFE_CALL_ERROR -> CandidateApplicability.UNSAFE_CALL
         ResolutionStatus.ARGUMENTS_MAPPING_ERROR -> CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR
         ResolutionStatus.RECEIVER_TYPE_ERROR -> CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
         else -> CandidateApplicability.INAPPLICABLE

@@ -105,7 +105,7 @@ class IrFakeOverrideFunctionImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     name: Name,
-    override var visibility: DescriptorVisibility,
+    visibility: DescriptorVisibility,
     override var modality: Modality,
     returnType: IrType,
     isInline: Boolean,

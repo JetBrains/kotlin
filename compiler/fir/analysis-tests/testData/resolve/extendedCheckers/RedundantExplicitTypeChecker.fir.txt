@@ -57,7 +57,7 @@ FILE: RedundantExplicitTypeChecker.kt
 
     }
     public final fun foo(): R|kotlin/Unit| {
-        lval s: R|kotlin/String| = <strcat>(String(Hello ), Int(10).R|kotlin/Int.plus|(Int(1)).R|kotlin/Any.toString|())
+        lval s: R|kotlin/String| = <strcat>(String(Hello ), Int(10).R|kotlin/Int.plus|(Int(1)))
         lval str: R|kotlin/String?| = String()
         lval o: R|Obj| = Q|Obj|
         lval p: R|Point| = R|/PointImpl.PointImpl|(Int(1), Int(2))

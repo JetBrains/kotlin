@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -40,30 +41,30 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-fun String.parseCharacter(): Char? {
+fun String.parseCharacter(): CharacterWithDiagnostic {
     // Strip the quotes
     if (length < 2 || this[0] != '\'' || this[length - 1] != '\'') {
-        return null
+        return CharacterWithDiagnostic(DiagnosticKind.IncorrectCharacterLiteral)
     }
-    val text = substring(1, length - 1) // now there're no quotes
+    val text = substring(1, length - 1) // now there is no quotes
 
     if (text.isEmpty()) {
-        return null
+        return CharacterWithDiagnostic(DiagnosticKind.EmptyCharacterLiteral)
     }
 
     return if (text[0] != '\\') {
         // No escape
         if (text.length == 1) {
-            text[0]
+            CharacterWithDiagnostic(text[0])
         } else {
-            null
+            CharacterWithDiagnostic(DiagnosticKind.TooManyCharactersInCharacterLiteral)
         }
     } else {
         escapedStringToCharacter(text)
     }
 }
 
-fun escapedStringToCharacter(text: String): Char? {
+fun escapedStringToCharacter(text: String): CharacterWithDiagnostic {
     assert(text.isNotEmpty() && text[0] == '\\') {
         "Only escaped sequences must be passed to this routine: $text"
     }
@@ -73,39 +74,58 @@ fun escapedStringToCharacter(text: String): Char? {
     when (escape.length) {
         0 -> {
             // bare slash
-            return null
+            return CharacterWithDiagnostic(DiagnosticKind.IllegalEscape)
         }
         1 -> {
             // one-char escape
-            return translateEscape(escape[0]) ?: return null
+            return translateEscape(escape[0])
         }
         5 -> {
             // unicode escape
             if (escape[0] == 'u') {
                 try {
                     val intValue = Integer.valueOf(escape.substring(1), 16)
-                    return intValue.toInt().toChar()
+                    return CharacterWithDiagnostic(intValue.toInt().toChar())
                 } catch (e: NumberFormatException) {
                     // Will be reported below
                 }
             }
         }
     }
-    return null
+    return CharacterWithDiagnostic(DiagnosticKind.IllegalEscape)
 }
 
-internal fun translateEscape(c: Char): Char? =
+internal fun translateEscape(c: Char): CharacterWithDiagnostic =
     when (c) {
-        't' -> '\t'
-        'b' -> '\b'
-        'n' -> '\n'
-        'r' -> '\r'
-        '\'' -> '\''
-        '\"' -> '\"'
-        '\\' -> '\\'
-        '$' -> '$'
-        else -> null
+        't' -> CharacterWithDiagnostic('\t')
+        'b' -> CharacterWithDiagnostic('\b')
+        'n' -> CharacterWithDiagnostic('\n')
+        'r' -> CharacterWithDiagnostic('\r')
+        '\'' -> CharacterWithDiagnostic('\'')
+        '\"' -> CharacterWithDiagnostic('\"')
+        '\\' -> CharacterWithDiagnostic('\\')
+        '$' -> CharacterWithDiagnostic('$')
+        else -> CharacterWithDiagnostic(DiagnosticKind.IllegalEscape)
     }
+
+class CharacterWithDiagnostic {
+    private val diagnostic: DiagnosticKind?
+    val value: Char?
+
+    constructor(diagnostic: DiagnosticKind) {
+        this.diagnostic = diagnostic
+        this.value = null
+    }
+
+    constructor(value: Char) {
+        this.diagnostic = null
+        this.value = value
+    }
+
+    fun getDiagnostic(): DiagnosticKind? {
+        return diagnostic
+    }
+}
 
 fun IElementType.toBinaryName(): Name? {
     return OperatorConventions.BINARY_OPERATION_NAMES[this]
@@ -258,7 +278,7 @@ fun generateTemporaryVariable(
 ): FirVariable<*> =
     buildProperty {
         this.source = source
-        this.session = session
+        declarationSiteSession = session
         origin = FirDeclarationOrigin.Source
         returnTypeRef = typeRef ?: buildImplicitTypeRef {
             this.source = source
@@ -293,7 +313,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         else -> null
     }
     val isMember = ownerSymbol != null
-    val fakeSource = delegateBuilder.source?.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
+    val fakeSource = delegateBuilder.source?.fakeElement(FirFakeSourceElementKind.DelegatedPropertyAccessor)
 
     /*
      * If we have delegation with provide delegate then we generate call like
@@ -382,7 +402,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         getter = buildPropertyAccessor {
             this.source = fakeSource
-            this.session = session
+            declarationSiteSession = session
             origin = FirDeclarationOrigin.Source
             returnTypeRef = buildImplicitTypeRef()
             isGetter = true
@@ -414,14 +434,14 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         val annotations = setter?.annotations
         setter = buildPropertyAccessor {
             this.source = fakeSource
-            this.session = session
+            declarationSiteSession = session
             origin = FirDeclarationOrigin.Source
             returnTypeRef = session.builtinTypes.unitType
             isGetter = false
             status = FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
             val parameter = buildValueParameter {
                 source = fakeSource
-                this.session = session
+                declarationSiteSession = session
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
                 name = DELEGATED_SETTER_PARAM
@@ -437,6 +457,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     source = fakeSource
                     explicitReceiver = delegateAccess()
                     calleeReference = buildSimpleNamedReference {
+                        source = fakeSource
                         name = SET_VALUE
                     }
                     argumentList = buildArgumentList {
@@ -493,8 +514,7 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
     return receiverName == name
 }
 
-
-fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExpression {
+fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression, source: FirSourceElement): FirSafeCallExpression {
     val checkedSafeCallSubject = buildCheckedSafeCallSubject {
         @OptIn(FirContractViolation::class)
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
@@ -511,7 +531,7 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExp
             bind(checkedSafeCallSubject)
         }
         this.regularQualifiedAccess = this@wrapWithSafeCall
-        this.source = this@wrapWithSafeCall.source?.fakeElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
+        this.source = source
     }
 }
 

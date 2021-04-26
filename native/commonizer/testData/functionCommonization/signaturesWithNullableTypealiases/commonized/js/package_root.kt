@@ -1,3 +1,3 @@
 actual class Foo actual constructor()
 
-actual fun bar(x: TypeAlias?) { }
+actual fun bar(x: TypeAlias?) {}

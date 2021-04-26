@@ -22,5 +22,5 @@ import kotlin.test.*
     a[2] = 'l'
     a[3] = 'l'
     a[4] = 'o'
-    println("Hello".hashCode() == String(a, 0, 5).hashCode())
+    println("Hello".hashCode() == a.concatToString(0, 5).hashCode())
 }

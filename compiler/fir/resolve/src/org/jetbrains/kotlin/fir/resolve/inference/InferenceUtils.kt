@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
@@ -17,7 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -201,24 +204,25 @@ fun ConeKotlinType.isKClassType(): Boolean {
     return classId == StandardClassIds.KClass
 }
 
+private fun ConeTypeProjection.typeOrDefault(default: ConeKotlinType): ConeKotlinType =
+    when (this) {
+        is ConeKotlinTypeProjection -> type
+        is ConeStarProjection -> default
+    }
+
 fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
-    if (isBuiltinFunctionalType(session) && isExtensionFunctionType(session)) {
-        return (this.fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
-    }
-    return null
+    if (!isBuiltinFunctionalType(session) || !isExtensionFunctionType(session)) return null
+    return fullyExpandedType(session).typeArguments.first().typeOrDefault(session.builtinTypes.nothingType.type)
 }
 
-fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType? {
+fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType {
     require(this is ConeClassLikeType)
-    val projection = fullyExpandedType(session).typeArguments.last()
-    return (projection as? ConeKotlinTypeProjection)?.type
+    return fullyExpandedType(session).typeArguments.last().typeOrDefault(session.builtinTypes.nullableAnyType.type)
 }
 
-fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType?> {
+fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType> {
     require(this is ConeClassLikeType)
-    return fullyExpandedType(session).typeArguments.dropLast(1).map {
-        (it as? ConeKotlinTypeProjection)?.type
-    }
+    return fullyExpandedType(session).typeArguments.dropLast(1).map { it.typeOrDefault(session.builtinTypes.nothingType.type) }
 }
 
 val FirAnonymousFunction.returnType: ConeKotlinType? get() = returnTypeRef.coneTypeSafe()
@@ -246,17 +250,33 @@ fun extractLambdaInfoFromFunctionalType(
     }
     if (!expectedType.isBuiltinFunctionalType(session)) return null
 
-    val receiverType = argument.receiverType ?: expectedType.receiverType(session)
-    val lastStatement = argument.body?.statements?.singleOrNull()
-    val returnType =
+    val singleStatement = argument.body?.statements?.singleOrNull() as? FirReturnExpression
+    if (argument.returnType == null && singleStatement != null &&
+        singleStatement.target.labeledElement == argument && singleStatement.result is FirUnitExpression
+    ) {
         // Simply { }, i.e., function literals without body. Raw FIR added an implicit return with an implicit unit type ref.
-        if (lastStatement?.source?.kind is FirFakeSourceElementKind.ImplicitReturn &&
-            (lastStatement as? FirReturnExpression)?.result?.source?.kind is FirFakeSourceElementKind.ImplicitUnit
-        ) {
-            session.builtinTypes.unitType.type
-        } else
-            argument.returnType ?: expectedType.returnType(session) ?: return null
-    val parameters = extractLambdaParameters(expectedType, argument, expectedType.isExtensionFunctionType(session), session)
+        argument.replaceReturnTypeRef(session.builtinTypes.unitType)
+    }
+    val returnType = argument.returnType ?: expectedType.returnType(session)
+
+    // `fun (x: T) = ...` and `fun T.() = ...` are both instances of `T.() -> V` and `(T) -> V`; `fun () = ...` is not.
+    // For lambdas, the existence of the receiver is always implied by the expected type, and a value parameter
+    // can never fill its role.
+    val receiverType = if (argument.isLambda) expectedType.receiverType(session) else argument.receiverType
+    val expectedParameters = expectedType.valueParameterTypesIncludingReceiver(session).let {
+        if (receiverType != null && expectedType.isExtensionFunctionType(session)) it.drop(1) else it
+    }
+    val parameters = if (argument.isLambda && argument.valueParameters.isEmpty() && expectedParameters.size < 2) {
+        expectedParameters // Infer existence of a parameter named `it` of an appropriate type.
+    } else {
+        argument.valueParameters.mapIndexed { index, parameter ->
+            parameter.returnTypeRef.coneTypeSafe()
+                ?: expectedParameters.getOrNull(index)
+                ?: ConeClassErrorType(
+                    ConeSimpleDiagnostic("Cannot infer type for parameter ${parameter.name}", DiagnosticKind.CannotInferParameterType)
+                )
+        }
+    }
 
     return ResolvedLambdaAtom(
         argument,
@@ -268,36 +288,4 @@ fun extractLambdaInfoFromFunctionalType(
         typeVariableForLambdaReturnType = returnTypeVariable,
         candidate
     )
-}
-
-private fun extractLambdaParameters(
-    expectedType: ConeKotlinType,
-    argument: FirAnonymousFunction,
-    expectedTypeIsExtensionFunctionType: Boolean,
-    session: FirSession
-): List<ConeKotlinType> {
-    val parameters = argument.valueParameters
-    val expectedParameters = expectedType.extractParametersForFunctionalType(expectedTypeIsExtensionFunctionType, session)
-
-    val nullableAnyType = argument.session.builtinTypes.nullableAnyType.type
-    if (parameters.isEmpty()) {
-        return expectedParameters.map { it?.type ?: nullableAnyType }
-    }
-
-    return parameters.mapIndexed { index, parameter ->
-        parameter.returnTypeRef.coneTypeSafe() ?: expectedParameters.getOrNull(index) ?: nullableAnyType
-    }
-}
-
-private fun ConeKotlinType.extractParametersForFunctionalType(
-    isExtensionFunctionType: Boolean,
-    session: FirSession
-): List<ConeKotlinType?> {
-    return valueParameterTypesIncludingReceiver(session).let {
-        if (isExtensionFunctionType) {
-            it.drop(1)
-        } else {
-            it
-        }
-    }
 }

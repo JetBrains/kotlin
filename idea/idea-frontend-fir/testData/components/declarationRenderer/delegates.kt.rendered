@@ -1,0 +1,12 @@
+interface MyRwProperty<in T, V> {
+    operator fun setValue(thisRef: T, property: Any, value: V)
+    operator fun getValue(thisRef: T, property: Any): V
+}
+val x: Int
+    get()
+val delegate: MyRwProperty<Any?, Int>
+val value: Int
+    get()
+var variable: Int
+    get()
+    set(value: Int)

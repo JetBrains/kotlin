@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclaratio
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ComposedExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.ComposedTypeCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 
 @RequiresOptIn
@@ -25,6 +27,9 @@ class CheckersComponent : FirSessionComponent {
 
     val expressionCheckers: ExpressionCheckers get() = _expressionCheckers
     private val _expressionCheckers = ComposedExpressionCheckers()
+
+    val typeCheckers: TypeCheckers get() = _typeCheckers
+    private val _typeCheckers = ComposedTypeCheckers()
 
     @SessionConfiguration
     @OptIn(CheckersComponentInternal::class)
@@ -39,9 +44,16 @@ class CheckersComponent : FirSessionComponent {
     }
 
     @SessionConfiguration
+    @OptIn(CheckersComponentInternal::class)
+    fun register(checkers: TypeCheckers) {
+        _typeCheckers.register(checkers)
+    }
+
+    @SessionConfiguration
     fun register(checkers: FirAdditionalCheckersExtension) {
         register(checkers.declarationCheckers)
         register(checkers.expressionCheckers)
+        register(checkers.typeCheckers)
     }
 }
 

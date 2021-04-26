@@ -1,6 +1,6 @@
 fun find2(): Any? {
     fun visit(element: Any) {
-        return@find2 element
+        <!RETURN_NOT_ALLOWED!>return@find2<!> element
     }
     return null
 }
@@ -10,7 +10,7 @@ fun find2(): Any? {
 fun find(): Any? {
     object : Any() {
         fun visit(element: Any) {
-            return@find element
+            <!RETURN_NOT_ALLOWED!>return@find<!> element
         }
     }
     return null
@@ -18,7 +18,7 @@ fun find(): Any? {
 
 fun find4(): Any? {
     inline fun visit(element: Any) {
-        return@find4 element
+        <!RETURN_NOT_ALLOWED!>return@find4<!> element
     }
     return null
 }
@@ -26,7 +26,7 @@ fun find4(): Any? {
 fun find3(): Any? {
     object : Any() {
         inline fun visit(element: Any) {
-            return@find3 element
+            <!RETURN_NOT_ALLOWED!>return@find3<!> element
         }
     }
     return null

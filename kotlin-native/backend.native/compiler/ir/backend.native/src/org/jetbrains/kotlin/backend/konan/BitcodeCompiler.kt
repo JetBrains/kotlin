@@ -50,27 +50,15 @@ internal class BitcodeCompiler(val context: Context) {
     private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
         val objectFile = temporary("result", ".o")
 
-        val profilingFlags = llvmProfilingFlags().map { listOf("-mllvm", it) }.flatten()
-
-        // TODO: fix with LLVM update.
-        val targetTriple = when (context.config.target) {
-            // LLVM we use does not have support for arm64_32.
-            KonanTarget.WATCHOS_ARM64 -> {
-                require(configurables is AppleConfigurables)
-                "arm64_32-apple-watchos${configurables.osVersionMin}"
-            }
-            // Runtime generates bitcode for mythical macos 10.16 because of old Clang.
-            // Let's fix it.
-            KonanTarget.MACOS_ARM64 -> {
-                require(configurables is AppleConfigurables)
-                "arm64-apple-macos${configurables.osVersionMin}"
-            }
-            else -> context.llvm.targetTriple
+        val targetTriple = if (configurables is AppleConfigurables) {
+            platform.targetTriple.withOSVersion(configurables.osVersionMin)
+        } else {
+            platform.targetTriple
         }
         val flags = overrideClangOptions.takeIf(List<String>::isNotEmpty)
                 ?: mutableListOf<String>().apply {
             addNonEmpty(configurables.clangFlags)
-            addNonEmpty(listOf("-triple", targetTriple))
+            addNonEmpty(listOf("-triple", targetTriple.toString()))
             if (configurables is ZephyrConfigurables) {
                 addNonEmpty(configurables.constructClangCC1Args())
             }
@@ -81,7 +69,6 @@ internal class BitcodeCompiler(val context: Context) {
             })
             addNonEmpty(BitcodeEmbedding.getClangOptions(context.config))
             addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
-            addNonEmpty(profilingFlags)
         }
         if (configurables is AppleConfigurables) {
             targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
@@ -95,17 +82,6 @@ internal class BitcodeCompiler(val context: Context) {
         RelocationModeFlags.Mode.PIC -> listOf("-mrelocation-model", "pic")
         RelocationModeFlags.Mode.STATIC -> listOf("-mrelocation-model", "static")
         RelocationModeFlags.Mode.DEFAULT -> emptyList()
-    }
-
-    private fun llvmProfilingFlags(): List<String> {
-        val flags = mutableListOf<String>()
-        if (context.shouldProfilePhases()) {
-            flags += "-time-passes"
-        }
-        if (context.inVerbosePhase) {
-            flags += "-debug-pass=Structure"
-        }
-        return flags
     }
 
     fun makeObjectFiles(bitcodeFile: BitcodeFile): List<ObjectFile> =

@@ -1,0 +1,119 @@
+package
+
+public abstract class Base {
+    public constructor Base(/*0*/ baseProp: kotlin.String)
+    public final val baseProp: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class CheckNested {
+    public constructor CheckNested(/*0*/ a: kotlin.Any)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion : CheckNested {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class Foo1 : Base {
+    public constructor Foo1(/*0*/ prop: kotlin.Int, /*1*/ baseProp: kotlin.String)
+    public final override /*1*/ /*fake_override*/ val baseProp: kotlin.String
+    public final val prop: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion : Foo1 {
+        private constructor Companion()
+        public final override /*1*/ /*fake_override*/ val baseProp: kotlin.String
+        public final override /*1*/ /*fake_override*/ val prop: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class Foo2 : Base {
+    public constructor Foo2(/*0*/ prop: kotlin.Int, /*1*/ baseProp: kotlin.String)
+    public final override /*1*/ /*fake_override*/ val baseProp: kotlin.String
+    public final val prop: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion : Foo2 {
+        private constructor Companion()
+        public final override /*1*/ /*fake_override*/ val baseProp: kotlin.String
+        public final override /*1*/ /*fake_override*/ val prop: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class Foo3 : Base {
+    public constructor Foo3(/*0*/ prop: kotlin.Int, /*1*/ baseProp: kotlin.String)
+    public final override /*1*/ /*fake_override*/ val baseProp: kotlin.String
+    public final val prop: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion : Foo3 {
+        private constructor Companion()
+        public final override /*1*/ /*fake_override*/ val baseProp: kotlin.String
+        public final override /*1*/ /*fake_override*/ val prop: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class Foo4 : Base {
+    public constructor Foo4(/*0*/ prop: kotlin.Int, /*1*/ baseProp: kotlin.String)
+    public final override /*1*/ /*fake_override*/ val baseProp: kotlin.String
+    public final val prop: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public object MyObject : Foo4 {
+        private constructor MyObject()
+        public final override /*1*/ /*fake_override*/ val baseProp: kotlin.String
+        public final override /*1*/ /*fake_override*/ val prop: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class Foo5 {
+    public constructor Foo5(/*0*/ prop: kotlin.Int)
+    public final val prop: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public object MyObject : Foo5 {
+        private constructor MyObject()
+        public final override /*1*/ /*fake_override*/ val prop: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

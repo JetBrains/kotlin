@@ -16,7 +16,7 @@ internal class FirThreadSafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(key: K, context: CONTEXT): V =
-        map.computeIfAbsent(key) {
+        map.getOrPut(key) {
             ValueWithPostCompute(
                 key,
                 calculate = { createValue(it, context) },

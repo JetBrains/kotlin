@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmSignature
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
@@ -62,7 +62,7 @@ class JavaClassUseSiteMemberScope(
     ): FirAccessorSymbol {
         return accessorByNameMap.getOrPut(property.name) {
             buildSyntheticProperty {
-                session = this@JavaClassUseSiteMemberScope.session
+                declarationSiteSession = session
                 name = property.name
                 symbol = FirAccessorSymbol(
                     accessorId = getterSymbol.callableId,

@@ -4,9 +4,9 @@ val p3: Byte = 1 - 1
 val p4: Short = 1 - 1
 
 val l1: Long = 1 - 1.toLong()
-val l2: Byte = 1 - 1.toLong()
-val l3: Int = 1 - 1.toLong()
-val l4: Short = 1 - 1.toLong()
+val l2: Byte = <!INITIALIZER_TYPE_MISMATCH!>1 - 1.toLong()<!>
+val l3: Int = <!INITIALIZER_TYPE_MISMATCH!>1 - 1.toLong()<!>
+val l4: Short = <!INITIALIZER_TYPE_MISMATCH!>1 - 1.toLong()<!>
 
 val b1: Byte = 1 - 1.toByte()
 val b2: Int = 1 - 1.toByte()

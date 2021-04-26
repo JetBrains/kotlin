@@ -2,5 +2,5 @@
 fun test(list: List<String>) {
     list
         // comment
-        .max()
+        .maxOrNull()
 }

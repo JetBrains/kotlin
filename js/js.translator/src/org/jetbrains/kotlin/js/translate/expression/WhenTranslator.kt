@@ -197,7 +197,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
                         is Int -> JsIntLiteral(it)
                         is Short -> JsIntLiteral(it.toInt())
                         is Byte -> JsIntLiteral(it.toInt())
-                        is Char -> JsIntLiteral(it.toInt())
+                        is Char -> JsIntLiteral(it.code)
                         else -> null
                     }
                 }

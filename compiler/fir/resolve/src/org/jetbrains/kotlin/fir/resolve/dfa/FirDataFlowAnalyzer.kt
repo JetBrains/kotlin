@@ -23,11 +23,14 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -840,6 +843,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         callNode.mergeIncomingFlow()
     }
 
+    fun exitStringConcatenationCall(call: FirStringConcatenationCall) {
+        val (callNode, unionNode) = graphBuilder.exitStringConcatenationCall(call)
+        unionNode?.let { unionFlowFromArguments(it) }
+        callNode.mergeIncomingFlow()
+    }
+
 
     private fun unionFlowFromArguments(node: UnionFunctionCallArgumentsNode) {
         node.flow = logicSystem.unionFlow(node.previousNodes.map { it.flow }).also {
@@ -865,12 +874,24 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val conditionalEffects = contractDescription.effects.map { it.effect }.filterIsInstance<ConeConditionalEffectDeclaration>()
         if (conditionalEffects.isEmpty()) return
         val argumentsMapping = createArgumentsMapping(qualifiedAccess) ?: return
+
+        val typeParameters = (owner as? FirTypeParameterRefsOwner)?.typeParameters
+        val substitutor = if (!typeParameters.isNullOrEmpty()) {
+            @Suppress("UNCHECKED_CAST")
+            val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
+                typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
+            }.filter { it.second != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
+            ConeSubstitutorByMap(substitutionFromArguments, components.session)
+        } else {
+            ConeSubstitutor.Empty
+        }
+
         contractDescriptionVisitingMode = true
         graphBuilder.enterContract(qualifiedAccess).mergeIncomingFlow()
         val lastFlow = graphBuilder.lastNode.flow
         val functionCallVariable = variableStorage.getOrCreateVariable(lastFlow, qualifiedAccess)
         for (conditionalEffect in conditionalEffects) {
-            val fir = conditionalEffect.buildContractFir(argumentsMapping) ?: continue
+            val fir = conditionalEffect.buildContractFir(argumentsMapping, substitutor) ?: continue
             val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
             fir.transformSingle(components.transformer, ResolutionMode.ContextDependent)
             val argumentVariable = variableStorage.getOrCreateVariable(lastFlow, fir)

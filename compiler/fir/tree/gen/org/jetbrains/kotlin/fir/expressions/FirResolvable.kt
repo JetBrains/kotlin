@@ -15,11 +15,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirResolvable : FirElement {
+sealed interface FirResolvable : FirElement {
     override val source: FirSourceElement?
     val calleeReference: FirReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvable(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformResolvable(this, data) as E
 
     fun replaceCalleeReference(newCalleeReference: FirReference)
 

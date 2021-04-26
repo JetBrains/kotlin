@@ -76,7 +76,7 @@ internal val IrExpression.canHaveSideEffects: Boolean
 private fun Any?.toLong(): Long? =
     when (this) {
         is Number -> toLong()
-        is Char -> toLong()
+        is Char -> code.toLong()
         else -> null
     }
 

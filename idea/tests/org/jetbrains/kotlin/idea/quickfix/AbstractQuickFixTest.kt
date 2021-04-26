@@ -67,7 +67,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor =
-        if ("createfromusage" in testDataPath.toLowerCase()) {
+        if ("createfromusage" in testDataPath.lowercase()) {
             KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
         } else {
             super.getProjectDescriptor()

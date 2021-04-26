@@ -36,6 +36,12 @@ interface SessionHolder {
     val scopeSession: ScopeSession
 }
 
+data class SessionHolderImpl(override val session: FirSession, override val scopeSession: ScopeSession) : SessionHolder {
+    companion object {
+        fun createWithEmptyScopeSession(session: FirSession): SessionHolderImpl = SessionHolderImpl(session, ScopeSession())
+    }
+}
+
 abstract class BodyResolveComponents : SessionHolder {
     abstract val returnTypeCalculator: ReturnTypeCalculator
     abstract val implicitReceiverStack: ImplicitReceiverStack

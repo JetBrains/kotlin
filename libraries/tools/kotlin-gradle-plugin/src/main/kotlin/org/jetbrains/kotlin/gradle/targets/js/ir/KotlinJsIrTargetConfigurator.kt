@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import java.io.File
 
-open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
-    KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
+open class KotlinJsIrTargetConfigurator() :
+    KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true),
     KotlinTargetWithTestsConfigurator<KotlinJsReportAggregatingTestRun, KotlinJsIrTarget> {
 
     override val testRunClass: Class<KotlinJsReportAggregatingTestRun> get() = KotlinJsReportAggregatingTestRun::class.java
@@ -54,8 +54,8 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     }
 
     override fun buildCompilationProcessor(compilation: KotlinJsIrCompilation): KotlinSourceSetProcessor<*> {
-        val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
-        return KotlinJsIrSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
+        val tasksProvider = KotlinTasksProvider()
+        return KotlinJsIrSourceSetProcessor(tasksProvider, compilation)
     }
 
     override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {

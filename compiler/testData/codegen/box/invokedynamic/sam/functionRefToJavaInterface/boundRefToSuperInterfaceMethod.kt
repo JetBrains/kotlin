@@ -4,6 +4,10 @@
 // WITH_RUNTIME
 // FULL_JDK
 
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 2 java/lang/invoke/LambdaMetafactory
+
 // FILE: boundRefToSuperInterfaceMethod.kt
 
 class Impl(val set1: Set<String>, val set2: Set<String>) : JDerived {

@@ -1,15 +1,7 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "java"
 }
-
-apply plugin: "kotlin"
-apply plugin: "java"
 
 repositories {
     mavenLocal()
@@ -17,7 +9,6 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testImplementation'junit:junit:4.12'
     implementation project(":lib")
@@ -25,4 +16,10 @@ dependencies {
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+test {
+    testLogging {
+        info.events = ["passed", "failed"]
+    }
 }

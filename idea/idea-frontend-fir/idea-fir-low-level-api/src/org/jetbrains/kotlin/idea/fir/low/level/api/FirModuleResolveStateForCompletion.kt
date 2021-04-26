@@ -70,12 +70,10 @@ internal class FirModuleResolveStateForCompletion(
     }
 
     override fun lazyResolveDeclarationForCompletion(
-        firFunction: FirDeclaration,
+        firDeclaration: FirDeclaration,
         containerFirFile: FirFile,
-        firIdeProvider: FirProvider,
-        toPhase: FirResolvePhase,
     ) {
-        originalState.lazyResolveDeclarationForCompletion(firFunction, containerFirFile, firIdeProvider, toPhase)
+        originalState.lazyResolveDeclarationForCompletion(firDeclaration, containerFirFile)
     }
 
     override fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? {

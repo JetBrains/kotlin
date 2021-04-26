@@ -1,22 +1,22 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.R|/JavaUsage.foo1|(<L> = foo1@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| {
+        Q|JavaUsage|.R|/JavaUsage.foo1|(<L> = foo1@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Any.toString|()
         }
         )
-        Q|JavaUsage|.R|/JavaUsage.foo2|(<L> = foo2@fun <anonymous>(x: R|ft<kotlin/Number, kotlin/Number?>|): R|ft<kotlin/CharSequence, kotlin/CharSequence?>| {
+        Q|JavaUsage|.R|/JavaUsage.foo2|(<L> = foo2@fun <anonymous>(x: R|ft<kotlin/Number, kotlin/Number?>|): R|ft<kotlin/CharSequence, kotlin/CharSequence?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         )
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): /JavaUsage.foo2>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/CharSequence, kotlin/CharSequence?>| {
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): /JavaUsage.foo2>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/CharSequence, kotlin/CharSequence?>| <inline=Unknown>  {
             ^ R|<local>/x|.R|kotlin/Any.toString|()
         }
         )
-        Q|JavaUsage|.R|/JavaUsage.foo3|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(foo3@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| {
+        Q|JavaUsage|.R|/JavaUsage.foo3|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(foo3@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.plus|(Int(1)).R|kotlin/Any.toString|()
         }
         , Int(1))
-        Q|JavaUsage|.R|/JavaUsage.foo3|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(foo3@fun <anonymous>(x: R|kotlin/Number|): R|ft<kotlin/String, kotlin/String?>| {
+        Q|JavaUsage|.R|/JavaUsage.foo3|<R|ft<kotlin/Int, kotlin/Int?>|, R|ft<kotlin/String, kotlin/String?>|>(foo3@fun <anonymous>(x: R|kotlin/Number|): R|ft<kotlin/String, kotlin/String?>| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         , Int(2))

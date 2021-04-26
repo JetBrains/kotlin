@@ -1,10 +1,11 @@
 enum class A(val v: A) {
-    A1(A2),
-    A2(A1)
+    A1(<!UNINITIALIZED_ENUM_ENTRY!>A2<!>),
+    A2(A1),
+    A3(<!UNINITIALIZED_ENUM_ENTRY!>A3<!>)
 }
 
 enum class D(val x: Int) {
-    D1(D2.x),
+    D1(<!UNINITIALIZED_ENUM_ENTRY!>D2<!>.x),
     D2(D1.x)
 }
 
@@ -28,8 +29,8 @@ object Object1 {
 enum class MyEnum {
     A, B;
     val x = when(this) {
-        A -> 1
-        B -> 2
+        <!UNINITIALIZED_ENUM_ENTRY!>A<!> -> 1
+        <!UNINITIALIZED_ENUM_ENTRY!>B<!> -> 2
         else -> 3
     }
 }

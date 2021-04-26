@@ -66,7 +66,7 @@ fun case_7(value_1: Any, value_2: String, value_3: String) {
 // TESTCASE NUMBER: 8
 fun case_8(value_1: Int, value_2: Int?, value_3: Int?) {
     when (value_1) {
-        value_2 ?: 0, value_2 ?: value_3 ?: 0, value_2!! ?: 0 -> {}
+        value_2 ?: 0, value_2 ?: value_3 ?: 0, value_2!! <!USELESS_ELVIS!>?: 0<!> -> {}
     }
 }
 
@@ -225,8 +225,8 @@ fun case_23(value_1: Nothing) {
 
 // TESTCASE NUMBER: 24
 fun case_24(value_1: Nothing?) = when (value_1) {
-    throw Exception(), return "" -> ""
-    null, return return return "", throw throw throw Exception() -> ""
+    throw Exception(), <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> "" -> ""
+    null, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> "", throw throw throw Exception() -> ""
     else -> ""
 }
 
@@ -237,8 +237,8 @@ fun case_24(value_1: Nothing?) = when (value_1) {
  */
 fun case_25(value_1: Boolean) = when (value_1) {
     true -> {}
-    throw Exception(), return -> {}
-    false, return return return, throw throw throw Exception() -> {}
+    throw Exception(), <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> -> {}
+    false, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!>, throw throw throw Exception() -> {}
 }
 
 /*

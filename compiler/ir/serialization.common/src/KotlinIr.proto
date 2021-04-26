@@ -415,6 +415,7 @@ enum IrTypeOperator {
   NOT_INSTANCEOF = 8;
   SAM_CONVERSION = 9;
   IMPLICIT_DYNAMIC_CAST = 10;
+  REINTERPRET_CAST = 11;
 }
 
 
@@ -587,4 +588,9 @@ message IrStatement {
     IrCatch catch = 6;
     IrSyntheticBody synthetic_body = 7;
   }
+}
+
+message PirBodyCarrier {
+  required int32 lastModified = 1;
+  optional int64 containerFieldSymbol = 2;
 }

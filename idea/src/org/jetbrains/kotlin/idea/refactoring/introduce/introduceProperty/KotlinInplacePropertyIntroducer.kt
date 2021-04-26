@@ -74,21 +74,22 @@ class KotlinInplacePropertyIntroducer(
         if (availableTargets.size > 1) {
             addPanelControl(
                 ControlWrapper {
-                    val propertyKindComboBox = with(JComboBox(availableTargets.map { it.targetName.capitalize() }.toTypedArray())) {
-                        addPopupMenuListener(
-                            object : PopupMenuListenerAdapter() {
-                                override fun popupMenuWillBecomeInvisible(e: PopupMenuEvent?) {
-                                    ApplicationManager.getApplication().invokeLater {
-                                        currentTarget = availableTargets[selectedIndex]
+                    val propertyKindComboBox =
+                        with(JComboBox(availableTargets.map { it.targetName.replaceFirstChar(Char::uppercaseChar) }.toTypedArray())) {
+                            addPopupMenuListener(
+                                object : PopupMenuListenerAdapter() {
+                                    override fun popupMenuWillBecomeInvisible(e: PopupMenuEvent?) {
+                                        ApplicationManager.getApplication().invokeLater {
+                                            currentTarget = availableTargets[selectedIndex]
+                                        }
                                     }
                                 }
-                            }
-                        )
+                            )
 
-                        selectedIndex = availableTargets.indexOf(currentTarget)
+                            selectedIndex = availableTargets.indexOf(currentTarget)
 
-                        this
-                    }
+                            this
+                        }
 
                     val propertyKindLabel = JLabel(KotlinBundle.message("label.text.introduce.as"))
                     propertyKindLabel.labelFor = propertyKindComboBox

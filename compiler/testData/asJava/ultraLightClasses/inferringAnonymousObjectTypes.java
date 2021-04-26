@@ -1,4 +1,5 @@
 public final class Prop /* Prop*/ {
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.Object someProp;
 
   public  Prop();//  .ctor()

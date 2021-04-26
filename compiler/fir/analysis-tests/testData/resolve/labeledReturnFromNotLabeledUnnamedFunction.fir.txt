@@ -1,0 +1,10 @@
+FILE: labeledReturnFromNotLabeledUnnamedFunction.kt
+    public final fun notInline(block: R|(kotlin/Boolean) -> kotlin/Unit|): R|kotlin/String| {
+        ^notInline String()
+    }
+    public final fun test(): R|kotlin/String| {
+        ^test R|/notInline|(fun <anonymous>(b: R|kotlin/Boolean|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@notInline Unit
+        }
+        )
+    }

@@ -67,6 +67,7 @@ public class ExpressionTypingComponents {
     /*package*/ NewKotlinTypeChecker kotlinTypeChecker;
     /*package*/ TypeResolutionInterceptor typeResolutionInterceptor;
     /*package*/ MissingSupertypesResolver missingSupertypesResolver;
+    /*package*/ AnnotationChecker annotationChecker;
 
 
     @Inject
@@ -257,5 +258,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setMissingSupertypesResolver(@NotNull MissingSupertypesResolver missingSupertypesResolver) {
         this.missingSupertypesResolver = missingSupertypesResolver;
+    }
+
+    @Inject
+    public void setAnnotationChecker(@NotNull AnnotationChecker annotationChecker) {
+        this.annotationChecker = annotationChecker;
     }
 }

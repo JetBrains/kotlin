@@ -84,12 +84,23 @@ class W {
     }
 }
 
-class BB1 { companion object }
+class BB1 {
+    companion object
+}
+
 class BB2
 
-class CC1 { companion object DD1 }
-class CC2 { companion object CompanionWithAnotherName }
-class CC3 { companion object }
+class CC1 {
+    companion object DD1
+}
+
+class CC2 {
+    companion object CompanionWithAnotherName
+}
+
+class CC3 {
+    companion object
+}
 
 inline class EE1(val value: String)
 class EE2(val value: String)
@@ -102,6 +113,7 @@ class FF1(val property1: String) {
     fun function1() = property1
     fun function2() = function1()
 }
+
 external class FF2()
 
 sealed class GG1

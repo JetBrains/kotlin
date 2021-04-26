@@ -5,6 +5,6 @@ class My {
 }
 
 fun My.foo(i: Int) {
-    <!HIDDEN!>i<!>("")
-    <!HIDDEN!>1<!>("")
+    <!INVISIBLE_REFERENCE!>i<!>("")
+    <!INVISIBLE_REFERENCE!>1<!>("")
 }

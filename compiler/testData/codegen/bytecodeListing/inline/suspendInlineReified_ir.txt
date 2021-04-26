@@ -2,7 +2,7 @@
 public final class A {
     // source: 'suspendInlineReified.kt'
     public method <init>(): void
-    public synthetic final method internalFun$test_module(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic final method internalFun$main(p0: kotlin.coroutines.Continuation): java.lang.Object
     private synthetic final method privateFun(p0: kotlin.coroutines.Continuation): java.lang.Object
     protected synthetic final method protectedFun(p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic final method publicFun(p0: kotlin.coroutines.Continuation): java.lang.Object

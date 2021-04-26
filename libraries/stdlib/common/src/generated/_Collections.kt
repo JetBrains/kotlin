@@ -1860,27 +1860,27 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.1")
 public fun Iterable<Double>.max(): Double? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.1")
 public fun Iterable<Float>.max(): Float? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T? {
     return maxByOrNull(selector)
 }
@@ -2134,7 +2134,7 @@ public fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
     return maxWithOrNull(comparator)
 }
@@ -2155,27 +2155,27 @@ public fun <T> Iterable<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.1")
 public fun Iterable<Double>.min(): Double? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 @SinceKotlin("1.1")
 public fun Iterable<Float>.min(): Float? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public fun <T : Comparable<T>> Iterable<T>.min(): T? {
     return minOrNull()
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T? {
     return minByOrNull(selector)
 }
@@ -2429,7 +2429,7 @@ public fun <T : Comparable<T>> Iterable<T>.minOrNull(): T? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
     return minWithOrNull(comparator)
 }
@@ -2811,23 +2811,11 @@ public inline fun <T, R> Iterable<T>.scanIndexed(initial: R, operation: (index: 
     return runningFoldIndexed(initial, operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun <S, T : S> Iterable<T>.scanReduce(operation: (acc: S, T) -> S): List<S> {
-    return runningReduce(operation)
-}
-
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun <S, T : S> Iterable<T>.scanReduceIndexed(operation: (index: Int, acc: S, T) -> S): List<S> {
-    return runningReduceIndexed(operation)
-}
-
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
@@ -2839,6 +2827,8 @@ public inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun <T> Iterable<T>.sumByDouble(selector: (T) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {

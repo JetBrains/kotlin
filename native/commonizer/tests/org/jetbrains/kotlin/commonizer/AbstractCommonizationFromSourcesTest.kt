@@ -16,15 +16,15 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedF
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
+import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
+import org.jetbrains.kotlin.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
+import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
-import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
-import org.jetbrains.kotlin.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
-import org.jetbrains.kotlin.commonizer.konan.TargetedNativeManifestDataProvider
-import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -205,23 +205,20 @@ private class AnalyzedModules(
     }
 
     fun toCommonizerParameters(
-        resultsConsumer: ResultsConsumer, manifestDataProvider: TargetedNativeManifestDataProvider = MockNativeManifestDataProvider()
+        resultsConsumer: ResultsConsumer,
+        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
     ) = CommonizerParameters(
-        resultsConsumer, manifestDataProvider, commonDependencyModulesProvider = dependencyModules[sharedTarget]?.let(MockModulesProvider::create)
-    ).also { parameters ->
-
-        leafTargets.forEach { leafTarget ->
-            val originalModule = originalModules.getValue(leafTarget)
-
-            parameters.addTarget(
-                TargetProvider(
-                    target = leafTarget,
-                    modulesProvider = MockModulesProvider.create(originalModule),
-                    dependencyModulesProvider = dependencyModules[leafTarget]?.let(MockModulesProvider::create)
-                )
+        outputTarget = SharedCommonizerTarget(leafTargets.toSet()),
+        manifestProvider = TargetDependent(sharedTarget.withAllAncestors(), manifestDataProvider),
+        dependenciesProvider = TargetDependent(sharedTarget.withAllAncestors()) { dependencyModules[it]?.let(MockModulesProvider::create) },
+        targetProviders = TargetDependent(leafTargets) { leafTarget ->
+            TargetProvider(
+                target = leafTarget,
+                modulesProvider = MockModulesProvider.create(originalModules.getValue(leafTarget))
             )
-        }
-    }
+        },
+        resultsConsumer = resultsConsumer,
+    )
 
     companion object {
         fun create(

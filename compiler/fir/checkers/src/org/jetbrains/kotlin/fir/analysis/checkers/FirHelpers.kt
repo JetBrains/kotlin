@@ -16,21 +16,29 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
@@ -40,47 +48,15 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+private val INLINE_ONLY_ANNOTATION_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
+
 internal fun FirClass<*>.unsubstitutedScope(context: CheckerContext) =
     this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
 
 /**
- * Returns true if this is a superclass of other.
- */
-fun FirClass<*>.isSuperclassOf(other: FirClass<*>): Boolean {
-    /**
-     * Hides additional parameters.
-     */
-    fun FirClass<*>.isSuperclassOf(other: FirClass<*>, exclude: MutableSet<FirClass<*>>): Boolean {
-        for (it in other.superTypeRefs) {
-            val that = it.firClassLike(session)
-                ?.followAllAlias(session)
-                ?.safeAs<FirClass<*>>()
-                ?: continue
-
-            if (that in exclude) {
-                continue
-            }
-
-            if (that.classKind == ClassKind.CLASS) {
-                if (that == this) {
-                    return true
-                }
-
-                exclude.add(that)
-                return this.isSuperclassOf(that, exclude)
-            }
-        }
-
-        return false
-    }
-
-    return isSuperclassOf(other, mutableSetOf())
-}
-
-/**
  * Returns true if this is a supertype of other.
  */
-fun FirClass<*>.isSupertypeOf(other: FirClass<*>): Boolean {
+fun FirClass<*>.isSupertypeOf(other: FirClass<*>, session: FirSession): Boolean {
     /**
      * Hides additional parameters.
      */
@@ -153,6 +129,16 @@ inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
  */
 fun FirSymbolOwner<*>.getContainingClass(context: CheckerContext): FirClassLikeDeclaration<*>? =
     this.safeAs<FirCallableMemberDeclaration<*>>()?.containingClass()?.toSymbol(context.session)?.fir
+
+fun FirClassLikeSymbol<*>.outerClass(context: CheckerContext): FirClassLikeSymbol<*>? {
+    if (this !is FirClassSymbol<*>) return null
+    val outerClassId = classId.outerClassId ?: return null
+    return context.session.symbolProvider.getClassLikeSymbolByFqName(outerClassId)
+}
+
+fun FirClass<*>.outerClass(context: CheckerContext): FirClass<*>? {
+    return symbol.outerClass(context)?.fir as? FirClass<*>
+}
 
 /**
  * Returns the FirClassLikeDeclaration that the
@@ -394,6 +380,40 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
         if (argument != boundTypeRef.coneType && argument.isSubtypeOf(context, boundTypeRef.coneType)) {
             return true
         }
+    }
+    return false
+}
+
+fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
+
+val FirExpression.isComponentCall
+    get() = this is FirComponentCall
+
+fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
+    return AbstractTypeChecker.isSubtypeOf(context, subtype, supertype)
+            || isSubtypeOfForFunctionalTypeReturningUnit(context.session.typeContext, subtype, supertype)
+}
+
+fun isSubtypeOfForFunctionalTypeReturningUnit(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
+    if (!supertype.isBuiltinFunctionalType(context.session)) return false
+    val functionalTypeReturnType = supertype.typeArguments.lastOrNull()
+    if ((functionalTypeReturnType as? ConeClassLikeType)?.isUnit == true) {
+        // We don't try to match return type for this case
+        // Dropping the return type (getting only the lambda args)
+        val superTypeArgs = supertype.typeArguments.dropLast(1)
+        val subTypeArgs = subtype.typeArguments.dropLast(1)
+        if (superTypeArgs.size != subTypeArgs.size) return false
+
+        for (i in superTypeArgs.indices) {
+            val subTypeArg = subTypeArgs[i].type ?: return false
+            val superTypeArg = superTypeArgs[i].type ?: return false
+
+            if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, subTypeArg, superTypeArg)) {
+                return false
+            }
+        }
+
+        return true
     }
     return false
 }

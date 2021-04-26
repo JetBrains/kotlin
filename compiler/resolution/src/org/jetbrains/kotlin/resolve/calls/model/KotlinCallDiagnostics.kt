@@ -170,7 +170,7 @@ class UnstableSmartCastDiagnosticError(
 class UnsafeCallError(
     val receiver: SimpleKotlinCallArgument,
     val isForImplicitInvoke: Boolean = false
-) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
+) : KotlinCallDiagnostic(UNSAFE_CALL) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
 }
 

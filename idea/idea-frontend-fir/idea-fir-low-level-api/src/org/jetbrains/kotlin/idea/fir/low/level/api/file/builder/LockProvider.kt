@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import com.google.common.collect.MapMaker
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.DeclarationLockType
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.locks.ReadWriteLock
@@ -38,6 +39,11 @@ internal class LockProvider<KEY> {
     inline fun <R> withWriteLockPCECheck(key: KEY, lockingIntervalMs: Long, action: () -> R): R {
         val writeLock = getLockFor(key).writeLock()
         return deadLockGuard.guardWriteLock { writeLock.lockWithPCECheck(lockingIntervalMs, action) }
+    }
+
+    inline fun <R> withLock(declaration: KEY, declarationLockType: DeclarationLockType, action: () -> R): R = when (declarationLockType) {
+        DeclarationLockType.READ_LOCK -> withReadLock(declaration, action)
+        DeclarationLockType.WRITE_LOCK -> withWriteLock(declaration, action)
     }
 }
 

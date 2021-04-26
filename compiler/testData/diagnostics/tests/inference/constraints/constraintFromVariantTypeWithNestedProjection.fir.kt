@@ -12,5 +12,5 @@ fun <R> choose3(c: Inv<Inv<R>>) {}
 fun f(o: Out<Out<*>>, i: In<In<*>>, inv: Inv<Inv<*>>) {
     choose1(o)
     choose2(i)
-    <!INAPPLICABLE_CANDIDATE!>choose3<!>(inv)
+    choose3(<!ARGUMENT_TYPE_MISMATCH!>inv<!>)
 }

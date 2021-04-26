@@ -27,7 +27,7 @@ internal class OneToManyUppercaseMappingsWriter(private val strategy: RangesWrit
                 return null
             }
 
-            val code = this.toInt()
+            val code = this.code
             val index = binarySearchRange(keys, code)
             if (keys[index] == code) {
                 return values[index]

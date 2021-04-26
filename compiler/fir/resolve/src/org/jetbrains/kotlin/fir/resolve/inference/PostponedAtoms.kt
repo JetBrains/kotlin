@@ -9,18 +9,16 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariable
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 //  --------------------------- Variables ---------------------------
@@ -45,7 +43,7 @@ class ResolvedLambdaAtom(
     val isSuspend: Boolean,
     val receiver: ConeKotlinType?,
     val parameters: List<ConeKotlinType>,
-    val returnType: ConeKotlinType,
+    var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
     candidateOfOuterCall: Candidate?
 ) : PostponedResolvedAtom() {
@@ -66,8 +64,9 @@ class ResolvedLambdaAtom(
     override val inputTypes: Collection<ConeKotlinType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: ConeKotlinType get() = returnType
 
-    fun replaceExpectedType(expectedType: ConeKotlinType) {
+    fun replaceExpectedType(expectedType: ConeKotlinType, newReturnType: ConeTypeVariableType) {
         this.expectedType = expectedType
+        this.returnType = newReturnType
     }
 
     fun replaceTypeVariableForLambdaReturnType(typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType) {
@@ -122,7 +121,8 @@ class ResolvedCallableReferenceAtom(
 
     val mightNeedAdditionalResolution get() = !hasBeenResolvedOnce || hasBeenPostponed
 
-    var resultingCandidate: Pair<Candidate, CandidateApplicability>? = null
+    var resultingReference: FirNamedReference? = null
+    var resultingTypeForCallableReference: ConeKotlinType? = null
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
@@ -165,7 +165,7 @@ internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
 
     return when {
         expectedType.isBuiltinFunctionalType(session) ->
-            extractInputOutputTypesFromFunctionType(expectedType, session)
+            InputOutputTypes(expectedType.valueParameterTypesIncludingReceiver(session), expectedType.returnType(session))
 
 //        ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
 //            InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
@@ -187,23 +187,4 @@ internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
 
         else -> null
     }
-}
-
-private fun extractInputOutputTypesFromFunctionType(
-    functionType: ConeKotlinType,
-    session: FirSession
-): InputOutputTypes {
-    val parameters = functionType.valueParameterTypesIncludingReceiver(session).map {
-        it ?: ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(StandardClassIds.Nothing), emptyArray(),
-            isNullable = false
-        )
-    }
-
-    val outputType = functionType.returnType(session) ?: ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(),
-        isNullable = true
-    )
-
-    return InputOutputTypes(parameters, outputType)
 }

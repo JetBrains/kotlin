@@ -4,13 +4,13 @@
 class Inv<T>
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K> Inv<out K>.onlyOut(e: K) {}
+fun <@kotlin.internal.OnlyInputTypes K> Inv<out K>.onlyOut(e: K) {}
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K : Number> Inv<out K>.onlyOutUB(e: K) {}
+fun <@kotlin.internal.OnlyInputTypes K : Number> Inv<out K>.onlyOutUB(e: K) {}
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K> Inv<in K>.onlyIn(e: K) {}
+fun <@kotlin.internal.OnlyInputTypes K> Inv<in K>.onlyIn(e: K) {}
 
 fun test(
     invStar: Inv<*>,
@@ -21,12 +21,12 @@ fun test(
     invOut.onlyOut(42)
     invOut.onlyOut(1L)
 
-    invOut.<!INAPPLICABLE_CANDIDATE!>onlyOutUB<!>("str")
+    invOut.onlyOutUB(<!ARGUMENT_TYPE_MISMATCH!>"str"<!>)
     invStar.<!INAPPLICABLE_CANDIDATE!>onlyOutUB<!>(0)
     invOut.onlyOutUB(42)
     invOut.onlyOutUB(1L)
 
-    invIn.<!INAPPLICABLE_CANDIDATE!>onlyIn<!>("str")
+    invIn.onlyIn(<!ARGUMENT_TYPE_MISMATCH!>"str"<!>)
     invIn.onlyIn(42)
     invIn.onlyIn(1L)
 }

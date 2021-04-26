@@ -1,5 +1,5 @@
 FILE: delegates.kt
-    public? final? val x: Intby lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> {
+    public? final? val x: Intby lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
         IntegerLiteral(1).plus#(IntegerLiteral(2))
     }
     )

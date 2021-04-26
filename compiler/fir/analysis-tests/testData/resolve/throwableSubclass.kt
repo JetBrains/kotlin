@@ -14,5 +14,5 @@ class Test5<T, B> {
 
 fun <Z> topLevelFun() {
     <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class Test8<!> : Error()
-    val obj = <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS{LT}!><!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS{PSI}!>object<!> : Throwable() {}<!>
+    val obj = <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>object<!> : Throwable() {}
 }

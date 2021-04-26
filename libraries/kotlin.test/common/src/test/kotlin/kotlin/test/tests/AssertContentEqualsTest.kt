@@ -9,11 +9,6 @@ import kotlin.test.*
 
 class AssertContentEqualsTest {
 
-    private fun testFailureMessage(expected: String, block: () -> Unit) {
-        val exception = checkFailedAssertion(block)
-        assertEquals(expected, exception.message, "Wrong assertion message")
-    }
-
     @Test
     fun testAssertContentEqualsIterable() {
         val list: Iterable<Int> = listOf(1, 2, 3)
@@ -38,6 +33,9 @@ class AssertContentEqualsTest {
         }
         testFailureMessage("Iterable lengths differ. Expected length is 3, actual length is bigger than 3.") {
             assertContentEquals(list, 1..4)
+        }
+        testFailureMessage("Iterable elements differ at index 0. Expected element <1>, actual element <3>.") {
+            assertContentEquals(setOf(1, 2, 3).asIterable(), setOf(3, 2, 1))
         }
     }
 

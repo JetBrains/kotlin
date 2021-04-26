@@ -192,7 +192,7 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.5.20-dev-3553"
+    extra["versions.kotlin-native"] = "1.5.20-dev-5613"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
@@ -355,6 +355,12 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-reflect"
 )
 
+val projectsWithDisabledFirBootstrap = coreLibProjects + listOf(
+    ":kotlin-gradle-plugin",
+    ":kotlinx-metadata",
+    ":kotlinx-metadata-jvm"
+)
+
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
     ":kotlin-gradle-plugin-api",
@@ -362,7 +368,8 @@ val gradlePluginProjects = listOf(
     ":kotlin-annotation-processing-gradle",
     ":kotlin-noarg",
     ":kotlin-sam-with-receiver",
-    ":kotlin-parcelize-compiler"
+    ":kotlin-parcelize-compiler",
+    ":kotlin-lombok"
 )
 
 apply {
@@ -469,7 +476,7 @@ allprojects {
                 useIR = true
             }
 
-            if (useJvmFir) {
+            if (useJvmFir && this@allprojects.name !in projectsWithDisabledFirBootstrap) {
                 freeCompilerArgs += "-Xuse-fir"
                 freeCompilerArgs += "-Xabi-stability=stable"
             }
@@ -568,26 +575,6 @@ allprojects {
 
         apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
         apply(from = "$rootDir/gradle/testRetry.gradle.kts")
-    }
-}
-
-if ((gradle.startParameter as? org.gradle.api.internal.StartParameterInternal)?.isConfigurationCache != true) {
-    // TODO: remove it once Gradle is bumped to 6.8:
-    // See https://docs.gradle.org/6.8/release-notes.html#more-cache-hits-when-empty-directories-are-present
-    gradle.buildFinished {
-        val taskGraph = gradle?.taskGraph
-        if (taskGraph != null) {
-            taskGraph.allTasks
-                .filterIsInstance<SourceTask>()
-                .filter { it.didWork }
-                .forEach {
-                    it.source.visit {
-                        if (file.isDirectory && file.listFiles()?.isEmpty() == true) {
-                            logger.warn("Empty source directories may cause build cache misses: " + file.absolutePath)
-                        }
-                    }
-                }
-        }
     }
 }
 
@@ -774,6 +761,9 @@ tasks {
         dependsOn("jvmCompilerIntegrationTest")
 
         dependsOn(":plugins:parcelize:parcelize-compiler:test")
+
+        dependsOn(":kotlin-util-io:test")
+        dependsOn(":kotlin-util-klib:test")
     }
 
     register("toolsTest") {

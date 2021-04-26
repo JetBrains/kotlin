@@ -67,7 +67,6 @@ internal class StringCasingTestGenerator(private val outputDir: File) {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun test(rangesArrayName: String, functionName: String): String = """
         class ${functionName.replaceFirstChar { it.uppercase() }}Test {
             @Test

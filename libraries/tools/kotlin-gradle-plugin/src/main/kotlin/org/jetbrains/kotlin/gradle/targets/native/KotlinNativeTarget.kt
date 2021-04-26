@@ -10,13 +10,14 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Usage
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isNativeShared
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.variantsContainingFragment
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
@@ -136,26 +137,49 @@ open class KotlinNativeTarget @Inject constructor(
     }
 }
 
-internal fun getHostSpecificSourceSets(project: Project): List<KotlinSourceSet> {
-    val compilationsBySourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project)
+private val hostManager by lazy { HostManager() }
 
-    val enabledByHost = HostManager().enabledByHost
+internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean {
+    val enabledByHost = hostManager.enabledByHost
     val allHosts = enabledByHost.keys
-
     fun canBeBuiltOnHosts(konanTarget: KonanTarget) = enabledByHost.filterValues { konanTarget in it }.keys
+    return konanTargets.flatMapTo(mutableSetOf(), ::canBeBuiltOnHosts) != allHosts
+}
 
-    return project.kotlinExtension.sourceSets.filter { sourceSet ->
-        if (sourceSet !in compilationsBySourceSet) return@filter false
+private fun <T> getHostSpecificElements(
+    fragments: Iterable<T>,
+    isNativeShared: (T) -> Boolean,
+    getKonanTargets: (T) -> Set<KonanTarget>
+): Set<T> = fragments.filterTo(mutableSetOf()) { isNativeShared(it) && isHostSpecificKonanTargetsSet(getKonanTargets(it)) }
 
-        // If the source set participates in compilations such that some host can't run either of them, then on that host,
-        // we can't analyze the source set, so the source set's metadata can't be published from that host, and therefore
-        // we consider it platform-specific and publish as a part of the Native targets where the source set takes part,
-        // not the common metadata artifact;
-        val platformCompilations = compilationsBySourceSet.getValue(sourceSet).filter { it !is KotlinMetadataCompilation }
-        val nativeCompilations = platformCompilations.filterIsInstance<KotlinNativeCompilation>()
-        val nativeEnabledOn = nativeCompilations.flatMapTo(mutableSetOf()) { compilation -> canBeBuiltOnHosts(compilation.konanTarget) }
-        platformCompilations == nativeCompilations && allHosts != nativeEnabledOn
+internal fun getHostSpecificFragments(
+    module: KotlinGradleModule
+): Set<KotlinGradleFragment> = getHostSpecificElements<KotlinGradleFragment>(
+    module.fragments,
+    isNativeShared = { it.isNativeShared() },
+    getKonanTargets = {
+        val nativeVariants = module.variantsContainingFragment(it).filterIsInstance<KotlinNativeVariantInternal>()
+        nativeVariants.mapTo(mutableSetOf()) { it.konanTarget }
     }
+)
+
+internal fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
+    val compilationsBySourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project).mapValues { (_, compilations) ->
+        compilations.filter { it !is KotlinMetadataCompilation<*> }
+    }
+
+    return getHostSpecificElements(
+        project.kotlinExtension.sourceSets,
+        isNativeShared = { sourceSet ->
+            val compilations = compilationsBySourceSet[sourceSet].orEmpty()
+            compilations.isNotEmpty() && compilations.all { it.platformType == KotlinPlatformType.native }
+        },
+        getKonanTargets = { sourceSet ->
+            compilationsBySourceSet[sourceSet].orEmpty()
+                .filterIsInstance<KotlinNativeCompilation>()
+                .mapTo(mutableSetOf()) { it.konanTarget }
+        }
+    )
 }
 
 abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(

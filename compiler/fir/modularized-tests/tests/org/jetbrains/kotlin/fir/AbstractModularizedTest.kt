@@ -38,10 +38,6 @@ data class ModuleData(
     val sources = rawSources.map { it.fixPath() }
     val javaSourceRoots = rawJavaSourceRoots.map { it.fixPath() }
     val friendDirs = rawFriendDirs.map { it.fixPath() }
-    lateinit var targetInfo: String
-    var compilationError: String? = null
-    var jvmInternalError: String? = null
-    var exceptionMessage: String = "NO MESSAGE"
 }
 
 private fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))

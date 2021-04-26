@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
@@ -25,7 +26,7 @@ abstract class SerializableCodegen(
     }
 
     private inline fun ClassDescriptor.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> FunctionDescriptor?) =
-        !isInline && (isAbstractSerializableClass() || isSealedSerializableClass() || functionPresenceChecker() != null)
+        !isInlineClass() && (isAbstractSerializableClass() || isSealedSerializableClass() || functionPresenceChecker() != null)
 
     private fun generateSyntheticInternalConstructor() {
         val serializerDescriptor = serializableDescriptor.classSerializer ?: return

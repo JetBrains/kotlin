@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResoluti
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 
-internal class DukatRootResolverPlugin(val resolver: KotlinRootNpmResolver) : RootResolverPlugin {
+internal class DukatRootResolverPlugin(val forceFullResolve: Boolean) : RootResolverPlugin {
     val compilations = mutableListOf<DukatCompilationResolverPlugin>()
 
     override fun createCompilationResolverPlugins(resolver: KotlinCompilationNpmResolver): List<DukatCompilationResolverPlugin> {
@@ -20,7 +20,7 @@ internal class DukatRootResolverPlugin(val resolver: KotlinRootNpmResolver) : Ro
     }
 
     override fun close(resolution: KotlinRootNpmResolution) {
-        if (resolver.forceFullResolve) {
+        if (forceFullResolve) {
             // inside idea import
             compilations.forEach {
                 it.executeDukatIfNeeded(true, resolution)

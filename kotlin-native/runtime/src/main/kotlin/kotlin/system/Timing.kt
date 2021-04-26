@@ -26,7 +26,11 @@ public external fun getTimeNanos() : Long
 @SymbolName("Kotlin_system_getTimeMicros")
 public external fun getTimeMicros() : Long
 
-/** Executes the given [block] and returns elapsed time in milliseconds. */
+/**
+ * Executes the given [block] and returns elapsed time in milliseconds.
+ *
+ * @sample samples.system.Timing.measureBlockTimeMillis
+ */
 public inline fun measureTimeMillis(block: () -> Unit) : Long {
     val start = getTimeMillis()
     block()
@@ -40,7 +44,11 @@ public inline fun measureTimeMicros(block: () -> Unit) : Long {
     return getTimeMicros() - start
 }
 
-/** Executes the given [block] and returns elapsed time in nanoseconds. */
+/**
+ * Executes the given [block] and returns elapsed time in nanoseconds.
+ *
+ * @sample samples.system.Timing.measureBlockNanoTime
+ */
 public inline fun measureNanoTime(block: () -> Unit) : Long {
     val start = getTimeNanos()
     block()

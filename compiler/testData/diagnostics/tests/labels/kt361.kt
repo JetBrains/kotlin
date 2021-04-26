@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun nonlocals(b : Boolean) {
     a@{
         fun foo() {

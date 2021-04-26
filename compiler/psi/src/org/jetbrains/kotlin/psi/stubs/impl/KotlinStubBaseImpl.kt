@@ -72,7 +72,7 @@ open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?,
     private fun getPropertyName(method: Method): String {
         val methodName = method.name!!
         if (methodName.startsWith("get")) {
-            return methodName.substring(3).decapitalize()
+            return methodName.substring(3).replaceFirstChar(Char::lowercaseChar)
         }
         return methodName
     }

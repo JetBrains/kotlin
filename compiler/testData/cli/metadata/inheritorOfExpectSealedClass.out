@@ -1,0 +1,4 @@
+compiler/testData/cli/metadata/inheritorOfExpectSealedClass/common-3.kt:1:17: error: inheritance of sealed classes or interfaces from different module is prohibited
+class Derived : Base()
+                ^
+COMPILATION_ERROR

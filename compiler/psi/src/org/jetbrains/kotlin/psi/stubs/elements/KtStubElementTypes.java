@@ -79,6 +79,9 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtNullableType> NULLABLE_TYPE =
             new KtPlaceHolderStubElementType<>("NULLABLE_TYPE", KtNullableType.class);
 
+    KtPlaceHolderStubElementType<KtDefinitelyNotNullType> DEFINITELY_NOT_NULL_TYPE =
+            new KtPlaceHolderStubElementType<>("DEFINITELY_NOT_NULL_TYPE", KtDefinitelyNotNullType.class);
+
     KtPlaceHolderStubElementType<KtTypeReference> TYPE_REFERENCE =
             new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference.class);
 
@@ -167,7 +170,7 @@ public interface KtStubElementTypes {
 
     TokenSet SUPER_TYPE_LIST_ENTRIES = TokenSet.create(DELEGATED_SUPER_TYPE_ENTRY, SUPER_TYPE_CALL_ENTRY, SUPER_TYPE_ENTRY);
 
-    TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE);
+    TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, DEFINITELY_NOT_NULL_TYPE);
 
     TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 }

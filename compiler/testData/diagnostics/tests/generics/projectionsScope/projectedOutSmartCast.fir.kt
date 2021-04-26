@@ -6,18 +6,18 @@ class C<R> {
 }
 
 fun foo(x: Any?, y: C<*>) {
-    y.<!INAPPLICABLE_CANDIDATE!>bindTo<!>("")
+    y.bindTo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
     if (x is C<*>) {
-        x.<!INAPPLICABLE_CANDIDATE!>bindTo<!>("")
+        x.bindTo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
         with(x) {
-            <!INAPPLICABLE_CANDIDATE!>bindTo<!>("")
+            bindTo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
         }
     }
 
     with(x) {
         if (this is C<*>) {
-            <!INAPPLICABLE_CANDIDATE!>bindTo<!>("")
+            bindTo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
         }
     }
 }

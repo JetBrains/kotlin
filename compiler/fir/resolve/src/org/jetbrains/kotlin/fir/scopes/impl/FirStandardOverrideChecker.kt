@@ -97,7 +97,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         overrideCandidate: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirCallableMemberDeclaration<*>
     ): ConeSubstitutor? {
-        val substitutor = buildSubstitutorForOverridesCheck(overrideCandidate, baseDeclaration) ?: return null
+        val substitutor = buildSubstitutorForOverridesCheck(overrideCandidate, baseDeclaration, session) ?: return null
         if (
             overrideCandidate.typeParameters.isNotEmpty() &&
             overrideCandidate.typeParameters.zip(baseDeclaration.typeParameters).any { (override, base) ->

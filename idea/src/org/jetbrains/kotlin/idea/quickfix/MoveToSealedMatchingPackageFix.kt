@@ -10,20 +10,22 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.parentOfType
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
-import org.jetbrains.kotlin.descriptors.containingPackage
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.isSealed
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.cases.*
+import org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.cases.FailedToRunCaseException
+import org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.cases.randomBoolean
+import org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.cases.randomDirectoryPathMutator
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.move.getTargetPackageFqName
 import org.jetbrains.kotlin.idea.refactoring.move.guessNewFileName
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler
@@ -33,11 +35,12 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlin
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsModel
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 class MoveToSealedMatchingPackageFix(element: KtTypeReference) : KotlinQuickFixAction<KtTypeReference>(element) {
 
@@ -65,16 +68,7 @@ class MoveToSealedMatchingPackageFix(element: KtTypeReference) : KotlinQuickFixA
         val ktUserType = typeElement as? KtUserType ?: return null
         val ktNameReferenceExpression = ktUserType.referenceExpression as? KtNameReferenceExpression ?: return null
         val declDescriptor = ktNameReferenceExpression.resolveMainReferenceToDescriptors().singleOrNull() ?: return null
-
-        val packageName = declDescriptor.containingPackage()?.asString() ?: return null
-
-        val projectFileIndex = ProjectFileIndex.getInstance(project)
-        val ktClassInQuestion = DescriptorToSourceUtils.getSourceFromDescriptor(declDescriptor) as? KtClass ?: return null
-        val module = projectFileIndex.getModuleForFile(ktClassInQuestion.containingFile.virtualFile) ?: return null
-        val psiPackage =
-            KotlinJavaPsiFacade.getInstance(project).findPackage(packageName, GlobalSearchScope.moduleScope(module)) ?: return null
-
-        return psiPackage.directories.find { it.module == module }
+        return declDescriptor.containingDeclaration?.findPsi()?.containingFile?.containingDirectory
     }
 
     override fun startInWriteAction(): Boolean {
@@ -94,9 +88,18 @@ class MoveToSealedMatchingPackageFix(element: KtTypeReference) : KotlinQuickFixA
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
+
+        private fun ClassDescriptor.isBinarySealed(): Boolean = isSealed() && this is DeserializedClassDescriptor
+
         override fun createAction(diagnostic: Diagnostic): MoveToSealedMatchingPackageFix? {
-            val annotationEntry = diagnostic.psiElement as? KtTypeReference ?: return null
-            return MoveToSealedMatchingPackageFix(annotationEntry)
+            val typeReference = diagnostic.psiElement as? KtTypeReference ?: return null
+
+            // We cannot suggest moving this class to the binary of his parent
+            val classDescriptor = typeReference.parentOfType<KtClass>()?.resolveToDescriptorIfAny() ?: return null
+            if (classDescriptor.getSuperInterfaces().any { it.isBinarySealed() }) return null
+            if (classDescriptor.getSuperClassNotAny()?.isBinarySealed() == true) return null
+
+            return MoveToSealedMatchingPackageFix(typeReference)
         }
     }
 }

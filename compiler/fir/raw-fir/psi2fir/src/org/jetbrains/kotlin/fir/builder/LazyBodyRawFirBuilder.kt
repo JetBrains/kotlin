@@ -31,7 +31,6 @@ class RawFirFragmentForLazyBodiesBuilder private constructor(
             designation: List<FirDeclaration>,
             declaration: KtDeclaration,
         ): FirDeclaration {
-            require(declaration is KtNamedFunction || declaration is KtProperty) { "Not implemented for ${declaration::class.qualifiedName}" }
             val builder = RawFirFragmentForLazyBodiesBuilder(session, baseScopeProvider, declaration)
             builder.context.packageFqName = declaration.containingKtFile.packageFqName
             return builder.moveNext(designation.iterator())

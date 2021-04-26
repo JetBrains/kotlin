@@ -3,8 +3,8 @@ package test
 
 annotation class A(val value: String)
 
-<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): test/A.A">@A(null)</error>
+@A(<error descr="[NULL_FOR_NONNULL_TYPE] ">null</error>)
 fun foo() {}
 
-<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): test/A.A">@A(null)</error>
+@A(<error descr="[NULL_FOR_NONNULL_TYPE] ">null</error>)
 class B

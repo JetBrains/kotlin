@@ -479,12 +479,12 @@ private class U32CString(val chars: CharArray): CValues<IntVar>() {
         var indexIn = 0
         var indexOut = 0
         while (indexIn < chars.size) {
-            var value = chars[indexIn++].toInt()
+            var value = chars[indexIn++].code
             if (value >= 0xd800 && value < 0xdc00) {
                 // Surrogate pair.
                 if (indexIn >= chars.size - 1) throw IllegalArgumentException()
                 indexIn++
-                val next = chars[indexIn].toInt()
+                val next = chars[indexIn].code
                 if (next < 0xdc00 || next >= 0xe000) throw IllegalArgumentException()
                 value = 0x10000 + ((value and 0x3ff) shl 10) + (next and 0x3ff)
             }
@@ -527,7 +527,7 @@ public fun CPointer<ShortVar>.toKStringFromUtf16(): String {
     val chars = CharArray(length)
     var index = 0
     while (index < length) {
-        chars[index] = nativeBytes[index].toChar()
+        chars[index] = nativeBytes[index].toInt().toChar()
         ++index
     }
     return chars.concatToString()
@@ -571,7 +571,6 @@ public fun CPointer<IntVar>.toKStringFromUtf32(): String {
  *
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
-@OptIn(ExperimentalStdlibApi::class)
 @SinceKotlin("1.3")
 public fun ByteArray.toKString() : String {
     val realEndIndex = realEndIndex(this, 0, this.size)
@@ -590,7 +589,6 @@ public fun ByteArray.toKString() : String {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
-@OptIn(ExperimentalStdlibApi::class)
 @SinceKotlin("1.3")
 public fun ByteArray.toKString(
         startIndex: Int = 0,

@@ -59,24 +59,36 @@ abstract class BinaryJavaMethodBase(
 
             val isInnerClassConstructor = isConstructor && containingClass.outerClass != null && !containingClass.isStatic
             val isEnumConstructor = containingClass.isEnum && isConstructor
+            val methodInfoFromDescriptor = parseMethodDescription(desc, parentContext, signatureParser).let {
+                when {
+                    isEnumConstructor ->
+                        // skip ordinal/name parameters for enum constructors
+                        MethodInfo(it.returnType, it.typeParameters, it.valueParameterTypes.drop(2))
+                    isInnerClassConstructor ->
+                        // omit synthetic inner class constructor parameter
+                        MethodInfo(it.returnType, it.typeParameters, it.valueParameterTypes.drop(1))
+                    else -> it
+                }
+            }
             val info: MethodInfo =
                 if (signature != null) {
                     val contextForMethod = parentContext.copyForMember()
-                    parseMethodSignature(signature, signatureParser, contextForMethod).also {
+                    val methodInforFromSignature = parseMethodSignature(signature, signatureParser, contextForMethod).also {
                         contextForMethod.addTypeParameters(it.typeParameters)
                     }
-                } else
-                    parseMethodDescription(desc, parentContext, signatureParser).let {
-                        when {
-                            isEnumConstructor ->
-                                // skip ordinal/name parameters for enum constructors
-                                MethodInfo(it.returnType, it.typeParameters, it.valueParameterTypes.drop(2))
-                            isInnerClassConstructor ->
-                                // omit synthetic inner class constructor parameter
-                                MethodInfo(it.returnType, it.typeParameters, it.valueParameterTypes.drop(1))
-                            else -> it
-                        }
+                    // JVM specs allows disagreements in parameters between signature and descriptor/serialized method. In particular the
+                    // situation was detected on Scala stdlib (see #KT-38325 for some details).
+                    // But in our implementation we are using the parameter infos read here as a "master" so if signature has less params
+                    // than the descriptor, we need get missing parameter infos from somewhere.
+                    // Since the known cases are rare, it was decided to keep it simple for now and only cover this particular case.
+                    if (methodInforFromSignature.valueParameterTypes.count() < methodInfoFromDescriptor.valueParameterTypes.count()) {
+                        methodInfoFromDescriptor
+                    } else {
+                        methodInforFromSignature
                     }
+                } else {
+                    methodInfoFromDescriptor
+                }
 
             val parameterTypes = info.valueParameterTypes
             val paramCount = parameterTypes.size

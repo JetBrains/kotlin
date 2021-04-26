@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.backend.jvm.lower.indy
 
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
+import org.jetbrains.kotlin.backend.common.ir.isFromJava
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
-import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
+import org.jetbrains.kotlin.backend.jvm.lower.isPrivate
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class LambdaMetafactoryArguments(
@@ -55,7 +56,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
-        if (reference.origin != IrStatementOrigin.LAMBDA && !samClass.isFromJava())
+        if (!reference.origin.isLambda && !samClass.isFromJava())
             return null
 
         val samMethod = samClass.getSingleAbstractMethod()
@@ -71,11 +72,26 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         val implFun = reference.symbol.owner
 
+        if (implFun is IrConstructor && implFun.visibility.isPrivate) {
+            // Kotlin generates constructor accessors differently from Java.
+            // TODO more precise accessibility check (see SyntheticAccessorLowering::isAccessible)
+            // TODO wrap inaccessible constructor with a local function
+            return null
+        }
+
+        val implFunParent = implFun.parent
+        if (implFunParent is IrClass && implFunParent.origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS) {
+            // LambdaMetafactory treats multifile class part members as non-accessible,
+            // even if the member is referenced via facade,
+            // because corresponding part class is non-accessible
+            return null
+        }
+
         // Can't use JDK LambdaMetafactory for annotated lambdas.
         // JDK LambdaMetafactory doesn't copy annotations from implementation method to an instance method in a
         // corresponding synthetic class, which doesn't look like a binary compatible change.
         // TODO relaxed mode?
-        if (implFun.annotations.isNotEmpty())
+        if (reference.origin.isLambda && implFun.annotations.isNotEmpty())
             return null
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.
@@ -88,6 +104,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
         if (implFun.parents.any { it.isInlineFunction() || it.isCrossinlineLambda() })
+            return null
+
+        // Don't try to use indy on SAM types with non-invariant projections because buildFakeOverrideMember doesn't support such supertypes
+        // (and rightly so: supertypes in Kotlin can't have projections in immediate type arguments). This can happen for example in case
+        // the SAM type is instantiated with an intersection type in arguments, which is approximated to an out-projection in psi2ir.
+        if (samType is IrSimpleType && samType.arguments.any { it is IrTypeProjection && it.variance != Variance.INVARIANT })
             return null
 
         // Do the hard work of matching Kotlin functional interface hierarchy against LambdaMetafactory constraints.
@@ -322,6 +344,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             origin = reference.origin
         )
     }
+
 
     private fun IrValueParameter.copy(parent: IrSimpleFunction, newIndex: Int, newName: Name = this.name): IrValueParameter =
         buildValueParameter(parent) {

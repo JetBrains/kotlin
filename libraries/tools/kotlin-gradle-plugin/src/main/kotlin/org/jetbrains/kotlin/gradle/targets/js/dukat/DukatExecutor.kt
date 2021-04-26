@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.gradle.internal.service.ServiceRegistry
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 
 class DukatExecutor(
-    val nodeJs: NodeJsRootExtension,
+    val npmVersions: NpmVersions,
     val typeDefinitions: List<DtsResolver.Dts>,
     val externalsOutputFormat: ExternalsOutputFormat,
     val npmProject: NpmProject,
@@ -23,7 +23,7 @@ class DukatExecutor(
     }
 
     val versionFile = npmProject.externalsDirRoot.resolve("version.txt")
-    val version = DukatCompilationResolverPlugin.VERSION + ", " + nodeJs.versions.dukat.version
+    val version = DukatCompilationResolverPlugin.VERSION + ", " + npmVersions.dukat.version
     val prevVersion = if (versionFile.exists()) versionFile.readText() else null
 
     val inputsFile = npmProject.externalsDirRoot.resolve("inputs.txt")
@@ -49,7 +49,7 @@ class DukatExecutor(
 
             npmProject.externalsDir.deleteRecursively()
             DukatRunner(
-                npmProject.compilation,
+                npmProject,
                 typeDefinitions.map { it.file },
                 externalsOutputFormat,
                 npmProject.externalsDir,
@@ -60,7 +60,5 @@ class DukatExecutor(
         }
 
         versionFile.writeText(version)
-
-        gradleModelPostProcess(externalsOutputFormat, npmProject)
     }
 }

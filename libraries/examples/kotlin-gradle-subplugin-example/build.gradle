@@ -1,5 +1,5 @@
 apply plugin: 'kotlin'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'jps-compatible'
 
 repositories {
@@ -39,3 +39,27 @@ dependencies {
 // (for example, the actual package at runtime is `org.jetbrains.kotlin.com.intellij.*`):
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
 // In a standalone build, you can setup the relocation with the Shadow plugin.
+
+publishing {
+    publications {
+        main(MavenPublication) {
+            artifact tasks.named("embeddable")
+        }
+    }
+}
+
+tasks.register("install") {
+    dependsOn(tasks.named("publishToMavenLocal"))
+}
+
+// workaround for Gradle configuration cache
+// TODO: remove it when https://github.com/gradle/gradle/pull/16945 merged into used in build Gradle version
+tasks.withType(PublishToMavenLocal) {
+    def originalTask = it
+    def serializablePublishTask =
+            tasks.register(originalTask.name + "Serializable", PublishToMavenLocalSerializable) {
+                publication = originalTask.publication
+            }
+    originalTask.onlyIf { false }
+    originalTask.dependsOn(serializablePublishTask)
+}

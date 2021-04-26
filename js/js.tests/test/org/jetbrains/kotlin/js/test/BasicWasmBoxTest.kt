@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.test.engines.ExternalTool
@@ -137,6 +138,7 @@ abstract class BasicWasmBoxTest(
             analyzer = AnalyzerWithCompilerReport(config.configuration),
             configuration = config.configuration,
             phaseConfig = phaseConfig,
+            irFactory = IrFactoryImpl,
             // TODO: Bypass the resolver fow wasm.
             allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
             friendDependencies = emptyList(),

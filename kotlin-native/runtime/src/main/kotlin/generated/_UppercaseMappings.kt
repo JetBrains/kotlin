@@ -68,5 +68,5 @@ internal fun Int.uppercaseCodePoint(): Int {
 }
 
 internal fun Char.uppercaseCharImpl(): Char {
-    return toInt().uppercaseCodePoint().toChar()
+    return code.uppercaseCodePoint().toChar()
 }

@@ -47,11 +47,13 @@ internal fun Project.setUpKotlinNativePlatformDependencies() {
         // not a multiplatform project, nothing to set up
         return
     }
-
     val kotlinVersion = getKotlinPluginVersion()!!
     val allowCommonizer = isAllowCommonizer(kotlinVersion)
-    val dependencyResolver = NativePlatformDependencyResolver(this, kotlinVersion)
+    if (allowCommonizer && isHierarchicalCommonizationEnabled) {
+        return setUpHierarchicalKotlinNativePlatformDependencies()
+    }
 
+    val dependencyResolver = NativePlatformDependencyResolver(this, kotlinVersion)
     findSourceSetsToAddDependencies(allowCommonizer).forEach { (sourceSet: KotlinSourceSet, sourceSetDeps: Set<NativePlatformDependency>) ->
         sourceSetDeps.forEach { sourceSetDep: NativePlatformDependency ->
             dependencyResolver.addForResolve(sourceSetDep) { resolvedFiles: FileCollection ->
@@ -99,7 +101,7 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
         check(!alreadyResolved)
         alreadyResolved = true
 
-        project.commonizeNativeDistributionTask.configure { commonizerTask ->
+        project.commonizeNativeDistributionTask?.configure { commonizerTask ->
             commonizerTask.targetGroups = dependencies.keys.filterIsInstance<CommonizedCommon>().map { it.targets }.toSet()
         }
 

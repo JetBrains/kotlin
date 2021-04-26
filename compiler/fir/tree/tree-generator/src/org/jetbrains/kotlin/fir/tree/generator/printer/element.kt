@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
 import org.jetbrains.kotlin.util.SmartPrinter
@@ -35,7 +36,7 @@ fun Element.generateCode(generationPath: File): GeneratedFile {
 
 fun SmartPrinter.printElement(element: Element) {
     with(element) {
-        val isInterface = kind == Implementation.Kind.Interface
+        val isInterface = kind == Kind.Interface || kind == Kind.SealedInterface
 
         fun abstract() {
             if (!isInterface) {
@@ -53,7 +54,7 @@ fun SmartPrinter.printElement(element: Element) {
         if (typeArguments.isNotEmpty()) {
             print(typeArguments.joinToString(", ", "<", ">") { it.toString() })
         }
-        val needPureAbstractElement = !isInterface && !allParents.any { it.kind == Implementation.Kind.AbstractClass }
+        val needPureAbstractElement = !isInterface && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }
 
         if (parents.isNotEmpty() || needPureAbstractElement) {
             print(" : ")
@@ -86,6 +87,14 @@ fun SmartPrinter.printElement(element: Element) {
 
             override()
             println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
+
+            println()
+            println("@Suppress(\"UNCHECKED_CAST\")")
+            override()
+            println("fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = ")
+            withIndent {
+                println("transformer.transform$name(this, data) as E")
+            }
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null, forceNullable: Boolean = false) {
                 println()
@@ -131,12 +140,6 @@ fun SmartPrinter.printElement(element: Element) {
                 println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
                 println()
                 println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
-                println()
-                println("@Suppress(\"UNCHECKED_CAST\")")
-                println("fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): CompositeTransformResult<E> =")
-                withIndent {
-                    println("accept(visitor, data) as CompositeTransformResult<E>")
-                }
                 println()
                 println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
             }

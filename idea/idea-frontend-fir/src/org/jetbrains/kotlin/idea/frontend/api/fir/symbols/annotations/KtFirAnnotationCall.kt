@@ -29,17 +29,17 @@ internal class KtFirAnnotationCall(
     override val token: ValidityToken get() = containingDeclaration.token
 
     override val psi: KtCallElement? by containingDeclaration.withFirAndCache { fir ->
-        fir.findPsi(fir.session) as? KtCallElement
+        fir.findPsi(fir.declarationSiteSession) as? KtCallElement
     }
 
     override val classId: ClassId? by containingDeclaration.withFirAndCache(AnnotationPhases.PHASE_FOR_ANNOTATION_CLASS_ID) { fir ->
-        annotationCallRef.getClassId(fir.session)
+        annotationCallRef.getClassId(fir.declarationSiteSession)
     }
 
     override val useSiteTarget: AnnotationUseSiteTarget? get() = annotationCallRef.useSiteTarget
 
     override val arguments: List<KtNamedConstantValue> by containingDeclaration.withFirAndCache(FirResolvePhase.TYPES) { fir ->
-        mapAnnotationParameters(annotationCallRef, fir.session).map { (name, expression) ->
+        mapAnnotationParameters(annotationCallRef, fir.declarationSiteSession).map { (name, expression) ->
             KtNamedConstantValue(name, expression.convertConstantExpression())
         }
     }

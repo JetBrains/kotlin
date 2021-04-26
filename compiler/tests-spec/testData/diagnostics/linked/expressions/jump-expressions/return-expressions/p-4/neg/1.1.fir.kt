@@ -5,7 +5,7 @@
 // TESTCASE NUMBER: 1
 // UNEXPECTED BEHAVIOUR
 // ISSUES : KT-35545
-fun case1(a: Boolean) = run { println("d"); return true }
+fun case1(a: Boolean) = run { println("d"); return <!RETURN_TYPE_MISMATCH!>true<!> }
 
 // TESTCASE NUMBER: 2
 val case2

@@ -78,6 +78,7 @@ class LazyJavaClassMemberScope(
             addAll(declaredMemberIndex().getMethodNames())
             addAll(declaredMemberIndex().getRecordComponentNames())
             addAll(computeClassNames(kindFilter, nameFilter))
+            addAll(c.components.syntheticPartsProvider.getMethodNames(ownerDescriptor))
         }
 
     internal val constructors = c.storageManager.createLazyValue {
@@ -97,6 +98,8 @@ class LazyJavaClassMemberScope(
                 c.components.javaResolverCache.recordConstructor(jClass, defaultConstructor)
             }
         }
+
+        c.components.syntheticPartsProvider.generateConstructors(ownerDescriptor, result)
 
         c.components.signatureEnhancement.enhanceSignatures(
             c,
@@ -496,6 +499,8 @@ class LazyJavaClassMemberScope(
         if (jClass.isRecord && declaredMemberIndex().findRecordComponentByName(name) != null && result.none { it.valueParameters.isEmpty() }) {
             result.add(resolveRecordComponentToFunctionDescriptor(declaredMemberIndex().findRecordComponentByName(name)!!))
         }
+
+        c.components.syntheticPartsProvider.generateMethods(ownerDescriptor, name, result)
     }
 
     private fun resolveRecordComponentToFunctionDescriptor(recordComponent: JavaRecordComponent): JavaMethodDescriptor {

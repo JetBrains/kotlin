@@ -1,5 +1,5 @@
 FILE: eqNotEq.kt
-    public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Unit|
+    public final fun checkNotNull(x: R|kotlin/Any?|): R|kotlin/Boolean|
         [R|Contract description]
          <
             Returns(TRUE) -> x != null
@@ -29,7 +29,7 @@ FILE: eqNotEq.kt
                 R|<local>/x|.R|kotlin/String.length|
             }
             else ->  {
-                R|<local>/x|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/String.length>#
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
             }
         }
 

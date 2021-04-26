@@ -81,7 +81,7 @@ internal object nativeMemUtils {
         val sourceArray = source.reinterpret<ShortVar>().ptr
         var index = 0
         while (index < length) {
-            dest[index] = sourceArray[index].toChar()
+            dest[index] = sourceArray[index].toInt().toChar()
             ++index
         }
     }
@@ -91,7 +91,7 @@ internal object nativeMemUtils {
         val destArray = dest.reinterpret<ShortVar>().ptr
         var index = 0
         while (index < length) {
-            destArray[index] = source[index].toShort()
+            destArray[index] = source[index].code.toShort()
             ++index
         }
     }
@@ -148,7 +148,7 @@ public fun CPointer<UShortVar>.toKStringFromUtf16(): String {
     val chars = kotlin.CharArray(length)
     var index = 0
     while (index < length) {
-        chars[index] = nativeBytes[index].toShort().toChar()
+        chars[index] = nativeBytes[index].toInt().toChar()
         ++index
     }
     return chars.concatToString()

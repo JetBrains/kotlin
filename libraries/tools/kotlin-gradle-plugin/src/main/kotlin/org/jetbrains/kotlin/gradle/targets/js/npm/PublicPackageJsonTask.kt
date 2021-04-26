@@ -24,26 +24,28 @@ constructor(
     private val compilation: KotlinJsCompilation
 ) : DefaultTask() {
     private val npmProject = compilation.npmProject
+
+    @Transient
     private val nodeJs = npmProject.nodeJs
+    private val resolutionManager = nodeJs.npmResolutionManager
 
     private val compilationName = compilation.disambiguatedName
     private val projectPath = project.path
 
     private val compilationResolution
-        get() = nodeJs.npmResolutionManager.requireInstalled(
-                services,
-                logger
-            )[projectPath][compilationName]
+        get() = resolutionManager.requireInstalled(
+            services,
+            logger
+        )[projectPath][compilationName]
 
+    private val packageJsonHandlers = compilation.packageJsonHandlers
 
-    // TODO: is map contains only serializable values?
     @get:Input
-    val packageJsonCustomFields: Map<String, Any?> by lazy {
-        PackageJson(fakePackageJsonValue, fakePackageJsonValue)
+    val packageJsonCustomFields: Map<String, Any?>
+        get() = PackageJson(fakePackageJsonValue, fakePackageJsonValue)
             .apply {
-                compilation.packageJsonHandlers.forEach { it() }
+                packageJsonHandlers.forEach { it() }
             }.customFields
-    }
 
     @get:Nested
     internal val externalDependencies: Collection<NpmDependencyDeclaration>
@@ -76,7 +78,7 @@ constructor(
 
     @TaskAction
     fun resolve() {
-        packageJson(npmProject.name, projectVersion, npmProject.main, externalDependencies).let { packageJson ->
+        packageJson(npmProject.name, projectVersion, npmProject.main, externalDependencies, packageJsonHandlers).let { packageJson ->
             packageJson.main = "${npmProject.name}.js"
 
             if (isJrIrCompilation) {

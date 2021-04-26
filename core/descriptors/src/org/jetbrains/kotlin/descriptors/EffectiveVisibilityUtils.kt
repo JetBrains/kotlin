@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 
 fun EffectiveVisibility.toDescriptorVisibility(): DescriptorVisibility = DescriptorVisibilities.toDescriptorVisibility(toVisibility())
 
@@ -20,10 +20,12 @@ fun DescriptorVisibility.effectiveVisibility(
 
 private fun DescriptorVisibility.forVisibility(descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false): EffectiveVisibility =
     when (this) {
-        DescriptorVisibilities.PRIVATE, DescriptorVisibilities.PRIVATE_TO_THIS, DescriptorVisibilities.INVISIBLE_FAKE -> EffectiveVisibility.Private
+        DescriptorVisibilities.PRIVATE_TO_THIS, DescriptorVisibilities.INVISIBLE_FAKE -> EffectiveVisibility.PrivateInClass
+        DescriptorVisibilities.PRIVATE -> if (descriptor is ClassDescriptor &&
+            descriptor.containingDeclaration is PackageFragmentDescriptor
+        ) EffectiveVisibility.PrivateInFile else EffectiveVisibility.PrivateInClass
         DescriptorVisibilities.PROTECTED -> EffectiveVisibility.Protected(
-            (descriptor.containingDeclaration as? ClassDescriptor)?.defaultType?.constructor,
-            ClassicTypeCheckerContext(errorTypeEqualsToAnything = false)
+            (descriptor.containingDeclaration as? ClassDescriptor)?.defaultType?.constructor
         )
         DescriptorVisibilities.INTERNAL -> if (!checkPublishedApi ||
             !descriptor.isPublishedApi()
@@ -69,7 +71,7 @@ private fun KotlinType.dependentDescriptors(types: Set<KotlinType>, ownRelation:
 private fun Set<DescriptorWithRelation>.leastPermissive(base: EffectiveVisibility): DescriptorWithRelation? {
     for (descriptorWithRelation in this) {
         val currentVisibility = descriptorWithRelation.effectiveVisibility()
-        when (currentVisibility.relation(base)) {
+        when (currentVisibility.relation(base, SimpleClassicTypeSystemContext)) {
             EffectiveVisibility.Permissiveness.LESS, EffectiveVisibility.Permissiveness.UNKNOWN -> {
                 return descriptorWithRelation
             }
@@ -83,11 +85,14 @@ private fun Set<DescriptorWithRelation>.leastPermissive(base: EffectiveVisibilit
 fun KotlinType.leastPermissiveDescriptor(base: EffectiveVisibility) = dependentDescriptors().leastPermissive(base)
 
 fun DeclarationDescriptorWithVisibility.effectiveVisibility(
-        visibility: DescriptorVisibility = this.visibility, checkPublishedApi: Boolean = false
+    visibility: DescriptorVisibility = this.visibility,
+    checkPublishedApi: Boolean = false
 ): EffectiveVisibility =
     lowerBound(
         visibility.effectiveVisibility(this, checkPublishedApi),
         (this.containingDeclaration as? ClassDescriptor)?.effectiveVisibility(checkPublishedApi) ?: EffectiveVisibility.Public
     )
 
-private fun lowerBound(first: EffectiveVisibility, second: EffectiveVisibility): EffectiveVisibility = first.lowerBound(second)
+private fun lowerBound(first: EffectiveVisibility, second: EffectiveVisibility): EffectiveVisibility {
+    return first.lowerBound(second, SimpleClassicTypeSystemContext)
+}

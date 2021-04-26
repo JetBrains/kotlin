@@ -35,8 +35,8 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Cannot access 'A': it is private in file
-'public' subclass exposes its 'private' supertype A
-'public' function exposes its 'private' return type A
+'public' subclass exposes its 'private-in-file' supertype A
+'public' function exposes its 'private-in-file' return type A
 Cannot access 'A': it is private in file
 Cannot access 'A': it is private in file
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Any?

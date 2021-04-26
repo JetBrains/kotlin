@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -13,12 +14,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirCall : FirStatement {
+sealed interface FirCall : FirStatement {
     override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
     val argumentList: FirArgumentList
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCall(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformCall(this, data) as E
 
     fun replaceArgumentList(newArgumentList: FirArgumentList)
 

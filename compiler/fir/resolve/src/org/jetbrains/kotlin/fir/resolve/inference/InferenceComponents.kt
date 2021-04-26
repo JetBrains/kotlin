@@ -18,7 +18,7 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
             get() = this@InferenceComponents.session
     }
 
-    val approximator: ConeTypeApproximator = ConeTypeApproximator(ctx)
+    val approximator: ConeTypeApproximator = ConeTypeApproximator(ctx, session.languageVersionSettings)
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle, ConeConstraintSystemUtilContext)
     private val injector = ConstraintInjector(

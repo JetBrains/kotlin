@@ -21,5 +21,5 @@ FILE: eagerAndPostponedCallableReferences.kt
         lval a4: R|B| = R|/foo|<R|B|>(::R|/multiple|, ::R|/singleB|)
         lval a5: R|A| = R|/foo|<R|A|>(::R|/singleA|, ::R|/singleA|)
         lval a6: R|it(A & B)| = R|/foo|<R|it(A & B)|>(::R|/singleA|, ::R|/singleB|)
-        R|/foo|<R|kotlin/Nothing|>(::<Unresolved reference: multiple>#, ::<Unresolved reference: multiple>#)
+        R|/foo|<R|kotlin/Nothing|>(::<Ambiguity: multiple, [/multiple, /multiple]>#, ::<Ambiguity: multiple, [/multiple, /multiple]>#)
     }

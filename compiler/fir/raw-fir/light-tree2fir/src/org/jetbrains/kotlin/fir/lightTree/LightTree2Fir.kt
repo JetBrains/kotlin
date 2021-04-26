@@ -11,7 +11,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -30,17 +29,17 @@ class LightTree2Fir(
 
     companion object {
         private val parserDefinition = KotlinParserDefinition()
-        private val lexer = KotlinLexer()
+        private fun makeLexer() = KotlinLexer()
 
         fun buildLightTreeBlockExpression(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
-            val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, lexer, code)
+            val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, makeLexer(), code)
             //KotlinParser.parseBlockExpression(builder)
             KotlinLightParser.parseBlockExpression(builder)
             return builder.lightTree
         }
 
         fun buildLightTreeLambdaExpression(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
-            val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, lexer, code)
+            val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, makeLexer(), code)
             //KotlinParser.parseLambdaExpression(builder)
             KotlinLightParser.parseLambdaExpression(builder)
             return builder.lightTree
@@ -57,7 +56,7 @@ class LightTree2Fir(
     }
 
     fun buildLightTree(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
-        val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, lexer, code)
+        val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, makeLexer(), code)
         //KotlinParser(project).parse(null, builder, ktDummyFile)
         KotlinLightParser.parse(builder)
         return builder.lightTree

@@ -59,16 +59,16 @@ internal class FirWhenExpressionImpl(
     }
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        calleeReference = calleeReference.transformSingle(transformer, data)
+        calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
     override fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
         if (subjectVariable != null) {
-            subjectVariable = subjectVariable?.transformSingle(transformer, data)
+            subjectVariable = subjectVariable?.transform(transformer, data)
             subject = subjectVariable?.initializer
         } else {
-            subject = subject?.transformSingle(transformer, data)
+            subject = subject?.transform(transformer, data)
         }
         return this
     }
@@ -79,7 +79,7 @@ internal class FirWhenExpressionImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        typeRef = typeRef.transformSingle(transformer, data)
+        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }

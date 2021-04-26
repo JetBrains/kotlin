@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext.SupertypesPolicy.*
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -258,6 +259,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {
         return this is ConeClassLikeLookupTag
+    }
+
+    override fun TypeConstructorMarker.isInterface(): Boolean {
+        return ((this as? ConeClassLikeLookupTag)?.toClassLikeSymbol()?.fir as? FirClass)?.classKind == ClassKind.INTERFACE
     }
 
     override fun TypeParameterMarker.getVariance(): TypeVariance {
@@ -564,7 +569,7 @@ class ConeTypeCheckerContext(
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
                         ?: session.builtinTypes.nullableAnyType.type)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
-            substitutorByMap(substitution)
+            substitutorByMap(substitution, session)
         } else {
             ConeSubstitutor.Empty
         }

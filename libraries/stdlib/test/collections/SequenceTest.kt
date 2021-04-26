@@ -122,7 +122,7 @@ public class SequenceTest {
         data.forEach {  }
         assertEquals(0, count, "onEach should be executed only when resulting sequence is iterated")
 
-        val sum = newData.sumBy { it.length }
+        val sum = newData.sumOf { it.length }
         assertEquals(sum, count)
     }
 

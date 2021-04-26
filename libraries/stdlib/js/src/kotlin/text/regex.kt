@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -51,7 +51,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     public actual val pattern: String = pattern
     /** The set of options that were used to create this regular expression. */
     public actual val options: Set<RegexOption> = options.toSet()
-    private val nativePattern: RegExp = RegExp(pattern, options.map { it.value }.joinToString(separator = "") + "g")
+    private val nativePattern: RegExp = RegExp(pattern, options.joinToString(separator = "", prefix = "gu") { it.value })
 
     /** Indicates whether the regular expression matches the entire [input]. */
     public actual infix fun matches(input: CharSequence): Boolean {
@@ -200,7 +200,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
          */
         public actual fun escapeReplacement(literal: String): String = literal.nativeReplace(replacementEscape, "$$$$")
 
-        private val patternEscape = RegExp("""[-\\^$*+?.()|[\]{}]""", "g")
+        private val patternEscape = RegExp("""[\\^$*+?.()|[\]{}]""", "g")
         private val replacementEscape = RegExp("""\$""", "g")
     }
 }

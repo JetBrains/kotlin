@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -66,7 +66,7 @@ class FirTypeDeserializer(
                     typeParameterNames[name.asString()] = it
                 }
                 builders += FirTypeParameterBuilder().apply {
-                    session = this@FirTypeDeserializer.session
+                    declarationSiteSession = session
                     origin = FirDeclarationOrigin.Library
                     this.name = name
                     this.symbol = symbol
@@ -132,9 +132,16 @@ class FirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeLookupTagBasedType? {
+    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeSimpleKotlinType? {
         val constructor = typeSymbol(proto) ?: return null
-        if (constructor is ConeTypeParameterLookupTag) return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable)
+        if (constructor is ConeTypeParameterLookupTag) {
+            return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable).let {
+                if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
+                    ConeDefinitelyNotNullType.create(it)
+                else
+                    it
+            }
+        }
         if (constructor !is ConeClassLikeLookupTag) return null
 
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =

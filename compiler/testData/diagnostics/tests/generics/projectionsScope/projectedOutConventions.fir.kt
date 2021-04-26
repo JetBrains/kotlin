@@ -8,7 +8,7 @@ class A<T> {
 }
 
 fun test(a: A<out CharSequence>) {
-    a <!INAPPLICABLE_CANDIDATE!>+<!> ""
-    <!INAPPLICABLE_CANDIDATE!>a[1]<!> = ""
-    <!INAPPLICABLE_CANDIDATE!>a[""]<!>
+    a + <!ARGUMENT_TYPE_MISMATCH!>""<!>
+    a[1] = <!ARGUMENT_TYPE_MISMATCH!>""<!>
+    a[<!ARGUMENT_TYPE_MISMATCH!>""<!>]
 }

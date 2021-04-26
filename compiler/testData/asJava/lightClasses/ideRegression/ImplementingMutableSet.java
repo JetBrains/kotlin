@@ -2,9 +2,10 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
   @org.jetbrains.annotations.NotNull()
   public static final SmartSet.Companion Companion;
 
-  private int size;
-
+  @org.jetbrains.annotations.Nullable()
   private java.lang.Object data;
+
+  private int size;
 
   private static final int ARRAY_THRESHOLD;
 

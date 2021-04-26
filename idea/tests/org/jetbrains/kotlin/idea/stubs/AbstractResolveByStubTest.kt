@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -33,7 +34,10 @@ abstract class AbstractResolveByStubTest : KotlinLightCodeInsightFixtureTestCase
         myFixture.configureByFile(fileName)
         val shouldFail = getTestName(false) == "ClassWithConstVal"
         AstAccessControl.testWithControlledAccessToAst(shouldFail, project, testRootDisposable) {
-            performTest(testPath())
+            val path = testPath()
+            withCustomCompilerOptions(File(path).readText(), project, module) {
+                performTest(path)
+            }
         }
     }
 

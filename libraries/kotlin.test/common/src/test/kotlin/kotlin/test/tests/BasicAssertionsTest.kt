@@ -89,6 +89,119 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertEqualsDouble() {
+        assertEquals(0.01, 0.02, .01)
+
+        // 0.0, -0.0
+        assertEquals(0.0, 0.0, 0.0)
+        assertEquals(0.0, -0.0, 0.0)
+        assertEquals(-0.0, 0.0, 0.0)
+        assertEquals(0.0, 0.0, -0.0)
+        assertEquals(0.0, -0.0, -0.0)
+        assertEquals(-0.0, 0.0, -0.0)
+
+        // NaN
+        val nans = doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32))
+        for (nan1 in nans) {
+            assertTrue(nan1.isNaN())
+            for (nan2 in nans) {
+                assertEquals(nan1, nan2, 0.1)
+                assertEquals(nan1, nan2, 0.0)
+            }
+        }
+
+        // MIN_VALUE, MAX_VALUE
+        assertEquals(Double.MAX_VALUE, Double.MAX_VALUE, 0.0)
+        assertEquals(Double.MIN_VALUE, Double.MIN_VALUE, 0.0)
+        assertEquals(Double.MAX_VALUE, Double.MIN_VALUE, Double.MAX_VALUE)
+        assertEquals(Double.MIN_VALUE, Double.MAX_VALUE, Double.MAX_VALUE)
+
+        // POSITIVE_INFINITY, NEGATIVE_INFINITY
+        assertEquals(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0.0)
+        assertEquals(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0)
+        assertEquals(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        assertEquals(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
+    }
+
+    @Test
+    fun testAssertEqualsDoubleFails() {
+        checkFailedAssertion { assertEquals(0.01, 1.03, .01) }
+
+        // negative absoluteTolerance
+        assertFailsWith<IllegalArgumentException> { assertEquals(0.01, 1.03, -5.0) }
+
+    }
+
+    @Test
+    fun testAssertEqualsFloat() {
+        assertEquals(0.01f, 0.02f, .01f)
+
+        // 0.0, -0.0
+        assertEquals(0.0f, 0.0f, 0.0f)
+        assertEquals(0.0f, -0.0f, 0.0f)
+        assertEquals(-0.0f, 0.0f, 0.0f)
+        assertEquals(0.0f, 0.0f, -0.0f)
+        assertEquals(0.0f, -0.0f, -0.0f)
+        assertEquals(-0.0f, 0.0f, -0.0f)
+
+        // NaN
+        val nans = floatArrayOf(Float.NaN, Float.fromBits(0xFFC00000.toInt()))
+        for (nan1 in nans) {
+            assertTrue(nan1.isNaN())
+            for (nan2 in nans) {
+                assertEquals(nan1, nan2, 0.1f)
+                assertEquals(nan1, nan2, 0.0f)
+            }
+        }
+
+        // MIN_VALUE, MAX_VALUE
+        assertEquals(Float.MAX_VALUE, Float.MAX_VALUE, 0.0f)
+        assertEquals(Float.MIN_VALUE, Float.MIN_VALUE, 0.0f)
+        assertEquals(Float.MAX_VALUE, Float.MIN_VALUE, Float.MAX_VALUE)
+        assertEquals(Float.MIN_VALUE, Float.MAX_VALUE, Float.MAX_VALUE)
+
+        // POSITIVE_INFINITY, NEGATIVE_INFINITY
+        assertEquals(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, 0.0f)
+        assertEquals(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, 0.0f)
+        assertEquals(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY)
+        assertEquals(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+    }
+
+    @Test
+    fun testAssertEqualsFloatFails() {
+        checkFailedAssertion { assertEquals(0.01f, 1.03f, .01f) }
+
+        // negative absoluteTolerance
+        assertFailsWith<IllegalArgumentException> { assertEquals(0.01f, 1.03f, -5.0f) }
+    }
+
+    @Test
+    fun testAssertNotEqualsDouble() {
+        assertNotEquals(0.1, 0.3, 0.1)
+    }
+
+    @Test
+    fun testAssertNotEqualsDoubleFails() {
+        checkFailedAssertion { assertNotEquals(0.1, 0.11, 0.1) }
+
+        // negative absoluteTolerance
+        assertFailsWith<IllegalArgumentException> { assertNotEquals(0.1, 0.11, -0.001) }
+    }
+
+    @Test
+    fun testAssertNotEqualsFloat() {
+        assertNotEquals(0.1f, 0.3f, 0.1f)
+    }
+
+    @Test
+    fun testAssertNotEqualsFloatFails() {
+        checkFailedAssertion { assertNotEquals(0.1f, 0.11f, .1f) }
+
+        // negative absoluteTolerance
+        assertFailsWith<IllegalArgumentException> { assertNotEquals(0.1f, 0.11f, -0.001f) }
+    }
+
+    @Test
     fun testAssertTrue() {
         assertTrue(true)
         assertTrue { true }
@@ -243,6 +356,11 @@ class BasicAssertionsTest {
     }
 }
 
+
+internal fun testFailureMessage(expected: String, block: () -> Unit) {
+    val exception = checkFailedAssertion(block)
+    assertEquals(expected, exception.message, "Wrong assertion message")
+}
 
 internal fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
     return assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }

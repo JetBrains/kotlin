@@ -2,22 +2,28 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
-import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
+import javax.inject.Inject
 
 @CacheableTask
-open class NodeJsSetupTask : DefaultTask() {
+abstract class NodeJsSetupTask : DefaultTask() {
+    @Transient
     private val settings = NodeJsRootPlugin.apply(project.rootProject)
     private val env by lazy { settings.requireConfigured() }
-    private val fs = FileSystemOperationsCompat(project)
     private val archiveOperations = ArchiveOperationsCompat(project)
+    private val shouldDownload = settings.download
+
+    @get:Inject
+    internal open val fs: FileSystemOperations
+        get() = error("Should be injected")
 
     val ivyDependency: String
         @Input get() = env.ivyDependency
@@ -63,7 +69,7 @@ open class NodeJsSetupTask : DefaultTask() {
     init {
         @Suppress("LeakingThis")
         onlyIf {
-            settings.download && !File(env.nodeExecutable).isFile
+            shouldDownload && !File(env.nodeExecutable).isFile
         }
     }
 

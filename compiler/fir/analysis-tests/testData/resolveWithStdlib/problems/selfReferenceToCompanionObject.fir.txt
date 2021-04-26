@@ -15,8 +15,8 @@ FILE: selfReferenceToCompanionObject.kt
 
         public final companion object Companion : R|Base| {
             private constructor(): R|Host.Companion| {
-                super<R|Base|>(R|kotlin/run|<R|() -> kotlin/String|>(<L> = run@fun <anonymous>(): R|() -> kotlin/String| <kind=EXACTLY_ONCE>  {
-                    ^ run@fun <anonymous>(): R|kotlin/String| {
+                super<R|Base|>(R|kotlin/run|<R|() -> kotlin/String|>(<L> = run@fun <anonymous>(): R|() -> kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    ^ run@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                         ^ Q|Host|.R|/Host.Companion.ok|()
                     }
 
@@ -44,8 +44,8 @@ FILE: selfReferenceToCompanionObject.kt
 
         public final static enum entry FOO: R|Test| = object : R|Test| {
             private constructor(): R|<anonymous>| {
-                super<R|Test|>(String(O), this@R|kotlin/Enum.Companion|.R|kotlin/run|<R|kotlin/Enum.Companion|, R|() -> kotlin/String|>(<L> = run@fun R|kotlin/Enum.Companion|.<anonymous>(): R|() -> kotlin/String| <kind=EXACTLY_ONCE>  {
-                    ^ run@fun <anonymous>(): R|kotlin/String| {
+                super<R|Test|>(String(O), this@R|kotlin/Enum.Companion|.R|kotlin/run|<R|kotlin/Enum.Companion|, R|() -> kotlin/String|>(<L> = run@fun R|kotlin/Enum.Companion|.<anonymous>(): R|() -> kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    ^ run@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                         ^ R|/Test.FOO|.R|/Test.x|
                     }
 
@@ -56,7 +56,7 @@ FILE: selfReferenceToCompanionObject.kt
             public final override val y: R|kotlin/String| = String(K)
                 public get(): R|kotlin/String|
 
-            public final val closure2: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| {
+            public final val closure2: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                 ^ this@R|/<anonymous>|.R|/<anonymous>.y|
             }
 

@@ -22,7 +22,7 @@ import org.junit.Test
 import java.io.File
 import kotlin.reflect.KMutableProperty0
 
-class GradleQuickFixTest : GradleImportingTestCase() {
+class GradleQuickFixTest : MultiplePluginVersionGradleImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
     override fun testDataDirName() = "fixes"

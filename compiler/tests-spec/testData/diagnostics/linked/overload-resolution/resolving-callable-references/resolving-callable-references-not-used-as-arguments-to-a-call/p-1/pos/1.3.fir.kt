@@ -10,7 +10,8 @@ package testsCase1
 
 class Case() {
     fun case(v: V) {
-        val va: () -> String = (V)::a
+        // InitializertTypeCheckerMismatch bug
+        val va: () -> String = <!INITIALIZER_TYPE_MISMATCH!>(V)::a<!>
 
         val vb: () -> String = (V)::b
 

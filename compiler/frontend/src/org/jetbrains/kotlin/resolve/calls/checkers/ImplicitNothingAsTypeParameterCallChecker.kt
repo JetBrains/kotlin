@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isNothingOrNullableNothing
+import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
 object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
@@ -61,9 +62,13 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
             resolvedCall.candidateDescriptor.valueParameters.filter { it.type.isFunctionOrSuspendFunctionType }
                 .map { it.returnType?.arguments?.last()?.type }.toSet()
         val unsubstitutedReturnType = resultingDescriptor.original.returnType
-        val hasImplicitNothing = inferredReturnType?.isNothing() == true &&
+        val hasImplicitNothing = inferredReturnType?.isNothingOrNullableNothing() == true &&
                 unsubstitutedReturnType?.isTypeParameter() == true &&
                 (TypeUtils.noExpectedType(expectedType) || !expectedType.isNothing())
+
+        if (inferredReturnType?.isNullableNothing() == true && unsubstitutedReturnType?.isMarkedNullable == false) {
+            return false
+        }
 
         if (hasImplicitNothing && unsubstitutedReturnType !in lambdasFromArgumentsReturnTypes) {
             context.trace.reportDiagnosticOnceWrtDiagnosticFactoryList(

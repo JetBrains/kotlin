@@ -17,8 +17,8 @@ public final class AnnotatedPropertyWithInlineClassTypeInSignatureKt {
 public final class C {
     // source: 'annotatedPropertyWithInlineClassTypeInSignature.kt'
     public method <init>(): void
-    public synthetic deprecated static @Anno method getInternal-IQRRRT4$test_module$annotations(p0: int): void
-    public final method getInternal-IQRRRT4$test_module(p0: int): int
+    public synthetic deprecated static @Anno method getInternal-IQRRRT4$main$annotations(p0: int): void
+    public final method getInternal-IQRRRT4$main(p0: int): int
     public synthetic deprecated static @Anno method getMemberExtension-IQRRRT4$annotations(p0: int): void
     public final method getMemberExtension-IQRRRT4(p0: int): int
     public synthetic deprecated static @Anno method getReturnType-a_XrcN0$annotations(): void

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiJavaModule
@@ -36,8 +37,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
@@ -304,6 +304,11 @@ object KotlinToJVMBytecodeCompiler {
         val project = environment.project
         val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
 
+        environment.messageCollector.report(
+            STRONG_WARNING,
+            "ATTENTION!\n This build uses in-dev FIR: \n  -Xuse-fir"
+        )
+
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
         val projectConfiguration = environment.configuration
@@ -427,6 +432,9 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyGenerationFinished()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             outputs[module] = generationState
+
+            PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+            Disposer.dispose(environment.project)
         }
 
         val mainClassFqName: FqName? =

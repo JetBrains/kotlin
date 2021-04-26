@@ -15,14 +15,18 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirDeclaration : FirElement {
+sealed interface FirDeclaration : FirElement {
     override val source: FirSourceElement?
-    val session: FirSession
+    val declarationSiteSession: FirSession
     val resolvePhase: FirResolvePhase
     val origin: FirDeclarationOrigin
     val attributes: FirDeclarationAttributes
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDeclaration(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformDeclaration(this, data) as E
 
     fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 }

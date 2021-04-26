@@ -1195,6 +1195,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
         }
 
+        @TestMetadata("inheritorOfExpectSealedClass.args")
+        public void testInheritorOfExpectSealedClass() throws Exception {
+            runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
+        }
+
         @TestMetadata("kotlinPackage.args")
         public void testKotlinPackage() throws Exception {
             runTest("compiler/testData/cli/metadata/kotlinPackage.args");
@@ -1203,6 +1208,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("moduleName.args")
         public void testModuleName() throws Exception {
             runTest("compiler/testData/cli/metadata/moduleName.args");
+        }
+
+        @TestMetadata("optionalExpectationUsage.args")
+        public void testOptionalExpectationUsage() throws Exception {
+            runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
         }
     }
 }

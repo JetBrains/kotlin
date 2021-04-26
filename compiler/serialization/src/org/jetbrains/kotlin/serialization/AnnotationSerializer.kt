@@ -73,7 +73,7 @@ open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTa
 
             override fun visitCharValue(value: CharValue, data: Unit) {
                 type = Type.CHAR
-                intValue = value.value.toLong()
+                intValue = value.value.code.toLong()
             }
 
             override fun visitDoubleValue(value: DoubleValue, data: Unit) {

@@ -9,21 +9,21 @@ fun test1() {
     foo0 {
         ""
     }
-    <!INAPPLICABLE_CANDIDATE!>foo0<!> {
-        s: String-> ""
+    foo0 {
+        s: String-> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
-    <!INAPPLICABLE_CANDIDATE!>foo0<!> {
-        x, y -> ""
+    foo0 {
+        <!CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
 
     foo1 {
         ""
     }
-    <!INAPPLICABLE_CANDIDATE!>foo1<!> {
-        s: String -> ""
+    foo1 {
+        s: String -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
-    <!INAPPLICABLE_CANDIDATE!>foo1<!> {
-        x, y -> ""
+    foo1 {
+        x, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
     foo1 {
         -> 42
@@ -31,15 +31,15 @@ fun test1() {
 
 
     foo2 {
-        ""
-    }
-    <!INAPPLICABLE_CANDIDATE!>foo2<!> {
-        s: String -> ""
-    }
-    <!INAPPLICABLE_CANDIDATE!>foo2<!> {
-        x -> ""
+        <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
     foo2 {
-         -> 42
+        s: String -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
+    }
+    foo2 {
+        x -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
+    }
+    foo2 {
+         -> <!ARGUMENT_TYPE_MISMATCH!>42<!>
     }
 }

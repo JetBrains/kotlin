@@ -10,7 +10,6 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":idea:idea-frontend-independent"))
-    compileOnly(project(":compiler:psi"))
     compileOnly(intellijCoreDep())
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }

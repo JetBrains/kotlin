@@ -9,13 +9,18 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.containingClassAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -163,18 +168,6 @@ internal fun checkPropertyInitializer(
     }
 }
 
-internal fun checkPropertyAccessors(
-    property: FirProperty,
-    reporter: DiagnosticReporter,
-    context: CheckerContext
-) {
-    if (property.isVal) {
-        property.setter?.source?.let {
-            reporter.reportOn(it, FirErrors.VAL_WITH_SETTER, context)
-        }
-    }
-}
-
 private val FirProperty.hasAccessorImplementation: Boolean
     get() = (getter !is FirDefaultPropertyAccessor && getter?.hasBody == true) ||
             (setter !is FirDefaultPropertyAccessor && setter?.hasBody == true)
@@ -186,6 +179,12 @@ internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
 
     return isInline || hasModifier(KtTokens.VALUE_KEYWORD)
 }
+
+internal val FirDeclaration.isEnumEntryInitializer: Boolean
+    get() {
+        if (this !is FirConstructor || !this.isPrimary) return false
+        return (containingClassAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.fir?.classKind == ClassKind.ENUM_ENTRY
+    }
 
 internal val FirMemberDeclaration.isLocalMember: Boolean
     get() = when (this) {

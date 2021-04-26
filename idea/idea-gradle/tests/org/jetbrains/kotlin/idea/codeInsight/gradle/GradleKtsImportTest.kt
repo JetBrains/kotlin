@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.testFramework.Parameterized
 import junit.framework.AssertionFailedError
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -21,19 +22,13 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
 import org.jetbrains.plugins.gradle.settings.GradleSettings
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
 @RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
-class GradleKtsImportTest : GradleImportingTestCase() {
-    companion object {
-        @JvmStatic
-        @Parameters(name = "{index}: with Gradle-{0}")
-        fun data(): Collection<Array<Any?>> = listOf(arrayOf<Any?>("6.0.1"))
-    }
+class GradleKtsImportTest : MultiplePluginVersionGradleImportingTestCase() {
 
     val scriptConfigurationManager get() = ScriptConfigurationManager.getInstance(myProject) as CompositeScriptConfigurationManager
     val projectDir get() = File(GradleSettings.getInstance(myProject).linkedProjectsSettings.first().externalProjectPath)
@@ -47,7 +42,7 @@ class GradleKtsImportTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("6.0.1+")
+    @PluginTargetVersions(gradleVersion = "6.0.1+")
     fun testEmpty() {
         configureByFiles()
         importProject()
@@ -56,7 +51,7 @@ class GradleKtsImportTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("6.0.1+")
+    @PluginTargetVersions(gradleVersion = "6.0.1+")
     fun testError() {
         configureByFiles()
 
@@ -72,7 +67,7 @@ class GradleKtsImportTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("6.0.1+")
+    @PluginTargetVersions(gradleVersion = "6.0.1+")
     fun testCompositeBuild() {
         configureByFiles()
         importProject()

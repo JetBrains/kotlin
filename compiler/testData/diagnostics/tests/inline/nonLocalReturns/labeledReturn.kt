@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun inlineCall(): String {
     inlineFun {
         if (true) {

@@ -2,6 +2,11 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 0 java/lang/invoke/LambdaMetafactory
+// 1 class GenericFunInterfaceWithInlineStringKt\$box\$t\$1
+
 inline class Z(val value: String)
 
 fun interface IFoo<T> {

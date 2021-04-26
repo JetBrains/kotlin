@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
 
 fun FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator(
@@ -61,17 +60,17 @@ class FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
-    ): CompositeTransformResult<FirSimpleFunction> {
+    ): FirSimpleFunction {
         FirLazyBodiesCalculator.calculateLazyBodiesForFunction(simpleFunction, declarationDesignation)
         return super.transformSimpleFunction(simpleFunction, data)
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirDeclaration {
         FirLazyBodiesCalculator.calculateLazyBodyForSecondaryConstructor(constructor, declarationDesignation)
         return super.transformConstructor(constructor, data)
     }
 
-    override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
+    override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
         FirLazyBodiesCalculator.calculateLazyBodyForProperty(property, declarationDesignation)
         return super.transformProperty(property, data)
     }

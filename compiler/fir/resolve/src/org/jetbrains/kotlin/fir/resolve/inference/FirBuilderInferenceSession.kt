@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
@@ -257,18 +255,18 @@ class FirStubTypeTransformer(
     private val substitutor: ConeSubstitutor
 ) : FirDefaultTransformer<Nothing?>() {
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         @Suppress("UNCHECKED_CAST")
-        return (element.transformChildren(this, data) as E).compose()
+        return (element.transformChildren(this, data) as E)
     }
 
-    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> =
+    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): FirTypeRef =
         substitutor.substituteOrNull(resolvedTypeRef.type)?.let {
-            resolvedTypeRef.withReplacedConeType(it).compose()
-        } ?: resolvedTypeRef.compose()
+            resolvedTypeRef.withReplacedConeType(it)
+        } ?: resolvedTypeRef
 
-    override fun transformArgumentList(argumentList: FirArgumentList, data: Nothing?): CompositeTransformResult<FirArgumentList> =
-        argumentList.transformArguments(this, data).compose()
+    override fun transformArgumentList(argumentList: FirArgumentList, data: Nothing?): FirArgumentList =
+        argumentList.transformArguments(this, data)
 }
 
 private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)

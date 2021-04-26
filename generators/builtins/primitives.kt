@@ -20,9 +20,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "div",
             "rem",
         )
-        internal val unaryOperators: Map<String, String> = mapOf(
-            "inc" to "Increments this value.",
-            "dec" to "Decrements this value.",
+        internal val unaryPlusMinusOperators: Map<String, String> = mapOf(
             "unaryPlus" to "Returns this value.",
             "unaryMinus" to "Returns the negative of this value.")
         internal val shiftOperators: Map<String, String> = mapOf(
@@ -44,6 +42,18 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             return """ 
                 * Note that only the $bitsUsed lowest-order bits of the [bitCount] are used as the shift distance.
                 * The shift distance actually used is therefore always in the range `0..${kind.bitSize - 1}`.
+                """
+        }
+
+        internal fun incDecOperatorsDoc(name: String): String {
+            val diff = if (name == "inc") "incremented" else "decremented"
+
+            return """
+                /**
+                 * Returns this value $diff by one.
+                 *
+                 * @sample samples.misc.Builtins.$name
+                 */
                 """
         }
 
@@ -239,9 +249,14 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateUnaryOperators(kind: PrimitiveType) {
-        for ((name, doc) in unaryOperators) {
-            val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR) &&
-                                 name in listOf("unaryPlus", "unaryMinus")) "Int" else kind.capitalized
+        for (name in listOf("inc", "dec")) {
+            out.println(incDecOperatorsDoc(name).replaceIndent("    "))
+            out.println("    public operator fun $name(): ${kind.capitalized}")
+            out.println()
+        }
+
+        for ((name, doc) in unaryPlusMinusOperators) {
+            val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR)) "Int" else kind.capitalized
             out.println("    /** $doc */")
             out.println("    public operator fun $name(): $returnType")
         }
@@ -394,8 +409,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateConversions(kind: PrimitiveType) {
-        fun isConversionDeprecated(otherKind: PrimitiveType): Boolean {
+        fun isFpToIntConversionDeprecated(otherKind: PrimitiveType): Boolean {
             return kind in PrimitiveType.floatingPoint && otherKind in listOf(PrimitiveType.BYTE, PrimitiveType.SHORT)
+        }
+
+        fun isCharConversionDeprecated(otherKind: PrimitiveType): Boolean {
+            return kind != PrimitiveType.INT && otherKind == PrimitiveType.CHAR
         }
 
         val thisName = kind.capitalized
@@ -422,8 +441,13 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
             out.println(doc)
 
-            if (isConversionDeprecated(otherKind)) {
+            if (isFpToIntConversionDeprecated(otherKind)) {
                 out.println("    @Deprecated(\"Unclear conversion. To achieve the same result convert to Int explicitly and then to $otherName.\", ReplaceWith(\"toInt().to$otherName()\"))")
+                out.println("    @DeprecatedSinceKotlin(warningSince = \"1.3\", errorSince = \"1.5\")")
+            }
+            if (isCharConversionDeprecated(otherKind)) {
+                out.println("    @Deprecated(\"Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.\", ReplaceWith(\"this.toInt().toChar()\"))")
+                out.println("    @DeprecatedSinceKotlin(warningSince = \"1.5\")")
             }
 
             out.println("    public override fun to$otherName(): $otherName")

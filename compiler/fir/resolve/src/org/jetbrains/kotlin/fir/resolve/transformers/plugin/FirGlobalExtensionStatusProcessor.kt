@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
 
 class FirGlobalExtensionStatusProcessor(
     session: FirSession,
@@ -62,59 +60,59 @@ class FirTransformerBasedExtensionStatusProcessor(
             transformStatus(ReplaceStatus, status)
         }
 
-        override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-            return element.compose()
+        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+            return element
         }
 
-        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirDeclaration {
             typeAlias.updateStatus()
-            return typeAlias.compose()
+            return typeAlias
         }
 
-        override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
+        override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
             regularClass.updateStatus()
             regularClass.transformDeclarations(this, data)
-            return regularClass.compose()
+            return regularClass
         }
 
-        override fun transformConstructor(constructor: FirConstructor, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        override fun transformConstructor(constructor: FirConstructor, data: Nothing?): FirDeclaration {
             constructor.updateStatus()
-            return constructor.compose()
+            return constructor
         }
 
-        override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        override fun transformProperty(property: FirProperty, data: Nothing?): FirDeclaration {
             property.updateStatus()
             property.transformGetter(this, data)
             property.transformSetter(this, data)
-            return property.compose()
+            return property
         }
 
-        override fun transformField(field: FirField, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        override fun transformField(field: FirField, data: Nothing?): FirDeclaration {
             field.updateStatus()
-            return field.compose()
+            return field
         }
 
-        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): FirDeclaration {
             enumEntry.updateStatus()
-            return enumEntry.compose()
+            return enumEntry
         }
 
-        override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): FirDeclaration {
             simpleFunction.updateStatus()
-            return simpleFunction.compose()
+            return simpleFunction
         }
     }
 }
 
 private object ReplaceStatus : FirTransformer<FirDeclarationStatus>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirDeclarationStatus): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: FirDeclarationStatus): E {
+        return element
     }
 
     override fun transformDeclarationStatus(
         declarationStatus: FirDeclarationStatus,
         data: FirDeclarationStatus
-    ): CompositeTransformResult<FirDeclarationStatus> {
-        return data.compose()
+    ): FirDeclarationStatus {
+        return data
     }
 }

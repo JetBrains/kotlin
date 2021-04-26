@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
+import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDepend
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirThreadSafeSymbolProviderWrapper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ModuleLibrariesSearchScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
@@ -60,10 +62,10 @@ internal object FirIdeSessionFactory {
         sessionsCache: MutableMap<ModuleSourceInfo, FirIdeSourcesSession>,
         isRootModule: Boolean,
         librariesCache: LibrariesCache,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         configureSession: (FirIdeSession.() -> Unit)? = null
     ): FirIdeSourcesSession {
         sessionsCache[moduleInfo]?.let { return it }
+        val languageVersionSettings = moduleInfo.module.languageVersionSettings
         val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
         val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
         val searchScope = ModuleProductionSourceScope(moduleInfo.module)
@@ -113,6 +115,7 @@ internal object FirIdeSessionFactory {
                                 builtinsAndCloneableSession,
                                 builtinTypes,
                                 librariesCache,
+                                languageVersionSettings = languageVersionSettings,
                                 configureSession = configureSession,
                             ).symbolProvider
                         )
@@ -168,6 +171,7 @@ internal object FirIdeSessionFactory {
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
         FirIdeLibrariesSession(moduleInfo, project, searchScope, builtinTypes).apply {
             registerIdeComponents()
+            register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
             registerJavaSpecificResolveComponents()
 
@@ -211,6 +215,7 @@ internal object FirIdeSessionFactory {
     ): FirIdeBuiltinsAndCloneableSession {
         return FirIdeBuiltinsAndCloneableSession(project, builtinTypes).apply {
             registerIdeComponents()
+            register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)

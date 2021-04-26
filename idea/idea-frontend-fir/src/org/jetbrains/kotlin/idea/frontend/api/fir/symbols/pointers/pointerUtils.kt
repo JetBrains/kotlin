@@ -46,7 +46,7 @@ internal inline fun <reified D : FirDeclaration> Collection<FirCallableSymbol<*>
 }
 
 internal fun FirDeclaration.createSignature(): IdSignature {
-    val signatureComposer = session.ideSessionComponents.signatureComposer
+    val signatureComposer = declarationSiteSession.ideSessionComponents.signatureComposer
     return signatureComposer.composeSignature(this)
         ?: error("Could not compose signature for ${this.renderWithType(FirRenderer.RenderMode.WithResolvePhases)}, looks like it is private or local")
 }

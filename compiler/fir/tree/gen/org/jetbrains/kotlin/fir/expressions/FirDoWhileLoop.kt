@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
@@ -22,6 +23,10 @@ abstract class FirDoWhileLoop : FirLoop() {
     abstract override val label: FirLabel?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDoWhileLoop(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformDoWhileLoop(this, data) as E
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
 

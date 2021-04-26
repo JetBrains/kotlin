@@ -8,7 +8,7 @@ operator fun <T> T.invoke(a: A<T>) {}
 fun foo(s: String, ai: A<Int>) {
     1(ai)
 
-    <!INAPPLICABLE_CANDIDATE!>s<!>(ai)
+    s(<!ARGUMENT_TYPE_MISMATCH!>ai<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>""<!>(ai)
+    ""(<!ARGUMENT_TYPE_MISMATCH!>ai<!>)
 }

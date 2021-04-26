@@ -68,6 +68,8 @@ fun generate(): String {
         }
     }
 
+    unaryOperationsMap.add(Triple("code", listOf(builtIns.charType), false))
+
     for (type in integerTypes) {
         for (otherType in integerTypes) {
             val parameters = listOf(type, otherType)
@@ -188,7 +190,7 @@ private fun CallableDescriptor.getParametersTypes(): List<KotlinType> =
     listOf((containingDeclaration as ClassDescriptor).defaultType) +
             valueParameters.map { it.type.makeNotNullable() }
 
-private fun KotlinType.asString(): String = typeName.toUpperCase()
+private fun KotlinType.asString(): String = typeName.uppercase()
 
 private val KotlinType.typeName: String
     get(): String = constructor.declarationDescriptor!!.name.asString()

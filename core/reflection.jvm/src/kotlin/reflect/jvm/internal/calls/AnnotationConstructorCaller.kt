@@ -123,7 +123,7 @@ internal fun <T : Any> createAnnotationInstance(
                 }
 
     val hashCode by lazy {
-        values.entries.sumBy { entry ->
+        values.entries.sumOf { entry ->
             val (key, value) = entry
             val valueHash = when (value) {
                 is BooleanArray -> Arrays.hashCode(value)

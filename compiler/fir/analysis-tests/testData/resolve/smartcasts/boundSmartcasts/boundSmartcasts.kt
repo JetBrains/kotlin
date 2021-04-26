@@ -69,8 +69,8 @@ fun test_6(d1: D) {
 }
 
 fun test_7(d1: D, d2: D) {
-    val a = d1?.any
-    val b = d2?.any
+    val a = d1<!UNNECESSARY_SAFE_CALL!>?.<!>any
+    val b = d2<!UNNECESSARY_SAFE_CALL!>?.<!>any
     a as A
     a.foo() // should be OK
     b as B

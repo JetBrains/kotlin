@@ -46,7 +46,7 @@ class JvmNameResolverTest : KtUsefulTestCase() {
                 internalString?.let { setString(it) }
                 operation?.let { setOperation(it) }
                 substringIndex?.let { addAllSubstringIndex(it) }
-                replaceChar?.let { addAllReplaceChar(it.map(Char::toInt)) }
+                replaceChar?.let { addAllReplaceChar(it.map(Char::code)) }
             }.build())
 
             string?.let { strings.add(it) }

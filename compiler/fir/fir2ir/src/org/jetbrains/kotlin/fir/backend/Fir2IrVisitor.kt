@@ -86,7 +86,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun FirDeclaration.toIrDeclaration(): IrDeclaration? =
+    private fun FirDeclaration.toIrDeclaration(): IrDeclaration =
         accept(this@Fir2IrVisitor, null) as IrDeclaration
 
     // ==================================================================================
@@ -449,7 +449,9 @@ class Fir2IrVisitor(
 
     internal fun convertToIrExpression(expression: FirExpression, annotationMode: Boolean = false): IrExpression {
         return when (expression) {
-            is FirBlock -> expression.convertToIrExpressionOrBlock()
+            is FirBlock -> expression.convertToIrExpressionOrBlock(
+                if (expression.source?.kind == FirFakeSourceElementKind.DesugaredForLoop) IrStatementOrigin.FOR_LOOP else null
+            )
             is FirUnitExpression -> expression.convertWithOffsets { startOffset, endOffset ->
                 IrGetObjectValueImpl(
                     startOffset, endOffset, irBuiltIns.unitType,
@@ -457,11 +459,7 @@ class Fir2IrVisitor(
                 )
             }
             else -> {
-                val unwrappedExpression = if (expression is FirWrappedArgumentExpression) {
-                    expression.expression
-                } else {
-                    expression
-                }
+                val unwrappedExpression = expression.unwrapArgument()
                 if (annotationMode && unwrappedExpression is FirFunctionCall) {
                     convertToIrCall(unwrappedExpression, annotationMode)
                 } else {
@@ -502,26 +500,7 @@ class Fir2IrVisitor(
     }
 
     private fun FirBlock.mapToIrStatements(): List<IrStatement?> {
-        val irRawStatements = statements.map { it.toIrStatement() }
-        val result = mutableListOf<IrStatement?>()
-        var missNext = false
-        for ((index, irRawStatement) in irRawStatements.withIndex()) {
-            if (missNext) {
-                missNext = false
-                continue
-            } else if (irRawStatement is IrVariable && irRawStatement.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) {
-                missNext = true
-                val irNextStatement = irRawStatements[index + 1]!!
-                result += IrBlockImpl(
-                    irRawStatement.startOffset, irNextStatement.endOffset,
-                    (irNextStatement as IrExpression).type, IrStatementOrigin.FOR_LOOP,
-                    listOf(irRawStatement, irNextStatement)
-                )
-            } else {
-                result += irRawStatement
-            }
-        }
-        return result
+        return statements.map { it.toIrStatement() }
     }
 
     internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {
@@ -551,7 +530,9 @@ class Fir2IrVisitor(
     private fun FirBlock.convertToIrExpressionOrBlock(origin: IrStatementOrigin? = null): IrExpression {
         if (statements.size == 1) {
             val firStatement = statements.single()
-            if (firStatement is FirExpression) {
+            if (firStatement is FirExpression &&
+                (firStatement !is FirBlock || firStatement.source?.kind != FirFakeSourceElementKind.DesugaredForLoop)
+            ) {
                 return convertToIrExpression(firStatement)
             }
         }
@@ -585,7 +566,7 @@ class Fir2IrVisitor(
     override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: Any?): IrElement {
         val firLhsVariable = buildProperty {
             source = elvisExpression.source
-            session = this@Fir2IrVisitor.session
+            declarationSiteSession = session
             origin = FirDeclarationOrigin.Source
             returnTypeRef = elvisExpression.lhs.typeRef
             name = Name.special("<elvis>")
@@ -858,10 +839,30 @@ class Fir2IrVisitor(
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Any?): IrElement {
         return stringConcatenationCall.convertWithOffsets { startOffset, endOffset ->
-            IrStringConcatenationImpl(
-                startOffset, endOffset, irBuiltIns.stringType,
-                stringConcatenationCall.arguments.map { convertToIrExpression(it) }
-            )
+            val arguments = mutableListOf<IrExpression>()
+            val sb = StringBuilder()
+            var startArgumentOffset = -1
+            var endArgumentOffset = -1
+            for (firArgument in stringConcatenationCall.arguments) {
+                val argument = convertToIrExpression(firArgument)
+                if (argument is IrConst<*>) {
+                    if (sb.isEmpty()) {
+                        startArgumentOffset = argument.startOffset
+                    }
+                    sb.append(argument.value)
+                    endArgumentOffset = argument.endOffset
+                } else {
+                    if (sb.isNotEmpty()) {
+                        arguments += IrConstImpl.string(startArgumentOffset, endArgumentOffset, irBuiltIns.stringType, sb.toString())
+                        sb.clear()
+                    }
+                    arguments += argument
+                }
+            }
+            if (sb.isNotEmpty()) {
+                arguments += IrConstImpl.string(startArgumentOffset, endArgumentOffset, irBuiltIns.stringType, sb.toString())
+            }
+            IrStringConcatenationImpl(startOffset, endOffset, irBuiltIns.stringType, arguments)
         }
     }
 

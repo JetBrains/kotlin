@@ -53,22 +53,22 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Cannot access 'A': it is private in file
-'public' subclass exposes its 'private' supertype A
-'public' generic exposes its 'private' parameter bound type A
+'public' subclass exposes its 'private-in-file' supertype A
+'public' generic exposes its 'private-in-file' parameter bound type A
 Cannot access 'A': it is private in file
 Cannot access 'A': it is private in file
-'public' function exposes its 'private' parameter type A
+'public' function exposes its 'private-in-file' parameter type A
 Cannot access 'A': it is private in file
 Cannot access 'A': it is private in file
-'public' function exposes its 'private' return type A
+'public' function exposes its 'private-in-file' return type A
 Cannot access 'A': it is private in file
 Cannot access 'A': it is private in file
 Cannot access 'A': it is private in file
 Cannot access 'A': it is private in file
-'public' function exposes its 'private' return type A
+'public' function exposes its 'private-in-file' return type A
 Cannot access 'A': it is private in file
 Cannot access 'A': it is private in file
-'public' function exposes its 'private' return type A
+'public' function exposes its 'private-in-file' return type A
 
 ================ Step #2 =================
 

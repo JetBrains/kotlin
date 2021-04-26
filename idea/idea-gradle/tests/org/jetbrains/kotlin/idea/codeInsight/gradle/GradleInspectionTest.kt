@@ -23,15 +23,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-class GradleInspectionTest : GradleImportingTestCase() {
+class GradleInspectionTest : MultiplePluginVersionGradleImportingTestCase() {
 
     // Disable gradle inspection tests in AndroidStudio as they are disabled in distribution
-    override fun isApplicableTest(): Boolean = isGradleInspectionTestApplicable()
+    override fun isApplicableTest(): Boolean = isGradleInspectionTestApplicable() && super.isApplicableTest()
 
 
     @Test
@@ -71,10 +72,14 @@ class GradleInspectionTest : GradleImportingTestCase() {
         val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertEquals(1, problems.size)
-        Assert.assertEquals("Plugin version ($LATEST_STABLE_GRADLE_PLUGIN_VERSION) is not the same as library version (1.3.30)", problems.single())
+        Assert.assertEquals(
+            "Plugin version ($gradleKotlinPluginVersion) is not the same as library version (1.3.30)",
+            problems.single()
+        )
     }
 
     @Test
+    @PluginTargetVersions(pluginVersion = "<1.5.20")
     fun testDifferentKotlinGradleVersion() {
         val tool = DifferentKotlinGradleVersionInspection()
         tool.testVersionMessage = "\$PLUGIN_VERSION"
@@ -82,20 +87,20 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
         Assert.assertEquals(1, problems.size)
         Assert.assertEquals(
-            "Kotlin version that is used for building with Gradle ($LATEST_STABLE_GRADLE_PLUGIN_VERSION) differs from the one bundled into the IDE plugin (\$PLUGIN_VERSION)",
+            "Kotlin version that is used for building with Gradle ($gradleKotlinPluginVersion) differs from the one bundled into the IDE plugin (\$PLUGIN_VERSION)",
             problems.single()
         )
     }
 
     @Test
-    @TargetVersions("4.9")
+    @PluginTargetVersions(gradleVersion = "4.9")
     fun testJreInOldVersion() {
         val problems = getInspectionResultFromTestDataProject()
         Assert.assertTrue("The inspection result should be empty but contains the following elements: [$problems].", problems.isEmpty())
     }
 
     @Test
-    @TargetVersions("4.9")
+    @PluginTargetVersions(gradleVersion = "4.9")
     fun testJreIsDeprecated() {
         val problems = getInspectionResultFromTestDataProject()
 
@@ -107,7 +112,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.9")
+    @PluginTargetVersions(gradleVersion = "4.9")
     fun testJreIsDeprecatedWithImplementation() {
         val problems = getInspectionResultFromTestDataProject()
 
@@ -118,7 +123,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         )
     }
 
-    @TargetVersions("4.9")
+    @PluginTargetVersions(gradleVersion = "4.9")
     @Test
     fun testJreIsDeprecatedWithoutImplicitVersion() {
         val problems = getInspectionResultFromTestDataProject()
@@ -145,7 +150,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.9")
+    @PluginTargetVersions(gradleVersion = "4.9")
     fun testObsoleteCoroutinesUsage() {
         val problems = getInspectionResultFromTestDataProject()
 

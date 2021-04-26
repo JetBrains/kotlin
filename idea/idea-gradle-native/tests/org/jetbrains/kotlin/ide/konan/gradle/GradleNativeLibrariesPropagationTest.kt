@@ -9,9 +9,9 @@ import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.kotlin.gradle.ModuleInfo
 import org.jetbrains.kotlin.gradle.checkProjectStructure
 import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Test
-import org.junit.runners.Parameterized
 
 class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
 
@@ -22,6 +22,7 @@ class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
     private val testedTargets = setOf("ios_arm64", "ios_x64", "watchos_arm32", "watchos_x86")
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testCommonIOS() {
         configureProject()
         importProject()
@@ -63,6 +64,7 @@ class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
     }
 
     @Test
+    @PluginTargetVersions(pluginVersion = "<1.4.0", skipForMaster = true)
     fun testCommonIOSWithDisabledPropagation() {
         configureProject()
         importProject()
@@ -109,12 +111,5 @@ class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
     private fun ModuleInfo.hasPlatformLibrary(libraryName: String, target: String) {
         libraryDependency("Kotlin/Native $kotlinVersion - $libraryName [$target]", DependencyScope.PROVIDED)
         noPlatformLibrary(libraryName, testedTargets - target)
-    }
-
-    companion object {
-        @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
-        @Throws(Throwable::class)
-        @JvmStatic
-        fun data() = listOf(arrayOf("4.10.2"))
     }
 }

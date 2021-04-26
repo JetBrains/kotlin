@@ -22,7 +22,7 @@ public inline fun Char(code: Int): Char {
     if (code < Char.MIN_VALUE.code || code > Char.MAX_VALUE.code) {
         throw IllegalArgumentException("Invalid Char code: $code")
     }
-    return Char(code.toUShort())
+    return code.toChar()
 }
 
 /**
@@ -45,4 +45,5 @@ public expect fun Char(code: UShort): Char
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
+@Suppress("DEPRECATION")
 public inline val Char.code: Int get() = this.toInt()

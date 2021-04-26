@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.DCE_RUNTIME_DIAGNOSTIC_EXCEPTION
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.DCE_RUNTIME_DIAGNOSTIC_LOG
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
@@ -230,6 +232,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     AnalyzerWithCompilerReport(config.configuration),
                     config.configuration,
                     PhaseConfig(wasmPhases),
+                    IrFactoryImpl,
                     allDependencies = resolvedLibraries,
                     friendDependencies = friendDependencies,
                     exportedDeclarations = setOf(FqName("main"))
@@ -256,6 +259,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 AnalyzerWithCompilerReport(config.configuration),
                 config.configuration,
                 phaseConfig,
+                if (arguments.irDceDriven) PersistentIrFactory() else IrFactoryImpl,
                 allDependencies = resolvedLibraries,
                 friendDependencies = friendDependencies,
                 mainArguments = mainCallArguments,
@@ -432,7 +436,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 fun DceRuntimeDiagnostic.Companion.resolve(
     value: String?,
     messageCollector: MessageCollector
-): DceRuntimeDiagnostic? = when (value?.toLowerCase()) {
+): DceRuntimeDiagnostic? = when (value?.lowercase()) {
     DCE_RUNTIME_DIAGNOSTIC_LOG -> DceRuntimeDiagnostic.LOG
     DCE_RUNTIME_DIAGNOSTIC_EXCEPTION -> DceRuntimeDiagnostic.EXCEPTION
     null -> null

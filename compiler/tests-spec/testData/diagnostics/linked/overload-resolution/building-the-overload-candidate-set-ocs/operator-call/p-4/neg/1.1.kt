@@ -26,7 +26,7 @@ fun case1() {
 }
 
 class B() {
-    val p: String by Delegate() // DELEGATE_SPECIAL_FUNCTION_MISSING expected
+    val p: String by Delegate() // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE expected
 }
 
 class Delegate {
@@ -51,7 +51,7 @@ fun case2() {
 }
 
 class B() {
-    var p: String by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>Delegate()<!> // DELEGATE_SPECIAL_FUNCTION_MISSING expected
+    var p: String by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>Delegate()<!> // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE expected
 }
 
 class Delegate {

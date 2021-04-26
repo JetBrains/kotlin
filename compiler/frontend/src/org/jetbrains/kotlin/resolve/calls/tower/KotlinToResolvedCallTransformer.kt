@@ -954,6 +954,7 @@ fun CandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) 
     CandidateApplicability.RESOLVED_WITH_ERROR,
     CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY -> ResolutionStatus.SUCCESS
     CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ResolutionStatus.RECEIVER_TYPE_ERROR
+    CandidateApplicability.UNSAFE_CALL -> ResolutionStatus.UNSAFE_CALL_ERROR
     else -> ResolutionStatus.OTHER_ERROR
 }
 

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import java.io.Serializable
+
 /**
  * Package versions used by tasks
  */
 // DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
-class NpmVersions {
+class NpmVersions : Serializable {
     val dukat = NpmPackageVersion("dukat", "0.5.8-rc.4")
     val webpack4 = NpmPackageVersion("webpack", "4.46.0")
     val sourceMapLoader1 = NpmPackageVersion("source-map-loader", "1.1.3")

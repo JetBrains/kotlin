@@ -25,17 +25,17 @@ fun test1(int: Int, any: Any) {
     val a5 : MyList<in Int> = getMyListToWriteTo(any)
 
 
-    val a6 : MyList<in Any> = getMyList<Int>(int)
+    val a6 : MyList<in Any> = <!INITIALIZER_TYPE_MISMATCH!>getMyList<Int>(int)<!>
     val a7 : MyList<in Any> = getMyList(int)
 
-    val a8 : MyList<in Any> = getMyListToReadFrom<Int>(int)
-    val a9 : MyList<in Any> = getMyListToReadFrom(int)
+    val a8 : MyList<in Any> = <!INITIALIZER_TYPE_MISMATCH!>getMyListToReadFrom<Int>(int)<!>
+    val a9 : MyList<in Any> = <!INITIALIZER_TYPE_MISMATCH!>getMyListToReadFrom(int)<!>
 
-    val a10 : MyList<out Int> = getMyList<Any>(any)
-    val a11 : MyList<out Int> = getMyList(any)
+    val a10 : MyList<out Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyList<Any>(any)<!>
+    val a11 : MyList<out Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyList(any)<!>
 
-    val a12 : MyList<out Int> = getMyListToWriteTo<Any>(any)
-    val a13 : MyList<out Int> = getMyListToWriteTo(any)
+    val a12 : MyList<out Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyListToWriteTo<Any>(any)<!>
+    val a13 : MyList<out Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyListToWriteTo(any)<!>
 
     useMyList(getMyList(int), int)
     useMyList(getMyList(any), int)
@@ -43,9 +43,9 @@ fun test1(int: Int, any: Any) {
 
     readFromMyList(getMyList(int), any)
     readFromMyList(getMyList(any), int)
-    <!INAPPLICABLE_CANDIDATE!>readFromMyList<!><Int>(getMyList(any), int)
+    readFromMyList<Int>(<!ARGUMENT_TYPE_MISMATCH!>getMyList(any)<!>, int)
 
-    <!INAPPLICABLE_CANDIDATE!>readFromMyList<!><Int>(getMyListToReadFrom(any), int)
+    readFromMyList<Int>(<!ARGUMENT_TYPE_MISMATCH!>getMyListToReadFrom(any)<!>, int)
     readFromMyList(getMyListToReadFrom(any), int)
 
     readFromMyList(getMyListToReadFrom(int), any)
@@ -61,7 +61,7 @@ fun test1(int: Int, any: Any) {
 
     readFromMyList(getMyListToWriteTo(any), any)
 
-    <!INAPPLICABLE_CANDIDATE!>writeToMyList<!>(getMyListToReadFrom(any), any)
+    writeToMyList(getMyListToReadFrom(any), <!ARGUMENT_TYPE_MISMATCH!>any<!>)
 
     use(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13)
 }

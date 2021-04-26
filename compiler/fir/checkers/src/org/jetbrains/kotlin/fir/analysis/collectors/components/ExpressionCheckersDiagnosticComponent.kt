@@ -22,7 +22,7 @@ class ExpressionCheckersDiagnosticComponent(
 ) : AbstractDiagnosticCollectorComponent(collector) {
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(anonymousFunction, data, reporter)
+        checkers.allAnonymousFunctionAsExpressionCheckers.check(anonymousFunction, data, reporter)
     }
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: CheckerContext) {
@@ -34,7 +34,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(annotationCall, data, reporter)
+        checkers.allAnnotationCallCheckers.check(annotationCall, data, reporter)
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: CheckerContext) {
@@ -70,11 +70,19 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(stringConcatenationCall, data, reporter)
+        checkers.allStringConcatenationCallCheckers.check(stringConcatenationCall, data, reporter)
     }
 
     override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(checkNotNullCall, data, reporter)
+        checkers.allCheckNotNullCallCheckers.check(checkNotNullCall, data, reporter)
+    }
+
+    override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: CheckerContext) {
+        checkers.allElvisExpressionCheckers.check(elvisExpression, data, reporter)
+    }
+
+    override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: CheckerContext) {
+        checkers.allSafeCallExpressionCheckers.check(safeCallExpression, data, reporter)
     }
 
     override fun visitTryExpression(tryExpression: FirTryExpression, data: CheckerContext) {
@@ -86,15 +94,23 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(getClassCall, data, reporter)
+        checkers.allGetClassCallCheckers.check(getClassCall, data, reporter)
     }
 
     override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(equalityOperatorCall, data, reporter)
+        checkers.allEqualityOperatorCallCheckers.check(equalityOperatorCall, data, reporter)
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CheckerContext) {
         checkers.allVariableAssignmentCheckers.check(variableAssignment, data, reporter)
+    }
+
+    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: CheckerContext) {
+        checkers.allReturnExpressionCheckers.check(returnExpression, data, reporter)
+    }
+
+    override fun visitBlock(block: FirBlock, data: CheckerContext) {
+        checkers.allBlockCheckers.check(block, data, reporter)
     }
 
     private fun <E : FirStatement> Collection<FirExpressionChecker<E>>.check(

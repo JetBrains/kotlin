@@ -48,6 +48,10 @@ public enum IrTypeOperator
    * <code>IMPLICIT_DYNAMIC_CAST = 10;</code>
    */
   IMPLICIT_DYNAMIC_CAST(9, 10),
+  /**
+   * <code>REINTERPRET_CAST = 11;</code>
+   */
+  REINTERPRET_CAST(10, 11),
   ;
 
   /**
@@ -90,6 +94,10 @@ public enum IrTypeOperator
    * <code>IMPLICIT_DYNAMIC_CAST = 10;</code>
    */
   public static final int IMPLICIT_DYNAMIC_CAST_VALUE = 10;
+  /**
+   * <code>REINTERPRET_CAST = 11;</code>
+   */
+  public static final int REINTERPRET_CAST_VALUE = 11;
 
 
   public final int getNumber() { return value; }
@@ -106,6 +114,7 @@ public enum IrTypeOperator
       case 8: return NOT_INSTANCEOF;
       case 9: return SAM_CONVERSION;
       case 10: return IMPLICIT_DYNAMIC_CAST;
+      case 11: return REINTERPRET_CAST;
       default: return null;
     }
   }

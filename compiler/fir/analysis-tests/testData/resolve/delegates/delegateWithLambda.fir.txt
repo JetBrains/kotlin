@@ -23,7 +23,7 @@ FILE: delegateWithLambda.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val x: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
+        public final val x: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             lval y: R|kotlin/String| = (R|/getAny|() as? R|kotlin/String|) ?: String()
             ^ R|<local>/y|
         }

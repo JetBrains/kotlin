@@ -15,7 +15,7 @@ FILE: localClassesWithImplicit.kt
             }
 
             public final fun foo(): R|kotlin/Int| {
-                ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+                ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
                     R|<local>/a|.R|kotlin/String.length|
                     ^ when () {
                         (R|<local>/b| is R|kotlin/String|) ->  {
@@ -32,7 +32,7 @@ FILE: localClassesWithImplicit.kt
             }
 
             public final fun bar(): R|kotlin/Int| {
-                ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+                ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
                     R|<local>/b|.<Unresolved name: length>#
                     R|<local>/a|.R|kotlin/String.length|
                     ^ this@R|/A|.R|/A.baz|()
@@ -52,7 +52,7 @@ FILE: localClassesWithImplicit.kt
             }
 
             public final fun foo(): R|kotlin/Int| {
-                ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+                ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
                     R|<local>/a|.R|kotlin/String.length|
                     ^ when () {
                         (R|<local>/b| is R|kotlin/String|) ->  {
@@ -69,7 +69,7 @@ FILE: localClassesWithImplicit.kt
             }
 
             public final fun bar(): R|kotlin/Int| {
-                ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+                ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
                     R|<local>/a|.R|kotlin/String.length|
                     R|<local>/b|.<Unresolved name: length>#
                     ^ this@R|/<anonymous>|.R|/<anonymous>.baz|()

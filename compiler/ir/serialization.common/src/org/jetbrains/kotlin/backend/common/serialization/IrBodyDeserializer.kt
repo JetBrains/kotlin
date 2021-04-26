@@ -567,6 +567,8 @@ class IrBodyDeserializer(
             IrTypeOperator.SAM_CONVERSION
         ProtoTypeOperator.IMPLICIT_DYNAMIC_CAST ->
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST
+        ProtoTypeOperator.REINTERPRET_CAST ->
+            IrTypeOperator.REINTERPRET_CAST
     }
 
     private fun deserializeTypeOp(proto: ProtoTypeOp, start: Int, end: Int, type: IrType): IrTypeOperatorCall {

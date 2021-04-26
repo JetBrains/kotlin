@@ -37,7 +37,7 @@ enum class FirImportingScopeFilter {
             // though, "unknown" will always become public anyway.
             Visibilities.Unknown -> true
             Visibilities.Internal ->
-                symbol.fir.session == session || session.moduleVisibilityChecker?.isInFriendModule(fir) == true
+                symbol.fir.declarationSiteSession == session || session.moduleVisibilityChecker?.isInFriendModule(fir) == true
             // All non-`internal` visibilities are either even more restrictive (e.g. `private`) or must not
             // be checked in imports (e.g. `protected` may be valid in some use sites).
             else -> !fir.status.visibility.mustCheckInImports()

@@ -141,7 +141,6 @@ actual class ArrayList<E> private constructor(
             array = array.copyOfUninitializedElements(length)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     final actual fun ensureCapacity(minCapacity: Int) {
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
         if (minCapacity > array.size) {
@@ -160,7 +159,7 @@ actual class ArrayList<E> private constructor(
     }
 
     override fun toString(): String {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return array.subarrayContentToString(offset, length)
     }
 

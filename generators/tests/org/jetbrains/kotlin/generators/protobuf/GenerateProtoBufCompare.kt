@@ -38,8 +38,9 @@ class GenerateProtoBufCompare {
             generate(DEST_FILE)
         }
 
-        fun generate(destFile: File) {
-            GeneratorsFileUtil.writeFileIfContentChanged(destFile, GenerateProtoBufCompare().generate())
+        fun generate(destFile: File, forbidGenerationOnTeamcity: Boolean = true) {
+            GeneratorsFileUtil.writeFileIfContentChanged(destFile, GenerateProtoBufCompare().generate(),
+                                                         forbidGenerationOnTeamcity = forbidGenerationOnTeamcity)
         }
     }
 
@@ -89,7 +90,7 @@ class GenerateProtoBufCompare {
             }
             return (extensionPrefix + fieldDescriptor.name.javaName + (if (fieldDescriptor.isRepeated) "List" else ""))
                 .replace("[A-Z]".toRegex()) { "_" + it.value }
-                .toUpperCase()
+                .uppercase()
         }
     }
 
@@ -236,7 +237,7 @@ class GenerateProtoBufCompare {
 
     fun generateHashCodeForField(field: Descriptors.FieldDescriptor, p: Printer, isExtensionField: Boolean) {
         val fieldName = field.name.javaName
-        val capFieldName = fieldName.capitalize()
+        val capFieldName = fieldName.replaceFirstChar(Char::uppercaseChar)
         val outerClassName = field.file.options.javaOuterClassname.removePrefix("Debug")
         val fullFieldName = "$outerClassName.$fieldName"
 
@@ -310,7 +311,7 @@ class GenerateProtoBufCompare {
 
         val typeName = field.containingType.typeName
         val fieldName = field.name.javaName
-        val capFieldName = fieldName.capitalize()
+        val capFieldName = fieldName.replaceFirstChar(Char::uppercaseChar)
         val methodName = field.helperMethodName()
 
         p.println()
@@ -357,7 +358,7 @@ class GenerateProtoBufCompare {
 
     open inner class FieldGeneratorImpl(field: Descriptors.FieldDescriptor, p: Printer) : FieldGenerator(field, p) {
         val fieldName = field.name.javaName
-        val capFieldName = fieldName.capitalize()
+        val capFieldName = fieldName.replaceFirstChar(Char::uppercaseChar)
 
         override fun printRepeatedField() {
             repeatedFields.add(field)
@@ -496,12 +497,12 @@ class GenerateProtoBufCompare {
         val packageHeader = this.file.`package`
         val descriptor = this.containingType
         val className = descriptor.fullName.removePrefix(packageHeader).replace(".", "")
-        val capFieldName = this.name.javaName.capitalize()
+        val capFieldName = this.name.javaName.replaceFirstChar(Char::uppercaseChar)
         return "$CHECK_EQUALS_NAME$className$capFieldName"
     }
 
     private val String.javaName: String
-        get() = this.split("_").joinToString("") { it.capitalize() }.decapitalize()
+        get() = this.split("_").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }.replaceFirstChar(Char::lowercaseChar)
 }
 
 private fun Printer.printlnMultiline(string: String) {

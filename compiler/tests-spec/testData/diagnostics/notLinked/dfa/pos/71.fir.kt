@@ -37,7 +37,7 @@ fun case_2(): Int {
         var c: Int? = null
         if (c == null || 0 < c) c = 0
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>c<!>
-        return c ?: 0
+        return c <!USELESS_ELVIS!>?: 0<!>
     }
 
     var c: Int = 0

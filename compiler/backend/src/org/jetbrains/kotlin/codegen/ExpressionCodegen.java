@@ -3009,7 +3009,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     private KotlinType approximateCapturedType(@NotNull KotlinType type) {
         if (state.getLanguageVersionSettings().supportsFeature(LanguageFeature.NewInference)) {
-            TypeApproximator approximator = new TypeApproximator(state.getModule().getBuiltIns());
+            TypeApproximator approximator = new TypeApproximator(state.getModule().getBuiltIns(), state.getLanguageVersionSettings());
 
             KotlinType approximatedType =
                     TypeUtils.contains(type, (containedType) -> CapturedTypeConstructorKt.isCaptured(containedType)) ?

@@ -183,7 +183,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                         if (callable !is PsiNamedElement) continue
 
                         if (!checkModifiable(callable)) {
-                            val renderedCallable = RefactoringUIUtil.getDescription(callable, true).capitalize()
+                            val renderedCallable = RefactoringUIUtil.getDescription(callable, true).replaceFirstChar(Char::uppercaseChar)
                             conflicts.putValue(callable, KotlinBundle.message("can.t.modify.0", renderedCallable))
                         }
 

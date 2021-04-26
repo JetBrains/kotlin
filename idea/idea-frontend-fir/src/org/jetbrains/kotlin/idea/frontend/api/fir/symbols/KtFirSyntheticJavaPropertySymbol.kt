@@ -44,7 +44,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
 ) : KtSyntheticJavaPropertySymbol(), KtFirSymbol<FirSyntheticProperty> {
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
 
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
     override val name: Name get() = firRef.withFir { it.name }

@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.callUtil.toOldSubstitution
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession.Companion.updateCalls
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
@@ -68,7 +68,7 @@ class BuilderInferenceSession(
     private val commonCalls = arrayListOf<PSICompletedCallInfo>()
 
     // These calls come from the old type inference
-    private val oldCallableReferenceCalls = arrayListOf<KtExpression>()
+    private val oldDoubleColonExpressionCalls = arrayListOf<KtExpression>()
 
     private var hasInapplicableCall = false
 
@@ -117,7 +117,7 @@ class BuilderInferenceSession(
     }
 
     fun addOldCallableReferenceCalls(callExpression: KtExpression) {
-        oldCallableReferenceCalls.add(callExpression)
+        oldDoubleColonExpressionCalls.add(callExpression)
     }
 
     override fun addCompletedCallInfo(callInfo: CompletedCallInfo) {
@@ -378,12 +378,32 @@ class BuilderInferenceSession(
         return currentSession.topLevelCallContext.trace
     }
 
-    private fun completeCallableReference(expression: KtCallableReferenceExpression, substitutor: NewTypeSubstitutor) {
-        createResolvedAtomCompleter(substitutor, topLevelCallContext).substituteFunctionLiteralDescriptor(
-            resolvedAtom = null,
-            descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression) as? SimpleFunctionDescriptorImpl ?: return,
-            substitutor
-        )
+    private fun completeDoubleColonExpression(expression: KtDoubleColonExpression, substitutor: NewTypeSubstitutor) {
+        val atomCompleter = createResolvedAtomCompleter(substitutor, topLevelCallContext)
+        val declarationDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression)
+
+        if (declarationDescriptor is SimpleFunctionDescriptorImpl) {
+            atomCompleter.substituteFunctionLiteralDescriptor(resolvedAtom = null, descriptor = declarationDescriptor, substitutor)
+        }
+
+        val recordedType = trace.getType(expression)
+
+        if (recordedType != null) {
+            trace.recordType(expression, substitutor.safeSubstitute(recordedType.unwrap()))
+        }
+
+        val targetExpression = when (expression) {
+            is KtCallableReferenceExpression -> expression.callableReference
+            is KtClassLiteralExpression -> expression.receiverExpression
+            else -> throw IllegalStateException("Unsupported double colon expression")
+        }
+
+        val call = trace.get(BindingContext.CALL, targetExpression) ?: return
+        val resolvedCall = trace.get(BindingContext.RESOLVED_CALL, call)
+
+        if (resolvedCall is ResolvedCallImpl<*>) {
+            resolvedCall.setResultingSubstitutor(substitutor.toOldSubstitution().buildSubstitutor())
+        }
     }
 
     private fun completeCall(
@@ -453,9 +473,9 @@ class BuilderInferenceSession(
                 reportErrors(callInfo, resolvedCall, errors)
             }
 
-            for (simpleCall in oldCallableReferenceCalls) {
-                when (simpleCall) {
-                    is KtCallableReferenceExpression -> completeCallableReference(simpleCall, nonFixedTypesToResultSubstitutor)
+            for (call in oldDoubleColonExpressionCalls) {
+                when (call) {
+                    is KtDoubleColonExpression -> completeDoubleColonExpression(call, nonFixedTypesToResultSubstitutor)
                     else -> throw Exception("Unsupported call expression type")
                 }
             }

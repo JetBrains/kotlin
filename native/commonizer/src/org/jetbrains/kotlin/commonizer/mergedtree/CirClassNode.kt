@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.cir.CirClass
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirClassNode(
+    val id: CirEntityId,
     override val targetDeclarations: CommonizedGroup<CirClass>,
     override val commonDeclaration: NullableLazyValue<CirClass>,
 ) : CirClassifierNode<CirClass, CirClass>, CirNodeWithMembers<CirClass, CirClass> {

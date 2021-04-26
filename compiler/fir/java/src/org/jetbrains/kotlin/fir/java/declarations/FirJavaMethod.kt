@@ -51,7 +51,7 @@ import kotlin.properties.Delegates
 @OptIn(FirImplementationDetail::class)
 class FirJavaMethod @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
@@ -181,7 +181,7 @@ val ALL_JAVA_OPERATION_NAMES =
 @FirBuilderDsl
 class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    override lateinit var session: FirSession
+    override lateinit var declarationSiteSession: FirSession
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
@@ -195,7 +195,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     lateinit var visibility: Visibility
     var modality: Modality? = null
     var isStatic: Boolean by Delegates.notNull()
-    var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
     lateinit var annotationBuilder: () -> List<FirAnnotationCall>
 
     @Deprecated("Modification of 'origin' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
@@ -209,7 +209,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override fun build(): FirJavaMethod {
         return FirJavaMethod(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             attributes,
             returnTypeRef as FirJavaTypeRef,
@@ -235,7 +235,7 @@ inline fun buildJavaMethodCopy(original: FirSimpleFunction, init: FirJavaMethodB
     }
     val copyBuilder = FirJavaMethodBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.session
+    copyBuilder.declarationSiteSession = original.declarationSiteSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef

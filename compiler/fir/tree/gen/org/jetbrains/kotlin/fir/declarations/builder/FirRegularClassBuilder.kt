@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    override lateinit var session: FirSession
-    open var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override lateinit var declarationSiteSession: FirSession
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
@@ -55,7 +55,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override fun build(): FirRegularClass {
         return FirRegularClassImpl(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             origin,
             attributes,
@@ -80,4 +80,28 @@ inline fun buildRegularClass(init: FirRegularClassBuilder.() -> Unit): FirRegula
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirRegularClassBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClassBuilder.() -> Unit): FirRegularClass {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirRegularClassBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.declarationSiteSession = original.declarationSiteSession
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.origin = original.origin
+    copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.typeParameters.addAll(original.typeParameters)
+    copyBuilder.status = original.status
+    copyBuilder.classKind = original.classKind
+    copyBuilder.declarations.addAll(original.declarations)
+    copyBuilder.scopeProvider = original.scopeProvider
+    copyBuilder.name = original.name
+    copyBuilder.symbol = original.symbol
+    copyBuilder.companionObject = original.companionObject
+    copyBuilder.superTypeRefs.addAll(original.superTypeRefs)
+    return copyBuilder.apply(init).build()
 }

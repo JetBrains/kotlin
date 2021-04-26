@@ -27,7 +27,7 @@ class G<E : <!FINAL_UPPER_BOUND!>Double<!>>(val balue: E) : F<E>(balue) {
     override fun rest(): E = balue
 }
 
-class H<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : <!INAPPLICABLE_CANDIDATE!>F<E><!>(balue) {
+class H<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : F<E>(<!ARGUMENT_TYPE_MISMATCH!>balue<!>) {
     override fun rest(): E = balue // no report because of INAPPLICABLE_CANDIDATE
 }
 
@@ -57,7 +57,7 @@ open class J() : S() {
 }
 
 open class Base<T : X, Z : T> {
-    open fun kek(): Z = Z()
+    open fun kek(): Z = <!RETURN_TYPE_MISMATCH!>Z()<!>
 }
 
 open class GoodDerrived : Base<Y, W>() {

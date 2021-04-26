@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
+import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENUM
 import org.jetbrains.kotlin.backend.konan.MemoryModel
@@ -23,38 +22,30 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL
-import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 private class EnumSyntheticFunctionsBuilder(val context: Context) {
-    fun buildValuesExpression(startOffset: Int, endOffset: Int,
-                              enumClass: IrClass): IrExpression {
-
-        val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)
-
-        return irCall(startOffset, endOffset, genericValuesSymbol.owner, listOf(enumClass.defaultType))
-                .apply {
-                    putValueArgument(0, loweredEnum.getValuesField(startOffset, endOffset))
-                }
+    fun IrBuilderWithScope.enumValues(enumClass: IrClass): IrExpression {
+        val loweredEnum = this@EnumSyntheticFunctionsBuilder.context.specialDeclarationsFactory.getLoweredEnum(enumClass)
+        return irCall(genericValuesSymbol, listOf(enumClass.defaultType)).apply {
+            putValueArgument(0, loweredEnum.getValuesField(startOffset, endOffset))
+        }
     }
 
-    fun buildValueOfExpression(startOffset: Int, endOffset: Int,
-                               enumClass: IrClass,
-                               value: IrExpression): IrExpression {
-        val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)
-
-        return irCall(startOffset, endOffset, genericValueOfSymbol.owner, listOf(enumClass.defaultType))
-                .apply {
-                    putValueArgument(0, value)
-                    putValueArgument(1, loweredEnum.getValuesField(startOffset, endOffset))
-                }
+    fun IrBuilderWithScope.enumValueOf(enumClass: IrClass, value: IrExpression): IrExpression {
+        val loweredEnum = this@EnumSyntheticFunctionsBuilder.context.specialDeclarationsFactory.getLoweredEnum(enumClass)
+        return irCall(genericValueOfSymbol, listOf(enumClass.defaultType)).apply {
+            putValueArgument(0, value)
+            putValueArgument(1, loweredEnum.getValuesField(startOffset, endOffset))
+        }
     }
 
     private val genericValueOfSymbol = context.ir.symbols.valueOfForEnum
@@ -63,65 +54,57 @@ private class EnumSyntheticFunctionsBuilder(val context: Context) {
 }
 
 internal class EnumUsageLowering(val context: Context)
-    : IrElementTransformerVoid(), FileLoweringPass {
+    : IrElementTransformer<IrBuilderWithScope?>, FileLoweringPass {
 
     private val enumSyntheticFunctionsBuilder = EnumSyntheticFunctionsBuilder(context)
 
     override fun lower(irFile: IrFile) {
-        visitFile(irFile)
+        visitFile(irFile, data = null)
     }
 
-    override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope?): IrStatement {
+        return super.visitDeclaration(declaration, context.createIrBuilder(declaration.symbol))
+    }
+
+    override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrBuilderWithScope?): IrExpression {
         val entry = expression.symbol.owner
-        return loadEnumEntry(
-                expression.startOffset,
-                expression.endOffset,
-                entry.parentAsClass,
-                entry.name
-        )
+        return data!!.at(expression).loadEnumEntry(entry.parentAsClass, entry.name)
     }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid(this)
+    override fun visitCall(expression: IrCall, data: IrBuilderWithScope?): IrExpression {
+        expression.transformChildren(this, data)
 
         val intrinsicType = tryGetIntrinsicType(expression)
         if (intrinsicType != IntrinsicType.ENUM_VALUES && intrinsicType != IntrinsicType.ENUM_VALUE_OF)
             return expression
 
-        val startOffset = expression.startOffset
-        val endOffset = expression.endOffset
+        data!!.at(expression)
+
         val irClassSymbol = expression.getTypeArgument(0)!!.classifierOrNull as? IrClassSymbol
 
         if (irClassSymbol == null || irClassSymbol == context.ir.symbols.enum) {
             // Either a type parameter or a type parameter erased to 'Enum'.
-            return irCall(startOffset, endOffset, context.ir.symbols.throwIllegalStateException.owner, emptyList())
+            return data.irCall(context.ir.symbols.throwIllegalStateException)
         }
 
         val irClass = irClassSymbol.owner
 
-        assert (irClass.kind == ClassKind.ENUM_CLASS)
+        require(irClass.kind == ClassKind.ENUM_CLASS)
 
-        return if (intrinsicType == IntrinsicType.ENUM_VALUES) {
-            enumSyntheticFunctionsBuilder.buildValuesExpression(startOffset, endOffset, irClass)
-        } else {
-            val value = expression.getValueArgument(0)!!
-            enumSyntheticFunctionsBuilder.buildValueOfExpression(startOffset, endOffset, irClass, value)
+        return with(enumSyntheticFunctionsBuilder) {
+            if (intrinsicType == IntrinsicType.ENUM_VALUES)
+                data.enumValues(irClass)
+            else
+                data.enumValueOf(irClass, expression.getValueArgument(0)!!)
         }
     }
 
-    private fun loadEnumEntry(startOffset: Int, endOffset: Int, enumClass: IrClass, name: Name): IrExpression {
-        val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)
+    private fun IrBuilderWithScope.loadEnumEntry(enumClass: IrClass, name: Name): IrExpression {
+        val loweredEnum = this@EnumUsageLowering.context.specialDeclarationsFactory.getLoweredEnum(enumClass)
         val ordinal = loweredEnum.entriesMap.getValue(name)
-        return IrCallImpl.fromSymbolDescriptor(
-                startOffset, endOffset, enumClass.defaultType,
-                loweredEnum.itemGetterSymbol.owner.symbol,
-                typeArgumentsCount = 0,
-                loweredEnum.itemGetterSymbol.owner.valueParameters.size
-        ).apply {
-            dispatchReceiver = IrCallImpl(startOffset, endOffset, loweredEnum.valuesGetter.returnType,
-                    loweredEnum.valuesGetter.symbol, loweredEnum.valuesGetter.typeParameters.size,
-                    loweredEnum.valuesGetter.valueParameters.size)
-            putValueArgument(0, IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, ordinal))
+        return irCall(loweredEnum.itemGetterSymbol, enumClass.defaultType).apply {
+            dispatchReceiver = irCall(loweredEnum.valuesGetter)
+            putValueArgument(0, irInt(ordinal))
         }
     }
 }
@@ -199,6 +182,16 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
 
             implObject.declarations += createSyntheticValuesPropertyDeclaration(enumEntries)
 
+            val companion = irClass.companionObject()
+            if (companion != null) {
+                // The initialization order is the following:
+                // - first all enum entries in their declaration order
+                // - then companion object if it exists
+                val constructor = implObject.constructors.single()
+                context.createIrBuilder(constructor.symbol).run {
+                    (constructor.body as IrBlockBody).statements += irGetObject(companion.symbol)
+                }
+            }
 
             irClass.declarations += implObject
         }
@@ -314,39 +307,14 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             (constructor.body as IrBlockBody).statements += valuesInitializer
         }
 
-        private fun createSyntheticValuesMethodBody(declaration: IrFunction): IrBody {
-            val startOffset = irClass.startOffset
-            val endOffset = irClass.endOffset
-            val valuesExpression = enumSyntheticFunctionsBuilder.buildValuesExpression(startOffset, endOffset, irClass)
+        private fun createSyntheticValuesMethodBody(declaration: IrFunction) =
+                context.createIrBuilder(declaration.symbol, irClass.startOffset, irClass.endOffset).irBlockBody {
+                    +irReturn(with(enumSyntheticFunctionsBuilder) { enumValues(irClass) })
+                }
 
-            return IrBlockBodyImpl(startOffset, endOffset).apply {
-                statements += IrReturnImpl(
-                        startOffset,
-                        endOffset,
-                        context.irBuiltIns.nothingType,
-                        declaration.symbol,
-                        valuesExpression
-                )
-            }
-        }
-
-        private fun createSyntheticValueOfMethodBody(declaration: IrFunction): IrBody {
-            val startOffset = irClass.startOffset
-            val endOffset = irClass.endOffset
-            val parameter = declaration.valueParameters[0]
-            val value = IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol)
-            val valueOfExpression = enumSyntheticFunctionsBuilder.buildValueOfExpression(startOffset, endOffset, irClass, value)
-
-            return IrBlockBodyImpl(startOffset, endOffset).apply {
-                statements += IrReturnImpl(
-                        startOffset,
-                        endOffset,
-                        context.irBuiltIns.nothingType,
-                        declaration.symbol,
-                        valueOfExpression
-                )
-            }
-        }
-
+        private fun createSyntheticValueOfMethodBody(declaration: IrFunction) =
+                context.createIrBuilder(declaration.symbol, irClass.startOffset, irClass.endOffset).irBlockBody {
+                    +irReturn(with(enumSyntheticFunctionsBuilder) { enumValueOf(irClass, irGet(declaration.valueParameters[0])) })
+                }
     }
 }

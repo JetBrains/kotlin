@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.*
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object FirTreeBuilder : AbstractFirTreeBuilder() {
     val annotationContainer = element("AnnotationContainer", Other)
-    val typeRef = element("TypeRef", TypeRef, annotationContainer)
+    val typeRef = sealedElement("TypeRef", TypeRef, annotationContainer)
     val reference = element("Reference", Reference)
     val label = element("Label", Other)
     val import = element("Import", Declaration)
     val resolvedImport = element("ResolvedImport", Declaration, import)
     val symbolOwner = element("SymbolOwner", Other)
-    val resolvable = element("Resolvable", Expression)
+    val resolvable = sealedElement("Resolvable", Expression)
 
     val targetElement = element("TargetElement", Other)
 
@@ -28,32 +28,32 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val statement = element("Statement", Expression, annotationContainer)
     val expression = element("Expression", Expression, statement)
-    val declaration = element("Declaration", Declaration)
-    val annotatedDeclaration = element("AnnotatedDeclaration", Declaration, declaration, annotationContainer)
+    val declaration = sealedElement("Declaration", Declaration)
+    val annotatedDeclaration = sealedElement("AnnotatedDeclaration", Declaration, declaration, annotationContainer)
     val anonymousInitializer = element("AnonymousInitializer", Declaration, declaration, symbolOwner, controlFlowGraphOwner)
-    val typedDeclaration = element("TypedDeclaration", Declaration, annotatedDeclaration)
-    val callableDeclaration = element("CallableDeclaration", Declaration, typedDeclaration, symbolOwner)
+    val typedDeclaration = sealedElement("TypedDeclaration", Declaration, annotatedDeclaration)
+    val callableDeclaration = sealedElement("CallableDeclaration", Declaration, typedDeclaration, symbolOwner)
     val typeParameterRef = element("TypeParameterRef", Declaration)
     val typeParameter = element("TypeParameter", Declaration, typeParameterRef, annotatedDeclaration, symbolOwner)
-    val typeParameterRefsOwner = element("TypeParameterRefsOwner", Declaration)
-    val typeParametersOwner = element("TypeParametersOwner", Declaration, typeParameterRefsOwner)
-    val memberDeclaration = element("MemberDeclaration", Declaration, annotatedDeclaration, typeParameterRefsOwner)
-    val callableMemberDeclaration = element("CallableMemberDeclaration", Declaration, callableDeclaration, memberDeclaration)
+    val typeParameterRefsOwner = sealedElement("TypeParameterRefsOwner", Declaration)
+    val typeParametersOwner = sealedElement("TypeParametersOwner", Declaration, typeParameterRefsOwner)
+    val memberDeclaration = sealedElement("MemberDeclaration", Declaration, annotatedDeclaration, typeParameterRefsOwner)
+    val callableMemberDeclaration = sealedElement("CallableMemberDeclaration", Declaration, callableDeclaration, memberDeclaration)
 
-    val variable = element("Variable", Declaration, callableDeclaration, annotatedDeclaration, statement)
+    val variable = sealedElement("Variable", Declaration, callableDeclaration, annotatedDeclaration, statement)
     val valueParameter = element("ValueParameter", Declaration, variable, controlFlowGraphOwner)
     val property = element("Property", Declaration, variable, typeParametersOwner, controlFlowGraphOwner, callableMemberDeclaration)
     val field = element("Field", Declaration, variable, typeParametersOwner, callableMemberDeclaration)
     val enumEntry = element("EnumEntry", Declaration, variable, callableMemberDeclaration)
 
-    val classLikeDeclaration = element("ClassLikeDeclaration", Declaration, annotatedDeclaration, statement, symbolOwner)
-    val klass = element("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
+    val classLikeDeclaration = sealedElement("ClassLikeDeclaration", Declaration, annotatedDeclaration, statement, symbolOwner)
+    val klass = sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
     val regularClass = element("RegularClass", Declaration, memberDeclaration, typeParameterRefsOwner, controlFlowGraphOwner, klass)
     val typeAlias = element("TypeAlias", Declaration, classLikeDeclaration, memberDeclaration, typeParametersOwner)
 
-    val function = element("Function", Declaration, callableDeclaration, targetElement, typeParameterRefsOwner, controlFlowGraphOwner, statement)
+    val function = sealedElement("Function", Declaration, callableDeclaration, targetElement, typeParameterRefsOwner, controlFlowGraphOwner, statement)
 
-    val contractDescriptionOwner = element("ContractDescriptionOwner", Declaration)
+    val contractDescriptionOwner = sealedElement("ContractDescriptionOwner", Declaration)
     val simpleFunction = element("SimpleFunction", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
     val propertyAccessor = element("PropertyAccessor", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
     val constructor = element("Constructor", Declaration, function, callableMemberDeclaration, typeParameterRefsOwner)
@@ -64,14 +64,14 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val diagnosticHolder = element("DiagnosticHolder", Diagnostics)
 
-    val loop = element("Loop", Expression, statement, targetElement)
+    val loop = sealedElement("Loop", Expression, statement, targetElement)
     val errorLoop = element("ErrorLoop", Expression, loop, diagnosticHolder)
     val doWhileLoop = element("DoWhileLoop", Expression, loop)
     val whileLoop = element("WhileLoop", Expression, loop)
 
     val block = element("Block", Expression, expression)
     val binaryLogicExpression = element("BinaryLogicExpression", Expression, expression)
-    val jump = element("Jump", Expression, expression)
+    val jump = sealedElement("Jump", Expression, expression)
     val loopJump = element("LoopJump", Expression, jump)
     val breakExpression = element("BreakExpression", Expression, loopJump)
     val continueExpression = element("ContinueExpression", Expression, loopJump)
@@ -82,7 +82,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val starProjection = element("StarProjection", TypeRef, typeProjection)
     val typeProjectionWithVariance = element("TypeProjectionWithVariance", TypeRef, typeProjection)
     val argumentList = element("ArgumentList", Expression)
-    val call = element("Call", Expression, statement) // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?
+    val call = sealedElement("Call", Expression, statement) // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?
     val annotationCall = element("AnnotationCall", Expression, expression, call, resolvable)
     val comparisonExpression = element("ComparisonExpression", Expression, expression)
     val typeOperatorCall = element("TypeOperatorCall", Expression, expression, call)

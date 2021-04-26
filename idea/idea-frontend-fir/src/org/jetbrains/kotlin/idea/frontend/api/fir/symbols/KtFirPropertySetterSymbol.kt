@@ -40,7 +40,7 @@ internal class KtFirPropertySetterSymbol(
 
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
 
     override val isDefault: Boolean get() = firRef.withFir { it is FirDefaultPropertyAccessor }
     override val isInline: Boolean get() = firRef.withFir { it.isInline }
@@ -61,14 +61,6 @@ internal class KtFirPropertySetterSymbol(
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
-
-    override val symbolKind: KtSymbolKind
-        get() = firRef.withFir { fir ->
-            when (fir.symbol.callableId.classId) {
-                null -> KtSymbolKind.TOP_LEVEL
-                else -> KtSymbolKind.MEMBER
-            }
-        }
 
     override val dispatchType: KtType? by cached {
         firRef.dispatchReceiverTypeAndAnnotations(builder)

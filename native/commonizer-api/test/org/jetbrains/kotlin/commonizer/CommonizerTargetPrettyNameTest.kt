@@ -72,9 +72,11 @@ class CommonizerTargetPrettyNameTest {
         )
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun sharedTargetNoInnerTargets() {
-        SharedCommonizerTarget(emptySet<CommonizerTarget>())
+        assertEquals(
+            "[]", SharedCommonizerTarget(emptySet<CommonizerTarget>()).prettyName
+        )
     }
 
     private companion object {

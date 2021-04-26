@@ -11,7 +11,7 @@ fun f1(a: String?) {
 }
 
 fun f2(a: String) {
-    a!!
+    a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     checkSubtype<String>(a)
 }
 

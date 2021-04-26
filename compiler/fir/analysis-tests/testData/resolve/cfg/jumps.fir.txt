@@ -22,7 +22,7 @@ FILE: jumps.kt
             }
         }
 
-        R|<local>/y|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Int.inc>#()
+        R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
     }
     public final fun test_3(x: R|kotlin/Int?|): R|kotlin/Unit| {
         while(Boolean(true)) {
@@ -55,7 +55,7 @@ FILE: jumps.kt
         R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun test_6(): R|kotlin/Unit| {
-        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             ^@run Unit
         }
         )

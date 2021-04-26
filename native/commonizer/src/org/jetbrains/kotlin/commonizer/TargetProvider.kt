@@ -10,8 +10,7 @@ import java.io.File
 
 class TargetProvider(
     val target: CommonizerTarget,
-    val modulesProvider: ModulesProvider,
-    val dependencyModulesProvider: ModulesProvider?
+    val modulesProvider: ModulesProvider
 )
 
 interface ModulesProvider {

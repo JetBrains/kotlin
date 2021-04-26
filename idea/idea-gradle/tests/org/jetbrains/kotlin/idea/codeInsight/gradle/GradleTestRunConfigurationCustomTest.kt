@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.idea.run.getConfiguration
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
-class GradleTestRunConfigurationCustomTest : GradleImportingTestCase() {
+class GradleTestRunConfigurationCustomTest : MultiplePluginVersionGradleImportingTestCase() {
     @Test
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+", skipForMaster = true)
     fun testPreferredConfigurations() {
         if (!PlatformUtils.isIntelliJ()) {
             return

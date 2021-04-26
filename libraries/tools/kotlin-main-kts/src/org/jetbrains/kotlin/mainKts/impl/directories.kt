@@ -39,7 +39,7 @@ class Directories(
     // compiler/daemon/daemon-common/src/org/jetbrains/kotlin/daemon/common/FileSystemUtils.kt
     // which in turn is based on: http://www.code4copy.com/java/post/detecting-os-type-in-java
     private val os: OSKind
-        get() = getProperty("os.name")?.toLowerCase(Locale.US).let { name ->
+        get() = getProperty("os.name")?.lowercase().let { name ->
             when {
                 name == null -> OSKind.Unknown
                 name.startsWith("windows") -> OSKind.Windows

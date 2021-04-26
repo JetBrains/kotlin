@@ -90,7 +90,7 @@ internal class KonanSymbols(
 
     val integerConversions = allIntegerClasses.flatMap { fromClass ->
         allIntegerClasses.map { toClass ->
-            val name = Name.identifier("to${toClass.descriptor.name.asString().capitalize()}")
+            val name = Name.identifier("to${toClass.descriptor.name.asString().replaceFirstChar(Char::uppercaseChar)}")
             val descriptor = if (fromClass in signedIntegerClasses && toClass in unsignedIntegerClasses) {
                 builtInsPackage("kotlin")
                         .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
@@ -222,11 +222,11 @@ internal class KonanSymbols(
     val getNativeNullPtr = symbolTable.referenceSimpleFunction(context.getNativeNullPtr)
 
     val boxCachePredicates = BoxCache.values().associate {
-        it to internalFunction("in${it.name.toLowerCase().capitalize()}BoxCache")
+        it to internalFunction("in${it.name.lowercase().replaceFirstChar(Char::uppercaseChar)}BoxCache")
     }
 
     val boxCacheGetters = BoxCache.values().associate {
-        it to internalFunction("getCached${it.name.toLowerCase().capitalize()}Box")
+        it to internalFunction("getCached${it.name.lowercase().replaceFirstChar(Char::uppercaseChar)}Box")
     }
 
     val immutableBlob = symbolTable.referenceClass(

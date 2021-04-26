@@ -7,7 +7,7 @@ fun bar(x : Int = 1, y : Int = 1, z : String) {
 fun test() {
     foo()
     foo(2)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("")
+    foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     foo(b = "")
     foo(1, "")
     foo(a = 2)

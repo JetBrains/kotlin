@@ -166,6 +166,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var lightDebugDeprecated: Boolean = false
 
     @Argument(
+            value = "-Xg-generate-inline-function-body-marker",
+            valueDescription = "{disable|enable}",
+            description = """generates marker of inlined function body on call site to make debugger breakpoint resolution more accurate"""
+    )
+    var generateInlinedFunctionMarkerString: String? = null
+
+
+    @Argument(
             value = MAKE_CACHE,
             valueDescription = "<path>",
             description = "Path of the library to be compiled to cache",

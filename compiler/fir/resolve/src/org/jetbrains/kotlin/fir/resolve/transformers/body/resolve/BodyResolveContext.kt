@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.name.Name
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>,
-    val targetedLocalClasses: Set<FirClass<*>> = emptySet(),
+    val targetedLocalClasses: Set<FirClassLikeDeclaration<*>> = emptySet(),
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
 ) {
     val fileImportsScope: MutableList<FirScope> = mutableListOf()
@@ -316,7 +316,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun createSnapshotForLocalClasses(
         returnTypeCalculator: ReturnTypeCalculator,
-        targetedLocalClasses: Set<FirClass<*>>
+        targetedLocalClasses: Set<FirClassLikeDeclaration<*>>
     ): BodyResolveContext =
         BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
             file = this@BodyResolveContext.file

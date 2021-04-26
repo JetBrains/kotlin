@@ -87,7 +87,7 @@ fun case_8(value_1: Int, value_2: Int?, value_3: Int?) {
     when (value_1) {
         value_2 ?: 0 -> {}
         value_2 ?: value_3 ?: 0 -> {}
-        value_2!! ?: 0 -> {}
+        value_2!! <!USELESS_ELVIS!>?: 0<!> -> {}
     }
 }
 

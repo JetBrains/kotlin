@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import org.jetbrains.kotlin.commonizer.cir.CirDeclaration
-import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirClassRecursionMarker
 import org.jetbrains.kotlin.commonizer.cir.CirClassifierRecursionMarker
+import org.jetbrains.kotlin.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.core.*
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue
@@ -83,7 +83,7 @@ internal fun buildClassNode(
     commonizerProducer = { ClassCommonizer(classifiers) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
-        CirClassNode(targetDeclarations, commonDeclaration).also {
+        CirClassNode(classId, targetDeclarations, commonDeclaration).also {
             classifiers.commonizedNodes.addClassNode(classId, it)
         }
     }
@@ -113,7 +113,7 @@ internal fun buildTypeAliasNode(
     commonizerProducer = { TypeAliasCommonizer(classifiers) },
     recursionMarker = CirClassifierRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
-        CirTypeAliasNode(targetDeclarations, commonDeclaration).also {
+        CirTypeAliasNode(typeAliasId, targetDeclarations, commonDeclaration).also {
             classifiers.commonizedNodes.addTypeAliasNode(typeAliasId, it)
         }
     }

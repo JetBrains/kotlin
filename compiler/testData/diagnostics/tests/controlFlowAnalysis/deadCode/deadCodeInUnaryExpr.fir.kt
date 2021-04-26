@@ -9,7 +9,7 @@ fun testPostfixWithCall(n: Nothing) {
 }
 
 fun testPostfixSpecial() {
-    todo()!!
+    todo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 }
 
 fun todo(): Nothing = throw Exception()

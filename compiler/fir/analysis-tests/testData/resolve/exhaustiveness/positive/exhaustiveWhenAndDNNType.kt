@@ -11,7 +11,7 @@ fun takeB(b: B) {}
 
 fun test_1() {
     val flag = SomeEnum.A1
-    val b: B = when (flag!!) {
+    val b: B = when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         SomeEnum.A1 -> B()
         SomeEnum.A2 -> B()
     }
@@ -21,7 +21,7 @@ fun test_1() {
 fun test_2() {
     val flag = SomeEnum.A1
 
-    val b = when (flag!!) {
+    val b = when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         SomeEnum.A1 -> B()
         SomeEnum.A2 -> B()
     }

@@ -50,8 +50,7 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
                   $this: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=null
                   key: STRING_CONCATENATION type=kotlin.String
-                    CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                      $this: GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
+                    GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
                     CONST String type=kotlin.String value="_alternative"
               WHEN type=kotlin.Unit origin=IF
                 BRANCH

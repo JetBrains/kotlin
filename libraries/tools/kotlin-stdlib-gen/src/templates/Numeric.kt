@@ -39,7 +39,7 @@ object Numeric : TemplateGroupBase() {
                 if (p == p.sumType())
                     "return storage.sum().to${p.sumType().name}()"
                 else
-                    "return sumBy { it.to${p.sumType().name}() }"
+                    "return sumOf { it.to${p.sumType().name}() }"
             }
         }
         specialFor(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives) {

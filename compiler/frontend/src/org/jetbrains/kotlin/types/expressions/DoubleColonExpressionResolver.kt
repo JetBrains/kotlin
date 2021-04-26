@@ -113,6 +113,11 @@ class DoubleColonExpressionResolver(
             c.trace.report(UNSUPPORTED.on(expression, "Class literals with empty left hand side are not yet supported"))
         } else {
             val result = resolveDoubleColonLHS(expression, c)
+
+            if (c.inferenceSession is BuilderInferenceSession && result?.type?.contains { it is StubType } == true) {
+                c.inferenceSession.addOldCallableReferenceCalls(expression)
+            }
+
             if (result != null && !result.type.isError) {
                 val inherentType = result.type
                 val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo

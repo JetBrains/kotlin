@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -37,12 +38,12 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  */
 
 @FirBuilderDsl
-class FirPropertyBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
+class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    lateinit var session: FirSession
-    var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    lateinit var origin: FirDeclarationOrigin
-    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    override lateinit var declarationSiteSession: FirSession
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
     lateinit var name: Name
@@ -63,7 +64,7 @@ class FirPropertyBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContainer
     override fun build(): FirProperty {
         return FirPropertyImpl(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             origin,
             attributes,
@@ -103,7 +104,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     }
     val copyBuilder = FirPropertyBuilder()
     copyBuilder.source = original.source
-    copyBuilder.session = original.session
+    copyBuilder.declarationSiteSession = original.declarationSiteSession
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

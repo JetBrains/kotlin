@@ -31,7 +31,7 @@ object TestGeneratorUtil {
 
     @JvmStatic
     fun fileNameToJavaIdentifier(file: File): String {
-        return escapeForJavaIdentifier(file.name).capitalize()
+        return escapeForJavaIdentifier(file.name).replaceFirstChar(Char::uppercaseChar)
     }
 }
 

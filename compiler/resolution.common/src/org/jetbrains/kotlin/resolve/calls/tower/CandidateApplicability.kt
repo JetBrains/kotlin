@@ -13,7 +13,8 @@ enum class CandidateApplicability {
     INAPPLICABLE, // arguments have wrong types
     IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
     RUNTIME_ERROR, // problems with visibility
-    MAY_THROW_RUNTIME_ERROR, // unsafe call or unstable smart cast
+    UNSAFE_CALL, // receiver nullability doesn't match
+    MAY_THROW_RUNTIME_ERROR, // unstable smart cast
     CONVENTION_ERROR, // missing infix, operator etc
     RESOLVED_LOW_PRIORITY,
     RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve

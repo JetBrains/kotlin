@@ -4,7 +4,7 @@
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
-    val x = <!EXPRESSION_REQUIRED!>fun named1(x: Int): Int { return 1 }<!>
+    val x = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named1(x: Int): Int { return 1 }<!>
     x <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Int, Int>>() }
 
     foo { fun named2(): Int {return 1} }
@@ -45,12 +45,12 @@ fun test() {
     x4 checkType { _<Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
-    val b = (<!EXPRESSION_REQUIRED, UNRESOLVED_REFERENCE!>fun named15(): Boolean { return true }<!>)()
+    val b = (<!ANONYMOUS_FUNCTION_WITH_NAME, UNRESOLVED_REFERENCE!>fun named15(): Boolean { return true }<!>)()
 
-    baz(<!EXPRESSION_REQUIRED!>fun named16(){}<!>)
+    baz(<!ANONYMOUS_FUNCTION_WITH_NAME!>fun named16(){}<!>)
 }
 
-fun bar() = <!EXPRESSION_REQUIRED!>fun named() {}<!>
+fun bar() = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named() {}<!>
 
 fun <T> run(block: () -> T): T = null!!
 fun run2(block: () -> Unit): Unit = null!!

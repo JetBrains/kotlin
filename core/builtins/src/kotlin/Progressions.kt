@@ -32,7 +32,7 @@ public open class CharProgression
     /**
      * The last element in the progression.
      */
-    public val last: Char = getProgressionLastElement(start.toInt(), endInclusive.toInt(), step).toChar()
+    public val last: Char = getProgressionLastElement(start.code, endInclusive.code, step).toChar()
 
     /**
      * The step of the progression.
@@ -43,7 +43,7 @@ public open class CharProgression
 
     /**
      * Checks if the progression is empty.
-     
+     *
      * Progression with a positive step is empty if its first element is greater than the last element.
      * Progression with a negative step is empty if its first element is less than the last element.
      */
@@ -54,14 +54,14 @@ public open class CharProgression
         first == other.first && last == other.last && step == other.step)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step)
+        if (isEmpty()) -1 else (31 * (31 * first.code + last.code) + step)
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
     companion object {
         /**
          * Creates CharProgression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *
@@ -94,7 +94,7 @@ public open class IntProgression
     /**
      * The last element in the progression.
      */
-    public val last: Int = getProgressionLastElement(start.toInt(), endInclusive.toInt(), step).toInt()
+    public val last: Int = getProgressionLastElement(start, endInclusive, step)
 
     /**
      * The step of the progression.
@@ -105,7 +105,7 @@ public open class IntProgression
 
     /**
      * Checks if the progression is empty.
-     
+     *
      * Progression with a positive step is empty if its first element is greater than the last element.
      * Progression with a negative step is empty if its first element is less than the last element.
      */
@@ -123,7 +123,7 @@ public open class IntProgression
     companion object {
         /**
          * Creates IntProgression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *
@@ -156,7 +156,7 @@ public open class LongProgression
     /**
      * The last element in the progression.
      */
-    public val last: Long = getProgressionLastElement(start.toLong(), endInclusive.toLong(), step).toLong()
+    public val last: Long = getProgressionLastElement(start, endInclusive, step)
 
     /**
      * The step of the progression.
@@ -167,7 +167,7 @@ public open class LongProgression
 
     /**
      * Checks if the progression is empty.
-     
+     *
      * Progression with a positive step is empty if its first element is greater than the last element.
      * Progression with a negative step is empty if its first element is less than the last element.
      */
@@ -185,7 +185,7 @@ public open class LongProgression
     companion object {
         /**
          * Creates LongProgression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *

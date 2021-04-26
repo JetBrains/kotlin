@@ -14,54 +14,52 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
 
-object InvocationKindTransformer : FirTransformer<Nothing?>() {
+object InvocationKindTransformer : FirTransformer<Any?>() {
     private object ArgumentsTransformer : FirTransformer<Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>>() {
-        override fun <E : FirElement> transformElement(element: E, data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>): CompositeTransformResult<E> {
-            return element.compose()
+        override fun <E : FirElement> transformElement(element: E, data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>): E {
+            return element
         }
 
         override fun transformAnonymousFunction(
             anonymousFunction: FirAnonymousFunction,
             data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
-        ): CompositeTransformResult<FirStatement> {
+        ): FirStatement {
             val kind = data.second ?: data.first[anonymousFunction]
             if (kind != null) {
                 anonymousFunction.replaceInvocationKind(kind)
             }
-            return anonymousFunction.compose()
+            return anonymousFunction
         }
 
         override fun transformLambdaArgumentExpression(
             lambdaArgumentExpression: FirLambdaArgumentExpression,
             data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
-        ): CompositeTransformResult<FirStatement> {
+        ): FirStatement {
             return data.first[lambdaArgumentExpression]?.let {
-                (lambdaArgumentExpression.transformChildren(this, data.first to it) as FirStatement).compose()
-            } ?: lambdaArgumentExpression.compose()
+                (lambdaArgumentExpression.transformChildren(this, data.first to it) as FirStatement)
+            } ?: lambdaArgumentExpression
         }
 
         override fun transformNamedArgumentExpression(
             namedArgumentExpression: FirNamedArgumentExpression,
             data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
-        ): CompositeTransformResult<FirStatement> {
+        ): FirStatement {
             return data.first[namedArgumentExpression]?.let {
-                (namedArgumentExpression.transformChildren(this, data.first to it) as FirStatement).compose()
-            } ?: namedArgumentExpression.compose()
+                (namedArgumentExpression.transformChildren(this, data.first to it) as FirStatement)
+            } ?: namedArgumentExpression
         }
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+        return element
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Nothing?): CompositeTransformResult<FirStatement> {
-        val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate ?: return functionCall.compose()
-        val argumentMapping = calleeReference.candidate.argumentMapping ?: return functionCall.compose()
-        val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return functionCall.compose()
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): FirStatement {
+        val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate ?: return functionCall
+        val argumentMapping = calleeReference.candidate.argumentMapping ?: return functionCall
+        val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return functionCall
 
         val callsEffects = function.contractDescription.effects
             ?.map { it.effect }
@@ -69,7 +67,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
 
         val isInline = function.isInline
         if (callsEffects.isEmpty() && !isInline) {
-            return functionCall.compose()
+            return functionCall
         }
 
         val reversedArgumentMapping = argumentMapping.entries.map { (argument, parameter) ->
@@ -89,9 +87,9 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
             }
         }
         if (invocationKindMapping.isEmpty()) {
-            return functionCall.compose()
+            return functionCall
         }
         functionCall.argumentList.transformArguments(ArgumentsTransformer, invocationKindMapping to null)
-        return functionCall.compose()
+        return functionCall
     }
 }

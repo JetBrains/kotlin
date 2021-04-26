@@ -39,7 +39,7 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
     private val klass = buildRegularClass {
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         origin = FirDeclarationOrigin.Library
-        this.session = session
+        declarationSiteSession = session
         status = FirDeclarationStatusImpl(
             Visibilities.Public,
             Modality.ABSTRACT
@@ -47,7 +47,7 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
         classKind = ClassKind.INTERFACE
         symbol = FirRegularClassSymbol(CLONEABLE_CLASS_ID)
         declarations += buildSimpleFunction {
-            this.session = session
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Library
             returnTypeRef = buildResolvedTypeRef {

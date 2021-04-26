@@ -9,3 +9,4 @@ class ChromePageManager(): PageManager(object : Runnable {
 }
 
 // EXIST: Tab
+// FIR_COMPARISON

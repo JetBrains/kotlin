@@ -1,0 +1,5 @@
+// "Replace with '@JvmInline value'" "true"
+// DISABLE-ERRORS
+
+@kotlin.jvm.JvmInline
+value class IC(val i: Int)

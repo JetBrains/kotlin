@@ -6,17 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 
-object FirAnonymousFunctionChecker : FirExpressionChecker<FirStatement>() {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression !is FirAnonymousFunction) {
-            return
-        }
+object FirAnonymousFunctionChecker : FirAnonymousFunctionAsExpressionChecker() {
+    override fun check(expression: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         for (valueParameter in expression.valueParameters) {
             val source = valueParameter.source ?: continue
             if (valueParameter.defaultValue != null) {
@@ -25,6 +19,23 @@ object FirAnonymousFunctionChecker : FirExpressionChecker<FirStatement>() {
             if (valueParameter.isVararg) {
                 reporter.reportOn(source, FirErrors.USELESS_VARARG_ON_PARAMETER, context)
             }
+        }
+
+        checkTypeParameters(expression, reporter, context)
+    }
+
+    private fun checkTypeParameters(
+        expression: FirAnonymousFunction,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ) {
+        val source = expression.source ?: return
+        source.treeStructure.typeParametersList(source.lighterASTNode)?.let { _ ->
+            reporter.reportOn(
+                source,
+                FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
+                context
+            )
         }
     }
 }

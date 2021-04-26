@@ -1086,7 +1086,7 @@ class MethodInliner(
                 "Number of expected and actual parameters should be equal, but ${actualParams.size} != ${directOrder.size}!"
             }
 
-            var currentShift = shift + directOrder.sumBy { it.size }
+            var currentShift = shift + directOrder.sumOf { it.size }
 
             val safeToUseArgumentKotlinType =
                 directOrder.size == directOrderOfArguments.size && directOrderOfArguments.size == directOrderOfInvokeParameters.size

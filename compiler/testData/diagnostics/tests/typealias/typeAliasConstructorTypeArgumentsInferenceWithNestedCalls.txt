@@ -1,7 +1,7 @@
 package
 
 public val test1: C<kotlin.Int> /* = Cons<kotlin.Int> */
-public val test2: Cons<out kotlin.Any?>
+public val test2: C<kotlin.Number> /* = Cons<kotlin.Number> */
 public val test23: C2<kotlin.Int?> /* = MapLike<kotlin.Int?> */
 public val test234: C2<(C2<kotlin.Int?> /* = MapLike<kotlin.Int?> */..C2<kotlin.Int?>? /* = MapLike<kotlin.Int?>? */)> /* = MapLike<(C2<kotlin.Int?> /* = MapLike<kotlin.Int?> */..C2<kotlin.Int?>? /* = MapLike<kotlin.Int?>? */)> */
 

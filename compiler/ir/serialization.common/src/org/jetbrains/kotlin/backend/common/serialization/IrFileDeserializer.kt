@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -146,16 +148,16 @@ class IrLibraryFileFromKlib(private val klib: IrLibrary, private val fileIndex: 
     override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
 }
 
-internal fun IrLibraryFile.deserializeString(index: Int): String = String(string(index))
+internal fun IrLibraryFile.deserializeString(index: Int): String = WobblyTF8.decode(string(index))
 
 internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::deserializeString)
 
-internal fun IrLibraryFile.createFile(moduleDescriptor: ModuleDescriptor, fileProto: ProtoFile): IrFile {
+internal fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
     val fileName = fileProto.fileEntry.name
     val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
-    val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
+    val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
     val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
-    return IrFileImpl(fileEntry, symbol, fqName)
+    return IrFileImpl(fileEntry, symbol, fqName, module)
 }

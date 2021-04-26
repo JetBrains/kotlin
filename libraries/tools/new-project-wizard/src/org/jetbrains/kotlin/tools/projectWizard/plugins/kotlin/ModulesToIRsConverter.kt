@@ -266,7 +266,7 @@ class ModulesToIRsConverter(
         val (moduleDependencies) = createModuleDependencies(target)
         mutateProjectStructureByModuleConfigurator(target, modulePath)
         val sourcesetss = target.sourcesets.map { sourceset ->
-            val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize(Locale.US)
+            val sourcesetName = target.name + sourceset.sourcesetType.name.replaceFirstChar(Char::uppercaseChar)
             MultiplatformSourcesetIR(
                 sourceset.sourcesetType,
                 modulePath / Defaults.SRC_DIR / sourcesetName,

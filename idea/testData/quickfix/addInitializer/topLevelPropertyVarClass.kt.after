@@ -2,3 +2,4 @@
 // WITH_RUNTIME
 class A
 var label: A = TODO()
+/* IGNORE_FIR */

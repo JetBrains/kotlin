@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Incubating
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.Logger
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -85,9 +86,22 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
     internal val resolver = KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
 
-    @Volatile
-    private var state: ResolutionState =
-        ResolutionState.Configuring(resolver)
+    internal abstract class KotlinNpmResolutionManagerStateHolder : BuildService<BuildServiceParameters.None> {
+        @Volatile
+        internal var state: ResolutionState? = null
+    }
+
+    private val stateHolderProvider = nodeJsSettings.rootProject.gradle.sharedServices.registerIfAbsent(
+        "npm-resolution-manager-state-holder", KotlinNpmResolutionManagerStateHolder::class.java) {
+    }
+
+    private val stateHolder get() = stateHolderProvider.get()
+
+    private var state: ResolutionState
+        get() = stateHolder.state ?: ResolutionState.Configuring(resolver)
+        set(value) {
+            stateHolder.state = value
+        }
 
     internal sealed class ResolutionState {
         abstract val npmProjects: List<NpmProject>
@@ -139,7 +153,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
         services: ServiceRegistry,
         logger: Logger
     ): KotlinRootNpmResolution {
-        synchronized(this) {
+        synchronized(stateHolder) {
             if (state is ResolutionState.Installed) {
                 return (state as ResolutionState.Installed).resolved
             }
@@ -178,9 +192,11 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         val state0 = this.state
         return when (state0) {
-            is ResolutionState.Prepared -> alreadyResolved(state0.preparedInstallation)
+            is ResolutionState.Prepared -> {
+                alreadyResolved(state0.preparedInstallation)
+            }
             is ResolutionState.Configuring -> {
-                synchronized(this) {
+                synchronized(stateHolder) {
                     val state1 = this.state
                     when (state1) {
                         is ResolutionState.Prepared -> alreadyResolved(state1.preparedInstallation)

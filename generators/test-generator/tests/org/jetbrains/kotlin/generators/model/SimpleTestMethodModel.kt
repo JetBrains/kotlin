@@ -46,10 +46,10 @@ open class SimpleTestMethodModel(
                 extractedName
             } else {
                 val relativePath = FileUtil.getRelativePath(rootDir, file.parentFile)
-                relativePath + "-" + extractedName.capitalize()
+                relativePath + "-" + extractedName.replaceFirstChar(Char::uppercaseChar)
             }
             val ignored = skipIgnored && InTextDirectivesUtils.isIgnoredTarget(targetBackend, file)
-            return (if (ignored) "ignore" else "test") + escapeForJavaIdentifier(unescapedName).capitalize()
+            return (if (ignored) "ignore" else "test") + escapeForJavaIdentifier(unescapedName).replaceFirstChar(Char::uppercaseChar)
         }
 
     init {

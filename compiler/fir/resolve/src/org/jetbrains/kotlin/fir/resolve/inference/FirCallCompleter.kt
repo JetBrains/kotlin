@@ -143,7 +143,7 @@ class FirCallCompleter(
             functionalType.attributes
         )
         csBuilder.addSubtypeConstraint(expectedType, functionalType, ConeArgumentConstraintPosition())
-        atom.replaceExpectedType(expectedType)
+        atom.replaceExpectedType(expectedType, returnVariable.defaultType)
         atom.replaceTypeVariableForLambdaReturnType(returnVariable)
     }
 
@@ -186,7 +186,7 @@ class FirCallCompleter(
                     val itType = parameters.single()
                     buildValueParameter {
                         source = lambdaAtom.atom.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
-                        session = this@FirCallCompleter.session
+                        declarationSiteSession = session
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = buildResolvedTypeRef { type = itType.approximateLambdaInputType() }
                         this.name = name
@@ -210,7 +210,13 @@ class FirCallCompleter(
 
             val lookupTracker = session.lookupTracker
             lambdaArgument.valueParameters.forEachIndexed { index, parameter ->
-                val newReturnTypeRef = parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index].approximateLambdaInputType())
+                val newReturnType = parameters[index].approximateLambdaInputType()
+                val newReturnTypeRef = if (parameter.returnTypeRef is FirImplicitTypeRef) {
+                    buildResolvedTypeRef {
+                        source = parameter.source
+                        type = newReturnType
+                    }
+                } else parameter.returnTypeRef.resolvedTypeFromPrototype(newReturnType)
                 parameter.replaceReturnTypeRef(newReturnTypeRef)
                 lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, parameter.source, null)
             }

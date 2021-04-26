@@ -247,7 +247,8 @@ abstract class BaseGradleIT {
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
         val warningMode: WarningMode = WarningMode.Fail,
-        val useFir: Boolean = false
+        val useFir: Boolean = false,
+        val customEnvironmentVariables: Map<String, String> = mapOf()
     )
 
     enum class ConfigurationCacheProblems {
@@ -258,7 +259,8 @@ abstract class BaseGradleIT {
         val verbose: Boolean,
         val useWorkers: Boolean,
         val incrementalKapt: Boolean = false,
-        val includeCompileClasspath: Boolean = true
+        val includeCompileClasspath: Boolean = true,
+        val classLoadersCacheSize: Int? = null
     )
 
     open inner class Project(
@@ -512,8 +514,9 @@ abstract class BaseGradleIT {
         assertNull(regex.find(output), "Output should not contain '$regex'")
     }
 
-    fun CompiledProject.assertNoWarnings() {
-        val warnings = "w: .*".toRegex().findAll(output).map { it.groupValues[0] }
+    fun CompiledProject.assertNoWarnings(sanitize: (String) -> String = { it }) {
+        val clearedOutput = sanitize(output)
+        val warnings = "w: .*".toRegex().findAll(clearedOutput).map { it.groupValues[0] }
 
         if (warnings.any()) {
             val message = (listOf("Output should not contain any warnings:") + warnings).joinToString(SYSTEM_LINE_SEPARATOR)
@@ -658,6 +661,12 @@ abstract class BaseGradleIT {
     fun CompiledProject.assertTasksRegistered(vararg tasks: String) {
         for (task in tasks) {
             assertContains("'Register task $task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksNotRegistered(vararg tasks: String) {
+        for (task in tasks) {
+            assertNotContains("'Register task $task'")
         }
     }
 
@@ -913,6 +922,9 @@ Finished executing task ':$taskName'|
                 add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
                 add("-Pkapt.incremental.apt=${kaptOptions.incrementalKapt}")
                 add("-Pkapt.include.compile.classpath=${kaptOptions.includeCompileClasspath}")
+                kaptOptions.classLoadersCacheSize?.also { cacheSize ->
+                    add("-Pkapt.classloaders.cache.size=$cacheSize")
+                }
             }
 
             options.parallelTasksInProject?.let {
@@ -959,6 +971,7 @@ Finished executing task ':$taskName'|
             options.gradleUserHome?.let {
                 put("GRADLE_USER_HOME", it.canonicalPath)
             }
+            putAll(options.customEnvironmentVariables)
         }
 
     private fun String.normalize() = this.lineSequence().joinToString(SYSTEM_LINE_SEPARATOR)

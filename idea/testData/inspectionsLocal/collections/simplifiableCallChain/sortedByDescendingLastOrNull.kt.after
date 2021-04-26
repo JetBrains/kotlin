@@ -1,2 +1,2 @@
 // WITH_RUNTIME
-val x = listOf("a" to 1, "c" to 3, "b" to 2).minBy { it.second }
+val x = listOf("a" to 1, "c" to 3, "b" to 2).minByOrNull { it.second }

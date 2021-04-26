@@ -6,13 +6,13 @@ package toplevelObjectDeclarations
 
   <!NO_VALUE_FOR_PARAMETER!>class T : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}<!>
 
-  object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
+  <!NO_VALUE_FOR_PARAMETER{LT}!>object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
     val x : Int = 2
 
     fun test() : Int {
-      return x + foo(<!NO_VALUE_FOR_PARAMETER!>)<!>
+      return x + foo(<!NO_VALUE_FOR_PARAMETER{PSI}!>)<!>
     }
-  }
+  }<!>
 
   object B : A {}
 

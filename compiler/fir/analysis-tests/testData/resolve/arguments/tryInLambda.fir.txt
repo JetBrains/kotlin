@@ -5,7 +5,7 @@ FILE: tryInLambda.kt
     public final fun foo(): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/myRun|<R|kotlin/Unit|>(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| {
+        R|/myRun|<R|kotlin/Unit|>(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             try {
                 lval x: R|kotlin/Int| = Int(1)
             }

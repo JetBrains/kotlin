@@ -15,6 +15,10 @@ import org.gradle.api.provider.Property
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeVariantCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
@@ -23,7 +27,7 @@ import javax.inject.Inject
 open class DefaultCInteropSettings @Inject constructor(
     private val project: Project,
     private val name: String,
-    override val compilation: KotlinNativeCompilation
+    override val compilation: KotlinNativeCompilationData<*>
 ) : CInteropSettings {
 
     inner class DefaultIncludeDirectories : CInteropSettings.IncludeDirectories {
@@ -46,8 +50,8 @@ open class DefaultCInteropSettings @Inject constructor(
     internal val identifier: CInteropIdentifier
         get() = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name)
 
-    val target: KotlinNativeTarget
-        get() = compilation.target
+    val target: KotlinNativeTarget?
+        get() = (compilation as? KotlinNativeCompilation?)?.target
 
     override val dependencyConfigurationName: String
         get() = compilation.disambiguateName("${name.capitalize()}CInterop")
@@ -57,9 +61,9 @@ open class DefaultCInteropSettings @Inject constructor(
     val interopProcessingTaskName: String
         get() = lowerCamelCaseName(
             "cinterop",
-            compilation.compilationName.takeIf { it != "main" }.orEmpty(),
+            compilation.compilationPurpose.takeIf { it != "main" }.orEmpty(),
             name,
-            target.disambiguationClassifier
+            target?.disambiguationClassifier ?: compilation.compilationClassifier
         )
 
     val defFileProperty: Property<File> = project.objects.property(File::class.java)
@@ -128,4 +132,14 @@ open class DefaultCInteropSettings @Inject constructor(
     override fun extraOpts(values: List<Any>) {
         _extraOptsProp.addAll(project.provider { values.map { it.toString() } })
     }
+}
+
+private fun KotlinNativeCompilationData<*>.disambiguateName(simpleName: String): String = when (this) {
+    is AbstractKotlinNativeCompilation -> (this as AbstractKotlinCompilation<*>).disambiguateName(simpleName)
+    is KotlinNativeVariantCompilationData -> owner.disambiguateName(simpleName)
+    else -> lowerCamelCaseName(
+        this.compilationClassifier,
+        this.compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+        simpleName
+    )
 }

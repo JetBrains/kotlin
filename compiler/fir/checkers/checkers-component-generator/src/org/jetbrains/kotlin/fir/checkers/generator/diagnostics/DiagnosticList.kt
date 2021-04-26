@@ -39,7 +39,6 @@ abstract class DiagnosticList {
 class DiagnosticBuilder(
     private val severity: Severity,
     private val name: String,
-    private val sourceElementType: KType,
     private val psiType: KType,
     private val positioningStrategy: PositioningStrategy,
 ) {
@@ -61,7 +60,6 @@ class DiagnosticBuilder(
     fun build() = DiagnosticData(
         severity,
         name,
-        sourceElementType,
         psiType,
         parameters,
         positioningStrategy,

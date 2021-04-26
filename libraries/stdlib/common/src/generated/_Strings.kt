@@ -1180,13 +1180,13 @@ public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public fun CharSequence.max(): Char? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
     return maxByOrNull(selector)
 }
@@ -1397,7 +1397,7 @@ public fun CharSequence.maxOrNull(): Char? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
     return maxWithOrNull(comparator)
 }
@@ -1417,13 +1417,13 @@ public fun CharSequence.maxWithOrNull(comparator: Comparator<in Char>): Char? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public fun CharSequence.min(): Char? {
     return minOrNull()
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
     return minByOrNull(selector)
 }
@@ -1634,7 +1634,7 @@ public fun CharSequence.minOrNull(): Char? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4")
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
     return minWithOrNull(comparator)
 }
@@ -2000,23 +2000,11 @@ public inline fun <R> CharSequence.scanIndexed(initial: R, operation: (index: In
     return runningFoldIndexed(initial, operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun CharSequence.scanReduce(operation: (acc: Char, Char) -> Char): List<Char> {
-    return runningReduce(operation)
-}
-
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public inline fun CharSequence.scanReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
-    return runningReduceIndexed(operation)
-}
-
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
@@ -2028,6 +2016,8 @@ public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
+@Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {

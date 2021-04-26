@@ -37,29 +37,17 @@ class ZephyrConfigurablesImpl(target: KonanTarget, properties: Properties, baseD
     : ZephyrConfigurables, KonanPropertiesLoader(target, properties, baseDir)
 
 
-fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: String?): Configurables = when (target)  {
-        KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM32_HFP, KonanTarget.LINUX_ARM64,
-        KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 ->
-            GccConfigurablesImpl(target, properties, baseDir)
+fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: String?): Configurables = when (target.family) {
+    Family.LINUX -> GccConfigurablesImpl(target, properties, baseDir)
 
-        KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64,
-        KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64, KonanTarget.IOS_X64,
-        KonanTarget.TVOS_ARM64, KonanTarget.TVOS_X64,
-        KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32,
-        KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 ->
-            AppleConfigurablesImpl(target, properties, baseDir)
+    Family.TVOS, Family.WATCHOS, Family.IOS, Family.OSX -> AppleConfigurablesImpl(target, properties, baseDir)
 
-        KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
-        KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 ->
-            AndroidConfigurablesImpl(target, properties, baseDir)
+    Family.ANDROID -> AndroidConfigurablesImpl(target, properties, baseDir)
 
-        KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 ->
-            MingwConfigurablesImpl(target, properties, baseDir)
+    Family.MINGW -> MingwConfigurablesImpl(target, properties, baseDir)
 
-        KonanTarget.WASM32 ->
-            WasmConfigurablesImpl(target, properties, baseDir)
+    Family.WASM -> WasmConfigurablesImpl(target, properties, baseDir)
 
-        is KonanTarget.ZEPHYR ->
-                ZephyrConfigurablesImpl(target, properties, baseDir)
+    Family.ZEPHYR -> ZephyrConfigurablesImpl(target, properties, baseDir)
 }
 

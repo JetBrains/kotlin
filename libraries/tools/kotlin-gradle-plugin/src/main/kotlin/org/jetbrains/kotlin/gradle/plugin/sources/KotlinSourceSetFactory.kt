@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
-import org.gradle.api.internal.file.FileResolver
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -74,7 +73,8 @@ internal class DefaultKotlinSourceSetFactory(
                 apiConfigurationName to apiMetadataConfigurationName,
                 implementationConfigurationName to implementationMetadataConfigurationName,
                 compileOnlyConfigurationName to compileOnlyMetadataConfigurationName,
-                runtimeOnlyConfigurationName to runtimeOnlyMetadataConfigurationName
+                runtimeOnlyConfigurationName to runtimeOnlyMetadataConfigurationName,
+                null to intransitiveMetadataConfigurationName
             )
         }
 
@@ -84,7 +84,10 @@ internal class DefaultKotlinSourceSetFactory(
                 attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
                 isVisible = false
                 isCanBeConsumed = false
-                extendsFrom(project.configurations.maybeCreate(configurationName))
+
+                if (configurationName != null) {
+                    extendsFrom(project.configurations.maybeCreate(configurationName))
+                }
 
                 if (project.isKotlinGranularMetadataEnabled) {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))

@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
-import org.jetbrains.kotlin.commonizer.konan.CommonNativeManifestDataProvider
-import org.jetbrains.kotlin.commonizer.konan.TargetedNativeManifestDataProvider
-import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
+import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.MockModulesProvider
 import org.jetbrains.kotlin.commonizer.utils.MockNativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
 import org.junit.Test
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
@@ -23,13 +22,6 @@ class CommonizerFacadeTest {
     @Test
     fun nothingToCommonize0() = doTestNothingToCommonize(
         emptyMap()
-    )
-
-    @Test
-    fun nothingToCommonize1() = doTestNothingToCommonize(
-        mapOf(
-            "target1" to listOf("foo")
-        )
     )
 
     @Test
@@ -45,6 +37,13 @@ class CommonizerFacadeTest {
         mapOf(
             "target1" to listOf("foo", "bar"),
             "target2" to listOf("bar", "foo")
+        )
+    )
+
+    @Test
+    fun commonized3() = doTestSuccessfulCommonization(
+        mapOf(
+            "target1" to listOf("foo")
         )
     )
 
@@ -65,18 +64,26 @@ class CommonizerFacadeTest {
     )
 
     companion object {
+
         private fun Map<String, List<String>>.toCommonizerParameters(
-            resultsConsumer: ResultsConsumer, manifestDataProvider: TargetedNativeManifestDataProvider = MockNativeManifestDataProvider()
-        ) = CommonizerParameters(resultsConsumer, manifestDataProvider).also { parameters ->
-            forEach { (targetName, moduleNames) ->
-                parameters.addTarget(
+            resultsConsumer: ResultsConsumer,
+            manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
+        ): CommonizerParameters {
+            val targetDependentModuleNames = mapKeys { (targetName, _) -> LeafCommonizerTarget(targetName) }.toTargetDependent()
+            val sharedTarget = SharedCommonizerTarget(targetDependentModuleNames.targets.toSet())
+
+            return CommonizerParameters(
+                outputTarget = sharedTarget,
+                dependenciesProvider = TargetDependent(sharedTarget.withAllAncestors()) { null },
+                manifestProvider = TargetDependent(sharedTarget.withAllAncestors(), manifestDataProvider),
+                targetProviders = targetDependentModuleNames.map { target, moduleNames ->
                     TargetProvider(
-                        target = LeafCommonizerTarget(targetName),
-                        modulesProvider = MockModulesProvider.create(moduleNames),
-                        dependencyModulesProvider = null
+                        target = target,
+                        modulesProvider = MockModulesProvider.create(moduleNames)
                     )
-                )
-            }
+                },
+                resultsConsumer = resultsConsumer,
+            )
         }
 
         private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>) {

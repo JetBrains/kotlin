@@ -29,7 +29,7 @@ fun case_3(x: String?) = x
 fun case_3() {
     var x: Int? = 10
     x = null
-    <!INAPPLICABLE_CANDIDATE!>case_3<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
+    case_3(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
 }
 
 /*

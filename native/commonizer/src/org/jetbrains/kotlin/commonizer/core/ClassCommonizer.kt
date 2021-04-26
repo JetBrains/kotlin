@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.commonizer.cir.CirClass
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.descriptors.ClassKind
 
 class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirClass, CirClass>() {
     private lateinit var name: CirName

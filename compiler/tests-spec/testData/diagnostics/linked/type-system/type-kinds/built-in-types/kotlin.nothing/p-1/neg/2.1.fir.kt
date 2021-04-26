@@ -6,7 +6,7 @@
 class Case1(val nothing: Nothing)
 
 fun case1() {
-    val res = Case1(<!HIDDEN!>Nothing<!>())
+    val res = Case1(<!INVISIBLE_REFERENCE!>Nothing<!>())
 }
 
 

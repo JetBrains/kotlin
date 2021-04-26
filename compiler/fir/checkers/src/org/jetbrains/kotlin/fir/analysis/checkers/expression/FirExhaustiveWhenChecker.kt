@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
@@ -25,6 +26,14 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
             } else if (source.isWhenExpression) {
                 val missingCases = (expression.exhaustivenessStatus as ExhaustivenessStatus.NotExhaustive).reasons
                 reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, missingCases, context)
+            }
+        }
+
+        val branchesCount = expression.branches.size
+        for (indexedValue in expression.branches.withIndex()) {
+            val branch = indexedValue.value
+            if (branch.condition is FirElseIfTrueCondition && indexedValue.index < branchesCount - 1) {
+                reporter.reportOn(branch.source, FirErrors.ELSE_MISPLACED_IN_WHEN, context)
             }
         }
     }

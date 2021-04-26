@@ -12,5 +12,5 @@ class C: A() {
 }
 
 class D {
-    fun qux() { B().<!HIDDEN!>foo<!>() }
+    fun qux() { B().<!INVISIBLE_REFERENCE!>foo<!>() }
 }

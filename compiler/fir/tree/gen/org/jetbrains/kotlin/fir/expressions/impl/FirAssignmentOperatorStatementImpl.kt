@@ -43,12 +43,12 @@ internal class FirAssignmentOperatorStatementImpl(
     }
 
     override fun <D> transformLeftArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatementImpl {
-        leftArgument = leftArgument.transformSingle(transformer, data)
+        leftArgument = leftArgument.transform(transformer, data)
         return this
     }
 
     override fun <D> transformRightArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatementImpl {
-        rightArgument = rightArgument.transformSingle(transformer, data)
+        rightArgument = rightArgument.transform(transformer, data)
         return this
     }
 }

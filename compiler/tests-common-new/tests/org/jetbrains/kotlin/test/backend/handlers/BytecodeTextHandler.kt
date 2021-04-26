@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_TEXT
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.TREAT_AS_ONE_FILE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isKtFile
 import java.util.LinkedHashMap
 
-class BytecodeTextHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+class BytecodeTextHandler(testServices: TestServices, private val shouldEnableExplicitly: Boolean = false) :
+    JvmBinaryArtifactHandler(testServices) {
+
     companion object {
         private const val IGNORED_PREFIX = "helpers/"
     }
@@ -26,6 +29,8 @@ class BytecodeTextHandler(testServices: TestServices) : JvmBinaryArtifactHandler
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        if (shouldEnableExplicitly && CHECK_BYTECODE_TEXT !in module.directives) return
+
         val targetBackend = module.targetBackend!!
         val isIgnored = targetBackend in module.directives[CodegenTestDirectives.IGNORE_BACKEND]
         val files = module.files.filter { it.isKtFile }
@@ -46,14 +51,20 @@ class BytecodeTextHandler(testServices: TestServices) : JvmBinaryArtifactHandler
         reportProblems: Boolean
     ) {
         val expectedOccurrencesByOutputFile = LinkedHashMap<String, List<OccurrenceInfo>>()
+        val globalOccurrences = ArrayList<OccurrenceInfo>()
         for (file in files) {
-            readExpectedOccurrencesForMultiFileTest(file.name, file.originalContent, expectedOccurrencesByOutputFile)
+            readExpectedOccurrencesForMultiFileTest(file.name, file.originalContent, expectedOccurrencesByOutputFile, globalOccurrences)
         }
 
-        val generated = info.classFileFactory.createTextForEachFile()
+        if (globalOccurrences.isNotEmpty()) {
+            val generatedText = info.classFileFactory.createText()
+            checkGeneratedTextAgainstExpectedOccurrences(generatedText, globalOccurrences, targetBackend, reportProblems, assertions)
+        }
+
+        val generatedByFile = info.classFileFactory.createTextForEachFile()
         for (expectedOutputFile in expectedOccurrencesByOutputFile.keys) {
-            assertTextWasGenerated(expectedOutputFile, generated, assertions)
-            val generatedText = generated[expectedOutputFile]!!
+            assertTextWasGenerated(expectedOutputFile, generatedByFile, assertions)
+            val generatedText = generatedByFile[expectedOutputFile]!!
             val expectedOccurrences = expectedOccurrencesByOutputFile[expectedOutputFile]!!
             checkGeneratedTextAgainstExpectedOccurrences(generatedText, expectedOccurrences, targetBackend, reportProblems, assertions)
         }

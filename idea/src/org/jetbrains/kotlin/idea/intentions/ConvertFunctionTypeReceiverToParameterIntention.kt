@@ -120,7 +120,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
                         if (callable !is KtFunction) continue
 
                         if (!checkModifiable(callable)) {
-                            val renderedCallable = RefactoringUIUtil.getDescription(callable, true).capitalize()
+                            val renderedCallable = RefactoringUIUtil.getDescription(callable, true).replaceFirstChar(Char::uppercaseChar)
                             conflicts.putValue(callable, KotlinBundle.message("can.t.modify.0", renderedCallable))
                         }
 

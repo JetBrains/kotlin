@@ -406,9 +406,13 @@ object AbstractTypeChecker {
                 it.getType()
             }
 
-            val isTypeVariableAgainstStarProjectionForSelfType =
+            val variance = effectiveVariance(superTypeConstructor.getParameter(index).getVariance(), superProjection.getVariance())
+                ?: return isErrorTypeEqualsToAnything // todo exception?
+
+            val isTypeVariableAgainstStarProjectionForSelfType = if (variance == TypeVariance.INV) {
                 isTypeVariableAgainstStarProjectionForSelfType(subArgumentType, superArgumentType, superTypeConstructor) ||
                         isTypeVariableAgainstStarProjectionForSelfType(superArgumentType, subArgumentType, superTypeConstructor)
+            } else false
 
             /*
              * We don't check subtyping between types like CapturedType(*) and TypeVariable(E) if the corresponding type parameter forms self type, for instance, Enum<E: Enum<E>>.
@@ -417,10 +421,8 @@ object AbstractTypeChecker {
              * Instead this type check we move on self-type level anyway: checking CapturedType(out Enum<*>) against TypeVariable(E).
              * This subtyping can already be successful and not add unwanted constraints in the type inference context.
              */
-            if (isTypeVariableAgainstStarProjectionForSelfType) continue
-
-            val variance = effectiveVariance(superTypeConstructor.getParameter(index).getVariance(), superProjection.getVariance())
-                ?: return isErrorTypeEqualsToAnything // todo exception?
+            if (isTypeVariableAgainstStarProjectionForSelfType)
+                continue
 
             val correctArgument = runWithArgumentsSettings(subArgumentType) {
                 when (variance) {

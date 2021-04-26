@@ -13,12 +13,13 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
+import java.io.Serializable
 
 // Gson set nulls reflectively no matter on default values and non-null types
 class PackageJson(
     var name: String,
     var version: String
-) {
+) : Serializable {
     internal val customFields = mutableMapOf<String, Any?>()
 
     val empty: Boolean
@@ -128,7 +129,8 @@ internal fun packageJson(
     name: String,
     version: String,
     main: String,
-    npmDependencies: Collection<NpmDependencyDeclaration>
+    npmDependencies: Collection<NpmDependencyDeclaration>,
+    packageJsonHandlers: List<PackageJson.() -> Unit>
 ): PackageJson {
 
     val packageJson = PackageJson(
@@ -155,9 +157,9 @@ internal fun packageJson(
         }
     }
 
-//    compilation.packageJsonHandlers.forEach {
-//        it(packageJson)
-//    }
+    packageJsonHandlers.forEach {
+        it(packageJson)
+    }
 
     return packageJson
 }

@@ -34,12 +34,20 @@ interface PackageFragmentProvider {
 
 interface PackageFragmentProviderOptimized : PackageFragmentProvider {
     fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>)
+    fun isEmpty(fqName: FqName): Boolean
 }
 
 fun PackageFragmentProvider.packageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
     val packageFragments = mutableListOf<PackageFragmentDescriptor>()
     collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
     return packageFragments
+}
+
+fun PackageFragmentProvider.isEmpty(fqName: FqName): Boolean {
+    return when (this) {
+        is PackageFragmentProviderOptimized -> isEmpty(fqName)
+        else -> packageFragments(fqName).isEmpty()
+    }
 }
 
 fun PackageFragmentProvider.collectPackageFragmentsOptimizedIfPossible(

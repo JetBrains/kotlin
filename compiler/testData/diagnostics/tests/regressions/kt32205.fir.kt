@@ -8,5 +8,5 @@ public class A {
 
 fun test(vararg values: A) {
     A.foo(*values)
-    A.<!INAPPLICABLE_CANDIDATE!>foo<!>(values)
+    A.foo(<!ARGUMENT_TYPE_MISMATCH!>values<!>)
 }

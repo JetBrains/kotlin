@@ -32,16 +32,7 @@ class AppleConfigurablesImpl(
     private val xcodeAddonDependency = this.additionalToolsDir!!
 
     override val absoluteTargetSysRoot: String get() = when (val provider = xcodePartsProvider) {
-        is XcodePartsProvider.Local -> when (target) {
-            KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> provider.xcode.macosxSdk
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> provider.xcode.iphoneosSdk
-            KonanTarget.IOS_X64 -> provider.xcode.iphonesimulatorSdk
-            KonanTarget.TVOS_ARM64 -> provider.xcode.appletvosSdk
-            KonanTarget.TVOS_X64 -> provider.xcode.appletvsimulatorSdk
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32 -> provider.xcode.watchosSdk
-            KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86 -> provider.xcode.watchsimulatorSdk
-            else -> error(target)
-        }
+        is XcodePartsProvider.Local -> provider.xcode.pathToPlatformSdk(platformName())
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)
     }
 
@@ -100,4 +91,27 @@ class AppleConfigurablesImpl(
         class Local(val xcode: Xcode) : XcodePartsProvider()
         object InternalServer : XcodePartsProvider()
     }
+}
+
+/**
+ * Name of an Apple platform as in Xcode.app/Contents/Developer/Platforms.
+ */
+fun AppleConfigurables.platformName(): String = when (target.family) {
+    Family.OSX -> "MacOSX"
+    Family.IOS -> if (targetTriple.isSimulator) {
+        "iPhoneSimulator"
+    } else {
+        "iPhoneOS"
+    }
+    Family.TVOS -> if (targetTriple.isSimulator) {
+        "AppleTVSimulator"
+    } else {
+        "AppleTVOS"
+    }
+    Family.WATCHOS -> if (targetTriple.isSimulator) {
+        "WatchSimulator"
+    } else {
+        "WatchOS"
+    }
+    else -> error("Not an Apple target: $target")
 }

@@ -37,49 +37,49 @@ class Flow<out R>(private val block: suspend FlowCollector<R>.() -> Unit)
 
 fun poll7(): Flow<String> {
     return flow {
-        val inv = ::bar!!
+        val inv = ::bar<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
 fun poll71(): Flow<String> {
     return flow {
-        val inv = ::bar2!!
+        val inv = ::bar2<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv()
     }
 }
 
 fun poll72(): Flow<String> {
     return flow {
-        val inv = ::bar3!!
+        val inv = ::bar3<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv()
     }
 }
 
 fun poll73(): Flow<String> {
     return flow {
-        val inv = ::bar4!!
+        val inv = ::bar4<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }
 
 fun poll74(): Flow<String> {
     return flow {
-        val inv = ::bar5!!
+        val inv = ::bar5<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }
 
 fun poll75(): Flow<String> {
     return flow {
-        val inv = ::Foo6!!
+        val inv = ::Foo6<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }
 
 fun poll76(): Flow<String> {
     return flow {
-        val inv = ::Foo7!!
+        val inv = ::Foo7<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
         inv
     }
 }

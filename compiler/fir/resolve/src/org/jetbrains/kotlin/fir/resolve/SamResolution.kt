@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -94,6 +94,7 @@ class FirSamResolverImpl(
                         Pair(parameterSymbol, typeArgument)
                     }
                     .toMap(),
+                firSession
             )
 
         val result =
@@ -130,7 +131,7 @@ class FirSamResolverImpl(
             val declaredTypeParameter = typeParameter.symbol.fir // TODO: or really declared?
             FirTypeParameterBuilder().apply {
                 source = declaredTypeParameter.source
-                session = firSession
+                declarationSiteSession = firSession
                 origin = FirDeclarationOrigin.SamConstructor
                 name = declaredTypeParameter.name
                 this.symbol = FirTypeParameterSymbol()
@@ -148,6 +149,7 @@ class FirSamResolverImpl(
             firRegularClass.typeParameters
                 .map { it.symbol }
                 .zip(newTypeParameterTypes).toMap(),
+            firSession
         )
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
@@ -161,7 +163,7 @@ class FirSamResolverImpl(
         }
 
         return buildSimpleFunction {
-            session = firSession
+            declarationSiteSession = firSession
             source = firRegularClass.source
             name = classId.shortClassName
             origin = FirDeclarationOrigin.SamConstructor
@@ -191,7 +193,7 @@ class FirSamResolverImpl(
             }
 
             valueParameters += buildValueParameter {
-                session = firSession
+                declarationSiteSession = firSession
                 origin = FirDeclarationOrigin.SamConstructor
                 returnTypeRef = buildResolvedTypeRef {
                     source = firRegularClass.source

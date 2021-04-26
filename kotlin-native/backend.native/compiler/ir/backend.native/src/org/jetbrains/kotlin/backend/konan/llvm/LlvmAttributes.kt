@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.isThrowable
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal fun addLlvmFunctionWithDefaultAttributes(
         context: Context,
@@ -29,7 +31,7 @@ internal fun addLlvmFunctionWithDefaultAttributes(
 private fun addDefaultLlvmFunctionAttributes(context: Context, llvmFunction: LLVMValueRef) {
     if (shouldEnforceFramePointer(context)) {
         // Note: this is default for clang on at least on iOS and macOS.
-        enforceFramePointer(llvmFunction)
+        enforceFramePointer(llvmFunction, context)
     }
 }
 
@@ -66,7 +68,21 @@ private fun shouldEnforceFramePointer(context: Context): Boolean {
     }
 }
 
-private fun enforceFramePointer(llvmFunction: LLVMValueRef) {
-    LLVMAddTargetDependentFunctionAttr(llvmFunction, "no-frame-pointer-elim", "true")
-    LLVMAddTargetDependentFunctionAttr(llvmFunction, "no-frame-pointer-elim-non-leaf", "")
+private fun enforceFramePointer(llvmFunction: LLVMValueRef, context: Context) {
+    val target = context.config.target
+
+    // Matches Clang behaviour.
+    val omitLeafFp = when {
+        target == KonanTarget.WATCHOS_ARM64 -> false
+        target.architecture == Architecture.ARM64 -> true
+        else -> false
+    }
+
+    val fpKind = if (omitLeafFp) {
+        "non-leaf"
+    } else {
+        "all"
+    }
+
+    LLVMAddTargetDependentFunctionAttr(llvmFunction, "frame-pointer", fpKind)
 }

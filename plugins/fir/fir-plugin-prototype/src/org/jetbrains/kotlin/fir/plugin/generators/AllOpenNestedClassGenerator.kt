@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
@@ -20,13 +21,13 @@ import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.plugin.AllOpenPluginKey
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
 class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
@@ -36,12 +37,13 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
     ): List<GeneratedDeclaration<FirRegularClass>> {
         val owner = annotatedDeclaration as? FirRegularClass ?: return emptyList()
         val newClass = buildRegularClass {
-            session = this@AllOpenNestedClassGenerator.session
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Private,
-                Modality.FINAL
+                Modality.FINAL,
+                EffectiveVisibility.PrivateInClass
             ).apply {
                 isInner = true
             }
@@ -58,7 +60,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
 
         val classId = klass.symbol.classId
         val constructor = buildConstructor {
-            session = klass.session
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = buildResolvedTypeRef {
@@ -66,19 +68,21 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             }
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
-                Modality.FINAL
+                Modality.FINAL,
+                EffectiveVisibility.Public
             )
             symbol = FirConstructorSymbol(CallableId(classId, classId.shortClassName))
         }
 
         val function = buildSimpleFunction {
-            session = klass.session
+            declarationSiteSession = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
-                Modality.FINAL
+                Modality.FINAL,
+                EffectiveVisibility.Public
             )
             name = Name.identifier("hello")
             symbol = FirNamedFunctionSymbol(CallableId(classId, name))

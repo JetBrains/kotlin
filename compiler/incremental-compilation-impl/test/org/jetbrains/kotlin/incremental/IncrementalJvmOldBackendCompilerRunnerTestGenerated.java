@@ -117,6 +117,11 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
             runTest("jps-plugin/testData/incremental/pureKotlin/classSignatureUnchanged/");
         }
 
+        @TestMetadata("companionConstantChanged")
+        public void testCompanionConstantChanged() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
+        }
+
         @TestMetadata("compilationErrorThenFixedOtherPackage")
         public void testCompilationErrorThenFixedOtherPackage() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixedOtherPackage/");
@@ -1604,6 +1609,11 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
                 }
 
+                @TestMetadata("methodAddDefault")
+                public void testMethodAddDefault() throws Exception {
+                    runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddDefault/");
+                }
+
                 @TestMetadata("methodAdded")
                 public void testMethodAdded() throws Exception {
                     runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAdded/");
@@ -1622,6 +1632,19 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
                 @TestMetadata("methodSignatureChangedSamAdapter")
                 public void testMethodSignatureChangedSamAdapter() throws Exception {
                     runTest("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChangedSamAdapter/");
+                }
+
+                @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddDefault")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class MethodAddDefault extends AbstractIncrementalJvmOldBackendCompilerRunnerTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInMethodAddDefault() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddDefault"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
+                    }
                 }
 
                 @TestMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAdded")

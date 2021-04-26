@@ -370,8 +370,7 @@ internal val KotlinTarget.testTaskName: String
 
 abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>, KotlinTargetType : KotlinOnlyTarget<KotlinCompilationType>>(
     createDefaultSourceSets: Boolean,
-    createTestCompilation: Boolean,
-    val kotlinPluginVersion: String
+    createTestCompilation: Boolean
 ) : AbstractKotlinTargetConfigurator<KotlinTargetType>(
     createDefaultSourceSets,
     createTestCompilation

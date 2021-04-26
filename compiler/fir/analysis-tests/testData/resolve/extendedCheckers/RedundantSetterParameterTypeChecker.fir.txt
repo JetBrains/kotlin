@@ -14,7 +14,7 @@ FILE: RedundantSetterParameterTypeChecker.kt
     public final var x: R|kotlin/String| = String()
         public get(): R|kotlin/String|
         public set(param: R|kotlin/String|): R|kotlin/Unit| {
-            F|/x| = <strcat>(R|<local>/param|.R|kotlin/Any.toString|(), String( ))
+            F|/x| = <strcat>(R|<local>/param|, String( ))
         }
     public final class My : R|kotlin/Any| {
         public constructor(): R|My| {

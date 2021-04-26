@@ -19,6 +19,7 @@ typealias X = U? // different nullability of the RHS TA
 
 // Supertypes:
 actual typealias FILE = _IO_FILE
+
 final class _IO_FILE : kotlinx.cinterop.CStructVar {}
 
 actual val uuid: uuid_t get() = TODO()

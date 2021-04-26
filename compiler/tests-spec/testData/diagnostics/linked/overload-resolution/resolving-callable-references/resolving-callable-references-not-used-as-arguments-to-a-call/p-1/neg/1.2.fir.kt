@@ -11,7 +11,7 @@ import libCase1.*
 import kotlin.text.format
 
 fun case1() {
-    val y1 =(String)::<!UNRESOLVED_REFERENCE!>format<!>
+    val y1 =(String)::<!OVERLOAD_RESOLUTION_AMBIGUITY!>format<!>
 }
 
 // FILE: LibCase1.kt
@@ -28,7 +28,7 @@ import libCase2.*
 import kotlin.text.*
 
 fun case2() {
-    val y1 =(String)::<!UNRESOLVED_REFERENCE!>format<!>
+    val y1 =(String)::<!OVERLOAD_RESOLUTION_AMBIGUITY!>format<!>
 }
 
 // FILE: LibCase2.kt

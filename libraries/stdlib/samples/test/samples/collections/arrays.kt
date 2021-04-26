@@ -68,7 +68,7 @@ class Arrays {
         fun associateArrayOfPrimitives() {
             val charCodes = intArrayOf(72, 69, 76, 76, 79)
 
-            val byCharCode = charCodes.associate { it to it.toChar() }
+            val byCharCode = charCodes.associate { it to Char(it) }
 
             // 76=L only occurs once because only the last pair with the same key gets added
             assertPrints(byCharCode, "{72=H, 69=E, 76=L, 79=O}")
@@ -79,7 +79,7 @@ class Arrays {
         fun associateArrayOfPrimitivesBy() {
             val charCodes = intArrayOf(72, 69, 76, 76, 79)
 
-            val byChar = charCodes.associateBy { it.toChar() }
+            val byChar = charCodes.associateBy { Char(it) }
 
             // L=76 only occurs once because only the last pair with the same key gets added
             assertPrints(byChar, "{H=72, E=69, L=76, O=79}")
@@ -89,7 +89,7 @@ class Arrays {
         fun associateArrayOfPrimitivesByWithValueTransform() {
             val charCodes = intArrayOf(65, 65, 66, 67, 68, 69)
 
-            val byUpperCase = charCodes.associateBy({ it.toChar() }, { (it + 32).toChar() })
+            val byUpperCase = charCodes.associateBy({ Char(it) }, { Char(it + 32) })
 
             // A=a only occurs once because only the last pair with the same key gets added
             assertPrints(byUpperCase, "{A=a, B=b, C=c, D=d, E=e}")
@@ -101,7 +101,7 @@ class Arrays {
             val byChar = mutableMapOf<Char, Int>()
 
             assertTrue(byChar.isEmpty())
-            charCodes.associateByTo(byChar) { it.toChar() }
+            charCodes.associateByTo(byChar) { Char(it) }
 
             assertTrue(byChar.isNotEmpty())
             // L=76 only occurs once because only the last pair with the same key gets added
@@ -113,7 +113,7 @@ class Arrays {
             val charCodes = intArrayOf(65, 65, 66, 67, 68, 69)
 
             val byUpperCase = mutableMapOf<Char, Char>()
-            charCodes.associateByTo(byUpperCase, { it.toChar() }, { (it + 32).toChar() } )
+            charCodes.associateByTo(byUpperCase, { Char(it) }, { Char(it + 32) })
 
             // A=a only occurs once because only the last pair with the same key gets added
             assertPrints(byUpperCase, "{A=a, B=b, C=c, D=d, E=e}")
@@ -124,7 +124,7 @@ class Arrays {
             val charCodes = intArrayOf(72, 69, 76, 76, 79)
 
             val byChar = mutableMapOf<Int, Char>()
-            charCodes.associateTo(byChar) { it to it.toChar() }
+            charCodes.associateTo(byChar) { it to Char(it) }
 
             // 76=L only occurs once because only the last pair with the same key gets added
             assertPrints(byChar, "{72=H, 69=E, 76=L, 79=O}")

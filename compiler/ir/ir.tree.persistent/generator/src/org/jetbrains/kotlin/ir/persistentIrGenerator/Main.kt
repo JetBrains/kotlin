@@ -19,5 +19,9 @@ fun main() {
         generateTypeAlias()
         generateTypeParameter()
         generateValueParameter()
+
+        generateKotlinPirCarriersProto()
+        generateCarrierDeserializer()
+        generateCarrierSerializer()
     }
 }

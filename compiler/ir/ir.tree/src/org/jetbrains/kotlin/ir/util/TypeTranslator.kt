@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.descriptors.IrBasedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -74,6 +75,9 @@ abstract class TypeTranslator(
     }
 
     private fun resolveTypeParameter(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameterSymbol {
+        if (typeParameterDescriptor is IrBasedTypeParameterDescriptor) {
+            return typeParameterDescriptor.owner.symbol
+        }
         val originalTypeParameter = typeParameterDescriptor.originalTypeParameter
         return typeParametersResolver.resolveScopedTypeParameter(originalTypeParameter)
             ?: symbolTable.referenceTypeParameter(originalTypeParameter)

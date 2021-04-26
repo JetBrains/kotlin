@@ -16,7 +16,7 @@ fun get(f: Boolean) = if (f) {A.A1} else {""}
 <!CONFLICTING_OVERLOADS!>fun case2()<!> {
 
     val flag: Any = get(false) //string
-    val l1 = <!NO_ELSE_IN_WHEN!>when<!> (flag!!) { // should be NO_ELSE_IN_WHEN
+    val l1 = <!NO_ELSE_IN_WHEN!>when<!> (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) { // should be NO_ELSE_IN_WHEN
         A.A1 -> B()
         A.A2 -> B()
     }
@@ -30,7 +30,7 @@ fun get(f: Boolean) = if (f) {A.A1} else {""}
 <!CONFLICTING_OVERLOADS!>fun case2()<!> {
 
     val flag: Any = get(true)  //A
-    val l1 = <!NO_ELSE_IN_WHEN!>when<!> (flag!!) {// should be NO_ELSE_IN_WHEN
+    val l1 = <!NO_ELSE_IN_WHEN!>when<!> (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {// should be NO_ELSE_IN_WHEN
         A.A1 -> B()
         A.A2 -> B()
     }
@@ -44,7 +44,7 @@ fun get(f: Boolean) = if (f) {A.A1} else {""}
 fun case3() {
 
     val flag = ""  //A
-    val l1 = <!NO_ELSE_IN_WHEN!>when<!> (flag!!) {// should be NO_ELSE_IN_WHEN
+    val l1 = <!NO_ELSE_IN_WHEN!>when<!> (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {// should be NO_ELSE_IN_WHEN
         A.A1 -> B() //should be INCOMPATIBLE_TYPES
         A.A2 -> B() //should be INCOMPATIBLE_TYPES
     }

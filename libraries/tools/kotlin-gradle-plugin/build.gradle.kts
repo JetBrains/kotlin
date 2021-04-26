@@ -44,6 +44,7 @@ dependencies {
     implementation(project(":kotlin-util-klib"))
     implementation(project(":native:kotlin-klib-commonizer-api"))
     implementation(project(":kotlin-tooling-metadata"))
+    implementation(project(":kotlin-project-model"))
     compileOnly(project(":native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-android-extensions"))
@@ -58,15 +59,16 @@ dependencies {
     embedded(project(":kotlin-gradle-build-metrics"))
 
     implementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    implementation("com.google.guava:guava:${rootProject.extra["versions.jar.guava"]}")
     implementation("de.undercouch:gradle-download-task:4.1.1")
     implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
     }
 
-    compileOnly("com.android.tools.build:gradle:2.0.0")
-    compileOnly("com.android.tools.build:gradle-core:2.0.0")
-    compileOnly("com.android.tools.build:builder:2.0.0")
-    compileOnly("com.android.tools.build:builder-model:2.0.0")
+    compileOnly("com.android.tools.build:gradle:3.4.0")
+    compileOnly("com.android.tools.build:gradle-api:3.4.0")
+    compileOnly("com.android.tools.build:builder:3.4.0")
+    compileOnly("com.android.tools.build:builder-model:3.4.0")
     compileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     compileOnly(gradleApi())
 
@@ -81,7 +83,7 @@ dependencies {
     runtimeOnly(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {
-        includeJars("asm-all", "gson", "serviceMessages", rootProject = rootProject)
+        includeJars("asm-all", "gson", "guava", "serviceMessages", rootProject = rootProject)
     })
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
@@ -223,6 +225,11 @@ pluginBundle {
         name = "kotlinNativeCocoapodsPlugin",
         id = "org.jetbrains.kotlin.native.cocoapods",
         display = "Kotlin Native plugin for CocoaPods integration"
+    )
+    create(
+        name = "kotlinMultiplatformPluginPm20",
+        id = "org.jetbrains.kotlin.multiplatform.pm20",
+        display = "Kotlin Multiplatform plugin with PM2.0"
     )
 }
 

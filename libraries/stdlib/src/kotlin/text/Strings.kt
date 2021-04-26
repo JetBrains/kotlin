@@ -14,6 +14,8 @@ import kotlin.jvm.JvmName
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
+@Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public expect fun String.toUpperCase(): String
 
 /**
@@ -31,6 +33,8 @@ public expect fun String.uppercase(): String
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
+@Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public expect fun String.toLowerCase(): String
 
 /**
@@ -54,6 +58,8 @@ public expect fun String.lowercase(): String
  *
  * @sample samples.text.Strings.capitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public expect fun String.capitalize(): String
 
 /**
@@ -62,6 +68,8 @@ public expect fun String.capitalize(): String
  *
  * @sample samples.text.Strings.decapitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public expect fun String.decapitalize(): String
 
 /**
@@ -492,7 +500,6 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
  * @param startIndex the index of the first character to be replaced.
  * @param endIndex the index of the first character after the replacement to keep in the string.
  */
-@OptIn(ExperimentalStdlibApi::class)
 public fun CharSequence.replaceRange(startIndex: Int, endIndex: Int, replacement: CharSequence): CharSequence {
     if (endIndex < startIndex)
         throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")
@@ -538,7 +545,6 @@ public inline fun String.replaceRange(range: IntRange, replacement: CharSequence
  *
  * [endIndex] is not included in the removed part.
  */
-@OptIn(ExperimentalStdlibApi::class)
 public fun CharSequence.removeRange(startIndex: Int, endIndex: Int): CharSequence {
     if (endIndex < startIndex)
         throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")

@@ -43,7 +43,7 @@ internal class KtFirFunctionSymbol(
 ) : KtFunctionSymbol(), KtFirSymbol<FirSimpleFunction> {
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
     override val name: Name get() = firRef.withFir { it.name }
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
@@ -107,6 +107,7 @@ internal class KtFirFunctionSymbol(
                     fir.createSignature()
                 )
             }
+            KtSymbolKind.ACCESSOR -> TODO("Creating symbol for accessors fun is not supported yet")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
                 callableIdIfNonLocal?.toString() ?: name.asString()
             )

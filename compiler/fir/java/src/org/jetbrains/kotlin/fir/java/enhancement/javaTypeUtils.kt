@@ -109,7 +109,7 @@ private fun ConeKotlinType.enhanceConeKotlinType(
 }
 
 private fun ConeKotlinType.subtreeSize(): Int {
-    return 1 + typeArguments.sumBy { ((it as? ConeKotlinType)?.subtreeSize() ?: 0) + 1 }
+    return 1 + typeArguments.sumOf { ((it as? ConeKotlinType)?.subtreeSize() ?: 0) + 1 }
 }
 
 private fun coneFlexibleOrSimpleType(

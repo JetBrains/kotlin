@@ -1,9 +1,9 @@
-// FIR_IDENTICAL
 package h
 
 class Square() {
   var size : Double =
   <!UNRESOLVED_REFERENCE!>set<!>(<!UNRESOLVED_REFERENCE!>value<!>) {
+    //in LT this LAMBDA_EXPRESSION get parsed lazyly, but doesn't got anywhere in FIR tree (as property doesn't have place for it)
     <!SYNTAX!>$area<!> <!SYNTAX!>= size * size<!>
   }
 

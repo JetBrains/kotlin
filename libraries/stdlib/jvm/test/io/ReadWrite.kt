@@ -84,7 +84,7 @@ class ReadWriteTest {
         //file.replaceText("Hello\nWorld")
         file.forEachBlock { arr: ByteArray, size: Int ->
             assertTrue(size >= 11 && size <= 12, size.toString())
-            assertTrue(arr.contains('W'.toByte()))
+            assertTrue(arr.contains('W'.code.toByte()))
         }
         val list = ArrayList<String>()
         file.forEachLine(Charsets.UTF_8, {

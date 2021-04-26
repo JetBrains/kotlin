@@ -1,5 +1,5 @@
 // FIR_COMPARISON
-`// COMPILER_ARGUMENTS: -XXLanguage:+ReadDeserializedContracts -XXLanguage:+UseReturnsEffect
+// COMPILER_ARGUMENTS: -XXLanguage:+ReadDeserializedContracts -XXLanguage:+UseReturnsEffect
 
 interface Foo {
     val x: Int

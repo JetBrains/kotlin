@@ -29,6 +29,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("annotationUsedAsAnnotationArgument.kt")
+    public void testAnnotationUsedAsAnnotationArgument() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotationUsedAsAnnotationArgument.kt");
+    }
+
     @TestMetadata("asImports.kt")
     public void testAsImports() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/asImports.kt");
@@ -174,6 +179,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/ft.kt");
     }
 
+    @TestMetadata("funInterfaceDeclaration.kt")
+    public void testFunInterfaceDeclaration() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/funInterfaceDeclaration.kt");
+    }
+
     @TestMetadata("functionTypeAlias.kt")
     public void testFunctionTypeAlias() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/functionTypeAlias.kt");
@@ -257,6 +267,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("labelAndReceiverForInfix.kt")
     public void testLabelAndReceiverForInfix() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");
+    }
+
+    @TestMetadata("labeledReturnFromNotLabeledUnnamedFunction.kt")
+    public void testLabeledReturnFromNotLabeledUnnamedFunction() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/labeledReturnFromNotLabeledUnnamedFunction.kt");
     }
 
     @TestMetadata("lambdaArgInScopeFunction.kt")
@@ -491,6 +506,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/ambiguityOnJavaOverride.kt");
         }
 
+        @TestMetadata("argParamTypeMismatch.kt")
+        public void testArgParamTypeMismatch() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argParamTypeMismatch.kt");
+        }
+
         @TestMetadata("argumentsOfAnnotations.kt")
         public void testArgumentsOfAnnotations() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argumentsOfAnnotations.kt");
@@ -514,6 +534,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("definetelyNotNullForTypeParameter.kt")
         public void testDefinetelyNotNullForTypeParameter() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/definetelyNotNullForTypeParameter.kt");
+        }
+
+        @TestMetadata("destructuring.kt")
+        public void testDestructuring() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/destructuring.kt");
         }
 
         @TestMetadata("extensionLambdaInDefaultArgument.kt")
@@ -931,6 +956,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("const.kt")
+        public void testConst() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/constVal/const.kt");
+        }
+
         @TestMetadata("constValNotTopLevelOrObject.kt")
         public void testConstValNotTopLevelOrObject() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValNotTopLevelOrObject.kt");
@@ -957,6 +987,24 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("noSuperCallInSupertypes.kt")
         public void testNoSuperCallInSupertypes() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/constructors/noSuperCallInSupertypes.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contracts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Contracts extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInContracts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("genericContract.kt")
+        public void testGenericContract() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contracts/genericContract.kt");
         }
     }
 
@@ -1138,6 +1186,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("methodOfAnyImplementedInInterface.kt")
         public void testMethodOfAnyImplementedInInterface() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/methodOfAnyImplementedInInterface.kt");
+        }
+
+        @TestMetadata("multipleBounds.kt")
+        public void testMultipleBounds() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/multipleBounds.kt");
         }
 
         @TestMetadata("nonConstValInAnnotationArgument.kt")
@@ -2671,6 +2724,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericDiamond.kt");
         }
 
+        @TestMetadata("fakeTypeMismatchOnExtensionReference.kt")
+        public void testFakeTypeMismatchOnExtensionReference() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/fakeTypeMismatchOnExtensionReference.kt");
+        }
+
         @TestMetadata("falseIntersection.kt")
         public void testFalseIntersection() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/falseIntersection.kt");
@@ -2797,9 +2855,19 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/references/integerLiteralInLhs.kt");
         }
 
+        @TestMetadata("leakedImplicitType.kt")
+        public void testLeakedImplicitType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/references/leakedImplicitType.kt");
+        }
+
         @TestMetadata("referenceToExtension.kt")
         public void testReferenceToExtension() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/references/referenceToExtension.kt");
+        }
+
+        @TestMetadata("referenceToField.kt")
+        public void testReferenceToField() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/references/referenceToField.kt");
         }
 
         @TestMetadata("simple.kt")
@@ -2823,6 +2891,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
 
         public void testAllFilesPresentInSamConstructors() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("funInterfaceConstructorReference.kt")
+        public void testFunInterfaceConstructorReference() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/samConstructors/funInterfaceConstructorReference.kt");
         }
 
         @TestMetadata("genericSam.kt")

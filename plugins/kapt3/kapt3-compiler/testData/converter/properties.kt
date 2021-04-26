@@ -5,4 +5,7 @@ class Test {
 
     val getter: String = "O"
         get() = { field }() + "K"
+
+    val constJavaClassValue: Class<*> = String::class.java
+    val constClassValue: kotlin.reflect.KClass<*> = (String::class)
 }

@@ -4,11 +4,11 @@
 fun <D> makeDefinitelyNotNull(arg: D?): D = TODO()
 
 fun <N : Number?> test(arg: N) {
-    makeDefinitelyNotNull(arg) ?: 1
+    makeDefinitelyNotNull(arg) <!USELESS_ELVIS!>?: 1<!>
 
-    makeDefinitelyNotNull(arg)!!
+    makeDefinitelyNotNull(arg)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 
-    makeDefinitelyNotNull(arg)?.toInt()
+    makeDefinitelyNotNull(arg)<!UNNECESSARY_SAFE_CALL!>?.<!>toInt()
 
     val nullImposible = when (val dnn = makeDefinitelyNotNull(arg)) {
         null -> false

@@ -2,6 +2,10 @@ package
 
 public fun test(): kotlin.Unit
 public fun test2(): kotlin.Unit
+public fun test3(/*0*/ i: kotlin.Int, /*1*/ d: kotlin.Double, /*2*/ b: kotlin.Boolean): kotlin.Unit
+public operator fun kotlin.Boolean.iterator(): MyBooleanIterator
+public operator fun kotlin.Double.iterator(): MyDoubleIterator
+public fun kotlin.Int.iterator(): MyIntIterator
 
 public open class Anc : Base {
     public constructor Anc()
@@ -65,3 +69,28 @@ public final class Example2 {
     public final operator fun rangeTo(/*0*/ o: Example2): Example2
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public interface MyBooleanIterator {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract operator fun next(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface MyDoubleIterator {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract operator fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun next(): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface MyIntIterator {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract operator fun hasNext(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract operator fun next(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

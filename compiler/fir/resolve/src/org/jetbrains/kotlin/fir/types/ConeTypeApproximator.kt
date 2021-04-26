@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
-class ConeTypeApproximator(inferenceContext: ConeInferenceContext) : AbstractTypeApproximator(inferenceContext) {
+class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersionSettings: LanguageVersionSettings) :
+    AbstractTypeApproximator(inferenceContext, languageVersionSettings) {
     fun approximateToSuperType(type: ConeKotlinType, conf: TypeApproximatorConfiguration): ConeKotlinType? {
         return super.approximateToSuperType(type, conf) as ConeKotlinType?
     }

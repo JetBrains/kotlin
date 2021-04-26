@@ -2,7 +2,17 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_RUNTIME
+
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 0 java/lang/invoke/LambdaMetafactory
+// 19 final synthetic class BoundAdaptedFunctionReferenceKt\$box\$[0-9]*
+// 1 final synthetic class FromOtherFileKt\$target1FromOtherFile\$[0-9]*
+// 1 final synthetic class FromOtherFileKt\$adapted1FromOtherFile\$[0-9]*
+// 1 final synthetic class FromOtherFileKt\$adapted2FromOtherFile\$[0-9]*
+
 // FILE: boundAdaptedFunctionReference.kt
+
 fun checkEqual(x: Any, y: Any) {
     if (x != y || y != x) throw AssertionError("$x and $y should be equal")
     if (x.hashCode() != y.hashCode()) throw AssertionError("$x and $y should have the same hash code")

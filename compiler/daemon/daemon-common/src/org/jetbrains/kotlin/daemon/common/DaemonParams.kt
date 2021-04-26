@@ -231,12 +231,38 @@ fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".form
 
 data class CompilerId(
         var compilerClasspath: List<String> = listOf(),
-        var compilerVersion: String = ""
+        var compilerVersion: String = "",
+        var javaExecutable: File? = null
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(PropMapper(this, CompilerId::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trimQuotes().split(File.pathSeparator) }),
-                       StringPropMapper(this, CompilerId::compilerVersion))
+        get() = listOf(
+            PropMapper(
+                dest = this,
+                prop = CompilerId::compilerClasspath,
+                toString = { it.joinToString(File.pathSeparator) },
+                fromString = { it.trimQuotes().split(File.pathSeparator) }
+            ),
+            StringPropMapper(
+                dest = this,
+                prop = CompilerId::compilerVersion
+            ),
+            PropMapper(
+                dest = this,
+                prop = CompilerId::javaExecutable,
+                toString = { it?.absolutePath },
+                fromString = { File(it.trimQuotes()) },
+                skipIf = { it == null }
+            )
+        )
+
+    fun digest(): String = compilerClasspath
+        .map { File(it).absolutePath }
+        .run {
+            javaExecutable?.let { plus(it.absolutePath) } ?: this
+        }
+        .distinctStringsDigest()
+        .toHexString()
 
     companion object {
         @JvmStatic
@@ -245,6 +271,15 @@ data class CompilerId(
         @JvmStatic
         fun makeCompilerId(paths: Iterable<File>): CompilerId =
                 CompilerId(compilerClasspath = paths.map { it.absolutePath })
+
+        @JvmStatic
+        fun makeCompilerId(
+            paths: Iterable<File>,
+            javaExecutable: File
+        ): CompilerId = CompilerId(
+            compilerClasspath = paths.map { it.absolutePath },
+            javaExecutable = javaExecutable
+        )
     }
 }
 
@@ -352,7 +387,7 @@ private val humanizedMemorySizeRegex = "(\\d+)([kmg]?)".toRegex()
 
 private fun String.memToBytes(): Long? =
         humanizedMemorySizeRegex
-            .matchEntire(this.trim().toLowerCase())
+            .matchEntire(this.trim().lowercase())
             ?.groups?.let { match ->
                 match[1]?.value?.let {
                     it.toLong() *

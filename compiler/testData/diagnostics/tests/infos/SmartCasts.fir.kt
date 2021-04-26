@@ -149,7 +149,7 @@ fun illegalWhenBody(a: Any): Int = <!NO_ELSE_IN_WHEN!>when<!>(a) {
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
         is Int -> return a
-        is String -> return a
+        is String -> return <!RETURN_TYPE_MISMATCH!>a<!>
     }
 }
 fun declarations(a: Any?) {
@@ -189,11 +189,11 @@ fun returnFunctionLiteralExpressionBody(a: Any?): Function0<Int> =
 
 fun mergeSmartCasts(a: Any?) {
   if (a is String || a is Int) {
-    a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("")
+    a.compareTo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     a.toString()
   }
   if (a is Int || a is String) {
-    a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("")
+    a.compareTo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
   }
   when (a) {
     is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
@@ -222,7 +222,7 @@ fun f(): String {
 fun foo(aa: Any?): Int {
     var a = aa
     if (a is Int?) {
-        return a
+        return <!RETURN_TYPE_MISMATCH!>a<!>
     }
     return 1
 }

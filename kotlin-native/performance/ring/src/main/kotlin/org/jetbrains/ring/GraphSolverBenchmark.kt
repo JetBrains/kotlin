@@ -33,7 +33,7 @@ class Greedy(private val graph: Graph) {
         val nodes = node.neighbors
                 .filter { it.value != 0 && !visitedNodes.contains(it.key) }
         val clostest = nodes
-                .minBy { it.value }!!
+                .minByOrNull { it.value }!!
         return ClosestNode(clostest.key, clostest.value)
     }
 

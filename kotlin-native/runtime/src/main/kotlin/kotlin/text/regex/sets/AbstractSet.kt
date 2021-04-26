@@ -41,6 +41,7 @@ internal abstract class AbstractSet(val type: Int = 0) {
         const val TYPE_LEAF = 1 shl 0
         const val TYPE_FSET = 1 shl 1
         const val TYPE_QUANT = 1 shl 3
+        @Suppress("DEPRECATION")
         const val TYPE_DOTSET = 0x80000000.toInt() or '.'.toInt()
 
         val dummyNext = object : AbstractSet() {

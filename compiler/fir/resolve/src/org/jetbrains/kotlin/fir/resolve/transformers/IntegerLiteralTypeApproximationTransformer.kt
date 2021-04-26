@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.toConstKind
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -26,20 +24,20 @@ fun FirExpression.approximateIfIsIntegerConst(expectedType: ConeKotlinType? = nu
 }
 
 private object IntegerLiteralTypeApproximationTransformer : FirTransformer<ConeKotlinType?>() {
-    override fun <E : FirElement> transformElement(element: E, data: ConeKotlinType?): CompositeTransformResult<E> {
-        return element.compose()
+    override fun <E : FirElement> transformElement(element: E, data: ConeKotlinType?): E {
+        return element
     }
 
     override fun <T> transformConstExpression(
         constExpression: FirConstExpression<T>,
         data: ConeKotlinType?
-    ): CompositeTransformResult<FirStatement> {
-        val type = constExpression.resultType.coneTypeSafe<ConeIntegerLiteralType>() ?: return constExpression.compose()
+    ): FirStatement {
+        val type = constExpression.resultType.coneTypeSafe<ConeIntegerLiteralType>() ?: return constExpression
         val approximatedType = type.getApproximatedType(data)
         constExpression.resultType = constExpression.resultType.resolvedTypeFromPrototype(approximatedType)
         @Suppress("UNCHECKED_CAST")
         val kind = approximatedType.toConstKind() as ConstantValueKind<T>
         constExpression.replaceKind(kind)
-        return constExpression.compose()
+        return constExpression
     }
 }

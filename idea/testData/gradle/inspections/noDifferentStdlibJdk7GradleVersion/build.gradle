@@ -5,7 +5,7 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        mavenCentral()
+        {{kotlin_plugin_repositories}}
     }
 
     dependencies {

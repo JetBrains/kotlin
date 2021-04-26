@@ -13,28 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.isLateInit
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirInapplicableLateinitChecker : FirPropertyChecker() {
-    var primitives: Set<ConeKotlinType>? = null
-
-    private fun getPrimitiveTypes(context: CheckerContext) = primitives ?: mutableSetOf<ConeKotlinType>().apply {
-        with(context.session.builtinTypes) {
-            add(intType.coneType)
-            add(booleanType.coneType)
-            add(charType.coneType)
-            add(shortType.coneType)
-            add(byteType.coneType)
-            add(longType.coneType)
-            add(doubleType.coneType)
-            add(floatType.coneType)
-        }
-        primitives = this
-    }
-
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isLateInit) {
             return
@@ -56,7 +38,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
             declaration.isNullable() ->
                 reporter.reportOn(declaration.source, "is not allowed on properties of a type with nullable upper bound", context)
 
-            declaration.returnTypeRef.coneType in getPrimitiveTypes(context) -> if (declaration.isLocal) {
+            declaration.returnTypeRef.coneType.classId in StandardClassIds.primitiveTypes -> if (declaration.isLocal) {
                 reporter.reportOn(declaration.source, "is not allowed on local variables of primitive types", context)
             } else {
                 reporter.reportOn(declaration.source, "is not allowed on properties of primitive types", context)

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
-import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import java.io.File
-import java.util.zip.ZipFile
 import javax.inject.Inject
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
@@ -217,7 +215,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:InputFiles
     @get:Classpath
     open val pluginClasspath: FileCollection by project.provider {
-        project.configurations.getByName(taskData.compilation.pluginConfigurationName)
+        // FIXME support compiler plugins with PM20
+        (taskData.compilation as? KotlinCompilation<*>?)?.pluginConfigurationName?.let(project.configurations::getByName)
+            ?: project.files()
     }
 
     @get:Internal
@@ -254,7 +254,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Internal
     @field:Transient
-    internal val kotlinExtProvider: KotlinProjectExtension = project.extensions.findByType(KotlinProjectExtension::class.java)!!
+    internal val kotlinExtProvider: KotlinTopLevelExtension = project.extensions.findByType(KotlinTopLevelExtension::class.java)!!
 
     override fun getDestinationDir(): File =
         taskData.destinationDir.get()
@@ -294,7 +294,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Internal
     internal val sourceSetName: String
-        get() = taskData.compilation.name
+        get() = taskData.compilation.compilationPurpose
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -305,26 +305,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         taskData.compilation.moduleName
     }
 
-    init {
-        if (taskData.compilation is AbstractKotlinCompilation<*> &&
-            (taskData.compilation as AbstractKotlinCompilation<*>).friendArtifactsTask != null) {
-            this@AbstractKotlinCompile.dependsOn(
-                (taskData.compilation as AbstractKotlinCompilation<*>).friendArtifactsTask
-            )
-        }
-    }
-
     @get:Internal // takes part in the compiler arguments
     val friendPaths: FileCollection = project.files(
-        project.provider {
-            taskData.compilation.run {
-                if (this !is AbstractKotlinCompilation<*>) return@run project.files()
-                mutableListOf<FileCollection>().also { allCollections ->
-                    associateWithTransitiveClosure.forEach { allCollections.add(it.output.classesDirs) }
-                    allCollections.add(friendArtifacts)
-                }
-            }
-        }
+        project.provider { taskData.compilation.friendPaths }
     )
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
@@ -335,24 +318,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     internal open fun compilerRunner(): GradleCompilerRunner = GradleCompilerRunner(GradleCompileTaskProvider(this))
 
+    private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle)
+
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs) {
-        CompilerSystemProperties.systemPropertyGetter = {
-            if (it in kotlinDaemonProperties) kotlinDaemonProperties[it] else System.getProperty(it)
-        }
-        CompilerSystemProperties.systemPropertySetter = setter@{ key, value ->
-            val oldValue = kotlinDaemonProperties[key]
-            if (oldValue == value) return@setter oldValue
-            kotlinDaemonProperties[key] = value
-            System.setProperty(key, value)
-            oldValue
-        }
-        CompilerSystemProperties.systemPropertyCleaner = {
-            val oldValue = kotlinDaemonProperties[it]
-            kotlinDaemonProperties.remove(it)
-            System.clearProperty(it)
-            oldValue
-        }
+        systemPropertiesService.get().startIntercept()
         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
 
         // If task throws exception, but its outputs are changed during execution,
@@ -421,7 +391,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
     @get:Input
-    internal val isMultiplatform: Boolean by lazy { project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper } }
+    internal val isMultiplatform: Boolean by lazy {
+        project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper || it is KotlinPm20PluginWrapper }
+    }
 
     @get:Internal
     internal val abstractKotlinCompileArgumentsContributor by lazy {
@@ -445,15 +417,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected fun hasFilesInTaskBuildDirectory(): Boolean {
         val taskBuildDir = taskBuildDirectory
         return taskBuildDir.walk().any { it != taskBuildDir && it.isFile }
-    }
-
-    @get:Internal
-    val kotlinDaemonProperties: MutableMap<String, String?> by lazy {
-        if (isGradleVersionAtLeast(6, 5)) {
-            CompilerSystemProperties.values()
-                .associate { it.property to project.providers.systemProperty(it.property).forUseAtConfigurationTime().orNull }
-                .toMutableMap()
-        } else mutableMapOf()
     }
 }
 
@@ -508,7 +471,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         get() = taskData.compilation.kotlinOptions as KotlinJvmOptions
 
     @get:Internal
-    internal open val sourceRootsContainer = FilteringSourceRootsContainer()
+    @field:Transient
+    internal open val sourceRootsContainer = FilteringSourceRootsContainer(project.objects)
+
+    private val jvmSourceRoots by project.provider {
+        // serialize in the task state for configuration caching; avoid building anew in task execution, as it may access the project model
+        SourceRoots.ForJvm.create(source, sourceRootsContainer, sourceFilesExtensions)
+    }
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
@@ -549,8 +518,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(this))
     }
 
-    @Internal
-    override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer, sourceFilesExtensions)
+    override fun getSourceRoots(): SourceRoots.ForJvm = jvmSourceRoots
 
     override fun callCompilerAsync(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.ForJvm

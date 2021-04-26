@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    lateinit var session: FirSession
+    lateinit var declarationSiteSession: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -47,7 +47,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirErrorFunction {
         return FirErrorFunctionImpl(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             origin,
             attributes,

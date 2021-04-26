@@ -141,6 +141,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/DefaultKeyword.kt");
         }
 
+        @TestMetadata("DefinitelyNotNullType.kt")
+        public void testDefinitelyNotNullType() throws Exception {
+            runTest("compiler/testData/psi/DefinitelyNotNullType.kt");
+        }
+
         @TestMetadata("destructuringInLambdas.kt")
         public void testDestructuringInLambdas() throws Exception {
             runTest("compiler/testData/psi/destructuringInLambdas.kt");

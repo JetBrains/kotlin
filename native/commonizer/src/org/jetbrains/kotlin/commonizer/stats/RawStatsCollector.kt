@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.commonizer.stats
 
 import com.intellij.util.containers.FactoryMap
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector.StatsKey
 import org.jetbrains.kotlin.commonizer.stats.StatsOutput.StatsHeader
 import org.jetbrains.kotlin.commonizer.stats.StatsOutput.StatsRow
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Allows printing commonization statistics to the file system.

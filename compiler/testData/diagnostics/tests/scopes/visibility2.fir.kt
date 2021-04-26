@@ -25,15 +25,15 @@ import a.PO
 fun test() {
     val y = makeA()
     y.bar()
-    <!HIDDEN!>foo<!>()
+    <!INVISIBLE_REFERENCE!>foo<!>()
 
-    val u : A = <!HIDDEN!>A<!>()
+    val u : A = <!INVISIBLE_REFERENCE!>A<!>()
     val a : java.util.Arrays.ArrayList<Int>;
 
-    val po = <!HIDDEN!>PO<!>
+    val po = <!INVISIBLE_REFERENCE!>PO<!>
 }
 
-class B : <!EXPOSED_SUPER_CLASS, HIDDEN!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE!>A<!>() {}
 
 class Q {
     class W {

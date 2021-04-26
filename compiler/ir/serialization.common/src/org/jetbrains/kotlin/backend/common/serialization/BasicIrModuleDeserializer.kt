@@ -103,7 +103,7 @@ abstract class BasicIrModuleDeserializer(
     private fun deserializeIrFile(fileProto: ProtoFile, fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean): IrFile {
 
         val fileReader = IrLibraryFileFromKlib(moduleDeserializer.klib, fileIndex)
-        val file = fileReader.createFile(moduleDescriptor, fileProto)
+        val file = fileReader.createFile(moduleFragment, fileProto)
 
         val fileDeserializationState = FileDeserializationState(
             linker,
@@ -174,7 +174,7 @@ fun IrModuleDeserializer.findModuleDeserializerForTopLevelId(idSignature: IdSign
     return moduleDependencies.firstOrNull { idSignature in it }
 }
 
-internal val ByteArray.codedInputStream: CodedInputStream
+val ByteArray.codedInputStream: CodedInputStream
     get() {
         val codedInputStream = CodedInputStream.newInstance(this)
         codedInputStream.setRecursionLimit(65535) // The default 64 is blatantly not enough for IR.

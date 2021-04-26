@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
-import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -142,19 +142,27 @@ private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
             parentAsClass.declarations.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
                 ?.isStaticInlineClassReplacement == true
 
-internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspendOfContinuation() &&
-        // These are tail-call bridges and do not require any bytecode modifications.
-        origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-        origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
-        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
-        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
-        origin != JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE &&
-        origin != IrDeclarationOrigin.BRIDGE &&
-        origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
+private val BRIDGE_ORIGINS = setOf(
+    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+    JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
+    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+    JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR,
+    JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE,
+    IrDeclarationOrigin.BRIDGE,
+    IrDeclarationOrigin.BRIDGE_SPECIAL,
+)
+
+// These functions contain a single `suspend` tail call, the value of which should be returned as is
+// (i.e. if it's an unboxed inline class value, it should remain unboxed).
+internal fun IrFunction.isNonBoxingSuspendDelegation(): Boolean =
+    origin in BRIDGE_ORIGINS || isMultifileBridge() || isBridgeToSuspendImplMethod()
+
+internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSuspendDelegation() &&
+        // These functions also contain a single `suspend` tail call, but if it returns an unboxed inline class value,
+        // the return of it should be checked for a suspension and potentially boxed to satisfy an interface.
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&
-        !isMultifileBridge() &&
+        !isInvokeSuspendOfContinuation() &&
         !isInvokeOfSuspendCallableReference() &&
-        !isBridgeToSuspendImplMethod() &&
         !isStaticInlineClassReplacementDelegatingCall()
 
 internal fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() ||
@@ -184,9 +192,8 @@ internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = 
 internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(): IrType? {
     if (!isSuspend) return null
     // Check whether we in fact return inline class
-    if (returnType.classOrNull?.owner?.isInline != true) return null
-    val unboxedReturnType = returnType.makeNotNull().unboxInlineClass()
-    // Force boxing for primitives
+    val unboxedReturnType = InlineClassAbi.unboxType(returnType.makeNotNull()) ?: return null
+    // Force boxing for primitives. NOTE: this also forbids unboxing a nullable inline class into a nullable primitive.
     if (unboxedReturnType.isPrimitiveType()) return null
     // Force boxing for nullable inline class types with nullable underlying type
     if (returnType.isNullable() && unboxedReturnType.isNullable()) return null

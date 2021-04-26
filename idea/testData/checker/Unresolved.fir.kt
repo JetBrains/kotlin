@@ -23,11 +23,11 @@ fun testUnresolved() {
         else -> <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: a">a</error>
     }
 
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: hasNext"><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: next">for (j in <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: collection">collection</error>) {
+    for (j in <error descr="[ITERATOR_MISSING] "><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: collection">collection</error></error>) {
        var i: Int = j
        i += 1
        foo1(j)
-    }</error></error>
+    }
 }
 
 fun foo1(i: Int) {}

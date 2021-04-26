@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.native.test.debugger
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.cli.bc.K2Native
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.StringReader
+import java.lang.Thread.sleep
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
@@ -25,13 +23,18 @@ class ToolDriver(
         listOf("-output", output.toString(), source.toString(), *args).toTypedArray()
     }
 
-    fun compile(output: Path, srcs:Array<Path>, vararg args: String) = compile(output, *args) {
-         listOf("-output", output.toString(), *srcs.map{it.toString()}.toTypedArray(), *args).toTypedArray()
+    fun compile(output: Path, srcs: Array<Path>, vararg args: String) = compile(output, *args) {
+        listOf("-output", output.toString(), *srcs.map { it.toString() }.toTypedArray(), *args).toTypedArray()
     }
+
+    private fun crossPlatform(): Array<String> = if (targetIsHost())
+        emptyArray()
+    else
+        arrayOf("-target", target())
 
     private fun compile(output: Path, vararg args: String, argsCalculator:() -> Array<String>) {
         check(!Files.exists(output))
-        val allArgs = argsCalculator()
+        val allArgs = arrayOf(*crossPlatform(), *argsCalculator())
 
         if (useInProcessCompiler) {
             K2Native.main(allArgs)
@@ -54,11 +57,15 @@ class ToolDriver(
     }
 
     fun runLldb(program: Path, commands: List<String>): String {
-        val args = listOf("-b", "-o", "command script import \"${DistProperties.lldbPrettyPrinters}\"") +
-                commands.flatMap { listOf("-o", it) }
-        return subprocess(DistProperties.lldb, program.toString(), "-b", *args.toTypedArray())
-                .thrownIfFailed()
-                .stdout
+        val args = listOf("-b", *program.programOrAttach(), "-o", "command script import \"${DistProperties.lldbPrettyPrinters}\"",
+                *commands.flatMap { listOf("-o", it) }.toTypedArray())
+        if (!targetIsHost()) {
+            return subprocess(DistProperties.xcrun, "simctl", "spawn", "-w", "-s", "iPhone 11", program.toString()) {
+                sleep(simulatorDelay())
+                DistProperties.lldb to listOf(*args.toTypedArray(), "-o", "detach")
+            }.thrownIfFailed().stdout
+        }
+        return subprocess(DistProperties.lldb, *args.toTypedArray()).thrownIfFailed().stdout
     }
 
     fun runDwarfDump(program: Path, vararg args:String = emptyArray(), processor:List<DwarfTag>.()->Unit) {
@@ -72,6 +79,8 @@ class ToolDriver(
         val out = swiftProcess.takeIf { it.process.exitValue() == 0 }?.stdout ?: error(swiftProcess.stderr)
     }
 }
+
+private fun Path.programOrAttach() = if (targetIsHost()) arrayOf(toString()) else arrayOf("-o", "process attach -n ${this.toString()}")
 
 data class ProcessOutput(
         val program: Path,
@@ -94,7 +103,7 @@ data class ProcessOutput(
     }
 }
 
-fun subprocess(program: Path, vararg args: String): ProcessOutput {
+fun subprocess(program: Path, vararg args: String, action: (() -> Pair<Path, List<String>>)? = null): ProcessOutput {
     val start = System.currentTimeMillis()
     val process = ProcessBuilder(program.toString(), *args).start()
     val out = GlobalScope.async(Dispatchers.IO) {
@@ -105,20 +114,26 @@ fun subprocess(program: Path, vararg args: String): ProcessOutput {
         readStream(process, process.errorStream.buffered())
     }
 
-    return runBlocking {
-        try {
-            val status = process.waitFor(5L, TimeUnit.MINUTES)
-            if (!status) {
-                out.cancel()
-                err.cancel()
-                error("$program timeouted")
-            }
-        }catch (e:Exception) {
+    val actionOutput = action?.let {
+        val p = it()
+        subprocess(p.first, *p.second.toTypedArray())
+    }
+
+    try {
+        val status = process.waitFor(5L, TimeUnit.MINUTES)
+        if (!status) {
             out.cancel()
             err.cancel()
-            error(e)
+            error("$program timeouted")
         }
-        ProcessOutput(program, process, out.await(), err.await(), System.currentTimeMillis() - start)
+    }catch (e:Exception) {
+        out.cancel()
+        err.cancel()
+        error(e)
+    }
+
+    return actionOutput ?: runBlocking {
+         ProcessOutput(program, process, out.await(), err.await(), System.currentTimeMillis() - start)
     }
 }
 

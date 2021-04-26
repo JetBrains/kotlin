@@ -243,7 +243,7 @@ abstract class AbstractAnnotationDeserializer(
                 const(kind, value.intValue)
             }
 
-            CHAR -> const(ConstantValueKind.Char, value.intValue.toChar())
+            CHAR -> const(ConstantValueKind.Char, value.intValue.toInt().toChar())
             FLOAT -> const(ConstantValueKind.Float, value.floatValue)
             DOUBLE -> const(ConstantValueKind.Double, value.doubleValue)
             BOOLEAN -> const(ConstantValueKind.Boolean, (value.intValue != 0L))

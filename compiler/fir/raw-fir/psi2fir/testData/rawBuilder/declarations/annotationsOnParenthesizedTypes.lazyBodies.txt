@@ -1,0 +1,40 @@
+FILE: annotationsOnParenthesizedTypes.kt
+    public? final? interface AnnotationsOnParenthesizedTypes : R|kotlin/Any| {
+        public? final? fun B<@A() C>.receiverArgument(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? fun parameter(a: @A() C): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? fun parameterArgument(a: B<@A() C>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? fun returnValue(): @A() C
+
+        public? final? fun <T> returnTypeParameterValue(): @A() T
+
+        public? final? fun returnArgument(): B<@A() C>
+
+        public? final? val lambdaType: @A() ( () -> C )
+            public? get(): @A() ( () -> C )
+
+        public? final? val lambdaParameter: ( (@A() C) -> C )
+            public? get(): ( (@A() C) -> C )
+
+        public? final? val lambdaReturnValue: ( () -> @A() C )
+            public? get(): ( () -> @A() C )
+
+        public? final? val lambdaReceiver: ( @A() C.() -> C )
+            public? get(): ( @A() C.() -> C )
+
+        public? final? val lambdaParameterNP: ( (@A() C) -> C )
+            public? get(): ( (@A() C) -> C )
+
+    }
+    @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#) public? final? annotation class A : R|kotlin/Annotation| {
+        public? constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? interface B<T> : R|kotlin/Any| {
+    }
+    public? final? interface C : R|kotlin/Any| {
+    }

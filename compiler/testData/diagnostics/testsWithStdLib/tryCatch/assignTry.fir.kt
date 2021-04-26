@@ -6,7 +6,7 @@ class ExcA : Exception()
 class ExcB : Exception()
 
 fun test2() {
-    val s: String? = try {
+    val s: String? = <!INITIALIZER_TYPE_MISMATCH!>try {
         ""
     }
     catch (e: ExcA) {
@@ -14,7 +14,7 @@ fun test2() {
     }
     catch (e: ExcB) {
         10
-    }
+    }<!>
     s<!UNSAFE_CALL!>.<!>length
 }
 

@@ -73,7 +73,7 @@ class ModulesEditorToolbarDecorator(
                     null -> ""
                 }
 
-                text = KotlinNewProjectWizardUIBundle.message("editor.modules.add", moduleKindTextToAdd.capitalize(Locale.US))
+                text = KotlinNewProjectWizardUIBundle.message("editor.modules.add", moduleKindTextToAdd.replaceFirstChar(Char::uppercaseChar))
             }
             event.presentation.isEnabled
         }
@@ -104,7 +104,7 @@ class ModulesEditorToolbarDecorator(
                 isEnabled = tree.selectedSettingItem is Module
                 text = KotlinNewProjectWizardUIBundle.message(
                     "editor.modules.remove.tooltip",
-                    selectedModuleKindText?.let { " ${it.capitalize(Locale.US)}" }.orEmpty()
+                    selectedModuleKindText?.let { " ${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString() }}" }.orEmpty()
                 )
             }
             event.presentation.isEnabled

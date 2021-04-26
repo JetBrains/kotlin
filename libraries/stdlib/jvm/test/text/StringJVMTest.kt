@@ -74,6 +74,7 @@ class StringJVMTest {
         assertEquals("UTF-32BE", Charsets.UTF_32BE.name())
     }
 
+    @Suppress("DEPRECATION")
     @Test fun capitalize() {
         fun testCapitalize(expected: String, string: String) {
             assertEquals(expected, string.capitalize())
@@ -90,6 +91,7 @@ class StringJVMTest {
 
     @Test fun decapitalize() {
         fun testDecapitalize(expected: String, string: String) {
+            @Suppress("DEPRECATION")
             assertEquals(expected, string.decapitalize())
             assertEquals(expected, string.replaceFirstChar { it.lowercase(Locale.getDefault()) })
         }
@@ -98,6 +100,7 @@ class StringJVMTest {
         testDecapitalize("ǳǳǳ", "ǲǳǳ")
     }
 
+    @Suppress("DEPRECATION")
     @Test fun capitalizeLocale() {
         fun testCapitalizeLocale(expected: String, string: String, locale: Locale) {
             assertEquals(expected, string.capitalize(locale))
@@ -122,6 +125,7 @@ class StringJVMTest {
 
     @Test fun decapitalizeLocale() {
         fun testDecapitalizeLocale(expected: String, string: String, locale: Locale) {
+            @Suppress("DEPRECATION")
             assertEquals(expected, string.decapitalize(locale))
             assertEquals(expected, string.replaceFirstChar { it.lowercase(locale) })
         }

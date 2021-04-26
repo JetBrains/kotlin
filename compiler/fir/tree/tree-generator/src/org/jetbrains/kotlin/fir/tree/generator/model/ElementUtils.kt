@@ -27,7 +27,7 @@ fun field(name: String, typeWithArgs: Pair<Type, List<Importable>>, nullable: Bo
 }
 
 fun field(type: Type, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(type.type.decapitalize(), type.typeWithArguments, type.packageName, null, nullable, withReplace)
+    return SimpleField(type.type.replaceFirstChar(Char::lowercaseChar), type.typeWithArguments, type.packageName, null, nullable, withReplace)
 }
 
 fun booleanField(name: String, withReplace: Boolean = false): Field {
@@ -57,7 +57,7 @@ fun field(name: String, element: AbstractElement, nullable: Boolean = false, wit
 }
 
 fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return FirField(element.name.decapitalize(), element, nullable, withReplace)
+    return FirField(element.name.replaceFirstChar(Char::lowercaseChar), element, nullable, withReplace)
 }
 
 // ----------- Field list -----------
@@ -67,7 +67,7 @@ fun fieldList(name: String, type: Importable, withReplace: Boolean = false): Fie
 }
 
 fun fieldList(element: Element, withReplace: Boolean = false): Field {
-    return FieldList(element.name.decapitalize() + "s", element, withReplace)
+    return FieldList(element.name.replaceFirstChar(Char::lowercaseChar) + "s", element, withReplace)
 }
 
 // ----------- Field set -----------

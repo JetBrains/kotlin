@@ -7,12 +7,12 @@
  * NOTE: right-hand side of an assignment must be expression
  */
 fun case1() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY, UNRESOLVED_REFERENCE!>for (<!SYNTAX!><!>) { }<!>
+    val x = for (<!SYNTAX!><!>) { }
     val y = for (x in 1..2) { }
 
-    val a = <!EXPRESSION_REQUIRED!>while (<!SYNTAX!><!>) { }<!>
-    val b = <!EXPRESSION_REQUIRED!>while (false) { }<!>
-    val c = <!EXPRESSION_REQUIRED!>while (<!SYNTAX!><!>) <!>;
+    val a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
+    val b = <!EXPRESSION_EXPECTED!>while (false) { }<!>
+    val c = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) <!>;
 }
 
 /*
@@ -20,12 +20,12 @@ fun case1() {
  * NOTE: right-hand side of an assignment must be expression
  */
 fun case2() {
-    var x = <!OVERLOAD_RESOLUTION_AMBIGUITY, UNRESOLVED_REFERENCE!>for (<!SYNTAX!><!>) { }<!>
+    var x = for (<!SYNTAX!><!>) { }
     var y = for (x in 1..2) { }
 
-    var a = <!EXPRESSION_REQUIRED!>while (<!SYNTAX!><!>) { }<!>
-    var b = <!EXPRESSION_REQUIRED!>while (false) { }<!>
-    var c = <!EXPRESSION_REQUIRED!>while (<!SYNTAX!><!>) <!>;
+    var a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
+    var b = <!EXPRESSION_EXPECTED!>while (false) { }<!>
+    var c = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) <!>;
 }
 
 /*
@@ -40,12 +40,12 @@ fun case3() {
     var b :Any?
     var c :Any?
 
-    x = <!OVERLOAD_RESOLUTION_AMBIGUITY, UNRESOLVED_REFERENCE!>for (<!SYNTAX!><!>) { }<!>
+    x = for (<!SYNTAX!><!>) { }
     y = for (x in 1..2) { }
 
-    a = <!EXPRESSION_REQUIRED!>while (<!SYNTAX!><!>) { }<!>
-    b = <!EXPRESSION_REQUIRED!>while (false) { }<!>
-    c = <!EXPRESSION_REQUIRED!>while (<!SYNTAX!><!>) <!>;
+    a = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) { }<!>
+    b = <!EXPRESSION_EXPECTED!>while (false) { }<!>
+    c = <!EXPRESSION_EXPECTED!>while (<!SYNTAX!><!>) <!>;
 }
 
 /*

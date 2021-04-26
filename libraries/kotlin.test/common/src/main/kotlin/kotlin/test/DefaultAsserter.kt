@@ -21,12 +21,3 @@ object DefaultAsserter : Asserter {
         throw AssertionErrorWithCause(message, cause)
     }
 }
-
-@Deprecated(
-    "DefaultAsserter is an object now, constructor call is not required anymore",
-    ReplaceWith("DefaultAsserter", "kotlin.test.DefaultAsserter"),
-    DeprecationLevel.ERROR
-)
-@kotlin.js.JsName("DefaultAsserterConstructor")
-@Suppress("FunctionName")
-fun DefaultAsserter(): DefaultAsserter = DefaultAsserter

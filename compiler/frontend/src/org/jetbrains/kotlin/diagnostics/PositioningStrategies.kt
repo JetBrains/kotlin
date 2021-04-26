@@ -371,6 +371,12 @@ object PositioningStrategies {
     val CONST_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.CONST_KEYWORD)
 
     @JvmField
+    val FUN_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.FUN_KEYWORD)
+
+    @JvmField
+    val SUSPEND_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.SUSPEND_KEYWORD)
+
+    @JvmField
     val FOR_REDECLARATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val nameIdentifier = when (element) {
@@ -418,6 +424,13 @@ object PositioningStrategies {
     val ARRAY_ACCESS: PositioningStrategy<KtArrayAccessExpression> = object : PositioningStrategy<KtArrayAccessExpression>() {
         override fun mark(element: KtArrayAccessExpression): List<TextRange> {
             return markElement(element.indicesNode)
+        }
+    }
+
+    @JvmField
+    val SAFE_ACCESS: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            return markElement(element.node.findChildByType(KtTokens.SAFE_ACCESS)?.psi ?: element)
         }
     }
 
@@ -770,8 +783,47 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField
+    val FUN_INTERFACE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            return when (element) {
+                is KtClass -> FUN_MODIFIER.mark(element)
+                is KtProperty -> markElement(element.valOrVarKeyword)
+                is KtNamedFunction -> {
+                    val typeParameterList = element.typeParameterList
+                    when {
+                        typeParameterList != null -> markElement(typeParameterList)
+                        element.hasModifier(KtTokens.SUSPEND_KEYWORD) -> SUSPEND_MODIFIER.mark(element)
+                        else -> markElement(element.funKeyword ?: element)
+                    }
+                }
+                else -> markElement(element)
+            }
+        }
+    }
+
     val REFERENCE_BY_QUALIFIED: PositioningStrategy<PsiElement> = FindReferencePositioningStrategy(false)
     val REFERENCED_NAME_BY_QUALIFIED: PositioningStrategy<PsiElement> = FindReferencePositioningStrategy(true)
+
+    val REIFIED_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.REIFIED_KEYWORD)
+
+    val ASSIGNMENT_VALUE: PositioningStrategy<KtProperty> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            return markElement(if (element is KtProperty) element.initializer ?: element else element)
+        }
+    }
+
+    val WHOLE_ELEMENT: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {}
+
+    val TYPE_PARAMETERS_LIST: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            if (element is KtTypeParameterListOwner) {
+                return markElement(element.typeParameterList ?: element)
+            }
+            return markElement(element)
+        }
+    }
+
 
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for

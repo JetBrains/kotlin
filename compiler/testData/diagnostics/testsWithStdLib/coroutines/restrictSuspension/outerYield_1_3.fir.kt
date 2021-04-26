@@ -87,7 +87,7 @@ fun test() {
                 this@with.<!UNRESOLVED_REFERENCE!>yield<!>("")
 
                 yield2("")
-                this@with<!UNSAFE_CALL!>.<!>yield2("")
+                this@with.<!INAPPLICABLE_CANDIDATE!>yield2<!>("")
             }
         }
     }

@@ -108,11 +108,16 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean
     ) {
-        // TODO: support in light tree
-        val psiFile = firFile.psi ?: return
-        val metaInfos = AnalyzingUtils.getSyntaxErrorRanges(psiFile).map {
-            FirErrors.SYNTAX.on(FirRealPsiSourceElement(it)).toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+        val metaInfos = if (firFile.psi != null) {
+            AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
+                FirErrors.SYNTAX.on(FirRealPsiSourceElement(it)).toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+            }
+        } else {
+            collectLightTreeSyntaxErrors(firFile).map { sourceElement ->
+                FirErrors.SYNTAX.on(sourceElement).toMetaInfo(testFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+            }
         }
+
         globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
     }
 
@@ -225,7 +230,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }
 
         val argumentText = argument()
-        val factory = FirDiagnosticFactory1<FirPsiSourceElement<PsiElement>, PsiElement, String>(name, severity)
+        val factory = FirDiagnosticFactory1<PsiElement, String>(name, severity)
         return when (positionedElement) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters1(positionedElement, argumentText, severity, factory)
             is FirLightSourceElement -> FirLightDiagnosticWithParameters1(positionedElement, argumentText, severity, factory)
@@ -287,3 +292,4 @@ class PsiLightTreeMetaInfoProcessor(testServices: TestServices) : AbstractTwoAtt
         return FirDiagnosticsDirectives.USE_LIGHT_TREE !in module.directives
     }
 }
+

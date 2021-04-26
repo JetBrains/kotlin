@@ -25,7 +25,7 @@ enum class DependenciesResolverOptionsName(optionName: String? = null) {
     TRANSITIVE,
     SCOPE;
 
-    val key = optionName ?: name.toLowerCase()
+    val key = optionName ?: name.lowercase()
 }
 
 val ExternalDependenciesResolver.Options.transitive

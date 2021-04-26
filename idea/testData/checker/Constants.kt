@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun <T> checkSubtype(t: T) = t
 
 fun test() {

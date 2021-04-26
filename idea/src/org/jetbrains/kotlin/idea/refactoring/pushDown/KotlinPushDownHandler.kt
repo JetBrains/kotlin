@@ -44,7 +44,8 @@ class KotlinPushDownHandler : AbstractPullPushMembersHandler(
 
     private fun reportFinalClassOrObject(project: Project, editor: Editor?, classOrObject: KtClassOrObject) {
         val message = RefactoringBundle.getCannotRefactorMessage(
-            KotlinBundle.message("text.class.0.is.final", RefactoringUIUtil.getDescription(classOrObject, false)).capitalize()
+            KotlinBundle.message("text.class.0.is.final", RefactoringUIUtil.getDescription(classOrObject, false))
+                .replaceFirstChar(Char::uppercaseChar)
         )
         CommonRefactoringUtil.showErrorHint(project, editor, message, PULL_MEMBERS_UP, HelpID.MEMBERS_PULL_UP)
     }

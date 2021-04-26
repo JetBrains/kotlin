@@ -38,6 +38,7 @@ internal fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? 
             "toLong" -> return (value as Char).toLong()
             "toShort" -> return (value as Char).toShort()
             "toString" -> return (value as Char).toString()
+            "code" -> return (value as Char).code
         }
         DOUBLE -> when (name) {
             "toByte" -> return (value as Double).toByte()

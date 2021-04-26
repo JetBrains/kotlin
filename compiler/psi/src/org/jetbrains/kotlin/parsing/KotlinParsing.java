@@ -833,7 +833,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
-        parseUserType();
+        parseUserType(/* forAnnotation */ true);
         typeReference.done(TYPE_REFERENCE);
         reference.done(CONSTRUCTOR_CALLEE);
 
@@ -2078,7 +2078,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             dynamicType.done(DYNAMIC_TYPE);
         }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
-            parseUserType();
+            parseUserType(/* forAnnotation */ false);
         }
         else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
@@ -2175,7 +2175,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
      */
-    private void parseUserType() {
+    private void parseUserType(boolean forAnnotation) {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
@@ -2220,6 +2220,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         userType.done(USER_TYPE);
+
+        if (!forAnnotation && at(EXCLEXCL)) {
+            PsiBuilder.Marker definitelyNotNull = userType.precede();
+            advance(); // !!
+            definitelyNotNull.done(DEFINITELY_NOT_NULL_TYPE);
+        }
     }
 
     private boolean atParenthesizedMutableForPlatformTypes(int offset) {

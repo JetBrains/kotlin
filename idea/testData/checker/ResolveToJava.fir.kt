@@ -24,7 +24,7 @@ fun test(l : List<Int>) {
   Collections.emptyList()
 
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
-  Collections.<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): java/util/Collections.singleton">singleton</error><Int>(1.0)
+  Collections.singleton<Int>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/Double but ft<TypeVariable(T), TypeVariable(T)?> was expected">1.0</error>)
 
   List<Int>
 

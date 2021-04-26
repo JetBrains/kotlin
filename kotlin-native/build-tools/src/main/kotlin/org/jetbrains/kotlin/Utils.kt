@@ -159,6 +159,18 @@ fun codesign(project: Project, path: String) {
 }
 
 /**
+ * Check that [target] is Apple simulator
+ */
+fun isSimulatorTarget(project: Project, target: KonanTarget): Boolean =
+    project.platformManager.platform(target).targetTriple.isSimulator
+
+/**
+ * Check that [target] is an Apple device.
+ */
+fun supportsRunningTestsOnDevice(target: KonanTarget): Boolean =
+    target == KonanTarget.IOS_ARM32 || target == KonanTarget.IOS_ARM64
+
+/**
  * Creates a list of file paths to be compiled from the given [compile] list with regard to [exclude] list.
  */
 fun Project.getFilesToCompile(compile: List<String>, exclude: List<String>): List<String> {
@@ -292,18 +304,7 @@ fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, o
     val configs = platform.configurables as AppleConfigurables
     val compiler = configs.absoluteTargetToolchain + "/usr/bin/swiftc"
 
-    val swiftTarget = when (target) {
-        KonanTarget.IOS_X64   -> "x86_64-apple-ios" + configs.osVersionMin
-        KonanTarget.IOS_ARM32 -> "armv7-apple-ios" + configs.osVersionMin
-        KonanTarget.IOS_ARM64 -> "arm64-apple-ios" + configs.osVersionMin
-        KonanTarget.TVOS_X64   -> "x86_64-apple-tvos" + configs.osVersionMin
-        KonanTarget.TVOS_ARM64 -> "arm64-apple-tvos" + configs.osVersionMin
-        KonanTarget.MACOS_X64 -> "x86_64-apple-macosx" + configs.osVersionMin
-        KonanTarget.MACOS_ARM64 -> "arm64-apple-macos" + configs.osVersionMin
-        KonanTarget.WATCHOS_X86 -> "i386-apple-watchos" + configs.osVersionMin
-        KonanTarget.WATCHOS_X64 -> "x86_64-apple-watchos" + configs.osVersionMin
-        else -> throw IllegalStateException("Test target $target is not supported")
-    }
+    val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
     val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
             options + "-o" + output.toString() + sources +
@@ -387,11 +388,8 @@ fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir:
     val platform = platformManager.platform(testTarget)
 
     objDir.mkdirs()
-    exec {
-        commandLine(platform.clang.clangC(
-                "-c",
-                *cSources.map { it.absolutePath }.toTypedArray()
-        ))
+    ExecClang(project).execClangForCompilerTests(testTarget) {
+        args = listOf("-c", *cSources.map { it.absolutePath }.toTypedArray())
         workingDir(objDir)
     }
 
@@ -411,3 +409,10 @@ internal fun StringBuilder.appendln(o: Any?) {
     append(o)
     append('\n')
 }
+
+internal val Project.testTargetConfigurables: Configurables
+    get() {
+        val platformManager = project.platformManager
+        val testTarget = project.testTarget
+        return platformManager.platform(testTarget).configurables
+    }

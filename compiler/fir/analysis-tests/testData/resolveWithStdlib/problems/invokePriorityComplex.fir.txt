@@ -60,7 +60,7 @@ FILE: invokePriorityComplex.kt
     public final fun main(): R|kotlin/Unit| {
         Q|E.foo|.R|/E.foo.a|
         Q|E.foo|
-        R|kotlin/with|<R|E.foo|, R|kotlin/Int|>(Q|E.foo|, <L> = with@fun R|E.foo|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|E.foo|, R|kotlin/Int|>(Q|E.foo|, <L> = with@fun R|E.foo|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ this@R|special/anonymous|.R|/E.foo.a|
         }
         )

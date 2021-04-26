@@ -53,7 +53,7 @@ internal class ByteValue(value: Byte) : IntegerValueConstant<Byte>(value) {
 internal class CharValue(value: Char) : IntegerValueConstant<Char>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitCharValue(this, data)
 
-    override fun toString(): String = "\\u%04X ('%s')".format(value.toInt(), getPrintablePart(value))
+    override fun toString(): String = "\\u%04X ('%s')".format(value.code, getPrintablePart(value))
 
     private fun getPrintablePart(c: Char): String = when (c) {
         '\b' -> "\\b"

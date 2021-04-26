@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.native.test.debugger.lldbCommandRunOrContinue
 import org.jetbrains.kotlin.native.test.debugger.lldbComplexTest
 import org.jetbrains.kotlin.native.test.debugger.lldbTest
 import org.junit.Test
@@ -20,7 +21,7 @@ class LldbTests {
         > b main.kt:2
         Breakpoint 1: [..]
 
-        > r
+        > ${lldbCommandRunOrContinue()}
         Process [..] stopped
         [..] stop reason = breakpoint 1.1
         [..] at main.kt:2[..]
@@ -53,7 +54,7 @@ class LldbTests {
         }
     """, """
             > b main.kt:7
-            > r
+            > ${lldbCommandRunOrContinue()}
             > fr var
             (char) a = '\x01'
             (int) b = 2
@@ -76,7 +77,7 @@ class LldbTests {
         }
     """, """
         > b main.kt:4
-        > r
+        > ${lldbCommandRunOrContinue()}
         > fr var
         (ObjHeader *) args = []
         (ObjHeader *) point = [x: ..., y: ...]
@@ -98,7 +99,7 @@ class LldbTests {
         data class Point(val x: Int, val y: Int)
     """, """
         > b main.kt:8
-        > r
+        > ${lldbCommandRunOrContinue()}
         > fr var
         (ObjHeader *) args = []
         (ObjHeader *) xs = [..., ..., ...]
@@ -115,7 +116,7 @@ class LldbTests {
         data class Point(val x: Int, val y: Int)
     """, """
         > b main.kt:3
-        > r
+        > ${lldbCommandRunOrContinue()}
         > fr var xs
         (ObjHeader *) xs = [..., ..., ...]
     """)
@@ -146,5 +147,26 @@ class LldbTests {
             > b kfun:#a(){}kotlin.String
             Breakpoint 2: where = [..]`kfun:#a(){}kotlin.String [..] at a.kt:1:1, [..]
         """.trimIndent().lldb(application)
+    }
+
+    @Test
+    fun `kt33055`() = lldbComplexTest {
+        val kt33055 = """
+            |fun question(subject: String, names: Array<String> = emptyArray()): String {
+            |    return buildString { // breakpoint here
+            |        append("${"$"}subject?") // actual stop
+            |        for (name in names)
+            |            append(" ${"$"}name?")
+            |    }
+            |}
+            |
+            |fun main(args: Array<String>) {
+            |    println(question("Subject", args))
+            |}
+        """.trimMargin().binary("kt33055", "-g", "-Xg-generate-inline-function-body-marker=enable")
+        """
+            > b 2
+            Breakpoint 1: where = [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [..] at kt33055.kt:2:12, [..]
+        """.trimIndent().lldb(kt33055)
     }
 }

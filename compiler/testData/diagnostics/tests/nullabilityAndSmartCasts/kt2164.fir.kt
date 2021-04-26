@@ -7,33 +7,33 @@ fun foo(x: Int): Int = x + 1
 fun main() {
     val x: Int? = null
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(x)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
     if (x != null) {
         foo(x)
-        foo(x!!)
+        foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
         foo(x)
     }
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(x)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
     if (x != null) {
         foo(x)
-        foo(x!!)
+        foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
         foo(x)
     } else {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(x)
+        foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         foo(x!!)
         foo(x)
     }
 
     foo(x)
-    foo(x!!)
+    foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
     foo(x)
-    
+
     val y: Int? = null
     y!!
-    y!!
+    y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     foo(y)
-    foo(y!!)
+    foo(y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }

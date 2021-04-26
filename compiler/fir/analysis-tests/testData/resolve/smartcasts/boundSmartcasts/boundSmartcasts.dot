@@ -322,8 +322,8 @@ digraph boundSmartcasts_kt {
     }
     115 -> {116} [color=green];
     116 -> {117} [style=dotted];
-    116 -> {123} [color=green];
-    116 -> {123} [style=dashed];
+    116 -> {121} [color=green];
+    116 -> {121} [style=dashed];
 
     subgraph cluster_28 {
         color=red
@@ -336,72 +336,67 @@ digraph boundSmartcasts_kt {
 
     subgraph cluster_29 {
         color=red
-        121 [label="Enter function getter" style="filled" fillcolor=red];
-        122 [label="Exit function getter" style="filled" fillcolor=red];
+        121 [label="Enter property" style="filled" fillcolor=red];
+        122 [label="Access variable R|<local>/any|"];
+        123 [label="Exit property" style="filled" fillcolor=red];
     }
     121 -> {122};
+    122 -> {123};
+    123 -> {117} [color=green];
 
     subgraph cluster_30 {
         color=red
-        123 [label="Enter property" style="filled" fillcolor=red];
-        124 [label="Access variable R|<local>/any|"];
-        125 [label="Exit property" style="filled" fillcolor=red];
+        124 [label="Enter function baz" style="filled" fillcolor=red];
+        subgraph cluster_31 {
+            color=blue
+            125 [label="Enter block"];
+            126 [label="Exit block"];
+        }
+        127 [label="Exit function baz" style="filled" fillcolor=red];
     }
-    123 -> {124};
     124 -> {125};
-    125 -> {117} [color=green];
-
-    subgraph cluster_31 {
-        color=red
-        126 [label="Enter function baz" style="filled" fillcolor=red];
-        subgraph cluster_32 {
-            color=blue
-            127 [label="Enter block"];
-            128 [label="Exit block"];
-        }
-        129 [label="Exit function baz" style="filled" fillcolor=red];
-    }
+    125 -> {126};
     126 -> {127};
-    127 -> {128};
-    128 -> {129};
 
-    subgraph cluster_33 {
+    subgraph cluster_32 {
         color=red
-        130 [label="Enter function test_5" style="filled" fillcolor=red];
-        subgraph cluster_34 {
+        128 [label="Enter function test_5" style="filled" fillcolor=red];
+        subgraph cluster_33 {
             color=blue
-            131 [label="Enter block"];
-            132 [label="Access variable R|<local>/d|"];
-            133 [label="Access variable R|/D.any|"];
-            134 [label="Exit lhs of ?:"];
-            135 [label="Enter rhs of ?:"];
-            136 [label="Jump: ^test_5 Unit"];
-            137 [label="Stub" style="filled" fillcolor=gray];
-            138 [label="Lhs of ?: is not null"];
-            139 [label="Exit ?:"];
-            140 [label="Variable declaration: lval a: R|kotlin/Any|"];
-            141 [label="Access variable R|<local>/a|"];
-            142 [label="Function call: R|<local>/a|.R|/baz|()"];
-            143 [label="Access variable R|<local>/d|"];
-            144 [label="Access variable R|/D.any|"];
-            145 [label="Function call: R|<local>/d|.R|/D.any|.R|/baz|()"];
+            129 [label="Enter block"];
+            130 [label="Access variable R|<local>/d|"];
+            131 [label="Access variable R|/D.any|"];
+            132 [label="Exit lhs of ?:"];
+            133 [label="Enter rhs of ?:"];
+            134 [label="Jump: ^test_5 Unit"];
+            135 [label="Stub" style="filled" fillcolor=gray];
+            136 [label="Lhs of ?: is not null"];
+            137 [label="Exit ?:"];
+            138 [label="Variable declaration: lval a: R|kotlin/Any|"];
+            139 [label="Access variable R|<local>/a|"];
+            140 [label="Function call: R|<local>/a|.R|/baz|()"];
+            141 [label="Access variable R|<local>/d|"];
+            142 [label="Access variable R|/D.any|"];
+            143 [label="Function call: R|<local>/d|.R|/D.any|.R|/baz|()"];
+            144 [label="Access variable R|<local>/a|"];
+            145 [label="Type operator: (R|<local>/a| as R|A|)"];
             146 [label="Access variable R|<local>/a|"];
-            147 [label="Type operator: (R|<local>/a| as R|A|)"];
-            148 [label="Access variable R|<local>/a|"];
-            149 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-            150 [label="Exit block"];
+            147 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            148 [label="Exit block"];
         }
-        151 [label="Exit function test_5" style="filled" fillcolor=red];
+        149 [label="Exit function test_5" style="filled" fillcolor=red];
     }
+    128 -> {129};
+    129 -> {130};
     130 -> {131};
     131 -> {132};
-    132 -> {133};
+    132 -> {136 133};
     133 -> {134};
-    134 -> {138 135};
-    135 -> {136};
-    136 -> {151};
-    136 -> {137} [style=dotted];
-    137 -> {139} [style=dotted];
+    134 -> {149};
+    134 -> {135} [style=dotted];
+    135 -> {137} [style=dotted];
+    136 -> {137};
+    137 -> {138};
     138 -> {139};
     139 -> {140};
     140 -> {141};
@@ -413,32 +408,32 @@ digraph boundSmartcasts_kt {
     146 -> {147};
     147 -> {148};
     148 -> {149};
-    149 -> {150};
-    150 -> {151};
 
-    subgraph cluster_35 {
+    subgraph cluster_34 {
         color=red
-        152 [label="Enter function test_6" style="filled" fillcolor=red];
-        subgraph cluster_36 {
+        150 [label="Enter function test_6" style="filled" fillcolor=red];
+        subgraph cluster_35 {
             color=blue
-            153 [label="Enter block"];
-            154 [label="Access variable R|<local>/d1|"];
-            155 [label="Access variable R|/D.any|"];
-            156 [label="Variable declaration: lval a: R|kotlin/Any?|"];
+            151 [label="Enter block"];
+            152 [label="Access variable R|<local>/d1|"];
+            153 [label="Access variable R|/D.any|"];
+            154 [label="Variable declaration: lval a: R|kotlin/Any?|"];
+            155 [label="Access variable R|<local>/a|"];
+            156 [label="Type operator: (R|<local>/a| as R|A|)"];
             157 [label="Access variable R|<local>/a|"];
-            158 [label="Type operator: (R|<local>/a| as R|A|)"];
-            159 [label="Access variable R|<local>/a|"];
-            160 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-            161 [label="Access variable R|<local>/d1|"];
-            162 [label="Access variable R|/D.any|"];
-            163 [label="Function call: R|<local>/d1|.R|/D.any|.R|/A.foo|()"];
-            164 [label="Access variable R|<local>/d1|"];
-            165 [label="Access variable R|/D.any|"];
-            166 [label="Function call: R|<local>/d1|.R|/D.any|.R|/baz|()"];
-            167 [label="Exit block"];
+            158 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            159 [label="Access variable R|<local>/d1|"];
+            160 [label="Access variable R|/D.any|"];
+            161 [label="Function call: R|<local>/d1|.R|/D.any|.R|/A.foo|()"];
+            162 [label="Access variable R|<local>/d1|"];
+            163 [label="Access variable R|/D.any|"];
+            164 [label="Function call: R|<local>/d1|.R|/D.any|.R|/baz|()"];
+            165 [label="Exit block"];
         }
-        168 [label="Exit function test_6" style="filled" fillcolor=red];
+        166 [label="Exit function test_6" style="filled" fillcolor=red];
     }
+    150 -> {151};
+    151 -> {152};
     152 -> {153};
     153 -> {154};
     154 -> {155};
@@ -453,45 +448,45 @@ digraph boundSmartcasts_kt {
     163 -> {164};
     164 -> {165};
     165 -> {166};
-    166 -> {167};
-    167 -> {168};
 
-    subgraph cluster_37 {
+    subgraph cluster_36 {
         color=red
-        169 [label="Enter function test_7" style="filled" fillcolor=red];
-        subgraph cluster_38 {
+        167 [label="Enter function test_7" style="filled" fillcolor=red];
+        subgraph cluster_37 {
             color=blue
-            170 [label="Enter block"];
-            171 [label="Access variable R|<local>/d1|"];
-            172 [label="Enter safe call"];
-            173 [label="Access variable R|/D.any|"];
-            174 [label="Exit safe call"];
-            175 [label="Variable declaration: lval a: R|kotlin/Any?|"];
-            176 [label="Access variable R|<local>/d2|"];
-            177 [label="Enter safe call"];
-            178 [label="Access variable R|/D.any|"];
-            179 [label="Exit safe call"];
-            180 [label="Variable declaration: lval b: R|kotlin/Any?|"];
+            168 [label="Enter block"];
+            169 [label="Access variable R|<local>/d1|"];
+            170 [label="Enter safe call"];
+            171 [label="Access variable R|/D.any|"];
+            172 [label="Exit safe call"];
+            173 [label="Variable declaration: lval a: R|kotlin/Any?|"];
+            174 [label="Access variable R|<local>/d2|"];
+            175 [label="Enter safe call"];
+            176 [label="Access variable R|/D.any|"];
+            177 [label="Exit safe call"];
+            178 [label="Variable declaration: lval b: R|kotlin/Any?|"];
+            179 [label="Access variable R|<local>/a|"];
+            180 [label="Type operator: (R|<local>/a| as R|A|)"];
             181 [label="Access variable R|<local>/a|"];
-            182 [label="Type operator: (R|<local>/a| as R|A|)"];
-            183 [label="Access variable R|<local>/a|"];
-            184 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            182 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            183 [label="Access variable R|<local>/b|"];
+            184 [label="Type operator: (R|<local>/b| as R|B|)"];
             185 [label="Access variable R|<local>/b|"];
-            186 [label="Type operator: (R|<local>/b| as R|B|)"];
-            187 [label="Access variable R|<local>/b|"];
-            188 [label="Function call: R|<local>/b|.R|/B.bar|()"];
-            189 [label="Exit block"];
+            186 [label="Function call: R|<local>/b|.R|/B.bar|()"];
+            187 [label="Exit block"];
         }
-        190 [label="Exit function test_7" style="filled" fillcolor=red];
+        188 [label="Exit function test_7" style="filled" fillcolor=red];
     }
-    169 -> {170};
+    167 -> {168};
+    168 -> {169};
+    169 -> {170 172};
     170 -> {171};
-    171 -> {172 174};
+    171 -> {172};
     172 -> {173};
     173 -> {174};
-    174 -> {175};
+    174 -> {175 177};
     175 -> {176};
-    176 -> {177 179};
+    176 -> {177};
     177 -> {178};
     178 -> {179};
     179 -> {180};
@@ -503,7 +498,5 @@ digraph boundSmartcasts_kt {
     185 -> {186};
     186 -> {187};
     187 -> {188};
-    188 -> {189};
-    189 -> {190};
 
 }

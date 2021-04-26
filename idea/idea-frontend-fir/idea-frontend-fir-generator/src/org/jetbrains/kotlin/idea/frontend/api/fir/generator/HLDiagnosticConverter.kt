@@ -9,23 +9,16 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticParameter
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -33,7 +26,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
@@ -65,10 +58,10 @@ object HLDiagnosticConverter {
     }
 
     private fun DiagnosticData.getHLDiagnosticClassName() =
-        name.toLowerCase()
+        name.lowercase()
             .split('_')
             .joinToString(separator = "") {
-                it.capitalize()
+                it.replaceFirstChar(Char::uppercaseChar)
             }
 
     private fun DiagnosticData.getHLDiagnosticImplClassName() =
@@ -100,7 +93,7 @@ private object FirToKtConversionCreator {
         if (kClass.isSubclassOf(Collection::class)) {
             val elementType = type.arguments.single().type ?: return HLIdParameterConversion
             return HLMapParameterConversion(
-                parameterName = elementType.kClass.simpleName!!.decapitalize(),
+                parameterName = elementType.kClass.simpleName!!.replaceFirstChar(Char::lowercaseChar),
                 mappingConversion = createConversion(elementType)
             )
         }
@@ -150,6 +143,11 @@ private object FirToKtConversionCreator {
             KtClassLikeSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirClass")
         ),
+        FirRegularClassSymbol::class to HLFunctionCallConversion(
+            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.fir)",
+            KtClassLikeSymbol::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirRegularClass")
+        ),
         FirMemberDeclaration::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0} as FirDeclaration)",
             KtSymbol::class.createType(),
@@ -165,10 +163,6 @@ private object FirToKtConversionCreator {
             KtTypeParameterSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirTypeParameter")
         ),
-        FirEffectiveVisibility::class to HLFunctionCallConversion(
-            "{0}.toVisibility()",
-            Visibility::class.createType()
-        ),
         ConeKotlinType::class to HLFunctionCallConversion(
             "firSymbolBuilder.typeBuilder.buildKtType({0})",
             KtType::class.createType()
@@ -178,7 +172,7 @@ private object FirToKtConversionCreator {
             KtType::class.createType()
         ),
         FirPropertySymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0}.fir as FirProperty)",
+            "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0}.fir)",
             KtVariableSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirProperty")
         ),
@@ -186,6 +180,16 @@ private object FirToKtConversionCreator {
             "firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol({0}.fir)",
             KtVariableLikeSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirVariable")
+        ),
+        FirDeclaration::class to HLFunctionCallConversion(
+            "firSymbolBuilder.buildSymbol({0})",
+            KtSymbol::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
+        ),
+        FirNamedFunctionSymbol::class to HLFunctionCallConversion(
+            "firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol({0}.fir)",
+            KtFunctionLikeSymbol::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirSimpleFunction")
         ),
     )
 
@@ -196,6 +200,7 @@ private object FirToKtConversionCreator {
         EventOccurrencesRange::class,
         KtModifierKeywordToken::class,
         Visibility::class,
+        EffectiveVisibility::class,
         WhenMissingCase::class,
         ForbiddenNamedArgumentsTarget::class,
         LanguageFeature::class,

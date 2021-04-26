@@ -6,14 +6,14 @@ FILE: lambdaAsReceiver.kt
     public final fun R|kotlin/String|.bar(): R|kotlin/Unit| {
     }
     public final fun main1(): R|kotlin/Unit| {
-        fun <anonymous>(): R|kotlin/String| {
+        fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
             ^ String()
         }
         .R|/foo|()
         String().R|/foo|()
     }
     public final fun main2(): R|kotlin/Unit| {
-        fun <anonymous>(): R|kotlin/String| {
+        fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
             ^ String()
         }
         .<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /bar>#()

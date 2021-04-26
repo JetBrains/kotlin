@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
+import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
@@ -38,7 +40,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings))
     register(InferenceComponents::class, InferenceComponents(this))
 
-    register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
+    register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider(this))
     register(FirCorrespondingSupertypesCache::class, FirCorrespondingSupertypesCache(this))
     register(FirDefaultParametersResolver::class, FirDefaultParametersResolver())
 
@@ -49,15 +51,11 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
 }
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerThreadUnsafeCaches() {
+fun FirSession.registerCliCompilerOnlyComponents() {
     register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
-}
-
-@OptIn(SessionConfiguration::class)
-fun FirSession.registerSealedClassInheritorsProvider() {
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
+    register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
 }
-
 
 
 // -------------------------- Resolve components --------------------------
@@ -91,7 +89,6 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
     register(FirModuleVisibilityChecker::class, FirJvmModuleVisibilityChecker(this))
     register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
-    register(FirEffectiveVisibilityResolver::class, FirJvmEffectiveVisibilityResolver(this))
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirJsr305StateContainer::class, FirJsr305StateContainer.Default)

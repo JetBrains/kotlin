@@ -27,5 +27,5 @@ class B : A() {
 }
 
 fun baz(a: A) {
-    a.<!HIDDEN!>foo<!> { }
+    a.<!INVISIBLE_REFERENCE!>foo<!> { }
 }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 
@@ -134,14 +134,14 @@ class JavaOverrideChecker internal constructor(
     override fun buildTypeParametersSubstitutorIfCompatible(
         overrideCandidate: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirCallableMemberDeclaration<*>
-    ): ConeSubstitutor? {
+    ): ConeSubstitutor {
         if (!overrideCandidate.isTypeParameterDependent() && !baseDeclaration.isTypeParameterDependent()) {
             return ConeSubstitutor.Empty
         }
         val typeParameters = linkedSetOf<FirTypeParameterRef>()
         overrideCandidate.extractTypeParametersTo(typeParameters)
         baseDeclaration.extractTypeParametersTo(typeParameters)
-        return substitutorByMap(typeParameters.buildErasure())
+        return substitutorByMap(typeParameters.buildErasure(), session)
     }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
@@ -151,7 +151,7 @@ class JavaOverrideChecker internal constructor(
         val baseParameterTypes = listOfNotNull(receiverTypeRef) + baseDeclaration.valueParameters.map { it.returnTypeRef }
 
         if (overrideCandidate.valueParameters.size != baseParameterTypes.size) return false
-        val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
+        val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration)
         return overrideCandidate.valueParameters.zip(baseParameterTypes).all { (paramFromJava, baseType) ->
             isEqualTypes(paramFromJava.returnTypeRef, baseType, substitutor)
         }

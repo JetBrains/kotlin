@@ -11,16 +11,18 @@ import java.io.IOException
 import kotlin.io.path.*
 
 object GeneratorsFileUtil {
-    val isTeamCityBuild: Boolean = System.getProperty("TEAMCITY_VERSION") != null
+    val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 
     @OptIn(ExperimentalPathApi::class)
     @JvmStatic
     @JvmOverloads
     @Throws(IOException::class)
-    fun writeFileIfContentChanged(file: File, newText: String, logNotChanged: Boolean = true) {
+    fun writeFileIfContentChanged(file: File, newText: String, logNotChanged: Boolean = true, forbidGenerationOnTeamcity: Boolean = true) {
         val parentFile = file.parentFile
         if (!parentFile.exists()) {
-            if (isTeamCityBuild) assertTeamCityMode()
+            if (forbidGenerationOnTeamcity) {
+                if (failOnTeamCity("Create dir `${parentFile.path}`")) return
+            }
             if (parentFile.mkdirs()) {
                 println("Directory created: " + parentFile.absolutePath)
             } else {
@@ -33,7 +35,9 @@ object GeneratorsFileUtil {
             }
             return
         }
-        if (isTeamCityBuild) assertTeamCityMode()
+        if (forbidGenerationOnTeamcity) {
+            if (failOnTeamCity("Write file `${file.toPath()}`")) return
+        }
         val useTempFile = !SystemInfo.isWindows
         val targetFile = file.toPath()
         val tempFile =
@@ -47,8 +51,30 @@ object GeneratorsFileUtil {
         println()
     }
 
-    fun assertTeamCityMode(): Nothing {
-        throw IllegalStateException("You should commit all newly generated files before pushing them to TeamCity")
+    fun failOnTeamCity(message: String): Boolean {
+        if (!isTeamCityBuild) return false
+
+        fun String.escapeForTC(): String = StringBuilder(length).apply {
+            for (char in this@escapeForTC) {
+                append(
+                    when (char) {
+                        '|' -> "||"
+                        '\'' -> "|'"
+                        '\n' -> "|n"
+                        '\r' -> "|r"
+                        '[' -> "|["
+                        ']' -> "|]"
+                        else -> char
+                    }
+                )
+            }
+        }.toString()
+
+        val fullMessage = "[Re-generation needed!] $message\n" +
+                "Run correspondent (check the log above) Gradle task locally and commit changes."
+
+        println("##teamcity[buildProblem description='${fullMessage.escapeForTC()}']")
+        return true
     }
 
     fun isFileContentChangedIgnoringLineSeparators(file: File, content: String): Boolean {

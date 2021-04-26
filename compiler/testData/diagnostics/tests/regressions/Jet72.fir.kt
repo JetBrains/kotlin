@@ -12,7 +12,7 @@ fun test(room : Object) {
   for(item: Item? in items) {
     if (item?.room === room) {
       // item?.room is not null
-      System.out.println("You see " + item?.name)
+      System.out.println("You see " + item<!UNNECESSARY_SAFE_CALL!>?.<!>name)
     }
   }
 }

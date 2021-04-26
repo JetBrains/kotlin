@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
@@ -39,7 +38,7 @@ class WasmBackendContext(
     override val builtIns = module.builtIns
     override var inVerbosePhase: Boolean = false
     override val scriptMode = false
-    override val irFactory: IrFactory = IrFactoryImpl
+    override val irFactory: IrFactory = symbolTable.irFactory
 
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
@@ -77,7 +76,7 @@ class WasmBackendContext(
 
             override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
             override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
-        }, internalPackageFragmentDescriptor).also {
+        }, internalPackageFragmentDescriptor, irModuleFragment).also {
             irModuleFragment.files += it
         }
     }

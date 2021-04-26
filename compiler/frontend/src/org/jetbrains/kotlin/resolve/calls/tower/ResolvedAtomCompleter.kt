@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.callUtil.toOldSubstitution
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceAdaptation
@@ -45,7 +46,6 @@ import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.shouldBeUpdated
@@ -117,7 +117,8 @@ class ResolvedAtomCompleter(
 
         clearPartiallyResolvedCall(resolvedCallAtom)
 
-        if (resolvedCallAtom.atom.psiKotlinCall is PSIKotlinCallForVariable) return null
+        val atom = resolvedCallAtom.atom
+        if (atom.psiKotlinCall is PSIKotlinCallForVariable) return null
 
         val allDiagnostics = diagnostics + diagnosticsFromPartiallyResolvedCall
 
@@ -135,8 +136,14 @@ class ResolvedAtomCompleter(
             return resolvedCall
         }
 
+        val psiCallForResolutionContext = when (atom) {
+            // PARTIAL_CALL_RESOLUTION_CONTEXT has been written for the baseCall
+            is PSIKotlinCallForInvoke -> atom.baseCall.psiCall
+            else -> atom.psiKotlinCall.psiCall
+        }
+
         val resolutionContextForPartialCall =
-            topLevelCallContext.trace[BindingContext.PARTIAL_CALL_RESOLUTION_CONTEXT, resolvedCallAtom.atom.psiKotlinCall.psiCall]
+            topLevelCallContext.trace[BindingContext.PARTIAL_CALL_RESOLUTION_CONTEXT, psiCallForResolutionContext]
 
         val callCheckerContext = if (resolutionContextForPartialCall != null)
             CallCheckerContext(
@@ -218,7 +225,7 @@ class ResolvedAtomCompleter(
         return FunctionLiteralTypes.ProcessedType(
             substitutedType,
             approximatedType = typeApproximator.approximateDeclarationType(
-                substitutedType, local = true, languageVersionSettings = topLevelCallContext.languageVersionSettings
+                substitutedType, local = true
             )
         )
     }
@@ -230,7 +237,8 @@ class ResolvedAtomCompleter(
     ): FunctionLiteralTypes {
         val returnType =
             (if (resolvedAtom?.isCoercedToUnit == true) builtIns.unitType else resolvedAtom?.returnType) ?: descriptor.returnType
-        val receiverType = resolvedAtom?.receiver ?: descriptor.extensionReceiverParameter?.type
+        val extensionReceiverType = resolvedAtom?.receiver ?: descriptor.extensionReceiverParameter?.type
+        val dispatchReceiverType = descriptor.dispatchReceiverParameter?.type
         val valueParameterTypes = resolvedAtom?.parameters ?: descriptor.valueParameters.map { it.type }
 
         require(returnType != null)
@@ -239,10 +247,17 @@ class ResolvedAtomCompleter(
             descriptor.setReturnType(it.approximatedType)
         }
 
-        val receiverFromDescriptor = descriptor.extensionReceiverParameter
-        val substitutedReceiverType = receiverType?.substituteAndApproximate(substitutor)?.also {
-            if (receiverFromDescriptor is ReceiverParameterDescriptorImpl && receiverFromDescriptor.type.shouldBeUpdated()) {
-                receiverFromDescriptor.setOutType(it.approximatedType)
+        val extensionReceiverFromDescriptor = descriptor.extensionReceiverParameter
+        val substitutedReceiverType = extensionReceiverType?.substituteAndApproximate(substitutor)?.also {
+            if (extensionReceiverFromDescriptor is ReceiverParameterDescriptorImpl && extensionReceiverFromDescriptor.type.shouldBeUpdated()) {
+                extensionReceiverFromDescriptor.setOutType(it.approximatedType)
+            }
+        }
+
+        val dispatchReceiverFromDescriptor = descriptor.dispatchReceiverParameter
+        dispatchReceiverType?.substituteAndApproximate(substitutor)?.also {
+            if (dispatchReceiverFromDescriptor is ReceiverParameterDescriptorImpl && dispatchReceiverFromDescriptor.type.shouldBeUpdated()) {
+                dispatchReceiverFromDescriptor.setOutType(it.approximatedType)
             }
         }
 
@@ -306,16 +321,6 @@ class ResolvedAtomCompleter(
                 reportErrorForTypeMismatch = true,
                 convertedArgumentType = null
             )
-        }
-    }
-
-    private fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubstitution() {
-        override fun get(key: KotlinType): TypeProjection? {
-            return safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
-        }
-
-        override fun isEmpty(): Boolean {
-            return isEmpty
         }
     }
 

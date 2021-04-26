@@ -18,8 +18,8 @@ object MismatchingTypes {
 }
 
 fun testMismatchingTypes() {
-    ++<!INAPPLICABLE_CANDIDATE!>MismatchingTypes[0]<!>
-    <!INAPPLICABLE_CANDIDATE!>MismatchingTypes[0]<!>++
+    ++<!ARGUMENT_TYPE_MISMATCH!>MismatchingTypes[0]<!>
+    <!ARGUMENT_TYPE_MISMATCH!>MismatchingTypes[0]++<!>
     MismatchingTypes[0] <!UNRESOLVED_REFERENCE!>+=<!> 1
 }
 
@@ -42,3 +42,4 @@ fun testMismatchingArities() {
     <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]++<!>
     <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]<!> <!UNRESOLVED_REFERENCE!>+=<!> 1
 }
+

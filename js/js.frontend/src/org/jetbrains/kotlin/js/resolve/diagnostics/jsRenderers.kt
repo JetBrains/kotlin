@@ -80,7 +80,7 @@ fun String.underlineAsText(from: Int, to: Int): String {
         marks.append(mark)
         lineWasMarked = lineWasMarked || mark != ' '
 
-        if (isEndOfLine(c.toInt())) {
+        if (isEndOfLine(c.code)) {
             if (lineWasMarked) {
                 lines.appendLine(marks.toString().trimEnd())
                 lineWasMarked = false
@@ -121,7 +121,7 @@ fun String.underlineAsHtml(from: Int, to: Int): String {
 
         lines.append(mark)
 
-        if (isEndOfLine(c.toInt()) && openMarker) {
+        if (isEndOfLine(c.code) && openMarker) {
             lines.append(underlineEnd + c + underlineStart)
         } else {
             lines.append(c)

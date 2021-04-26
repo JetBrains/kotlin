@@ -13,8 +13,8 @@ FILE: lambdaInImplicitPropertyBody.kt
         public final [BODY_RESOLVE] val a: R|kotlin/Int| = Int(10)
             [BODY_RESOLVE] public get(): R|kotlin/Int|
 
-        public final [BODY_RESOLVE] val x: R|kotlin/String| = R|/with|<R|kotlin/Int|, R|kotlin/String|>(this@R|/B|.R|/B.a|, <L> = [BODY_RESOLVE] with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/String| <kind=UNKNOWN>  {
-            ^ this@R|special/anonymous|.R|kotlin/Any.toString|().R|/let|<R|kotlin/String|, R|kotlin/String|>(<L> = [BODY_RESOLVE] let@fun <anonymous>([BODY_RESOLVE] it: R|kotlin/String|): R|kotlin/String| <kind=UNKNOWN>  {
+        public final [BODY_RESOLVE] val x: R|kotlin/String| = R|/with|<R|kotlin/Int|, R|kotlin/String|>(this@R|/B|.R|/B.a|, <L> = [BODY_RESOLVE] with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+            ^ this@R|special/anonymous|.R|kotlin/Any.toString|().R|/let|<R|kotlin/String|, R|kotlin/String|>(<L> = [BODY_RESOLVE] let@fun <anonymous>([BODY_RESOLVE] it: R|kotlin/String|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
                 ^ R|<local>/it|
             }
             )

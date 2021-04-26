@@ -17,7 +17,7 @@ FILE: booleanElvisBoundSmartcast.kt
                 R|<local>/a|.R|/A.foo|()
             }
             else ->  {
-                R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()
+                R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
             }
         }
 
@@ -25,7 +25,7 @@ FILE: booleanElvisBoundSmartcast.kt
     public final fun test_2(a: R|A?|): R|kotlin/Unit| {
         when () {
             R|<local>/a|?.{ $subj$.R|/A.b| } ?: Boolean(true) ->  {
-                R|<local>/a|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /A.foo>#()
+                R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
             }
             else ->  {
                 R|<local>/a|.R|/A.foo|()

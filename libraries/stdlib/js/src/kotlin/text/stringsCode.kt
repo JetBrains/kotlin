@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,15 +54,18 @@ public fun String.matches(regex: String): Boolean {
 
 public actual fun CharSequence.isBlank(): Boolean = length == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
 
-@OptIn(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean =
-    if (this == null)
-        other == null
-    else if (!ignoreCase)
-        this == other
-    else
-        other != null && this.lowercase() == other.lowercase()
+    when {
+        this == null -> other == null
+        !ignoreCase -> this == other
+        other == null -> false
+        else -> {
+            val thisLower = this.lowercase()
+            val otherLower = other.lowercase()
+            thisLower == otherLower || (thisLower.uppercase() == otherLower.uppercase())
+        }
+    }
 
 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -79,8 +82,10 @@ public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequenc
  *
  * @sample samples.text.Strings.capitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.capitalize(): String {
-    return if (isNotEmpty()) substring(0, 1).toUpperCase() + substring(1) else this
+    return if (isNotEmpty()) substring(0, 1).uppercase() + substring(1) else this
 }
 
 /**
@@ -89,13 +94,16 @@ public actual fun String.capitalize(): String {
  *
  * @sample samples.text.Strings.decapitalize
  */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
-    return if (isNotEmpty()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty()) substring(0, 1).lowercase() + substring(1) else this
 }
 
 /**
  * Returns a string containing this char sequence repeated [n] times.
  * @throws [IllegalArgumentException] when n < 0.
+ * @sample samples.text.Strings.repeat
  */
 public actual fun CharSequence.repeat(n: Int): String {
     require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
@@ -123,18 +131,29 @@ public actual fun CharSequence.repeat(n: Int): String {
     }
 }
 
+/**
+ * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
+ * with the specified [newValue] string.
+ *
+ * @sample samples.text.Strings.replace
+ */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
-    nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "gi" else "g"), Regex.escapeReplacement(newValue))
+    nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "gui" else "gu"), Regex.escapeReplacement(newValue))
 
+/**
+ * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ *
+ * @sample samples.text.Strings.replace
+ */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
-    nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "gi" else "g"), newChar.toString())
+    nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "gui" else "gu"), newChar.toString())
 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
-    nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "i" else ""), Regex.escapeReplacement(newValue))
+    nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "ui" else "u"), Regex.escapeReplacement(newValue))
 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
-    nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "i" else ""), newChar.toString())
+    nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "ui" else "u"), newChar.toString())

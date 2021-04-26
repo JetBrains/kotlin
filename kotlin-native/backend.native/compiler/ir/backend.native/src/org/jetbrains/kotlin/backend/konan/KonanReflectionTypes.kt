@@ -32,7 +32,7 @@ class KonanReflectionTypes(module: ModuleDescriptor, internalPackage: FqName) {
 
     private class ClassLookup(val memberScope: MemberScope) {
         operator fun getValue(types: KonanReflectionTypes, property: KProperty<*>): ClassDescriptor {
-            return types.find(memberScope, property.name.capitalize())
+            return types.find(memberScope, property.name.replaceFirstChar(Char::uppercaseChar))
         }
     }
 

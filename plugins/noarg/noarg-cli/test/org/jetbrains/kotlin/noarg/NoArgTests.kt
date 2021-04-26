@@ -28,6 +28,7 @@ abstract class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest
     }
 }
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractBytecodeListingTestForNoArg : AbstractBytecodeListingTest() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         NoArgComponentRegistrar.registerNoArgComponents(environment.project, NOARG_ANNOTATIONS, backend.isIR, false)

@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -284,7 +287,7 @@ internal object FirReferenceResolveHelper {
     fun getFirSymbolsByErrorNamedReference(
         errorNamedReference: FirErrorNamedReference,
     ): Collection<FirBasedSymbol<*>> = when (val diagnostic = errorNamedReference.diagnostic) {
-        is ConeAmbiguityError -> diagnostic.candidates
+        is ConeAmbiguityError -> diagnostic.candidates.map { it.symbol }
         is ConeOperatorAmbiguityError -> diagnostic.candidates
         is ConeInapplicableCandidateError -> listOf(diagnostic.candidate.symbol)
         else -> emptyList()

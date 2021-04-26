@@ -394,9 +394,13 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
 @Suppress("UNCHECKED_CAST")
 fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst<Boolean>)?.value == true)
 
-fun IrFunction.isMethodOfAny() =
-    ((valueParameters.size == 0 && name.asString().let { it == "hashCode" || it == "toString" }) ||
-            (valueParameters.size == 1 && name.asString() == "equals" && valueParameters[0].type.isNullableAny()))
+fun IrFunction.isMethodOfAny(): Boolean =
+    extensionReceiverParameter == null && dispatchReceiverParameter != null &&
+            when (name.asString()) {
+                "hashCode", "toString" -> valueParameters.isEmpty()
+                "equals" -> valueParameters.singleOrNull()?.type?.isNullableAny() == true
+                else -> false
+            }
 
 fun IrClass.simpleFunctions() = declarations.flatMap {
     when (it) {
@@ -693,3 +697,7 @@ fun IrExpression?.isPure(
 
     return false
 }
+
+fun IrDeclaration.isFromJava(): Boolean =
+    origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+            parent is IrDeclaration && (parent as IrDeclaration).isFromJava()

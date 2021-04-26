@@ -25,4 +25,4 @@ class C<R>() {
 }
 
 var c1: Int by C()
-var c2: Int by C<Number>()
+var c2: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>C<Number>()<!>

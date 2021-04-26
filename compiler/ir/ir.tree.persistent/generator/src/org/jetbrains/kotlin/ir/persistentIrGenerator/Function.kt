@@ -7,17 +7,11 @@ package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateFunction() {
 
-    val returnTypeFieldField = Field("returnTypeField", IrType)
-    val typeParametersField = Field("typeParameters", +"List<" + IrTypeParameter + ">")
-    val dispatchReceiverParameterField = Field("dispatchReceiverParameter", IrValueParameter + "?")
-    val extensionReceiverParameterField = Field("extensionReceiverParameter", IrValueParameter + "?")
-    val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">")
-    val bodyField = Field("body", IrBody + "?")
-    val metadataField = Field("metadata", MetadataSource + "?")
-    val visibilityField = Field("visibility", DescriptorVisibility)
-    val overriddenSymbolsField = Field("overriddenSymbols", +"List<" + irSymbol("IrSimpleFunctionSymbol") + ">")
-    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
-    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?")
+    val returnTypeFieldField = Field("returnTypeField", IrType, typeProto)
+    val bodyField = Field("body", IrBody + "?", bodyProto)
+    val visibilityField = Field("visibility", DescriptorVisibility, visibilityProto)
+    val overriddenSymbolsField = Field("overriddenSymbols", +"List<" + IrSimpleFunctionSymbol + ">", simpleFunctionSymbolListProto)
+    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", propertySymbolProto)
 
     writeFile("PersistentIrFunctionCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -65,13 +59,10 @@ internal fun PersistentIrGenerator.generateFunction() {
                 extensionReceiverParameterField.toPersistentField(+"null"),
                 valueParametersField.toPersistentField(+"emptyList()"),
                 bodyField.toBody(),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
                 visibilityField.toPersistentField(+"visibility"),
                 overriddenSymbolsField.toPersistentField(+"emptyList()"),
-                lines(
-                    +"@Suppress(\"LeakingThis\")",
-                    attributeOwnerIdField.toPersistentField(+"this"),
-                ),
+                +"override var attributeOwnerId: " + IrAttributeContainer + " = this",
                 correspondingPropertySymbolField.toPersistentField(+"null"),
             ),
             id,
@@ -85,13 +76,24 @@ internal fun PersistentIrGenerator.generateFunction() {
             dispatchReceiverParameterField,
             extensionReceiverParameterField,
             bodyField,
-            metadataField,
             visibilityField,
             typeParametersField,
             valueParametersField,
             correspondingPropertySymbolField,
             overriddenSymbolsField,
-            attributeOwnerIdField,
         )()
     })
+
+    addCarrierProtoMessage(
+        "Function",
+        returnTypeFieldField,
+        dispatchReceiverParameterField,
+        extensionReceiverParameterField,
+        bodyField,
+        visibilityField,
+        typeParametersField,
+        valueParametersField,
+        correspondingPropertySymbolField,
+        overriddenSymbolsField,
+    )
 }

@@ -40,8 +40,8 @@ class B {
 }
 
 fun test3(a: A) {
-    a.<!HIDDEN!>v<!> //todo .bMethod()
-    a.<!HIDDEN!>f<!>(0, 1) //todo .bMethod()
+    a.<!INVISIBLE_REFERENCE!>v<!> //todo .bMethod()
+    a.<!INVISIBLE_REFERENCE!>f<!>(0, 1) //todo .bMethod()
 }
 
 interface T
@@ -54,7 +54,7 @@ open class C : T {
 }
 
 fun test4(c: C) {
-    c.<!HIDDEN, HIDDEN!>i<!>++
+    c.<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>i<!>++
 }
 
 class D : C() {
@@ -78,7 +78,7 @@ class F : C() {
 
 class G : T {
     fun test8(c: C) {
-        doSmth(c.<!HIDDEN!>i<!>)
+        doSmth(c.<!INVISIBLE_REFERENCE!>i<!>)
     }
 }
 
@@ -91,5 +91,5 @@ import test_visibility.*
 
 fun test() {
     internal_fun()
-    <!HIDDEN!>private_fun<!>()
+    <!INVISIBLE_REFERENCE!>private_fun<!>()
 }

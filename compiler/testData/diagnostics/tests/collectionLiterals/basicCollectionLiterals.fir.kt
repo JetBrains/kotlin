@@ -7,18 +7,18 @@ fun test() {
     val b: Array<Int> = []
     val c = [1, 2]
     val d: Array<Int> = [1, 2]
-    val e: Array<String> = [1]
+    val e: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[1]<!>
 
     val f: IntArray = [1, 2]
     val g = [f]
 }
 
 fun check() {
-    [1, 2] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Int>>() }
-    [""] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<String>>() }
+    [1, 2] checkType { _<Array<Int>>() }
+    [""] checkType { _<Array<String>>() }
 
     val f: IntArray = [1]
-    [f] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<IntArray>>() }
+    [f] checkType { _<Array<IntArray>>() }
 
-    [1, ""] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Any>>() }
+    [1, ""] checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Any>>() }
 }

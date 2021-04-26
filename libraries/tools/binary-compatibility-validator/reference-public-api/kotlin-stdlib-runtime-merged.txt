@@ -1677,8 +1677,6 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun runningReduceIndexed ([Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun scan ([Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun scanIndexed ([Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
-	public static final fun scanReduce ([Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
-	public static final fun scanReduceIndexed ([Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun shuffle ([B)V
 	public static final fun shuffle ([BLkotlin/random/Random;)V
 	public static final fun shuffle ([C)V
@@ -2323,8 +2321,6 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun runningReduceIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun scan (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun scanIndexed (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
-	public static final fun scanReduce (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
-	public static final fun scanReduceIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun shuffle (Ljava/util/List;Lkotlin/random/Random;)V
 	public static final fun shuffled (Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun shuffled (Ljava/lang/Iterable;Ljava/util/Random;)Ljava/util/List;
@@ -4406,8 +4402,8 @@ public final class kotlin/ranges/LongRange$Companion {
 }
 
 public final class kotlin/ranges/RangesKt {
-	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;F)Z
+	public static final synthetic fun byteRangeContains (Lkotlin/ranges/ClosedRange;D)Z
+	public static final synthetic fun byteRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;J)Z
 	public static final fun byteRangeContains (Lkotlin/ranges/ClosedRange;S)Z
@@ -4436,11 +4432,11 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedFloatingPointRange;)Ljava/lang/Comparable;
 	public static final fun coerceIn (Ljava/lang/Comparable;Lkotlin/ranges/ClosedRange;)Ljava/lang/Comparable;
 	public static final fun coerceIn (SSS)S
-	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;B)Z
+	public static final synthetic fun doubleRangeContains (Lkotlin/ranges/ClosedRange;B)Z
 	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;F)Z
-	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;I)Z
-	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;J)Z
-	public static final fun doubleRangeContains (Lkotlin/ranges/ClosedRange;S)Z
+	public static final synthetic fun doubleRangeContains (Lkotlin/ranges/ClosedRange;I)Z
+	public static final synthetic fun doubleRangeContains (Lkotlin/ranges/ClosedRange;J)Z
+	public static final synthetic fun doubleRangeContains (Lkotlin/ranges/ClosedRange;S)Z
 	public static final fun downTo (BB)Lkotlin/ranges/IntProgression;
 	public static final fun downTo (BI)Lkotlin/ranges/IntProgression;
 	public static final fun downTo (BJ)Lkotlin/ranges/LongProgression;
@@ -4458,19 +4454,19 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun downTo (SI)Lkotlin/ranges/IntProgression;
 	public static final fun downTo (SJ)Lkotlin/ranges/LongProgression;
 	public static final fun downTo (SS)Lkotlin/ranges/IntProgression;
-	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;B)Z
+	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;B)Z
 	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;I)Z
-	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;J)Z
-	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;S)Z
+	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;I)Z
+	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;J)Z
+	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;S)Z
 	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;B)Z
-	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;F)Z
+	public static final synthetic fun intRangeContains (Lkotlin/ranges/ClosedRange;D)Z
+	public static final synthetic fun intRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;J)Z
 	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;S)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;B)Z
-	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;F)Z
+	public static final synthetic fun longRangeContains (Lkotlin/ranges/ClosedRange;D)Z
+	public static final synthetic fun longRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;S)Z
 	public static final fun random (Lkotlin/ranges/CharRange;Lkotlin/random/Random;)C
@@ -4486,8 +4482,8 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun reversed (Lkotlin/ranges/IntProgression;)Lkotlin/ranges/IntProgression;
 	public static final fun reversed (Lkotlin/ranges/LongProgression;)Lkotlin/ranges/LongProgression;
 	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;B)Z
-	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;D)Z
-	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;F)Z
+	public static final synthetic fun shortRangeContains (Lkotlin/ranges/ClosedRange;D)Z
+	public static final synthetic fun shortRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;I)Z
 	public static final fun shortRangeContains (Lkotlin/ranges/ClosedRange;J)Z
 	public static final fun step (Lkotlin/ranges/CharProgression;I)Lkotlin/ranges/CharProgression;
@@ -4975,8 +4971,6 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun runningReduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Lkotlin/sequences/Sequence;
 	public static final fun scan (Lkotlin/sequences/Sequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun scanIndexed (Lkotlin/sequences/Sequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Lkotlin/sequences/Sequence;
-	public static final fun scanReduce (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
-	public static final fun scanReduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Lkotlin/sequences/Sequence;
 	public static final fun sequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun sequenceOf ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun shuffled (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
@@ -5448,8 +5442,6 @@ public final class kotlin/text/StringsKt {
 	public static final fun runningReduceIndexed (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun scan (Ljava/lang/CharSequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun scanIndexed (Ljava/lang/CharSequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
-	public static final fun scanReduce (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
-	public static final fun scanReduceIndexed (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun single (Ljava/lang/CharSequence;)C
 	public static final fun single (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)C
 	public static final fun singleOrNull (Ljava/lang/CharSequence;)Ljava/lang/Character;

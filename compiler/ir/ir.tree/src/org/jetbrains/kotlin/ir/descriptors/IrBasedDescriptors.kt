@@ -304,6 +304,7 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
         visitor!!.visitTypeParameterDescriptor(this, null)
     }
 
+    override fun toString(): String = super.toString() + "\nParent: $containingDeclaration"
 }
 
 fun IrTypeParameter.toIrBasedDescriptor() = IrBasedTypeParameterDescriptor(this)

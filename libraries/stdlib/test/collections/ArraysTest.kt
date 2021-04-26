@@ -1156,7 +1156,7 @@ class ArraysTest {
             assertEquals(expected, FloatArray(size) { it.toFloat() }.scan("") { acc, e -> acc + e.toInt() })
             assertEquals(expected, DoubleArray(size) { it.toDouble() }.scan("") { acc, e -> acc + e.toInt() })
             assertEquals(
-                expected.map { it.map { c -> c.toInt() % 2 == 0 }.joinToString(separator = "") },
+                expected.map { it.map { c -> c.code % 2 == 0 }.joinToString(separator = "") },
                 BooleanArray(size) { it % 2 == 0 }.scan("") { acc, e -> acc + e }
             )
         }
@@ -1177,7 +1177,7 @@ class ArraysTest {
             assertEquals(expected, FloatArray(size) { it.toFloat() }.runningFold("") { acc, e -> acc + e.toInt() })
             assertEquals(expected, DoubleArray(size) { it.toDouble() }.runningFold("") { acc, e -> acc + e.toInt() })
             assertEquals(
-                expected.map { it.map { c -> c.toInt() % 2 == 0 }.joinToString(separator = "") },
+                expected.map { it.map { c -> c.code % 2 == 0 }.joinToString(separator = "") },
                 BooleanArray(size) { it % 2 == 0 }.runningFold("") { acc, e -> acc + e }
             )
         }
@@ -1199,7 +1199,7 @@ class ArraysTest {
             )
             assertEquals(
                 expected,
-                CharArray(size) { it.toChar() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+                CharArray(size) { Char(it) }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.code}]" }
             )
             assertEquals(
                 expected,
@@ -1222,7 +1222,7 @@ class ArraysTest {
                 DoubleArray(size) { it.toDouble() }.scanIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
             )
             assertEquals(
-                expected.map { it.map { c -> if (c.isAsciiLetter()) c.toInt() % 2 != 0 else c }.joinToString(separator = "") },
+                expected.map { it.map { c -> if (c.isAsciiLetter()) c.code % 2 != 0 else c }.joinToString(separator = "") },
                 BooleanArray(size) { it % 2 == 0 }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
             )
         }
@@ -1244,7 +1244,7 @@ class ArraysTest {
             )
             assertEquals(
                 expected,
-                CharArray(size) { it.toChar() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
+                CharArray(size) { Char(it) }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.code}]" }
             )
             assertEquals(
                 expected,
@@ -1267,7 +1267,7 @@ class ArraysTest {
                 DoubleArray(size) { it.toDouble() }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: ${'a' + e.toInt()}]" }
             )
             assertEquals(
-                expected.map { it.map { c -> if (c.isAsciiLetter()) c.toInt() % 2 != 0 else c }.joinToString(separator = "") },
+                expected.map { it.map { c -> if (c.isAsciiLetter()) c.code % 2 != 0 else c }.joinToString(separator = "") },
                 BooleanArray(size) { it % 2 == 0 }.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
             )
         }
@@ -1288,8 +1288,8 @@ class ArraysTest {
                 ByteArray(size) { it.toByte() }.runningReduce { acc, e -> (acc + e).toByte() }
             )
             assertEquals(
-                expected.map { it.toChar() },
-                CharArray(size) { it.toChar() }.runningReduce { acc, e -> acc + e.toInt() }
+                expected.map { Char(it) },
+                CharArray(size) { Char(it) }.runningReduce { acc, e -> acc + e.code }
             )
             assertEquals(
                 expected.map { it.toShort() },
@@ -1332,8 +1332,8 @@ class ArraysTest {
                 expected.map { it.toByte() },
                 ByteArray(size) { it.toByte() }.runningReduceIndexed { index, acc, e -> (index * (acc + e)).toByte() })
             assertEquals(
-                expected.map { it.toChar() },
-                CharArray(size) { it.toChar() }.runningReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() }
+                expected.map { Char(it) },
+                CharArray(size) { Char(it) }.runningReduceIndexed { index, acc, e -> (index * (acc.code + e.code)).let(::Char) }
             )
             assertEquals(
                 expected.map { it.toShort() },
@@ -2177,7 +2177,7 @@ class ArraysTest {
         testShuffle(numbers.map(Int::toShort).toShortArray(), { shuffle() }, { toList() })
         testShuffle(numbers.map(Int::toFloat).toFloatArray(), { shuffle() }, { toList() })
         testShuffle(numbers.map(Int::toDouble).toDoubleArray(), { shuffle() }, { toList() })
-        testShuffle(numbers.map(Int::toChar).toCharArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(::Char).toCharArray(), { shuffle() }, { toList() })
         testShuffle(numbers.map { it % 2 == 0 }.toBooleanArray(), { shuffle() }, { toList() })
 
         testShuffle(numbers.map(Int::toUInt).toUIntArray(), { shuffle() }, { toList() })
@@ -2207,7 +2207,7 @@ class ArraysTest {
         testShuffleR(numbers.map(Int::toShort).toShortArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map(Int::toFloat).toFloatArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map(Int::toDouble).toDoubleArray(), { r -> shuffle(r) }, { toList() })
-        testShuffleR(numbers.map(Int::toChar).toCharArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(::Char).toCharArray(), { r -> shuffle(r) }, { toList() })
         testShuffleR(numbers.map { it % 2 == 0 }.toBooleanArray(), { r -> shuffle(r) }, { toList() })
 
         testShuffleR(numbers.map(Int::toUInt).toUIntArray(), { r -> shuffle(r) }, { toList() })
@@ -2244,7 +2244,7 @@ class ArraysTest {
 
         testFailures(BooleanArray(5) { it % 2 == 0 }, BooleanArray::fill, true, 5)
         testFailures(ByteArray(5) { it.toByte() }, ByteArray::fill, 0.toByte(), 5)
-        testFailures(CharArray(5) { it.toChar() }, CharArray::fill, 0.toChar(), 5)
+        testFailures(CharArray(5) { Char(it) }, CharArray::fill, Char(0), 5)
         testFailures(FloatArray(5) { it.toFloat() }, FloatArray::fill, 0.0f, 5)
         testFailures(DoubleArray(5) { it.toDouble() }, DoubleArray::fill, 0.0, 5)
         testFailures(ShortArray(5) { it.toShort() }, ShortArray::fill, 0.toShort(), 5)
@@ -2278,7 +2278,7 @@ class ArraysTest {
 
         test(array, BooleanArray::fill, operations, IntArray::toBooleanArray, { this % 2 == 0 }, BooleanArray::contentEquals)
         test(array, ByteArray::fill, operations, IntArray::toByteArray, Int::toByte, ByteArray::contentEquals)
-        test(array, CharArray::fill, operations, IntArray::toCharArray, Int::toChar, CharArray::contentEquals)
+        test(array, CharArray::fill, operations, IntArray::toCharArray, ::Char, CharArray::contentEquals)
         test(array, FloatArray::fill, operations, IntArray::toFloatArray, Int::toFloat, FloatArray::contentEquals)
         test(array, DoubleArray::fill, operations, IntArray::toDoubleArray, Int::toDouble, DoubleArray::contentEquals)
         test(array, ShortArray::fill, operations, IntArray::toShortArray, Int::toShort, ShortArray::contentEquals)
@@ -2297,7 +2297,7 @@ class ArraysTest {
 
 private fun IntArray.toBooleanArray() = BooleanArray(size) { get(it) % 2 == 0 }
 private fun IntArray.toByteArray() = ByteArray(size) { get(it).toByte() }
-private fun IntArray.toCharArray() = CharArray(size) { get(it).toChar() }
+private fun IntArray.toCharArray() = CharArray(size) { Char(get(it)) }
 private fun IntArray.toFloatArray() = FloatArray(size) { get(it).toFloat() }
 private fun IntArray.toDoubleArray() = DoubleArray(size) { get(it).toDouble() }
 private fun IntArray.toShortArray() = ShortArray(size) { get(it).toShort() }

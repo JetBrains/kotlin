@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.runSupertypeResolvePhaseFor
 import org.jetbrains.kotlin.fir.resolve.transformers.runTypeResolvePhaseForLocalClass
 import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 
-fun <F : FirClass<F>> F.runAllPhasesForLocalClass(
+fun <F : FirClassLikeDeclaration<F>> F.runAllPhasesForLocalClass(
     transformer: FirAbstractBodyResolveTransformer,
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode

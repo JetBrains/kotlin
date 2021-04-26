@@ -4,6 +4,12 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 0 java/lang/invoke/LambdaMetafactory
+// 1 class MixPrimitiveAndBoxedKt\$box\$f0\$1
+// 1 class MixPrimitiveAndBoxedKt\$box\$f1\$1
+
 fun interface IFooT<T> {
     fun foo(x: T): T
 }

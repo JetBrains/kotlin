@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    lateinit var session: FirSession
+    lateinit var declarationSiteSession: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -56,7 +56,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirValueParameter {
         return FirDefaultSetterValueParameter(
             source,
-            session,
+            declarationSiteSession,
             resolvePhase,
             origin,
             attributes,

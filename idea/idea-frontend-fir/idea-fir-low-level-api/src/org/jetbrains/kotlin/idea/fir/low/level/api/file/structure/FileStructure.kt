@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
@@ -29,7 +30,7 @@ internal class FileStructure(
     private val moduleFileCache: ModuleFileCache,
     private val collector: FirTowerDataContextCollector
 ) {
-    private val firIdeProvider = firFile.session.firIdeProvider
+    private val firIdeProvider = firFile.declarationSiteSession.firIdeProvider
 
     private val structureElements = ConcurrentHashMap<KtAnnotated, FileStructureElement>()
 
@@ -43,7 +44,7 @@ internal class FileStructure(
         val structureElement = structureElements.compute(declaration) { _, structureElement ->
             when {
                 structureElement == null -> createStructureElement(declaration)
-                structureElement is ReanalyzableStructureElement<KtDeclaration> && !structureElement.isUpToDate() -> {
+                structureElement is ReanalyzableStructureElement<KtDeclaration, *> && !structureElement.isUpToDate() -> {
                     structureElement.reanalyze(
                         newKtDeclaration = declaration as KtDeclaration,
                         cache = moduleFileCache,
@@ -79,7 +80,7 @@ internal class FileStructure(
         }
     }
 
-    private fun getAllStructureElements(): Collection<FileStructureElement> {
+    fun getAllStructureElements(): Collection<FileStructureElement> {
         val structureElements = mutableSetOf(getStructureElementFor(ktFile))
         ktFile.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
@@ -89,7 +90,7 @@ internal class FileStructure(
             override fun visitDeclaration(dcl: KtDeclaration) {
                 val structureElement = getStructureElementFor(dcl)
                 structureElements += structureElement
-                if (structureElement !is ReanalyzableStructureElement<*>) {
+                if (structureElement !is ReanalyzableStructureElement<*, *>) {
                     dcl.acceptChildren(this)
                 }
             }
@@ -114,22 +115,25 @@ internal class FileStructure(
             towerDataContextCollector = collector
         )
         return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
-            FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile)
+            FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile, moduleFileCache.firFileLockProvider)
         }
     }
 
     private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
         is KtFile -> {
+            val scopeSession = ScopeSession()
             val firFile = firFileBuilder.getFirFileResolvedToPhaseWithCaching(
                 container,
                 moduleFileCache,
-                //TODO: Make resolve whole file into TYPES only for top level declarations or annotations with `file` site
-                FirResolvePhase.TYPES,
+                FirResolvePhase.IMPORTS,
+                scopeSession,
                 checkPCE = true
             )
+            firLazyDeclarationResolver.resolveFileAnnotations(firFile, moduleFileCache, scopeSession)
             RootStructureElement(
                 firFile,
                 container,
+                moduleFileCache.firFileLockProvider,
             )
         }
         is KtDeclaration -> createDeclarationStructure(container)

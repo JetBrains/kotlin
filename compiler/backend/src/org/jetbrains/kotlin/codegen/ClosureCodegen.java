@@ -158,7 +158,14 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         for (int i = 0; i < superInterfaceTypes.size(); i++) {
             KotlinType superInterfaceType = superInterfaceTypes.get(i);
             sw.writeInterface();
-            superInterfaceAsmTypes[i] = typeMapper.mapSupertype(superInterfaceType, sw).getInternalName();
+            Type superInterfaceAsmType;
+            if (samType != null && superInterfaceType.getConstructor() == samType.getType().getConstructor()) {
+                superInterfaceAsmType = typeMapper.mapSupertype(superInterfaceType, null);
+                sw.writeAsmType(superInterfaceAsmType);
+            } else {
+                superInterfaceAsmType = typeMapper.mapSupertype(superInterfaceType, sw);
+            }
+            superInterfaceAsmTypes[i] = superInterfaceAsmType.getInternalName();
             sw.writeInterfaceEnd();
         }
 

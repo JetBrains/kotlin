@@ -3,7 +3,7 @@
 annotation class Ann(val x: Int)
 
 // TESTCASE NUMBER: 1
-abstract class Bar<T : @Ann(unresolved_reference) Any>
+abstract class Bar<T : @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Any>
 
 /*
  * TESTCASE NUMBER: 2

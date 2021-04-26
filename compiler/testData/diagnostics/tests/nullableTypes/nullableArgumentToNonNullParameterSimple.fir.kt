@@ -6,8 +6,8 @@ fun foo(x: Int) {}
 fun foo(x: Int, y: String) {}
 
 fun bar(nullX: Int?, nullY: String?, notNullY: String) {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(nullX)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(nullX, notNullY)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(nullX, nullY)
+    <!NONE_APPLICABLE!>foo<!>(nullX)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>nullX<!>, notNullY)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>nullX<!>, <!ARGUMENT_TYPE_MISMATCH!>nullY<!>)
     <!NONE_APPLICABLE!>foo<!>()
 }

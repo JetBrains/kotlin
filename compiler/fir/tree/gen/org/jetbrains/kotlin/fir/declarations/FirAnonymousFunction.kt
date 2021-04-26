@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpression(), FirTypeParametersOwner {
     abstract override val source: FirSourceElement?
-    abstract override val session: FirSession
+    abstract override val declarationSiteSession: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
@@ -38,10 +39,15 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
     abstract override val symbol: FirAnonymousFunctionSymbol
     abstract val label: FirLabel?
     abstract val invocationKind: EventOccurrencesRange?
+    abstract val inlineStatus: InlineStatus
     abstract val isLambda: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunction(this, data)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+        transformer.transformAnonymousFunction(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
@@ -58,6 +64,8 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?)
+
+    abstract fun replaceInlineStatus(newInlineStatus: InlineStatus)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 

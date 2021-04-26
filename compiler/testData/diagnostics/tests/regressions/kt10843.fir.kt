@@ -5,4 +5,4 @@ fun lambda(x : Int?) = x?.<!UNRESOLVED_REFERENCE!>let<!> <!UNRESOLVED_REFERENCE!
     y ->
     if (y <!UNRESOLVED_REFERENCE!>><!> 0) return@l x
     y
-}!!
+}<!NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION!>!!<!>

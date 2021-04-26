@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.commonizer.konan
 
-import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.CommonizerOutputLayout
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.ResultsConsumer
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -25,8 +27,11 @@ internal class ModuleSerializer(
                 writeLibrary(moduleResult.metadata, moduleResult.manifest, libraryDestination)
             }
             is ResultsConsumer.ModuleResult.Missing -> {
-                val missingModuleLocation = moduleResult.originalLocation
-                missingModuleLocation.copyRecursively(librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName))
+                val missingModuleSourceLocation = moduleResult.originalLocation
+                val missingModuleDestinationLocation = librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName)
+                if (!missingModuleDestinationLocation.exists()) {
+                    missingModuleSourceLocation.copyRecursively(librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName))
+                }
             }
         }
     }
@@ -42,13 +47,13 @@ private fun writeLibrary(
         moduleName = manifestData.uniqueName,
         versions = manifestData.versions,
         builtInsPlatform = BuiltInsPlatform.NATIVE,
-        nativeTargets = emptyList(), // will be overwritten with NativeSensitiveManifestData.applyTo() below
+        nativeTargets = emptyList(), // will be overwritten with addManifest(manifestData) below
         nopack = true,
         shortName = manifestData.shortName,
         layout = layout
     )
     library.addMetadata(metadata)
-    manifestData.applyTo(library.base as BaseWriterImpl)
+    (library.base as BaseWriterImpl).addManifest(manifestData)
     library.commit()
 }
 

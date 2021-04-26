@@ -5,5 +5,5 @@ interface G<T>
 
 fun test(tr: Tr) {
     val v = tr as <!NO_TYPE_ARGUMENTS_ON_RHS!>G<!>
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><G<*>>(v)
+    checkSubtype<G<*>>(<!ARGUMENT_TYPE_MISMATCH!>v<!>)
 }

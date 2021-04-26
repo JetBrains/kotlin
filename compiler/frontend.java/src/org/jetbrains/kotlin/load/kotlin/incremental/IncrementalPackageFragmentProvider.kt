@@ -60,6 +60,8 @@ class IncrementalPackageFragmentProvider(
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) =
         packageFragments.addIfNotNull(fqNameToPackageFragment[fqName])
 
+    override fun isEmpty(fqName: FqName): Boolean = !fqNameToPackageFragment.containsKey(fqName)
+
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         return listOfNotNull(fqNameToPackageFragment[fqName])
     }

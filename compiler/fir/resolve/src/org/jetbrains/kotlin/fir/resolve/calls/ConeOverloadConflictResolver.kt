@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.render
@@ -196,7 +197,7 @@ class ConeOverloadConflictResolver(
 
 object NoSubstitutor : TypeSubstitutorMarker
 
-class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : SimpleConstraintSystem {
+class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val session: FirSession) : SimpleConstraintSystem {
     override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker = with(context) {
         val csBuilder = system.getBuilder()
         val substitutionMap = typeParameters.associateBy({ (it as ConeTypeParameterLookupTag).typeParameterSymbol }) {
@@ -206,7 +207,7 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : Simp
 
             variable.defaultType
         }
-        val substitutor = substitutorByMap(substitutionMap)
+        val substitutor = substitutorByMap(substitutionMap, session)
         for (typeParameter in typeParameters) {
             require(typeParameter is ConeTypeParameterLookupTag)
             for (upperBound in typeParameter.symbol.fir.bounds) {

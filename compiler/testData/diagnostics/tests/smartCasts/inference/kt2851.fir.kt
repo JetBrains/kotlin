@@ -5,7 +5,7 @@ fun main() {
     val value: String? = ""
     if (value != null) {
         foo(Pair("val", value))
-        foo(Pair("val", value!!))
+        foo(Pair("val", value<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
         foo(Pair<String, String>("val", value))
     }
 }

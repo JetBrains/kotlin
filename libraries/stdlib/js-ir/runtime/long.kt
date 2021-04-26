@@ -201,10 +201,18 @@ public class Long internal constructor(
     @SinceKotlin("1.1")
     public inline operator fun rem(other: Double): Double = toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public operator fun inc(): Long = this + 1L
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public operator fun dec(): Long = this - 1L
 
     /** Returns this value. */
@@ -262,6 +270,8 @@ public class Long internal constructor(
     public fun inv(): Long = Long(low.inv(), high.inv())
 
     public override fun toByte(): Byte = low.toByte()
+    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public override fun toChar(): Char = low.toChar()
     public override fun toShort(): Short = low.toShort()
     public override fun toInt(): Int = low

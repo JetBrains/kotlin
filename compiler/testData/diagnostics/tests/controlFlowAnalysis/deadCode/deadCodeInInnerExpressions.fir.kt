@@ -2,7 +2,7 @@
 
 fun testCompound() {
     operator fun Nothing.get(i: Int) {}
-    todo()!![12]
+    todo()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>[12]
 }
 
 fun testCompound1() {

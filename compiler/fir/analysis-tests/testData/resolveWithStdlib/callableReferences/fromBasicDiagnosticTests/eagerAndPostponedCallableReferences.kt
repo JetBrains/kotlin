@@ -22,5 +22,5 @@ fun test() {
 
     val a6 = foo(::singleA, ::singleB)
 
-    foo(::<!UNRESOLVED_REFERENCE!>multiple<!>, ::<!UNRESOLVED_REFERENCE!>multiple<!>)
+    foo(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>, ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>)
 }

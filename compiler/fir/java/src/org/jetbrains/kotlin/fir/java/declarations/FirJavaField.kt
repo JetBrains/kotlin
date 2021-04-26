@@ -33,7 +33,7 @@ import kotlin.properties.Delegates
 @OptIn(FirImplementationDetail::class)
 class FirJavaField @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
-    override val session: FirSession,
+    override val declarationSiteSession: FirSession,
     override val symbol: FirFieldSymbol,
     override val name: Name,
     override var resolvePhase: FirResolvePhase,
@@ -156,7 +156,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     override fun build(): FirJavaField {
         return FirJavaField(
             source,
-            session,
+            declarationSiteSession,
             symbol as FirFieldSymbol,
             name,
             resolvePhase,

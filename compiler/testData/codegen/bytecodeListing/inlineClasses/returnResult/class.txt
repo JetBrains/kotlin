@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'class.kt'
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method foo-d1pmJ48(): java.lang.Object
+}

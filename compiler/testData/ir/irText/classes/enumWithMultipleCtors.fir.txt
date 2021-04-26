@@ -159,17 +159,14 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun f (): kotlin.String declared in <root>.A'
           STRING_CONCATENATION type=kotlin.String
-            CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-              $this: CALL 'public final fun <get-prop1> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
+            CALL 'public final fun <get-prop1> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
             CONST String type=kotlin.String value="#"
-            CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-              $this: CALL 'public final fun <get-prop2> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
+            CALL 'public final fun <get-prop2> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
             CONST String type=kotlin.String value="#"
-            CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-              $this: CALL 'public final fun <get-prop3> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
+            CALL 'public final fun <get-prop3> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.A>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.A

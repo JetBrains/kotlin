@@ -7,8 +7,8 @@ FILE: postponedLambdaInConstructor.kt
     }
     public final class B : R|A| {
         public constructor(s: R|kotlin/String|): R|B| {
-            super<R|A|>(R|<local>/s|.R|kotlin/let|<R|kotlin/String|, R|() -> kotlin/String|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|() -> kotlin/String| <kind=EXACTLY_ONCE>  {
-                ^ let@fun <anonymous>(): R|kotlin/String| {
+            super<R|A|>(R|<local>/s|.R|kotlin/let|<R|kotlin/String|, R|() -> kotlin/String|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|() -> kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
                     ^ R|<local>/it|
                 }
 

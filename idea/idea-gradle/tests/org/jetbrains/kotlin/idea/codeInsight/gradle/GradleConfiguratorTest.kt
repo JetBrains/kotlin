@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestRunConfigurationProducer
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Assert
 import org.junit.Test
 
-class GradleConfiguratorTest : GradleImportingTestCase() {
+class GradleConfiguratorTest : MultiplePluginVersionGradleImportingTestCase() {
 
     @Test
     fun testProjectWithModule() {
@@ -46,7 +46,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
             """
             <p>The compiler bundled to Kotlin plugin (1.0.0) is older than external compiler used for building modules:</p>
             <ul>
-            <li>app (${LATEST_STABLE_GRADLE_PLUGIN_VERSION})</li>
+            <li>app ($gradleKotlinPluginVersion)</li>
             </ul>
             <p>This may cause different set of errors and warnings reported in IDE.</p>
             <p><a href="update">Update</a>  <a href="ignore">Ignore</a></p>
@@ -120,7 +120,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.4+")
+    @PluginTargetVersions(gradleVersion = "4.4+")
     fun testConfigureJvmWithBuildGradle() {
         val files = importProjectFromTestData()
 
@@ -137,7 +137,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.4+")
+    @PluginTargetVersions(gradleVersion = "4.4+")
     fun testConfigureJvmWithBuildGradleKts() {
         val files = importProjectFromTestData()
 
@@ -154,7 +154,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.4+")
+    @PluginTargetVersions(gradleVersion = "4.4+")
     fun testConfigureJvmEAPWithBuildGradle() {
         val files = importProjectFromTestData()
 
@@ -171,7 +171,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.4+")
+    @PluginTargetVersions(gradleVersion = "4.4+")
     fun testConfigureJvmEAPWithBuildGradleKts() {
         val files = importProjectFromTestData()
 
@@ -188,7 +188,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.4+")
+    @PluginTargetVersions(gradleVersion = "4.4+")
     fun testConfigureJsWithBuildGradle() {
         val files = importProjectFromTestData()
 
@@ -205,7 +205,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.4+")
+    @PluginTargetVersions(gradleVersion = "4.4+")
     fun testConfigureJsWithBuildGradleKts() {
         val files = importProjectFromTestData()
 
@@ -222,7 +222,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.4+")
+    @PluginTargetVersions(gradleVersion = "4.4+")
     fun testConfigureJsEAPWithBuildGradle() {
         val files = importProjectFromTestData()
 
@@ -239,7 +239,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.4+")
+    @PluginTargetVersions(gradleVersion = "4.4+")
     fun testConfigureJsEAPWithBuildGradleKts() {
         val files = importProjectFromTestData()
 
@@ -330,6 +330,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testTestTasksAreImported() {
         importProjectFromTestData()
 
@@ -338,6 +339,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testAddNonKotlinLibraryGSK() {
         val files = importProjectFromTestData()
 
@@ -356,6 +358,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testAddTestLibraryGSK() {
         val files = importProjectFromTestData()
 
@@ -381,6 +384,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testAddLibraryGSK() {
         val files = importProjectFromTestData()
 
@@ -438,6 +442,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testChangeLanguageVersionGSK() {
         val files = importProjectFromTestData()
 
@@ -483,7 +488,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testChangeFeatureSupportWithXFlag() = testChangeFeatureSupport()
 
@@ -502,7 +507,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testDisableFeatureSupportWithXFlag() = testDisableFeatureSupport()
 
@@ -521,7 +526,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     @JvmName("testEnableFeatureSupportWithXFlag")
     fun testEnableFeatureSupportWithXFlag() = testEnableFeatureSupport()
@@ -556,11 +561,12 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportToExistentArgumentsWithXFlag() = testEnableFeatureSupportToExistentArguments()
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testChangeFeatureSupportGSK() {
         val files = importProjectFromTestData()
 
@@ -575,11 +581,12 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testChangeFeatureSupportGSKWithXFlag() = testChangeFeatureSupportGSK()
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testDisableFeatureSupportGSK() {
         val files = importProjectFromTestData()
 
@@ -594,11 +601,13 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+
     @Test
+    @PluginTargetVersions(gradleVersion = "4.7+")
     fun testDisableFeatureSupportGSKWithXFlag() = testDisableFeatureSupportGSK()
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testEnableFeatureSupportGSK() {
         val files = importProjectFromTestData()
 
@@ -613,15 +622,15 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportGSKWithXFlag() = testEnableFeatureSupportGSK()
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportGSKWithNotInfixVersionCallAndXFlag() = testEnableFeatureSupportGSK()
 
-    @TargetVersions("4.7+")
+    @PluginTargetVersions(gradleVersion = "4.7+")
     @Test
     fun testEnableFeatureSupportGSKWithSpecifyingPluginThroughIdAndXFlag() = testEnableFeatureSupportGSK()
 

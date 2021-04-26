@@ -32,9 +32,12 @@ fun FirCallableDeclaration<*>.containingClass(): ConeClassLikeLookupTag? {
 fun FirCallableMemberDeclaration<*>.containingClass(): ConeClassLikeLookupTag? {
     return (containingClassAttr ?: dispatchReceiverClassOrNull())
 }
+fun FirRegularClass.containingClassForLocal(): ConeClassLikeLookupTag? =
+    if (isLocal) containingClassForLocalAttr else null
 
 private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration<*>.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
+var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 
 val FirCallableDeclaration<*>.isIntersectionOverride get() = origin == FirDeclarationOrigin.IntersectionOverride
 val FirCallableDeclaration<*>.isSubstitutionOverride get() = origin == FirDeclarationOrigin.SubstitutionOverride
@@ -76,10 +79,12 @@ inline fun <reified D : FirCallableDeclaration<*>> D.unwrapFakeOverrides(): D {
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S
 
 private object SubstitutedOverrideOriginalKey : FirDeclarationDataKey()
+
 var <D : FirCallableDeclaration<*>>
         D.originalForSubstitutionOverrideAttr: D? by FirDeclarationDataRegistry.data(SubstitutedOverrideOriginalKey)
 
 private object IntersectionOverrideOriginalKey : FirDeclarationDataKey()
+
 var <D : FirCallableDeclaration<*>>
         D.originalForIntersectionOverrideAttr: D? by FirDeclarationDataRegistry.data(IntersectionOverrideOriginalKey)
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis
 
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.fir.*
@@ -36,6 +37,19 @@ private fun FirPsiSourceElement<*>.getChild(types: Set<IElementType>, index: Int
 
 private fun FirLightSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int): FirSourceElement? {
     val visitor = LighterTreeElementFinderByType(treeStructure, types, index, depth)
-    return visitor.find(lighterASTNode)?.toFirLightSourceElement(treeStructure)
+    val childNode = visitor.find(lighterASTNode) ?: return null
+    return buildChildSourceElement(childNode)
+}
+
+/**
+ * Keeps 'padding' of parent node in child node
+ */
+internal fun FirLightSourceElement.buildChildSourceElement(childNode: LighterASTNode): FirLightSourceElement {
+    val offsetDelta = startOffset - lighterASTNode.startOffset
+    return childNode.toFirLightSourceElement(
+        treeStructure,
+        startOffset = childNode.startOffset + offsetDelta,
+        endOffset = childNode.endOffset + offsetDelta
+    )
 }
 

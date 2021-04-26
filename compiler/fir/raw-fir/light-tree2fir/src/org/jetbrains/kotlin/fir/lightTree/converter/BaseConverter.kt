@@ -45,7 +45,7 @@ abstract class BaseConverter(
     override val LighterASTNode.unescapedValue: String
         get() {
             val escape = this.asText
-            return escapedStringToCharacter(escape)?.toString()
+            return escapedStringToCharacter(escape).value?.toString()
                 ?: escape.replace("\\", "").replace("u", "\\u")
         }
 
@@ -54,6 +54,9 @@ abstract class BaseConverter(
     }
 
     override fun LighterASTNode.getLabelName(): String? {
+        if (tokenType == KtNodeTypes.FUN) {
+            return getParent()?.getLabelName()
+        }
         this.forEachChildren {
             when (it.tokenType) {
                 KtNodeTypes.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "")
@@ -75,6 +78,15 @@ abstract class BaseConverter(
         }
 
         return null
+    }
+
+    protected fun LighterASTNode.getFirstChildExpressionUnwrapped(): LighterASTNode? {
+        val expression = getFirstChildExpression() ?: return null
+        return if (expression.tokenType == KtNodeTypes.PARENTHESIZED) {
+            expression.getFirstChildExpressionUnwrapped()
+        } else {
+            expression
+        }
     }
 
     private fun LighterASTNode.getLastChildExpression(): LighterASTNode? {

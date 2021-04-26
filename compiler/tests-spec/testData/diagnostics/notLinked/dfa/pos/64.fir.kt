@@ -17,7 +17,7 @@ class Case1<T> {
             x = getT()
         }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
-        return x
+        return <!RETURN_TYPE_MISMATCH!>x<!>
     }
 }
 

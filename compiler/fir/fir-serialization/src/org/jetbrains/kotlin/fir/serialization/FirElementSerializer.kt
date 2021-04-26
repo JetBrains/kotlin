@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -598,10 +598,16 @@ class FirElementSerializer private constructor(
         }
     }
 
-    private fun typeProto(type: ConeKotlinType, toSuper: Boolean = false, correspondingTypeRef: FirTypeRef? = null): ProtoBuf.Type.Builder {
+    private fun typeProto(
+        type: ConeKotlinType,
+        toSuper: Boolean = false,
+        correspondingTypeRef: FirTypeRef? = null,
+        isDefinitelyNotNullType: Boolean = false,
+    ): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
 
         when (type) {
+            is ConeDefinitelyNotNullType -> return typeProto(type.original, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
             is ConeKotlinErrorType -> {
                 extension.serializeErrorType(type, builder)
                 return builder
@@ -623,7 +629,7 @@ class FirElementSerializer private constructor(
                         session, CONTINUATION_INTERFACE_CLASS_ID
                     )
                     val functionType = typeProto(runtimeFunctionType)
-                    functionType.flags = Flags.getTypeFlags(true)
+                    functionType.flags = Flags.getTypeFlags(true, false)
                     return functionType
                 }
                 fillFromPossiblyInnerType(builder, type)
@@ -640,8 +646,11 @@ class FirElementSerializer private constructor(
                 } else {
                     builder.typeParameter = getTypeParameterId(typeParameter)
                 }
+
+                if (isDefinitelyNotNullType) {
+                    builder.flags = Flags.getTypeFlags(false, isDefinitelyNotNullType)
+                }
             }
-            is ConeDefinitelyNotNullType,
             is ConeIntersectionType -> {
                 val approximatedType = if (toSuper) {
                     typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration)
@@ -929,6 +938,7 @@ class FirElementSerializer private constructor(
 
         @JvmStatic
         fun create(
+            session: FirSession,
             scopeSession: ScopeSession,
             klass: FirClass<*>,
             extension: FirSerializerExtension,
@@ -937,17 +947,17 @@ class FirElementSerializer private constructor(
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
             val parent = if (parentClassId != null && !parentClassId.isLocal) {
-                val parentClass = klass.session.symbolProvider.getClassLikeSymbolByFqName(parentClassId)!!.fir as FirRegularClass
-                parentSerializer ?: create(scopeSession, parentClass, extension, null, typeApproximator)
+                val parentClass = session.symbolProvider.getClassLikeSymbolByFqName(parentClassId)!!.fir as FirRegularClass
+                parentSerializer ?: create(session, scopeSession, parentClass, extension, null, typeApproximator)
             } else {
-                createTopLevel(klass.session, scopeSession, extension, typeApproximator)
+                createTopLevel(session, scopeSession, extension, typeApproximator)
             }
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
             // serializing outer classes before nested classes.
             // Otherwise our interner can get wrong ids because we may serialize classes in any order.
             val serializer = FirElementSerializer(
-                klass.session,
+                session,
                 scopeSession,
                 klass,
                 Interner(parent.typeParameters),

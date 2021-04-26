@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.*
@@ -57,7 +56,7 @@ internal val generateMultifileFacadesPhase = makeCustomPhase<JvmBackendContext, 
         // we construct an inheritance chain such that all part members are present as fake overrides in the facade.
         val shouldGeneratePartHierarchy = context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)
         input.files.addAll(
-            generateMultifileFacades(input.descriptor, context, shouldGeneratePartHierarchy, functionDelegates)
+            generateMultifileFacades(input, context, shouldGeneratePartHierarchy, functionDelegates)
         )
 
         UpdateFunctionCallSites(functionDelegates).lower(input)
@@ -90,7 +89,7 @@ class MultifileFacadeFileEntry(
 }
 
 private fun generateMultifileFacades(
-    module: ModuleDescriptor,
+    module: IrModuleFragment,
     context: JvmBackendContext,
     shouldGeneratePartHierarchy: Boolean,
     functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
@@ -108,7 +107,7 @@ private fun generateMultifileFacades(
         }
 
         val fileEntry = MultifileFacadeFileEntry(jvmClassName, partClasses.map(IrClass::fileParent))
-        val file = IrFileImpl(fileEntry, EmptyPackageFragmentDescriptor(module, kotlinPackageFqName))
+        val file = IrFileImpl(fileEntry, EmptyPackageFragmentDescriptor(module.descriptor, kotlinPackageFqName), module)
 
         context.log {
             "Multifile facade $jvmClassName:\n  ${partClasses.joinToString("\n  ") { it.fqNameWhenAvailable!!.asString() }}\n"
@@ -261,6 +260,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
         }
     }
 
+    function.copyAttributes(target)
     function.copyAnnotationsFrom(target)
     function.copyParameterDeclarationsFrom(target)
     function.returnType = target.returnType.substitute(target.typeParameters, function.typeParameters.map { it.defaultType })

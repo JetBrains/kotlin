@@ -120,7 +120,7 @@ fun printField(s: String, steps: Int) {
 fun makeField(s: String): Field {
     val lines: List<String> = s.split("\n")
 
-    val w = lines.map { it.length }.max()!!
+    val w = lines.maxOf { it.length }
     val data = Array(lines.size) { Array(w) { false } }
 
     // workaround

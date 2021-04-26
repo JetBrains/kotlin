@@ -83,9 +83,9 @@ fun testVararg() {
     varargFn(1,2,3) // comment
     // comment
     <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    varargFn(1,2,3) {} <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    varargFn(1,2,3) {}
-    <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) <!ARGUMENT_TYPE_MISMATCH!>{}<!> <!ARGUMENT_TYPE_MISMATCH, VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) <!ARGUMENT_TYPE_MISMATCH!>{}<!>
+    <!ARGUMENT_TYPE_MISMATCH, VARARG_OUTSIDE_PARENTHESES!>{}<!>
 }
 
 fun testTwoLambdas() {
@@ -111,8 +111,8 @@ fun testTwoLambdas() {
 }
 
 fun f1(): (() -> Unit) -> (() -> Unit) -> Unit {
-    return { l1 ->
+    return <!RETURN_TYPE_MISMATCH!>{ l1 ->
         l1()
         <!TOO_MANY_ARGUMENTS!>{ l2 -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!>
-    }
+    }<!>
 }

@@ -30,20 +30,20 @@ package a
 fun test() {
     val y = makeA()
     y.bar()
-    <!HIDDEN!>foo<!>()
+    <!INVISIBLE_REFERENCE!>foo<!>()
 
-    val u : A = <!HIDDEN!>A<!>()
+    val u : A = <!INVISIBLE_REFERENCE!>A<!>()
 
-    val z = <!HIDDEN!>x<!>
-    <!HIDDEN!>x<!> = 30
+    val z = <!INVISIBLE_REFERENCE!>x<!>
+    <!INVISIBLE_REFERENCE!>x<!> = 30
 
-    val po = <!HIDDEN!>PO<!>
+    val po = <!INVISIBLE_REFERENCE!>PO<!>
 
     val v = xx
     xx = 40
 }
 
-class B : <!EXPOSED_SUPER_CLASS, HIDDEN!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE!>A<!>() {}
 
 class Q {
     class W {

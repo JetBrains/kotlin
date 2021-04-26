@@ -7,14 +7,22 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightPlatformTestCase
+import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.DuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
+import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.idea.frontend.api.analyse
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.trackers.KotlinOutOfBlockModificationTrackerFactory
 import java.io.File
 
 fun <R> executeOnPooledThreadInReadAction(action: () -> R): R =
@@ -68,5 +76,15 @@ inline fun <T> withPossiblyDisabledDuplicatedFirSourceElementsException(fileText
         }
     } else {
         return action()
+    }
+}
+
+@OptIn(InvalidWayOfUsingAnalysisSession::class)
+fun Project.invalidateCaches(context: KtElement?) {
+    LibraryModificationTracker.getInstance(this).incModificationCount()
+    (service<KotlinOutOfBlockModificationTrackerFactory>() as KotlinFirOutOfBlockModificationTrackerFactory).incrementModificationsCount()
+    (service<KtAnalysisSessionProvider>() as KtFirAnalysisSessionProvider).clearCaches()
+    if (context != null) {
+        executeOnPooledThreadInReadAction { analyse(context) {} }
     }
 }

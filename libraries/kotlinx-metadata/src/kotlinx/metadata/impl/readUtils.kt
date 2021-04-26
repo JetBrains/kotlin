@@ -37,7 +37,7 @@ fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResol
 
     return when (type) {
         BYTE -> KmAnnotationArgument.ByteValue(intValue.toByte())
-        CHAR -> KmAnnotationArgument.CharValue(intValue.toChar())
+        CHAR -> KmAnnotationArgument.CharValue(intValue.toInt().toChar())
         SHORT -> KmAnnotationArgument.ShortValue(intValue.toShort())
         INT -> KmAnnotationArgument.IntValue(intValue.toInt())
         LONG -> KmAnnotationArgument.LongValue(intValue)

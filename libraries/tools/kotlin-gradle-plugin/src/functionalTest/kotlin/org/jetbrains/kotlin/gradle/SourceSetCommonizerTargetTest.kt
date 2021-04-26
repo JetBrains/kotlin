@@ -163,4 +163,18 @@ class SourceSetCommonizerTargetTest {
         assertNull(project.getCommonizerTarget(commonMain), "Expected commonMain to have no commonizer target")
         assertNull(project.getCommonizerTarget(commonTest), "Expected commonTest to have no commonizer target")
     }
+
+    @Test
+    fun `nativeMain with non hmpp workaround`() {
+        val linux1 = kotlin.linuxX64("linux1")
+        val linux2 = kotlin.linuxArm64("linux2")
+
+        val nativeMain = kotlin.sourceSets.create("nativeMain")
+
+        listOf(linux1, linux2).forEach { target ->
+            target.compilations.getByName("main").source(nativeMain)
+        }
+
+        assertNull(project.getCommonizerTarget(nativeMain), "Expected no commonizer target, since no real source set hierarchy is given")
+    }
 }

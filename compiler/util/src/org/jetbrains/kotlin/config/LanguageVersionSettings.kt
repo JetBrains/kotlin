@@ -18,6 +18,9 @@ enum class LanguageFeature(
     val kind: Kind = OTHER // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
+
+    // 1.1
+
     TypeAliases(KOTLIN_1_1),
     BoundCallableReferences(KOTLIN_1_1, ApiVersion.KOTLIN_1_1),
     LocalDelegatedProperties(KOTLIN_1_1, ApiVersion.KOTLIN_1_1),
@@ -40,6 +43,8 @@ enum class LanguageFeature(
     NoDelegationToJavaDefaultInterfaceMembers(KOTLIN_1_1),
     DefaultImportOfPackageKotlinComparisons(KOTLIN_1_1),
 
+    // 1.2
+
     ArrayLiteralsInAnnotations(KOTLIN_1_2),
     InlineDefaultFunctionalParameters(KOTLIN_1_2),
     SoundSmartCastsAfterTry(KOTLIN_1_2),
@@ -56,6 +61,8 @@ enum class LanguageFeature(
     AssigningArraysToVarargsInNamedFormInAnnotations(KOTLIN_1_2),
     ExpectedTypeFromCast(KOTLIN_1_2),
     DefaultMethodsCallFromJava6TargetError(KOTLIN_1_2),
+
+    // 1.3
 
     RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3, kind = BUG_FIX),
     NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3, kind = BUG_FIX),
@@ -88,6 +95,8 @@ enum class LanguageFeature(
     ExtendedMainConvention(KOTLIN_1_3),
     ExperimentalBuilderInference(KOTLIN_1_3),
 
+    // 1.4
+
     DslMarkerOnFunctionTypeReceiver(KOTLIN_1_4, kind = BUG_FIX),
     RestrictReturnStatementTarget(KOTLIN_1_4, kind = BUG_FIX),
     NoConstantValueAttributeForNonConstVals(KOTLIN_1_4, kind = BUG_FIX),
@@ -116,7 +125,6 @@ enum class LanguageFeature(
     AllowAssigningArrayElementsToVarargsInNamedFormForFunctions(KOTLIN_1_4),
     AllowNullOperatorsForResult(KOTLIN_1_4),
     AllowResultInReturnType(KOTLIN_1_4, defaultState = State.DISABLED),
-    AllowNullOperatorsForResultAndResultReturnTypeByDefault(KOTLIN_1_5, defaultState = State.ENABLED),
     PreferJavaFieldOverload(KOTLIN_1_4),
     AllowContractsForNonOverridableMembers(KOTLIN_1_4),
     AllowReifiedGenericsInContracts(KOTLIN_1_4),
@@ -128,27 +136,51 @@ enum class LanguageFeature(
     MangleClassMembersReturningInlineClasses(KOTLIN_1_4),
     ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass(KOTLIN_1_4, kind = BUG_FIX, defaultState = State.ENABLED),
 
+    NewInference(KOTLIN_1_4),
+
+    // In the next block, features can be enabled only along with new inference
+    // v----------------------------------------------------------------------v
+    SamConversionForKotlinFunctions(KOTLIN_1_4),
+    SamConversionPerArgument(KOTLIN_1_4),
+    FunctionReferenceWithDefaultValueAsOtherType(KOTLIN_1_4),
+    SuspendConversion(KOTLIN_1_4, defaultState = State.DISABLED),
+    UnitConversion(KOTLIN_1_4, defaultState = State.DISABLED),
+    OverloadResolutionByLambdaReturnType(KOTLIN_1_4),
+    ContractsOnCallsWithImplicitReceiver(KOTLIN_1_4),
+    BooleanElvisBoundSmartCasts(KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
+    NewDataFlowForTryExpressions(KOTLIN_1_4, defaultState = State.DISABLED),
+    ReferencesToSyntheticJavaProperties(KOTLIN_1_3, defaultState = State.DISABLED),
+    // ^----------------------------------------------------------------------^
+
+    // 1.5
+
     ProhibitSpreadOnSignaturePolymorphicCall(KOTLIN_1_5, kind = BUG_FIX),
     ProhibitInvisibleAbstractMethodsInSuperclasses(KOTLIN_1_5, kind = BUG_FIX),
     ProhibitNonReifiedArraysAsReifiedTypeArguments(KOTLIN_1_5, kind = BUG_FIX),
     ProhibitVarargAsArrayAfterSamArgument(KOTLIN_1_5, kind = BUG_FIX),
     CorrectSourceMappingSyntax(KOTLIN_1_5, kind = UNSTABLE_FEATURE),
     ProperArrayConventionSetterWithDefaultCalls(KOTLIN_1_5, kind = OTHER),
-    DisableCompatibilityModeForNewInference(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
-    AdaptedCallableReferenceAgainstReflectiveType(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
+    DisableCompatibilityModeForNewInference(KOTLIN_1_5, defaultState = State.DISABLED),
+    AdaptedCallableReferenceAgainstReflectiveType(KOTLIN_1_5, defaultState = State.DISABLED),
     InferenceCompatibility(KOTLIN_1_5, kind = BUG_FIX),
     RequiredPrimaryConstructorDelegationCallInEnums(KOTLIN_1_5, kind = BUG_FIX),
     ApproximateAnonymousReturnTypesInPrivateInlineFunctions(KOTLIN_1_5, kind = BUG_FIX),
     ForbidReferencingToUnderscoreNamedParameterOfCatchBlock(KOTLIN_1_5, kind = BUG_FIX),
     UseCorrectExecutionOrderForVarargArguments(KOTLIN_1_5, kind = BUG_FIX),
     JvmRecordSupport(KOTLIN_1_5),
-
+    AllowNullOperatorsForResultAndResultReturnTypeByDefault(KOTLIN_1_5, defaultState = State.ENABLED),
     AllowSealedInheritorsInDifferentFilesOfSamePackage(KOTLIN_1_5),
     SealedInterfaces(KOTLIN_1_5),
     JvmIrEnabledByDefault(KOTLIN_1_5),
+    JvmInlineValueClasses(KOTLIN_1_5, defaultState = State.ENABLED, kind = OTHER),
+    SuspendFunctionsInFunInterfaces(KOTLIN_1_5, defaultState = State.ENABLED, kind = OTHER),
+    SamWrapperClassesAreSynthetic(KOTLIN_1_5, defaultState = State.ENABLED, kind = BUG_FIX),
+    StrictOnlyInputTypesChecks(KOTLIN_1_5),
+
     // Disabled until the breaking change is approved by the committee, see KT-10884.
     PackagePrivateFileClassesWithAllPrivateMembers(KOTLIN_1_5, defaultState = State.DISABLED),
-    StrictOnlyInputTypesChecks(sinceVersion = KOTLIN_1_5),
+
+    // 1.6
 
     /*
      * Improvements include the following:
@@ -163,12 +195,18 @@ enum class LanguageFeature(
      *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
      */
     TypeEnhancementImprovementsInStrictMode(KOTLIN_1_6),
+    ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor(KOTLIN_1_6, kind = BUG_FIX),
+    PrivateInFileEffectiveVisibility(KOTLIN_1_6, kind = BUG_FIX),
+    ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_6, kind = BUG_FIX),
+    ProhibitSelfCallsInNestedObjects(KOTLIN_1_6, kind = BUG_FIX),
+    ApproximateIntegerLiteralTypesInReceiverPosition(KOTLIN_1_6),
+    ProperCheckAnnotationsTargetInTypeUsePositions(KOTLIN_1_6, kind = BUG_FIX),
+
+    DefinitelyNotNullTypeParameters(KOTLIN_1_6),
+    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_6, kind = BUG_FIX),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
-
-    // Looks like we can't enable it until KT-26245 is fixed because otherwise some use cases become broken because of overrides
-    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = null, kind = BUG_FIX),
 
     // Experimental features
 
@@ -177,35 +215,14 @@ enum class LanguageFeature(
         "https://kotlinlang.org/docs/diagnostics/experimental-coroutines",
         State.ENABLED_WITH_WARNING
     ),
-
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
+    InlineClasses(KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
 
-    NewInference(sinceVersion = KOTLIN_1_4),
-
-    // In the next block, features can be enabled only along with new inference
-    SamConversionForKotlinFunctions(sinceVersion = KOTLIN_1_4),
-    SamConversionPerArgument(sinceVersion = KOTLIN_1_4),
-    FunctionReferenceWithDefaultValueAsOtherType(sinceVersion = KOTLIN_1_4),
-    SuspendConversion(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
-    UnitConversion(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
-    OverloadResolutionByLambdaReturnType(sinceVersion = KOTLIN_1_4),
-    ContractsOnCallsWithImplicitReceiver(sinceVersion = KOTLIN_1_4),
-
-    BooleanElvisBoundSmartCasts(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
-    NewDataFlowForTryExpressions(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
-    ReferencesToSyntheticJavaProperties(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
-    // ------
-    // Next features can be enabled regardless of new inference
-
-    InlineClasses(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
-    JvmInlineValueClasses(sinceVersion = KOTLIN_1_5, defaultState = State.ENABLED, kind = OTHER),
-    SuspendFunctionsInFunInterfaces(sinceVersion = KOTLIN_1_5, defaultState = State.ENABLED, kind = OTHER),
-    SamWrapperClassesAreSynthetic(sinceVersion = KOTLIN_1_5, defaultState = State.ENABLED, kind = BUG_FIX)
     ;
 
     val presentableName: String
-    // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
-        get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::toLowerCase)
+        // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
+        get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::lowercase)
 
     val presentableText get() = if (hintUrl == null) presentableName else "$presentableName (See: $hintUrl)"
 
@@ -338,7 +355,7 @@ interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean =
         getFeatureSupport(feature).let {
             it == LanguageFeature.State.ENABLED ||
-            it == LanguageFeature.State.ENABLED_WITH_WARNING
+                    it == LanguageFeature.State.ENABLED_WITH_WARNING
         }
 
     fun isPreRelease(): Boolean

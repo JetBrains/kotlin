@@ -18,7 +18,6 @@ internal class StdlibRepository(
     }
 
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {
-        return if (target is SharedCommonizerTarget) setOf(stdlib)
-        else emptySet()
+        return if (target is SharedCommonizerTarget) setOf(stdlib) else emptySet()
     }
 }

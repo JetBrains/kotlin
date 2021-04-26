@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.core.CommonizedTypeAliasAnswer.Companion.FAILURE_MISSING_IN_SOME_TARGET
 import org.jetbrains.kotlin.commonizer.core.CommonizedTypeAliasAnswer.Companion.SUCCESS_FROM_DEPENDENCY_LIBRARY
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
+import org.jetbrains.kotlin.descriptors.Visibility
 
 class TypeCommonizer(private val classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirType, CirType>() {
     private lateinit var wrapped: Commonizer<*, CirType>
@@ -141,7 +141,11 @@ private class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifie
 
             // type alias don't needs to be commonized because it is from the standard library
             fun forKnownUnderlyingType(underlyingType: CirClassOrTypeAliasType) = object : CommonizedTypeAliasTypeBuilder {
-                override fun build(typeAliasId: CirEntityId, arguments: List<CirTypeProjection>, isMarkedNullable: Boolean): CirTypeAliasType {
+                override fun build(
+                    typeAliasId: CirEntityId,
+                    arguments: List<CirTypeProjection>,
+                    isMarkedNullable: Boolean
+                ): CirTypeAliasType {
                     val underlyingTypeWithProperNullability = underlyingType.makeNullableIfNecessary(isMarkedNullable)
                     return CirTypeAliasType.createInterned(
                         typeAliasId = typeAliasId,

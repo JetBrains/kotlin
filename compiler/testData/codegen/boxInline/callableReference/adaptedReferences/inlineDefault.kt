@@ -11,7 +11,7 @@ inline fun foo(mkString: () -> String): String =
         mkString()
 
 inline fun bar (xs: CharArray = charArrayOf('O','K')) =
-        String(xs)
+        xs.concatToString()
 
 // FILE: 2.kt
 import test.*

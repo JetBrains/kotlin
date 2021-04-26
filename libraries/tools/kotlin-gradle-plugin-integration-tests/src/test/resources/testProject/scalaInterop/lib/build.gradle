@@ -1,10 +1,12 @@
-apply plugin: "java"
-apply plugin: "scala"
+plugins {
+    id "java-library"
+    id "scala"
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.scala-lang:scala-library:2.12.7'
+    api 'org.scala-lang:scala-library:2.12.7'
 }

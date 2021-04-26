@@ -256,22 +256,24 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
 
     @Test
     fun testNoFailureIfConfigurationIsObserved() = with(jvmProject()) {
-        lateinit var originalScript: String
-        try {
-            gradleBuildScript().modify {
-                originalScript = it
-                """
-                    configurations.create("api")
-                    dependencies {
-                        api("org.jetbrains.kotlin:kotlin-reflect")
-                    }
-                    println(configurations.api.incoming.dependencies.toList())
-                """.trimIndent() + "\n" + it
+        gradleBuildScript().modify {
+            //language=Groovy
+            """
+            $it
+            
+            configurations {
+                 apiTest
+                 api.extendsFrom(apiTest)
             }
-            checkTaskCompileClasspath("compileKotlin", listOf("kotlin-reflect"))
-        } finally {
-            gradleBuildScript().writeText(originalScript)
+            
+            dependencies {
+                apiTest("org.jetbrains.kotlin:kotlin-reflect")
+            }
+            println(configurations.apiTest.incoming.resolutionResult.allDependencies)
+            println(configurations.apiTest.incoming.dependencies.toList())
+            """.trimIndent()
         }
+        checkTaskCompileClasspath("compileKotlin", listOf("kotlin-reflect"))
     }
 
     private fun Project.checkConfigurationContent(

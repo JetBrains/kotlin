@@ -330,7 +330,7 @@ class GenerationState private constructor(
 
     val typeApproximator: TypeApproximator? =
         if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-            TypeApproximator(module.builtIns)
+            TypeApproximator(module.builtIns, languageVersionSettings)
         else
             null
 

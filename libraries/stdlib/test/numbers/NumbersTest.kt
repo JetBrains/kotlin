@@ -128,8 +128,8 @@ class NumbersTest {
     }
 
     @Test fun charMinMaxValues() {
-        assertTrue(Char.MIN_VALUE.toInt() == 0)
-        assertTrue(Char.MAX_VALUE.toInt() > 0)
+        assertTrue(Char.MIN_VALUE.code == 0)
+        assertTrue(Char.MAX_VALUE.code > 0)
 
         // overflow behavior
         expect(Char.MIN_VALUE) { Char.MAX_VALUE + one }

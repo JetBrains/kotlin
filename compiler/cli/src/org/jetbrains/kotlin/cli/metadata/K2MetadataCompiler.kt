@@ -62,8 +62,9 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
+        val commonSources = arguments.commonSources?.toSet() ?: emptySet()
         for (arg in arguments.freeArgs) {
-            configuration.addKotlinSourceRoot(arg, isCommon = true)
+            configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources)
         }
         if (arguments.classpath != null) {
             configuration.addJvmClasspathRoots(arguments.classpath!!.split(File.pathSeparatorChar).map(::File))

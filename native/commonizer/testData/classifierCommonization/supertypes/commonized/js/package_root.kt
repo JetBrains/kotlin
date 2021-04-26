@@ -3,12 +3,12 @@ actual interface A1 {
     actual fun function1(): Int
 }
 
-actual abstract class A2 actual constructor(): A1 {
+actual abstract class A2 actual constructor() : A1 {
     actual abstract val property2: Int
     actual abstract fun function2(): Int
 }
 
-actual class A3 actual constructor(): A2() {
+actual class A3 actual constructor() : A2() {
     actual override val property1 = 1
     actual override val property2 = 1
     actual val property3 = 1
@@ -28,7 +28,7 @@ interface B2 {
     fun function2(): Int
 }
 
-actual class B3 actual constructor(): B1, B2 {
+actual class B3 actual constructor() : B1, B2 {
     actual override val property1 = 1
     actual override val property2 = 1
     actual val property3 = 1
@@ -48,7 +48,7 @@ interface C2 {
     fun function2(): Int
 }
 
-actual class C3 actual constructor(): C1, C2 {
+actual class C3 actual constructor() : C1, C2 {
     actual override val property1 = 1
     actual override val property2 = 1
     actual val property3 = 1
@@ -68,7 +68,7 @@ actual interface D2 {
     actual fun function2(): Int
 }
 
-actual class D3 actual constructor(): D1, D2 {
+actual class D3 actual constructor() : D1, D2 {
     actual override val property1 = 1
     actual override val property2 = 1
     actual val property3 = 1

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
@@ -37,7 +38,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             is FieldWithDefault -> origin.transform()
 
             is FirField ->
-                println("$name = ${name}${call()}transformSingle(transformer, data)")
+                println("$name = ${name}${call()}transform(transformer, data)")
 
             is FieldList -> {
                 println("${name}.transformInplace(transformer, data)")
@@ -57,8 +58,8 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
         print("${kind!!.title} $type")
         print(element.typeParameters)
 
-        val isInterface = kind == Implementation.Kind.Interface
-        val isAbstract = kind == Implementation.Kind.AbstractClass
+        val isInterface = kind == Kind.Interface || kind == Kind.SealedInterface
+        val isAbstract = kind == Kind.AbstractClass || kind == Kind.SealedClass
 
         fun abstract() {
             if (isAbstract) {
@@ -80,7 +81,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
         }
 
         print(" : ")
-        if (!isInterface && !allParents.any { it.kind == Implementation.Kind.AbstractClass }) {
+        if (!isInterface && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }) {
             print("${pureAbstractElementType.type}(), ")
         }
         print(allParents.joinToString { "${it.typeWithArguments}${it.kind.braces()}" })
@@ -198,13 +199,13 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 val dispatchReceiver = implementation["dispatchReceiver"]!!
                                 val extensionReceiver = implementation["extensionReceiver"]!!
                                 if (explicitReceiver.isMutable) {
-                                    println("explicitReceiver = explicitReceiver${explicitReceiver.call()}transformSingle(transformer, data)")
+                                    println("explicitReceiver = explicitReceiver${explicitReceiver.call()}transform(transformer, data)")
                                 }
                                 if (dispatchReceiver.isMutable) {
                                     println(
                                         """
                                     |if (dispatchReceiver !== explicitReceiver) {
-                                    |            dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
+                                    |            dispatchReceiver = dispatchReceiver.transform(transformer, data)
                                     |        }
                                 """.trimMargin(),
                                     )
@@ -213,7 +214,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                     println(
                                         """
                                     |if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-                                    |            extensionReceiver = extensionReceiver.transformSingle(transformer, data)
+                                    |            extensionReceiver = extensionReceiver.transform(transformer, data)
                                     |        }
                                 """.trimMargin(),
                                     )
@@ -228,7 +229,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
                             field.needsSeparateTransform -> {
                                 if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {
-                                    println("transform${field.name.capitalize()}(transformer, data)")
+                                    println("transform${field.name.replaceFirstChar(Char::uppercaseChar)}(transformer, data)")
                                 }
                             }
 
@@ -266,10 +267,10 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                             println(
                                 """
                                 |if (subjectVariable != null) {
-                                |            subjectVariable = subjectVariable?.transformSingle(transformer, data)
+                                |            subjectVariable = subjectVariable?.transform(transformer, data)
                                 |            subject = subjectVariable?.initializer
                                 |        } else {
-                                |            subject = subject?.transformSingle(transformer, data)
+                                |            subject = subject?.transform(transformer, data)
                                 |        }
                                     """.trimMargin(),
                             )
@@ -297,7 +298,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 field.transform()
                             }
                             if (field.needTransformInOtherChildren) {
-                                println("transform${field.name.capitalize()}(transformer, data)")
+                                println("transform${field.name.replaceFirstChar(Char::uppercaseChar)}(transformer, data)")
                             }
                         }
                         println("return this")
@@ -335,7 +336,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             }
 
             for (field in allFields.filter { it.withReplace }) {
-                val capitalizedFieldName = field.name.capitalize()
+                val capitalizedFieldName = field.name.replaceFirstChar(Char::uppercaseChar)
                 val newValue = "new$capitalizedFieldName"
                 generateReplace(field, forceNullable = field.useNullableForReplace) {
                     when {

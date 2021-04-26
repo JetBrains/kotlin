@@ -53,7 +53,7 @@ fun case_3(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_4(x: Class?) {
-    if (x!!?.prop_8?.prop_8?.prop_8?.prop_8 == null == true) else {
+    if (x!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8?.prop_8?.prop_8?.prop_8 == null == true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
@@ -68,7 +68,7 @@ fun case_4(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_5(x: Class?) {
-    if (x?.prop_8!!?.prop_8?.prop_8?.prop_8 == null == true) else {
+    if (x?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8?.prop_8?.prop_8 == null == true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
@@ -83,7 +83,7 @@ fun case_5(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_6(x: Class?) {
-    if (x?.prop_8?.prop_8?.prop_8!!?.prop_8 == null == true) else {
+    if (x?.prop_8?.prop_8?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8 == null == true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
@@ -98,7 +98,7 @@ fun case_6(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_7(x: Class) {
-    if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
+    if (x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.prop_8?.prop_8?.prop_8?.prop_8 != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
@@ -113,7 +113,7 @@ fun case_7(x: Class) {
  * ISSUES: KT-30376
  */
 fun case_8(x: Class) {
-    if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
+    if (x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.prop_8?.prop_8?.prop_8?.prop_8 != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8

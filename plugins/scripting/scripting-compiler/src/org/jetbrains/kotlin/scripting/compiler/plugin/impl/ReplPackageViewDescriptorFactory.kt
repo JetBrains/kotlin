@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LazyPackageViewDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageViewDescriptorFactory
+import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.StorageManager
@@ -34,4 +35,9 @@ class ReplPackageViewDescriptor(
             if (calculatedFragments.isNotEmpty()) cachedFragments = calculatedFragments
             return calculatedFragments
         }
+
+    override fun isEmpty(): Boolean {
+        cachedFragments?.let { return it.isEmpty() }
+        return module.packageFragmentProvider.isEmpty(fqName)
+    }
 }

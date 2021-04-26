@@ -7,14 +7,14 @@ fun f1(s: String?) {
 
 fun f2(s: Number?) {
     if (s is Int);
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(s)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
     if (s as Int == 42);
     checkSubtype<Int>(s)
 }
 
 fun f3(s: Number?) {
     if (s is Int && s as Int == 42);
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(s)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }
 
 fun f4(s: Int?) {

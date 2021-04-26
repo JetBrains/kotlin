@@ -27,7 +27,7 @@ class AllCodePointsTest {
 
     fun codePointToString(codePoint: Int): String {
         val charArray = Char.toChars(codePoint)
-        return String(charArray, 0, charArray.size)
+        return charArray.concatToString(0, charArray.size)
     }
 
     // TODO: Here is a performance problem: an execution of this test requires much more time than it in Kotlin/JVM.

@@ -23,6 +23,7 @@ import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlugin
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import java.io.File
 import java.net.URLClassLoader
 import java.net.URLDecoder
@@ -119,7 +120,7 @@ internal fun findToolsJar(): File? {
     return javacUtilContextClass?.let(::findJarByClass)
 }
 
-private fun findJarByClass(klass: Class<*>): File? {
+internal fun findJarByClass(klass: Class<*>): File? {
     val classFileName = klass.name.substringAfterLast(".") + ".class"
     val resource = klass.getResource(classFileName) ?: return null
     val uri = resource.toString()
@@ -130,16 +131,13 @@ private fun findJarByClass(klass: Class<*>): File? {
 }
 
 private fun findKotlinModuleJar(project: Project, expectedClassName: String, moduleId: String): List<File> {
-    val pluginVersion = pluginVersionFromAppliedPlugin(project)
+    val pluginVersion = project.getKotlinPluginVersion()
 
     val filesToCheck = sequenceOf(pluginVersion?.let { version -> getModuleFromClassLoader(moduleId, version) }) +
             Sequence { findPotentialModuleJars(project, moduleId).iterator() } //call the body only when queried
     val entryToFind = expectedClassName.replace(".", "/") + ".class"
     return filesToCheck.filterNotNull().firstOrNull { it.hasEntry(entryToFind) }?.let { listOf(it) } ?: emptyList()
 }
-
-private fun pluginVersionFromAppliedPlugin(project: Project): String? =
-    project.plugins.filterIsInstance<KotlinBasePluginWrapper>().firstOrNull()?.kotlinPluginVersion
 
 private fun getModuleFromClassLoader(moduleId: String, moduleVersion: String): File? {
     val urlClassLoader = KotlinPlugin::class.java.classLoader as? URLClassLoader ?: return null

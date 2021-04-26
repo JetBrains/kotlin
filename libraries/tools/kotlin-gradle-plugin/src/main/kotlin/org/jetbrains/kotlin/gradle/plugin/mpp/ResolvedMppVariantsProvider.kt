@@ -14,25 +14,26 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import java.io.File
 
 internal class ResolvedMppVariantsProvider private constructor(private val project: Project) {
     companion object {
-
-        fun get(project: Project): ResolvedMppVariantsProvider = with(project.extensions.extraProperties) {
+        fun get(project: Project): ResolvedMppVariantsProvider {
             val propertyName = "kotlin.mpp.internal.resolvedModuleVariantsProvider"
-            if (!has(propertyName)) {
-                set(propertyName, ResolvedMppVariantsProvider(project))
+            return project.extensions.extraProperties.getOrPut(propertyName) {
+                ResolvedMppVariantsProvider(project)
             }
-            @Suppress("UNCHECKED_CAST")
-            get(propertyName) as ResolvedMppVariantsProvider
         }
     }
 
     /** Gets the name of the variant that the module specified by the [moduleIdentifier] resolved to in the given [configuration].
      * The [moduleIdentifier] may be either the root module or a platform-specific module, the result is the same for the two cases. */
-    fun getResolvedVariantName(moduleIdentifier: ModuleDependencyIdentifier, configuration: Configuration): String? =
+    fun getResolvedVariantName(moduleIdentifier: KotlinModuleIdentifier, configuration: Configuration): String? =
         getEntryForModule(moduleIdentifier).run {
             if (configuration !in resolvedVariantsByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.NONE)
@@ -45,13 +46,14 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
      * module of a multiplatform project, not one of its platform-specific modules, as seen in the given [configuration].
      * If the [configuration] requests platform artifacts and not the common code metadata, then this function will resolve its
      * dependencies to metadata separately. */
-    fun getMetadataArtifactByRootModule(rootModuleIdentifier: ModuleDependencyIdentifier, configuration: Configuration): File? {
+    fun getHostSpecificMetadataArtifactByRootModule(rootModuleIdentifier: KotlinModuleIdentifier, configuration: Configuration): File? {
         val rootModuleEntry = getEntryForModule(rootModuleIdentifier)
 
         val platformModuleEntry = rootModuleEntry.run {
             if (configuration !in chosenPlatformModuleByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.METADATA)
             }
+            // At this point the map should contain the result if calculation above succeeded. If not, put null to avoid recalculation.
             chosenPlatformModuleByConfiguration.getOrPut(configuration) { null }
         }
 
@@ -66,7 +68,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
     }
 
     /** Gets the artifact of a particular MPP platform-specific [moduleIdentifier] as resolved in the [configuration]. */
-    fun getPlatformArtifactByPlatformModule(moduleIdentifier: ModuleDependencyIdentifier, configuration: Configuration): File? =
+    fun getResolvedArtifactByPlatformModule(moduleIdentifier: KotlinModuleIdentifier, configuration: Configuration): File? =
         getEntryForModule(moduleIdentifier).run {
             if (configuration !in resolvedArtifactByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.NORMAL)
@@ -75,10 +77,10 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
             resolvedArtifactByConfiguration.getOrPut(configuration) { null }
         }
 
-    private fun getEntryForModule(moduleIdentifier: ModuleDependencyIdentifier) =
+    private fun getEntryForModule(moduleIdentifier: KotlinModuleIdentifier) =
         entriesCache.getOrPut(moduleIdentifier, { ModuleEntry(moduleIdentifier) })
 
-    private val entriesCache: MutableMap<ModuleDependencyIdentifier, ModuleEntry> = mutableMapOf()
+    private val entriesCache: MutableMap<KotlinModuleIdentifier, ModuleEntry> = mutableMapOf()
 
     private val mppComponentsByConfiguration: MutableMap<Configuration, Set<ResolvedComponentResult>> = mutableMapOf()
 
@@ -104,22 +106,25 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
         val result = mutableListOf<ResolvedComponentResult>()
 
         configuration.incoming.resolutionResult.allComponents { component ->
-            val moduleId = ModuleIds.fromComponent(project, component)
-            val variants = component.variants
-
-            val isMpp = variants.any { variant -> variant.attributes.keySet().any { it.name == KotlinPlatformType.attribute.name } }
+            val isMpp =
+                component.dependents.isNotEmpty() && // filter out the root of the dependency graph, we are not interested in it
+                component.variants.any { variant -> variant.attributes.keySet().any { it.name == KotlinPlatformType.attribute.name } }
             if (isMpp) {
                 result.add(component)
-                val moduleEntry = getEntryForModule(moduleId)
-                moduleEntry.resolvedVariantsByConfiguration[configuration] = variants
+                component.dependents.forEach { dependent ->
+                    dependent.requested.toModuleIdentifiers().forEach { moduleId ->
+                        val moduleEntry = getEntryForModule(moduleId)
+                        moduleEntry.resolvedVariantsByConfiguration[configuration] = listOf(dependent.resolvedVariant)
 
-                moduleEntry.dependenciesByConfiguration[configuration] = component.dependencies
-                    .filterIsInstance<ResolvedDependencyResult>()
-                    .map { dependency -> ModuleIds.fromComponent(project, dependency.selected) }
+                        moduleEntry.dependenciesByConfiguration[configuration] = component.dependencies
+                            .filterIsInstance<ResolvedDependencyResult>()
+                            .map { dependency -> dependency.selected.toSingleModuleIdentifier() }
 
-                if (component.id is ProjectComponentIdentifier) {
-                    // Then the platform variant chosen for this module is definitely inside the module itself:
-                    moduleEntry.chosenPlatformModuleByConfiguration[configuration] = moduleEntry
+                        if (component.id is ProjectComponentIdentifier) {
+                            // Then the platform variant chosen for this module is definitely inside the module itself:
+                            moduleEntry.chosenPlatformModuleByConfiguration[configuration] = moduleEntry
+                        }
+                    }
                 }
             }
         }
@@ -159,36 +164,40 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
         configuration: Configuration,
         artifactResolutionMode: ArtifactResolutionMode
     ) {
-        val mppModuleIds = mppComponentIds.mapTo(mutableSetOf()) { ModuleIds.fromComponent(project, it) }
+        val mppModuleIds = mppComponentIds.flatMapTo(mutableSetOf()) { componentId ->
+            componentId.toModuleIdentifiers()
+        }
 
         mppComponentIds.forEach { componentId ->
-            val moduleEntry = getEntryForModule(ModuleIds.fromComponent(project, componentId))
-            val artifact = artifacts[componentId]
-            when {
-                // With project dependencies, we don't need the host-specific metadata artifacts, as we have the compilation outputs:
-                componentId is ProjectComponentIdentifier -> {
-                    moduleEntry.resolvedMetadataArtifactByConfiguration[configuration] = null
-                }
-
-                // We found the host-specific artifact for a platform variant of some MPP:
-                artifact != null -> {
-                    val resolvedArtifactMap = when (artifactResolutionMode) {
-                        ArtifactResolutionMode.NORMAL -> moduleEntry.resolvedArtifactByConfiguration
-                        ArtifactResolutionMode.METADATA -> moduleEntry.resolvedMetadataArtifactByConfiguration
-                        else -> error("unexpected $artifactResolutionMode")
+            componentId.toModuleIdentifiers().forEach { moduleId ->
+                val moduleEntry = getEntryForModule(moduleId)
+                val artifact = artifacts[componentId]
+                when {
+                    // With project dependencies, we don't need the host-specific metadata artifacts, as we have the compilation outputs:
+                    componentId is ProjectComponentIdentifier -> {
+                        moduleEntry.resolvedMetadataArtifactByConfiguration[configuration] = null
                     }
-                    resolvedArtifactMap[configuration] = artifact.file
-                }
 
-                // Otherwise, this may be a root module of some MPP that resolved to a variant in another module. Take a note of that.
-                else -> {
-                    // TODO: there's an assumption that resolving a root MPP module to a host-specific metadata artifact and to a platform
-                    //  artifact will choose variants that are published within the same Maven module; change this code if that's not
-                    //  true anymore.
-                    val singleDependencyId = moduleEntry.dependenciesByConfiguration.getValue(configuration).singleOrNull()
-                    if (singleDependencyId != null && singleDependencyId in mppModuleIds) {
-                        moduleEntry.chosenPlatformModuleByConfiguration[configuration] =
-                            getEntryForModule(singleDependencyId)
+                    // We found a requested artifact of the MPP; it is one of: platform artifact, root metadata, host-specific metadata
+                    artifact != null -> {
+                        val resolvedArtifactMap = when (artifactResolutionMode) {
+                            ArtifactResolutionMode.NORMAL -> moduleEntry.resolvedArtifactByConfiguration
+                            ArtifactResolutionMode.METADATA -> moduleEntry.resolvedMetadataArtifactByConfiguration
+                            else -> error("unexpected $artifactResolutionMode")
+                        }
+                        resolvedArtifactMap[configuration] = artifact.file
+                    }
+
+                    // Otherwise, this may be a root module of some MPP that resolved to a variant in another module. Take a note of that.
+                    else -> {
+                        // TODO: there's an assumption that resolving a root MPP module to a host-specific metadata artifact and to a platform
+                        //  artifact will choose variants that are published within the same Maven module; change this code if that's not
+                        //  true anymore.
+                        val singleDependencyId = moduleEntry.dependenciesByConfiguration.getValue(configuration).singleOrNull()
+                        if (singleDependencyId != null && singleDependencyId in mppModuleIds) {
+                            moduleEntry.chosenPlatformModuleByConfiguration[configuration] =
+                                getEntryForModule(singleDependencyId)
+                        }
                     }
                 }
             }
@@ -202,9 +211,9 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
      */
     private class ModuleEntry(
         @Suppress("unused") // simplify debugging
-        val moduleIdentifier: ModuleDependencyIdentifier
+        val moduleIdentifier: KotlinModuleIdentifier
     ) {
-        val dependenciesByConfiguration: MutableMap<Configuration, List<ModuleDependencyIdentifier>> = HashMap()
+        val dependenciesByConfiguration: MutableMap<Configuration, List<KotlinModuleIdentifier>> = HashMap()
         val resolvedVariantsByConfiguration: MutableMap<Configuration, List<ResolvedVariantResult?>?> = HashMap()
         val resolvedArtifactByConfiguration: MutableMap<Configuration, File?> = HashMap()
         val resolvedMetadataArtifactByConfiguration: MutableMap<Configuration, File?> = HashMap()

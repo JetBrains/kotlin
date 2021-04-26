@@ -19,6 +19,6 @@ class A3<T> {
     fun test2(): (T) -> Unit = A3<T>()::a3
     fun test3(): (Int) -> String = A3<Int>()::a3
 
-    fun <R> test4(): (R) -> Unit = this::a3
+    fun <R> test4(): (R) -> Unit = <!RETURN_TYPE_MISMATCH!>this::a3<!>
     fun <R> test5(): (T) -> R = this::a3
 }

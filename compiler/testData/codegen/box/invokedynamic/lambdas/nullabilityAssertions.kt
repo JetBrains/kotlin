@@ -2,7 +2,12 @@
 // JVM_TARGET: 1.8
 // LAMBDAS: INDY
 // WITH_RUNTIME
+// CHECK_BYTECODE_TEXT
+
 // FILE: nullabilityAssertions.kt
+// JVM_IR_TEMPLATES
+// 1 java/lang/invoke/LambdaMetafactory
+
 fun box(): String {
     val fn: (String) -> String = { it }
     try {

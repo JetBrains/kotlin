@@ -4,6 +4,6 @@ class X
 operator fun <T> X.iterator(): Iterable<T> = TODO()
 
 fun test() {
-    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (i in X()) {
-    }<!>
+    for (i in <!HAS_NEXT_MISSING, NEXT_MISSING!>X()<!>) {
+    }
 }

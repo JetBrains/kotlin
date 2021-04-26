@@ -9,7 +9,7 @@ const val e = 0.0 % 0
 const val g = 0.0.rem(0)
 const val h = 0.0.div(0)
 
-const val i = 1 / 0
+const val i = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 / 0<!>
 
 val nonConst1 = 1.0 / 0
 val nonConst2 = 1 / 0

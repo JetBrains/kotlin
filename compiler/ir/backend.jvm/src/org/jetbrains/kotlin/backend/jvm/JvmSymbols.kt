@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
@@ -51,6 +51,7 @@ class JvmSymbols(
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
     private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
+    private val javaUtilPackage: IrPackageFragment = createPackage(FqName("java.util"))
 
     // Special package for functions representing dynamic symbols referenced by 'INVOKEDYNAMIC' instruction - e.g.,
     //  'get(Ljava/lang/String;)Ljava/util/function/Supplier;'
@@ -90,6 +91,7 @@ class JvmSymbols(
                 "kotlin.jvm" -> kotlinJvmPackage
                 "kotlin.reflect" -> kotlinReflectPackage
                 "java.lang" -> javaLangPackage
+                "java.util" -> javaUtilPackage
                 else -> error("Other packages are not supported yet: $fqName")
             }
             createImplicitParameterDeclarationWithWrappedDescriptor()
@@ -548,6 +550,7 @@ class JvmSymbols(
         }.symbol
 
     val arrayOfAnyType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyType)
+    val arrayOfAnyNType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
 
     // Intrinsic to represent closure creation using INVOKEDYNAMIC with LambdaMetafactory.{metafactory, altMetafactory}
     // as a bootstrap method.
@@ -742,14 +745,38 @@ class JvmSymbols(
         }
     }
 
-    private val systemClass: IrClassSymbol = createClass(FqName("java.lang.System")) { klass ->
-        klass.addFunction("arraycopy", irBuiltIns.unitType, isStatic = true).apply {
-            addValueParameter("src", irBuiltIns.anyNType)
-            addValueParameter("srcPos", irBuiltIns.intType)
-            addValueParameter("dest", irBuiltIns.anyNType)
-            addValueParameter("destPos", irBuiltIns.intType)
-            addValueParameter("length", irBuiltIns.intType)
+    private val arraysCopyOfFunctions = HashMap<IrClassifierSymbol, IrSimpleFunction>()
+
+    private fun IrClass.addArraysCopyOfFunction(arrayType: IrSimpleType) {
+        addFunction("copyOf", arrayType, isStatic = true).apply {
+            addValueParameter("original", arrayType)
+            addValueParameter("newLength", irBuiltIns.intType)
+            arraysCopyOfFunctions[arrayType.classifierOrFail] = this
         }
+    }
+
+    val arraysClass: IrClassSymbol =
+        createClass(FqName("java.util.Arrays")) { irClass ->
+            irClass.addArraysCopyOfFunction(booleanArrayType)
+            irClass.addArraysCopyOfFunction(byteArrayType)
+            irClass.addArraysCopyOfFunction(charArrayType)
+            irClass.addArraysCopyOfFunction(shortArrayType)
+            irClass.addArraysCopyOfFunction(intArrayType)
+            irClass.addArraysCopyOfFunction(longArrayType)
+            irClass.addArraysCopyOfFunction(floatArrayType)
+            irClass.addArraysCopyOfFunction(doubleArrayType)
+
+            // public static <T> T[] copyOf(T[] original, int newLength)
+            irClass.addArraysCopyOfFunction(arrayOfAnyNType)
+        }
+
+    fun getArraysCopyOfFunction(arrayType: IrSimpleType): IrSimpleFunctionSymbol {
+        val classifier = arrayType.classifier
+        val copyOf = arraysCopyOfFunctions[classifier]
+        if (copyOf != null)
+            return copyOf.symbol
+        else
+            throw AssertionError("Array type expected: ${arrayType.render()}")
     }
 
     private val javaLangInteger: IrClassSymbol = createClass(FqName("java.lang.Integer")) { klass ->
@@ -797,8 +824,6 @@ class JvmSymbols(
     val divideUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("divideUnsigned")
     val remainderUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("remainderUnsigned")
     val toUnsignedStringLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("toUnsignedString")
-
-    val systemArraycopy: IrSimpleFunctionSymbol = systemClass.functionByName("arraycopy")
 
     val signatureStringIntrinsic: IrSimpleFunctionSymbol =
         irFactory.buildFun {

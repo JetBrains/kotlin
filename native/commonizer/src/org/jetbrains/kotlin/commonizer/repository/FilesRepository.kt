@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.commonizer.repository
 
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.NativeLibraryLoader
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
+import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -17,18 +17,22 @@ internal class FilesRepository(
     private val libraryLoader: NativeLibraryLoader
 ) : Repository {
 
-    private val librariesByTarget: Map<CommonizerTarget, Set<NativeLibrary>> by lazy {
+    private val librariesByKonanTargets: Map<Set<KonanTarget>, Set<NativeLibrary>> by lazy {
         libraryFiles
             .map(libraryLoader::invoke)
-            .groupBy { library -> CommonizerTarget(library.manifestData.nativeTargets.map(::konanTargetOrThrow)) }
+            .groupBy { library ->
+                library.manifestData.commonizerTarget?.konanTargets
+                    ?: library.manifestData.nativeTargets.map(::konanTargetOrThrow).toSet()
+            }
             .mapValues { (_, list) -> list.toSet() }
     }
 
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {
-        return librariesByTarget[target].orEmpty()
+        return librariesByKonanTargets[target.konanTargets].orEmpty()
+    }
+
+    private fun konanTargetOrThrow(value: String): KonanTarget {
+        return KonanTarget.predefinedTargets[value] ?: error("Unexpected KonanTarget $value")
     }
 }
 
-private fun konanTargetOrThrow(value: String): KonanTarget {
-    return KonanTarget.predefinedTargets[value] ?: error("Unexpected KonanTarget $value")
-}

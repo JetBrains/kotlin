@@ -10,6 +10,7 @@ import kotlinx.metadata.KmTypeParameter
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
+import org.jetbrains.kotlin.commonizer.tree.deserializer.ClassesToProcess
 
 typealias TypeParameterId = Int
 typealias TypeParameterIndex = Int
@@ -70,6 +71,13 @@ abstract class CirTypeResolver : CirTypeParameterResolver {
 
             Nested(this, mapping)
         }
+
+    internal fun create(classEntry: ClassesToProcess.ClassEntry): CirTypeResolver {
+        return when (classEntry) {
+            is ClassesToProcess.ClassEntry.RegularClassEntry -> create(classEntry.clazz.typeParameters)
+            is ClassesToProcess.ClassEntry.EnumEntry -> this
+        }
+    }
 
     companion object {
         fun create(providedClassifiers: CirProvidedClassifiers): CirTypeResolver = TopLevel(providedClassifiers)

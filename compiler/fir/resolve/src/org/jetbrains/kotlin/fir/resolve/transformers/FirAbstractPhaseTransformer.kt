@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
 abstract class FirAbstractPhaseTransformer<D>(
@@ -27,22 +25,22 @@ abstract class FirAbstractPhaseTransformer<D>(
         }
     }
 
-    override fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirFile> {
+    override fun transformFile(file: FirFile, data: D): FirFile {
         checkSessionConsistency(file)
         file.replaceResolvePhase(transformerPhase)
 
         @Suppress("UNCHECKED_CAST")
-        return super.transformFile(file, data) as CompositeTransformResult<FirFile>
+        return super.transformFile(file, data) as FirFile
     }
 
-    override fun transformDeclaration(declaration: FirDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
+    override fun transformDeclaration(declaration: FirDeclaration, data: D): FirDeclaration {
         declaration.replaceResolvePhase(transformerPhase)
 
         return super.transformDeclaration(declaration, data)
     }
 
     protected fun checkSessionConsistency(file: FirFile) {
-        assert(session === file.session) {
+        assert(session === file.declarationSiteSession) {
             "File ${file.name} and transformer ${this::class} have inconsistent sessions"
         }
     }

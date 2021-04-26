@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
 class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
@@ -30,6 +32,12 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
         val source = errorTypeRef.source ?: return
         reportFirDiagnostic(errorTypeRef.diagnostic, source, reporter, data)
+    }
+
+    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: CheckerContext) {
+        val errorType = resolvedTypeRef.type as? ConeClassErrorType ?: return
+        val source = resolvedTypeRef.source ?: return
+        reportFirDiagnostic(errorType.diagnostic, source, reporter, data)
     }
 
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
@@ -82,16 +90,18 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     ) {
         // Will be handled by [FirDestructuringDeclarationChecker]
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
-            // TODO: if all diagnostics are supported, we don't need the following check, and will bail out based on element type.
-            if (diagnostic is ConeUnresolvedNameError ||
-                diagnostic is ConeAmbiguityError ||
-                diagnostic is ConeInapplicableCandidateError
-            ) {
-                return
-            }
+            return
         }
 
-        if (source.kind == FirFakeSourceElementKind.ImplicitConstructor) {
+        // Will be handled by [FirDelegatedPropertyChecker]
+        if (source.kind == FirFakeSourceElementKind.DelegatedPropertyAccessor &&
+            (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableCandidateError)
+        ) {
+            return
+        }
+
+        if (source.kind == FirFakeSourceElementKind.ImplicitConstructor || source.kind == FirFakeSourceElementKind.DesugaredForLoop) {
+            // See FirForLoopChecker
             return
         }
         for (coneDiagnostic in diagnostic.toFirDiagnostics(source, qualifiedAccessSource)) {

@@ -20,12 +20,9 @@ configurations {
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
-def commonSrcDir = "${projectDir}/../src/kotlin"
-def commonSrcDir2 = "${projectDir}/../common/src"
 def jsCommonDir = "${projectDir}/../js"
 
 def builtinsDir = "${rootDir}/core/builtins"
-def unsignedCommonSrcDir = "${rootDir}/libraries/stdlib/unsigned/src"
 
 def jsSrcDir = "src"
 def jsCommonSrcDir = "${jsCommonDir}/src"
@@ -142,11 +139,6 @@ compileKotlin2Js {
     kotlinOptions {
         outputFile = "${buildDir}/classes/main/kotlin.js"
         sourceMap = true
-        sourceMapPrefix = "./"
-        sourceMapBaseDirs = files(
-                [builtinsSrcDir, jsSrcDir, jsCommonSrcDir, commonSrcDir, commonSrcDir2, unsignedCommonSrcDir]
-                        .collect { file(it).absoluteFile }
-        )
         freeCompilerArgs += [
             "-Xopt-in=kotlin.RequiresOptIn",
             "-Xopt-in=kotlin.ExperimentalMultiplatform",
@@ -203,6 +195,7 @@ task compileJs(type: NoDebugJavaExec) {
     def sourceMapFile = file(jsOutputMapFileName)
     def jsOutputMetaFile = file(jsOutputMetaFileName)
     def compileMetaFile = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js'))
+    def mainJsOutputDir = compileKotlin2Js.destinationDirectory
     doLast {
         ant.replaceregexp(
                 file: jsOutputFileName,
@@ -222,23 +215,29 @@ task compileJs(type: NoDebugJavaExec) {
 
         def sourceMap = new groovy.json.JsonSlurper().parseText(sourceMapFile.text)
 
-        def sourceMapBasePaths = [
-                "./",
-                "libraries/stdlib/js-v1/src/js/",
-                "libraries/stdlib/js-v1/src/",
-        ]
-        sourceMap.sources = sourceMap.sources.collect { sourcePath ->
-            def prefixToRemove = sourceMapBasePaths.find { basePath -> sourcePath.startsWith(basePath) }
-            if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
-        }
-
-        def sourceMapSourcesBaseDirs = ["$projectDir/$jsSrcDir", jsCommonSrcDir, "$projectDir/$jsSrcJsDir", builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir,  unsignedCommonSrcDir]
+        def sourceMapSourcesBaseDirs = [mainJsOutputDir.get(), "${jsCommonDir}/runtime", projectDir, rootDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
             def text = sourceMapSourcesBaseDirs.collect { new File("$it/$sourceName") }.find { it.exists() }?.text
             if (text == null) logger.warn("Sources missing for file $sourceName")
             text
         }
+
+        def sourceMapBasePaths = [
+                "../../../../",
+                "../../../",
+                "../../",
+                "./",
+                "libraries/stdlib/js-v1/src/"
+        ]
+        def shortPaths = sourceMap.sources.collect { sourcePath ->
+            def prefixToRemove = sourceMapBasePaths.find { basePath -> sourcePath.startsWith(basePath) }
+            if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
+        }
+        if (shortPaths.size != shortPaths.toUnique().size) {
+            logger.warn("Duplicate source file names found:\n${sourceMap.sources.toSorted().join("\n")}")
+        }
+        sourceMap.sources = shortPaths
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
 

@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
 
 object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder) {
     fun configureBuilders() = with(firTreeBuilder) {
+        val declarationBuilder by builder {
+            fields from declaration
+        }
+
         val annotationContainerBuilder by builder {
             fields from annotationContainer
         }
@@ -28,6 +32,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         val classBuilder by builder {
+            parents += declarationBuilder
             parents += annotationContainerBuilder
             fields from klass without listOf("symbol", "resolvePhase")
         }
@@ -37,6 +42,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += typeParameterRefsOwnerBuilder
             defaultNull("companionObject")
             openBuilder()
+            withCopy()
         }
 
         val qualifiedAccessBuilder by builder {
@@ -52,6 +58,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         val functionBuilder by builder {
+            parents += declarationBuilder
             parents += annotationContainerBuilder
             fields from function without listOf("symbol", "resolvePhase", "controlFlowGraphReference", "receiverTypeRef", "typeParameters")
         }
@@ -85,16 +92,20 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(field) {
+            parents += declarationBuilder
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
             openBuilder()
         }
 
         builder(anonymousObject) {
+            parents += declarationBuilder
             parents += classBuilder
         }
 
         builder(typeAlias) {
+            parents += declarationBuilder
             parents += typeParametersOwnerBuilder
+            withCopy()
         }
 
         builder(annotationCall) {
@@ -178,6 +189,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(property) {
+            parents += declarationBuilder
             parents += typeParametersOwnerBuilder
             defaultNull("getter", "setter", "containerSource", "delegateFieldSymbol")
             default("resolvePhase", "FirResolvePhase.RAW_FIR")
@@ -208,6 +220,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(anonymousFunction) {
             parents += functionBuilder
             defaultNull("invocationKind", "label", "body", "controlFlowGraphReference")
+            default("inlineStatus", "InlineStatus.Unknown")
         }
 
         builder(propertyAccessor) {
@@ -286,6 +299,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(anonymousInitializer) {
+            parents += declarationBuilder
             default("symbol", "FirAnonymousInitializerSymbol()")
         }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.isFromJava
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.SYNTHESIZED_INIT_BLOCK
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
@@ -229,20 +229,9 @@ class ExpressionCodegen(
             if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
                 irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
             }
-            if (irFunction.isSuspend && irFunction.origin == IrDeclarationOrigin.BRIDGE) {
-                mv.areturn(OBJECT_TYPE)
-            } else {
-                var returnType = signature.returnType
-                var returnIrType = if (irFunction !is IrConstructor) irFunction.returnType else context.irBuiltIns.unitType
-                val unboxedInlineClass =
-                    irFunction.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
-                if (unboxedInlineClass != null) {
-                    returnIrType = unboxedInlineClass
-                    returnType = unboxedInlineClass.asmType
-                }
-                result.materializeAt(returnType, returnIrType)
-                mv.areturn(returnType)
-            }
+            val (returnType, returnIrType) = irFunction.returnAsmAndIrTypes()
+            result.materializeAt(returnType, returnIrType)
+            mv.areturn(returnType)
         }
         val endLabel = markNewLabel()
         writeLocalVariablesInTable(info, endLabel)
@@ -473,21 +462,6 @@ class ExpressionCodegen(
             addInlineMarker(mv, isStartNotEnd = false)
         }
 
-        if (unboxedInlineClassIrType != null) {
-            val isFunctionReference = irFunction.origin != IrDeclarationOrigin.BRIDGE &&
-                    irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-
-            val isDelegateCall = irFunction.origin == IrDeclarationOrigin.DELEGATED_MEMBER
-
-            if (irFunction.isInvokeSuspendOfContinuation() || isFunctionReference || isDelegateCall) {
-                mv.generateCoroutineSuspendedCheck(state.languageVersionSettings)
-                mv.checkcast(unboxedInlineClassIrType.asmType)
-            }
-            if (irFunction.isInvokeSuspendOfContinuation()) {
-                StackValue.boxInlineClass(unboxedInlineClassIrType, mv, typeMapper)
-            }
-        }
-
         return when {
             (expression.type.isNothing() || expression.type.isUnit()) && irFunction.shouldContainSuspendMarkers() -> {
                 // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
@@ -508,18 +482,20 @@ class ExpressionCodegen(
                 wrapJavaClassesIntoKClasses(mv)
                 MaterialValue(this, AsmTypes.K_CLASS_ARRAY_TYPE, expression.type)
             }
-            unboxedInlineClassIrType != null && !irFunction.isInvokeSuspendOfContinuation() ->
-                object : PromisedValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType) {
-                    override fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
-                        mv.checkcast(unboxedInlineClassIrType.asmType)
-                        MaterialValue(this@ExpressionCodegen, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType)
-                            .materializeAt(target, irTarget, castForReified)
-                    }
-
-                    override fun discard() {
-                        pop(mv, OBJECT_TYPE)
-                    }
+            unboxedInlineClassIrType != null && !irFunction.isNonBoxingSuspendDelegation() -> {
+                if (!irFunction.shouldContainSuspendMarkers()) {
+                    // Since the coroutine transformer won't run, we need to do this manually.
+                    mv.generateCoroutineSuspendedCheck(state.languageVersionSettings)
                 }
+                mv.checkcast(unboxedInlineClassIrType.asmType)
+                if (irFunction.isInvokeSuspendOfContinuation()) {
+                    // TODO: why is simply materializing the value with type `Object` not enough? This branch shouldn't be needed.
+                    StackValue.boxInlineClass(unboxedInlineClassIrType, mv, typeMapper)
+                    MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
+                } else {
+                    MaterialValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType)
+                }
+            }
             else ->
                 MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
         }
@@ -736,7 +712,7 @@ class ExpressionCodegen(
     private fun isDefaultValueForType(type: Type, value: Any?): Boolean =
         when (type) {
             Type.BOOLEAN_TYPE -> value is Boolean && !value
-            Type.CHAR_TYPE -> value is Char && value.toInt() == 0
+            Type.CHAR_TYPE -> value is Char && value.code == 0
             Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE, Type.LONG_TYPE -> value is Number && value.toLong() == 0L
             // Must use `equals` for these two to differentiate between +0.0 and -0.0:
             Type.FLOAT_TYPE -> value is Number && value.toFloat().equals(0.0f)
@@ -836,7 +812,7 @@ class ExpressionCodegen(
                 mv.nop()
                 return BooleanConstant(this, value)
             }
-            is Char -> mv.iconst(value.toInt())
+            is Char -> mv.iconst(value.code)
             is Long -> mv.lconst(value)
             is Float -> mv.fconst(value)
             is Double -> mv.dconst(value)
@@ -902,20 +878,25 @@ class ExpressionCodegen(
         }
     }
 
+    private fun IrFunction.returnAsmAndIrTypes(): Pair<Type, IrType> {
+        val unboxedInlineClass = suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
+        // In case of non-boxing delegation, the return type of the tail call was considered to be `Object`,
+        // so that's also what we'll return here to avoid casts/unboxings/etc.
+        if (unboxedInlineClass != null && !isNonBoxingSuspendDelegation()) {
+            return unboxedInlineClass.asmType to unboxedInlineClass
+        }
+        val asmType = if (this == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(this)
+        val irType = if (this is IrConstructor) context.irBuiltIns.unitType else returnType
+        return asmType to irType
+    }
+
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
         val returnTarget = expression.returnTargetSymbol.owner
         val owner = returnTarget as? IrFunction ?: error("Unsupported IrReturnTarget: $returnTarget")
         // TODO: should be owner != irFunction
         val isNonLocalReturn = methodSignatureMapper.mapFunctionName(owner) != methodSignatureMapper.mapFunctionName(irFunction)
 
-        var returnType = if (owner == irFunction) signature.returnType else methodSignatureMapper.mapReturnType(owner)
-        var returnIrType = owner.returnType
-        val unboxedInlineClass = owner.suspendFunctionOriginal().originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
-        if (unboxedInlineClass != null) {
-            returnIrType = unboxedInlineClass
-            returnType = unboxedInlineClass.asmType
-        }
-
+        val (returnType, returnIrType) = owner.returnAsmAndIrTypes()
         val afterReturnLabel = Label()
         expression.value.accept(this, data).materializeAt(returnType, returnIrType)
         // In case of non-local return from suspend lambda 'materializeAt' does not box return value, box it manually.
@@ -1079,7 +1060,8 @@ class ExpressionCodegen(
         nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf(),
         stop: (LoopInfo) -> Boolean
     ): LoopInfo? {
-        return data.handleBlock {
+        @Suppress("RemoveExplicitTypeArguments")
+        return data.handleBlock<Nothing> {
             when {
                 it is TryWithFinallyInfo -> {
                     genFinallyBlock(it, null, endLabel, data, nestedTryWithoutFinally)

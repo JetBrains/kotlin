@@ -20,9 +20,7 @@ fun removeExtraFilesFromPreviousGeneration(previouslyGeneratedFiles: List<File>,
 
     for (file in previouslyGeneratedFiles) {
         if (file.absolutePath !in generatedFilesPath) {
-            if (GeneratorsFileUtil.isTeamCityBuild) {
-                GeneratorsFileUtil.assertTeamCityMode()
-            }
+            if (GeneratorsFileUtil.failOnTeamCity("File delete `${file.absolutePath}`")) continue
             println("Deleted: ${file.absolutePath}")
             file.delete()
         }

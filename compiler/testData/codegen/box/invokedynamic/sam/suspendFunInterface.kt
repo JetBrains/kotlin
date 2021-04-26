@@ -5,14 +5,20 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_RUNTIME
-// WITH_COROUTINES
+
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 0 java/lang/invoke/LambdaMetafactory
+// 1 final class SuspendFunInterfaceKt\$box\$1
+
 import kotlin.coroutines.*
 
 var c: Continuation<Unit>? = null
 
-suspend fun suspendMe() = suspendCoroutine<Unit> { continuation ->
-    c = continuation
-}
+suspend fun suspendMe() =
+    suspendCoroutine<Unit> { continuation ->
+        c = continuation
+    }
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object: Continuation<Unit> {

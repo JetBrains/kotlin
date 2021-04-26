@@ -3,18 +3,18 @@ FILE: lambdaAndAnonymousFunction.kt
         ^run block#()
     }
     public? final? fun test_1(): R|kotlin/Unit| {
-        run#(<L> = run@fun <implicit>.<anonymous>(): <implicit> {
+        run#(<L> = run@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             ^@run Unit
         }
         )
-        run#(<L> = run@fun <implicit>.<anonymous>(): <implicit> {
+        run#(<L> = run@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             ^test_1 Unit
         }
         )
     }
     public? final? fun test_2(): R|kotlin/Unit| {
-        run#(fun <anonymous>(): Int {
-            ^ IntegerLiteral(1)
+        run#(fun <anonymous>(): Int <inline=Unknown>  {
+            ^@run IntegerLiteral(1)
         }
         )
     }

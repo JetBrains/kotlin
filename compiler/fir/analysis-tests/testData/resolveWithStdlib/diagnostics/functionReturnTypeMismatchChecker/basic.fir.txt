@@ -1,0 +1,77 @@
+FILE: basic.kt
+    public final fun illegalReturnIf(): R|kotlin/Char| {
+        ^illegalReturnIf when () {
+            CMP(<, Int(1).R|kotlin/Int.compareTo|(Int(2))) ->  {
+                Char(a)
+            }
+            else ->  {
+                Int(1)
+            }
+        }
+
+    }
+    public final fun foo(): R|kotlin/String| {
+        ^foo Int(1)
+    }
+    public final fun ok(): R|kotlin/Int| {
+        ^ok Int(1)
+    }
+    public final fun okOneLineFunction(): R|kotlin/Int| {
+        ^okOneLineFunction Int(10).R|kotlin/Int.plus|(Int(1))
+    }
+    public final fun errorOneLineFunction(): R|kotlin/String| {
+        ^errorOneLineFunction Int(10).R|kotlin/Int.plus|(Int(1))
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final infix fun R|() -> kotlin/Unit|.foo(x: R|A.() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun okWithLambda(): R|kotlin/String| {
+        foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@foo Unit
+        }
+        .R|/foo|(foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/A.bar|()
+            ^@foo Unit
+        }
+        )
+        ^okWithLambda String()
+    }
+    public final fun errorWithLambda(): R|kotlin/String| {
+        foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@foo Unit
+        }
+        .R|/foo|(foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/A.bar|()
+            ^@foo Int(10)
+        }
+        )
+        ^errorWithLambda String()
+    }
+    public final fun blockReturnValueTypeMatch1(): R|kotlin/Int| {
+        when () {
+            CMP(>, Int(1).R|kotlin/Int.compareTo|(Int(2))) ->  {
+                ^blockReturnValueTypeMatch1 Double(1.0)
+            }
+        }
+
+        ^blockReturnValueTypeMatch1 Double(2.0)
+    }
+    public final fun blockReturnValueTypeMatch2(): R|kotlin/Int| {
+        when () {
+            CMP(>, Int(1).R|kotlin/Int.compareTo|(Int(2))) ->  {
+            }
+            else ->  {
+                ^blockReturnValueTypeMatch2 Double(1.0)
+            }
+        }
+
+        ^blockReturnValueTypeMatch2 Double(2.0)
+    }

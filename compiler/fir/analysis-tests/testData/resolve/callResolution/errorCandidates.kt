@@ -9,7 +9,7 @@ fun bar(x: B) {}
 
 fun test(c: C) {
     // Argument mapping error
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("")
+    foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
     // Ambiguity
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(c)

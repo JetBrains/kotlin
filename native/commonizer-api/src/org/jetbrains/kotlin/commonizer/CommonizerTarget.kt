@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.Serializable
 
@@ -34,10 +35,6 @@ public data class SharedCommonizerTarget(val targets: Set<CommonizerTarget>) : C
             return if (targets.isNotEmpty()) SharedCommonizerTarget(targets) else null
         }
     }
-
-    init {
-        require(targets.isNotEmpty()) { "Empty 'SharedCommonizerTarget': Expected at least one target" }
-    }
 }
 
 public fun CommonizerTarget(konanTargets: Iterable<KonanTarget>): CommonizerTarget {
@@ -57,6 +54,14 @@ public fun CommonizerTarget(konanTarget: KonanTarget, vararg konanTargets: Konan
         addAll(konanTargets)
     }
     return SharedCommonizerTarget(targets.map(::LeafCommonizerTarget).toSet())
+}
+
+public fun CommonizerTarget(commonizerTarget: CommonizerTarget, vararg commonizerTargets: CommonizerTarget): SharedCommonizerTarget {
+    val targets = mutableListOf<CommonizerTarget>().apply {
+        add(commonizerTarget)
+        addAll(commonizerTargets)
+    }
+    return SharedCommonizerTarget(targets.toSet())
 }
 
 public val CommonizerTarget.identityString: String
@@ -101,6 +106,34 @@ public val CommonizerTarget.level: Int
     get() {
         return when (this) {
             is LeafCommonizerTarget -> return 0
-            is SharedCommonizerTarget -> targets.maxOf { it.level } + 1
+            is SharedCommonizerTarget -> if (targets.isNotEmpty()) targets.maxOf { it.level } + 1 else 0
         }
     }
+
+public fun CommonizerTarget.withAllAncestors(): Set<CommonizerTarget> {
+    return setOf(this) + transitiveClosure(this) {
+        when (this) {
+            is SharedCommonizerTarget -> targets
+            is LeafCommonizerTarget -> emptyList()
+        }
+    }
+}
+
+public fun CommonizerTarget.allLeaves(): Set<LeafCommonizerTarget> {
+    return withAllAncestors().filterIsInstance<LeafCommonizerTarget>().toSet()
+}
+
+public infix fun CommonizerTarget.isAncestorOf(other: CommonizerTarget): Boolean {
+    if (this is SharedCommonizerTarget) {
+        return targets.any { it == other } || targets.any { it.isAncestorOf(other) }
+    }
+    return false
+}
+
+public infix fun CommonizerTarget.isEqualOrAncestorOf(other: CommonizerTarget): Boolean {
+    return this == other || this.isAncestorOf(other)
+}
+
+public infix fun CommonizerTarget.isDescendentOf(other: CommonizerTarget): Boolean {
+    return other.isAncestorOf(this)
+}

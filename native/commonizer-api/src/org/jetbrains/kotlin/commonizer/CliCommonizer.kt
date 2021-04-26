@@ -25,7 +25,7 @@ public class CliCommonizer(private val executor: Executor) : Commonizer {
     override fun commonizeLibraries(
         konanHome: File,
         inputLibraries: Set<File>,
-        dependencyLibraries: Set<File>,
+        dependencyLibraries: Set<CommonizerDependency>,
         outputCommonizerTarget: SharedCommonizerTarget,
         outputDirectory: File
     ) {
@@ -37,7 +37,7 @@ public class CliCommonizer(private val executor: Executor) : Commonizer {
             add("-output-commonizer-target"); add(outputCommonizerTarget.identityString)
             add("-output-path"); add(outputDirectory.absolutePath)
             if (dependencyLibraries.isNotEmpty()) {
-                add("-dependency-libraries"); add(dependencyLibraries.joinToString(";") { it.absolutePath })
+                add("-dependency-libraries"); add(dependencyLibraries.joinToString(";"))
             }
         }
         executor(arguments)

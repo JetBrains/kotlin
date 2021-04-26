@@ -2,7 +2,7 @@
 public final class Foo {
     // source: 'inlineReifiedPropertyVisibility.kt'
     public method <init>(): void
-    public synthetic final method getInternalExtProp$test_module(p0: java.lang.Object): java.lang.String
+    public synthetic final method getInternalExtProp$main(p0: java.lang.Object): java.lang.String
     private synthetic final method getPrivateExtProp(p0: java.lang.Object): java.lang.String
     protected synthetic final method getProtectedExtProp(p0: java.lang.Object): java.lang.String
 }

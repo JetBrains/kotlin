@@ -264,19 +264,59 @@ class TypeResolver(
             }
 
             override fun visitNullableType(nullableType: KtNullableType) {
-                val innerModifierList = nullableType.modifierList
-                if (innerModifierList != null && outerModifierList != null) {
-                    c.trace.report(MODIFIER_LIST_NOT_ALLOWED.on(innerModifierList))
+                val innerType = nullableType.innerType
+
+                val baseType = createTypeFromInner(nullableType, nullableType.modifierList, innerType)
+
+                if (!baseType.isBare && baseType.actualType is DefinitelyNotNullType) {
+                    c.trace.report(NULLABLE_ON_DEFINITELY_NOT_NULLABLE.on(nullableType))
                 }
 
-                val innerAnnotations = composeAnnotations(annotations, resolveTypeAnnotations(c, nullableType))
-
-                val innerType = nullableType.innerType
-                val baseType = resolveTypeElement(c, innerAnnotations, outerModifierList ?: innerModifierList, innerType)
                 if (baseType.isNullable || innerType is KtNullableType || innerType is KtDynamicType) {
                     c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
                 }
                 result = baseType.makeNullable()
+            }
+
+            private fun createTypeFromInner(
+                typeElement: KtTypeElement,
+                innerModifierList: KtModifierList?,
+                innerType: KtTypeElement?
+            ): PossiblyBareType {
+                if (innerModifierList != null && outerModifierList != null) {
+                    c.trace.report(MODIFIER_LIST_NOT_ALLOWED.on(innerModifierList))
+                }
+
+                val innerAnnotations = composeAnnotations(annotations, resolveTypeAnnotations(c, typeElement as KtElementImplStub<*>))
+
+                return resolveTypeElement(c, innerAnnotations, outerModifierList ?: innerModifierList, innerType)
+            }
+
+            override fun visitDefinitelyNotNullType(definitelyNotNullType: KtDefinitelyNotNullType) {
+                val baseType =
+                    createTypeFromInner(definitelyNotNullType, definitelyNotNullType.modifierList, definitelyNotNullType.innerType)
+
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNotNullTypeParameters)) {
+                    result = baseType
+                    c.trace.report(
+                        UNSUPPORTED_FEATURE.on(
+                            definitelyNotNullType,
+                            LanguageFeature.DefinitelyNotNullTypeParameters to languageVersionSettings
+                        )
+                    )
+                    return
+                }
+
+                val definitelyNotNullKotlinType =
+                    if (!baseType.isBare) DefinitelyNotNullType.makeDefinitelyNotNull(baseType.actualType.unwrap()) else null
+
+                if (definitelyNotNullKotlinType == null) {
+                    result = baseType
+                    c.trace.report(DEFINITELY_NOT_NULLABLE_NOT_APPLICABLE.on(definitelyNotNullType))
+                    return
+                }
+
+                result = type(definitelyNotNullKotlinType)
             }
 
             override fun visitFunctionType(type: KtFunctionType) {
@@ -494,8 +534,8 @@ class TypeResolver(
         }
 
         val (collectedArgumentAsTypeProjections, argumentsForOuterClass) =
-                collectArgumentsForClassifierTypeConstructor(c, classDescriptor, qualifierResolutionResult.qualifierParts)
-                        ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
+            collectArgumentsForClassifierTypeConstructor(c, classDescriptor, qualifierResolutionResult.qualifierParts)
+                ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
         assert(collectedArgumentAsTypeProjections.size <= parameters.size) {
             "Collected arguments count should be not greater then parameters count," +
@@ -583,11 +623,11 @@ class TypeResolver(
 
         val typeAliasQualifierPart =
             qualifierResolutionResult.qualifierParts.lastOrNull()
-                    ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
+                ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
         val (argumentElementsFromUserType, argumentsForOuterClass) =
-                collectArgumentsForClassifierTypeConstructor(c, descriptor, qualifierResolutionResult.qualifierParts)
-                        ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
+            collectArgumentsForClassifierTypeConstructor(c, descriptor, qualifierResolutionResult.qualifierParts)
+                ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
         val argumentsFromUserType = resolveTypeProjections(c, typeConstructor, argumentElementsFromUserType)
 
@@ -803,13 +843,13 @@ class TypeResolver(
                 parameters[result.size].original.containingDeclaration as? ClassDescriptor
                 // If next parameter is captured from the enclosing function, default arguments must be used
                 // (see appendDefaultArgumentsForLocalClassifier)
-                        ?: return Pair(result, null)
+                    ?: return Pair(result, null)
 
             val restArguments = c.scope.findImplicitOuterClassArguments(nextParameterOwner)
             val restParameters = parameters.subList(result.size, parameters.size)
 
             val typeArgumentsCanBeSpecifiedCount =
-                classifierDescriptor.classifierDescriptorsFromInnerToOuter().sumBy { it.declaredTypeParameters.size }
+                classifierDescriptor.classifierDescriptorsFromInnerToOuter().sumOf { it.declaredTypeParameters.size }
 
             if (restArguments == null && typeArgumentsCanBeSpecifiedCount > result.size) {
                 c.trace.report(

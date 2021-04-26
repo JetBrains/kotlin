@@ -67,7 +67,7 @@ internal class UppercaseMappingsWriter(private val strategy: RangesWritingStrate
 
     private fun uppercaseCharImpl(): String = """
         internal fun Char.uppercaseCharImpl(): Char {
-            return toInt().uppercaseCodePoint().toChar()
+            return code.uppercaseCodePoint().toChar()
         }
     """.trimIndent()
 }

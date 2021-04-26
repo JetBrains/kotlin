@@ -19,7 +19,7 @@ interface IDerived : ILeft, IRight {
 }
 
 // Error: ILeft::copy and IRight::copy have unrelated return types
-class CDerivedInvalid1 : ILeft, IRight
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class CDerivedInvalid1<!> : ILeft, IRight
 
 // Error: CLeft::copy and IRight::copy have unrelated return types
 class CDerivedInvalid2 : CLeft(), IRight

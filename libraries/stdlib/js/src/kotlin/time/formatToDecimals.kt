@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,8 +13,7 @@ internal actual fun formatToExactDecimals(value: Double, decimals: Int): String 
         value
     } else {
         val pow = 10.0.pow(decimals)
-        @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-        kotlin.js.Math.round(abs(value) * pow) / pow * sign(value)
+        JsMath.round(abs(value) * pow) / pow * sign(value)
     }
     return rounded.asDynamic().toFixed(decimals).unsafeCast<String>()
 }

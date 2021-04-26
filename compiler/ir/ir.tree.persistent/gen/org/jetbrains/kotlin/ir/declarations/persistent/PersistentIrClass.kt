@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ClassCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -83,6 +85,12 @@ internal class PersistentIrClass(
 
     override var thisReceiverField: IrValueParameter? = null
 
+    override var thisReceiverSymbolField: IrValueParameterSymbol?
+        get() = thisReceiverField?.symbol
+        set(v) {
+            thisReceiverField = v?.owner
+        }
+
     override var thisReceiver: IrValueParameter?
         get() = getCarrier().thisReceiverField
         set(v) {
@@ -110,6 +118,12 @@ internal class PersistentIrClass(
 
     override var typeParametersField: List<IrTypeParameter> = emptyList()
 
+    override var typeParametersSymbolField: List<IrTypeParameterSymbol>
+        get() = typeParametersField.map { it.symbol }
+        set(v) {
+            typeParametersField = v.map { it.owner }
+        }
+
     override var typeParameters: List<IrTypeParameter>
         get() = getCarrier().typeParametersField
         set(v) {
@@ -130,16 +144,7 @@ internal class PersistentIrClass(
             }
         }
 
-    override var metadataField: MetadataSource? = null
-
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier()
-                metadataField = v
-            }
-        }
+    override var metadata: MetadataSource? = null
 
     override var modalityField: Modality = modality
 
@@ -152,14 +157,5 @@ internal class PersistentIrClass(
             }
         }
 
-    override var attributeOwnerIdField: IrAttributeContainer = this
-
-    override var attributeOwnerId: IrAttributeContainer
-        get() = getCarrier().attributeOwnerIdField
-        set(v) {
-            if (attributeOwnerId !== v) {
-                setCarrier()
-                attributeOwnerIdField = v
-            }
-        }
+    override var attributeOwnerId: IrAttributeContainer = this
 }

@@ -85,6 +85,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractFirContextCollectionTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.resolve.AbstractInnerDeclarationsResolvePhaseTest
@@ -95,6 +96,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.AbstractExpectedExpress
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractHLExpressionTypeTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractReturnExpressionTargetTest
+import org.jetbrains.kotlin.idea.frontend.api.components.AbstractRendererTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractFileScopeTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
@@ -164,6 +166,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTes
 import org.jetbrains.kotlin.kapt3.test.AbstractIrClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
+import org.jetbrains.kotlin.lombok.AbstractLombokCompileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinCopyPasteConversionTest
@@ -1042,6 +1045,10 @@ fun main(args: Array<String>) {
             testClass<AbstractHLExpressionTypeTest> {
                 model("components/expressionType")
             }
+
+            testClass<AbstractRendererTest> {
+                model("components/declarationRenderer")
+            }
         }
 
         testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
@@ -1077,6 +1084,9 @@ fun main(args: Array<String>) {
                 model("outOfBlockProjectWide")
             }
             testClass<AbstractFileStructureTest> {
+                model("fileStructure")
+            }
+            testClass<AbstractFirContextCollectionTest> {
                 model("fileStructure")
             }
             testClass<AbstractDiagnosticTraversalCounterTest> {
@@ -1131,8 +1141,11 @@ fun main(args: Array<String>) {
                 model("quickfix/lateinit", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/modifiers", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
                 model("quickfix/override/typeMismatchOnOverride", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
+                model("quickfix/replaceWithDotCall", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/replaceWithSafeCall", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/variables/changeMutability", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/addInitializer", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/addPropertyAccessors", pattern = pattern, filenameStartsLowerCase = true)
             }
 
             testClass<AbstractHLInspectionTest> {
@@ -1308,8 +1321,8 @@ fun main(args: Array<String>) {
             testClass<AbstractIdeCompiledLightClassTest> {
                 model(
                     "asJava/lightClasses",
-                    excludeDirs = listOf("local", "compilationErrors", "ideRegression"),
-                    pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME
+                    excludeDirs = listOf("local", "compilationErrors", "ideRegression", "script"),
+                    pattern = KT_WITHOUT_DOTS_IN_NAME
                 )
             }
         }
@@ -1844,6 +1857,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractPerformanceCompletionCharFilterTest> {
                 model("handlers/charFilter", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
+
+        testGroup("plugins/lombok/lombok-compiler-plugin/tests", "plugins/lombok/lombok-compiler-plugin/testData") {
+            testClass<AbstractLombokCompileTest> {
+                model("compile")
             }
         }
 /*

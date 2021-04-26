@@ -344,9 +344,10 @@ private fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: Captu
         ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
     }
 
-    val substitutor = substitutorByMap((0 until argumentsCount).map { index ->
+    val substitution = (0 until argumentsCount).map { index ->
         (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index] as ConeKotlinType)
-    }.toMap())
+    }.toMap()
+    val substitutor = substitutorByMap(substitution, session)
 
     for (index in 0 until argumentsCount) {
         val oldArgument = type.typeArguments[index]

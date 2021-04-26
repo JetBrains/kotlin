@@ -43,7 +43,7 @@ internal fun FirErrorNamedReference.getCandidateSymbols(): Collection<FirBasedSy
     when (val diagnostic = diagnostic) {
         is ConeInapplicableCandidateError -> listOf(diagnostic.candidate.symbol)
         is ConeHiddenCandidateError -> listOf(diagnostic.candidateSymbol)
-        is ConeAmbiguityError -> diagnostic.candidates
+        is ConeAmbiguityError -> diagnostic.candidates.map { it.symbol }
         is ConeOperatorAmbiguityError -> diagnostic.candidates
         is ConeUnsupportedCallableReferenceTarget -> listOf(diagnostic.fir.symbol)
         else -> emptyList()

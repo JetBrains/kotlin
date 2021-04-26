@@ -293,6 +293,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         public void visitClassLiteral(@NotNull ClassLiteralValue classLiteralValue) {
         }
 
+        @Nullable
+        @Override
+        public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
+            return null;
+        }
+
         @Override
         public void visitEnd() {
             //noinspection SSBasedInspection

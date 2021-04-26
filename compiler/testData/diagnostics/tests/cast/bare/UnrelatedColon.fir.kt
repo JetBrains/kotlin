@@ -4,4 +4,4 @@
 interface Tr
 interface G<T>
 
-fun test(tr: Tr) = <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>>(tr)
+fun test(tr: Tr) = checkSubtype<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>>(<!ARGUMENT_TYPE_MISMATCH!>tr<!>)

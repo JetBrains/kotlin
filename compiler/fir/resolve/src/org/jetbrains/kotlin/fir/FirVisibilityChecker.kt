@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
@@ -69,14 +70,19 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val symbol = declaration.symbol
         return when (declaration.visibility) {
             Visibilities.Internal -> {
-                declaration.session == session || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
+                declaration.declarationSiteSession == session || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
             }
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerId = symbol.getOwnerId()
-                if (declaration.session == session) {
+                if (declaration.declarationSiteSession == session) {
                     when {
                         ownerId == null -> {
                             val candidateFile = when (symbol) {
+                                is FirSyntheticFunctionSymbol -> {
+                                    // SAM case
+                                    val classId = ClassId(symbol.callableId.packageName, symbol.callableId.callableName)
+                                    provider.getFirClassifierContainerFile(classId)
+                                }
                                 is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
                                 is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
                                 else -> null

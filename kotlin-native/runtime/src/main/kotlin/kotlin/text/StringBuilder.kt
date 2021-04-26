@@ -645,7 +645,7 @@ actual class StringBuilder private constructor (
 }
 
 /**
- * Clears the content of this string builder making it empty.
+ * Clears the content of this string builder making it empty and returns this instance.
  *
  * @sample samples.text.Strings.clearStringBuilder
  */
@@ -698,7 +698,7 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  * @param startIndex the beginning (inclusive) of the range to remove.
  * @param endIndex the end (exclusive) of the range to remove.
  *
- * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
@@ -798,6 +798,17 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
         this.insertRange(index, value, startIndex, endIndex)
+
+
+internal fun insertString(array: CharArray, start: Int, value: String): Int =
+        insertString(array, start, value, 0, value.length)
+
+@SymbolName("Kotlin_StringBuilder_insertString")
+internal external fun insertString(array: CharArray, distIndex: Int, value: String, sourceIndex: Int, count: Int): Int
+
+@SymbolName("Kotlin_StringBuilder_insertInt")
+internal external fun insertInt(array: CharArray, start: Int, value: Int): Int
+
 
 // Method parameters renamings
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")

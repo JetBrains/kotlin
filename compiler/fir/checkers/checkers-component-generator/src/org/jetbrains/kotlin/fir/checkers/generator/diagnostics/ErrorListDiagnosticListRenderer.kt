@@ -68,7 +68,6 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun DiagnosticData.getAllTypeArguments(): List<KType> = buildList {
-        add(sourceElementType)
         add(psiType)
         parameters.mapTo(this) { it.type }
     }
@@ -124,7 +123,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         get() = classifier as KClass<*>
 
     private fun DiagnosticData.getFactoryFunction(): String =
-        severity.name.toLowerCase() + parameters.size
+        severity.name.lowercase() + parameters.size
 }
 
 private inline fun <T> SmartPrinter.printSeparatedWithComma(list: List<T>, printItem: (T) -> Unit) {

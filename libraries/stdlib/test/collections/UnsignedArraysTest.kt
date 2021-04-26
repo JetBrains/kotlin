@@ -327,6 +327,7 @@ class UnsignedArraysTest {
         assertEquals(3, ulongArrayOf(2u, 3u, 4u).count { it > 1uL })
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun sumBy() {
         assertEquals(3u, ubyteArrayOf(0, 1, 2).sumBy { it.toUInt() })
@@ -335,6 +336,7 @@ class UnsignedArraysTest {
         assertEquals(6u, ulongArrayOf(2, 3, 4).sumBy { (it - 1u).toUInt() })
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun sumByDouble() {
         assertEquals(3.0, ubyteArrayOf(0, 1, 2).sumByDouble { it.toDouble() })

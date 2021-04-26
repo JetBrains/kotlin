@@ -3,7 +3,7 @@ FILE: nonExhaustiveWhenWithCoercionToUnit.kt
         ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
     }
     public final fun test(a: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
-        R|/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| {
+        R|/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             when () {
                 R|<local>/b| ->  {
                     ^@run Unit

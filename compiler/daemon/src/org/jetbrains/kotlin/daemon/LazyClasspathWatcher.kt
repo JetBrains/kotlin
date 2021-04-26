@@ -114,7 +114,7 @@ class LazyClasspathWatcher(classpath: Iterable<String>,
 }
 
 
-fun isClasspathFile(file: File): Boolean = file.isFile && listOf("class", "jar").contains(file.extension.toLowerCase())
+fun isClasspathFile(file: File): Boolean = file.isFile && listOf("class", "jar").contains(file.extension.lowercase())
 
 fun File.md5Digest(): ByteArray {
     val md = MessageDigest.getInstance(CLASSPATH_FILE_ID_DIGEST)

@@ -1,5 +1,5 @@
-// FILE: delegationToJavaInterfaceWithWildcardType.kt
 // WITH_SIGNATURES
+// FILE: delegationToJavaInterfaceWithWildcardType.kt
 interface K {
     fun kf1(): Collection<out CharSequence>
     fun kf2(): Collection<CharSequence>

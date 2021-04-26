@@ -6,28 +6,37 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.GsonBuilder
-import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import java.io.File
 
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
-internal abstract class AbstractNodeModulesCache(nodeJs: NodeJsRootExtension) : AutoCloseable {
+internal abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<AbstractNodeModulesCache.Parameters> {
+    internal interface Parameters : BuildServiceParameters {
+        val rootProjectDir: DirectoryProperty
+        val cacheDir: DirectoryProperty
+    }
+
     companion object {
         const val STATE_FILE_NAME = ".visited"
     }
 
-    internal val dir = nodeJs.nodeModulesGradleCacheDir
-    private val cache = ProcessedFilesCache(
-        nodeJs.rootProject.logger,
-        nodeJs.rootProject.projectDir,
-        dir,
-        STATE_FILE_NAME,
-        "9"
-    )
+    lateinit var fileHasher: FileHasher
+
+    private val cache by lazy {
+        ProcessedFilesCache(
+            fileHasher,
+            parameters.rootProjectDir.get().asFile,
+            parameters.cacheDir.get().asFile,
+            STATE_FILE_NAME,
+            "9"
+        )
+    }
 
     @Synchronized
     fun get(
@@ -52,8 +61,6 @@ internal abstract class AbstractNodeModulesCache(nodeJs: NodeJsRootExtension) : 
     }
 }
 
-// Synchronized as tasks from configuration cache run in parallel and every task has it's own modules cache
-@Synchronized
 fun makeNodeModule(
     container: File,
     packageJson: PackageJson,

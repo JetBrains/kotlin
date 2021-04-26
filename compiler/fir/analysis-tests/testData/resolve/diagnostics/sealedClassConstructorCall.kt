@@ -1,3 +1,3 @@
 sealed class A
 
-val b = <!HIDDEN!>A<!>()
+val b = <!INVISIBLE_REFERENCE!>A<!>()

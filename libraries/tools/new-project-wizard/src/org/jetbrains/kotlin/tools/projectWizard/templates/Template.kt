@@ -164,7 +164,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
 
 
     private fun Reader.createDefaultSettings() = mapOf(
-        "projectName" to StructurePlugin.name.settingValue.capitalize(Locale.US)
+        "projectName" to StructurePlugin.name.settingValue.replaceFirstChar(Char::uppercaseChar)
     )
 
     override fun equals(other: Any?): Boolean =

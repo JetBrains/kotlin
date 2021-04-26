@@ -38,27 +38,48 @@ public class Char private constructor() : Comparable<Char> {
     /** Subtracts the other Int value from this value resulting a Char. */
     public operator fun minus(other: Int): Char
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public operator fun inc(): Char
-    /** Decrements this value. */
+
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public operator fun dec(): Char
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Char): CharRange
 
     /** Returns the value of this character as a `Byte`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toByte(): Byte
     /** Returns the value of this character as a `Char`. */
     public fun toChar(): Char
     /** Returns the value of this character as a `Short`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toShort(): Short
     /** Returns the value of this character as a `Int`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toInt(): Int
     /** Returns the value of this character as a `Long`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toLong(): Long
     /** Returns the value of this character as a `Float`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toFloat(): Float
     /** Returns the value of this character as a `Double`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toDouble(): Double
 
     companion object {

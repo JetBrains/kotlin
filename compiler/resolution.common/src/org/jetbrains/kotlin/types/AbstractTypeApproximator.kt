@@ -5,11 +5,16 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.model.*
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionContext) : TypeSystemInferenceExtensionContext by ctx {
+abstract class AbstractTypeApproximator(
+    val ctx: TypeSystemInferenceExtensionContext,
+    protected val languageVersionSettings: LanguageVersionSettings,
+) : TypeSystemInferenceExtensionContext by ctx {
 
     private class ApproximationResult(val type: KotlinTypeMarker?)
 
@@ -360,7 +365,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             return typeWithErasedNullability
         }
 
-        return if (conf.definitelyNotNullType) {
+        return if (conf.definitelyNotNullType || languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNotNullTypeParameters)) {
             approximatedOriginalType?.makeDefinitelyNotNullOrNotNull()
         } else {
             if (toSuper)

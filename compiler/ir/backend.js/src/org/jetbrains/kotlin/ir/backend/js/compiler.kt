@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.StageController
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
@@ -39,6 +39,7 @@ fun compile(
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
+    irFactory: IrFactory,
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
     mainArguments: List<String>?,
@@ -52,8 +53,6 @@ fun compile(
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
 ): CompilerResult {
-    val irFactory = if (dceDriven) PersistentIrFactory() else IrFactoryImpl
-
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
 
@@ -74,7 +73,6 @@ fun compile(
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,
-        irFactory = irFactory
     )
 
     // Load declarations referenced during `context` initialization

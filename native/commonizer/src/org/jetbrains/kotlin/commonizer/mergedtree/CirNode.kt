@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.cir.CirClassifier
+import org.jetbrains.kotlin.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.commonizer.cir.CirLiftedUpDeclaration
+import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.commonizer.utils.firstNonNull
 import org.jetbrains.kotlin.storage.NullableLazyValue
@@ -17,6 +20,10 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R
 
     companion object {
+        inline val CirNode<*, *>.indices: IntRange get() = 0..targetDeclarations.size
+
+        inline val CirNode<*, *>.targetIndices: List<Int> get() = indices - indexOfCommon
+
         inline val CirNode<*, *>.indexOfCommon: Int
             get() = targetDeclarations.size
 

@@ -6,12 +6,12 @@ class O : Function2<Int, String, Unit> {
 fun test() {
     val a = fun(o: O) {
     }
-    <!INAPPLICABLE_CANDIDATE!>a<!> {}
+    a <!ARGUMENT_TYPE_MISMATCH!>{}<!>
 }
 
-class Ext : String.() -> Unit {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Ext<!> : String.() -> Unit {
 }
 
 fun test2() {
-    val f: Ext = {}
+    val f: Ext = <!INITIALIZER_TYPE_MISMATCH!>{}<!>
 }

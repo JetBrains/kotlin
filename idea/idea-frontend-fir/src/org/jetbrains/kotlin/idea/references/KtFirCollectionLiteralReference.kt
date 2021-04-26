@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.references
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -50,7 +50,7 @@ class KtFirCollectionLiteralReference(
         }.associateWith { it.correspondingArrayOfCallFqName() }
 
         private fun ClassId.correspondingArrayOfCallFqName(): Name =
-            Name.identifier("${shortClassName.identifier.decapitalize()}Of")
+            Name.identifier("${shortClassName.identifier.replaceFirstChar(Char::lowercaseChar)}Of")
 
     }
 }

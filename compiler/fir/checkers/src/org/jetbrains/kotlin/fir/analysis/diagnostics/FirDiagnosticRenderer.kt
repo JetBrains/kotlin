@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.*
-import org.jetbrains.kotlin.fir.FirSourceElement
 
 interface FirDiagnosticRenderer<D : FirDiagnostic<*>> : DiagnosticRenderer<D> {
     override fun render(diagnostic: D): String
 }
 
-class SimpleFirDiagnosticRenderer<E : FirSourceElement>(private val message: String) : FirDiagnosticRenderer<FirSimpleDiagnostic<E>> {
-    override fun render(diagnostic: FirSimpleDiagnostic<E>): String {
+class SimpleFirDiagnosticRenderer(private val message: String) : FirDiagnosticRenderer<FirSimpleDiagnostic<*>> {
+    override fun render(diagnostic: FirSimpleDiagnostic<*>): String {
         return message
     }
 }
@@ -22,22 +21,22 @@ sealed class AbstractFirDiagnosticWithParametersRenderer<D : FirDiagnostic<*>>(
     protected val message: String
 ) : FirDiagnosticRenderer<D>, AbstractDiagnosticWithParametersRenderer<D>(message)
 
-class FirDiagnosticWithParameters1Renderer<E : FirSourceElement, A : Any>(
+class FirDiagnosticWithParameters1Renderer<A : Any>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
-) : AbstractFirDiagnosticWithParametersRenderer<FirDiagnosticWithParameters1<E, A>>(message) {
-    override fun renderParameters(diagnostic: FirDiagnosticWithParameters1<E, A>): Array<out Any> {
+) : AbstractFirDiagnosticWithParametersRenderer<FirDiagnosticWithParameters1<*, A>>(message) {
+    override fun renderParameters(diagnostic: FirDiagnosticWithParameters1<*, A>): Array<out Any> {
         val context = RenderingContext.of(diagnostic.a)
         return arrayOf(renderParameter(diagnostic.a, rendererForA, context))
     }
 }
 
-class FirDiagnosticWithParameters2Renderer<E : FirSourceElement, A : Any, B : Any>(
+class FirDiagnosticWithParameters2Renderer<A : Any, B : Any>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
     private val rendererForB: DiagnosticParameterRenderer<B>?,
-) : AbstractFirDiagnosticWithParametersRenderer<FirDiagnosticWithParameters2<E, A, B>>(message) {
-    override fun renderParameters(diagnostic: FirDiagnosticWithParameters2<E, A, B>): Array<out Any> {
+) : AbstractFirDiagnosticWithParametersRenderer<FirDiagnosticWithParameters2<*, A, B>>(message) {
+    override fun renderParameters(diagnostic: FirDiagnosticWithParameters2<*, A, B>): Array<out Any> {
         val context = RenderingContext.of(diagnostic.a, diagnostic.b)
         return arrayOf(
             renderParameter(diagnostic.a, rendererForA, context),
@@ -46,13 +45,13 @@ class FirDiagnosticWithParameters2Renderer<E : FirSourceElement, A : Any, B : An
     }
 }
 
-class FirDiagnosticWithParameters3Renderer<E : FirSourceElement, A : Any, B : Any, C : Any>(
+class FirDiagnosticWithParameters3Renderer<A : Any, B : Any, C : Any>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
     private val rendererForB: DiagnosticParameterRenderer<B>?,
     private val rendererForC: DiagnosticParameterRenderer<C>?,
-) : AbstractFirDiagnosticWithParametersRenderer<FirDiagnosticWithParameters3<E, A, B, C>>(message) {
-    override fun renderParameters(diagnostic: FirDiagnosticWithParameters3<E, A, B, C>): Array<out Any> {
+) : AbstractFirDiagnosticWithParametersRenderer<FirDiagnosticWithParameters3<*, A, B, C>>(message) {
+    override fun renderParameters(diagnostic: FirDiagnosticWithParameters3<*, A, B, C>): Array<out Any> {
         val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c)
         return arrayOf(
             renderParameter(diagnostic.a, rendererForA, context),

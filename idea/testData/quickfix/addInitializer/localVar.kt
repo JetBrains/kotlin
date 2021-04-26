@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.InitializePropertyQuickFixFactory$AddInitializerFix" "false"
+// "Add initializer" "false"
 fun test() {
     <caret>val n: Int
 }

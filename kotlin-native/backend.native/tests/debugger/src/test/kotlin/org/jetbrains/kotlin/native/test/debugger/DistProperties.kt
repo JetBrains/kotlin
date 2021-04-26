@@ -17,6 +17,7 @@ object DistProperties {
     val konanc: Path = dist.resolve("bin/$konancDriver")
     val cinterop: Path = dist.resolve("bin/$cinteropDriver")
     val lldb: Path = Paths.get("lldb")
+    val xcrun: Path = Paths.get("xcrun")
     val devToolsSecurity: Path = Paths.get("DevToolsSecurity")
     val dwarfDump: Path = Paths.get("dwarfdump")
     val swiftc: Path = Paths.get("swiftc")

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.code
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.systemIndependentPath
 import junit.framework.TestCase
+import org.jetbrains.kotlin.config.LanguageFeature
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -377,6 +378,20 @@ class CodeConformanceTest : TestCase() {
                 .map { it.removePrefix(" - Path: ").trim().ensureFileOrEndsWithSlash() }
                 .toList()
 
+        }
+    }
+
+    fun testLanguageFeatureOrder() {
+        val values = enumValues<LanguageFeature>()
+        val enabledFeatures = values.filter { it.sinceVersion != null && it.defaultState == LanguageFeature.State.ENABLED }
+
+        if (enabledFeatures.sortedBy { it.sinceVersion!! } != enabledFeatures) {
+            val (a, b) = enabledFeatures.zipWithNext().first { (a, b) -> a.sinceVersion!! > b.sinceVersion!! }
+            fail(
+                "Please make sure LanguageFeature entries are sorted by sinceVersion to improve readability & reduce confusion.\n" +
+                        "The feature $b is out of order; its sinceVersion is ${b.sinceVersion}, yet it comes after $a, whose " +
+                        "sinceVersion is ${a.sinceVersion}.\n"
+            )
         }
     }
 }

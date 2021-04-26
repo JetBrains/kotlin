@@ -11,7 +11,6 @@ import kotlin.reflect.KType
 data class DiagnosticData(
     val severity: Severity,
     val name: String,
-    val sourceElementType: KType,
     val psiType: KType,
     val parameters: List<DiagnosticParameter>,
     val positioningStrategy: PositioningStrategy,
@@ -40,6 +39,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     OPEN_MODIFIER,
     WHEN_EXPRESSION,
     IF_EXPRESSION,
+    ELSE_ENTRY,
     VARIANCE_MODIFIER,
     LATEINIT_MODIFIER,
     INLINE_OR_VALUE_MODIFIER,
@@ -51,9 +51,23 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     COMPANION_OBJECT,
     CONST_MODIFIER,
     ARRAY_ACCESS,
+    SAFE_ACCESS,
+    USELESS_ELVIS,
     NAME_OF_NAMED_ARGUMENT,
     VALUE_ARGUMENTS,
     SUPERTYPES_LIST,
+    RETURN_WITH_LABEL,
+    ASSIGNMENT_VALUE,
+    WHOLE_ELEMENT,
+    INT_LITERAL_OUT_OF_RANGE,
+    FLOAT_LITERAL_OUT_OF_RANGE,
+    LONG_LITERAL_SUFFIX,
+    REIFIED_MODIFIER,
+    TYPE_PARAMETERS_LIST,
+    FUN_MODIFIER,
+    SUSPEND_MODIFIER,
+    FUN_INTERFACE,
+
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"

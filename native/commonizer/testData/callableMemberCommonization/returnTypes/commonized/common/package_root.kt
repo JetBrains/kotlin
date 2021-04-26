@@ -26,6 +26,7 @@ expect fun function7(): C
 expect class Box<T>(value: T) {
     val value: T
 }
+
 expect class Fox()
 
 expect fun functionWithTypeParametersInReturnType1(): Array<Int>
@@ -46,6 +47,7 @@ expect class Outer<A>() {
         class Nested<C>()
         inner class Inner<D>()
     }
+
     inner class Inner<E>() {
         inner class Inner<F>()
     }

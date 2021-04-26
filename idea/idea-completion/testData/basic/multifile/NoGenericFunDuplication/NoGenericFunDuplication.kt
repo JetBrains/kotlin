@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 // this test tests correct substitution equality checking for generic functions
 import java.io.InputStreamReader
 

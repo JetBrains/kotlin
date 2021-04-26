@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-4204 ConstraintSystem erased after resolution completion
 package c
 

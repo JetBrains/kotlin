@@ -70,7 +70,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         val resDirectories = variant.resDirectories.map { fileManager.findFileByUrl("file://$it") }
         val allChildren = resDirectories.flatMap { it?.getAllChildren() ?: listOf() }
 
-        val allLayoutFiles = allChildren.filter { it.parent.name.startsWith("layout") && it.name.toLowerCase().endsWith(".xml") }
+        val allLayoutFiles = allChildren.filter { it.parent.name.startsWith("layout") && it.name.lowercase().endsWith(".xml") }
         val allLayoutPsiFiles = allLayoutFiles.fold(ArrayList<PsiFile>(allLayoutFiles.size)) { list, file ->
             val psiFile = psiManager.findFile(file)
             if (psiFile?.parent != null) {

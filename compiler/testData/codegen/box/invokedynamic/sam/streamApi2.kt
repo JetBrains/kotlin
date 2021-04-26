@@ -7,6 +7,10 @@
 // no stream api on Android
 // IGNORE_BACKEND: ANDROID
 
+// CHECK_BYTECODE_TEXT
+// JVM_IR_TEMPLATES
+// 4 java/lang/invoke/LambdaMetafactory
+
 import java.util.stream.*
 
 fun box(): String {

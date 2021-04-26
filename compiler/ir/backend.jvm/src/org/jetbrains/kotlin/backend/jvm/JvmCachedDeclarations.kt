@@ -179,7 +179,20 @@ class JvmCachedDeclarations(
             modality = if (isInterface) Modality.OPEN else target.modality
             // Since we already mangle the name above we need to reset internal visibilities to public in order
             // to avoid mangling the same name twice.
-            visibility = if (target.visibility == DescriptorVisibilities.INTERNAL) DescriptorVisibilities.PUBLIC else target.visibility
+            visibility = when (target.visibility) {
+                DescriptorVisibilities.INTERNAL ->
+                    DescriptorVisibilities.PUBLIC
+                DescriptorVisibilities.PROTECTED -> {
+                    // Required to properly create accessors to protected static companion object member
+                    // when this member is referenced in subclass.
+                    if (isStatic)
+                        JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
+                    else
+                        DescriptorVisibilities.PROTECTED
+                }
+                else ->
+                    target.visibility
+            }
             isSuspend = target.isSuspend
         }.apply proxy@{
             parent = this@makeProxy

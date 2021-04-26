@@ -9,7 +9,7 @@ fun test() {
     val interface_as_fun = <!UNRESOLVED_REFERENCE!>A<!>()
     val interface_as_val = A
 
-    val object_as_fun = <!HIDDEN!>B<!>()
+    val object_as_fun = <!INVISIBLE_REFERENCE!>B<!>()
     val class_as_val = C
 }
 

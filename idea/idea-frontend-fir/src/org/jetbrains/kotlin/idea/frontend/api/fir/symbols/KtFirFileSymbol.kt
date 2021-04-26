@@ -28,7 +28,7 @@ internal class KtFirFileSymbol(
     override val token: ValidityToken,
 ) : KtFileSymbol(), KtSymbolWithDeclarations, KtFirSymbol<FirFile> {
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.declarationSiteSession) }
 
     override fun createPointer(): KtSymbolPointer<KtFileSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

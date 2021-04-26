@@ -2,11 +2,11 @@ fun interface MyRunnable {
     fun foo(x: Int): Boolean
 }
 
-fun interface WithProperty {
-    val x: Int
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface WithProperty {
+    <!FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES!>val<!> x: Int
 }
 
-fun interface TwoAbstract : MyRunnable {
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface TwoAbstract : MyRunnable {
     fun bar()
 }
 
@@ -29,11 +29,11 @@ fun main() {
     foo1 { x -> x > 1 }
     foo1(f)
 
-    <!INAPPLICABLE_CANDIDATE!>foo2<!> { x -> x <!UNRESOLVED_REFERENCE!>><!> 1 }
-    <!INAPPLICABLE_CANDIDATE!>foo2<!>(f)
+    foo2 { x -> <!ARGUMENT_TYPE_MISMATCH!><!ARGUMENT_TYPE_MISMATCH!>x<!> <!UNRESOLVED_REFERENCE!>><!> 1<!> }
+    foo2(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo3<!> { x -> x <!UNRESOLVED_REFERENCE!>><!> 1 }
-    <!INAPPLICABLE_CANDIDATE!>foo3<!>(f)
+    foo3 { x -> <!ARGUMENT_TYPE_MISMATCH!><!ARGUMENT_TYPE_MISMATCH!>x<!> <!UNRESOLVED_REFERENCE!>><!> 1<!> }
+    foo3(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
 
     foo4 { x -> x > 1 }
     foo4(f)
