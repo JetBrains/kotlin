@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
@@ -16,9 +17,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 
 @OptIn(CheckersComponentInternal::class)
 class DeclarationCheckersDiagnosticComponent(
-    collector: AbstractDiagnosticCollector,
-    private val checkers: DeclarationCheckers = collector.session.checkersComponent.declarationCheckers,
-) : AbstractDiagnosticCollectorComponent(collector) {
+    session: FirSession,
+    reporter: DiagnosticReporter,
+    private val checkers: DeclarationCheckers = session.checkersComponent.declarationCheckers,
+) : AbstractDiagnosticCollectorComponent(session, reporter) {
 
     override fun visitFile(file: FirFile, data: CheckerContext) {
         checkers.allFileCheckers.check(file, data, reporter)

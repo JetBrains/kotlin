@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
@@ -17,9 +18,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 
 @OptIn(CheckersComponentInternal::class)
 class ExpressionCheckersDiagnosticComponent(
-    collector: AbstractDiagnosticCollector,
-    private val checkers: ExpressionCheckers = collector.session.checkersComponent.expressionCheckers,
-) : AbstractDiagnosticCollectorComponent(collector) {
+    session: FirSession,
+    reporter: DiagnosticReporter,
+    private val checkers: ExpressionCheckers = session.checkersComponent.expressionCheckers,
+) : AbstractDiagnosticCollectorComponent(session, reporter) {
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
         checkers.allAnonymousFunctionAsExpressionCheckers.check(anonymousFunction, data, reporter)

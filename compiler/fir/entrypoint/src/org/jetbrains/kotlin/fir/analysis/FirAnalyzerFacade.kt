@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
@@ -78,7 +79,9 @@ class FirAnalyzerFacade(
         val collector = FirDiagnosticsCollector.create(session, scopeSession)
         collectedDiagnostics = buildMap {
             for (file in firFiles!!) {
-                put(file, collector.collectDiagnostics(file))
+                val reporter = DiagnosticReporterFactory.createReporter()
+                collector.collectDiagnostics(file, reporter)
+                put(file, reporter.diagnostics)
             }
         }
         return collectedDiagnostics!!

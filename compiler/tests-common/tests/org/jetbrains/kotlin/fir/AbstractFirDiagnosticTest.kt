@@ -268,7 +268,9 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         for (firFile in firFiles) {
             val session = firFile.declarationSiteSession
             val collector = collectors.computeIfAbsent(session) { createCollector(session) }
-            result[firFile] = collector.collectDiagnostics(firFile).toList()
+            val reporter = DiagnosticReporterFactory.createReporter()
+            collector.collectDiagnostics(firFile, reporter)
+            result[firFile] = reporter.diagnostics
         }
         return result
     }

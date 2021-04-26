@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -23,7 +24,10 @@ import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
-class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
+class ErrorNodeDiagnosticCollectorComponent(
+    session: FirSession,
+    reporter: DiagnosticReporter,
+) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
         val source = errorLoop.source ?: return
         reportFirDiagnostic(errorLoop.diagnostic, source, reporter, data)

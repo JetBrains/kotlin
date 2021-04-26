@@ -19,33 +19,15 @@ import org.jetbrains.kotlin.fir.types.*
 abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
     override val scopeSession: ScopeSession = ScopeSession(),
+    protected val createComponents: (DiagnosticReporter) -> List<AbstractDiagnosticCollectorComponent>,
 ) : SessionHolder {
-    fun collectDiagnostics(firDeclaration: FirDeclaration): List<FirDiagnostic<*>> {
-        if (!componentsInitialized) {
-            throw IllegalStateException("Components are not initialized")
-        }
-        initializeCollector()
+    fun collectDiagnostics(firDeclaration: FirDeclaration, reporter: DiagnosticReporter) {
+        val components = createComponents(reporter)
+        val visitor = createVisitor(components)
         firDeclaration.accept(visitor, null)
-        return getCollectedDiagnostics()
     }
 
-    protected abstract fun initializeCollector()
-    protected abstract fun getCollectedDiagnostics(): List<FirDiagnostic<*>>
-    abstract val reporter: DiagnosticReporter
-
-    protected val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
-    private var componentsInitialized = false
-
-    protected abstract val visitor: CheckerRunningDiagnosticCollectorVisitor
-
-    fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
-        if (componentsInitialized) {
-            throw IllegalStateException()
-        }
-        this.components += components
-        componentsInitialized = true
-    }
-
+    protected abstract fun createVisitor(components: List<AbstractDiagnosticCollectorComponent>): CheckerRunningDiagnosticCollectorVisitor
 
     companion object {
         const val SUPPRESS_ALL_INFOS = "infos"
@@ -65,15 +47,4 @@ abstract class AbstractDiagnosticCollector(
             }
         }
     }
-}
-
-
-fun AbstractDiagnosticCollector.registerAllComponents() {
-    initializeComponents(
-        DeclarationCheckersDiagnosticComponent(this),
-        ExpressionCheckersDiagnosticComponent(this),
-        TypeCheckersDiagnosticComponent(this),
-        ErrorNodeDiagnosticCollectorComponent(this),
-        ControlFlowAnalysisDiagnosticComponent(this),
-    )
 }

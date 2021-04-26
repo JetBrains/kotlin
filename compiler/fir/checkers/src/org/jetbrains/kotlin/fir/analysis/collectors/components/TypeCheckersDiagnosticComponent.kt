@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeChecker
@@ -16,9 +17,10 @@ import org.jetbrains.kotlin.fir.types.*
 
 @OptIn(CheckersComponentInternal::class)
 class TypeCheckersDiagnosticComponent(
-    collector: AbstractDiagnosticCollector,
-    private val checkers: TypeCheckers = collector.session.checkersComponent.typeCheckers,
-) : AbstractDiagnosticCollectorComponent(collector) {
+    session: FirSession,
+    reporter: DiagnosticReporter,
+    private val checkers: TypeCheckers = session.checkersComponent.typeCheckers,
+) : AbstractDiagnosticCollectorComponent(session, reporter) {
 
     override fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef, data: CheckerContext) {
         checkers.allTypeRefCheckers.check(dynamicTypeRef, data, reporter)
