@@ -16,8 +16,16 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 
-object FirValReassignmentViaBackingFieldChecker : FirVariableAssignmentChecker() {
+object FirValReassignmentChecker : FirVariableAssignmentChecker() {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
+        checkValReassignmentViaBackingField(expression, context, reporter)
+    }
+
+    private fun checkValReassignmentViaBackingField(
+        expression: FirVariableAssignment,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         val backingFieldReference = expression.lValue as? FirBackingFieldReference ?: return
         val property = backingFieldReference.resolvedSymbol.fir
         if (property.isVar) return
