@@ -85,9 +85,9 @@ class UpToDateIT : BaseGradleIT() {
             buildGradle.appendText("""${'\n'}
                 // Add Kapt to the project to test its input checks as well:
                 apply plugin: 'kotlin-kapt'
-                compileKotlin.compilerClasspath = files($originalPaths).toList()
+                compileKotlin.getDefaultCompilerClasspath${'$'}kotlin_gradle_plugin().setFrom(files($originalPaths).toList())
                 afterEvaluate {
-                    kaptGenerateStubsKotlin.compilerClasspath = files($originalPaths).toList()
+                    kaptGenerateStubsKotlin.getDefaultCompilerClasspath${'$'}kotlin_gradle_plugin().setFrom(files($originalPaths).toList())
                 }
             """.trimIndent())
         }

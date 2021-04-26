@@ -368,23 +368,6 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCustomCompilerFile() {
-        val project = Project("customCompilerFile")
-        project.setupWorkingDir()
-
-        // copy compiler embeddable to project dir using custom name
-        val classpath = System.getProperty("java.class.path").split(File.pathSeparator)
-        val kotlinEmbeddableJar = File(classpath.find { it.contains("kotlin-compiler-embeddable") })
-        val compilerJar = File(project.projectDir, "compiler.jar")
-        kotlinEmbeddableJar.copyTo(compilerJar)
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains("Kotlin compiler classpath: $compilerJar")
-        }
-    }
-
-    @Test
     fun testFreeCompilerArgs() {
         val project = Project("kotlinProject")
         project.setupWorkingDir()

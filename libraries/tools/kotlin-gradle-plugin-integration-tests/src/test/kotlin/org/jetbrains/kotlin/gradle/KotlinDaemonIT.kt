@@ -103,25 +103,6 @@ class KotlinDaemonIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testGradleBuildClasspathShouldNotBeLeakedIntoDaemonClasspathOnUsingCustomCompilerJar() {
-        val testProject = Project(
-            projectName = "customCompilerFile",
-        )
-        testProject.setupWorkingDir()
-
-        // copy compiler embeddable into project dir using custom name
-        val classpath = System.getProperty("java.class.path").split(File.pathSeparator)
-        val kotlinEmbeddableJar = File(classpath.find { it.contains("kotlin-compiler-embeddable") }!!)
-
-        val compilerJar = File(testProject.projectDir, "compiler.jar")
-        kotlinEmbeddableJar.copyTo(compilerJar)
-
-        testProject.build("build") {
-            assertGradleClasspathNotLeaked()
-        }
-    }
-
     private fun CompiledProject.assertGradleClasspathNotLeaked() {
         assertContains("Kotlin compiler classpath:")
         val daemonClasspath = output.lineSequence().find {
