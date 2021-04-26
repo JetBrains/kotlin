@@ -4,9 +4,7 @@
  */
 
 package org.jetbrains.kotlin.compilerRunner
-
 import org.gradle.api.Project
-import org.gradle.api.UnknownTaskException
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.JavaPluginConvention
@@ -16,18 +14,16 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.CompilerId
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
+import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeOrCanonical
@@ -213,50 +209,57 @@ internal open class GradleCompilerRunner(
             val jarToClassListFile = HashMap<File, File>()
             val jarToModule = HashMap<File, IncrementalModuleEntry>()
 
-            for (project in gradle.rootProject.allprojects) {
+            val multiplatformProjectTasks = mutableMapOf<Project, MutableSet<String>>()
 
-                if (project.kotlinExtensionOrNull == null)
-                    continue
+            gradle.taskGraph.allTasks.forEach { task ->
+                val project = task.project
+                if (project.multiplatformExtensionOrNull != null) {
+                    // Just record this, we'll process them later
+                    val tasksInProject = multiplatformProjectTasks[project] ?: mutableSetOf()
+                    tasksInProject.add(task.name)
+                    multiplatformProjectTasks[project] = tasksInProject
+                }
 
-                val isMultiplatformProject = project.multiplatformExtensionOrNull != null
-
-                KotlinCompileTaskData.getTaskDataContainer(project).forEach { taskData ->
-                    val compilation = taskData.compilation
-                    val target = taskData.compilation.owner
+                if (task is AbstractKotlinCompile<*>) {
                     val module = IncrementalModuleEntry(
                         project.path,
-                        compilation.ownModuleName,
+                        task.moduleName.get(),
                         project.buildDir,
-                        taskData.buildHistoryFile
+                        task.buildHistoryFile.get().asFile
                     )
-                    dirToModule[taskData.destinationDir.get()] = module
-
-                    taskData.javaOutputDir?.let { dirToModule[it] = module }
+                    dirToModule[task.destinationDir] = module
+                    task.javaOutputDir.orNull?.asFile?.let { dirToModule[it] = module }
                     nameToModules.getOrPut(module.name) { HashSet() }.add(module)
 
-                    if (compilation.platformType == KotlinPlatformType.js) {
-                        jarForSourceSet(project, compilation.compilationPurpose)?.let {
+                    if (task is Kotlin2JsCompile) {
+                        jarForSourceSet(project, task.sourceSetName.get())?.let {
                             jarToModule[it] = module
                         }
                     }
+                } else if (task is InspectClassesForMultiModuleIC) {
+                    jarToClassListFile[File(task.archivePath.get())] = task.classesListFile
+                }
+            }
 
-                    if (compilation is KotlinCompilation<*> && target is KotlinTarget && compilation.isMain()) { // FIXME support PM20
-                        if (isMultiplatformProject) {
-                            try {
-                                //It could cause task reconfiguration. TODO: fix it some day if need
-                                // But using project.locateTask(taskName).configure cause an Exception for call from ImmutableActionSet
+            for ((project, tasksInProject) in multiplatformProjectTasks) {
+                project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.let { kotlinExt ->
+                    for (target in kotlinExt.targets) {
+                        val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) ?: continue
 
-                                val archiveTask = project.tasks.getByName(target.artifactsTaskName) as AbstractArchiveTask
-                                jarToModule[archiveTask.archivePathCompatible.canonicalFile] = module
-                            } catch (e: UnknownTaskException) {
-                                //ignore not found task
-                            }
-                        } else {
-                            if (target is KotlinWithJavaTarget<*>) {
-                                val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
-                                jarToClassListFile[jar.archivePathCompatible.canonicalFile] = target.defaultArtifactClassesListFile.get()
-                            }
+                        if (mainCompilation.compileKotlinTaskName !in tasksInProject || target.artifactsTaskName !in tasksInProject) {
+                            // tasks are not part of the task graph, skip
+                            continue
                         }
+
+                        val kotlinTask = mainCompilation.compileKotlinTask as? AbstractKotlinCompile<*> ?: continue
+                        val module = IncrementalModuleEntry(
+                            project.path,
+                            kotlinTask.moduleName.get(),
+                            project.buildDir,
+                            kotlinTask.buildHistoryFile.get().asFile
+                        )
+                        val jarTask = project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask ?: continue
+                        jarToModule[jarTask.archivePathCompatible.canonicalFile] = module
                     }
                 }
             }
