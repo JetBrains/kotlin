@@ -11,14 +11,17 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
+import java.io.File
 
 /**
  * Uses Gradle worker api to run kotlin compilation.
  */
 internal class GradleCompilerRunnerWithWorkers(
     taskProvider: GradleCompileTaskProvider,
+    javaExecutable: File,
+    jdkToolsJar: File?,
     private val workerExecutor: WorkerExecutor
-) : GradleCompilerRunner(taskProvider) {
+) : GradleCompilerRunner(taskProvider, javaExecutable, jdkToolsJar) {
     override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
         loggerProvider.kotlinDebug { "Starting Kotlin compiler work from task '${pathProvider}'" }
 

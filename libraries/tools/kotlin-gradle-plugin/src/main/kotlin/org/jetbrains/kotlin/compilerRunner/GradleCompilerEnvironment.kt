@@ -9,7 +9,6 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
-import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import java.io.File
 
 internal class GradleCompilerEnvironment(
@@ -21,9 +20,9 @@ internal class GradleCompilerEnvironment(
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment? = null,
     val kotlinScriptExtensions: Array<String> = emptyArray()
 ) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector) {
-    val toolsJar: File? by lazy { findToolsJar() }
 
-    val compilerFullClasspath: List<File>
-        get() = (compilerClasspath + toolsJar).filterNotNull()
+    fun compilerFullClasspath(
+        toolsJar: File?
+    ): List<File> = if (toolsJar != null ) compilerClasspath + toolsJar else compilerClasspath.toList()
 }
 
