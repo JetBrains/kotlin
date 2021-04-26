@@ -6,17 +6,18 @@
 package org.jetbrains.kotlin.gradle.internal.tasks
 
 import org.gradle.api.Task
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.gradle.utils.outputsCompatible
 
 internal interface TaskWithLocalState : Task {
-    fun localStateDirectories(): FileCollection
+    @get:Internal
+    val localStateDirectories: ConfigurableFileCollection
 
     @get:Internal
     val metrics: BuildMetricsReporter
 }
 
 internal fun TaskWithLocalState.allOutputFiles(): FileCollection =
-    outputs.files + localStateDirectories()
+    outputs.files + localStateDirectories
