@@ -10,6 +10,7 @@ import org.gradle.api.Incubating
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
-import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -37,7 +37,8 @@ open class KotlinWebpack
 constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsCompilation
+    override val compilation: KotlinJsCompilation,
+    objects: ObjectFactory
 ) : DefaultTask(), RequiresNpmDependencies {
     @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
@@ -78,9 +79,7 @@ constructor(
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
-    val entryProperty: RegularFileProperty = project.newFileProperty {
-        compilation.compileKotlinTask.outputFile
-    }
+    val entryProperty: RegularFileProperty = objects.fileProperty().fileProvider(compilation.compileKotlinTask.outputFile)
 
     init {
         onlyIf {

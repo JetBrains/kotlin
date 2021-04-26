@@ -21,10 +21,9 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.runOnceAfterEvaluated
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
@@ -92,6 +91,7 @@ internal open class KotlinTasksProvider {
         val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
         val result = project.registerTask(name, taskClass) {
             configureAction(it)
+            KotlinCompile.Configurator(compilation).configure(it)
         }
         configure(result, project, properties, compilation)
         return result
@@ -107,6 +107,7 @@ internal open class KotlinTasksProvider {
         val taskClass = taskOrWorkersTask<Kotlin2JsCompile, Kotlin2JsCompileWithWorkers>(properties)
         val result = project.registerTask(name, taskClass) {
             configureAction(it)
+            Kotlin2JsCompile.Configurator<Kotlin2JsCompile>(compilation).configure(it)
         }
         configure(result, project, properties, compilation)
         return result
@@ -122,6 +123,7 @@ internal open class KotlinTasksProvider {
         val taskClass = taskOrWorkersTask<KotlinJsIrLink, KotlinJsIrLinkWithWorkers>(properties)
         val result = project.registerTask(name, taskClass) {
             configureAction(it)
+            KotlinJsIrLink.Configurator(compilation).configure(it)
         }
         configure(result, project, properties, compilation)
         return result
@@ -137,6 +139,7 @@ internal open class KotlinTasksProvider {
         val taskClass = taskOrWorkersTask<KotlinCompileCommon, KotlinCompileCommonWithWorkers>(properties)
         val result = project.registerTask(name, taskClass) {
             configureAction(it)
+            KotlinCompileCommon.Configurator(compilation).configure(it)
         }
         configure(result, project, properties, compilation)
         return result
@@ -171,7 +174,7 @@ internal class AndroidTasksProvider : KotlinTasksProvider() {
     ) {
         super.configure(kotlinTaskHolder, project, propertiesProvider, compilation)
         kotlinTaskHolder.configure {
-            it.useModuleDetection = true
+            it.useModuleDetection.set(true)
         }
     }
 }

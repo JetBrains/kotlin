@@ -103,8 +103,8 @@ abstract class KotlinJsSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            val compileOutputFile = compileTask.map { it.outputFile }
-            testJs.inputFileProperty.set(project.layout.file(compileOutputFile))
+            val compileOutputFile = compileTask.flatMap { it.outputFile }
+            testJs.inputFileProperty.fileProvider(compileOutputFile)
 
             testJs.dependsOn(nodeJs.npmInstallTaskProvider, compileTask, nodeJs.nodeJsSetupTaskProvider)
 
