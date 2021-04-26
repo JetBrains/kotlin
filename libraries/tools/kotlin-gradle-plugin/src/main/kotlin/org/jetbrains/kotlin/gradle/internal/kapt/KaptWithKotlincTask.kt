@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
@@ -18,40 +20,52 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChan
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.optionalProvider
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
 import javax.inject.Inject
 
 abstract class KaptWithKotlincTask @Inject constructor(
-    objectFactory: ObjectFactory
-) : KaptTask(objectFactory),
+    objectFactory: ObjectFactory,
+    providerFactory: ProviderFactory
+) : KaptTask(providerFactory),
     CompilerArgumentAwareWithInput<K2JVMCompilerArguments>,
-    UsesKotlinJavaToolchain {
+    UsesKotlinJavaToolchain{
+
+    class Configurator(kotlinCompileTask: KotlinCompile): KaptTask.Configurator<KaptWithKotlincTask>(kotlinCompileTask) {
+        override fun configure(task: KaptWithKotlincTask) {
+            super.configure(task)
+            task.pluginClasspath.from(kotlinCompileTask.pluginClasspath)
+            task.compileKotlinArgumentsContributor.set(
+                task.project.provider { kotlinCompileTask.compilerArgumentsContributor }
+            )
+            task.javaPackagePrefix.set(task.project.provider { kotlinCompileTask.javaPackagePrefix })
+            task.reportingSettings.set(task.project.provider { kotlinCompileTask.reportingSettings })
+        }
+    }
 
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
     @get:Classpath
     @get:InputFiles
-    val pluginClasspath: FileCollection get() = kotlinCompileTask.pluginClasspath
+    abstract val pluginClasspath: ConfigurableFileCollection
 
     @get:Internal
-    val taskProvider = GradleCompileTaskProvider(this)
+    val taskProvider by lazy { GradleCompileTaskProvider(this) }
 
     final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> =
         objectFactory.propertyWithNewInstance()
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
-    private val compileKotlinArgumentsContributor by project.provider {
-        kotlinCompileTask.compilerArgumentsContributor
-    }
+    @get:Internal
+    internal abstract val compileKotlinArgumentsContributor: Property<CompilerArgumentsContributor<K2JVMCompilerArguments>>
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        compileKotlinArgumentsContributor.contributeArguments(
+        compileKotlinArgumentsContributor.get().contributeArguments(
             args, compilerArgumentsConfigurationFlags(
                 defaultsOnly,
             ignoreClasspathResolutionErrors
@@ -63,7 +77,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
             withApClasspath = kaptClasspath,
             changedFiles = changedFiles,
             classpathChanges = classpathChanges,
-            compiledSourcesDir = compiledSources,
+            compiledSourcesDir = compiledSources.toList(),
             processIncrementally = processIncrementally
         )
 
@@ -80,8 +94,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
     private var classpathChanges: List<String> = emptyList()
     private var processIncrementally = false
 
-    private val javaPackagePrefix by project.optionalProvider { kotlinCompileTask.javaPackagePrefix }
-    private val reportingSettings by project.provider { kotlinCompileTask.reportingSettings }
+    private val javaPackagePrefix = objectFactory.property(String::class.java)
+    private val reportingSettings = objectFactory.property(ReportingSettings::class.java)
 
     @TaskAction
     fun compile(inputs: IncrementalTaskInputs) {
@@ -100,8 +114,8 @@ abstract class KaptWithKotlincTask @Inject constructor(
         val messageCollector = GradlePrintingMessageCollector(GradleKotlinLogger(logger), args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
         val environment = GradleCompilerEnvironment(
-            compilerClasspath, messageCollector, outputItemCollector,
-            reportingSettings = reportingSettings,
+            compilerClasspath.files.toList(), messageCollector, outputItemCollector,
+            reportingSettings = reportingSettings.get(),
             outputFiles = allOutputFiles()
         )
 
@@ -114,7 +128,7 @@ abstract class KaptWithKotlincTask @Inject constructor(
             sourcesToCompile = emptyList(),
             commonSources = emptyList(),
             javaSourceRoots = source.files,
-            javaPackagePrefix = javaPackagePrefix,
+            javaPackagePrefix = javaPackagePrefix.orNull,
             args = args,
             environment = environment
         )
