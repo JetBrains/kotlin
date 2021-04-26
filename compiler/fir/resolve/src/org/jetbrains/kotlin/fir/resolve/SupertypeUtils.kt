@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.createSubstitutionForSupertype
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
@@ -22,11 +23,18 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 
 abstract class SupertypeSupplier {
-    abstract fun forClass(firClass: FirClass<*>): List<ConeClassLikeType>
+    abstract fun forClass(firClass: FirClass<*>, useSiteSession: FirSession): List<ConeClassLikeType>
     abstract fun expansionForTypeAlias(typeAlias: FirTypeAlias): ConeClassLikeType?
 
     object Default : SupertypeSupplier() {
-        override fun forClass(firClass: FirClass<*>) = firClass.superConeTypes
+        override fun forClass(firClass: FirClass<*>, useSiteSession: FirSession): List<ConeClassLikeType> {
+            if (!firClass.isLocal) {
+                // for local classes the phase may not be updated till that moment
+                firClass.ensureResolved(FirResolvePhase.SUPER_TYPES, useSiteSession)
+            }
+            return firClass.superConeTypes
+        }
+
         override fun expansionForTypeAlias(typeAlias: FirTypeAlias) = typeAlias.expandedConeType
     }
 }
@@ -173,7 +181,7 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
     when (this) {
         is FirClassSymbol<*> -> {
             val superClassTypes =
-                supertypeSupplier.forClass(fir).mapNotNull {
+                supertypeSupplier.forClass(fir, useSiteSession).mapNotNull {
                     it.computePartialExpansion(useSiteSession, supertypeSupplier)
                         .takeIf { type -> lookupInterfaces || type.isClassBasedType(useSiteSession) }
                 }

@@ -370,7 +370,7 @@ private class SupertypeComputationSession {
     private val supertypeStatusMap = linkedMapOf<FirClassLikeDeclaration<*>, SupertypeComputationStatus>()
 
     val supertypesSupplier: SupertypeSupplier = object : SupertypeSupplier() {
-        override fun forClass(firClass: FirClass<*>): List<ConeClassLikeType> {
+        override fun forClass(firClass: FirClass<*>, useSiteSession: FirSession): List<ConeClassLikeType> {
             if (firClass.resolvePhase > FirResolvePhase.SUPER_TYPES) return firClass.superConeTypes
             return (getSupertypesComputationStatus(firClass) as? SupertypeComputationStatus.Computed)?.supertypeRefs?.mapNotNull {
                 it.coneTypeSafe<ConeClassLikeType>()
