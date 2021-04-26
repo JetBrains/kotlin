@@ -54,7 +54,7 @@ fun t2() {
 class A() {}
 
 fun t4(a: A) {
-    a = A()
+    <!VAL_REASSIGNMENT!>a<!> = A()
 }
 
 // ------------------------------------------------
@@ -188,7 +188,7 @@ class AnonymousInitializers(var a: String, val b: String) {
 }
 
 fun reassignFunParams(a: Int) {
-    a = 1
+    <!VAL_REASSIGNMENT!>a<!> = 1
 }
 
 open class Open(a: Int, w: Int) {}

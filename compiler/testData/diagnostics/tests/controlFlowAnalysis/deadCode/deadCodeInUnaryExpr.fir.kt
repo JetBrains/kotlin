@@ -5,7 +5,7 @@ fun testPrefix() {
 
 fun testPostfixWithCall(n: Nothing) {
     operator fun Nothing.inc(): Nothing = this
-    n++
+    <!VAL_REASSIGNMENT!>n<!>++
 }
 
 fun testPostfixSpecial() {
