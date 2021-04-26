@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Suppress("warnings")
 class C {
     fun foo(p: String??) {

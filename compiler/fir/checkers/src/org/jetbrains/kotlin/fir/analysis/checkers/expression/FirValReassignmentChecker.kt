@@ -12,13 +12,16 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 
 object FirValReassignmentChecker : FirVariableAssignmentChecker() {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         checkValReassignmentViaBackingField(expression, context, reporter)
+        checkValReassignmentOnValueParameter(expression, context, reporter)
     }
 
     private fun checkValReassignmentViaBackingField(
@@ -39,5 +42,14 @@ object FirValReassignmentChecker : FirVariableAssignmentChecker() {
                 reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, property.symbol, context)
             }
         }
+    }
+
+    private fun checkValReassignmentOnValueParameter(
+        expression: FirVariableAssignment,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val valueParameter = (expression.lValue as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirValueParameter ?: return
+        reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, valueParameter.symbol, context)
     }
 }

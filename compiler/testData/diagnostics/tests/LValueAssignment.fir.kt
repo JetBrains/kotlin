@@ -59,7 +59,7 @@ fun canBe(i0: Int, j: Int) {
     var i = i0
     (label@ i) = 34
 
-    (label@ j) = 34 //repeat for j
+    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34 //repeat for j
 
     val a = A()
     (l@ a.a) = 3894
@@ -69,7 +69,7 @@ fun canBe(i0: Int, j: Int) {
 }
 
 fun canBe2(j: Int) {
-    (label@ j) = 34
+    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34
 }
 
 class A() {
