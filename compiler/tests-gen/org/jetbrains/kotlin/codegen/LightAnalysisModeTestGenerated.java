@@ -6801,6 +6801,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/kt38099.kt");
         }
 
+        @TestMetadata("suspendFunctionAsSupertype.kt")
+        public void ignoreSuspendFunctionAsSupertype() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertype.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }

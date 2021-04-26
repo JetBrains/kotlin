@@ -5686,6 +5686,136 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                     runTest("compiler/testData/diagnostics/tests/coroutines/callableReference/outsideSuspend.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype")
+            @TestDataPath("$PROJECT_ROOT")
+            public class SuspendFunctionAsSupertype {
+                @Test
+                public void testAllFilesPresentInSuspendFunctionAsSupertype() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN")
+                @TestDataPath("$PROJECT_ROOT")
+                public class KSuspendFunctionN {
+                    @Test
+                    public void testAllFilesPresentInKSuspendFunctionN() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypes.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypes() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN/mixingSuspendAndNonSuspendSupertypes.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperClass() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN/mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperFunInterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperinterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN/mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("simple.kt")
+                    public void testSimple() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN/simple.kt");
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Simple {
+                    @Test
+                    public void testAllFilesPresentInSimple() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypes.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypes() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple/mixingSuspendAndNonSuspendSupertypes.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperClass() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple/mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperFunInterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperinterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple/mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("simple.kt")
+                    public void testSimple() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple/simple.kt");
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN")
+                @TestDataPath("$PROJECT_ROOT")
+                public class SuspendFunctionN {
+                    @Test
+                    public void testAllFilesPresentInSuspendFunctionN() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypes.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypes() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN/mixingSuspendAndNonSuspendSupertypes.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperClass() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN/mixingSuspendAndNonSuspendSupertypesThruSuperClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperFunInterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN/mixingSuspendAndNonSuspendSupertypesThruSuperFunInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt")
+                    public void testMixingSuspendAndNonSuspendSupertypesThruSuperinterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN/mixingSuspendAndNonSuspendSupertypesThruSuperinterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("simple.kt")
+                    public void testSimple() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN/simple.kt");
+                    }
+                }
+            }
         }
 
         @Nested

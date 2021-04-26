@@ -635,6 +635,7 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
         MAP.put(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE, "Suspend function type is not allowed as supertypes");
         MAP.put(SUPERTYPE_IS_KSUSPEND_FUNCTION_TYPE, "KSuspendFunctionN interfaces are not allowed as supertypes");
+        MAP.put(MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES, "Mixing suspend and non-suspend supertypes is not allowed");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
         MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'Any'");

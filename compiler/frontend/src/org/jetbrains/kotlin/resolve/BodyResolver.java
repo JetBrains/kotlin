@@ -587,10 +587,13 @@ public class BodyResolver {
                 if (FunctionTypesKt.isExtensionFunctionType(supertype)) {
                     trace.report(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.on(typeReference));
                 }
-                else if (FunctionTypesKt.isSuspendFunctionType(supertype)) {
+                else if (FunctionTypesKt.isSuspendFunctionType(supertype) &&
+                         !languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionAsSupertype)
+                ) {
                     trace.report(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE.on(typeReference));
                 }
-                else if (FunctionTypesKt.isKSuspendFunctionType(supertype)) {
+                else if (FunctionTypesKt.isKSuspendFunctionType(supertype) &&
+                         !languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionAsSupertype)) {
                     trace.report(SUPERTYPE_IS_KSUSPEND_FUNCTION_TYPE.on(typeReference));
                 }
 
