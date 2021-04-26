@@ -14,7 +14,7 @@ import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
-internal open class KotlinJsIrLinkWithWorkers
+internal abstract class KotlinJsIrLinkWithWorkers
 @Inject
 constructor(
     objectFactory: ObjectFactory,
