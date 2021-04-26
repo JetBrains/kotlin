@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.utils.IgnoreTests
 
 abstract class AbstractFirShortenRefsTest : AbstractImportsTest() {
     override val captureExceptions: Boolean = false

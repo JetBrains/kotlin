@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.utils.IgnoreTests
 import java.io.File
 
 abstract class AbstractHLLocalInspectionTest : AbstractLocalInspectionTest() {

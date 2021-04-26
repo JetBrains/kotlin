@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.test.uitls.IgnoreTests.DIRECTIVES
+import org.jetbrains.kotlin.test.utils.IgnoreTests.DIRECTIVES
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractHighLevelPerformanceCompletionHandlerTests(

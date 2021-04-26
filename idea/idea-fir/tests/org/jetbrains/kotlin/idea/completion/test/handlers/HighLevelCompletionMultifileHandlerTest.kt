@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.completion.test.handlers
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.utils.IgnoreTests
 import org.junit.runner.RunWith
 import java.nio.file.Paths
 
