@@ -101,6 +101,12 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
     override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String =
         classInternalName((typeConstructor as IrClassSymbol).owner)
 
+    override fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String {
+        val script = (typeConstructor as IrScriptSymbol).owner
+        val targetClass = script.targetClass ?: error("No target class computed for script: ${script.render()}")
+        return classInternalName(targetClass.owner)
+    }
+
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) {
         if (sw.skipGenericSignature()) return
         with(KotlinTypeMapper) {
