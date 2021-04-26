@@ -166,6 +166,18 @@ to perform such updates:
 - If you’re adding a dependency with OS mentioning in an artifact name (`darwin`, `mac`, `osx`, `linux`, `windows`), remember to add 
   counterparts for other platforms.
 
+## Using -dev and -SNAPSHOT versions
+
+We publish `-dev` and `-SNAPSHOT` versions frequently.
+
+For `-dev` versions you can use the [list of available versions](https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
+
+`maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap") }`
+
+For `-SNAPSHOT` versions that are updated daily, you can use the [list of available versions](https://oss.sonatype.org/content/repositories/snapshots/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
+
+`maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }`
+
 # License
 Kotlin is distributed under the terms of the Apache License (Version 2.0). See [license folder](license/README.md) for details.
 
