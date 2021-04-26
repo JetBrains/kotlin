@@ -18,7 +18,6 @@
 - [`KT-28791`](https://youtrack.jetbrains.com/issue/KT-28791) Kotlin serialization with inline classes
 - [`KT-30222`](https://youtrack.jetbrains.com/issue/KT-30222) Support JVM target version selection in Kotlin bytecode tool window
 - [`KT-41884`](https://youtrack.jetbrains.com/issue/KT-41884) Support 'file' target for JvmSynthetic annotation
-- [`KT-42522`](https://youtrack.jetbrains.com/issue/KT-42522) Enable string concatenation via invokedynamic by default for JVM target 9 and above
 - [`KT-43677`](https://youtrack.jetbrains.com/issue/KT-43677) Support for Java records
 - [`KT-43920`](https://youtrack.jetbrains.com/issue/KT-43920) Support loading binary Java annotations on fields
 - [`KT-44278`](https://youtrack.jetbrains.com/issue/KT-44278) Generate SAM-converted lambdas and function references using 'invokedynamic' on JDK 1.8+
