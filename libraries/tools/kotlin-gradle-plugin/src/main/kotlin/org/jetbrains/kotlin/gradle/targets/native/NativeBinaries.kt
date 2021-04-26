@@ -13,6 +13,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.HasAttributes
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
@@ -268,7 +269,14 @@ class Framework(
     /**
      * Specifies if the framework is linked as a static library (false by default).
      */
-    var isStatic = false
+    var isStatic: Boolean
+        get() = isStaticProvider.get()
+        set(value) {
+            isStaticProvider = project.provider { value }
+        }
+
+    internal var isStaticProvider: Provider<Boolean> = project.provider { isStaticProvided }
+    private var isStaticProvided = false;
 
     object BitcodeEmbeddingMode {
         val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE

@@ -42,6 +42,9 @@ open class PodspecTask : DefaultTask() {
     @get:Input
     internal lateinit var needPodspec: Provider<Boolean>
 
+    @get:Input
+    internal lateinit var useDynamicFrameworks: Provider<Boolean>
+
     @get:Nested
     val pods = project.objects.listProperty(CocoapodsDependency::class.java)
 
@@ -112,6 +115,7 @@ open class PodspecTask : DefaultTask() {
             }
         }
 
+        val staticFrameworks = if (useDynamicFrameworks.get().not()) "|    spec.static_framework = true" else ""
         with(outputFileProvider.get()) {
             writeText(
                 """
@@ -124,7 +128,7 @@ open class PodspecTask : DefaultTask() {
                 |    spec.license                  = '${license.getOrEmpty()}'
                 |    spec.summary                  = '${summary.getOrEmpty()}'
                 |
-                |    spec.static_framework         = true
+                $staticFrameworks 
                 |    spec.vendored_frameworks      = "$frameworkDir/${frameworkName.get()}.framework"
                 |    spec.libraries                = "c++"
                 |    spec.module_name              = "#{spec.name}_umbrella"
@@ -215,8 +219,17 @@ open class DummyFrameworkTask : DefaultTask() {
     @Input
     lateinit var frameworkName: Provider<String>
 
+    @Input
+    lateinit var useDynamicFramework: Provider<Boolean>
+
     private val frameworkDir: File
         get() = destinationDir.resolve("${frameworkName.get()}.framework")
+
+    private val dummyFrameworkPath: String
+        get() {
+            val staticOrDynamic = if (useDynamicFramework.get()) "dynamic" else "static"
+            return "/cocoapods/$staticOrDynamic/dummy.framework/"
+        }
 
     private fun copyResource(from: String, to: File) {
         to.parentFile.mkdirs()
@@ -240,7 +253,7 @@ open class DummyFrameworkTask : DefaultTask() {
 
     private fun copyFrameworkFile(relativeFrom: String, relativeTo: String = relativeFrom) =
         copyResource(
-            "/cocoapods/dummy.framework/$relativeFrom",
+            "$dummyFrameworkPath$relativeFrom",
             frameworkDir.resolve(relativeTo)
         )
 
@@ -249,7 +262,7 @@ open class DummyFrameworkTask : DefaultTask() {
         relativeTo: String = relativeFrom,
         transform: (String) -> String = { it }
     ) = copyTextResource(
-        "/cocoapods/dummy.framework/$relativeFrom",
+        "$dummyFrameworkPath$relativeFrom",
         frameworkDir.resolve(relativeTo),
         transform
     )

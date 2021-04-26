@@ -64,6 +64,16 @@ open class CocoapodsExtension(private val project: Project) {
     internal var useLibraries: Boolean = false
 
     /**
+     * Setup plugin to produce dynamic framework
+     */
+    fun useDynamicFramework() {
+        useDynamicFramework = true
+    }
+
+    @get:Input
+    internal var useDynamicFramework: Boolean = false
+
+    /**
      * Configure license of the pod built from this project.
      */
     @Optional

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.io.File
-import java.util.*
 
 internal val Project.cocoapodsBuildDirs: CocoapodsBuildDirs
     get() = CocoapodsBuildDirs(this)
@@ -122,7 +122,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         kotlinExtension.supportedTargets().all { target ->
             target.binaries.framework {
                 baseNameProvider = project.provider { cocoapodsExtension.frameworkName }
-                isStatic = true
+                isStaticProvider = project.provider { cocoapodsExtension.useDynamicFramework.not() }
             }
         }
     }
@@ -306,6 +306,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         }
                     }
                 }
+                if (cocoapodsExtension.useDynamicFramework) {
+                    target.binaries.withType(Framework::class.java) {
+                        it.linkerOpts("-framework", pod.moduleName)
+                        project.findProperty(FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
+                            it.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
+                        }
+                    }
+                }
             }
         }
     }
@@ -316,6 +324,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     ) {
         project.tasks.register(DUMMY_FRAMEWORK_TASK_NAME, DummyFrameworkTask::class.java) {
             it.frameworkName = project.provider { cocoapodsExtension.frameworkName }
+            it.useDynamicFramework = project.provider { cocoapodsExtension.useDynamicFramework }
         }
     }
 
@@ -329,6 +338,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for CocoaPods import"
             it.needPodspec = project.provider { cocoapodsExtension.needPodspec }
+            it.useDynamicFrameworks = project.provider { cocoapodsExtension.useDynamicFramework }
             it.pods.set(cocoapodsExtension.pods)
             it.version = project.provider { cocoapodsExtension.version }
             it.homepage.set(cocoapodsExtension.homepage)
