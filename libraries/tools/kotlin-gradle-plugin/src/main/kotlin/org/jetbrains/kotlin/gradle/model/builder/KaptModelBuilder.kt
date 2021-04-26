@@ -34,10 +34,9 @@ class KaptModelBuilder : ToolingModelBuilder {
     companion object {
 
         private fun KaptTask.createKaptSourceSet(): KaptSourceSet {
-            val sourceSetName = kotlinCompileTask.sourceSetName
             return KaptSourceSetImpl(
-                sourceSetName,
-                if (sourceSetName.contains(
+                this.sourceSetName.get(),
+                if (this.sourceSetName.get().contains(
                         "test",
                         true
                     )
