@@ -37,5 +37,3 @@ testsJar()
 projectTest(parallel = true) {
     workingDir = rootDir
 }
-
-apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

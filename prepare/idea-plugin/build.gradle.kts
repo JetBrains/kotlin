@@ -233,5 +233,3 @@ tasks.register<Sync>("ideaPlugin") {
     rename(quote("-$version"), "")
     rename(quote("-$bootstrapKotlinVersion"), "")
 }
-
-apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

@@ -32,5 +32,3 @@ sourcesJar()
 javadocJar()
 
 projectTest(parallel = true)
-
-apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

@@ -79,5 +79,3 @@ projectTest {
         systemProperty("robolectric.classpath", robolectricClasspathProvider.get())
     }
 }
-
-apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")
