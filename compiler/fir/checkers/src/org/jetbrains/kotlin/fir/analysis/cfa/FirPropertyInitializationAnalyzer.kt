@@ -87,8 +87,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
         }
 
         override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
-            val reference = node.fir.calleeReference as? FirResolvedNamedReference ?: return
-            val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return
+            val symbol = getPropertySymbol(node) ?: return
             if (symbol !in localProperties) return
             if (symbol.fir.isLateInit) return
             val pathAwareInfo = data.getValue(node)
