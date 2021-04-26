@@ -229,23 +229,6 @@ fun Project.publish(moduleMetadata: Boolean = false, configure: MavenPublication
     publication.configure()
 }
 
-fun Project.publishWithLegacyMavenPlugin(body: Upload.() -> Unit = {}): Upload {
-    apply<plugins.PublishedKotlinModule>()
-
-    if (artifactsRemovedDiagnosticFlag) {
-        error("`publish()` should be called before removing artifacts typically done in `noDefaultJar()` or `runtimeJar()` call")
-    }
-
-    afterEvaluate {
-        if (configurations.findByName("classes-dirs") != null)
-            throw GradleException("classesDirsArtifact() is incompatible with publish(), see sources comments for details")
-    }
-
-    return (tasks.getByName("uploadArchives") as Upload).apply {
-        body()
-    }
-}
-
 fun Project.idePluginDependency(block: () -> Unit) {
     val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true
     if (shouldActivate) {

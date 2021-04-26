@@ -126,13 +126,6 @@ task preparePublication {
     }
 }
 
-ext.signPom = { Project project, MavenDeployer deployer ->
-    deployer.beforeDeployment { MavenDeployment deployment ->
-        if (project.signing.required)
-            project.signing.signPom(deployment)
-    }
-}
-
 ext.configurePublishing = { Project project, configure = { } ->
     ArtifactsKt.publish(project, false) { publication ->
         configure.delegate = publication
@@ -142,72 +135,6 @@ ext.configurePublishing = { Project project, configure = { } ->
 
 ext.configurePluginMarkers = { Project project, withEmptyJars = true ->
     PluginMarkersKt.publishPluginMarkers(project, withEmptyJars)
-}
-
-ext.configureLegacyPublishing = { Project project ->
-    project.configure(project) {
-        apply plugin: 'maven'
-
-        if (!project.hasProperty('prebuiltJar')) {
-            apply plugin: 'signing'
-
-            signing {
-                required { (project.properties["signingRequired"] ?: project.isSonatypeRelease) }
-                sign configurations.archives
-                useGpgCmd()
-            }
-
-            signArchives {
-                enabled signing.required
-            }
-        }
-
-        uploadArchives {
-            def prepareTask = rootProject.preparePublication
-            dependsOn prepareTask
-
-            doFirst {
-                repositories.mavenDeployer.repository.url = prepareTask.repoUrl
-            }
-
-            repositories {
-                mavenDeployer {
-                    signPom(project, it)
-
-                    repository(url: prepareTask.repoUrl) {
-                        authentication(userName: prepareTask.username, password: prepareTask.password)
-                    }
-                    pom.project {
-                        name "${project.group}:${project.name}"
-                        packaging 'jar'
-                        // optionally artifactId can be defined here
-                        description project.description
-                        url 'https://kotlinlang.org/'
-                        licenses {
-                            license {
-                                name 'The Apache License, Version 2.0'
-                                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            }
-                        }
-                        scm {
-                            url 'https://github.com/JetBrains/kotlin'
-                            connection 'scm:git:https://github.com/JetBrains/kotlin.git'
-                            developerConnection 'scm:git:https://github.com/JetBrains/kotlin.git'
-                        }
-                        developers {
-                            developer {
-                                name 'Kotlin Team'
-                                organization = 'JetBrains'
-                                organizationUrl 'https://www.jetbrains.com'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        task publish(dependsOn: uploadArchives)
-    }
 }
 
 ext.configureJvmIrBackend = { Project project ->
