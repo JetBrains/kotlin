@@ -85,7 +85,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         // what comparison means. The optimization does not apply to `object == primitive` as equals
         // could be overridden for the object.
         if ((opToken == IrStatementOrigin.EQEQ || opToken == IrStatementOrigin.EXCLEQ) &&
-            ((AsmUtil.isIntOrLongPrimitive(leftType) && !AsmUtil.isPrimitive(rightType)) ||
+            ((AsmUtil.isIntOrLongPrimitive(leftType) && !isPrimitive(rightType)) ||
                     (AsmUtil.isIntOrLongPrimitive(rightType) && AsmUtil.isBoxedPrimitiveType(leftType)))
         ) {
             val aValue = a.accept(codegen, data).materializedAt(leftType, a.type)
