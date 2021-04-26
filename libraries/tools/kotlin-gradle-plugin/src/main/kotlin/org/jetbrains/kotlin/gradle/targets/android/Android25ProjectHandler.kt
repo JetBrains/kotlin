@@ -61,12 +61,11 @@ class Android25ProjectHandler(
         kotlinTask.configure { kotlinTaskInstance ->
             kotlinTaskInstance.inputs.files(variantData.getSourceFolders(SourceKind.JAVA)).withPathSensitivity(PathSensitivity.RELATIVE)
 
-            kotlinTaskInstance.mapClasspath {
-                val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
-                kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
-            }
+            kotlinTaskInstance.classpath = project.files()
+                .from(variantData.getCompileClasspath(preJavaClasspathKey))
+                .from(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
 
-            kotlinTaskInstance.javaOutputDir = javaTask.get().destinationDir
+            kotlinTaskInstance.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
         }
 
         // Find the classpath entries that come from the tested variant and register them as the friend paths, lazily
@@ -84,8 +83,8 @@ class Android25ProjectHandler(
         )
 
         compilation.output.classesDirs.from(
-            kotlinTask.map { it.destinationDir },
-            javaTask.map { it.destinationDir }
+            kotlinTask.flatMap { it.destinationDirectory },
+            javaTask.flatMap { it.destinationDirectory }
         )
     }
 

@@ -685,7 +685,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val abstractKotlinCompileClass =
             compileKotlinTask.javaClass.classLoader.loadClass(AbstractKotlinGradleModelBuilder.ABSTRACT_KOTLIN_COMPILE_CLASS)
         val getCompileClasspath =
-            abstractKotlinCompileClass.getDeclaredMethodOrNull("getCompileClasspath") ?: return emptyList()
+            abstractKotlinCompileClass.getDeclaredMethodOrNull("getCompileClasspath") ?:
+            abstractKotlinCompileClass.getDeclaredMethodOrNull("getClasspath") ?: return emptyList()
         @Suppress("UNCHECKED_CAST")
         return (getCompileClasspath(compileKotlinTask) as? Collection<File>)?.map { it.path } ?: emptyList()
     }

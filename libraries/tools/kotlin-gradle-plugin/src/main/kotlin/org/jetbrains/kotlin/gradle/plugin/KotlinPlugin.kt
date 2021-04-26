@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
@@ -107,7 +108,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
         registerKotlinCompileTask(register = ::doRegisterTask).also { task ->
-            kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }).builtBy(task) }
+            kotlinCompilation.output.classesDirs.from(task.flatMap { it.destinationDirectory })
         }
 
     protected fun registerKotlinCompileTask(
@@ -116,13 +117,10 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     ): TaskProvider<out T> {
         logger.kotlinDebug("Creating kotlin compile task $name")
 
-        KotlinCompileTaskData.register(name, kotlinCompilation).apply {
-            destinationDir.set(project.provider { defaultKotlinDestinationDir })
-        }
-
         return register(project, name) {
             it.description = taskDescription
-            it.mapClasspath { kotlinCompilation.compileDependencyFiles }
+            it.destinationDirectory.set(defaultKotlinDestinationDir)
+            it.classpath = project.files({ kotlinCompilation.compileDependencyFiles })
         }
     }
 
@@ -207,21 +205,25 @@ internal class Kotlin2JvmSourceSetProcessor(
 
             javaSourceSet?.let { java ->
                 val javaTask = project.tasks.withType<AbstractCompile>().named(java.compileJavaTaskName)
-                configureJavaTask(kotlinTask, javaTask)
+                javaTask.configure { javaCompile ->
+                    javaCompile.classpath += project.files(kotlinTask.flatMap { it.destinationDirectory })
+                }
+                kotlinTask.configure { kotlinCompile ->
+                    kotlinCompile.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
+                }
             }
 
             if (sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
                 project.pluginManager.withPlugin("java-library") {
-                    registerKotlinOutputForJavaLibrary(kotlinTask.map { it.destinationDir }, kotlinTask)
+                    registerKotlinOutputForJavaLibrary(kotlinTask.flatMap { it.destinationDirectory })
                 }
             }
         }
     }
 
-    private fun registerKotlinOutputForJavaLibrary(outputDir: Provider<File>, taskDependency: TaskProvider<*>) {
+    private fun registerKotlinOutputForJavaLibrary(outputDir: Provider<Directory>) {
         val configuration = project.configurations.getByName("apiElements")
         configuration.outgoing.variants.getByName("classes").artifact(outputDir) {
-            it.builtBy(taskDependency)
             it.type = "java-classes-directory"
         }
     }
@@ -259,11 +261,12 @@ internal class Kotlin2JsSourceSetProcessor(
         project.whenEvaluated {
             kotlinTask.configure { kotlinTaskInstance ->
                 val kotlinOptions = kotlinTaskInstance.kotlinOptions
-                val outputDir: File = kotlinTaskInstance.outputFile.parentFile
+                val outputFile = kotlinTaskInstance.outputFile.get()
+                val outputDir: File = outputFile.parentFile
                 kotlinOptions.outputFile = if (!kotlinOptions.isProduceUnzippedKlib()) {
-                    kotlinTaskInstance.outputFile.absolutePath
+                    outputFile.absolutePath
                 } else {
-                    kotlinTaskInstance.outputFile.parentFile.absolutePath
+                    outputFile.parentFile.absolutePath
                 }
                 if (outputDir.isParentOf(project.rootDir))
                     throw InvalidUserDataException(
@@ -931,14 +934,11 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         val kotlinTaskName = compilation.compileKotlinTaskName
 
-        KotlinCompileTaskData.register(kotlinTaskName, compilation).apply {
-            // store kotlin classes in separate directory. They will serve as class-path to java compiler
-            destinationDir.set(project.provider { File(project.buildDir, "tmp/kotlin-classes/$variantDataName") })
-        }
-
         tasksProvider.registerKotlinJVMTask(project, kotlinTaskName, compilation) {
-            it.parentKotlinOptionsImpl = rootKotlinOptions
+            it.parentKotlinOptionsImpl.set(rootKotlinOptions)
 
+            // store kotlin classes in separate directory. They will serve as class-path to java compiler
+            it.destinationDirectory.set(project.layout.buildDirectory.dir( "tmp/kotlin-classes/$variantDataName"))
             it.description = "Compiles the $variantDataName kotlin."
         }
 
@@ -977,36 +977,6 @@ internal inline fun BaseVariant.forEachKotlinSourceSet(action: (KotlinSourceSet)
 
 internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {
     getSourceFolders(SourceKind.JAVA).forEach(action)
-}
-
-
-internal fun configureJavaTask(
-    kotlinTaskProvider: TaskProvider<out KotlinCompile>,
-    javaTaskProvider: TaskProvider<out AbstractCompile>
-) {
-    javaTaskProvider.configure { javaTask ->
-        val kotlinTask = kotlinTaskProvider.get()
-        kotlinTask.javaOutputDir = javaTask.destinationDir
-
-        // Make Gradle check if the javaTask is up-to-date based on the Kotlin classes
-        javaTask.inputs.run {
-            dir(kotlinTask.destinationDir)
-                .withNormalizer(CompileClasspathNormalizer::class.java)
-                .withPropertyName("${kotlinTask.name}OutputClasses")
-        }
-        // Also, use kapt1 annotations file for up-to-date check since annotation processing is done with javac
-        javaTask.dependsOn(kotlinTask)
-        /*
-         * It's important to modify javaTask.classpath only in doFirst,
-         * because Android plugin uses ConventionMapping to modify it too (see JavaCompileConfigAction.execute),
-         * and setting classpath explicitly prevents usage of Android mappings.
-         * Also classpath set by Android can be modified after execution of some tasks (see VarianConfiguration.getCompileClasspath)
-         * ex. it adds some support libraries jars after execution of prepareComAndroidSupportSupportV42311Library task,
-         * so it's only safe to modify javaTask.classpath right before its usage
-         */
-        // todo: remove?
-        javaTask.appendClasspathDynamically(kotlinTask.destinationDir)
-    }
 }
 
 internal fun ifKaptEnabled(project: Project, block: () -> Unit) {
