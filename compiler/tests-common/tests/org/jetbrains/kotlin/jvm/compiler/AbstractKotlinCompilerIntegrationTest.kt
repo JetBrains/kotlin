@@ -51,15 +51,15 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
      * @return [destination]
      */
     protected fun compileLibrary(
-            libraryName: String,
-            destination: File = File(tmpdir, "$libraryName.jar"),
-            additionalOptions: List<String> = emptyList(),
-            compileJava: (sourceDir: File, javaFiles: List<File>, outputDir: File) -> Boolean = { _, javaFiles, outputDir ->
-                KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
-            },
-            checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
-            manifest: Manifest? = null,
-            extraClassPath: List<File> = emptyList()
+        libraryName: String,
+        destination: File = File(tmpdir, "$libraryName.jar"),
+        additionalOptions: List<String> = emptyList(),
+        compileJava: (sourceDir: File, javaFiles: List<File>, outputDir: File) -> Boolean = { _, javaFiles, outputDir ->
+            KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
+        },
+        checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
+        manifest: Manifest? = null,
+        extraClassPath: List<File> = emptyList()
     ): File {
         val sourceDir = File(testDataDirectory, libraryName)
         val javaFiles = FileUtil.findFilesByMask(JAVA_FILES, sourceDir)
@@ -84,13 +84,12 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         if (isJar) {
             destination.delete()
             val stream =
-                    if (manifest != null) JarOutputStream(destination.outputStream(), manifest)
-                    else JarOutputStream(destination.outputStream())
+                if (manifest != null) JarOutputStream(destination.outputStream(), manifest)
+                else JarOutputStream(destination.outputStream())
             stream.use { jar ->
                 ZipUtil.addDirToZipRecursively(jar, destination, outputDir, "", null, null)
             }
-        }
-        else assertNull("Manifest is ignored if destination is not a .jar file", manifest)
+        } else assertNull("Manifest is ignored if destination is not a .jar file", manifest)
 
         return destination
     }
@@ -132,17 +131,26 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     }
 
     protected fun normalizeOutput(output: Pair<String, ExitCode>): String {
-        return AbstractCliTest.getNormalizedCompilerOutput(output.first, output.second, testDataDirectory.path)
-                .replace(FileUtil.toSystemIndependentName(tmpdir.absolutePath), "\$TMP_DIR\$")
+        return AbstractCliTest.getNormalizedCompilerOutput(output.first, output.second, testDataDirectory.path).removeFirWarning()
+            .replace(FileUtil.toSystemIndependentName(tmpdir.absolutePath), "\$TMP_DIR\$")
+    }
+
+    private fun String.removeFirWarning(): String {
+        return this.replace(
+            """warning: ATTENTION!
+ This build uses in-dev FIR: 
+  -Xuse-fir
+""", ""
+        )
     }
 
     protected fun compileKotlin(
-            fileName: String,
-            output: File,
-            classpath: List<File> = emptyList(),
-            compiler: CLICompiler<*> = K2JVMCompiler(),
-            additionalOptions: List<String> = emptyList(),
-            expectedFileName: String? = "output.txt"
+        fileName: String,
+        output: File,
+        classpath: List<File> = emptyList(),
+        compiler: CLICompiler<*> = K2JVMCompiler(),
+        additionalOptions: List<String> = emptyList(),
+        expectedFileName: String? = "output.txt"
     ): Pair<String, ExitCode> {
         val args = mutableListOf<String>()
         val sourceFile = File(testDataDirectory, fileName)

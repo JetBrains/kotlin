@@ -182,7 +182,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertNoWarnings()
+            assertNoWarnings { removeFirWarning(it) }
         }
 
         val greeterKt = project.projectDir.getFileByName("Greeter.kt")
@@ -192,13 +192,21 @@ class KotlinGradleIT : BaseGradleIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertNoWarnings()
+            assertNoWarnings { removeFirWarning(it) }
             val affectedSources = project.projectDir.getFilesByNames(
                 "Greeter.kt", "KotlinGreetingJoiner.kt",
                 "TestGreeter.kt", "TestKotlinGreetingJoiner.kt"
             )
             assertCompiledKotlinSources(project.relativize(affectedSources))
         }
+    }
+
+    private fun removeFirWarning(output: String): String {
+        return output.replace(
+            """w: ATTENTION!
+ This build uses in-dev FIR: 
+  -Xuse-fir""", ""
+        )
     }
 
     @Test

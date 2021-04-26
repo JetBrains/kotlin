@@ -1,3 +1,6 @@
+warning: ATTENTION!
+ This build uses in-dev FIR:
+  -Xuse-fir
 compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:26: error: unresolved reference: getSomeInt
     constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
                          ^
