@@ -11,6 +11,7 @@ import org.gradle.internal.impldep.org.junit.platform.commons.support.Annotation
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.test.WithMuteInDatabase
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.io.TempDir
@@ -23,6 +24,7 @@ import kotlin.streams.asStream
 /**
  * Base class for all Kotlin Gradle plugin integration tests.
  */
+@Tag("JUnit5")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithMuteInDatabase
 abstract class KGPBaseTest {
@@ -40,6 +42,7 @@ abstract class KGPBaseTest {
         val parallel: Boolean = true,
         val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
         val fileSystemWatchEnabled: Boolean = false,
+        val buildCacheEnabled: Boolean = false,
     ) {
         fun toArguments(
             gradleVersion: GradleVersion
@@ -78,6 +81,8 @@ abstract class KGPBaseTest {
                     arguments.add("--no-watch-fs")
                 }
             }
+
+            arguments.add(if (buildCacheEnabled) "--build-cache" else "--no-build-cache")
 
             return arguments.toList()
         }

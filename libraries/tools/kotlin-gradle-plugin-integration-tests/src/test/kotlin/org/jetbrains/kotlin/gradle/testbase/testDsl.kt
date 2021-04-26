@@ -34,12 +34,14 @@ fun KGPBaseTest.project(
     forceOutput: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: Boolean = false,
+    projectPathAdditionalSuffix: String = "",
     test: TestProject.() -> Unit
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
         projectName,
         gradleVersion,
-        workingDir
+        workingDir,
+        projectPathAdditionalSuffix
     )
     projectPath.addDefaultBuildFiles()
     if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
@@ -93,13 +95,38 @@ fun TestProject.buildAndFail(
     assertions(buildResult)
 }
 
+fun TestProject.enableLocalBuildCache(
+    buildCacheLocation: Path
+) {
+    // language=Groovy
+    settingsGradle.append(
+        """
+        buildCache {
+            local {
+                directory = '${buildCacheLocation.toUri()}'
+            }
+        }
+        """.trimIndent()
+    )
+}
+
+fun TestProject.enableBuildCacheDebug() {
+    gradleProperties.append(
+        "org.gradle.caching.debug=true"
+    )
+}
+
 class TestProject(
     val gradleRunner: GradleRunner,
     val projectName: String,
     val buildOptions: KGPBaseTest.BuildOptions,
     val projectPath: Path,
     val gradleVersion: GradleVersion
-)
+) {
+    val rootBuildGradle: Path get() = projectPath.resolve("build.gradle")
+    val settingsGradle: Path get() = projectPath.resolve("settings.gradle")
+    val gradleProperties: Path get() = projectPath.resolve("gradle.properties")
+}
 
 private fun TestProject.commonBuildSetup(
     buildArguments: List<String>
@@ -123,7 +150,8 @@ private val testKitDir get() = Paths.get(".").resolve(".testKitDir")
 private fun setupProjectFromTestResources(
     projectName: String,
     gradleVersion: GradleVersion,
-    tempDir: Path
+    tempDir: Path,
+    optionalSubDir: String
 ): Path {
     val testProjectPath = Paths.get("src", "test", "resources", "testProject", projectName)
     assertTrue("Test project exists") { Files.exists(testProjectPath) }
@@ -132,6 +160,7 @@ private fun setupProjectFromTestResources(
     return tempDir
         .resolve(projectName)
         .resolve(gradleVersion.version)
+        .resolve(optionalSubDir)
         .also {
             testProjectPath.copyRecursively(it)
         }
