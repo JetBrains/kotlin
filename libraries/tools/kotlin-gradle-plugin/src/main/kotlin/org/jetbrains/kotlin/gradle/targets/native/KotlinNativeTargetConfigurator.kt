@@ -457,9 +457,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             }
 
 
-            compilation.output.addClassesDir {
-                project.project.files(compileTaskProvider.map { it.outputFile })
-            }
+            compilation.output.classesDirs.from(compileTaskProvider.flatMap { it.outputFile })
 
             project.project.tasks.getByName(compilation.compileAllTaskName).dependsOn(compileTaskProvider)
 

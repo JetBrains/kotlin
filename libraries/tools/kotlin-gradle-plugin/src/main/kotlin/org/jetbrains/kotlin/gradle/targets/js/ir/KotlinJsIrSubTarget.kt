@@ -123,7 +123,7 @@ abstract class KotlinJsIrSubTarget(
                 project.layout.file(
                     binary.linkSyncTask.map {
                         it.destinationDir
-                            .resolve(binary.linkTask.get().outputFile.name)
+                            .resolve(binary.linkTask.get().outputFile.get().name)
                     }
                 )
             )

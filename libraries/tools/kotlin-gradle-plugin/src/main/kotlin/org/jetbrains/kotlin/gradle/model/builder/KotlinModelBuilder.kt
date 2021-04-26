@@ -83,14 +83,14 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
 
         private fun AbstractKotlinCompile<*>.createSourceSet(project: Project, projectType: KotlinProject.ProjectType): SourceSet? {
             val javaSourceSet =
-                project.convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets?.find { it.name == sourceSetName }
+                project.convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets?.find { it.name == sourceSetName.get() }
             val kotlinSourceSet =
                 javaSourceSet?.getConvention(if (projectType == KotlinProject.ProjectType.PLATFORM_JS) KOTLIN_JS_DSL_NAME else KOTLIN_DSL_NAME) as? KotlinSourceSet
             return if (kotlinSourceSet != null) {
                 SourceSetImpl(
-                    sourceSetName,
-                    if (sourceSetName.contains("test", true)) SourceSet.SourceSetType.TEST else SourceSet.SourceSetType.PRODUCTION,
-                    findFriendSourceSets(),
+                    sourceSetName.get(),
+                    if (sourceSetName.get().contains("test", true)) SourceSet.SourceSetType.TEST else SourceSet.SourceSetType.PRODUCTION,
+                    friendSourceSets.get(),
                     kotlinSourceSet.kotlin.srcDirs,
                     javaSourceSet.resources.srcDirs,
                     destinationDir,
@@ -104,7 +104,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
          * Constructs the Android [SourceSet] that should be returned to the IDE for each compile task/variant.
          */
         private fun AbstractKotlinCompile<*>.createAndroidSourceSet(androidTarget: KotlinAndroidTarget): SourceSet {
-            val variantName = sourceSetName
+            val variantName = sourceSetName.get()
             val compilation = androidTarget.compilations.getByName(variantName)
             // Merge all sources and resource dirs from the different Source Sets that make up this variant.
             val sources = compilation.allKotlinSourceSets.flatMap {
@@ -114,9 +114,9 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                 it.resources.srcDirs
             }.distinctBy { it.absolutePath }
             return SourceSetImpl(
-                sourceSetName,
-                if (sourceSetName.contains("test", true)) SourceSet.SourceSetType.TEST else SourceSet.SourceSetType.PRODUCTION,
-                findFriendSourceSets(),
+                sourceSetName.get(),
+                if (sourceSetName.get().contains("test", true)) SourceSet.SourceSetType.TEST else SourceSet.SourceSetType.PRODUCTION,
+                friendSourceSets.get(),
                 sources,
                 resources,
                 destinationDir,
@@ -125,24 +125,16 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
             )
         }
 
-        private fun AbstractKotlinCompile<*>.findFriendSourceSets(): Collection<String> {
-            val friendSourceSets = ArrayList<String>()
-            (taskData.compilation as? KotlinCompilation<*>)?.associateWithTransitiveClosure?.forEach { associateCompilation ->
-                friendSourceSets.add(associateCompilation.name)
-            }
-            return friendSourceSets
-        }
-
         private fun AbstractKotlinCompile<*>.createCompilerArguments(): CompilerArguments {
             return CompilerArgumentsImpl(
                 serializedCompilerArguments,
                 defaultSerializedCompilerArguments,
-                compileClasspath.toList()
+                classpath.toList()
             )
         }
 
         private fun AbstractKotlinCompile<*>.createExperimentalFeatures(): ExperimentalFeatures {
-            return ExperimentalFeaturesImpl(coroutinesStr.get())
+            return ExperimentalFeaturesImpl(coroutines.get().name)
         }
     }
 }

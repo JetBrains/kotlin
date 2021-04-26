@@ -28,7 +28,6 @@ import java.io.File
 import java.util.*
 
 internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinCompile<*>) {
-    coroutines?.let { task.coroutinesFromGradleProperties = it }
     useFallbackCompilerSearch?.let { task.useFallbackCompilerSearch = it }
 
     if (task is KotlinCompile) {

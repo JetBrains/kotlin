@@ -62,7 +62,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                     if (task !is KaptGenerateStubsTask) {
 
                         try {
-                            val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName)
+                            val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName.get())
                             val discoveryClasspathConfiguration = project.configurations.findByName(discoveryClasspathConfigurationName)
                             when {
                                 discoveryClasspathConfiguration == null ->
@@ -70,7 +70,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                                 discoveryClasspathConfiguration.allDependencies.isEmpty() -> {
                                     // skip further checks - user did not configured any discovery sources
                                 }
-                                else -> configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
+                                else -> configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName.get())
                             }
                         } catch (e: IllegalStateException) {
                             project.logger.warn("$SCRIPTING_LOG_PREFIX applied in the non-supported environment (error received: ${e.message})")
