@@ -251,7 +251,7 @@ sealed class CallResolutionResult(
             if (error !is NewConstraintError) return@map it
             val lowerType = error.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
             val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
-            NewConstraintError(newLowerType, error.upperType, error.position).asDiagnostic()
+            NewConstraintError(newLowerType, error.upperType, error.position, error.isWarning).asDiagnostic()
         }
     }
 

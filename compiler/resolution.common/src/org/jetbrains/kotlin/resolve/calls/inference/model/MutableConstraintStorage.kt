@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.AbstractTypeCheckerContextForConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.model.*
@@ -46,6 +47,8 @@ class MutableVariableWithConstraints private constructor(
     private val mutableConstraints = if (constraints == null) SmartList() else SmartList(constraints)
 
     private var simplifiedConstraints: SmartList<Constraint>? = mutableConstraints
+
+    val rawConstraintsCount get() = mutableConstraints.size
 
     // return new actual constraint, if this constraint is new, otherwise return already existed not redundant constraint
     // the second element of pair is a flag whether a constraint was added in fact
@@ -104,8 +107,8 @@ class MutableVariableWithConstraints private constructor(
 
     // This method should be used only for transaction in constraint system
     // shouldRemove should give true only for tail elements
-    internal fun removeLastConstraints(shouldRemove: (Constraint) -> Boolean) {
-        mutableConstraints.trimToSize(mutableConstraints.indexOfLast { !shouldRemove(it) } + 1)
+    internal fun removeLastConstraints(sinceIndex: Int) {
+        mutableConstraints.trimToSize(sinceIndex)
         if (simplifiedConstraints !== mutableConstraints) {
             simplifiedConstraints = null
         }
@@ -212,6 +215,8 @@ class MutableVariableWithConstraints private constructor(
 internal class MutableConstraintStorage : ConstraintStorage {
     override val allTypeVariables: MutableMap<TypeConstructorMarker, TypeVariableMarker> = LinkedHashMap()
     override val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints> = LinkedHashMap()
+    override val missedConstraints: MutableList<Pair<IncorporationConstraintPosition, MutableList<Pair<TypeVariableMarker, Constraint>>>> =
+        SmartList()
     override val initialConstraints: MutableList<InitialConstraint> = SmartList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
     override val errors: MutableList<ConstraintSystemError> = SmartList()

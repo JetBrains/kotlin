@@ -4,5 +4,5 @@
 class Foo<T : Enum<T>>(val values: Array<T>)
 
 fun foo(x: Array<out Enum<*>>) {
-    val y = Foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    val y = Foo(<!ARGUMENT_TYPE_MISMATCH{LT}!>x<!>)
 }
