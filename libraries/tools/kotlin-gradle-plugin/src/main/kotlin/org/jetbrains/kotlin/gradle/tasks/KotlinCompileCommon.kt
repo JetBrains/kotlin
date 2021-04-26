@@ -17,16 +17,14 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -34,24 +32,57 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
-import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
 @CacheableTask
-open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
+abstract class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
-    override val kotlinOptions: KotlinMultiplatformCommonOptions =
-        taskData.compilation.kotlinOptions as KotlinMultiplatformCommonOptionsImpl
+    class Configurator(compilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<KotlinCompileCommon>(compilation) {
+        override fun configure(task: KotlinCompileCommon) {
+            super.configure(task)
+            task.kotlinOptionsProperty.value(compilation.kotlinOptions as KotlinMultiplatformCommonOptionsImpl).disallowChanges()
+            task.refinesMetadataPaths.from(getRefinesMetadataPaths(task.project)).disallowChanges()
+            task.expectActualLinker
+                .value(task.project.provider { (compilation as? KotlinCommonCompilation)?.isKlibCompilation == true || compilation is KotlinMetadataCompilationData })
+                .disallowChanges()
+        }
+
+        private fun getRefinesMetadataPaths(project: Project): Provider<Iterable<File>> {
+            return project.provider {
+                when (compilation) {
+                    is KotlinCompilation<*> -> {
+                        val defaultKotlinSourceSet: KotlinSourceSet = compilation.defaultSourceSet
+                        val metadataTarget = compilation.owner as KotlinTarget
+                        defaultKotlinSourceSet.resolveAllDependsOnSourceSets()
+                            .mapNotNull { sourceSet -> metadataTarget.compilations.findByName(sourceSet.name)?.output?.classesDirs }
+                            .flatten()
+                    }
+                    is AbstractKotlinFragmentMetadataCompilationData -> {
+                        val fragment = compilation.fragment
+                        project.files(
+                            fragment.refinesClosure.minus(fragment).map {
+                                compilation.metadataCompilationRegistry.byFragment(it).output.classesDirs
+                            }
+                        )
+                    }
+                    else -> error("unexpected compilation type")
+                }
+            }
+        }
+    }
+
+    override val kotlinOptionsProperty: Property<KotlinMultiplatformCommonOptions> = objects.property(KotlinMultiplatformCommonOptions::class.java)
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
 
     override fun getSourceRoots(): SourceRoots =
-        SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions)
+        SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions.get())
 
     override fun findKotlinCompilerClasspath(project: Project): List<File> =
         findKotlinMetadataCompilerClasspath(project)
@@ -60,11 +91,9 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        args.moduleName = this@KotlinCompileCommon.moduleName
+        args.moduleName = this@KotlinCompileCommon.moduleName.get()
 
-        if ((taskData.compilation as? KotlinCommonCompilation)?.isKlibCompilation == true ||
-            taskData.compilation is KotlinMetadataCompilationData
-        ) {
+        if (expectActualLinker.get()) {
             args.expectActualLinker = true
         }
 
@@ -83,32 +112,12 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         (kotlinOptions as KotlinMultiplatformCommonOptionsImpl).updateArguments(args)
     }
 
-    private fun outputPathsFromMetadataCompilationsOf(sourceSets: Iterable<KotlinSourceSet>): List<File> {
-        val metadataTarget = taskData.compilation.owner as KotlinTarget
-        return sourceSets
-            .mapNotNull { sourceSet -> metadataTarget.compilations.findByName(sourceSet.name)?.output?.classesDirs }
-            .flatten()
-    }
-
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
-    internal val refinesMetadataPaths by project.provider {
-        when (val compilation = taskData.compilation) {
-            is KotlinCompilation<*> -> {
-                val defaultKotlinSourceSet: KotlinSourceSet = compilation.defaultSourceSet
-                outputPathsFromMetadataCompilationsOf(defaultKotlinSourceSet.resolveAllDependsOnSourceSets())
-            }
-            is AbstractKotlinFragmentMetadataCompilationData -> {
-                val fragment = compilation.fragment
-                project.files(
-                    fragment.refinesClosure.minus(fragment).map {
-                        compilation.metadataCompilationRegistry.byFragment(it).output.classesDirs
-                    }
-                )
-            }
-            else -> error("unexpected compilation type")
-        }
-    }
+    internal val refinesMetadataPaths: ConfigurableFileCollection = objects.fileCollection()
+
+    @get:Internal
+    internal val expectActualLinker = objects.property(Boolean::class.java)
 
     override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
