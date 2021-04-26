@@ -10,7 +10,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTestCase
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.utils.IgnoreTests
 import java.nio.file.Paths
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 

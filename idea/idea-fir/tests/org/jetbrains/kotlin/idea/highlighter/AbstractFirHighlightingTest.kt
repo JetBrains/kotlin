@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.utils.IgnoreTests
 
 abstract class AbstractFirHighlightingTest : AbstractHighlightingTest() {
     override val captureExceptions: Boolean = false

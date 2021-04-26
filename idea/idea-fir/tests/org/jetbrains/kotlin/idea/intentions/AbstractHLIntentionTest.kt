@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.utils.IgnoreTests
 import java.io.File
 
 abstract class AbstractHLIntentionTest : AbstractIntentionTest() {

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.completion.wheigher
 
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
-import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.utils.IgnoreTests
 
 abstract class AbstractHighLevelWeigherTest : AbstractBasicCompletionWeigherTest() {
     override fun isFirPlugin(): Boolean = true

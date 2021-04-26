@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers
 
-import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.utils.IgnoreTests
 
 abstract class AbstractHighLevelBasicCompletionHandlerTest : AbstractBasicCompletionHandlerTest() {
     override val captureExceptions: Boolean = false
