@@ -25,24 +25,24 @@ internal fun boxByte(primitive: Byte): java.lang.Byte = java.lang.Byte.valueOf(p
 
 @SinceKotlin("1.3")
 @PublishedApi
-internal fun boxShort(primitive: Short): java.lang.Short = java.lang.Short(primitive)
+internal fun boxShort(primitive: Short): java.lang.Short = java.lang.Short.valueOf(primitive) as java.lang.Short
 
 @SinceKotlin("1.3")
 @PublishedApi
-internal fun boxInt(primitive: Int): java.lang.Integer = java.lang.Integer(primitive)
+internal fun boxInt(primitive: Int): java.lang.Integer = java.lang.Integer.valueOf(primitive) as java.lang.Integer
 
 @SinceKotlin("1.3")
 @PublishedApi
-internal fun boxLong(primitive: Long): java.lang.Long = java.lang.Long(primitive)
+internal fun boxLong(primitive: Long): java.lang.Long = java.lang.Long.valueOf(primitive) as java.lang.Long
 
 @SinceKotlin("1.3")
 @PublishedApi
-internal fun boxFloat(primitive: Float): java.lang.Float = java.lang.Float(primitive)
+internal fun boxFloat(primitive: Float): java.lang.Float = java.lang.Float.valueOf(primitive) as java.lang.Float
 
 @SinceKotlin("1.3")
 @PublishedApi
-internal fun boxDouble(primitive: Double): java.lang.Double = java.lang.Double(primitive)
+internal fun boxDouble(primitive: Double): java.lang.Double = java.lang.Double.valueOf(primitive) as java.lang.Double
 
 @SinceKotlin("1.3")
 @PublishedApi
-internal fun boxChar(primitive: Char): java.lang.Character = java.lang.Character(primitive)
+internal fun boxChar(primitive: Char): java.lang.Character = java.lang.Character.valueOf(primitive) as java.lang.Character
