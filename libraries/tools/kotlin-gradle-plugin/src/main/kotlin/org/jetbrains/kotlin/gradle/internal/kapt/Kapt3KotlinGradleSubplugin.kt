@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
@@ -497,10 +496,21 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             project.dependencies.add(classStructureIfIncremental.name, project.files(project.provider { kotlinCompile.get().classpath }))
         }
 
+        val kaptClasspathConfiguration = project.configurations.create("kaptClasspath_$taskName")
+            .setExtendsFrom(kaptClasspathConfigurations).also {
+                it.isVisible = false
+                it.isCanBeConsumed = false
+            }
+
         val kaptTaskProvider = project.registerTask(taskName, taskClass, emptyList()) { kaptTask ->
             kaptTask.useBuildCache = kaptExtension.useBuildCache
 
-            kaptTask.kotlinCompileTask = kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile
+            val kotlinCompileTask = kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile
+            if (kaptTask is KaptWithoutKotlincTask) {
+                KaptWithoutKotlincTask.Configurator(kotlinCompileTask).configure(kaptTask)
+            } else {
+                KaptWithKotlincTask.Configurator(kotlinCompileTask).configure(kaptTask as KaptWithKotlincTask)
+            }
 
             kaptTask.stubsDir.set(getKaptStubsDir())
 
@@ -512,12 +522,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             kaptTask.isIncremental = project.isIncrementalKapt()
 
             if (kaptTask.isIncremental) {
-                kaptTask.incAptCache.set(getKaptIncrementalAnnotationProcessingCache())
-                kaptTask.localState.register(kaptTask.incAptCache)
+                kaptTask.incAptCache.fileValue(getKaptIncrementalAnnotationProcessingCache()).disallowChanges()
 
-                kaptTask.classpathStructure = classStructureIfIncremental!!.incoming.artifactView { viewConfig ->
-                    viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-                }.files
+                kaptTask.classpathStructure.from(
+                    classStructureIfIncremental!!.incoming.artifactView { viewConfig ->
+                        viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+                    }.files
+                ).disallowChanges()
 
                 if (kaptTask is KaptWithKotlincTask) {
                     kaptTask.pluginOptions.addPluginArgument(
@@ -530,24 +541,16 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 }
             }
 
-            val kaptClasspathConfiguration =
-                project.configurations.create("kaptClasspath_" + kaptTask.name).setExtendsFrom(kaptClasspathConfigurations).also {
-                    it.isVisible = false
-                    it.isCanBeConsumed = false
-                }
-
-            kaptTask.kaptClasspath.from(kaptClasspathConfiguration)
-            kaptTask.kaptExternalClasspath.from(*kaptClasspathConfiguration.files { it is ExternalDependency }.toTypedArray())
-            kaptTask.kaptClasspathConfigurationNames.set(kaptClasspathConfigurations.map { it.name })
+            kaptTask.kaptClasspath.from(kaptClasspathConfiguration).disallowChanges()
+            kaptTask.kaptExternalClasspath.from(kaptClasspathConfiguration.fileCollection { it is ExternalDependency })
+            kaptTask.kaptClasspathConfigurationNames.value(kaptClasspathConfigurations.map { it.name }).disallowChanges()
 
             KaptWithAndroid.androidVariantData(this)?.annotationProcessorOptionProviders?.let {
                 kaptTask.annotationProcessorOptionProviders.add(it)
             }
         }
 
-        kotlinCompilation.output.apply {
-            addClassesDir { project.files(classesOutputDir).builtBy(kaptTaskProvider) }
-        }
+        kotlinCompilation.output.classesDirs.from(kaptTaskProvider.map { it.destinationDir })
 
         kotlinCompilation.compileKotlinTaskProvider.configure {
             it as SourceTask
@@ -568,7 +571,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 if (javaCompile != null && "-source" !in result && "--source" !in result && "--release" !in result) {
                     val atLeast12Java =
                         if (isConfigurationCacheAvailable(project.gradle)) {
-                            val currentJavaVersion = JavaVersion.parse(project.providers.systemProperty("java.version").forUseAtConfigurationTime().get())
+                            val currentJavaVersion =
+                                JavaVersion.parse(project.providers.systemProperty("java.version").forUseAtConfigurationTime().get())
                             currentJavaVersion.feature >= 12
                         } else {
                             SystemInfo.isJavaVersionAtLeast(12, 0, 0)
@@ -644,26 +648,20 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): TaskProvider<KaptGenerateStubsTask> {
         val kaptTaskName = getKaptTaskName("kaptGenerateStubs")
 
-        KotlinCompileTaskData.register(kaptTaskName, kotlinCompilation).apply {
-            useModuleDetection.set(KotlinCompileTaskData.get(project, kotlinCompile.name).useModuleDetection)
-            destinationDir.set(project.provider { getKaptIncrementalDataDir() })
-        }
-
         val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName) { kaptTask ->
-            kaptTask.kotlinCompileTask = kotlinCompile.get()
+            KaptGenerateStubsTask.Configurator(kotlinCompile.get(), kotlinCompilation).configure(kaptTask)
 
             kaptTask.stubsDir.set(getKaptStubsDir())
-            kaptTask.setDestinationDir { getKaptIncrementalDataDir() }
-            kaptTask.mapClasspath { kaptTask.kotlinCompileTask.classpath }
+            kaptTask.destinationDirectory.set(getKaptIncrementalDataDir())
             kaptTask.generatedSourcesDirs = listOf(sourcesOutputDir, kotlinSourcesOutputDir)
 
-            kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
+            kaptTask.kaptClasspath.from(kaptClasspathConfigurations)
 
             PropertiesProvider(project).mapKotlinTaskProperties(kaptTask)
 
             if (!includeCompileClasspath) {
                 kaptTask.onlyIf {
-                    !(it as KaptGenerateStubsTask).kaptClasspath.isEmpty()
+                    !(it as KaptGenerateStubsTask).kaptClasspath.isEmpty
                 }
             }
         }
