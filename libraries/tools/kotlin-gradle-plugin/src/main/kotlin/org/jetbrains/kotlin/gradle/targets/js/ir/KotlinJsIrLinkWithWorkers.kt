@@ -10,6 +10,7 @@ import org.gradle.api.tasks.CacheableTask
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
+import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
@@ -19,9 +20,13 @@ constructor(
     objectFactory: ObjectFactory,
     private val workerExecutor: WorkerExecutor
 ) : KotlinJsIrLink(objectFactory) {
-    override fun compilerRunner() =
-        GradleCompilerRunnerWithWorkers(
-            GradleCompileTaskProvider(this),
-            workerExecutor
-        )
+    override fun compilerRunner(
+        javaExecutable: File,
+        jdkToolsJar: File?
+    ) = GradleCompilerRunnerWithWorkers(
+        GradleCompileTaskProvider(this),
+        javaExecutable,
+        jdkToolsJar,
+        workerExecutor
+    )
 }

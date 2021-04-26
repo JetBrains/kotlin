@@ -57,7 +57,11 @@ Using real taskProvider cause "field 'taskProvider' from type 'org.jetbrains.kot
 value 'fixed(class org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated, task ':compileKotlin')'
 is not assignable to 'org.gradle.api.tasks.TaskProvider'" exception
  */
-internal open class GradleCompilerRunner(protected val taskProvider: GradleCompileTaskProvider) {
+internal open class GradleCompilerRunner(
+    protected val taskProvider: GradleCompileTaskProvider,
+    protected val javaExecutable: File,
+    protected val jdkToolsJar: File?
+) {
 
     internal val pathProvider = taskProvider.path
     internal val loggerProvider = taskProvider.logger
@@ -152,7 +156,7 @@ internal open class GradleCompilerRunner(protected val taskProvider: GradleCompi
                 projectRootDirProvider,
                 sessionDirProvider
             ),
-            compilerFullClasspath = environment.compilerFullClasspath,
+            compilerFullClasspath = environment.compilerFullClasspath(jdkToolsJar),
             compilerClassName = compilerClassName,
             compilerArgs = argsArray,
             isVerbose = compilerArgs.verbose,
@@ -162,7 +166,8 @@ internal open class GradleCompilerRunner(protected val taskProvider: GradleCompi
             taskPath = pathProvider,
             reportingSettings = environment.reportingSettings,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
-            allWarningsAsErrors = compilerArgs.allWarningsAsErrors
+            allWarningsAsErrors = compilerArgs.allWarningsAsErrors,
+            javaExecutable = javaExecutable
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         runCompilerAsync(workArgs)
@@ -179,10 +184,11 @@ internal open class GradleCompilerRunner(protected val taskProvider: GradleCompi
             clientIsAliveFlagFile: File,
             sessionIsAliveFlagFile: File,
             compilerFullClasspath: List<File>,
+            javaExecutable: File,
             messageCollector: MessageCollector,
             isDebugEnabled: Boolean
         ): CompileServiceSession? {
-            val compilerId = CompilerId.makeCompilerId(compilerFullClasspath)
+            val compilerId = CompilerId.makeCompilerId(compilerFullClasspath, javaExecutable)
             val additionalJvmParams = arrayListOf<String>()
             return KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile,

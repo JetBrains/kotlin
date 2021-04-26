@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.intellij.openapi.util.SystemInfo
-import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
@@ -22,9 +18,8 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChan
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
-import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
-import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.optionalProvider
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
@@ -32,7 +27,10 @@ import javax.inject.Inject
 
 abstract class KaptWithKotlincTask @Inject constructor(
     objectFactory: ObjectFactory
-) : KaptTask(objectFactory), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
+) : KaptTask(objectFactory),
+    CompilerArgumentAwareWithInput<K2JVMCompilerArguments>,
+    UsesKotlinJavaToolchain {
+
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
@@ -42,6 +40,9 @@ abstract class KaptWithKotlincTask @Inject constructor(
 
     @get:Internal
     val taskProvider = GradleCompileTaskProvider(this)
+
+    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> =
+        objectFactory.propertyWithNewInstance()
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
@@ -103,11 +104,12 @@ abstract class KaptWithKotlincTask @Inject constructor(
             reportingSettings = reportingSettings,
             outputFiles = allOutputFiles()
         )
-        if (environment.toolsJar == null && !isAtLeastJava9) {
-            throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
-        }
 
-        val compilerRunner = GradleCompilerRunner(taskProvider)
+        val compilerRunner = GradleCompilerRunner(
+            taskProvider,
+            kotlinJavaToolchainProvider.get().javaExecutable.get().asFile,
+            kotlinJavaToolchainProvider.get().jdkToolsJar.orNull
+        )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
             commonSources = emptyList(),
@@ -117,7 +119,4 @@ abstract class KaptWithKotlincTask @Inject constructor(
             environment = environment
         )
     }
-
-    private val isAtLeastJava9: Boolean
-        get() = SystemInfo.isJavaVersionAtLeast(9, 0, 0)
 }
