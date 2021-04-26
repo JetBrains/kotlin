@@ -64,32 +64,6 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     CompilerArgumentAwareWithInput<T>,
     TaskWithLocalState {
 
-    private fun useCompilerClasspathConfigurationMessage(propertyName: String) {
-        logger.kotlinWarn(
-            "'$path.$propertyName' is deprecated and will be removed soon. " +
-                    "Use '$COMPILER_CLASSPATH_CONFIGURATION_NAME' " +
-                    "configuration for customizing compiler classpath."
-        )
-    }
-
-    // TODO: remove
-    @get:Internal
-    var compilerJarFile: File? = null
-        @Deprecated("Use $COMPILER_CLASSPATH_CONFIGURATION_NAME configuration")
-        set(value) {
-            useCompilerClasspathConfigurationMessage("compilerJarFile")
-            field = value
-        }
-
-    // TODO: remove
-    @get:Internal
-    var compilerClasspath: List<File>? = null
-        @Deprecated("Use $COMPILER_CLASSPATH_CONFIGURATION_NAME configuration")
-        set(value) {
-            useCompilerClasspathConfigurationMessage("compilerClasspath")
-            field = value
-        }
-
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
     override fun getSource() = super.getSource()
@@ -114,8 +88,6 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     @get:InputFiles
     internal val computedCompilerClasspath: FileCollection = project.objects.fileCollection().from({
         when {
-            !compilerClasspath.isNullOrEmpty() -> compilerClasspath!!
-            compilerJarFile != null -> classpathWithCompilerJar
             useFallbackCompilerSearch -> findKotlinCompilerClasspath(project)
             else -> defaultCompilerClasspath
         }
