@@ -262,7 +262,7 @@ class PSICallResolver(
             return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace, context)
         }
 
-        if (getResultApplicability(diagnostics) == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
+        if (getResultApplicability(diagnostics.filterErrorDiagnostics()) == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
             val singleCandidate = result.resultCallAtom() ?: error("Should be not null for result: $result")
             val resolvedCall = kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, diagnostics).also {
                 tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))

@@ -91,6 +91,13 @@ class NewConstraintSystemImpl(
         return storage
     }
 
+    override fun addMissedConstraints(
+        position: IncorporationConstraintPosition,
+        constraints: MutableList<Pair<TypeVariableMarker, Constraint>>
+    ) {
+        storage.missedConstraints.add(position to constraints)
+    }
+
     override fun asConstraintSystemCompleterContext() = apply { checkState(State.BUILDING) }
 
     override fun asPostponedArgumentsAnalyzerContext() = apply { checkState(State.BUILDING) }
@@ -187,6 +194,8 @@ class NewConstraintSystemImpl(
         val beforeErrorsCount = storage.errors.size
         val beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints
         val beforeTypeVariablesTransactionSize = typeVariablesTransaction.size
+        val beforeMissedConstraintsCount = storage.missedConstraints.size
+        val beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount }
 
         state = State.TRANSACTION
         // typeVariablesTransaction is clear
@@ -201,13 +210,16 @@ class NewConstraintSystemImpl(
         }
         storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
         storage.errors.trimToSize(beforeErrorsCount)
+        storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
 
         val addedInitialConstraints = storage.initialConstraints.subList(beforeInitialConstraintCount, storage.initialConstraints.size)
 
-        val shouldRemove = { c: Constraint -> addedInitialConstraints.contains(c.position.initialConstraint) }
-
         for (variableWithConstraint in storage.notFixedTypeVariables.values) {
-            variableWithConstraint.removeLastConstraints(shouldRemove)
+            val sinceIndexToRemoveConstraints =
+                beforeConstraintCountByVariables[variableWithConstraint.typeVariable.freshTypeConstructor()]
+            if (sinceIndexToRemoveConstraints != null) {
+                variableWithConstraint.removeLastConstraints(sinceIndexToRemoveConstraints)
+            }
         }
 
         addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
@@ -334,6 +346,13 @@ class NewConstraintSystemImpl(
 
         constraintInjector.addInitialEqualityConstraint(this@NewConstraintSystemImpl, variable.defaultType(), resultType, position)
 
+        /*
+         * Checking missed constraint can introduce new type mismatch warnings.
+         * It's needed to deprecate green code which works only due to incorrect optimization in the constraint injector.
+         * TODO: remove this code (and `substituteMissedConstraints`) with removing `ProperTypeInferenceConstraintsProcessing` feature
+         */
+        checkMissedConstraints()
+
         val freshTypeConstructor = variable.freshTypeConstructor()
         val variableWithConstraints = notFixedTypeVariables.remove(freshTypeConstructor)
 
@@ -343,9 +362,45 @@ class NewConstraintSystemImpl(
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
 
+        // Substitute freshly fixed type variable into missed constraints
+        substituteMissedConstraints()
+
         postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
 
         doPostponedComputationsIfAllVariablesAreFixed()
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun checkMissedConstraints() {
+        val constraintSystem = this@NewConstraintSystemImpl
+        val errorsByMissedConstraints = buildList {
+            runTransaction {
+                for ((position, constraints) in storage.missedConstraints) {
+                    val fixedVariableConstraints =
+                        constraints.filter { (typeVariable, _) -> typeVariable.freshTypeConstructor() in notFixedTypeVariables }
+                    constraintInjector.processMissedConstraints(constraintSystem, position, fixedVariableConstraints)
+                }
+                errors.filterIsInstance<NewConstraintError>().forEach(::add)
+                false
+            }
+        }
+        val constraintErrors = constraintSystem.errors.filterIsInstance<NewConstraintError>()
+        // Don't report warning if an error on the same call has already been reported
+        if (constraintErrors.isEmpty() || constraintErrors.all { it.isWarning }) {
+            errorsByMissedConstraints.forEach {
+                constraintSystem.addError(it.transformToWarning())
+            }
+        }
+    }
+
+    private fun substituteMissedConstraints() {
+        val substitutor = buildCurrentSubstitutor()
+        for ((_, constraints) in storage.missedConstraints) {
+            for ((index, variableWithConstraint) in constraints.withIndex()) {
+                val (typeVariable, constraint) = variableWithConstraint
+                constraints[index] = typeVariable to constraint.replaceType(substitutor.safeSubstitute(constraint.type))
+            }
+        }
     }
 
     private fun ConstraintSystemUtilContext.postponeOnlyInputTypesCheck(

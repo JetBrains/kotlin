@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // SKIP_JAVAC
 
 // FILE: MySettings.java
@@ -28,5 +27,5 @@ abstract class MySettingsListener<S extends MyComparableSettings> {}
 fun test() {
     val a = MySettings.getSettings()
     a.getLinkedProjectsSettings()
-    a.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{OI}, TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>linkedProjectsSettings<!>
+    a.linkedProjectsSettings
 }

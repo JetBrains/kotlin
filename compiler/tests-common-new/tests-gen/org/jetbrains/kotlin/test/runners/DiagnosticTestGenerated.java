@@ -12593,6 +12593,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 runTest("compiler/testData/diagnostics/tests/inference/violatingUpperBoundForSelfType.kt");
             }
 
+            @Test
+            @TestMetadata("violatingUpperBoundForSelfTypeError.kt")
+            public void testViolatingUpperBoundForSelfTypeError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/violatingUpperBoundForSelfTypeError.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference")
             @TestDataPath("$PROJECT_ROOT")
@@ -29283,6 +29289,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("implicitNothingOnDelegates.kt")
             public void testImplicitNothingOnDelegates() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingOnDelegates.kt");
+            }
+
+            @Test
+            @TestMetadata("kt42042.kt")
+            public void testKt42042() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/kt42042.kt");
+            }
+
+            @Test
+            @TestMetadata("kt42042Error.kt")
+            public void testKt42042Error() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/kt42042Error.kt");
             }
 
             @Test

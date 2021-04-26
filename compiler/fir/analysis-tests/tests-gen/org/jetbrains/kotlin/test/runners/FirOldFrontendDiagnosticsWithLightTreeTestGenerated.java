@@ -12587,6 +12587,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 runTest("compiler/testData/diagnostics/tests/inference/violatingUpperBoundForSelfType.kt");
             }
 
+            @Test
+            @TestMetadata("violatingUpperBoundForSelfTypeError.kt")
+            public void testViolatingUpperBoundForSelfTypeError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/violatingUpperBoundForSelfTypeError.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference")
             @TestDataPath("$PROJECT_ROOT")
@@ -21143,6 +21149,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("dontSubstituteAnotherErasedRecursiveTypeArgumentAndNonRecursive.kt")
+                public void testDontSubstituteAnotherErasedRecursiveTypeArgumentAndNonRecursive() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/dontSubstituteAnotherErasedRecursiveTypeArgumentAndNonRecursive.kt");
+                }
+
+                @Test
+                @TestMetadata("dontSubstituteAnotherErasedTypeArgumentIfRecursive.kt")
+                public void testDontSubstituteAnotherErasedTypeArgumentIfRecursive() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/dontSubstituteAnotherErasedTypeArgumentIfRecursive.kt");
+                }
+
+                @Test
                 @TestMetadata("errorType.kt")
                 public void testErrorType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/errorType.kt");
@@ -21230,6 +21248,30 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 @TestMetadata("starProjectionToRaw.kt")
                 public void testStarProjectionToRaw() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/starProjectionToRaw.kt");
+                }
+
+                @Test
+                @TestMetadata("substituteAnotherErasedTypeArgument.kt")
+                public void testSubstituteAnotherErasedTypeArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteAnotherErasedTypeArgument.kt");
+                }
+
+                @Test
+                @TestMetadata("substituteOtherErasedDeepTypeArguments.kt")
+                public void testSubstituteOtherErasedDeepTypeArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteOtherErasedDeepTypeArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("substituteSeveralOtherErasedDependentTypeArguments.kt")
+                public void testSubstituteSeveralOtherErasedDependentTypeArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteSeveralOtherErasedDependentTypeArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("substituteSeveralOtherErasedTypeArguments.kt")
+                public void testSubstituteSeveralOtherErasedTypeArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/substituteSeveralOtherErasedTypeArguments.kt");
                 }
 
                 @Test
@@ -29157,6 +29199,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             @TestMetadata("kt42042.kt")
             public void testKt42042() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/kt42042.kt");
+            }
+
+            @Test
+            @TestMetadata("kt42042Error.kt")
+            public void testKt42042Error() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/kt42042Error.kt");
             }
 
             @Test

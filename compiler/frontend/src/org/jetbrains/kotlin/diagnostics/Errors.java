@@ -155,6 +155,7 @@ public interface Errors {
 
     DiagnosticFactory0<KtTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = DiagnosticFactory0.create(ERROR, VARIANCE_IN_PROJECTION);
     DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> UPPER_BOUND_VIOLATED = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> UPPER_BOUND_VIOLATED_WARNING = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory0<KtNullableType> REDUNDANT_NULLABLE = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
     DiagnosticFactory0<KtDefinitelyNotNullType> DEFINITELY_NOT_NULLABLE_NOT_APPLICABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtNullableType> NULLABLE_ON_DEFINITELY_NOT_NULLABLE = DiagnosticFactory0.create(ERROR);
@@ -1080,6 +1081,7 @@ public interface Errors {
     // Type mismatch
 
     DiagnosticFactory2<KtExpression, KotlinType, KotlinType> TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtExpression, KotlinType, KotlinType> TYPE_MISMATCH_WARNING = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<KtElement, KotlinType> TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtElement, TypeMismatchDueToTypeProjectionsData> TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtElement, CallableDescriptor, KotlinType> MEMBER_PROJECTED_OUT = DiagnosticFactory2.create(ERROR);
@@ -1091,6 +1093,7 @@ public interface Errors {
     DiagnosticFactory0<KtWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = DiagnosticFactory0.create(ERROR, WHEN_CONDITION_IN_RANGE);
 
     DiagnosticFactory1<KtParameter, KotlinType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtParameter, KotlinType> EXPECTED_PARAMETER_TYPE_MISMATCH_WARNING = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory2<KtFunction, Integer, List<KotlinType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
             DiagnosticFactory2.create(ERROR, FUNCTION_PARAMETERS);
 
