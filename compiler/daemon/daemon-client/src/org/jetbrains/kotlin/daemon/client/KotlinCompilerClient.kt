@@ -101,7 +101,11 @@ object KotlinCompilerClient {
         fun CompileService.leaseImpl(): CompileServiceSession? {
             // the newJVMOptions could be checked here for additional parameters, if needed
             registerClient(clientAliveFlagFile.absolutePath)
-            reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
+            val javaExecutablePath = compilerId.javaExecutable?.absolutePath ?: "'user jvm'"
+            reportingTargets.report(
+                DaemonReportCategory.DEBUG,
+                "connected to the daemon. Daemon is using following 'java' executable to run itself: $javaExecutablePath"
+            )
 
             if (!leaseSession) return CompileServiceSession(this, CompileService.NO_SESSION)
 
