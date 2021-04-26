@@ -18,15 +18,17 @@ inline fun test2(s: () -> String): String {
     return res
 }
 
+fun <T> eval(f: () -> T) = f()
+
 fun box(): String {
     var result = "fail"
 
     test {
-        {
+        eval {
             result = test2 {
                 "OK"
             }
-        }()
+        }
     }
 
     return result

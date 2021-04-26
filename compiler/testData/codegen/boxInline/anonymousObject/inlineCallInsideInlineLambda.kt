@@ -19,16 +19,17 @@ object B {
 // FILE: 2.kt
 import test.*
 
+fun <T> eval(f: () -> T) = f()
 
 fun box(): String {
     var z = "fail"
 
     B.test2 {
-        { // regenerated object in inline lambda
+        eval { // regenerated object in inline lambda
             A.test {
                 z = "OK"
             }
-        }()
+        }
     }
     return z;
 }

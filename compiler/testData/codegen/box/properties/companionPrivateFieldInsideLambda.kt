@@ -1,7 +1,9 @@
+fun <T> eval(fn: () -> T) = fn()
+
 class My {
     companion object {
         private val my: String = "O"
-            get() = { field }() + "K"
+            get() = eval { field } + "K"
 
         fun getValue() = my
     }

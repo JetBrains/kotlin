@@ -1,6 +1,8 @@
+fun <T> eval(fn: () -> T) = fn()
+
 class My {
     var my: String = "U"
-        get() = { field }()
+        get() = eval { field }
         set(arg) {
             class Local {
                 fun foo() {

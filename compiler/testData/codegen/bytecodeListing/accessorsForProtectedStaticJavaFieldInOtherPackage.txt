@@ -37,3 +37,9 @@ public final class test/C {
     public final @org.jetbrains.annotations.NotNull method f(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method g(): kotlin.jvm.functions.Function0
 }
+
+@kotlin.Metadata
+public final class test/CKt {
+    // source: 'C.kt'
+    public final static method eval(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
+}

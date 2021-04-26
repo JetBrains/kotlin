@@ -15,10 +15,11 @@ interface Checker {
 class Checker1 : Checker {
     override fun check(): Boolean {
         var result = true
-        assert(true, {
+        val lam = {
             result = false
             { "Assertion failure" }
-        }())
+        }
+        assert(true, lam())
         return result
     }
 }
@@ -26,10 +27,11 @@ class Checker1 : Checker {
 class Checker2 : Checker {
     override fun check(): Boolean {
         var result = true
-        assert(true, {
+        val lam = {
             result = false
             { "Assertion failure" }
-        }())
+        }
+        assert(true, lam())
         return result
     }
 }

@@ -1,5 +1,5 @@
 Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;
-final class foo/Kotlin$foo4$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+final class foo/Kotlin$foo5$lambda$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
     final foo.Kotlin this$0
 
     void <init>(foo.Kotlin $receiver)
@@ -29,6 +29,12 @@ public final class foo/Kotlin : java/lang/Object {
       @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    private final static java.lang.String foo4$lambda-0(foo.Kotlin this$0)
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
+    public final void foo5()
 }
 
 public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {

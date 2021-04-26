@@ -6,4 +6,11 @@
 // JVM_IR_TEMPLATES
 // 3 java/lang/invoke/LambdaMetafactory
 
-fun box() = { { "O" }() + { "K" }() }()
+fun box(): String {
+    val lam1 = {
+        val lamO = { "O" }
+        val lamK = { "K" }
+        lamO() + lamK()
+    }
+    return lam1()
+}

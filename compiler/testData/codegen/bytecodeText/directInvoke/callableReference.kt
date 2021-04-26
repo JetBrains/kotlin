@@ -3,7 +3,8 @@ class Z{
     fun a(s: Int) {}
 
     fun b() {
-        (Z::a)(Z(), 1)
+        val cr = (Z::a)
+        cr(Z(), 1)
     }
 }
 

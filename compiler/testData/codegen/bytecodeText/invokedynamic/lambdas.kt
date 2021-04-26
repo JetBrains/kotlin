@@ -3,7 +3,14 @@
 // JVM_TARGET: 1.8
 // LAMBDAS: INDY
 
-fun test() = { { "O" }() + { "K" }() }()
+fun test(): String {
+    val lam = {
+        val lamO = { "O" }
+        val lamK = { "K" }
+        lamO() + lamK()
+    }
+    return lam()
+}
 
 // JVM_IR_TEMPLATES
 // 3 INVOKEDYNAMIC

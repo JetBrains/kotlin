@@ -10,17 +10,19 @@ inline fun test(s: () -> Unit) {
 
 import test.*
 
+fun <T> eval(f: () -> T) = f()
+
 fun box() {
     var s1 = ""
     var s2 = ""
     test {
-        {
+        eval {
             val p = object {}
             s1 = p.toString();
-            {
+            eval {
                 val q = object {}
                 s2 = q.toString()
-            }()
-        }()
+            }
+        }
     }
 }

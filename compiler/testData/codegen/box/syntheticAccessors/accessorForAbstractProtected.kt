@@ -1,8 +1,10 @@
 // FILE: 1.kt
 import a.*
 
+fun <T> eval(fn: () -> T) = fn()
+
 abstract class B : A() {
-    fun g() = { f() }()
+    fun g() = eval { f() }
 }
 
 fun box() = object : B() {

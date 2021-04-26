@@ -131,6 +131,8 @@ val IrDeclaration.isTopLevelDeclaration get() =
 
 val IrDeclaration.isAnonymousObject get() = this is IrClass && name == SpecialNames.NO_NAME_PROVIDED
 
+val IrDeclaration.isAnonymousFunction get() = this is IrSimpleFunction && name == SpecialNames.NO_NAME_PROVIDED
+
 val IrDeclaration.isLocal: Boolean
     get() {
         var current: IrElement = this

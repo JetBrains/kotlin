@@ -124,6 +124,11 @@ public class FirLightClassTestGenerated extends AbstractFirLightClassTest {
         runTest("compiler/testData/asJava/lightClasses/JvmStatic.kt");
     }
 
+    @TestMetadata("LocalFunctions.kt")
+    public void testLocalFunctions() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/LocalFunctions.kt");
+    }
+
     @TestMetadata("NestedObjects.kt")
     public void testNestedObjects() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/NestedObjects.kt");

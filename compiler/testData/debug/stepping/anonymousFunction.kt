@@ -1,13 +1,17 @@
 // FILE: test.kt
 
+fun <T> eval(f: () -> T) = f()
+
 fun box() {
-    {
+    eval {
         "OK"
-    }()
+    }
 }
 
 // LINENUMBERS
-// test.kt:4 box
-// test.kt:5 invoke
-// test.kt:4 box
-// test.kt:7 box
+// test.kt:6 box
+// test.kt:3 eval
+// test.kt:7 invoke
+// test.kt:3 eval
+// test.kt:6 box
+// test.kt:9 box

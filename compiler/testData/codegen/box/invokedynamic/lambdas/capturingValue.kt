@@ -8,5 +8,6 @@
 
 fun box(): String {
     val ok = "OK"
-    return { ok }()
+    val lam = { ok }
+    return lam()
 }

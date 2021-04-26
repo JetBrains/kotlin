@@ -9,6 +9,7 @@
 var ok = "Failed"
 
 fun box(): String {
-    { ok = "OK" }()
+    val lam = { ok = "OK" }
+    lam()
     return ok
 }

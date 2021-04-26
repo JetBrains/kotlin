@@ -49,6 +49,7 @@ public final class _2Kt {
     // source: '2.kt'
     inner (anonymous) class _2Kt$box$1$1
     public final static method box(): void
+    public final static method eval(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
 }
 
 @kotlin.Metadata

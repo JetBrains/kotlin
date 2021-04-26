@@ -39,6 +39,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("anonymousFunctionDirect.kt")
+    public void testAnonymousFunctionDirect() throws Exception {
+        runTest("compiler/testData/debug/stepping/anonymousFunctionDirect.kt");
+    }
+
+    @Test
     @TestMetadata("assertion.kt")
     public void testAssertion() throws Exception {
         runTest("compiler/testData/debug/stepping/assertion.kt");

@@ -6,4 +6,7 @@
 // JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
-fun box() = { "OK" }()
+fun box(): String {
+    val lam = { "OK" }
+    return lam()
+}

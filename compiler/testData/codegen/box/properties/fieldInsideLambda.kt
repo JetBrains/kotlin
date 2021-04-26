@@ -1,4 +1,6 @@
+fun <T> eval(fn: () -> T) = fn()
+
 val my: String = "O"
-    get() = { field }() + "K"
+    get() = eval { field } + "K"
 
 fun box() = my

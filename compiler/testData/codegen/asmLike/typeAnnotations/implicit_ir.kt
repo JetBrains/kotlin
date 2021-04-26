@@ -26,4 +26,8 @@ class Kotlin {
 
     fun foo4() = { foo2() }()
 
+    fun foo5() {
+        val lambda = { foo2() }
+        lambda()
+    }
 }

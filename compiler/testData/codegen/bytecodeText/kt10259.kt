@@ -2,12 +2,12 @@ fun box(): String {
     var encl1 = "fail"
     var encl2 = "fail"
     test {
-        {
+        val lam1 = {
             encl1 = "OK"
-            {
-                encl2 = "OK"
-            }()
-        }()
+            val lam2 = { encl2 = "OK" }
+            lam2()
+        }
+        lam1()
     }
 
     return "OK"
@@ -28,7 +28,5 @@ inline fun test(s: () -> Unit) {
 
 // JVM_IR_TEMPLATES
 // 5 INNERCLASS
-// 3 INNERCLASS Kt10259Kt\$box\$1\$1\s
-// 2 INNERCLASS Kt10259Kt\$box\$1\$1\$1
-// 1 class Kt10259Kt\$box\$1\$1\ extends
-// 1 class Kt10259Kt\$box\$1\$1\$1 extends
+// 3 INNERCLASS Kt10259Kt\$box\$1\$lam1\$1 null null
+// 2 INNERCLASS Kt10259Kt\$box\$1\$lam1\$1\$lam2\$1

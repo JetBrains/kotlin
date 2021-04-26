@@ -7,12 +7,14 @@
 
 package test
 
-val p = { "OK" }()
+fun <T> eval(lambda: () -> T) = lambda()
+
+val p = eval { "OK" }
 
 val getter: String
-    get() = { "OK" }()
+    get() = eval { "OK" }
 
-fun f() = { "OK" }()
+fun f() = eval { "OK" }
 
 val obj = object : Function0<String> {
     override fun invoke() = "OK"

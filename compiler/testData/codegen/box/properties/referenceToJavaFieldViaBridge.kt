@@ -13,9 +13,11 @@ public class D {
 
 import test.D
 
+fun <T> eval(fn: () -> T) = fn()
+
 class A : D() {
     fun a(): String {
-        return {field!!}()
+        return eval { field!! }
     }
 }
 

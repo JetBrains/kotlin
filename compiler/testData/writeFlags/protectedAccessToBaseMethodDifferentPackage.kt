@@ -20,10 +20,12 @@ package differentPackage;
 import Base.Derived
 import Base
 
+fun <T> eval(f: () -> T) = f()
+
 class Kotlin : Base.Derived() {
     fun doTest(): String {
-        if ({ Base.baseOnly() }() != "BASE") return "fail 8"
-        if ({ baseOnly() }() != "BASE") return "fail 10"
+        if (eval { Base.baseOnly() } != "BASE") return "fail 8"
+        if (eval { baseOnly() } != "BASE") return "fail 10"
         return "FAIL"
     }
 }
