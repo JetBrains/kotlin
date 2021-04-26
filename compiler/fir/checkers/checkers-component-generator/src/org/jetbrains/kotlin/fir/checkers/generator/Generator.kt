@@ -94,7 +94,7 @@ class Generator(
             printPackageAndCopyright()
             printImports()
             printGeneratedMessage()
-            println("internal class $composedComponentName : $checkersComponentName() {")
+            println("class $composedComponentName : $checkersComponentName() {")
             withIndent {
                 // public overrides
                 for (alias in configuration.aliases.values) {
@@ -122,7 +122,7 @@ class Generator(
 
                 // register function
                 println(CHECKERS_COMPONENT_INTERNAL_ANNOTATION)
-                println("internal fun register(checkers: $checkersComponentName) {")
+                println("fun register(checkers: $checkersComponentName) {")
                 withIndent {
                     for (alias in configuration.aliases.values) {
                         println("_${alias.fieldName} += checkers.${alias.fieldName}")

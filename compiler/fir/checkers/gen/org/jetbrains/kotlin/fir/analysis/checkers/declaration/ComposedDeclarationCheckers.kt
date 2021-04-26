@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class ComposedDeclarationCheckers : DeclarationCheckers() {
+class ComposedDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = _basicDeclarationCheckers
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker>
@@ -54,7 +54,7 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
     private val _variableAssignmentCfaBasedCheckers: MutableSet<AbstractFirPropertyInitializationChecker> = mutableSetOf()
 
     @CheckersComponentInternal
-    internal fun register(checkers: DeclarationCheckers) {
+    fun register(checkers: DeclarationCheckers) {
         _basicDeclarationCheckers += checkers.basicDeclarationCheckers
         _memberDeclarationCheckers += checkers.memberDeclarationCheckers
         _functionCheckers += checkers.functionCheckers

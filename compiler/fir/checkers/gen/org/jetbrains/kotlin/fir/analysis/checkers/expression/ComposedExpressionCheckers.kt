@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class ComposedExpressionCheckers : ExpressionCheckers() {
+class ComposedExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = _basicExpressionCheckers
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
@@ -64,7 +64,7 @@ internal class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _stringConcatenationCallCheckers: MutableSet<FirStringConcatenationCallChecker> = mutableSetOf()
 
     @CheckersComponentInternal
-    internal fun register(checkers: ExpressionCheckers) {
+    fun register(checkers: ExpressionCheckers) {
         _basicExpressionCheckers += checkers.basicExpressionCheckers
         _qualifiedAccessCheckers += checkers.qualifiedAccessCheckers
         _functionCallCheckers += checkers.functionCallCheckers

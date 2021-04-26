@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class ComposedTypeCheckers : TypeCheckers() {
+class ComposedTypeCheckers : TypeCheckers() {
     override val typeRefCheckers: Set<FirTypeRefChecker>
         get() = _typeRefCheckers
 
     private val _typeRefCheckers: MutableSet<FirTypeRefChecker> = mutableSetOf()
 
     @CheckersComponentInternal
-    internal fun register(checkers: TypeCheckers) {
+    fun register(checkers: TypeCheckers) {
         _typeRefCheckers += checkers.typeRefCheckers
     }
 }
