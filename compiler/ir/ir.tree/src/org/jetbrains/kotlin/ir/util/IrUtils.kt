@@ -338,6 +338,8 @@ fun ReferenceSymbolTable.referenceClassifier(classifier: ClassifierDescriptor): 
     when (classifier) {
         is TypeParameterDescriptor ->
             referenceTypeParameter(classifier)
+        is ScriptDescriptor ->
+            referenceScript(classifier)
         is ClassDescriptor ->
             referenceClass(classifier)
         else ->

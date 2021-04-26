@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKE
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -36,7 +37,8 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonCon
 
     useConfigurators(
         ::CommonEnvironmentConfigurator,
-        ::JvmEnvironmentConfigurator
+        ::JvmEnvironmentConfigurator,
+        ::ScriptingEnvironmentConfigurator,
     )
 
     useAdditionalSourceProviders(

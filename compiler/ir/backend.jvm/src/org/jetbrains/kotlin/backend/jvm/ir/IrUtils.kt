@@ -66,12 +66,11 @@ fun IrType.eraseTypeParameters() = when (this) {
     is IrErrorType -> this
     is IrSimpleType ->
         when (val owner = classifier.owner) {
-            is IrClass -> IrSimpleTypeImpl(
-                classifier,
-                hasQuestionMark,
-                arguments.map { it.eraseTypeParameters() },
-                annotations
-            )
+            is IrScript -> {
+                assert(arguments.isEmpty()) { "Script can't be generic: " + owner.render() }
+                IrSimpleTypeImpl(classifier, hasQuestionMark, emptyList(), annotations)
+            }
+            is IrClass -> IrSimpleTypeImpl(classifier, hasQuestionMark, arguments.map { it.eraseTypeParameters() }, annotations)
             is IrTypeParameter -> {
                 val upperBound = owner.erasedUpperBound
                 IrSimpleTypeImpl(
