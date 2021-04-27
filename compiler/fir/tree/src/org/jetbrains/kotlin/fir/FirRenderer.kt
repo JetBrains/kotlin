@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -324,13 +325,20 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print("inner ")
         }
 
-        // `companion/data` modifiers are only valid for FirRegularClass, but we render them to make sure they are not
+        // `companion/data/fun` modifiers are only valid for FirRegularClass, but we render them to make sure they are not
         // incorrectly loaded for other declarations during deserialization.
         if (memberDeclaration.status.isCompanion) {
             print("companion ")
         }
         if (memberDeclaration.status.isData) {
             print("data ")
+        }
+        // All Java interfaces are considered `fun` (functional interfaces) for resolution purposes
+        // (see JavaSymbolProvider.createFirJavaClass). Don't render `fun` for Java interfaces; it's not a modifier in Java.
+        val isJavaInterface =
+            memberDeclaration is FirRegularClass && memberDeclaration.classKind == ClassKind.INTERFACE && memberDeclaration.isJava
+        if (memberDeclaration.status.isFun && !isJavaInterface) {
+            print("fun ")
         }
 
         if (memberDeclaration.isInline) {

@@ -462,7 +462,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
 
 fun FirClass<*>.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
     firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
-    origin == FirDeclarationOrigin.Java -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    isJava -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 }
 
