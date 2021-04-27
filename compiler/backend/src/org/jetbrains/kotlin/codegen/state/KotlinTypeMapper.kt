@@ -87,6 +87,9 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private val moduleName: String,
     val languageVersionSettings: LanguageVersionSettings,
     private val useOldInlineClassesManglingScheme: Boolean,
+    // temporary returned to preserve binary compatibility with Dagger in IDE
+    // https://android.googlesource.com/platform/tools/adt/idea/+/refs/heads/mirror-goog-studio-master-dev/dagger/src/com/android/tools/idea/dagger/DaggerAnnotatedElementsSearch.kt
+    private val incompatibleClassTracker: IncompatibleClassTracker = IncompatibleClassTracker.DoNothing,
     val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
     private val isIrBackend: Boolean = false,
     private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
