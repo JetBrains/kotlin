@@ -11,6 +11,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
+    compile(project(":plugins:uast-kotlin-base"))
 
     // BEWARE: Uast should not depend on IDEA.
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }

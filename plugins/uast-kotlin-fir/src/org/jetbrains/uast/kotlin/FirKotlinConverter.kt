@@ -213,25 +213,3 @@ internal object FirKotlinConverter {
         }
     }
 }
-
-private inline fun <reified ActualT : UElement> Array<out Class<out UElement>>.el(f: () -> UElement?): UElement? {
-    return if (isAssignableFrom(ActualT::class.java)) f() else null
-}
-
-private inline fun <reified ActualT : UElement> Array<out Class<out UElement>>.expr(f: () -> UExpression?): UExpression? {
-    return if (isAssignableFrom(ActualT::class.java)) f() else null
-}
-
-private fun Array<out Class<out UElement>>.isAssignableFrom(cls: Class<*>) = any { it.isAssignableFrom(cls) }
-
-private fun <U : UElement> Array<out Class<out UElement>>.accommodate(vararg makers: UElementAlternative<out U>): Sequence<UElement> {
-    val makersSeq = makers.asSequence()
-    return this.asSequence()
-        .flatMap { requiredType -> makersSeq.filter { requiredType.isAssignableFrom(it.uType) } }
-        .distinct()
-        .mapNotNull { it.make.invoke() }
-}
-
-private inline fun <reified U : UElement> alternative(noinline make: () -> U?) = UElementAlternative(U::class.java, make)
-
-private class UElementAlternative<U : UElement>(val uType: Class<U>, val make: () -> U?)

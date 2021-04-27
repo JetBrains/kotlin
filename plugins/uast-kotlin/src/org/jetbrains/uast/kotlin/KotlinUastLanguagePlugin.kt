@@ -169,22 +169,6 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         }
 }
 
-internal inline fun <reified ActualT : UElement> Class<*>?.el(f: () -> UElement?): UElement? {
-    return if (this == null || isAssignableFrom(ActualT::class.java)) f() else null
-}
-
-internal inline fun <reified ActualT : UElement> Array<out Class<out UElement>>.el(f: () -> UElement?): UElement? {
-    return if (isAssignableFrom(ActualT::class.java)) f() else null
-}
-
-internal inline fun <reified ActualT : UElement> Array<out Class<out UElement>>.expr(f: () -> UExpression?): UExpression? {
-    return if (isAssignableFrom(ActualT::class.java)) f() else null
-}
-
-internal fun Array<out Class<out UElement>>.isAssignableFrom(cls: Class<*>) = any { it.isAssignableFrom(cls) }
-
-
-
 internal object KotlinConverter {
     internal tailrec fun unwrapElements(element: PsiElement?): PsiElement? = when (element) {
         is KtValueArgumentList -> unwrapElements(element.parent)
@@ -743,22 +727,3 @@ val kotlinUastPlugin: UastLanguagePlugin by lz {
     UastLanguagePlugin.getInstances().find { it.language == KotlinLanguage.INSTANCE }
         ?: KotlinUastLanguagePlugin()
 }
-
-private fun expressionTypes(requiredType: Class<out UElement>?) = requiredType?.let { arrayOf(it) } ?: DEFAULT_EXPRESSION_TYPES_LIST
-
-private fun elementTypes(requiredType: Class<out UElement>?) = requiredType?.let { arrayOf(it) } ?: DEFAULT_TYPES_LIST
-
-private fun <T : UElement> Array<out Class<out T>>.nonEmptyOr(default: Array<out Class<out UElement>>) = takeIf { it.isNotEmpty() }
-    ?: default
-
-private fun <U : UElement> Array<out Class<out UElement>>.accommodate(vararg makers: UElementAlternative<out U>): Sequence<UElement> {
-    val makersSeq = makers.asSequence()
-    return this.asSequence()
-        .flatMap { requiredType -> makersSeq.filter { requiredType.isAssignableFrom(it.uType) } }
-        .distinct()
-        .mapNotNull { it.make.invoke() }
-}
-
-private inline fun <reified U : UElement> alternative(noinline make: () -> U?) = UElementAlternative(U::class.java, make)
-
-private class UElementAlternative<U : UElement>(val uType: Class<U>, val make: () -> U?)

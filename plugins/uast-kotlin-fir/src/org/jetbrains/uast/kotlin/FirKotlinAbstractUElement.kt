@@ -8,11 +8,11 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.PsiElement
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.kotlin.internal.FirKotlinUElementWithComments
+import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 
 abstract class FirKotlinAbstractUElement(
     private val givenParent: UElement?
-) : FirKotlinUElementWithComments {
+) : KotlinUElementWithComments {
 
     final override val uastParent: UElement? by lz {
         givenParent ?: convertParent()

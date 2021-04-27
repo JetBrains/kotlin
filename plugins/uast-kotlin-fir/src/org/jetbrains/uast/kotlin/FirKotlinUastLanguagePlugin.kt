@@ -88,10 +88,3 @@ class FirKotlinUastLanguagePlugin : UastLanguagePlugin {
         TODO("Not yet implemented")
     }
 }
-
-private fun elementTypes(requiredType: Class<out UElement>?) =
-    requiredType?.let { arrayOf(it) } ?: DEFAULT_TYPES_LIST
-
-private fun <T : UElement> Array<out Class<out T>>.nonEmptyOr(default: Array<out Class<out UElement>>) =
-    takeIf { it.isNotEmpty() } ?: default
-
