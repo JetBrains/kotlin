@@ -888,6 +888,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             val descriptor = OpenFileDescriptor(project, targetClass.containingFile.virtualFile)
             val targetEditor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true)!!
+            targetEditor.selectionModel.removeSelection()
 
             when (newJavaMember) {
                 is PsiMethod -> CreateFromUsageUtils.setupEditor(newJavaMember, targetEditor)
