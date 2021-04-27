@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun Candidate.preprocessLambdaArgument(
@@ -22,16 +25,23 @@ fun Candidate.preprocessLambdaArgument(
     expectedType: ConeKotlinType?,
     expectedTypeRef: FirTypeRef?,
     context: ResolutionContext,
-    forceResolution: Boolean = false,
+    sink: CheckerSink?,
+    duringCompletion: Boolean = false,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
 ): PostponedResolvedAtom {
-    if (expectedType != null && expectedTypeRef != null && !forceResolution && csBuilder.isTypeVariable(expectedType)) {
+    if (expectedType != null && expectedTypeRef != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
         return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, expectedTypeRef, this)
     }
 
     val resolvedArgument =
-        extractLambdaInfoFromFunctionalType(expectedType, expectedTypeRef, argument, returnTypeVariable, context.bodyResolveComponents, this)
-            ?: extraLambdaInfo(expectedType, argument, csBuilder, context.session, this)
+        extractLambdaInfoFromFunctionalType(
+            expectedType,
+            expectedTypeRef,
+            argument,
+            returnTypeVariable,
+            context.bodyResolveComponents,
+            this
+        ) ?: extraLambdaInfo(expectedType, argument, csBuilder, context.session, this)
 
     if (expectedType != null) {
         // TODO: add SAM conversion processing
@@ -41,7 +51,15 @@ fun Candidate.preprocessLambdaArgument(
             resolvedArgument.returnType,
             isSuspend = resolvedArgument.isSuspend
         )
-        csBuilder.addSubtypeConstraint(lambdaType, expectedType, SimpleConstraintSystemConstraintPosition)
+
+        val position = ConeArgumentConstraintPosition(resolvedArgument.atom)
+        if (duringCompletion || sink == null) {
+            csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
+        } else {
+            if (!csBuilder.addSubtypeConstraintIfCompatible(lambdaType, expectedType, position)) {
+                sink.reportDiagnostic(ArgumentTypeMismatch(lambdaType, expectedType, argument))
+            }
+        }
     }
 
     return resolvedArgument

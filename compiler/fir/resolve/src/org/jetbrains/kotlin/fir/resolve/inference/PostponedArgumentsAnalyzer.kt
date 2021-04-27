@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.types.*
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
@@ -201,7 +201,7 @@ class PostponedArgumentsAnalyzer(
             c.getBuilder().addEqualityConstraint(
                 lambdaReturnType,
                 components.session.builtinTypes.unitType.type,
-                SimpleConstraintSystemConstraintPosition
+                ConeLambdaArgumentConstraintPosition(lambda.atom)
             )
         }
 
@@ -230,7 +230,8 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
         fixedExpectedType,
         expectedTypeRef,
         context,
-        forceResolution = true,
+        sink = null,
+        duringCompletion = true,
         returnTypeVariable = returnTypeVariable
     ) as ResolvedLambdaAtom
     analyzed = true
