@@ -260,7 +260,7 @@ class FunctionDecl(val name: String, val parameters: List<Parameter>, val return
     /**
      * C++ class or instance member function, i.e. any function in the scope of class/struct: method, static, ctor, dtor, cast operator, etc
      */
-    val isCxxMethod: Boolean get() = this.cxxMethod?.kind != CxxMethodKind.None
+    val isCxxMethod: Boolean get() = this.cxxMethod != null && this.cxxMethod.kind != CxxMethodKind.None
 
     val isCxxConstructor: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.Constructor
     val isCxxDestructor: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.Destructor

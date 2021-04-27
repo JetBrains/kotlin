@@ -76,30 +76,6 @@ private class ObjCCategoryImpl(
     override val properties = mutableListOf<ObjCProperty>()
 }
 
-
-private fun getParentName(cursor: CValue<CXCursor>, pkg: List<String> = emptyList()) : String? { // }: List<String>? {
-    // This doesn't work for anonymous C++ struct (such as typedef struct { void foo(); } TypeDefName)  as well as anon namespace
-    // In contrast, clang_getTypeSpelling return fully qualified name for struct & class (incl. typedef anon struct),
-    // but does not help for anything elde such as template member, namespace etc
-    // So, TODO Use ultimately clang_getTypeSpelling for CXType_Record (no traversing needed) and traverse up the whole hierarchy for anythiong else
-    // Unfortunately, this won't work too for variable decl with anon type like that: ''struct { void foo(); } x;''
-    // while function is accessible as x.foo()
-
-    // skip this (zero) level:
-
-    val parent = clang_getCursorSemanticParent(cursor)
-    if (clang_isDeclaration(parent.kind) == 0)
-        return if (pkg.isNotEmpty()) pkg.joinToString("::") else null
-
-    val type = clang_getCursorType(parent)
-    if (type.kind == CXTypeKind.CXType_Record)
-        return clang_getTypeSpelling(type).convertAndDispose()
-
-    val nextPkg = if (parent.kind == CXCursorKind.CXCursor_Namespace) listOf(parent.spelling) + pkg else pkg
-    return getParentName(parent, nextPkg)
-}
-
-
 public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean = false) : NativeIndex() {
 
     private sealed class DeclarationID {
@@ -1017,6 +993,31 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
     }
     protected open fun String.isUnknownTemplate() = false
+
+    private fun getParentName(cursor: CValue<CXCursor>, pkg: List<String> = emptyList()) : String? {
+
+        if (library.language != Language.CPP) return null
+
+        // This doesn't work for anonymous C++ struct (such as typedef struct { void foo(); } TypeDefName)  as well as anon namespace
+        // In contrast, clang_getTypeSpelling return fully qualified name for struct & class (incl. typedef anon struct),
+        // but does not help for anything elde such as template member, namespace etc
+        // So, TODO Use ultimately clang_getTypeSpelling for CXType_Record (no traversing needed) and traverse up the whole hierarchy for anythiong else
+        // Unfortunately, this won't work too for variable decl with anon type like that: ''struct { void foo(); } x;''
+        // while function is accessible as x.foo()
+
+        // skip this (zero) level:
+
+        val parent = clang_getCursorSemanticParent(cursor)
+        if (clang_isDeclaration(parent.kind) == 0)
+            return if (pkg.isNotEmpty()) pkg.joinToString("::") else null
+
+        val type = clang_getCursorType(parent)
+        if (type.kind == CXTypeKind.CXType_Record)
+            return clang_getTypeSpelling(type).convertAndDispose()
+
+        val nextPkg = if (parent.kind == CXCursorKind.CXCursor_Namespace) listOf(parent.spelling) + pkg else pkg
+        return getParentName(parent, nextPkg)
+    }
 
     private fun getFunction(cursor: CValue<CXCursor>, receiver: StructDecl? = null): FunctionDecl? {
         if (!isFuncDeclEligible(cursor)) {
