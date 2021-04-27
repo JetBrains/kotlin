@@ -23,9 +23,9 @@ fun testNoArgs() {
     noArgs() // comment
     // comment
     <!TOO_MANY_ARGUMENTS!>{}<!>
-    noArgs() <!TOO_MANY_ARGUMENTS!>{}<!> <!TOO_MANY_ARGUMENTS!>{}<!>
+    noArgs() <!TOO_MANY_ARGUMENTS!>{}<!> <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     noArgs() <!TOO_MANY_ARGUMENTS!>{}<!>
-    <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 }
 
 fun testLambdaArg() {
@@ -35,7 +35,7 @@ fun testLambdaArg() {
     {}
     oneLambdaArg()
     {}
-    <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     oneLambdaArg(
         {},
         <!TOO_MANY_ARGUMENTS!>{}<!>
@@ -52,19 +52,19 @@ fun testLambdaArg() {
     {}
     oneLambdaArg() {}/*
         block comment, no new line
-    */ <!TOO_MANY_ARGUMENTS!>{}<!>
+    */ <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     oneLambdaArg() {}/*
         block comment with new line
     */
-    <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     oneLambdaArg() {}// comment
     // comment
-    <!TOO_MANY_ARGUMENTS!>{}<!>
-    oneLambdaArg() {} <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    oneLambdaArg() {} <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     oneLambdaArg() {}
-    <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
     oneLambdaArg() {} // comment
-    <!TOO_MANY_ARGUMENTS!>{}<!>
+    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 }
 
 fun testVararg() {
@@ -83,9 +83,9 @@ fun testVararg() {
     varargFn(1,2,3) // comment
     // comment
     <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    varargFn(1,2,3) <!ARGUMENT_TYPE_MISMATCH!>{}<!> <!ARGUMENT_TYPE_MISMATCH, VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    varargFn(1,2,3) <!ARGUMENT_TYPE_MISMATCH!>{}<!>
-    <!ARGUMENT_TYPE_MISMATCH, VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) {} <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    varargFn(1,2,3) {}
+    <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 }
 
 fun testTwoLambdas() {
@@ -96,14 +96,14 @@ fun testTwoLambdas() {
     )
 
     fun bar(): () -> Unit {
-        twoLambdaArgs()
+        twoLambdaArgs(<!NO_VALUE_FOR_PARAMETER!>)<!>
         {}
-        {}
+        <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 
         return if (true) {
             twoLambdaArgs({})
             {}
-            <!TOO_MANY_ARGUMENTS!>{}<!>
+            <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
         } else {
             {}
         }

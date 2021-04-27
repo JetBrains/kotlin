@@ -98,3 +98,7 @@ class ArgumentTypeMismatch(
 class NullForNotNullType(
     val argument: FirExpression
 ) : ResolutionDiagnostic(INAPPLICABLE)
+
+class ManyLambdaExpressionArguments(
+    val argument: FirExpression
+) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)

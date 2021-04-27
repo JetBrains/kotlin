@@ -61,11 +61,20 @@ fun BodyResolveComponents.mapArguments(
     if (arguments.isEmpty() && function.valueParameters.isEmpty()) {
         return EmptyArgumentMapping
     }
-    val externalArgument: FirExpression? = arguments.lastOrNull { it is FirLambdaArgumentExpression }
-    var argumentsInParenthesis: List<FirExpression> = if (externalArgument == null) {
-        arguments
-    } else {
-        arguments.subList(0, arguments.size - 1)
+
+    val argumentsInParenthesis: MutableList<FirExpression> = mutableListOf()
+    val excessLambdaArguments: MutableList<FirExpression> = mutableListOf()
+    var externalArgument: FirExpression? = null
+    for (argument in arguments) {
+        if (argument is FirLambdaArgumentExpression) {
+            if (externalArgument == null) {
+                externalArgument = argument
+            } else {
+                excessLambdaArguments.add(argument)
+            }
+        } else {
+            argumentsInParenthesis.add(argument)
+        }
     }
 
     // If this is an overloading indexed access operator, it could have default values or a vararg parameter in the middle.
@@ -82,7 +91,8 @@ fun BodyResolveComponents.mapArguments(
                 isSpread = false
                 name = function.valueParameters.last().name
             }
-            argumentsInParenthesis = argumentsInParenthesis.dropLast(1) + listOf(namedV)
+            argumentsInParenthesis.removeAt(argumentsInParenthesis.size - 1)
+            argumentsInParenthesis.add(namedV)
         }
     }
 
@@ -91,6 +101,7 @@ fun BodyResolveComponents.mapArguments(
     if (externalArgument != null) {
         processor.processExternalArgument(externalArgument)
     }
+    processor.processExcessLambdaArguments(excessLambdaArguments)
     processor.processDefaultsAndRunChecks()
 
     return ArgumentMapping(processor.result, processor.diagnostics ?: emptyList())
@@ -210,6 +221,10 @@ private class FirCallArgumentsProcessor(
 
 
         result[lastParameter] = ResolvedCallArgument.SimpleArgument(externalArgument)
+    }
+
+    fun processExcessLambdaArguments(excessLambdaArguments: List<FirExpression>) {
+        excessLambdaArguments.forEach { arg -> addDiagnostic(ManyLambdaExpressionArguments(arg)) }
     }
 
     fun processDefaultsAndRunChecks() {

@@ -155,6 +155,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_OBJECT_NOT_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OBJECTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
@@ -461,6 +462,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter")
             map.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter ''{0}''", NAME)
             map.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", TO_STRING)
+            map.put(MANY_LAMBDA_EXPRESSION_ARGUMENTS, "Only one lambda expression is allowed outside a parenthesized argument list")
 
             map.put(ARGUMENT_TYPE_MISMATCH, "Argument type mismatch: actual type is {1} but {0} was expected", TO_STRING, TO_STRING)
 

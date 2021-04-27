@@ -595,6 +595,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val name: String
     }
 
+    abstract class ManyLambdaExpressionArguments : KtFirDiagnostic<KtValueArgument>() {
+        override val diagnosticClass get() = ManyLambdaExpressionArguments::class
+    }
+
     abstract class OverloadResolutionAmbiguity : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OverloadResolutionAmbiguity::class
         abstract val candidates: List<KtSymbol>
