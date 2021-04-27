@@ -6205,6 +6205,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/overrideInInlineClass.kt");
             }
 
+            @TestMetadata("overrideInInnerClass.kt")
+            public void testOverrideInInnerClass() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/overrideInInnerClass.kt");
+            }
+
             @TestMetadata("safeCallOnTwoReceivers.kt")
             public void testSafeCallOnTwoReceivers() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceivers.kt");
