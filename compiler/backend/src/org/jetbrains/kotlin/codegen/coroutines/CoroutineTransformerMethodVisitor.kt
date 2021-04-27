@@ -650,7 +650,7 @@ class CoroutineTransformerMethodVisitor(
 
         val livenessFrames = analyzeLiveness(methodNode)
 
-        // References shall be cleaned up after uspill (during spill in next suspension point) to prevent memory leaks,
+        // References shall be cleaned up after unspill (during spill in next suspension point) to prevent memory leaks,
         val referencesToSpillBySuspensionPointIndex = arrayListOf<List<ReferenceToSpill>>()
         // while primitives shall not
         val primitivesToSpillBySuspensionPointIndex = arrayListOf<List<PrimitiveToSpill>>()
@@ -759,6 +759,35 @@ class CoroutineTransformerMethodVisitor(
             referencesToCleanBySuspensionPointIndex += currentSpilledReferencesCount to predSpilledReferencesCount
         }
 
+        // Calculate debug metadata mapping before modifying method node to make it easier to locate
+        // locals alive across suspension points.
+
+        fun calculateSpilledVariableAndField(
+            suspension: SuspensionPoint,
+            slot: Int,
+            spillableVariable: SpillableVariable?
+        ): SpilledVariableAndField? {
+            if (spillableVariable == null) return null
+            val name = localVariableName(methodNode, slot, suspension.suspensionCallBegin.index()) ?: return null
+            return SpilledVariableAndField(spillableVariable.fieldName, name)
+        }
+
+        val spilledToVariableMapping = arrayListOf<List<SpilledVariableAndField>>()
+        for (suspensionPointIndex in suspensionPoints.indices) {
+            val suspension = suspensionPoints[suspensionPointIndex]
+
+            val spilledToVariable = arrayListOf<SpilledVariableAndField>()
+
+            referencesToSpillBySuspensionPointIndex[suspensionPointIndex].mapNotNullTo(spilledToVariable) { (slot, spillableVariable) ->
+                calculateSpilledVariableAndField(suspension, slot, spillableVariable)
+            }
+            primitivesToSpillBySuspensionPointIndex[suspensionPointIndex].mapNotNullTo(spilledToVariable) { (slot, spillableVariable) ->
+                calculateSpilledVariableAndField(suspension, slot, spillableVariable)
+            }
+
+            spilledToVariableMapping += spilledToVariable
+        }
+
         // Mutate method node
 
         fun generateSpillAndUnspill(suspension: SuspensionPoint, slot: Int, spillableVariable: SpillableVariable?) {
@@ -770,6 +799,22 @@ class CoroutineTransformerMethodVisitor(
                     })
                 }
                 return
+            }
+
+            // Find and remove the local variable node, if any, in the local variable table corresponding to the slot that is spilled.
+            var local: LocalVariableNode? = null
+            val localRestart = LabelNode().linkWithLabel()
+            val iterator = methodNode.localVariables.listIterator()
+            while (iterator.hasNext()) {
+                val node = iterator.next()
+                if (node.index == slot &&
+                    methodNode.instructions.indexOf(node.start) <= methodNode.instructions.indexOf(suspension.suspensionCallBegin) &&
+                    methodNode.instructions.indexOf(node.end) > methodNode.instructions.indexOf(suspension.tryCatchBlockEndLabelAfterSuspensionCall)
+                ) {
+                    local = node
+                    iterator.remove()
+                    break
+                }
             }
 
             with(instructions) {
@@ -795,7 +840,30 @@ class CoroutineTransformerMethodVisitor(
                     )
                     StackValue.coerce(spillableVariable.normalizedType, spillableVariable.type, this)
                     store(slot, spillableVariable.type)
+                    if (local != null) {
+                        visitLabel(localRestart.label)
+                    }
                 })
+            }
+
+            // Split the local variable range for the local so that it is visible until the next state label, but is
+            // not visible until it has been unspilled from the continuation on the reentry path.
+            if (local != null) {
+                val previousEnd = local.end
+                local.end = suspension.stateLabel
+                // Add the local back, but end it at the next state label.
+                methodNode.localVariables.add(local)
+                // Add a new entry that starts after the local variable is restored from the continuation.
+                methodNode.localVariables.add(
+                    LocalVariableNode(
+                        local.name,
+                        local.desc,
+                        local.signature,
+                        localRestart,
+                        previousEnd,
+                        local.index
+                    )
+                )
             }
         }
 
@@ -839,33 +907,6 @@ class CoroutineTransformerMethodVisitor(
             }
         }
 
-        // Calculate debug metadata mapping
-
-        fun calculateSpilledVariableAndField(
-            suspension: SuspensionPoint,
-            slot: Int,
-            spillableVariable: SpillableVariable?
-        ): SpilledVariableAndField? {
-            if (spillableVariable == null) return null
-            val name = localVariableName(methodNode, slot, suspension.suspensionCallEnd.next.index()) ?: return null
-            return SpilledVariableAndField(spillableVariable.fieldName, name)
-        }
-
-        val spilledToVariableMapping = arrayListOf<List<SpilledVariableAndField>>()
-        for (suspensionPointIndex in suspensionPoints.indices) {
-            val suspension = suspensionPoints[suspensionPointIndex]
-
-            val spilledToVariable = arrayListOf<SpilledVariableAndField>()
-
-            referencesToSpillBySuspensionPointIndex[suspensionPointIndex].mapNotNullTo(spilledToVariable) { (slot, spillableVariable) ->
-                calculateSpilledVariableAndField(suspension, slot, spillableVariable)
-            }
-            primitivesToSpillBySuspensionPointIndex[suspensionPointIndex].mapNotNullTo(spilledToVariable) { (slot, spillableVariable) ->
-                calculateSpilledVariableAndField(suspension, slot, spillableVariable)
-            }
-
-            spilledToVariableMapping += spilledToVariable
-        }
         return spilledToVariableMapping
     }
 
@@ -901,7 +942,6 @@ class CoroutineTransformerMethodVisitor(
         suspendMarkerVarIndex: Int,
         suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
-        val stateLabel = LabelNode().linkWithLabel()
         val continuationLabelAfterLoadedResult = LabelNode()
         val suspendElementLineNumber = lineNumber
         var nextLineNumberNode = nextDefinitelyHitLineNumber(suspension)
@@ -929,7 +969,7 @@ class CoroutineTransformerMethodVisitor(
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
                 areturn(AsmTypes.OBJECT_TYPE)
                 // Mark place for continuation
-                visitLabel(stateLabel.label)
+                visitLabel(suspension.stateLabel.label)
             })
 
             // After suspension point there is always three nodes: L1, NOP, L2
@@ -985,7 +1025,7 @@ class CoroutineTransformerMethodVisitor(
             }
         }
 
-        return stateLabel
+        return suspension.stateLabel
     }
 
     // Find the next line number instruction that is defintely hit. That is, a line number
@@ -1154,6 +1194,7 @@ internal class SuspensionPoint(
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
 
+    val stateLabel = LabelNode().linkWithLabel()
     val unboxInlineClassInstructions: List<AbstractInsnNode> = findUnboxInlineClassInstructions()
 
     private fun findUnboxInlineClassInstructions(): List<AbstractInsnNode> {
