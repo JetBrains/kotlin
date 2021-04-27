@@ -133,7 +133,7 @@ class ControlFlowGraphBuilder {
         }
 
         fun CFGNode<*>.extractArgument(): FirElement? = when (this) {
-            is FunctionEnterNode, is TryMainBlockEnterNode, is CatchClauseEnterNode -> null
+            is FunctionEnterNode, is TryMainBlockEnterNode, is FinallyBlockExitNode, is CatchClauseEnterNode -> null
             is StubNode, is BlockExitNode -> firstPreviousNode.extractArgument()
             else -> fir.extractArgument()
         }
