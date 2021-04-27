@@ -14,5 +14,5 @@ fun useJ(j: J) {
 }
 
 fun jj() {
-    <!INAPPLICABLE_CANDIDATE!>useJ<!>({})
+    useJ(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }

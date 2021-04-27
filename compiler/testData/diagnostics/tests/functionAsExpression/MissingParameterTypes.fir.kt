@@ -19,9 +19,9 @@ fun test1(a: (Int) -> Unit) {
 }
 
 fun test2(a: (Int) -> Unit) {
-    <!INAPPLICABLE_CANDIDATE!>test2<!>(fun (x: String) {})
+    test2(<!ARGUMENT_TYPE_MISMATCH!>fun (x: String) {}<!>)
 }
 
 fun test3(a: (Int, String) -> Unit) {
-    <!INAPPLICABLE_CANDIDATE!>test3<!>(fun (x: String) {})
+    test3(<!ARGUMENT_TYPE_MISMATCH!>fun (x: String) {}<!>)
 }

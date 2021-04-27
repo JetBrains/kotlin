@@ -23,4 +23,4 @@ var test3: Int = 0
 
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
 
-val test4 = <!INAPPLICABLE_CANDIDATE!>f4<!> { single -> }
+val test4 = f4 <!ARGUMENT_TYPE_MISMATCH!>{ single -> }<!>
