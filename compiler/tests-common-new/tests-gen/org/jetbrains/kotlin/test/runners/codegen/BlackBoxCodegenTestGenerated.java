@@ -9796,6 +9796,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("overrideInInnerClass.kt")
+            public void testOverrideInInnerClass() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/overrideInInnerClass.kt");
+            }
+
+            @Test
             @TestMetadata("safeCallOnTwoReceivers.kt")
             public void testSafeCallOnTwoReceivers() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceivers.kt");
