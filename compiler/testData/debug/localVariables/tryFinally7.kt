@@ -20,7 +20,7 @@ fun compute(): String {
             }
         }
     } finally {
-        x = "OK"
+        x = "OK"  // TODO: `e` should not be visible here.
     }
     return "FAIL"
 }
