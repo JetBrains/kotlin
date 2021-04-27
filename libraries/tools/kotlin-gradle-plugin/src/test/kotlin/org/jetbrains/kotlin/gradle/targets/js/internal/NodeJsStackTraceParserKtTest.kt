@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class NodeJsStackTraceParserKtTest {
     @Test

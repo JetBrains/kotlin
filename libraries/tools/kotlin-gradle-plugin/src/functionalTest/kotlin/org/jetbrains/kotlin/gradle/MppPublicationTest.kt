@@ -11,10 +11,10 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.testfixtures.ProjectBuilder
+import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import kotlin.test.Test
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import org.junit.Assert.fail
+import org.junit.Test
 
 class MppPublicationTest {
 
@@ -50,7 +50,10 @@ class MppPublicationTest {
             .filterIsInstance<MavenPublication>()
             .forEach { publication ->
                 val sources = publication.artifacts.filter { artifact -> artifact.classifier == "sources" }
-                assertTrue(sources.isNotEmpty(), "Expected at least one sources artifact for ${publication.name}")
+                assertThat(
+                    "Expected at least one sources artifact for ${publication.name}",
+                    sources.isNotEmpty()
+                )
             }
     }
 }

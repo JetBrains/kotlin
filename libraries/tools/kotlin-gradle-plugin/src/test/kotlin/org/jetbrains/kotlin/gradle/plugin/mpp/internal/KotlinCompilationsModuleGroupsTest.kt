@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.MockKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.MockKotlinSourceSet
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class KotlinCompilationsModuleGroupsTest {
     private lateinit var instance: KotlinCompilationsModuleGroups

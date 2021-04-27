@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class GradleVersionTest {
     @Test
     fun testParse() {
         fun String.parseToPair() = ParsedGradleVersion.parse(this)?.let { it.major to it.minor }
 
-        assertEquals(2 to 1, "2.1".parseToPair())
-        assertEquals(2 to 10, "2.10".parseToPair())
-        assertEquals(2 to 14, "2.14.1".parseToPair())
-        assertEquals(3 to 2, "3.2-rc-1".parseToPair())
-        assertEquals(3 to 2, "3.2".parseToPair())
-        assertEquals(4 to 0, "4.0".parseToPair())
+        assertThat("", 2 to 1 == "2.1".parseToPair())
+        assertThat("", 2 to 10 == "2.10".parseToPair())
+        assertThat("", 2 to 14 == "2.14.1".parseToPair())
+        assertThat("", 3 to 2 == "3.2-rc-1".parseToPair())
+        assertThat("", 3 to 2 == "3.2".parseToPair())
+        assertThat("", 4 to 0 == "4.0".parseToPair())
     }
 
     @Test

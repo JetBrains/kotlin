@@ -11,10 +11,12 @@ package org.jetbrains.kotlin.gradle
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
+import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSet
-import kotlin.test.*
+import org.junit.Before
+import org.junit.Test
 
 class SyncKotlinAndAndroidSourceSetsTest {
 
@@ -22,7 +24,7 @@ class SyncKotlinAndAndroidSourceSetsTest {
     private lateinit var kotlin: KotlinMultiplatformExtension
     private lateinit var android: LibraryExtension
 
-    @BeforeTest
+    @Before
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
         project.plugins.apply("kotlin-multiplatform")
@@ -45,11 +47,11 @@ class SyncKotlinAndAndroidSourceSetsTest {
         val kotlinAndroidMainSourceSet = kotlin.sourceSets.getByName("androidMain")
         val androidMainSourceSet = android.sourceSets.getByName("main")
 
-        assertTrue(
-            kotlinAndroidMainSourceSet.kotlin.srcDirs.containsAll(androidMainSourceSet.java.srcDirs),
+        assertThat(
             "Expected all Android java srcDirs in Kotlin source set.\n" +
                     "Kotlin=${kotlinAndroidMainSourceSet.kotlin.srcDirs}\n" +
-                    "Android=${androidMainSourceSet.java.srcDirs}"
+                    "Android=${androidMainSourceSet.java.srcDirs}",
+            kotlinAndroidMainSourceSet.kotlin.srcDirs.containsAll(androidMainSourceSet.java.srcDirs)
         )
     }
 
@@ -60,11 +62,11 @@ class SyncKotlinAndAndroidSourceSetsTest {
         val kotlinAndroidTestSourceSet = kotlin.sourceSets.getByName("androidTest")
         val testSourceSet = android.sourceSets.getByName("test")
 
-        assertTrue(
-            kotlinAndroidTestSourceSet.kotlin.srcDirs.containsAll(testSourceSet.java.srcDirs),
+        assertThat(
             "Expected all Android java srcDirs in Kotlin source set.\n" +
                     "Kotlin=${kotlinAndroidTestSourceSet.kotlin.srcDirs}\n" +
-                    "Android=${testSourceSet.java.srcDirs}"
+                    "Android=${testSourceSet.java.srcDirs}",
+            kotlinAndroidTestSourceSet.kotlin.srcDirs.containsAll(testSourceSet.java.srcDirs)
         )
     }
 
@@ -75,16 +77,16 @@ class SyncKotlinAndAndroidSourceSetsTest {
         val kotlinAndroidAndroidTestSourceSet = kotlin.sourceSets.getByName("androidAndroidTest")
         val androidTestSourceSet = android.sourceSets.getByName("androidTest")
 
-        assertTrue(
-            project.file("src/androidTest/kotlin") !in kotlinAndroidAndroidTestSourceSet.kotlin.srcDirs,
+        assertThat(
             "Expected no source directory of 'androidTest' kotlin source set (Unit Test) " +
-                    "being present in 'androidAndroidTest' kotlin source set (Instrumented Test)"
+                    "being present in 'androidAndroidTest' kotlin source set (Instrumented Test)",
+            project.file("src/androidTest/kotlin") !in kotlinAndroidAndroidTestSourceSet.kotlin.srcDirs
         )
 
-        assertTrue(
-            project.file("src/androidTest/kotlin") !in androidTestSourceSet.java.srcDirs,
+        assertThat(
             "Expected no source directory of 'androidTest' kotlin source set (Unit Test) " +
-                    "being present in 'androidTest' Android source set (Instrumented Test)"
+                    "being present in 'androidTest' Android source set (Instrumented Test)",
+            project.file("src/androidTest/kotlin") !in androidTestSourceSet.java.srcDirs
         )
     }
 
@@ -101,9 +103,20 @@ class SyncKotlinAndAndroidSourceSetsTest {
         project.evaluate()
 
         fun assertSourceSetsExist(androidName: String, kotlinName: String) {
-            val androidSourceSet = assertNotNull(android.sourceSets.findByName(androidName), "Expected Android source set '$androidName'")
-            val kotlinSourceSet = assertNotNull(kotlin.sourceSets.findByName(kotlinName), "Expected Kotlin source set '$kotlinName'")
-            assertSame(kotlinSourceSet, androidSourceSet.kotlinSourceSet)
+            val androidSourceSet = android.sourceSets.findByName(androidName)
+            assertThat(
+                "Expected Android source set '$androidName'",
+                androidSourceSet != null
+            )
+            val kotlinSourceSet = kotlin.sourceSets.findByName(kotlinName)
+            assertThat(
+                "Expected Kotlin source set '$kotlinName'",
+                kotlinSourceSet != null
+            )
+            assertThat(
+                "Kotlin source set is not the same as android source set",
+                kotlinSourceSet === androidSourceSet?.kotlinSourceSet
+            )
         }
 
         assertSourceSetsExist("freeBetaDebug", "androidFreeBetaDebug")
@@ -135,20 +148,20 @@ class SyncKotlinAndAndroidSourceSetsTest {
         kotlin.sourceSets.toSet().allPairs()
             .forEach { (sourceSetA, sourceSetB) ->
                 val sourceDirsInBothSourceSets = sourceSetA.kotlin.srcDirs.intersect(sourceSetB.kotlin.srcDirs)
-                assertTrue(
-                    sourceDirsInBothSourceSets.isEmpty(),
+                assertThat(
                     "Expected disjoint source directories in source sets. " +
-                            "Found $sourceDirsInBothSourceSets present in ${sourceSetA.name}(Kotlin) and ${sourceSetB.name}(Kotlin)"
+                            "Found $sourceDirsInBothSourceSets present in ${sourceSetA.name}(Kotlin) and ${sourceSetB.name}(Kotlin)",
+                    sourceDirsInBothSourceSets.isEmpty()
                 )
             }
 
         android.sourceSets.toSet().allPairs()
             .forEach { (sourceSetA, sourceSetB) ->
                 val sourceDirsInBothSourceSets = sourceSetA.java.srcDirs.intersect(sourceSetB.java.srcDirs)
-                assertTrue(
-                    sourceDirsInBothSourceSets.isEmpty(),
+                assertThat(
                     "Expected disjoint source directories in source sets. " +
-                            "Found $sourceDirsInBothSourceSets present in ${sourceSetA.name}(Android) and ${sourceSetB.name}(Android)"
+                            "Found $sourceDirsInBothSourceSets present in ${sourceSetA.name}(Android) and ${sourceSetB.name}(Android)",
+                    sourceDirsInBothSourceSets.isEmpty()
                 )
             }
     }
@@ -165,9 +178,9 @@ class SyncKotlinAndAndroidSourceSetsTest {
 
         project.evaluate()
 
-        assertTrue(
-            kotlinAndroidMain.kotlin.srcDirs.containsAll(setOf(project.file("fromKotlin"), project.file("fromAndroid"))),
-            "Expected custom configured source directories being present on kotlin source set after evaluation"
+        assertThat(
+            "Expected custom configured source directories being present on kotlin source set after evaluation",
+            kotlinAndroidMain.kotlin.srcDirs.containsAll(setOf(project.file("fromKotlin"), project.file("fromAndroid")))
         )
     }
 
@@ -176,13 +189,22 @@ class SyncKotlinAndAndroidSourceSetsTest {
         kotlin.android()
 
         val main = android.sourceSets.getByName("main")
-        assertSame(kotlin.sourceSets.getByName("androidMain"), main.kotlinSourceSet)
+        assertThat(
+            "'androidMain' source set is not the same as 'main.kotlinSourceSet'",
+            kotlin.sourceSets.getByName("androidMain") === main.kotlinSourceSet
+        )
 
         val test = android.sourceSets.getByName("test")
-        assertSame(kotlin.sourceSets.getByName("androidTest"), test.kotlinSourceSet)
+        assertThat(
+            "'androidTest' source set is not the same as 'test.kotlinSourceSet'",
+            kotlin.sourceSets.getByName("androidTest") === test.kotlinSourceSet
+        )
 
         val androidTest = android.sourceSets.getByName("androidTest")
-        assertSame(kotlin.sourceSets.getByName("androidAndroidTest"), androidTest.kotlinSourceSet)
+        assertThat(
+            "'androidAndroidTest' source set is not the same as 'androidTest.kotlinSourceSet'",
+            kotlin.sourceSets.getByName("androidAndroidTest") === androidTest.kotlinSourceSet
+        )
     }
 }
 

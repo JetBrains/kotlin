@@ -11,12 +11,13 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
+import org.gradle.internal.impldep.org.hamcrest.MatcherAssert.assertThat
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import kotlin.test.*
+import org.junit.Test
 
 internal class CompilationSpecificPluginPath {
     @Test
@@ -54,11 +55,26 @@ internal class CompilationSpecificPluginPath {
         project.evaluate()
 
         // Then expect native artifact to be used for nativeMain metadata compilation
-        assertEquals(setOf("native"), project.compileTaskSubplugins("compileNativeMainKotlinMetadata"))
-        assertEquals(setOf("common"), project.compileTaskSubplugins("compileKotlinMetadata"))
-        assertEquals(setOf("common"), project.compileTaskSubplugins("compileCommonMainKotlinMetadata"))
-        assertEquals(setOf("common"), project.compileTaskSubplugins("compileKotlinJvm"))
-        assertEquals(setOf("native"), project.compileTaskSubplugins("compileKotlinLinuxX64"))
+        assertThat(
+            "'compileNativeMainKotlinMetadata' task does not have 'native' subplugin",
+            setOf("native") == project.compileTaskSubplugins("compileNativeMainKotlinMetadata")
+        )
+        assertThat(
+            "'compileKotlinMetadata' task does not have 'common' task subplugin",
+            setOf("common") == project.compileTaskSubplugins("compileKotlinMetadata")
+        )
+        assertThat(
+            "'compileCommonMainKotlinMetadata' task does not have 'common' task subplugin",
+            setOf("common") == project.compileTaskSubplugins("compileCommonMainKotlinMetadata")
+        )
+        assertThat(
+            "'compileKotlinJvm' task does not have 'common' task subplugin",
+            setOf("common") == project.compileTaskSubplugins("compileKotlinJvm")
+        )
+        assertThat(
+            "'compileKotlinLinuxX64' task does not have 'native' task subplugin",
+            setOf("native") == project.compileTaskSubplugins("compileKotlinLinuxX64")
+        )
     }
 
     @Test
@@ -76,7 +92,12 @@ internal class CompilationSpecificPluginPath {
             .map(String::capitalize)
             .flatMap { listOf(pluginClassPathConfiguration(it, "main"), pluginClassPathConfiguration(it, "test")) }
             .plus(pluginClassPathConfiguration("metadata", "main")) // and also one for metadata
-            .forEach { assertNotNull(project.configurations.findByName(it), "Configuration $it should exist") }
+            .forEach {
+                assertThat(
+                    "Configuration $it should exist",
+                    project.configurations.findByName(it) != null
+                )
+            }
     }
 
     @Test
@@ -100,13 +121,22 @@ internal class CompilationSpecificPluginPath {
         project.evaluate()
 
         // Then each plugin classpath should have its own dependency
-        assertEquals(listOf("jvmOnly"), project.subplugins("desktop"))
-        assertEquals(listOf("jsOnly"), project.subplugins("web"))
+        assertThat(
+            "'desktop' subplugin does not have only 'jvmOnly' dependency",
+            listOf("jvmOnly") == project.subplugins("desktop")
+        )
+        assertThat(
+            "'web' subplugin does not have only 'jsOnly' dependency",
+            listOf("jsOnly") == project.subplugins("web")
+        )
 
         // And each compilation task should have its own plugin classpath
         val compileDesktop = project.tasks.getByName("compileKotlinDesktop") as KotlinCompile
         val expectedConfig = project.configurations.getByName(pluginClassPathConfiguration("desktop", "main"))
-        assertEquals(expectedConfig, compileDesktop.pluginClasspath)
+        assertThat(
+            "'compileKotlinDesktop' does not equals expected classpath",
+            expectedConfig == compileDesktop.pluginClasspath
+        )
     }
 
     @Test
@@ -130,10 +160,16 @@ internal class CompilationSpecificPluginPath {
         project.evaluate()
 
         // Expect jvm target have both artifacts
-        assertEquals(listOf("common1", "common2"), project.subplugins("jvm"))
+        assertThat(
+            "'jvm' target does not have expected artifacts",
+            listOf("common1", "common2") == project.subplugins("jvm")
+        )
 
         // And native target should have only NativeSpecificPlugin artifacts
-        assertEquals(listOf("native"), project.subplugins("linuxX64"))
+        assertThat(
+            "'native' target does not have expected artifacts",
+            listOf("native") == project.subplugins("linuxX64")
+        )
     }
 
     @Test
@@ -149,7 +185,10 @@ internal class CompilationSpecificPluginPath {
             .configurations
             .getByName(pluginClassPathConfiguration("linuxX64", "main"))
 
-        assertFalse(nativeConfig.isTransitive)
+        assertThat(
+            "Native configuration is transitive",
+            !nativeConfig.isTransitive
+        )
     }
 
     @Test
@@ -168,11 +207,26 @@ internal class CompilationSpecificPluginPath {
         project.evaluate()
 
         // Then ALL compilations should have shared plugin EXCEPT native
-        assertTrue("shared" in project.subplugins("jvm"))
-        assertTrue("shared" in project.subplugins("js"))
-        assertTrue("shared" in project.subplugins("js", "test"))
-        assertTrue("shared" in project.subplugins("metadata"))
-        assertTrue("shared" !in project.subplugins("native"))
+        assertThat(
+            "'jvm' compilation does not contain 'shared' dependency",
+            "shared" in project.subplugins("jvm")
+        )
+        assertThat(
+            "'js' compilation does not contain 'shared' dependency",
+            "shared" in project.subplugins("js")
+        )
+        assertThat(
+            "'js' test compilation does not contain 'shared' dependency",
+            "shared" in project.subplugins("js", "test")
+        )
+        assertThat(
+            "'metadata' compilation does not contain 'shared' dependency",
+            "shared" in project.subplugins("metadata")
+        )
+        assertThat(
+            "'native' compilation does not contain 'shared' dependency",
+            "shared" !in project.subplugins("native")
+        )
     }
 
     @Test
@@ -191,13 +245,28 @@ internal class CompilationSpecificPluginPath {
         project.evaluate()
 
         // Then ALL native compilations should have shared plugin
-        assertTrue("shared" in project.subplugins("linux"))
-        assertTrue("shared" in project.subplugins("mac"))
-        assertTrue("shared" in project.subplugins("mac", "test"))
+        assertThat(
+            "'linux' compilation does not contain 'shared' dependency",
+            "shared" in project.subplugins("linux")
+        )
+        assertThat(
+            "'mac' compilation does not contain 'shared' dependency",
+            "shared" in project.subplugins("mac")
+        )
+        assertThat(
+            "'mac' test compilation does not contain 'shared' dependency",
+            "shared" in project.subplugins("mac", "test")
+        )
 
         // And all non-native should not have it
-        assertTrue("shared" !in project.subplugins("metadata"))
-        assertTrue("shared" !in project.subplugins("jvm"))
+        assertThat(
+            "'metadata' compilation does not contain 'shared' dependency",
+            "shared" !in project.subplugins("metadata")
+        )
+        assertThat(
+            "'jvm' compilation does not contain 'shared' dependency",
+            "shared" !in project.subplugins("jvm")
+        )
     }
 
     private fun pluginClassPathConfiguration(target: String, compilation: String) =

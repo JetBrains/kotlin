@@ -7,11 +7,11 @@ description = "Kotlin/Native utils"
 
 dependencies {
     compileOnly(kotlinStdlib())
-    compile(project(":kotlin-util-io"))
+    api(project(":kotlin-util-io"))
 
-    testCompile(commonDep("junit:junit"))
+    testImplementation(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-reflect"))
 }
 
 sourceSets {

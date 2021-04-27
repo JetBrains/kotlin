@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.gradle.model.builder
 
 import org.jetbrains.kotlin.gradle.model.KotlinProject
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class KotlinModelBuilderTest {
     @Test
