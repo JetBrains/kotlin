@@ -472,8 +472,8 @@ object FirFakeOverrideGenerator {
         forceTypeParametersRecreation: Boolean = true
     ): Pair<List<FirTypeParameterRef>, ConeSubstitutor> {
         if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
-        val newTypeParameters = member.typeParameters.map { typeParameter ->
-            if (typeParameter !is FirTypeParameter) return@map null
+        val newTypeParameters = member.typeParameters.map { typeParameterRef ->
+            val typeParameter = typeParameterRef.symbol.fir
             FirTypeParameterBuilder().apply {
                 source = typeParameter.source
                 moduleData = typeParameter.moduleData
@@ -486,18 +486,15 @@ object FirFakeOverrideGenerator {
             }
         }
 
-        val substitutionMapForNewParameters = member.typeParameters.zip(newTypeParameters).mapNotNull { (original, new) ->
-            if (new != null)
-                Pair(original.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isNullable = false))
-            else null
-        }.toMap()
+        val substitutionMapForNewParameters = member.typeParameters.zip(newTypeParameters).associate { (original, new) ->
+            Pair(original.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isNullable = false))
+        }
 
         val additionalSubstitutor = substitutorByMap(substitutionMapForNewParameters, useSiteSession)
 
         var wereChangesInTypeParameters = forceTypeParametersRecreation
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(member.typeParameters)) {
-            if (newTypeParameter == null) continue
-            val original = oldTypeParameter as FirTypeParameter
+            val original = oldTypeParameter.symbol.fir
             for (boundTypeRef in original.bounds) {
                 val typeForBound = boundTypeRef.coneType
                 val substitutedBound = substitutor.substituteOrNull(typeForBound)
@@ -514,7 +511,7 @@ object FirFakeOverrideGenerator {
 
         if (!wereChangesInTypeParameters) return Pair(member.typeParameters, substitutor)
         return Pair(
-            newTypeParameters.mapIndexed { index, builder -> builder?.build() ?: member.typeParameters[index] },
+            newTypeParameters.map(FirTypeParameterBuilder::build),
             ChainedSubstitutor(substitutor, additionalSubstitutor)
         )
     }
