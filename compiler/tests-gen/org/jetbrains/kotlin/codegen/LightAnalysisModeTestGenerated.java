@@ -15899,6 +15899,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
             }
 
+            @TestMetadata("mangledSamWrappers.kt")
+            public void ignoreMangledSamWrappers() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappers.kt");
+            }
+
             @TestMetadata("returnIC.kt")
             public void ignoreReturnIC() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt");
