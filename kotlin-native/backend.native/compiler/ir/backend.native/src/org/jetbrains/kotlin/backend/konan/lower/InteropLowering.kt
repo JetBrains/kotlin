@@ -824,7 +824,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     }.all{ it }
                 }
 
-        val irBlock = irBuilder(context.irBuiltIns, irConstructor.symbol, expression.startOffset, expression.endOffset)
+        val irBlock = builder.at(expression)
                 .irBlock {
                     val call = irCall(primaryConstructor).also {
                         val nativePointed = irCall(alloc).apply {
