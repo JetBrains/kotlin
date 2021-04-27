@@ -164,7 +164,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
             element is KtParameter -> KotlinConverter.convertParameter(element, null, requiredTypes) as Sequence<T>
             element is KtClassOrObject -> KotlinConverter.convertClassOrObject(element, null, requiredTypes) as Sequence<T>
             element is UastFakeLightPrimaryConstructor ->
-                KotlinConverter.convertFakeLightConstructorAlternatices(element, null, requiredTypes) as Sequence<T>
+                KotlinConverter.convertFakeLightConstructorAlternatives(element, null, requiredTypes) as Sequence<T>
             else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
         }
 }
@@ -514,7 +514,7 @@ internal object KotlinConverter {
                         KotlinUMethodWithFakeLightDelegate(ktFunction, original, givenParent)
                 }
                 is UastFakeLightPrimaryConstructor ->
-                    convertFakeLightConstructorAlternatices(original, givenParent, expectedTypes).firstOrNull()
+                    convertFakeLightConstructorAlternatives(original, givenParent, expectedTypes).firstOrNull()
                 is KtLightClass -> when (original.kotlinOrigin) {
                     is KtEnumEntry -> el<UEnumConstant> {
                         convertEnumEntry(original.kotlinOrigin as KtEnumEntry, givenParent)
@@ -593,7 +593,7 @@ internal object KotlinConverter {
         }
     }
 
-    internal fun convertFakeLightConstructorAlternatices(
+    internal fun convertFakeLightConstructorAlternatives(
         original: UastFakeLightPrimaryConstructor,
         givenParent: UElement?,
         expectedTypes: Array<out Class<out UElement>>
