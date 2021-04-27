@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 
 internal fun isConfigurationCacheAvailable(gradle: Gradle) =
@@ -14,3 +15,11 @@ internal fun isConfigurationCacheAvailable(gradle: Gradle) =
     } catch (_: Exception) {
         null
     } ?: false
+
+internal fun Project.getSystemProperty(key: String): String? {
+    return if (isConfigurationCacheAvailable(gradle)) {
+        providers.systemProperty(key).forUseAtConfigurationTime().orNull
+    } else {
+        System.getProperty(key)
+    }
+}
