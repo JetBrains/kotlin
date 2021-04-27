@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosi
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 /*
@@ -25,7 +24,7 @@ interface ConstraintSystemUtilContext {
     fun KotlinTypeMarker.refineType(): KotlinTypeMarker
 
     // PostponedArgumentInputTypesResolver
-    fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T>
+    fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ArgumentConstraintPosition<*>
     fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T>
     fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
     fun PostponedAtomWithRevisableExpectedType.isAnonymousFunction(): Boolean

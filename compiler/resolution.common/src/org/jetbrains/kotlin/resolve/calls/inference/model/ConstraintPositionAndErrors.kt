@@ -26,7 +26,7 @@ abstract class DeclaredUpperBoundConstraintPosition<T>(val typeParameter: T) : C
     override fun toString(): String = "DeclaredUpperBound $typeParameter"
 }
 
-abstract class ArgumentConstraintPosition<T>(val argument: T) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
+abstract class ArgumentConstraintPosition<out T>(val argument: T) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString(): String = "Argument $argument"
 }
 

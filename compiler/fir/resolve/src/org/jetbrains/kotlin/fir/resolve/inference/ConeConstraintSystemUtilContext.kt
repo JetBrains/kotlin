@@ -44,9 +44,11 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return this
     }
 
-    override fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T> {
-        @Suppress("UNCHECKED_CAST")
-        return ConeArgumentConstraintPosition() as ArgumentConstraintPosition<T>
+    override fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ArgumentConstraintPosition<*> {
+        require(argument is PostponedResolvedAtom) {
+            "${argument::class}"
+        }
+        return ConeArgumentConstraintPosition(argument.atom)
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {

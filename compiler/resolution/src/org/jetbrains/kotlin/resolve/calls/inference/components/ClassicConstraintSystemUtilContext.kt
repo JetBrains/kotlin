@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.builtins.*
-import org.jetbrains.kotlin.builtins.getPureArgumentsForFunctionalTypeOrSubtype
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_CR_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.unCapture as unCaptureKotlinType
@@ -51,10 +49,9 @@ class ClassicConstraintSystemUtilContext(
         return kotlinTypeRefiner.refineType(this)
     }
 
-    override fun <T> createArgumentConstraintPosition(argument: T): ArgumentConstraintPosition<T> {
+    override fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ArgumentConstraintPosition<*> {
         require(argument is ResolvedAtom)
-        @Suppress("UNCHECKED_CAST")
-        return ArgumentConstraintPositionImpl(argument.atom as KotlinCallArgument) as ArgumentConstraintPosition<T>
+        return ArgumentConstraintPositionImpl(argument.atom as KotlinCallArgument)
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {
