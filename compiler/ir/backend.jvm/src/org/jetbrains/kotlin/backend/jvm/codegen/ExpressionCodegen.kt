@@ -423,7 +423,7 @@ class ExpressionCodegen(
         }
     }
 
-    private fun addLocalVariableGapsForFinallyBlocks(
+    private fun splitLocalVariableRangesByFinallyBlocks(
         info: BlockInfo,
         tryWithFinallyInfo: TryWithFinallyInfo,
         gapStart: Label,
@@ -1276,7 +1276,7 @@ class ExpressionCodegen(
         // Split the local variables for the blocks on the way to the finally. Variables introduced in these blocks do not
         // cover the finally block code.
         val endOfFinallyCode = markNewLinkedLabel()
-        addLocalVariableGapsForFinallyBlocks(data, tryWithFinallyInfo, gapStart, endOfFinallyCode)
+        splitLocalVariableRangesByFinallyBlocks(data, tryWithFinallyInfo, gapStart, endOfFinallyCode)
 
         val gapEnd = afterJumpLabel ?: endOfFinallyCode
         tryWithFinallyInfo.gaps.add(gapStart to gapEnd)

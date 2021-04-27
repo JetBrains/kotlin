@@ -99,6 +99,42 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("tryFinally11.kt")
+    public void testTryFinally11() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally11.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally12.kt")
+    public void testTryFinally12() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally12.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally13.kt")
+    public void testTryFinally13() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally13.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally14.kt")
+    public void testTryFinally14() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally14.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally15.kt")
+    public void testTryFinally15() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally15.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally16.kt")
+    public void testTryFinally16() throws Exception {
+        runTest("compiler/testData/debug/localVariables/tryFinally16.kt");
+    }
+
+    @Test
     @TestMetadata("tryFinally2.kt")
     public void testTryFinally2() throws Exception {
         runTest("compiler/testData/debug/localVariables/tryFinally2.kt");
