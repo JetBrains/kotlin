@@ -236,19 +236,21 @@ internal class DescriptorRendererImpl(
     private fun StringBuilder.renderDefaultType(type: KotlinType) {
         this.renderAnnotations(type)
 
-        if (type.isError) {
-            if (type is UnresolvedType && presentableUnresolvedTypes) {
-                append(type.presentableName)
-            } else {
-                if (type is ErrorType && !informativeErrorType) {
+        when {
+            type.isError -> {
+                if (type is UnresolvedType && presentableUnresolvedTypes) {
                     append(type.presentableName)
                 } else {
-                    append(type.constructor.toString()) // Debug name of an error type is more informative
+                    if (type is ErrorType && !informativeErrorType) {
+                        append(type.presentableName)
+                    } else {
+                        append(type.constructor.toString()) // Debug name of an error type is more informative
+                    }
                 }
+                append(renderTypeArguments(type.arguments))
             }
-            append(renderTypeArguments(type.arguments))
-        } else {
-            renderTypeConstructorAndArguments(type)
+            type is StubType -> append(type.originalTypeVariable.toString())
+            else -> renderTypeConstructorAndArguments(type)
         }
 
         if (type.isMarkedNullable) {

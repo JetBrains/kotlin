@@ -36,7 +36,7 @@ class StubTypeForProvideDelegateReceiver(
 }
 
 abstract class AbstractStubType(
-    protected val originalTypeVariable: TypeConstructor,
+    val originalTypeVariable: TypeConstructor,
     override val isMarkedNullable: Boolean,
     override val constructor: TypeConstructor,
     override val memberScope: MemberScope

@@ -12639,6 +12639,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("renderingStubTypes.kt")
+                public void testRenderingStubTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/renderingStubTypes.kt");
+                }
+
+                @Test
                 @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
                 public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
