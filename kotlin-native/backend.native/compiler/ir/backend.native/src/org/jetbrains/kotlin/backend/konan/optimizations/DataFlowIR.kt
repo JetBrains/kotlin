@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.isBuiltInOperator
 import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.konan.ir.isOverridableOrOverrides
-import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
+import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
@@ -506,7 +506,7 @@ internal object DataFlowIR {
                     mapFunction(it.getImplementation(context)!!)
                 }
                 layoutBuilder.methodTableEntries.forEach {
-                    type.itable[it.overriddenFunction.computeFunctionName().localHash.value] = mapFunction(it.getImplementation(context)!!)
+                    type.itable[it.overriddenFunction.computeFullName().localHash.value] = mapFunction(it.getImplementation(context)!!)
                 }
             } else if (irClass.isInterface) {
                 // Warmup interface table so it is computed before DCE.
@@ -564,7 +564,7 @@ internal object DataFlowIR {
             val containingDeclarationPart = parent.fqNameForIrSerialization.let {
                 if (it.isRoot) "" else "$it."
             }
-            val name = "kfun:$containingDeclarationPart${it.computeFunctionName()}"
+            val name = "kfun:$containingDeclarationPart${it.computeFullName()}"
 
             val returnsUnit = it is IrConstructor || (!it.isSuspend && it.returnType.isUnit())
             val returnsNothing = !it.isSuspend && it.returnType.isNothing()

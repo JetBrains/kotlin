@@ -329,7 +329,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     fun methodTableRecords(irClass: IrClass): List<MethodTableRecord> {
         val functionNames = mutableMapOf<Long, OverriddenFunctionInfo>()
         return context.getLayoutBuilder(irClass).methodTableEntries.map {
-            val functionName = it.overriddenFunction.computeFunctionName()
+            val functionName = it.overriddenFunction.computeFullName()
             val nameSignature = functionName.localHash
             val previous = functionNames.putIfAbsent(nameSignature.value, it)
             if (previous != null)
@@ -544,7 +544,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val methods = (methodTableRecords(superClass) + methodImpls.map { (method, impl) ->
             assert(method.parent == irClass)
-            MethodTableRecord(method.computeFunctionName().localHash, impl.bitcast(int8TypePtr))
+            MethodTableRecord(method.computeFullName().localHash, impl.bitcast(int8TypePtr))
         }).sortedBy { it.nameSignature.value }.also {
             assert(it.distinctBy { it.nameSignature.value } == it)
         }

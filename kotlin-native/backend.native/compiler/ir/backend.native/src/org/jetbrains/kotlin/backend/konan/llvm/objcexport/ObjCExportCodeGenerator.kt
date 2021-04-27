@@ -1431,13 +1431,13 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
             inherited.forEach {
                 presentVtableBridges += vtableIndex(it)
-                presentMethodTableBridges += it.computeFunctionName()
+                presentMethodTableBridges += it.computeFullName()
                 presentItableBridges += itablePlace(it)
             }
 
             uninherited.forEach {
                 val vtableIndex = vtableIndex(it)
-                val functionName = it.computeFunctionName()
+                val functionName = it.computeFullName()
                 val itablePlace = itablePlace(it)
 
                 if (vtableIndex !in presentVtableBridges || functionName !in presentMethodTableBridges
