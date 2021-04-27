@@ -182,7 +182,7 @@ class PostponedArgumentsAnalyzer(
             val lastExpressionCoercedToUnit =
                 it == lastExpression && expectedReturnType?.isUnitOrFlexibleUnit == true && !it.typeRef.coneType.isUnitOrFlexibleUnit
             // No constraint for the last expression of lambda if it will be coerced to Unit.
-            if (!lastExpressionCoercedToUnit) {
+            if (!lastExpressionCoercedToUnit && !c.getBuilder().hasContradiction) {
                 candidate.resolveArgumentExpression(
                     c.getBuilder(),
                     it,
