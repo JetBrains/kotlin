@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
@@ -109,6 +110,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
@@ -3830,13 +3832,25 @@ class ComposableFunctionBodyTransformer(
         ): IrChangedBitMaskVariable {
             used = true
             val temps = params.mapIndexed { index, param ->
-                irTemporary(
-                    irGet(param),
-                    if (index == 0) nameHint else "$nameHint$index",
-                    context.irBuiltIns.intType,
+                val descriptor = WrappedVariableDescriptor()
+                IrVariableImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    // We label "dirty" as a defined variable instead of a temporary, so that it
+                    // is properly stored in the locals table and discoverable by debuggers. The
+                    // dirty variable encodes information that could be useful for tooling to
+                    // interpret.
+                    IrDeclarationOrigin.DEFINED,
+                    IrVariableSymbolImpl(descriptor),
+                    Name.identifier(if (index == 0) "\$dirty" else "\$dirty$index"),
+                    param.type,
                     isVar,
-                    exactName
-                )
+                    isConst = false,
+                    isLateinit = false
+                ).apply {
+                    descriptor.bind(this)
+                    initializer = irGet(param)
+                }
             }
             return IrChangedBitMaskVariableImpl(temps, count)
         }
