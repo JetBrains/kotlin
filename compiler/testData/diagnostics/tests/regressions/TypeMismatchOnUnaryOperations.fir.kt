@@ -8,7 +8,7 @@ fun main() {
     val g1 : String = ++v;
     val h : String = v--;
     val h1 : String = --v;
-    val i : String = <!INITIALIZER_TYPE_MISMATCH!>!true<!>;
+    val i : String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>!true<!>;
     val j : String = <!INITIALIZER_TYPE_MISMATCH!>foo@ true<!>;
     val k : String = <!INITIALIZER_TYPE_MISMATCH!>foo@ bar@ true<!>;
     val l : String = <!INITIALIZER_TYPE_MISMATCH!>-1<!>;

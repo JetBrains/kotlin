@@ -11,7 +11,7 @@ fun test() {
     select3(
         { a: A, b: A -> Unit },
         { b, a -> Unit },
-        { <!UNRESOLVED_REFERENCE!>it<!>; Unit }
+        <!TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>; Unit }<!>
     )
 }
 

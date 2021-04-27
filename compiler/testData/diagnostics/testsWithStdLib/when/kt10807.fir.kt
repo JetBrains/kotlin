@@ -10,8 +10,8 @@ fun getComp(): Comparator<Foo?> =
         }<!>
 
 fun getCompInverted(): Comparator<Foo?> =
-        nullsLast(
+        <!TYPE_MISMATCH!>nullsLast(
                 when {
                     else -> compareBy({ it.<!UNRESOLVED_REFERENCE!>a<!> }, { it.<!UNRESOLVED_REFERENCE!>b<!> })
                 }
-        )
+        )<!>

@@ -2,7 +2,7 @@
 // JAVAC_EXPECTED_FILE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass): String {
-    return javaClass.doSomething("") { <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>it<!> }
+    return javaClass.doSomething("") <!ARGUMENT_TYPE_MISMATCH!>{ <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>it<!> }<!>
 }
 
 // FILE: JavaClass.java

@@ -12,14 +12,14 @@ open class A<T> : J() {
     init {
         foo()
         bar()
-        val a: Int = <!INITIALIZER_TYPE_MISMATCH!>baz()<!>
+        val a: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz()<!>
         val b: T = baz()
     }
 
     fun test1() {
         foo()
         bar()
-        val a: Int = <!INITIALIZER_TYPE_MISMATCH!>baz()<!>
+        val a: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz()<!>
         val b: T = baz()
     }
 

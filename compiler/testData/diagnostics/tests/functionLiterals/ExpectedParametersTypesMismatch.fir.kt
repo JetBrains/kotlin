@@ -9,37 +9,37 @@ fun test1() {
     foo0 {
         ""
     }
-    foo0 {
-        s: String-> <!ARGUMENT_TYPE_MISMATCH!>""<!>
-    }
-    foo0 {
-        <!CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
-    }
+    foo0 <!ARGUMENT_TYPE_MISMATCH!>{
+        s: String-> ""
+    }<!>
+    foo0 <!ARGUMENT_TYPE_MISMATCH!>{
+        <!CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> ""
+    }<!>
 
     foo1 {
         ""
     }
+    foo1 <!ARGUMENT_TYPE_MISMATCH!>{
+        s: String -> ""
+    }<!>
+    foo1 <!ARGUMENT_TYPE_MISMATCH!>{
+        x, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> ""
+    }<!>
     foo1 {
-        s: String -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
-    }
-    foo1 {
-        x, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
-    }
-    foo1 {
-        -> 42
+        -> <!ARGUMENT_TYPE_MISMATCH!>42<!>
     }
 
 
-    foo2 {
-        <!ARGUMENT_TYPE_MISMATCH!>""<!>
-    }
-    foo2 {
-        s: String -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
-    }
-    foo2 {
-        x -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
-    }
-    foo2 {
+    foo2 <!ARGUMENT_TYPE_MISMATCH!>{
+        ""
+    }<!>
+    foo2 <!ARGUMENT_TYPE_MISMATCH!>{
+        s: String -> ""
+    }<!>
+    foo2 <!ARGUMENT_TYPE_MISMATCH!>{
+        x -> ""
+    }<!>
+    foo2 <!ARGUMENT_TYPE_MISMATCH!>{
          -> <!ARGUMENT_TYPE_MISMATCH!>42<!>
-    }
+    }<!>
 }

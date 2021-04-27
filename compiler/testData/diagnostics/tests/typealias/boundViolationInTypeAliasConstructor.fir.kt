@@ -13,6 +13,6 @@ class TColl<T, C : Collection<T>>
 typealias TC<T, C> = TColl<T, C>
 typealias TC2<T, C> = TC<T, C>
 
-val y1 = TColl<Any, <!UPPER_BOUND_VIOLATED!>Any<!>>()
+val y1 = TColl<Any, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>()
 val y2 = TC<Any, Any>()
 val y3 = TC2<Any, Any>()

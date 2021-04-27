@@ -16,6 +16,6 @@ fun test(s: Sub) {
         t: Trait -> s
     }
 
-    foo(fun(t: Sub) = <!ARGUMENT_TYPE_MISMATCH!>s<!>)
-    foo(fun(t): Super = <!ARGUMENT_TYPE_MISMATCH!>s<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>fun(t: Sub) = s<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>fun(t): Super = s<!>)
 }

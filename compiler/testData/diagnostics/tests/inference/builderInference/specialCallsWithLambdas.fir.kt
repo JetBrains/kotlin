@@ -147,7 +147,7 @@ fun poll73(): Flow<String> {
 
 fun poll8(): Flow<String> {
     return flow {
-        val inv = {1} in setOf({1f})
+        val inv = {<!ARGUMENT_TYPE_MISMATCH!>1<!>} in setOf({1f})
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
@@ -175,7 +175,7 @@ fun poll83(): Flow<String> {
 
 fun poll84(): Flow<String> {
     return flow {
-        val inv = {{1}} in setOf({{1f}})
+        val inv = {<!ARGUMENT_TYPE_MISMATCH!>{1}<!>} in setOf({{1f}})
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }

@@ -2,8 +2,8 @@
 // JAVAC_EXPECTED_FILE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<Int>) {
-    val a: String = javaClass.doSomething1("", 1) { p: String -> <!ARGUMENT_TYPE_MISMATCH!>p<!> }
-    val b: String = javaClass.doSomething2("", 1, true) { p: Int -> <!ARGUMENT_TYPE_MISMATCH!>p<!> }
+    val a: String = javaClass.doSomething1("", 1) <!ARGUMENT_TYPE_MISMATCH!>{ p: String -> p }<!>
+    val b: String = javaClass.doSomething2("", 1, true) <!ARGUMENT_TYPE_MISMATCH!>{ p: Int -> p }<!>
 }
 
 // FILE: JavaClass.java

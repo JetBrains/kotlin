@@ -12,7 +12,7 @@ fun ok(): Int {
 }
 
 fun okOneLineFunction(): Int = 10 + 1
-fun errorOneLineFunction(): String = <!RETURN_TYPE_MISMATCH!>10 + 1<!>
+fun errorOneLineFunction(): String = <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>10 + 1<!>
 
 class A {
     fun bar() {}

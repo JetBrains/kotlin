@@ -15,6 +15,6 @@ public inline fun <T: Closeable, R> T.use(block: T.()-> R) : R {
 fun test() {
     C().use {
         this.close()
-        <!UNRESOLVED_REFERENCE!>x<!>
+        <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>x<!>
     }
 }

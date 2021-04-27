@@ -21,7 +21,7 @@ fun test() {
 
     class B: A() {
         init {
-            val a: Int = <!INITIALIZER_TYPE_MISMATCH!>foo()<!> // todo
+            val a: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>foo()<!> // todo
         }
     }
 }

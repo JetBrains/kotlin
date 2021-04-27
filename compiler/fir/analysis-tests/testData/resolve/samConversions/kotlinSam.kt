@@ -29,10 +29,10 @@ fun main() {
     foo1 { x -> x > 1 }
     foo1(f)
 
-    foo2 { x -> <!ARGUMENT_TYPE_MISMATCH!><!ARGUMENT_TYPE_MISMATCH!>x<!> <!UNRESOLVED_REFERENCE!>><!> 1<!> }
+    foo2 <!ARGUMENT_TYPE_MISMATCH!>{ x -> x <!UNRESOLVED_REFERENCE!>><!> 1 }<!>
     foo2(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
 
-    foo3 { x -> <!ARGUMENT_TYPE_MISMATCH!><!ARGUMENT_TYPE_MISMATCH!>x<!> <!UNRESOLVED_REFERENCE!>><!> 1<!> }
+    foo3 <!ARGUMENT_TYPE_MISMATCH!>{ x -> x <!UNRESOLVED_REFERENCE!>><!> 1 }<!>
     foo3(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
 
     foo4 { x -> x > 1 }

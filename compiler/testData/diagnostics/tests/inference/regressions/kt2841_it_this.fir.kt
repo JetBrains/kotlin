@@ -16,6 +16,6 @@ fun test() {
     use(C()) {
         this.close()
         it.close()
-        <!UNRESOLVED_REFERENCE!>xx<!>
+        <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>xx<!>
     }
 }

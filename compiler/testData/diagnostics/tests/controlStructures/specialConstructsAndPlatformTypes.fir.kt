@@ -12,7 +12,7 @@ public class J {
 val testImplicitExclExcl1: String = J.s
 val testImplicitExclExcl2: String? = J.s
 
-val testImplicitExclExcl3: String = <!INITIALIZER_TYPE_MISMATCH!>J.m[""]<!>
+val testImplicitExclExcl3: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>J.m[""]<!>
 val testImplicitExclExcl4: String? = J.m[""]
 
 val testExclExcl1: String = J.s!!

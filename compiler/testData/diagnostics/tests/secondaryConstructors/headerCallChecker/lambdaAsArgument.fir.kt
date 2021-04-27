@@ -7,9 +7,9 @@ class A {
     constructor(x: () -> Int)
     constructor() : this(
             {
-                <!UNRESOLVED_REFERENCE!>foo<!>() +
+                <!ARGUMENT_TYPE_MISMATCH, TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>foo<!>() +
                 <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNRESOLVED_REFERENCE!>foo<!>() +
                 <!UNRESOLVED_LABEL!>this@A<!>.<!UNRESOLVED_REFERENCE!>foo<!>() +
-                <!UNRESOLVED_REFERENCE!>foobar<!>()
+                <!UNRESOLVED_REFERENCE!>foobar<!>()<!>
             })
 }

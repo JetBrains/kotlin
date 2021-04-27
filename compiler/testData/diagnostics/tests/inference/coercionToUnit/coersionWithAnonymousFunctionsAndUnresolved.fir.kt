@@ -52,7 +52,7 @@ fun testUnit() {
 fun testParameter() {
     takeFnToParameter {  }
     takeFnToParameter { Unit }
-    takeFnToParameter { <!UNRESOLVED_REFERENCE!>unresolved<!>() }
+    takeFnToParameter { <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!> }
     takeFnToParameter { if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() }
     takeFnToParameter {
         if (true) <!UNRESOLVED_REFERENCE!>unresolved<!>() else <!UNRESOLVED_REFERENCE!>unresolved<!>()
@@ -66,7 +66,7 @@ fun testParameter() {
     takeFnToParameter(fun(): Unit { return Unit })
     takeFnToParameter(fun() { if (true) return })
     takeFnToParameter(fun() { if (true) return Unit })
-    takeFnToParameter(fun() = <!UNRESOLVED_REFERENCE!>unresolved<!>())
+    takeFnToParameter(fun() = <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE!>unresolved<!>()<!>)
     takeFnToParameter(fun() { <!UNRESOLVED_REFERENCE!>unresolved<!>() })
     takeFnToParameter(fun(): Unit { <!UNRESOLVED_REFERENCE!>unresolved<!>() })
     takeFnToParameter(fun() { return <!UNRESOLVED_REFERENCE!>unresolved<!>() })
