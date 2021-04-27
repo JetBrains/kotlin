@@ -13,10 +13,6 @@ val ideaSandboxDir: File by extra
 val ideaSdkPath: String
     get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
 
-val intellijUltimateEnabled: Boolean by rootProject.extra
-val ideaUltimatePluginDir: File by rootProject.extra
-val ideaUltimateSandboxDir: File by rootProject.extra
-
 val pathToKotlinModularizedTestData = kotlinBuildProperties.pathToKotlinModularizedTestData
 
 fun MutableList<String>.addModularizedTestArgs(prefix: String, benchFilter: String?) {

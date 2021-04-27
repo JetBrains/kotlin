@@ -420,43 +420,6 @@ if (!buildProperties.getBoolean("disableKotlinPluginModules", false) && buildPro
     logger.info("Old Kotlin plugin modules are disabled")
 }
 
-if (buildProperties.includeCidrPlugins) {
-    logger.info("Including CIDR modules in settings.gradle")
-    include ":kotlin-ultimate:ide:cidr-gradle-tooling",
-            ":kotlin-ultimate:ide:common-native",
-            ":kotlin-ultimate:ide:common-cidr-mobile",
-            ":kotlin-ultimate:ide:common-cidr-native",
-            ":kotlin-ultimate:ide:common-cidr-swift-native",
-            ":kotlin-ultimate:ide:common-noncidr-native",
-            ":kotlin-ultimate:ide:appcode-native",
-            ":kotlin-ultimate:ide:mobile-native",
-            ":kotlin-ultimate:prepare:cidr-plugin",
-            ":kotlin-ultimate:prepare:appcode-plugin",
-            ":kotlin-ultimate:prepare:mobile-plugin",
-            ":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"
-
-    if (projectVersions.contains("versions.androidStudioRelease")) {
-        logger.info("Including KMM modules in settings.gradle")
-        include ":kotlin-ultimate:ide:android-studio-native",
-                ":kotlin-ultimate:prepare:kmm-plugin"
-    } else {
-        logger.info("NOT including KMM modules in settings.gradle")
-    }
-} else {
-    logger.info("NOT including CIDR modules in settings.gradle")
-}
-
-if (buildProperties.includeUltimate) {
-    include ":kotlin-ultimate:ultimate",
-            ":kotlin-ultimate:ultimate:ultimate-runner",
-            ":kotlin-ultimate:ide:common-native",
-            ":kotlin-ultimate:ide:common-noncidr-native",
-            ":kotlin-ultimate:ide:ultimate-native"
-    logger.info("Including extension for IJ Ultimate in settings.gradle")
-} else {
-    logger.info("NOT including extension for IJ Ultimate in settings.gradle")
-}
-
 if (buildProperties.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"
     project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File

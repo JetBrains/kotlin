@@ -13,10 +13,6 @@ val ideaSandboxDir: File by extra
 val ideaSdkPath: String
     get() = IntellijRootUtils.getIntellijRootDir(rootProject).absolutePath
 
-val intellijUltimateEnabled: Boolean by rootProject.extra
-val ideaUltimatePluginDir: File by rootProject.extra
-val ideaUltimateSandboxDir: File by rootProject.extra
-
 fun JUnit.configureForKotlin(xmx: String = "1600m") {
     vmParameters = listOf(
         "-ea",
@@ -230,10 +226,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                         idea("[JPS] IDEA (No ProcessCanceledException)", ideaSandboxDir, ideaPluginDir, disableProcessCanceledException = true)
 
-                        if (intellijUltimateEnabled) {
-                            idea("[JPS] IDEA Ultimate", ideaUltimateSandboxDir, ideaPluginDir)
-                        }
-
                         defaults<JUnit> {
                             configureForKotlin()
                         }
@@ -243,14 +235,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                             moduleName = "kotlin.idea.test"
                             pattern = "org.jetbrains.kotlin.*"
                             configureForKotlin()
-                        }
-
-                        if (intellijUltimateEnabled) {
-                            junit("[JPS] All IDEA Ultimate Plugin Tests") {
-                                moduleName = "kotlin.ultimate.test"
-                                pattern = "org.jetbrains.kotlin.*"
-                                configureForKotlin()
-                            }
                         }
 
                         junit("[JPS] Compiler Tests") {

@@ -50,16 +50,7 @@ class KotlinBuildProperties(
     val isInJpsBuildIdeaSync: Boolean
         get() = isJpsBuildEnabled && isInIdeaSync
 
-    private val kotlinUltimateExists: Boolean = propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
-
     val isTeamcityBuild: Boolean = getBoolean("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-
-    val intellijUltimateEnabled: Boolean = getBoolean("intellijUltimateEnabled", isTeamcityBuild) ||
-            getBoolean("kotlin.build.dependencies.iu.enabled", isTeamcityBuild)
-
-    val includeCidrPlugins: Boolean = kotlinUltimateExists && getBoolean("cidrPluginsEnabled")
-
-    val includeUltimate: Boolean = kotlinUltimateExists && (isTeamcityBuild || intellijUltimateEnabled)
 
     val buildCacheUrl: String? = getOrNull("kotlin.build.cache.url") as String?
 

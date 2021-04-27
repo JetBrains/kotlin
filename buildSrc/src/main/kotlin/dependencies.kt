@@ -91,12 +91,6 @@ fun Project.preloadedDeps(
     return files(*matchingFiles.map { it.canonicalPath }.toTypedArray())
 }
 
-fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: String? = null): ConfigurableFileCollection {
-    val ultimateDepsDir = fileFrom(rootDir, "ultimate", "dependencies")
-    return if (ultimateDepsDir.isDirectory) preloadedDeps(*artifactBaseNames, baseDir = ultimateDepsDir, subdir = subdir)
-    else files()
-}
-
 fun Project.kotlinDep(artifactBaseName: String, version: String, classifier: String? = null): String =
     listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
 

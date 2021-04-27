@@ -58,7 +58,6 @@ build/
 .idea/artifacts/kotlin_stdlib_wasm_*
 .idea/jarRepositories.xml
 .idea/csv-plugin.xml
-kotlin-ultimate/
 node_modules/
 .rpt2_cache/
 libraries/tools/kotlin-test-js-runner/lib/

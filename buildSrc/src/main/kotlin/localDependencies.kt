@@ -37,9 +37,7 @@ private fun Project.kotlinBuildLocalRepoDir(): File = kotlinBuildLocalDependenci
 
 fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"
-    Ide.Kind.IntelliJ -> {
-        if (kotlinBuildProperties.intellijUltimateEnabled) "ideaIU" else "ideaIC"
-    }
+    Ide.Kind.IntelliJ -> "ideaIC"
 }
 
 private fun Project.ideModuleVersion(forIde: Boolean) = when (IdeVersionConfigurator.currentIde.kind) {
@@ -110,10 +108,6 @@ fun Project.intellijRuntimeAnnotations() = "kotlin.build:intellij-runtime-annota
 
 fun Project.intellijPluginDep(plugin: String, forIde: Boolean = false) = intellijDep(plugin, forIde)
 
-fun Project.intellijUltimateDep() = intellijDep("ideaIU")
-
-fun Project.intellijUltimatePluginDep(plugin: String) = intellijDep(plugin)
-
 fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = null) {
     names.forEach {
         var baseName = it.removeSuffix(".jar")
@@ -152,18 +146,7 @@ fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFi
         rootProject = project.rootProject
     )
 
-fun Project.isIntellijCommunityAvailable() =
-    !(rootProject.extra["intellijUltimateEnabled"] as Boolean) || rootProject.extra["intellijSeparateSdks"] as Boolean
-
-fun Project.isIntellijUltimateSdkAvailable() = (rootProject.extra["intellijUltimateEnabled"] as Boolean)
-
 fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
-
-fun Project.intellijUltimateRootDir() =
-    if (isIntellijUltimateSdkAvailable())
-        File(kotlinBuildLocalRepoDir(), "kotlin.build/ideaIU/${rootProject.extra["versions.intellijSdk"]}/artifacts")
-    else
-        throw GradleException("intellij ultimate SDK is not available")
 
 fun DependencyHandlerScope.excludeInAndroidStudio(rootProject: Project, block: DependencyHandlerScope.() -> Unit) {
     if (!rootProject.extra.has("versions.androidStudioRelease")) {
@@ -198,7 +181,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
 
-        if (Platform[201].orHigher() && !isIntellijUltimateSdkAvailable()) {
+        if (Platform[201].orHigher()) {
             jvmArgs("-Didea.platform.prefix=Idea")
         }
 

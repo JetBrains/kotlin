@@ -25,49 +25,4 @@ buildscript {
     }
 }
 
-def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
-def projectVersions = file("../gradle/versions.properties").text
-
 include "prepare-deps"
-
-def target_AppCode_Clion = buildProperties.includeCidrPlugins && !projectVersions.contains("versions.androidStudioRelease")
-def target_AndroidStudio = buildProperties.includeCidrPlugins && projectVersions.contains("versions.androidStudioRelease")
-def target_IdeaUltimate = buildProperties.includeUltimate
-
-if (target_AppCode_Clion) {
-    logger.info("Including modules for AC and CL in buildSrc/settings.gradle")
-
-    include ":prepare-deps:kotlin-native-platform-deps"
-    include ":prepare-deps:native-debug-plugin"
-
-    project(":prepare-deps:kotlin-native-platform-deps").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
-    project(":prepare-deps:native-debug-plugin").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
-} else if (target_AndroidStudio) {
-    logger.info("Including modules for AS (mobile plugin) in buildSrc/settings.gradle")
-
-    include ":prepare-deps:appcode-binaries"
-    include ":prepare-deps:lldb-framework"
-    include ":prepare-deps:lldb-frontend"
-
-    project(":prepare-deps:appcode-binaries").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/appcode-binaries")
-    project(":prepare-deps:lldb-framework").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-framework")
-    project(":prepare-deps:lldb-frontend").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-frontend")
-} else if (target_IdeaUltimate) {
-    logger.info("Including modules for IU in buildSrc/settings.gradle")
-
-    include ":prepare-deps:lldb-frontend"
-    include ":prepare-deps:native-debug-plugin"
-
-    project(":prepare-deps:lldb-frontend").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-frontend")
-    project(":prepare-deps:native-debug-plugin").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
-
-} else {
-    logger.info("Not including extra modules in buildSrc/settings.gradle")
-}

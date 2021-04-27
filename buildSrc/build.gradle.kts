@@ -69,7 +69,6 @@ rootProject.apply {
 }
 
 val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
-val intellijUltimateEnabled by extra(kotlinBuildProperties.intellijUltimateEnabled)
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 
 extra["intellijReleaseType"] = when {

@@ -37,28 +37,14 @@ val distKotlinHomeDir by extra("$distDir/kotlinc")
 val distLibDir = "$distKotlinHomeDir/lib"
 val commonLocalDataDir = "$rootDir/local"
 val ideaSandboxDir = "$commonLocalDataDir/ideaSandbox"
-val ideaUltimateSandboxDir = "$commonLocalDataDir/ideaUltimateSandbox"
-val clionSandboxDir = "$commonLocalDataDir/clionSandbox"
-val appcodeSandboxDir = "$commonLocalDataDir/appcodeSandbox"
 val ideaPluginDir = "$distDir/artifacts/ideaPlugin/Kotlin"
-val ideaUltimatePluginDir = "$distDir/artifacts/ideaUltimatePlugin/Kotlin"
-val cidrPluginDir = "$distDir/artifacts/cidrPlugin/Kotlin"
-val appcodePluginDir = "$distDir/artifacts/appcodePlugin/Kotlin"
-val clionPluginDir = "$distDir/artifacts/clionPlugin/Kotlin"
 
 // TODO: use "by extra()" syntax where possible
 extra["distLibDir"] = project.file(distLibDir)
 extra["libsDir"] = project.file(distLibDir)
 extra["commonLocalDataDir"] = project.file(commonLocalDataDir)
 extra["ideaSandboxDir"] = project.file(ideaSandboxDir)
-extra["ideaUltimateSandboxDir"] = project.file(ideaUltimateSandboxDir)
-extra["clionSandboxDir"] = project.file(ideaSandboxDir)
-extra["appcodeSandboxDir"] = project.file(ideaSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
-extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
-extra["cidrPluginDir"] = project.file(cidrPluginDir)
-extra["appcodePluginDir"] = project.file(appcodePluginDir)
-extra["clionPluginDir"] = project.file(clionPluginDir)
 extra["isSonatypeRelease"] = false
 
 // Work-around necessary to avoid setting null javaHome. Will be removed after support of lazy task configuration
@@ -85,13 +71,11 @@ extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
 
 val isTeamcityBuild = false
-val intellijUltimateEnabled = false
 val effectSystemEnabled by extra(false)
 val newInferenceEnabled by extra(false)
 
 val intellijSeparateSdks = false
 
-extra["intellijUltimateEnabled"] = intellijUltimateEnabled
 extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
@@ -276,10 +260,6 @@ tasks {
     create("cleanupArtifacts") {
         doLast {
             delete(ideaPluginDir)
-            delete(ideaUltimatePluginDir)
-            delete(cidrPluginDir)
-            delete(appcodePluginDir)
-            delete(clionPluginDir)
         }
     }
 
