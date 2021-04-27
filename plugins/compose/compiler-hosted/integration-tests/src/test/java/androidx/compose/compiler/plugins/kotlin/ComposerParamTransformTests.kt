@@ -35,7 +35,6 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """
             @file:OptIn(
               InternalComposeApi::class,
-              ComposeCompilerApi::class
             )
             package test
 
