@@ -2253,6 +2253,16 @@ internal class DelegateSpecialFunctionNoneApplicableImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class DelegateSpecialFunctionReturnTypeMismatchImpl(
+    override val delegateFunction: String,
+    override val expected: KtType,
+    override val actual: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.DelegateSpecialFunctionReturnTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class UnderscoreIsReservedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

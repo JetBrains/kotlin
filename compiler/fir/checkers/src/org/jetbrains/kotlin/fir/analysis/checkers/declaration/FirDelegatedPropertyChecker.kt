@@ -21,18 +21,23 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirDelegatedPropertyChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val delegate = declaration.delegate ?: return
         val delegateType = delegate.typeRef.coneType
 
+        // TODO: Also suppress delegate issue if type inference failed. For example, in
+        //  compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.fir.kt, no delegate issues are
+        //  reported due to the inference issue.
         if (delegateType is ConeKotlinErrorType) {
             val delegateSource = delegate.source
             // Implicit recursion type is not reported since the type ref does not have a real source.
@@ -47,8 +52,13 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
             override fun visitElement(element: FirElement) = element.acceptChildren(this)
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
-                val errorNamedReference = functionCall.calleeReference as? FirErrorNamedReference ?: return
-                if (errorNamedReference.source?.kind != FirFakeSourceElementKind.DelegatedPropertyAccessor) return
+                val hasReferenceError = hasFunctionReferenceErrors(functionCall)
+                if (isGet && !hasReferenceError) checkReturnType(functionCall)
+            }
+
+            private fun hasFunctionReferenceErrors(functionCall: FirFunctionCall): Boolean {
+                val errorNamedReference = functionCall.calleeReference as? FirErrorNamedReference ?: return false
+                if (errorNamedReference.source?.kind != FirFakeSourceElementKind.DelegatedPropertyAccessor) return false
                 val expectedFunctionSignature =
                     (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.typeRef.coneType.render() }})"
                 val delegateDescription = if (isGet) "delegate" else "delegate for var (read-write property)"
@@ -77,7 +87,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                     }
                 }
 
-                when (val diagnostic = errorNamedReference.diagnostic) {
+                return when (val diagnostic = errorNamedReference.diagnostic) {
                     is ConeUnresolvedNameError -> {
                         reporter.reportOn(
                             errorNamedReference.source,
@@ -87,6 +97,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                             delegateDescription,
                             context
                         )
+                        true
                     }
                     is ConeAmbiguityError -> {
                         if (diagnostic.applicability.isSuccess) {
@@ -101,10 +112,28 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                         } else {
                             reportInapplicableDiagnostics(diagnostic.applicability, diagnostic.candidates.map { it.symbol })
                         }
+                        true
                     }
                     is ConeInapplicableCandidateError -> {
                         reportInapplicableDiagnostics(diagnostic.applicability, listOf(diagnostic.candidate.symbol))
+                        true
                     }
+                    else -> false
+                }
+            }
+
+            private fun checkReturnType(functionCall: FirFunctionCall) {
+                val returnType = functionCall.typeRef.coneType
+                val propertyType = declaration.returnTypeRef.coneType
+                if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, returnType, propertyType)) {
+                    reporter.reportOn(
+                        delegate.source,
+                        FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
+                        "getValue",
+                        propertyType,
+                        returnType,
+                        context
+                    )
                 }
             }
         }

@@ -1388,6 +1388,13 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtSymbol>
     }
 
+    abstract class DelegateSpecialFunctionReturnTypeMismatch : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = DelegateSpecialFunctionReturnTypeMismatch::class
+        abstract val delegateFunction: String
+        abstract val expected: KtType
+        abstract val actual: KtType
+    }
+
     abstract class UnderscoreIsReserved : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = UnderscoreIsReserved::class
     }
