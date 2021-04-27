@@ -20,22 +20,5 @@ object FirAnonymousFunctionChecker : FirAnonymousFunctionAsExpressionChecker() {
                 reporter.reportOn(source, FirErrors.USELESS_VARARG_ON_PARAMETER, context)
             }
         }
-
-        checkTypeParameters(expression, reporter, context)
-    }
-
-    private fun checkTypeParameters(
-        expression: FirAnonymousFunction,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
-    ) {
-        val source = expression.source ?: return
-        source.treeStructure.typeParametersList(source.lighterASTNode)?.let { _ ->
-            reporter.reportOn(
-                source,
-                FirErrors.TYPE_PARAMETERS_NOT_ALLOWED,
-                context
-            )
-        }
     }
 }

@@ -9,17 +9,16 @@ import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationCh
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
-            RedundantVisibilityModifierChecker,
+            RedundantVisibilityModifierSyntaxChecker,
         )
 
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker>
         get() = setOf(
-            RedundantModalityModifierChecker,
+            RedundantModalityModifierSyntaxChecker,
             RedundantExplicitTypeChecker,
             RedundantSetterParameterTypeChecker,
         )

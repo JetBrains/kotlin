@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.implicitModality
+import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
@@ -18,22 +19,29 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.psi.KtDeclaration
 
-object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val source = declaration.source
-        if (source?.kind is FirFakeSourceElementKind) return
+object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirMemberDeclaration, KtDeclaration>() {
 
-        val modality = declaration.modality ?: return
+    override fun isApplicable(element: FirMemberDeclaration, source: FirSourceElement): Boolean =
+        source.kind !is FirFakeSourceElementKind
+
+    override fun checkLightTree(
+        element: FirMemberDeclaration,
+        source: FirSourceElement,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val modality = element.modality ?: return
         if (
             modality == Modality.FINAL
             && (context.containingDeclarations.last() as? FirClass<*>)?.classKind == ClassKind.INTERFACE
         ) return
 
-        if (source != null && source.treeStructure.modalityModifier(source.lighterASTNode) == null) return
-        val implicitModality = declaration.implicitModality(context)
-        if (modality != implicitModality) return
-
-        reporter.reportOn(source, REDUNDANT_MODALITY_MODIFIER, context)
+        if (source.treeStructure.modalityModifier(source.lighterASTNode) == null) return
+        val implicitModality = element.implicitModality(context)
+        if (modality == implicitModality) {
+            reporter.reportOn(source, REDUNDANT_MODALITY_MODIFIER, context)
+        }
     }
 }

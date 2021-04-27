@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -25,10 +26,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.isInterface) {
-            for (superTypeRef in declaration.superTypeRefs) {
-                val source = superTypeRef.source ?: continue
-                if (source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE) {
-                    reporter.reportOn(source, FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE, context)
+            with(SourceNavigator.forElement(declaration)) {
+                for (superTypeRef in declaration.superTypeRefs) {
+                    if (superTypeRef.isInConstructorCallee()) {
+                        reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE, context)
+                    }
                 }
             }
             return
@@ -97,10 +99,11 @@ object FirPrimaryConstructorSuperTypeChecker : FirRegularClassChecker() {
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
-        for (superTypeRef in regularClass.superTypeRefs) {
-            val source = superTypeRef.source ?: continue
-            if (source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE) {
-                reporter.reportOn(regularClass.source, FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, context)
+        with(SourceNavigator.forElement(regularClass)) {
+            for (superTypeRef in regularClass.superTypeRefs) {
+                if (superTypeRef.isInConstructorCallee()) {
+                    reporter.reportOn(regularClass.source, FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, context)
+                }
             }
         }
     }

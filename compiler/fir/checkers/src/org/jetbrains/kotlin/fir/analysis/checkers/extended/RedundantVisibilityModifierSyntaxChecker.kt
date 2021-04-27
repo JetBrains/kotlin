@@ -11,45 +11,50 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirFakeSourceElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
+import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.psi.KtDeclaration
 
-object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val source = declaration.source ?: return
-        if (declaration is FirConstructor && source.kind is FirFakeSourceElementKind) return
+object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
+
+    override fun checkLightTree(
+        element: FirDeclaration,
+        source: FirSourceElement,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        if (element is FirConstructor && source.kind is FirFakeSourceElementKind) return
         if (source is FirFakeSourceElement<*>) return
         if (
-            declaration !is FirMemberDeclaration
-            && !(declaration is FirPropertyAccessor && declaration.visibility == context.containingPropertyVisibility)
+            element !is FirMemberDeclaration
+            && !(element is FirPropertyAccessor && element.visibility == context.containingPropertyVisibility)
         ) return
 
         val visibilityModifier = source.treeStructure.visibilityModifier(source.lighterASTNode)
         val explicitVisibility = (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
-        val implicitVisibility = declaration.implicitVisibility(context)
+        val implicitVisibility = element.implicitVisibility(context)
         val containingMemberDeclaration = context.findClosest<FirMemberDeclaration>()
 
         val redundantVisibility = when {
             explicitVisibility == implicitVisibility -> implicitVisibility
-            explicitVisibility == Visibilities.Internal &&
-                    containingMemberDeclaration.let { decl ->
-                        decl != null && decl.isLocalMember
-                    } -> Visibilities.Internal
+            explicitVisibility == Visibilities.Internal && containingMemberDeclaration?.isLocalMember == true -> Visibilities.Internal
             else -> return
         }
 
         if (
             redundantVisibility == Visibilities.Public
-            && declaration is FirProperty
+            && element is FirProperty
             && source.treeStructure.overrideModifier(source.lighterASTNode) != null
-            && declaration.isVar
-            && declaration.setter?.visibility == Visibilities.Public
+            && element.isVar
+            && element.setter?.visibility == Visibilities.Public
         ) return
 
         reporter.reportOn(source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER, context)

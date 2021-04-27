@@ -40,7 +40,7 @@ object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCa
         return when (val source = source) {
             is FirPsiSourceElement<*> -> source.psi.stringParentChildrenCount()
             is FirLightSourceElement -> source.lighterASTNode.stringParentChildrenCount(source)
-            else -> null
+            null -> null
         }
     }
 
