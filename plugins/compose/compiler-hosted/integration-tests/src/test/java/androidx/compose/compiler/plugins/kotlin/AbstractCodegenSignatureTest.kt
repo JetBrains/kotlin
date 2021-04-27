@@ -138,7 +138,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                     override fun clear() { }
                 }
 
-                @OptIn(ComposeCompilerApi::class, InternalComposeApi::class)
+                @OptIn(InternalComposeApi::class)
                 class FakeComposition: ControlledComposition {
                     override val isComposing: Boolean get() = false
                     override val isDisposed: Boolean get() = false
@@ -156,7 +156,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                     override fun setContent(content: () -> Unit) { }
                 }
 
-                @OptIn(ComposeCompilerApi::class, InternalComposeApi::class)
+                @OptIn(InternalComposeApi::class)
                 class FakeComposer : Composer {
                     override val applier: Applier<*> = FakeApplier()
                     override val inserting: Boolean get() = true

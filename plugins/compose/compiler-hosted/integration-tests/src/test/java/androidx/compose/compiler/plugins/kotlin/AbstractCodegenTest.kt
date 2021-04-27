@@ -80,7 +80,6 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
             """
            @file:OptIn(
              InternalComposeApi::class,
-             ComposeCompilerApi::class
            )
            package test
 
