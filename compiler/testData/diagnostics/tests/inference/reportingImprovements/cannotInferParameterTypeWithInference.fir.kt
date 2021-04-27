@@ -6,7 +6,7 @@ fun <T, R> foo(block: (T)-> R) = block
 fun test1() {
     foo {
         x ->  // here we have 'cannot infer parameter type' error
-        43
+        <!ARGUMENT_TYPE_MISMATCH!>43<!>
     }
 }
 
