@@ -94,11 +94,11 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
                     with(context.plugin.managedTypePassing) { unwrappedReturnType.returnValue }
                 else ""
 
-        val signatureParameters = function.parameters.mapIndexed { index, parameter ->
+        val parameters = function.parameters.mapIndexed { index, parameter ->
             val type = parameter.type.stringRepresentation
             Parameter(type, "p$index")
         }
-        val bodyParameters = function.parameters.mapIndexed { index, parameter ->
+        val argumentTypes = function.parameters.map { parameter ->
             val parameterTypeText = parameter.type.stringRepresentation
             val type = parameter.type
             val unwrappedType = type.unwrapTypedefs()
@@ -121,27 +121,26 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
                     "$cppRefTypePrefix($parameterTypeText)"
             }
 
-            Parameter(typeExpression, "p$index")
+            typeExpression
         }
 
         val callExpression = with (function) {
-            when  {
+            assert(argumentTypes.size == parameters.size)
+            val arguments = argumentTypes.mapIndexed { index, type ->
+                "${type}(${parameters[index].name})"
+            }
+            when {
                 isCxxInstanceMethod -> {
-                    val parametersPart = bodyParameters.drop(1).joinToString {
-                        "${it.type}(${it.name})"
-                    }
-                    "(${bodyParameters[0].name})->${name}($parametersPart)"
+                    val parametersPart = arguments.drop(1).joinToString()
+                    "(${parameters[0].name})->${name}($parametersPart)"
                 }
                 isCxxConstructor -> {
-                    val parametersPart = bodyParameters.drop(1).joinToString {
-                        "${it.type}${it.name}"
-                    }
-                    "new(${bodyParameters[0].name}) ${cxxReceiverClass!!.spelling}($parametersPart)"
+                    val parametersPart = arguments.drop(1).joinToString()
+                    "new(${parameters[0].name}) ${cxxReceiverClass!!.spelling}($parametersPart)"
                 }
                 isCxxDestructor ->
-                    "(${bodyParameters[0].name})->~${cxxReceiverClass!!.spelling.substringAfterLast(':')}()"
-                else ->
-                    "${fullName}(${bodyParameters.joinToString {"${it.type}(${it.name})"}})"
+                    "(${parameters[0].name})->~${cxxReceiverClass!!.spelling.substringAfterLast(':')}()"
+                else -> "${fullName}(${arguments.joinToString()})"
             }
         }
 
@@ -150,7 +149,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         } else {
             "return (${returnType})$returnTypePrefix($callExpression)$returnTypePostfix;"
         }
-        return createWrapper(symbolName, wrapperName, returnType, signatureParameters, wrapperBody)
+        return createWrapper(symbolName, wrapperName, returnType, parameters, wrapperBody)
     }
 
     fun generateCCalleeWrapper(function: FunctionDecl, symbolName: String): CCalleeWrapper =
