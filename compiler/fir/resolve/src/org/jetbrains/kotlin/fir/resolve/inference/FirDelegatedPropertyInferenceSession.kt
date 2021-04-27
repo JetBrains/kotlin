@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -132,6 +129,7 @@ class FirDelegatedPropertyInferenceSession(
             ?: when (val container = components.container) {
                 is FirRegularClass -> container.defaultType()
                 is FirAnonymousObject -> container.defaultType()
+                is FirCallableMemberDeclaration<*> -> container.dispatchReceiverType
                 else -> null
             } ?: components.session.builtinTypes.nullableNothingType.type
         val valueParameterForThis = (symbol as? FirFunctionSymbol<*>)?.fir?.valueParameters?.firstOrNull() ?: return
