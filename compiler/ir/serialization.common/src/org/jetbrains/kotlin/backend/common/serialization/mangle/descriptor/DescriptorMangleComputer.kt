@@ -132,7 +132,7 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it, localNameResolver) }
 
         returnType?.run {
-            if (!isCtor && !isUnit() && addReturnType() || addReturnTypeSpecialCase(this@mangleSignature)) {
+            if (!isCtor && !isUnit() && (addReturnType() || addReturnTypeSpecialCase(this@mangleSignature))) {
                 mangleType(builder, this, localNameResolver)
             }
         }

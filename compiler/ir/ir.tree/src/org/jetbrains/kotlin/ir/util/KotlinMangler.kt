@@ -28,6 +28,8 @@ interface KotlinMangler<D : Any> {
     }
     fun D.fqnMangle(localNameResolver: (D) -> String? = { null }): Long = fqnString(localNameResolver).hashMangle
 
+    fun D.isPlatformSpecificExport(): Boolean = false
+
     val manglerName: String
 
     interface DescriptorMangler : KotlinMangler<DeclarationDescriptor> {

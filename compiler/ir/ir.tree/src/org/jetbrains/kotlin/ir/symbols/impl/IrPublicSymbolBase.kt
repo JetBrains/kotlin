@@ -74,7 +74,13 @@ class IrEnumEntryPublicSymbolImpl(sig: IdSignature, descriptor: ClassDescriptor?
 
 class IrSimpleFunctionPublicSymbolImpl(sig: IdSignature, descriptor: FunctionDescriptor? = null) :
     IrBindablePublicSymbolBase<FunctionDescriptor, IrSimpleFunction>(sig, descriptor),
-    IrSimpleFunctionSymbol
+    IrSimpleFunctionSymbol {
+        init {
+            if (sig.toString() == "kotlin/Function.equals|4638265728071529943[0]") {
+                println("jdkfjs")
+            }
+        }
+    }
 
 class IrConstructorPublicSymbolImpl(sig: IdSignature, descriptor: ClassConstructorDescriptor? = null) :
     IrBindablePublicSymbolBase<ClassConstructorDescriptor, IrConstructor>(sig, descriptor),

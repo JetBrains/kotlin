@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -69,15 +70,21 @@ class Psi2IrTranslator(
         )
     }
 
+    fun createFiles(context: GeneratorContext, ktFiles: Collection<KtFile>): Map<KtFile, IrFile> {
+        val moduleGenerator = ModuleGenerator(context, null)
+        return ktFiles.associateWith { moduleGenerator.createEmptyIrFile(it) }
+    }
+
     fun generateModuleFragment(
         context: GeneratorContext,
         ktFiles: Collection<KtFile>,
         irProviders: List<IrProvider>,
         linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
-        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
+        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
+        irFilesMap: Map<KtFile, IrFile>? = null
     ): IrModuleFragment {
         val moduleGenerator = ModuleGenerator(context, expectDescriptorToSymbol)
-        val irModule = moduleGenerator.generateModuleFragment(ktFiles)
+        val irModule = moduleGenerator.generateModuleFragment(ktFiles, irFilesMap)
 
         val deserializers = irProviders.filterIsInstance<IrDeserializer>()
         deserializers.forEach { it.init(irModule, linkerExtensions) }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.preprocessing
 
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -14,10 +15,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class SourceDeclarationsPreprocessor(private val context: GeneratorContext) {
 
-    fun run(ktFiles: Collection<KtFile>) {
+    fun run(ktFiles: Collection<KtFile>, ktToIr: Map<KtFile, IrFile>) {
         for (ktFile in ktFiles.toSet()) {
-            for (ktDeclaration in ktFile.declarations) {
-                processDeclaration(ktDeclaration)
+            val irFile = ktToIr[ktFile] ?: error("No ir file found for ${ktFile.name}")
+            context.symbolTable.signaturer.inFile(irFile.symbol) {
+                for (ktDeclaration in ktFile.declarations) {
+                    processDeclaration(ktDeclaration)
+                }
             }
         }
     }

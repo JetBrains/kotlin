@@ -151,6 +151,9 @@ internal class ModuleDeserializationState(val linker: KotlinIrLinker, val module
     }
 
     fun addIdSignature(key: IdSignature) {
+        if (key.toString() == " kotlin/Function.equals|4638265728071529943[0]") {
+            println("mjjfjd")
+        }
         val fileLocalDeserializationState = moduleDeserializer.moduleReversedFileIndex[key] ?: error("No file found for key $key")
         fileLocalDeserializationState.addIdSignature(key)
 

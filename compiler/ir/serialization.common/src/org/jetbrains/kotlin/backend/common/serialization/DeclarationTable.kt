@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -84,11 +85,20 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
             }
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                scope.commitLocalFunction(declaration)
+                if (declaration.visibility == DescriptorVisibilities.LOCAL) {
+                    scope.commitLocalFunction(declaration)
+                }
             }
 
             override fun visitFunctionExpression(expression: IrFunctionExpression) {
                 scope.commitLambda(expression.function)
+            }
+
+            override fun visitEnumEntry(declaration: IrEnumEntry) {
+                if (declaration.name.asString() == "BASIC_LATIN") {
+                    println("X")
+                }
+                super.visitEnumEntry(declaration)
             }
 
         }

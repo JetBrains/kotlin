@@ -90,6 +90,8 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
         return result
     }
 
+    private fun IrDeclaration.checkIfPlatformSpecificExport(): Boolean = mangler.run { isPlatformSpecificExport() }
+
     private var localScope: LocalScope? = null
 
     private var localCounter: Long = 0
@@ -166,7 +168,7 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
             get() = visibility == DescriptorVisibilities.LOCAL
 
         private val IrDeclarationWithVisibility.isTopLevelPrivate: Boolean
-            get() = visibility == DescriptorVisibilities.PRIVATE && parent is IrPackageFragment
+            get() = visibility == DescriptorVisibilities.PRIVATE && !checkIfPlatformSpecificExport() && parent is IrPackageFragment
 
         override fun visitClass(declaration: IrClass) {
             collectParents(declaration, declaration.isLocal)

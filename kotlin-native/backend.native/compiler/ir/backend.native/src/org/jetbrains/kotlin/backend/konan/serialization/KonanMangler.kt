@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorBasedKotlinManglerImpl
-import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorExportCheckerVisitor
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrBasedKotlinManglerImpl
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheckerVisitor
@@ -12,36 +12,39 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.types.KotlinType
 
 abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrBasedKotlinManglerImpl() {
-    override fun getExportChecker(): IrExportCheckerVisitor = KonanIrExportChecker()
+    override fun getExportChecker(compatibleMode: Boolean): IrExportCheckerVisitor = KonanIrExportChecker(compatibleMode)
 
-    override fun getMangleComputer(mode: MangleMode): IrMangleComputer =
+    override fun getMangleComputer(mode: MangleMode, app: (KotlinType) -> KotlinType): IrMangleComputer =
             KonanIrManglerComputer(StringBuilder(256), mode, withReturnType)
 
-    private class KonanIrExportChecker : IrExportCheckerVisitor() {
-        override fun IrDeclaration.isPlatformSpecificExported(): Boolean {
-            if (this is IrSimpleFunction) if (isFakeOverride) return false
+    override fun IrDeclaration.isPlatformSpecificExport(): Boolean {
+        if (this is IrSimpleFunction) if (isFakeOverride) return false
 
-            // TODO: revise
-            if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
-                // Treat any `@SymbolName` declaration as exported.
-                return true
-            }
-            if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
-                // Treat any `@ExportForCppRuntime` declaration as exported.
-                return true
-            }
-            if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
-                // Treat `@CName` declaration as exported.
-                return true
-            }
-            if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
-                return true
-            }
-
-            return false
+        // TODO: revise
+        if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
+            // Treat any `@SymbolName` declaration as exported.
+            return true
         }
+        if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
+            // Treat any `@ExportForCppRuntime` declaration as exported.
+            return true
+        }
+        if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
+            // Treat `@CName` declaration as exported.
+            return true
+        }
+        if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
+            return true
+        }
+
+        return false
+    }
+
+    private inner class KonanIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
+        override fun IrDeclaration.isPlatformSpecificExported(): Boolean = isPlatformSpecificExport()
     }
 
     private class KonanIrManglerComputer(builder: StringBuilder, mode: MangleMode, private val withReturnType: Boolean) : IrMangleComputer(builder, mode) {
@@ -84,39 +87,38 @@ abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrB
 object KonanManglerIr : AbstractKonanIrMangler(false)
 
 abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl() {
-    override fun getExportChecker(): DescriptorExportCheckerVisitor = KonanDescriptorExportChecker()
+    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = error("Should not be reached")
 
-    override fun getMangleComputer(mode: MangleMode): DescriptorMangleComputer =
-            KonanDescriptorMangleComputer(StringBuilder(256), mode)
+    override fun getMangleComputer(mode: MangleMode, app: (KotlinType) -> KotlinType): DescriptorMangleComputer =
+            KonanDescriptorMangleComputer(StringBuilder(256), mode, app)
 
-    private class KonanDescriptorExportChecker : DescriptorExportCheckerVisitor() {
-        override fun DeclarationDescriptor.isPlatformSpecificExported(): Boolean {
-            if (this is SimpleFunctionDescriptor) {
-                if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false
-            }
-            // TODO: revise
-            if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
-                // Treat any `@SymbolName` declaration as exported.
-                return true
-            }
-            if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
-                // Treat any `@ExportForCppRuntime` declaration as exported.
-                return true
-            }
-            if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
-                // Treat `@CName` declaration as exported.
-                return true
-            }
-            if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
-                return true
-            }
 
-            return false
+    override fun DeclarationDescriptor.isPlatformSpecificExport(): Boolean {
+        if (this is SimpleFunctionDescriptor) {
+            if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false
         }
+        // TODO: revise
+        if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
+            // Treat any `@SymbolName` declaration as exported.
+            return true
+        }
+        if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
+            // Treat any `@ExportForCppRuntime` declaration as exported.
+            return true
+        }
+        if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
+            // Treat `@CName` declaration as exported.
+            return true
+        }
+        if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
+            return true
+        }
+
+        return false
     }
 
-    private class KonanDescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) : DescriptorMangleComputer(builder, mode) {
-        override fun copy(newMode: MangleMode): DescriptorMangleComputer = KonanDescriptorMangleComputer(builder, newMode)
+    private class KonanDescriptorMangleComputer(builder: StringBuilder, mode: MangleMode, app: (KotlinType) -> KotlinType) : DescriptorMangleComputer(builder, mode, app) {
+        override fun copy(newMode: MangleMode): DescriptorMangleComputer = KonanDescriptorMangleComputer(builder, newMode, typeApproximation)
 
         override fun FunctionDescriptor.platformSpecificFunctionName(): String? {
             (if (this is ConstructorDescriptor && this.isObjCConstructor) this.getObjCInitMethod() else this)?.getObjCMethodInfo()

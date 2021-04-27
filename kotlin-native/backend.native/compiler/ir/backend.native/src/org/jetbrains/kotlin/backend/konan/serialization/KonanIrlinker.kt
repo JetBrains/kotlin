@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -93,7 +93,7 @@ internal class KonanIrLinker(
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(KonanManglerIr), builtIns, KonanFakeOverrideClassFilter)
 
-    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
+    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
         if (moduleDescriptor === forwardModuleDescriptor) {
             return forwardDeclarationDeserializer ?: error("forward declaration deserializer expected")
         }
@@ -110,16 +110,16 @@ internal class KonanIrLinker(
 
     private inner class KonanModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
-            klib: IrLibrary,
+            klib: KotlinLibrary,
             strategy: DeserializationStrategy
-    ): BasicIrModuleDeserializer(this@KonanIrLinker, moduleDescriptor, klib, strategy){
+    ): BasicIrModuleDeserializer(this@KonanIrLinker, moduleDescriptor, klib, strategy, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
         override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
     }
 
     private inner class KonanInteropModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             private val isLibraryCached: Boolean
-    ) : IrModuleDeserializer(moduleDescriptor) {
+    ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
         init {
             assert(moduleDescriptor.kotlinLibrary.isInteropLibrary())
         }
@@ -170,7 +170,7 @@ internal class KonanIrLinker(
         override val moduleDependencies: Collection<IrModuleDeserializer> = listOfNotNull(forwardDeclarationDeserializer)
     }
 
-    private inner class KonanForwardDeclarationModuleDeserializer(moduleDescriptor: ModuleDescriptor) : IrModuleDeserializer(moduleDescriptor) {
+    private inner class KonanForwardDeclarationModuleDeserializer(moduleDescriptor: ModuleDescriptor) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
         init {
             assert(moduleDescriptor.isForwardDeclarationModule)
         }

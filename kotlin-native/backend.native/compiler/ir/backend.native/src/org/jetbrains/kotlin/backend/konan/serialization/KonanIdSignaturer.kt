@@ -12,15 +12,10 @@ class KonanIdSignaturer(private val mangler: KotlinMangler.DescriptorMangler) : 
     override fun createSignatureBuilder(): DescriptorBasedSignatureBuilder =
             KonanDescriptorBasedSignatureBuilder(mangler)
 
-    private class KonanDescriptorBasedSignatureBuilder(
+    private inner class KonanDescriptorBasedSignatureBuilder(
             mangler: KotlinMangler.DescriptorMangler
     ) : DescriptorBasedSignatureBuilder(mangler) {
 
-        /**
-         * We need a way to distinguish interop declarations from usual ones
-         * to be able to link against them. We do it by marking them with
-         * [IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY] flag.
-         */
         private fun markInteropDeclaration(descriptor: DeclarationDescriptor) {
             if (descriptor.module.isFromInteropLibrary()) {
                 mask = mask or IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.encode(true)

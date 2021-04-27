@@ -132,7 +132,7 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
         typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it, localNameResolver) }
 
-        if (!isCtor && !returnType.isUnit() && (addReturnType() || addReturnTypeSpecialCase(this)) {
+        if (!isCtor && !returnType.isUnit() && (addReturnType() || addReturnTypeSpecialCase(this))) {
             mangleType(builder, returnType, localNameResolver)
         }
     }

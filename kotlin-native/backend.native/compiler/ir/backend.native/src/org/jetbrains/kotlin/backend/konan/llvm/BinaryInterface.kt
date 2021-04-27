@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.name.Name
 object KonanBinaryInterface {
     private val mangler = object : AbstractKonanIrMangler(true) {}
 
-    private val exportChecker = mangler.getExportChecker()
+    private val exportChecker = mangler.getExportChecker(compatibleMode = true)
 
-    val IrFunction.functionName: String get() = mangler.run { signatureString }
+    val IrFunction.functionName: String get() = mangler.run { signatureString() }
 
     val IrFunction.symbolName: String get() = funSymbolNameImpl()
     val IrField.symbolName: String get() =
@@ -65,7 +65,7 @@ object KonanBinaryInterface {
             return name // no wrapping currently required
         }
 
-        return withPrefix(MangleConstant.FUN_PREFIX, mangler.run { mangleString })
+        return withPrefix(MangleConstant.FUN_PREFIX, mangler.run { mangleString() })
     }
 
     private fun IrField.fieldSymbolNameImpl(): String {

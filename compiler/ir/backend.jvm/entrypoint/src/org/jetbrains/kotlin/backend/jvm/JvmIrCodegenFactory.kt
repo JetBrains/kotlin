@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -117,7 +116,9 @@ open class JvmIrCodegenFactory(
             }
         }
 
-        SourceDeclarationsPreprocessor(psi2irContext).run(files)
+        val irFiles = psi2ir.createFiles(psi2irContext, files)
+
+        SourceDeclarationsPreprocessor(psi2irContext).run(files, irFiles)
 
         for (extension in pluginExtensions) {
             psi2ir.addPostprocessingStep { module ->
@@ -144,7 +145,7 @@ open class JvmIrCodegenFactory(
         }
         val irProviders = listOf(irLinker)
 
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null, irFilesMap = irFiles)
         irLinker.postProcess()
 
         stubGenerator.unboundSymbolGeneration = true
