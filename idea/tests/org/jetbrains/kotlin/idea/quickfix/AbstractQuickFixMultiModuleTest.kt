@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,10 +14,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.allKotlinFiles
-import org.jetbrains.kotlin.idea.test.findFileWithCaret
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -32,7 +29,10 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
 
     fun doTest(dirPath: String) {
         setupMppProjectFromDirStructure(File(dirPath))
-        doQuickFixTest(dirPath)
+        val directiveFileText = project.findFileWithCaret().text
+        withCustomCompilerOptions(directiveFileText, project, module) {
+            doQuickFixTest(dirPath)
+        }
     }
 
     private fun doQuickFixTest(dirPath: String) {
