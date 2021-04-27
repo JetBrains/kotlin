@@ -3441,6 +3441,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("mangledSamWrappers.kt")
+        public void testMangledSamWrappers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/mangledSamWrappers.kt");
+        }
+
+        @Test
+        @TestMetadata("mangledSamWrappersIndy.kt")
+        public void testMangledSamWrappersIndy() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/mangledSamWrappersIndy.kt");
+        }
+
+        @Test
+        @TestMetadata("mangledSamWrappersOld.kt")
+        public void testMangledSamWrappersOld() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/mangledSamWrappersOld.kt");
+        }
+
+        @Test
         @TestMetadata("noActualCallsOfInlineFunctionsOfInlineClass.kt")
         public void testNoActualCallsOfInlineFunctionsOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noActualCallsOfInlineFunctionsOfInlineClass.kt");
