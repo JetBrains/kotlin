@@ -1,3 +1,5 @@
+import javax.inject.Inject
+
 /**
  * This Gradle script captures data about the OS, IDE, CI, and Git and stores it in build scans via custom tags, custom links, and custom values.
  *
@@ -27,9 +29,9 @@ void tagOs() {
 void tagIde() {
     if (project.hasProperty('android.injected.invoked.from.ide')) {
         buildScan.tag 'Android Studio'
-    } else if (System.getProperty('idea.version')) {
+    } else if (providers.systemProperty("idea.version").forUseAtConfigurationTime().present) {
         buildScan.tag 'IntelliJ IDEA'
-    } else if (System.getProperty('eclipse.buildId')) {
+    } else if (providers.systemProperty("eclipse.buildId").forUseAtConfigurationTime().present) {
         buildScan.tag 'Eclipse'
     } else if (!isCi()) {
         buildScan.tag 'Cmd Line'
@@ -57,13 +59,13 @@ void addCiMetadata() {
             def jobNameLabel = 'CI job'
             def jobName = System.getenv('JOB_NAME')
             buildScan.value jobNameLabel, jobName
-            addCustomValueSearchLink 'CI job build scans', [(jobNameLabel): jobName]
+            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
         if (System.getenv('STAGE_NAME')) {
             def stageNameLabel = 'CI stage'
             def stageName = System.getenv('STAGE_NAME')
             buildScan.value stageNameLabel, stageName
-            addCustomValueSearchLink 'CI stage build scans', [(stageNameLabel): stageName]
+            addCustomValueSearchLink buildScan, 'CI stage build scans', [(stageNameLabel): stageName]
         }
     }
 
@@ -100,13 +102,13 @@ void addCiMetadata() {
             def jobLabel = 'CI job'
             def job = System.getenv('CIRCLE_JOB')
             buildScan.value jobLabel, job
-            addCustomValueSearchLink 'CI job build scans', [(jobLabel): job]
+            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobLabel): job]
         }
         if (System.getenv('CIRCLE_WORKFLOW_ID')) {
             def workflowIdLabel = 'CI workflow'
             def workflowId = System.getenv('CIRCLE_WORKFLOW_ID')
             buildScan.value workflowIdLabel, workflowId
-            addCustomValueSearchLink 'CI workflow build scans', [(workflowIdLabel): workflowId]
+            addCustomValueSearchLink buildScan, 'CI workflow build scans', [(workflowIdLabel): workflowId]
         }
     }
 
@@ -121,13 +123,13 @@ void addCiMetadata() {
             def planNameLabel = 'CI plan'
             def planName = System.getenv('bamboo_planName')
             buildScan.value planNameLabel, planName
-            addCustomValueSearchLink 'CI plan build scans', [(planNameLabel): planName]
+            addCustomValueSearchLink buildScan, 'CI plan build scans', [(planNameLabel): planName]
         }
         if (System.getenv('bamboo_buildPlanName')) {
             def jobNameLabel = 'CI job'
             def jobName = System.getenv('bamboo_buildPlanName')
             buildScan.value jobNameLabel, jobName
-            addCustomValueSearchLink 'CI job build scans', [(jobNameLabel): jobName]
+            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
         if (System.getenv('bamboo_agentId')) {
             def agentId = System.getenv('bamboo_agentId')
@@ -137,20 +139,25 @@ void addCiMetadata() {
     }
 }
 
+interface Injected {
+    @Inject ExecOperations getExecOperations()
+}
+
 void addGitMetadata() {
+    def injected = project.objects.newInstance(Injected)
     buildScan.background {
         if (!isGitInstalled()) {
             return
         }
-        def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
-        def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
-        def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
+        def gitCommitId = execAndGetStdout(injected.execOperations, 'git', 'rev-parse', '--short=8', '--verify', 'HEAD')
+        def gitBranchName = execAndGetStdout(injected.execOperations, 'git', 'rev-parse', '--abbrev-ref', 'HEAD')
+        def gitStatus = execAndGetStdout(injected.execOperations, 'git', 'status', '--porcelain')
 
         if (gitCommitId) {
             def commitIdLabel = 'Git commit id'
             value commitIdLabel, gitCommitId
-            addCustomValueSearchLink 'Git commit id build scans', [(commitIdLabel): gitCommitId]
-            def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
+            addCustomValueSearchLink it, 'Git commit id build scans', [(commitIdLabel): gitCommitId]
+            def originUrl = execAndGetStdout(injected.execOperations, 'git', 'config', '--get', 'remote.origin.url')
             if (originUrl.contains('github.com')) { // only for GitHub
                 def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*)/)[0][2]
                 if (repoPath.endsWith('.git')) {
@@ -196,22 +203,22 @@ static boolean isBamboo() {
     System.getenv('bamboo_resultsUrl')
 }
 
-String execAndGetStdout(String... args) {
+static String execAndGetStdout(ExecOperations execOperations, String... args) {
     def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine(args)
-        standardOutput = stdout
+    execOperations.exec {
+        it.commandLine(args)
+        it.standardOutput = stdout
     }
     trimAtEnd(stdout.toString())
 }
 
-void addCustomValueSearchLink(String title, Map<String, String> search) {
+static void addCustomValueSearchLink(buildScan, String title, Map<String, String> search) {
     if (buildScan.server) {
-        buildScan.link title, customValueSearchUrl(search)
+        buildScan.link title, customValueSearchUrl(buildScan, search)
     }
 }
 
-String customValueSearchUrl(Map<String, String> search) {
+static String customValueSearchUrl(buildScan, Map<String, String> search) {
     def query = search.collect { name, value ->
         "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
