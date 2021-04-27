@@ -20,7 +20,7 @@ FILE: basic.kt
         ^okOneLineFunction Int(10).R|kotlin/Int.plus|(Int(1))
     }
     public final fun errorOneLineFunction(): R|kotlin/String| {
-        ^errorOneLineFunction Int(10).R|kotlin/Int.plus|(Int(1))
+        ^errorOneLineFunction Int(10).<CS errors: kotlin/Int.plus>#(Int(1))
     }
     public final class A : R|kotlin/Any| {
         public constructor(): R|A| {

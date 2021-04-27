@@ -180,7 +180,7 @@ FILE: returnTypeMismatchOnOverride.kt
         }
 
         public open fun kek(): R|Z| {
-            ^kek R|/Z.Z|()
+            ^kek <CS errors: /Z.Z>#()
         }
 
     }

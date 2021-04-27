@@ -26,7 +26,7 @@ FILE: kt41982.kt
             super<R|DelegateProvider<kotlin/Any>|>()
         }
 
-        public final var start: R|kotlin/Long|by this@R|/Test|.R|/long|<R|Test?|, R|Test?|>(<L> = long@fun <anonymous>(): R|kotlin/Long?| <inline=NoInline>  {
+        public final var start: R|kotlin/Long|by this@R|/Test|.R|/long|<R|Test|, R|Test|>(<L> = long@fun <anonymous>(): R|kotlin/Long?| <inline=NoInline>  {
             ^ Long(0)
         }
         )

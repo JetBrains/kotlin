@@ -59,8 +59,8 @@ FILE: multipleBounds.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        R|Jet87/Test1.Test1|<R|Jet87/B|>()
-        R|Jet87/Test1.Test1|<R|Jet87/A|>()
+        <CS errors: Jet87/Test1.Test1>#<R|Jet87/B|>()
+        <CS errors: Jet87/Test1.Test1>#<R|Jet87/A|>()
         R|Jet87/Test1.Test1|<R|Jet87/C|>()
     }
     public final class Foo : R|kotlin/Any| {
