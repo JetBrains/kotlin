@@ -94,7 +94,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
-    private class Namer(val prefix: String) {
+    class Namer(val prefix: String) {
         private val names = mutableMapOf<IrDeclaration, Name>()
         private val counts = mutableMapOf<FqName, Int>()
 
