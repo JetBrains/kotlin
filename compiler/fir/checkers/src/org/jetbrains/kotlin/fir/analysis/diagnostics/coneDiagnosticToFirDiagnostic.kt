@@ -15,10 +15,17 @@ import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -70,10 +77,11 @@ fun ConeDiagnostic.toFirDiagnostics(
     source: FirSourceElement,
     qualifiedAccessSource: FirSourceElement?
 ): List<FirDiagnostic<FirSourceElement>> {
-    if (this is ConeInapplicableCandidateError) {
-        return mapInapplicableCandidateError(this, source, qualifiedAccessSource)
+    return when (this) {
+        is ConeInapplicableCandidateError -> mapInapplicableCandidateError(this, source, qualifiedAccessSource)
+        is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(this, source, qualifiedAccessSource)
+        else -> listOfNotNull(toFirDiagnostic(source, qualifiedAccessSource))
     }
-    return listOfNotNull(toFirDiagnostic(source, qualifiedAccessSource))
 }
 
 private fun mapUnsafeCallError(
@@ -149,6 +157,76 @@ private fun mapInapplicableCandidateError(
         }
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }
 }
+
+@OptIn(ExperimentalStdlibApi::class)
+private fun mapSystemHasContradictionError(
+    diagnostic: ConeConstraintSystemHasContradiction,
+    source: FirSourceElement,
+    qualifiedAccessSource: FirSourceElement?,
+): List<FirDiagnostic<FirSourceElement>> = buildList<FirDiagnostic<FirSourceElement>> {
+    for (error in diagnostic.candidate.system.errors) {
+        addIfNotNull(error.toDiagnostic(source, qualifiedAccessSource, diagnostic.candidate.callInfo.session.typeContext))
+    }
+}.ifEmpty {
+    listOfNotNull(
+        diagnostic.candidate.system.errors.firstNotNullOfOrNull {
+            val message = when (it) {
+                is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
+                // Error should be reported on the error type itself
+                is ConstrainingTypeIsError -> return@firstNotNullOfOrNull null
+                else -> "Inference error: ${it::class.simpleName}"
+            }
+            FirErrors.NEW_INFERENCE_ERROR.on(qualifiedAccessSource ?: source, message)
+        }
+    )
+}
+
+private fun ConstraintSystemError.toDiagnostic(
+    source: FirSourceElement,
+    qualifiedAccessSource: FirSourceElement?,
+    typeContext: ConeTypeContext,
+): FirDiagnostic<FirSourceElement>? = when (this) {
+    is NewConstraintError -> {
+        val position = position.from
+        val argument =
+            when (position) {
+                // TODO: Support other ReceiverConstraintPositionImpl, LHSArgumentConstraintPositionImpl
+                is ConeArgumentConstraintPosition -> position.argument
+                is ConeLambdaArgumentConstraintPosition -> position.lambda
+                else -> null
+            }
+
+        argument?.let {
+            return FirErrors.TYPE_MISMATCH.on(it.source ?: source, lowerConeType, upperConeType)
+        }
+
+        when (position) {
+            is ExpectedTypeConstraintPosition<*> -> {
+                val inferredType =
+                    if (!lowerConeType.isNullableNothing)
+                        lowerConeType
+                    else
+                        upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
+
+                FirErrors.TYPE_MISMATCH.on(qualifiedAccessSource ?: source, upperConeType, inferredType)
+            }
+            is ExplicitTypeParameterConstraintPosition<*> -> {
+                val conePosition = position as ConeExplicitTypeParameterConstraintPosition
+                val typeArgument = conePosition.typeArgument
+
+                FirErrors.UPPER_BOUND_VIOLATED.on(
+                    typeArgument.source ?: qualifiedAccessSource ?: source,
+                    upperConeType,
+                )
+            }
+            else -> null
+        }
+    }
+    else -> null
+}
+
+private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
+private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
 private fun ConeSimpleDiagnostic.getFactory(source: FirSourceElement): FirDiagnosticFactory0<*> {
     @Suppress("UNCHECKED_CAST")

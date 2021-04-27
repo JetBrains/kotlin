@@ -50,6 +50,12 @@ class ConeInapplicableCandidateError(
     override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidate.symbol)}"
 }
 
+class ConeConstraintSystemHasContradiction(
+    val candidate: Candidate,
+) : ConeDiagnostic() {
+    override val reason: String get() = "CS errors: ${describeSymbol(candidate.symbol)}"
+}
+
 class ConeArgumentTypeMismatchCandidateError(
     val expectedType: ConeKotlinType, val actualType: ConeKotlinType
 ) : ConeDiagnostic() {

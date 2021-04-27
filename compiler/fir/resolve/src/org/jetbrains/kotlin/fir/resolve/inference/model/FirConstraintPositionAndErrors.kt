@@ -5,13 +5,24 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 class ConeDeclaredUpperBoundConstraintPosition : DeclaredUpperBoundConstraintPosition<Nothing?>(null)
 
 class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVariableConstraintPosition<Nothing?>(variable, null)
 
-class ConeArgumentConstraintPosition : ArgumentConstraintPosition<Nothing?>(null)
+class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintPosition<FirElement>(argument)
+
+class ConeExpectedTypeConstraintPosition : ExpectedTypeConstraintPosition<Nothing?>(null)
+
+class ConeExplicitTypeParameterConstraintPosition(
+    typeArgument: FirTypeProjection,
+) : ExplicitTypeParameterConstraintPosition<FirTypeProjection>(typeArgument)
+
+class ConeLambdaArgumentConstraintPosition(
+    anonymousFunction: FirAnonymousFunction
+) : LambdaArgumentConstraintPosition<FirAnonymousFunction>(anonymousFunction)

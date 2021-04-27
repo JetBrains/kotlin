@@ -71,6 +71,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NEW_INFERENCE_ERROR) { firDiagnostic ->
+        NewInferenceErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

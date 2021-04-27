@@ -38,6 +38,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val UNSUPPORTED_FEATURE by error<PsiElement> {
             parameter<Pair<LanguageFeature, LanguageVersionSettings>>("unsupportedFeature")
         }
+        val NEW_INFERENCE_ERROR by error<PsiElement> {
+            parameter<String>("error")
+        }
     }
 
     val Miscellaneous by object : DiagnosticGroup("Miscellaneous") {

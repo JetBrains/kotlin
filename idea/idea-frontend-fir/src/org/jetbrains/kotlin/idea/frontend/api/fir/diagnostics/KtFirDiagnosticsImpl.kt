@@ -81,6 +81,14 @@ internal class UnsupportedFeatureImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class NewInferenceErrorImpl(
+    override val error: String,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NewInferenceError(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class SyntaxImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
