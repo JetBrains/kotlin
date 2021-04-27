@@ -84,11 +84,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val file: FirFile get() = components.file
 
     val ResolutionMode.expectedType: FirTypeRef?
-        get() = when (this) {
-            is ResolutionMode.WithExpectedType -> expectedTypeRef
-            is ResolutionMode.ContextIndependent -> noExpectedType
-            else -> null
-        }
+        get() = expectedType(components)
 
     class BodyResolveTransformerComponents(
         override val session: FirSession,

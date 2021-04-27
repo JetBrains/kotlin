@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.isUnitOrFlexibleUnit
+import org.jetbrains.kotlin.fir.resolve.expectedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
@@ -33,9 +36,9 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -53,7 +56,13 @@ class FirCallCompleter(
 
     data class CompletionResult<T>(val result: T, val callCompleted: Boolean)
 
-    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): CompletionResult<T>
+    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): CompletionResult<T> where T : FirResolvable, T : FirStatement =
+        completeCall(call, expectedTypeRef, mayBeCoercionToUnitApplied = false)
+
+    fun <T> completeCall(call: T, data: ResolutionMode): CompletionResult<T> where T : FirResolvable, T : FirStatement =
+        completeCall(call, data.expectedType(components), (data as? ResolutionMode.WithExpectedType)?.mayBeCoercionToUnitApplied == true)
+
+    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?, mayBeCoercionToUnitApplied: Boolean): CompletionResult<T>
             where T : FirResolvable, T : FirStatement {
         val typeRef = components.typeFromCallee(call)
 
@@ -73,7 +82,15 @@ class FirCallCompleter(
         }
 
         if (expectedTypeRef is FirResolvedTypeRef) {
-            candidate.system.addSubtypeConstraint(initialType, expectedTypeRef.type, SimpleConstraintSystemConstraintPosition)
+            if (expectedTypeRef.coneType.isUnitOrFlexibleUnit && mayBeCoercionToUnitApplied) {
+                if (candidate.system.notFixedTypeVariables.isNotEmpty()) {
+                    candidate.system.addSubtypeConstraintIfCompatible(
+                        initialType, expectedTypeRef.type, ConeExpectedTypeConstraintPosition()
+                    )
+                }
+            } else {
+                candidate.system.addSubtypeConstraint(initialType, expectedTypeRef.type, ConeExpectedTypeConstraintPosition())
+            }
         }
 
         val completionMode = candidate.computeCompletionMode(session.inferenceComponents, expectedTypeRef, initialType)
@@ -149,7 +166,7 @@ class FirCallCompleter(
             isNullable = functionalType.isNullable,
             functionalType.attributes
         )
-        csBuilder.addSubtypeConstraint(expectedType, functionalType, ConeArgumentConstraintPosition())
+        csBuilder.addSubtypeConstraint(expectedType, functionalType, ConeArgumentConstraintPosition(atom.atom))
         atom.replaceExpectedType(expectedType, returnVariable.defaultType)
         atom.replaceTypeVariableForLambdaReturnType(returnVariable)
     }

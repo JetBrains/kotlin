@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
-import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
+import org.jetbrains.kotlin.fir.resolve.substitution.substituteOrNull
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -125,7 +125,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     if (!transformedCallee.isAcceptableResolvedQualifiedAccess()) {
                         return qualifiedAccessExpression
                     }
-                    callCompleter.completeCall(transformedCallee, data.expectedType).result
+                    callCompleter.completeCall(transformedCallee, data).result
                 } else {
                     transformedCallee
                 }
@@ -280,7 +280,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         functionCall.transformAnnotations(transformer, data)
         functionCall.transformSingle(InvocationKindTransformer, null)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
-        val expectedTypeRef = data.expectedType
         val (completeInference, callCompleted) =
             try {
                 val initialExplicitReceiver = functionCall.explicitReceiver
@@ -290,7 +289,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     // name.invoke() case
                     callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
                 }
-                callCompleter.completeCall(resultExpression, expectedTypeRef)
+                callCompleter.completeCall(resultExpression, data)
             } catch (e: Throwable) {
                 throw RuntimeException("While resolving call ${functionCall.render()}", e)
             }
@@ -318,7 +317,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val numberOfStatements = block.statements.size
 
         block.transformStatementsIndexed(transformer) { index ->
-            val value = if (index == numberOfStatements - 1) data else ResolutionMode.ContextIndependent
+            val value =
+                if (index == numberOfStatements - 1)
+                    if (data is ResolutionMode.WithExpectedType)
+                        ResolutionMode.WithExpectedType(data.expectedTypeRef, mayBeCoercionToUnitApplied = true)
+                    else
+                        data
+                else
+                    ResolutionMode.ContextIndependent
             transformer.firTowerDataContextCollector?.addStatementContext(block.statements[index], context.towerDataContext)
             TransformData.Data(value)
         }
@@ -632,7 +638,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         var callCompleted = false
         val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext)?.let {
-            val completionResult = callCompleter.completeCall(it, data.expectedType)
+            val completionResult = callCompleter.completeCall(it, data)
             callCompleted = completionResult.callCompleted
             completionResult.result
         } ?: run {
