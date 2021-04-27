@@ -279,8 +279,12 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type): JvmCl
     }
     sw.writeSuperclassEnd()
 
-    val superInterfaces = LinkedHashSet<String>()
     val kotlinMarkerInterfaces = LinkedHashSet<String>()
+    if (irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
+        kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendFunction")
+    }
+
+    val superInterfaces = LinkedHashSet<String>()
     for (superType in irClass.superTypes) {
         val superClass = superType.safeAs<IrSimpleType>()?.classifier?.safeAs<IrClassSymbol>()?.owner ?: continue
         if (superClass.isJvmInterface) {

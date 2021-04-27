@@ -9820,6 +9820,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("suspendFunctionAsSupertypeIsCheck.kt")
+            public void testSuspendFunctionAsSupertypeIsCheck() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendFunctionAsSupertypeIsCheck.kt");
+            }
+
+            @Test
             @TestMetadata("suspendFunctionIsAs.kt")
             public void testSuspendFunctionIsAs() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendFunctionIsAs.kt");
