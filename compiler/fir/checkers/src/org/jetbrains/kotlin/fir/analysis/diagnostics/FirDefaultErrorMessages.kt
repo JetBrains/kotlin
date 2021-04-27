@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_PAIR
@@ -904,6 +905,13 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
                 TO_STRING,
                 SYMBOLS
+            )
+            map.put(
+                DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
+                "The ''{0}'' function of property delegate is expected to return ''{1}'', but returns ''{2}''",
+                TO_STRING,
+                RENDER_TYPE,
+                RENDER_TYPE,
             )
 
             // Type alias

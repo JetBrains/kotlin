@@ -702,6 +702,12 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("expectedFunctionSignature")
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
+        val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression> {
+            parameter<String>("delegateFunction")
+            parameter<ConeKotlinType>("expected")
+            parameter<ConeKotlinType>("actual")
+        }
+
         val UNDERSCORE_IS_RESERVED by error<KtExpression>(PositioningStrategy.RESERVED_UNDERSCORE)
         val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error<KtExpression>(PositioningStrategy.RESERVED_UNDERSCORE)
     }

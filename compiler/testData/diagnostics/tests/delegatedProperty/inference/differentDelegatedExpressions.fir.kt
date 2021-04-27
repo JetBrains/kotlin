@@ -12,8 +12,8 @@ class A(outer: Outer) {
 
     var b: String by  foo(getMyProperty())
     var r: String by  foo(outer.getContainer().getMyProperty())
-    var e: String by  <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>+ foo(getMyProperty())<!>
-    var f: String by  <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>foo(getMyProperty()) - 1<!>
+    var e: String by  <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH!>+ foo(getMyProperty())<!>
+    var f: String by  <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH!>foo(getMyProperty()) - 1<!>
 }
 
 fun <A, B> foo(a: Any?) = MyProperty<A, B>()
