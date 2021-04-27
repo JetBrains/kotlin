@@ -178,4 +178,33 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("Should not produce kotlin-stdlib version conflict on Kotlin files compilation in 'buildSrc' module")
+    internal fun testKotlinDslStdlibVersionConflict(gradleVersion: GradleVersion) {
+        project(
+            projectName = "buildSrcUsingKotlinCompilationAndKotlinPlugin",
+            gradleVersion,
+            forceOutput = true
+        ) {
+            listOf(
+                "compileClasspath",
+                "compileOnly",
+                "runtimeClasspath"
+            ).forEach { configuration ->
+                build("-p", "buildSrc", "dependencies", "--configuration", configuration) {
+                    listOf(
+                        "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}",
+                        "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${buildOptions.kotlinVersion}",
+                        "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${buildOptions.kotlinVersion}",
+                        "org.jetbrains.kotlin:kotlin-stdlib-common:${buildOptions.kotlinVersion}",
+                        "org.jetbrains.kotlin:kotlin-reflect:${buildOptions.kotlinVersion}",
+                        "org.jetbrains.kotlin:kotlin-script-runtime:${buildOptions.kotlinVersion}"
+                    ).forEach { assertOutputDoesNotContain(it) }
+                }
+            }
+
+            build("assemble")
+        }
+    }
 }

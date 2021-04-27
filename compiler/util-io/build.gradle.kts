@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    compile(kotlinStdlib())
+    implementation(kotlinStdlib())
     testImplementation(commonDep("junit:junit"))
 }
 
