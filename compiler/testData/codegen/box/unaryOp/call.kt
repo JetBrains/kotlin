@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+
 fun box(): String {
     val a1: Byte = 1.unaryMinus()
     val a2: Short = 1.unaryMinus()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 val a: Short = 1 + 255
 
 // 1 SIPUSH 256

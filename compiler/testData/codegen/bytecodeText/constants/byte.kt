@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 val a: Byte = 1 + 10
 
 // 1 BIPUSH 11
