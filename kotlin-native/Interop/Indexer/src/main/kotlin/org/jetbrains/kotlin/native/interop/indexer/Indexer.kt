@@ -284,6 +284,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun addDeclaredFields(result: MutableList<StructMember>, structType: CValue<CXType>, containerType: CValue<CXType>) {
+        // TODO: We don't exactly preserve C++ layout here, but
+        // we don't allow general case C++ classes by value at the moment.
         getFields(containerType).filter { library.language != Language.CPP || it.isCxxPublic }.forEach { fieldCursor ->
             val name = getCursorSpelling(fieldCursor)
             if (name.isNotEmpty()) {
