@@ -158,11 +158,7 @@ internal class ModuleMetadataEmitter(
                     KmFunction(function.flags, function.qualifiedName()).also { km ->
                         km.receiverParameterType = function.receiver?.type?.map()
                         function.typeParameters.mapTo(km.typeParameters) { it.map() }
-                        val parameters = if (function.isCxxInstanceMember())
-                            function.parameters.drop(1)
-                        else
-                            function.parameters
-                        parameters.mapTo(km.valueParameters) { it.map() }
+                        function.parameters.mapTo(km.valueParameters) { it.map() }
                         function.annotations.mapTo(km.annotations) { it.map() }
                         km.returnType = function.returnType.map()
                     }

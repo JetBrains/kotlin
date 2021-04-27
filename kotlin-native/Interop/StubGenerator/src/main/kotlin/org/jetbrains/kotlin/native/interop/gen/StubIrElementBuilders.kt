@@ -524,7 +524,12 @@ internal abstract class FunctionalStubBuilder(
 
     fun buildParameters(parameters: MutableList<FunctionParameterStub>, platform: KotlinPlatform): Boolean {
         var hasStableParameterNames = true
-        func.parameters.forEachIndexed { index, parameter ->
+        val funcParameters = if (func.isCxxInstanceMethod) {
+            func.parameters.drop(1)
+        } else {
+            func.parameters
+        }
+        funcParameters.forEachIndexed { index, parameter ->
             val parameterName = parameter.name.let {
                 if (it == null || it.isEmpty()) {
                     hasStableParameterNames = false
