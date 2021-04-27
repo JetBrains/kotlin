@@ -16,29 +16,22 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
+class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
+
+    private val publicSignatureBuilder = PublicIdSigBuilder()
 
     override fun computeSignature(declaration: IrDeclaration): IdSignature? {
         return if (mangler.run { declaration.isExported() }) {
-            composePublicIdSignature(declaration)
+            publicSignatureBuilder.buildSignature(declaration)
         } else null
     }
 
-    fun composeSignatureForDeclaration(declaration: IrDeclaration): IdSignature {
-        return if (mangler.run { declaration.isExported() }) {
-            composePublicIdSignature(declaration)
-        } else composeFileLocalIdSignature(declaration)
-    }
+    fun composePublicIdSignature(declaration: IrDeclaration): IdSignature {
+        assert(mangler.run { declaration.isExported() }) {
+            "${declaration.render()} expected to be exported"
+        }
 
-    private var localIndex: Long = 0
-    private var scopeIndex: Int = 0
-
-    // TODO: we need to disentangle signature construction with declaration tables.
-    lateinit var table: DeclarationTable
-
-    fun reset() {
-        localIndex = 0
-        scopeIndex = 0
+        return publicSignatureBuilder.buildSignature(declaration)
     }
 
     private inner class PublicIdSigBuilder : IdSignatureBuilder<IrDeclaration>(), IrElementVisitorVoid {
@@ -96,8 +89,31 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
             collectFqNames(declaration)
         }
     }
+}
 
-    private val publicSignatureBuilder = PublicIdSigBuilder()
+open class IdSignatureSerializer(
+    private val publicSignatureBuilder: PublicIdSignatureComputer,
+    private val table: DeclarationTable,
+    localIndexOffset: Long = 0,
+    scopeIndexOffset: Int = 0,
+) : IdSignatureComputer {
+
+    private val mangler: KotlinMangler.IrMangler = publicSignatureBuilder.mangler
+
+    override fun computeSignature(declaration: IrDeclaration): IdSignature? {
+        return if (mangler.run { declaration.isExported() }) {
+            publicSignatureBuilder.composePublicIdSignature(declaration)
+        } else null
+    }
+
+    fun composeSignatureForDeclaration(declaration: IrDeclaration): IdSignature {
+        return if (mangler.run { declaration.isExported() }) {
+            publicSignatureBuilder.composePublicIdSignature(declaration)
+        } else composeFileLocalIdSignature(declaration)
+    }
+
+    private var localIndex: Long = localIndexOffset
+    private var scopeIndex: Int = scopeIndexOffset
 
     private fun composeContainerIdSignature(container: IrDeclarationParent): IdSignature =
         when (container) {
@@ -105,14 +121,6 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
             is IrDeclaration -> table.signatureByDeclaration(container)
             else -> error("Unexpected container ${container.render()}")
         }
-
-    fun composePublicIdSignature(declaration: IrDeclaration): IdSignature {
-        assert(mangler.run { declaration.isExported() }) {
-            "${declaration.render()} expected to be exported"
-        }
-
-        return publicSignatureBuilder.buildSignature(declaration)
-    }
 
     fun composeFileLocalIdSignature(declaration: IrDeclaration): IdSignature {
         assert(!mangler.run { declaration.isExported() })

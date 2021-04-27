@@ -16,8 +16,7 @@ class KonanIrModuleSerializer(
     val skipExpects: Boolean
 ) : IrModuleSerializer<KonanIrFileSerializer>(messageLogger) {
 
-    private val signaturer = IdSignatureSerializer(KonanManglerIr)
-    private val globalDeclarationTable = KonanGlobalDeclarationTable(signaturer, irBuiltIns)
+    private val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
 
     // We skip files with IR for C structs and enums because they should be
     // generated anew.

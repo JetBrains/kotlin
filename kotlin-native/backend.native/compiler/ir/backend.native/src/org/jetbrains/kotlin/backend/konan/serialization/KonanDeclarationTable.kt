@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-class KonanGlobalDeclarationTable(signatureSerializer: IdSignatureSerializer, builtIns: IrBuiltIns) : GlobalDeclarationTable(signatureSerializer, KonanManglerIr) {
+class KonanGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(KonanManglerIr) {
     init {
         loadKnownBuiltins(builtIns)
     }

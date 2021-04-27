@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -43,7 +44,7 @@ class JvmIrLinker(
     private val manglerDesc: JvmManglerDesc
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
 
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(JvmManglerIr), builtIns)
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmManglerIr, builtIns)
 
     private val javaName = Name.identifier("java")
 

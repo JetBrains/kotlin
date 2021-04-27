@@ -91,7 +91,7 @@ internal class KonanIrLinker(
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(KonanManglerIr), builtIns, KonanFakeOverrideClassFilter)
+    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, KonanManglerIr, builtIns, KonanFakeOverrideClassFilter)
 
     override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
         if (moduleDescriptor === forwardModuleDescriptor) {
