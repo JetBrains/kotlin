@@ -1,5 +1,5 @@
 FILE: sam.kt
-    public abstract interface MySam : R|kotlin/Any| {
+    public abstract fun interface MySam : R|kotlin/Any| {
         public abstract fun run(x: R|kotlin/String|): R|kotlin/Int|
 
     }

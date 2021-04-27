@@ -155,7 +155,7 @@ class JavaScopeProvider(
             }
         } ?: return null
 
-        if (superClass.origin is FirDeclarationOrigin.Java) return superClass
+        if (superClass.isJava) return superClass
 
         return superClass.findJavaSuperClass(useSiteSession)
     }

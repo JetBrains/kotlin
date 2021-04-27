@@ -1,5 +1,5 @@
 FILE: funInterfaceConstructorReference.kt
-    public abstract interface Test : R|kotlin/Any| {
+    public abstract fun interface Test : R|kotlin/Any| {
         public abstract fun foo(): R|kotlin/Unit|
 
     }
