@@ -61,11 +61,12 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
     override fun getBuiltIns(): KotlinBuiltIns =
         intersectedTypes.iterator().next().constructor.builtIns
 
-    override fun toString(): String =
-        makeDebugNameForIntersectionType(intersectedTypes)
+    override fun toString(): String = makeDebugNameForIntersectionType()
 
-    private fun makeDebugNameForIntersectionType(resultingTypes: Iterable<KotlinType>): String =
-        resultingTypes.sortedBy { it.toString() }.joinToString(separator = " & ", prefix = "{", postfix = "}")
+    fun makeDebugNameForIntersectionType(getProperTypeRelatedToStringify: (KotlinType) -> Any = { it.toString() }): String {
+        return intersectedTypes.sortedBy { getProperTypeRelatedToStringify(it).toString() }
+            .joinToString(separator = " & ", prefix = "{", postfix = "}") { getProperTypeRelatedToStringify(it).toString() }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

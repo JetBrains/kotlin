@@ -288,7 +288,11 @@ internal class DescriptorRendererImpl(
 
     override fun renderTypeConstructor(typeConstructor: TypeConstructor): String = when (val cd = typeConstructor.declarationDescriptor) {
         is TypeParameterDescriptor, is ClassDescriptor, is TypeAliasDescriptor -> renderClassifierName(cd)
-        null -> typeConstructor.toString()
+        null -> {
+            if (typeConstructor is IntersectionTypeConstructor) {
+                typeConstructor.makeDebugNameForIntersectionType { if (it is StubType) it.originalTypeVariable else it }
+            } else typeConstructor.toString()
+        }
         else -> error("Unexpected classifier: " + cd::class.java)
     }
 

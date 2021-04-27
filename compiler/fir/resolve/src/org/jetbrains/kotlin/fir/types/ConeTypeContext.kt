@@ -380,7 +380,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun SimpleTypeMarker.isStubType(): Boolean {
-        return this is StubTypeMarker
+        return this is ConeStubType // TODO: distinguish stub types for builder inference and for subtyping
+    }
+
+    override fun SimpleTypeMarker.isStubTypeForVariableInSubtyping(): Boolean {
+        return this is ConeStubType // TODO: distinguish stub types for builder inference and for subtyping
     }
 
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {

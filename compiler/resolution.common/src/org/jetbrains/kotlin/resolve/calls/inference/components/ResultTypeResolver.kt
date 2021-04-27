@@ -134,15 +134,13 @@ class ResultTypeResolver(
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
             var commonSuperType = computeCommonSuperType(types)
 
-            if (commonSuperType.contains { it is StubTypeMarker }) {
+            if (commonSuperType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }) {
                 val typesWithoutStubs = types.filter { lowerType ->
-                    !lowerType.contains { it is StubTypeMarker }
+                    !lowerType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }
                 }
 
                 if (typesWithoutStubs.isNotEmpty()) {
                     commonSuperType = computeCommonSuperType(typesWithoutStubs)
-                } else {
-                    return null
                 }
             }
 

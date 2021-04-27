@@ -1,0 +1,56 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -EXPERIMENTAL_IS_NOT_ENABLED -UNUSED_VARIABLE
+// WITH_RUNTIME
+
+// FILE: Test.java
+
+class Test {
+    static <T> T foo(T x) { return x; }
+}
+
+// FILE: main.kt
+import kotlin.experimental.ExperimentalTypeInference
+
+@UseExperimental(ExperimentalTypeInference::class)
+fun <R> build(@BuilderInference block: TestInterface<R>.() -> Unit): R = TODO()
+
+@UseExperimental(ExperimentalTypeInference::class)
+fun <R> build2(@BuilderInference block: TestInterface<R>.() -> Unit): R = TODO()
+
+class Inv<K>
+
+interface TestInterface<R> {
+    fun emit(r: R)
+    fun get(): R
+    fun getInv(): Inv<R>
+}
+
+fun <U> id(x: U) = x
+fun <E> select(vararg x: E) = x[0]
+
+fun test() {
+    val ret = build {
+        emit("1")
+        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R)..TypeVariable(R)?)")!>Test.foo(get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>Test.foo(getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>id(get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>select(get(), get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R)..TypeVariable(R)?)")!>select(Test.foo(get()), Test.foo(get()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R)..TypeVariable(R)?)")!>select(Test.foo(get()), get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<TypeVariable(R)>")!>select(getInv(), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>select(Test.foo(getInv()), Test.foo(getInv()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>select(Test.foo(getInv()), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>select(getInv(), Test.foo(getInv()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypeVariable(R)")!>select(id(get()), id(get()))<!>
+        build2 {
+            emit(1)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(this@build.get(), get())<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(Test.foo(this@build.get()), Test.foo(get()))<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Any?>")!>select(this@build.getInv(), getInv())<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<out kotlin.Any?>..Inv<out kotlin.Any?>?)")!>select(Test.foo(this@build.getInv()), Test.foo(getInv()))<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<out kotlin.Any?>..Inv<out kotlin.Any?>?)")!>select(Test.foo(this@build.getInv()), getInv())<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(id(this@build.get()), id(get()))<!>
+            ""
+        }
+        ""
+    }
+}

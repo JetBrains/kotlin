@@ -478,7 +478,11 @@ object AbstractTypeChecker {
             )
         }
 
-        if (subType.isStubType() || superType.isStubType()) return context.isStubTypeEqualsToAnything
+        if (subType.isStubType() && superType.isStubType())
+            return subType.typeConstructor() === superType.typeConstructor()
+
+        if (subType.isStubType() || superType.isStubType() || subType.isStubTypeForVariableInSubtyping() || superType.isStubTypeForVariableInSubtyping())
+            return context.isStubTypeEqualsToAnything
 
         // superType might be a definitely notNull type (see KT-42824)
         val superOriginalType = superType.asDefinitelyNotNullType()?.original() ?: superType
@@ -742,7 +746,7 @@ object AbstractNullabilityChecker {
             if (type.isNothing()) return true
             if (type.isMarkedNullable()) return false
 
-            if (context.isStubTypeEqualsToAnything && type.isStubType()) return true
+            if (context.isStubTypeEqualsToAnything && (type.isStubTypeForVariableInSubtyping() || type.isStubType())) return true
 
             return areEqualTypeConstructors(type.typeConstructor(), end)
         }

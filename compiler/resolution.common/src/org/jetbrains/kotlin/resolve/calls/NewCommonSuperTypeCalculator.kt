@@ -59,7 +59,7 @@ object NewCommonSuperTypeCalculator {
 
         if (!isTopLevelType) {
             val nonStubTypes =
-                types.filter { !isStubRelatedType(it.lowerBoundIfFlexible()) && !isStubRelatedType(it.upperBoundIfFlexible()) }
+                types.filter { !isTypeVariable(it.lowerBoundIfFlexible()) && !isTypeVariable(it.upperBoundIfFlexible()) }
             val equalToEachOtherTypes = nonStubTypes.filter { potentialCommonSuperType ->
                 nonStubTypes.all {
                     AbstractTypeChecker.equalTypes(this, it, potentialCommonSuperType)
@@ -87,7 +87,7 @@ object NewCommonSuperTypeCalculator {
 
         // i.e. result type also should be marked nullable
         val notAllNotNull =
-            types.any { !isStubRelatedType(it) && !AbstractNullabilityChecker.isSubtypeOfAny(contextStubTypesEqualToAnything, it) }
+            types.any { !isTypeVariable(it) && !AbstractNullabilityChecker.isSubtypeOfAny(contextStubTypesEqualToAnything, it) }
         val notNullTypes = if (notAllNotNull) types.map { it.withNullability(false) } else types
 
         val commonSuperType = commonSuperTypeForNotNullTypes(notNullTypes, depth, contextStubTypesEqualToAnything, contextStubTypesNotEqual)
@@ -164,14 +164,23 @@ object NewCommonSuperTypeCalculator {
     ): SimpleTypeMarker {
         if (types.size == 1) return types.single()
 
-        val nonStubTypes = types.filter { !isStubRelatedType(it) }
-        if (nonStubTypes.size == 1) return nonStubTypes.single()
+        val nonTypeVariables = types.filter { !isTypeVariable(it) }
+        if (nonTypeVariables.size == 1) return nonTypeVariables.single()
 
-        assert(nonStubTypes.isNotEmpty()) {
+        assert(nonTypeVariables.isNotEmpty()) {
             "There should be at least one non-stub type to compute common supertype but there are: $types"
         }
 
-        val uniqueTypes = uniquify(nonStubTypes, contextStubTypesNotEqual)
+        val stubTypeVariables = types.filter { isStubTypeVariable(it) }
+        val nonStubTypeVariables = types.filter { !isStubTypeVariable(it) }
+        val areAllNonStubTypesNothing = nonStubTypeVariables.isNotEmpty() && nonStubTypeVariables.all { it.isNothing() }
+        if (nonStubTypeVariables.size == 1 && !areAllNonStubTypesNothing) return nonStubTypeVariables.single()
+
+        if (nonStubTypeVariables.isEmpty() || areAllNonStubTypesNothing) {
+            return uniquify(stubTypeVariables, contextStubTypesNotEqual).singleOrNull() ?: nullableAnyType()
+        }
+
+        val uniqueTypes = uniquify(nonTypeVariables, contextStubTypesNotEqual)
         if (uniqueTypes.size == 1) return uniqueTypes.single()
 
         val explicitSupertypes = filterSupertypes(uniqueTypes, contextStubTypesNotEqual)
@@ -183,14 +192,24 @@ object NewCommonSuperTypeCalculator {
         return findSuperTypeConstructorsAndIntersectResult(explicitSupertypes, depth, contextStubTypesEqualToAnything)
     }
 
-    private fun TypeSystemCommonSuperTypesContext.isStubRelatedType(type: SimpleTypeMarker): Boolean {
-        return type.isStubType() || isCapturedStubType(type)
+    private fun TypeSystemCommonSuperTypesContext.isStubTypeVariable(type: SimpleTypeMarker): Boolean {
+        return type.isStubType() || isStubCapturedTypeVariable(type)
     }
 
-    private fun TypeSystemCommonSuperTypesContext.isCapturedStubType(type: SimpleTypeMarker): Boolean {
+    private fun TypeSystemCommonSuperTypesContext.isStubCapturedTypeVariable(type: SimpleTypeMarker): Boolean {
         val projectedType =
             type.asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }?.getType() ?: return false
         return projectedType.asSimpleType()?.isStubType() == true
+    }
+
+    private fun TypeSystemCommonSuperTypesContext.isTypeVariable(type: SimpleTypeMarker): Boolean {
+        return type.isStubTypeForVariableInSubtyping() || isCapturedTypeVariable(type)
+    }
+
+    private fun TypeSystemCommonSuperTypesContext.isCapturedTypeVariable(type: SimpleTypeMarker): Boolean {
+        val projectedType =
+            type.asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }?.getType() ?: return false
+        return projectedType.asSimpleType()?.isStubTypeForVariableInSubtyping() == true
     }
 
     private fun TypeSystemCommonSuperTypesContext.findErrorTypeInSupertypes(
@@ -288,7 +307,7 @@ object NewCommonSuperTypeCalculator {
                         null
                     }
 
-                    typeArgument.getType().lowerBoundIfFlexible().isStubType() -> null
+                    typeArgument.getType().lowerBoundIfFlexible().isStubTypeForVariableInSubtyping() -> null
 
                     else -> typeArgument
                 }

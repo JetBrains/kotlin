@@ -16,10 +16,13 @@ interface TestInterface<R> {
     fun getInv(): Inv<R>
 }
 
+fun <U> id(x: U) = x
+
 fun test() {
     val ret = build {
-        emit(1)
+        emit("1")
         get()
         getInv()
+        ""
     }
 }

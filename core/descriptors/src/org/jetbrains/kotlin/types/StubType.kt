@@ -23,6 +23,17 @@ class StubType(
     }
 }
 
+class StubTypeForTypeVariablesInSubtyping(
+    originalTypeVariable: TypeConstructor,
+    isMarkedNullable: Boolean,
+    constructor: TypeConstructor = ErrorUtils.createErrorTypeConstructor("Constructor for non fixed type: $originalTypeVariable"),
+    memberScope: MemberScope = ErrorUtils.createErrorScope("Scope for non fixed type: $originalTypeVariable")
+) : AbstractStubType(originalTypeVariable, isMarkedNullable, constructor, memberScope), StubTypeMarker {
+    override fun materialize(newNullability: Boolean): AbstractStubType {
+        return StubTypeForTypeVariablesInSubtyping(originalTypeVariable, newNullability, constructor, memberScope)
+    }
+}
+
 // This type is used as a replacement of type variables for provideDelegate resolve
 class StubTypeForProvideDelegateReceiver(
     originalTypeVariable: TypeConstructor,
@@ -54,7 +65,7 @@ abstract class AbstractStubType(
     }
 
     override fun toString(): String {
-        return "NonFixed: $originalTypeVariable"
+        return "NonFixed: $originalTypeVariable${if (isMarkedNullable) "?" else ""}"
     }
 
     @TypeRefinement

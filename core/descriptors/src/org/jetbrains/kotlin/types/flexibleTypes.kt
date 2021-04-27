@@ -136,6 +136,8 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         return renderer.renderFlexibleType(renderer.renderType(lowerBound), renderer.renderType(upperBound), builtIns)
     }
 
+    override fun toString() = "($lowerBound..$upperBound)"
+
     override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType = KotlinTypeFactory.flexibleType(
         lowerBound.makeNullableAsSpecified(newNullability),
         upperBound.makeNullableAsSpecified(newNullability)

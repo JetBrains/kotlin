@@ -43,6 +43,6 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
     context: TypeSystemInferenceExtensionContext
 ): TypeSubstitutorMarker {
     return context.typeSubstitutorByTypeConstructor(
-        notFixedTypeVariables.mapValues { context.createStubType(it.value.typeVariable) }
+        notFixedTypeVariables.mapValues { context.createStubTypeForTypeVariablesInSubtyping(it.value.typeVariable) }
     )
 }

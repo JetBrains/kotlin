@@ -2,14 +2,8 @@ package
 
 public val test1: kotlin.collections.List<kotlin.Int>
 public val test2: kotlin.collections.List<kotlin.Int>
-public val test3: [ERROR : Type for generate {
-    yield(3)
-    yieldBarReturnType(3)
-}]
-public val test4: [ERROR : Type for generate {
-    yield(3)
-    barReturnType()
-}]
+public val test3: kotlin.collections.List<kotlin.Int>
+public val test4: kotlin.collections.List<kotlin.Int>
 public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend GenericController<S>.() -> kotlin.Unit): kotlin.collections.List<S>
 
 public final class GenericController</*0*/ T> {

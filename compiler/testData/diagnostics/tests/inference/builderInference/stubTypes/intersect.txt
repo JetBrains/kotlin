@@ -1,0 +1,33 @@
+package
+
+@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R1> build(/*0*/ @kotlin.BuilderInference block: TestInterface<R1>.() -> kotlin.Unit): R1
+@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R2> build2(/*0*/ @kotlin.BuilderInference block: TestInterface<R2>.() -> kotlin.Unit): R2
+public fun </*0*/ U> id(/*0*/ x: U): U
+public fun </*0*/ E> intersect(/*0*/ vararg x: In<E> /*kotlin.Array<out In<E>>*/): E
+public fun test(): kotlin.Unit
+
+public final class In</*0*/ in K> {
+    public constructor In</*0*/ in K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ open class Test {
+    public/*package*/ constructor Test()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ open fun </*0*/ T : kotlin.Any!> foo(/*0*/ x: T!): T!
+}
+
+public interface TestInterface</*0*/ R> {
+    public abstract fun emit(/*0*/ r: R): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun get(): R
+    public abstract fun getIn(): In<R>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

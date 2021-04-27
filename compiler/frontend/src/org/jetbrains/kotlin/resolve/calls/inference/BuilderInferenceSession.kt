@@ -29,8 +29,10 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasBuilderInferenceAnnotation
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -146,6 +148,16 @@ class BuilderInferenceSession(
         return null
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun findAllParentBuildInferenceSessions() = buildList {
+        var currentSession: BuilderInferenceSession? = findParentBuildInferenceSession()
+
+        while (currentSession != null) {
+            add(currentSession)
+            currentSession = currentSession.findParentBuildInferenceSession()
+        }
+    }
+
     fun hasInapplicableCall(): Boolean = hasInapplicableCall
 
     override fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean {
@@ -257,6 +269,10 @@ class BuilderInferenceSession(
     ): Boolean {
         storage.notFixedTypeVariables.values.forEach { commonSystem.registerVariable(it.typeVariable) }
 
+        for (parentSession in findAllParentBuildInferenceSessions()) {
+            parentSession.stubsForPostponedVariables.keys.forEach { commonSystem.registerVariable(it) }
+        }
+
         /*
         * storage can contain the following substitutions:
         *  TypeVariable(A) -> ProperType
@@ -269,8 +285,10 @@ class BuilderInferenceSession(
         var introducedConstraint = false
 
         for (initialConstraint in storage.initialConstraints) {
-            val lower = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.a as UnwrappedType)) // TODO: SUB
-            val upper = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.b as UnwrappedType)) // TODO: SUB
+            val lowerCallSubstituted = callSubstitutor.safeSubstitute(initialConstraint.a as UnwrappedType)
+            val upperCallSubstituted = callSubstitutor.safeSubstitute(initialConstraint.b as UnwrappedType)
+
+            val (lower, upper) = substituteNotFixedVariables(lowerCallSubstituted, upperCallSubstituted, nonFixedToVariablesSubstitutor)
 
             if (commonSystem.isProperType(lower) && commonSystem.isProperType(upper)) continue
 
@@ -299,6 +317,39 @@ class BuilderInferenceSession(
         }
 
         return introducedConstraint
+    }
+
+    private fun substituteNotFixedVariables(
+        lowerType: KotlinType,
+        upperType: KotlinType,
+        nonFixedToVariablesSubstitutor: NewTypeSubstitutor
+    ): Pair<KotlinType, KotlinType> {
+        val commonCapTypes = extractCommonCapturedTypes(lowerType, upperType)
+        val substitutedCommonCapType = commonCapTypes.associate {
+            it.constructor as TypeConstructor to nonFixedToVariablesSubstitutor.safeSubstitute(it).asTypeProjection()
+        }
+
+        val capTypesSubstitutor = TypeConstructorSubstitution.createByConstructorsMap(substitutedCommonCapType).buildSubstitutor()
+
+        val substitutedLowerType = nonFixedToVariablesSubstitutor.safeSubstitute(capTypesSubstitutor.substitute(lowerType.unwrap()))
+        val substitutedUpperType = nonFixedToVariablesSubstitutor.safeSubstitute(capTypesSubstitutor.substitute(upperType.unwrap()))
+
+        return substitutedLowerType to substitutedUpperType
+    }
+
+    private fun extractCommonCapturedTypes(a: KotlinType, b: KotlinType): List<NewCapturedType> {
+        val extractedCapturedTypes = mutableSetOf<NewCapturedType>().also { extractCapturedTypes(a, it) }
+        return extractedCapturedTypes.filter { capturedType -> b.contains { it.constructor === capturedType.constructor } }
+    }
+
+    private fun extractCapturedTypes(type: KotlinType, capturedTypes: MutableSet<NewCapturedType>) {
+        if (type is NewCapturedType) {
+            capturedTypes.add(type)
+        }
+        for (typeArgument in type.arguments) {
+            if (typeArgument.isStarProjection) continue
+            extractCapturedTypes(typeArgument.type, capturedTypes)
+        }
     }
 
     private fun buildCommonSystem(initialStorage: ConstraintStorage): Pair<NewConstraintSystemImpl, Boolean> {

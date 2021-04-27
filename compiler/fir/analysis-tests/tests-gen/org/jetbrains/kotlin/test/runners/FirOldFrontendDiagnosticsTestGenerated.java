@@ -12639,12 +12639,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
-                @TestMetadata("renderingStubTypes.kt")
-                public void testRenderingStubTypes() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/renderingStubTypes.kt");
-                }
-
-                @Test
                 @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
                 public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
@@ -12690,6 +12684,64 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 @TestMetadata("specialCallsWithLambdas.kt")
                 public void testSpecialCallsWithLambdas() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithLambdas.kt");
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes")
+                @TestDataPath("$PROJECT_ROOT")
+                public class StubTypes {
+                    @Test
+                    public void testAllFilesPresentInStubTypes() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("capturedTypes.kt")
+                    public void testCapturedTypes() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/capturedTypes.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("commonSuperType.kt")
+                    public void testCommonSuperType() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperType.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("commonSuperTypeContravariant.kt")
+                    public void testCommonSuperTypeContravariant() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeContravariant.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("commonSuperTypeCovariant.kt")
+                    public void testCommonSuperTypeCovariant() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeCovariant.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("commonSuperTypeInvariant.kt")
+                    public void testCommonSuperTypeInvariant() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeInvariant.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("commonSuperTypeNullable.kt")
+                    public void testCommonSuperTypeNullable() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeNullable.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("intersect.kt")
+                    public void testIntersect() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/intersect.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("renderingStubTypes.kt")
+                    public void testRenderingStubTypes() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/renderingStubTypes.kt");
+                    }
                 }
             }
 
