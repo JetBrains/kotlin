@@ -415,7 +415,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     private fun FirTypeParameterSymbol.allBoundsAreNullable(): Boolean {
-        return fir.bounds.all { it.coneType.isMarkedNullable }
+        return fir.bounds.all { it.coneType.isNullableType() }
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {

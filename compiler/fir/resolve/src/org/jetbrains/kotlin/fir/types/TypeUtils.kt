@@ -47,23 +47,32 @@ fun ConeInferenceContext.intersectTypesOrNull(types: List<ConeKotlinType>): Cone
 fun TypeCheckerProviderContext.equalTypes(a: ConeKotlinType, b: ConeKotlinType): Boolean =
     AbstractTypeChecker.equalTypes(this, a, b)
 
-fun ConeDefinitelyNotNullType.Companion.create(original: ConeKotlinType): ConeDefinitelyNotNullType? {
+fun ConeDefinitelyNotNullType.Companion.create(
+    original: ConeKotlinType,
+    typeContext: ConeTypeContext,
+    useCorrectedNullabilityForFlexibleTypeParameters: Boolean = false,
+): ConeDefinitelyNotNullType? {
     return when {
         original is ConeDefinitelyNotNullType -> original
-        makesSenseToBeDefinitelyNotNull(original) ->
-            ConeDefinitelyNotNullType(original.lowerBoundIfFlexible())
+        typeContext
+            .newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
+            .makesSenseToBeDefinitelyNotNull(original, useCorrectedNullabilityForFlexibleTypeParameters) ->
+
+            ConeDefinitelyNotNullType(
+                original.lowerBoundIfFlexible()
+            )
         else -> null
     }
 }
 
-fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(typeContext: ConeInferenceContext): ConeKotlinType {
+fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(typeContext: ConeTypeContext): ConeKotlinType {
     if (this is ConeIntersectionType) {
         return ConeIntersectionType(intersectedTypes.map { it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext) })
     }
-    return ConeDefinitelyNotNullType.create(this) ?: this.withNullability(ConeNullability.NOT_NULL, typeContext)
+    return ConeDefinitelyNotNullType.create(this, typeContext) ?: this.withNullability(ConeNullability.NOT_NULL, typeContext)
 }
 
-fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {
+fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>, typeSystemContext: ConeTypeContext): T {
     if (this.typeArguments === arguments) {
         return this
     }
@@ -72,12 +81,15 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
     return when (this) {
         is ConeClassErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, nullability.isNullable) as T
-        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(original.withArguments(arguments))!! as T
+        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(
+            original.withArguments(arguments, typeSystemContext),
+            typeSystemContext
+        )!! as T
         else -> error("Not supported: $this: ${this.render()}")
     }
 }
 
-fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
+fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes, typeSystemContext: ConeTypeContext): T {
     if (this.attributes == attributes) {
         return this
     }
@@ -86,16 +98,22 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
     return when (this) {
         is ConeClassErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
-        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(original.withAttributes(attributes))!!
+        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(
+            original.withAttributes(attributes, typeSystemContext),
+            typeSystemContext
+        )!!
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, attributes)
-        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
+        is ConeFlexibleType -> ConeFlexibleType(
+            lowerBound.withAttributes(attributes, typeSystemContext),
+            upperBound.withAttributes(attributes, typeSystemContext)
+        )
         else -> error("Not supported: $this: ${this.render()}")
     } as T
 }
 
 fun <T : ConeKotlinType> T.withNullability(
     nullability: ConeNullability,
-    typeContext: ConeInferenceContext,
+    typeContext: ConeTypeContext,
     attributes: ConeAttributes = this.attributes,
 ): T {
     if (this.nullability == nullability && this.attributes == attributes) {
@@ -140,7 +158,7 @@ fun <T : ConeKotlinType> T.withNullability(
 }
 
 fun coneFlexibleOrSimpleType(
-    typeContext: ConeInferenceContext,
+    typeContext: ConeTypeContext,
     lowerBound: ConeKotlinType,
     upperBound: ConeKotlinType,
 ): ConeKotlinType {
@@ -197,7 +215,7 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
 
-fun FirTypeRef.withoutEnhancedNullability(): FirTypeRef {
+fun FirTypeRef.withoutEnhancedNullability(typeSystemContext: ConeTypeContext): FirTypeRef {
     require(this is FirResolvedTypeRef)
     if (!hasEnhancedNullability()) return this
     return buildResolvedTypeRef {
@@ -205,7 +223,8 @@ fun FirTypeRef.withoutEnhancedNullability(): FirTypeRef {
         type = this@withoutEnhancedNullability.type.withAttributes(
             ConeAttributes.create(
                 this@withoutEnhancedNullability.type.attributes.filter { it != CompilerConeAttributes.EnhancedNullability }
-            )
+            ),
+            typeSystemContext,
         )
         annotations += this@withoutEnhancedNullability.annotations
     }
@@ -263,13 +282,14 @@ fun FirTypeRef.approximated(
 fun FirTypeRef.approximatedIfNeededOrSelf(
     approximator: ConeTypeApproximator,
     containingCallableVisibility: Visibility?,
-    isInlineFunction: Boolean = false
+    typeSystemContext: ConeTypeContext,
+    isInlineFunction: Boolean = false,
 ): FirTypeRef {
     val approximated = if (containingCallableVisibility == Visibilities.Public || containingCallableVisibility == Visibilities.Protected)
         approximatedForPublicPosition(approximator)
     else
         this
-    return approximated.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction).withoutEnhancedNullability()
+    return approximated.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction).withoutEnhancedNullability(typeSystemContext)
 }
 
 fun FirTypeRef.approximatedForPublicPosition(approximator: ConeTypeApproximator): FirTypeRef =
@@ -334,11 +354,11 @@ fun ConeTypeContext.captureFromArgumentsInternal(type: ConeKotlinType, status: C
     val capturedArguments = captureArguments(type, status) ?: return null
     return if (type is ConeFlexibleType) {
         ConeFlexibleType(
-            type.lowerBound.withArguments(capturedArguments),
-            type.upperBound.withArguments(capturedArguments),
+            type.lowerBound.withArguments(capturedArguments, this),
+            type.upperBound.withArguments(capturedArguments, this),
         )
     } else {
-        type.withArguments(capturedArguments)
+        type.withArguments(capturedArguments, this)
     }
 }
 
@@ -418,12 +438,12 @@ fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType): ConeKot
             typeToReplace.intersectedTypes.map { componentType ->
                 val capturedArguments = findCorrespondingCapturedArgumentsForType(componentType)
                     ?: return@map componentType
-                componentType.withArguments(capturedArguments)
+                componentType.withArguments(capturedArguments, this)
             }
         } else {
             val capturedArguments = findCorrespondingCapturedArgumentsForType(typeToReplace)
                 ?: return listOf(typeToReplace)
-            listOf(typeToReplace.withArguments(capturedArguments))
+            listOf(typeToReplace.withArguments(capturedArguments, this))
         }
     }
 

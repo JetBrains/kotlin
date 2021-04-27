@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.ConstantValueKind
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -137,15 +139,37 @@ fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
         else -> error("!")
     }
 
-fun makesSenseToBeDefinitelyNotNull(type: ConeKotlinType): Boolean =
-    type.canHaveUndefinedNullability() // TODO: also check nullability
+fun AbstractTypeCheckerContext.makesSenseToBeDefinitelyNotNull(
+    type: ConeKotlinType,
+    useCorrectedNullabilityForFlexibleTypeParameters: Boolean
+): Boolean {
+    if (!type.canHaveUndefinedNullability()) return false
+
+    // Replacing `useCorrectedNullabilityForFlexibleTypeParameters` with true for all call-sites seems to be correct
+    // But it seems that it should be a new feature: KT-28785 would be automatically fixed then
+    // (see the tests org.jetbrains.kotlin.spec.checkers.DiagnosticsTestSpecGenerated.NotLinked.Dfa.Pos.test12/13)
+    // So it should be a language feature, but it's hard correctly identify language version settings for all call sites
+    // Thus, we have non-trivial value at org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeEnhancement.notNullTypeParameter
+    // that run under related language-feature only
+    if (useCorrectedNullabilityForFlexibleTypeParameters && type is ConeTypeParameterType) {
+        // Effectively checks if the type is flexible or has nullable bound
+        return with(typeSystemContext) {
+            type.isNullableType()
+        }
+    }
+
+    // Actually, this code should work for type parameters as well, but it breaks some cases
+    // See KT-40114
+
+    return !AbstractNullabilityChecker.isSubtypeOfAny(this, type)
+}
 
 fun ConeKotlinType.canHaveUndefinedNullability(): Boolean {
     return when (this) {
         is ConeTypeVariableType,
-        is ConeCapturedType
+        is ConeCapturedType,
+        is ConeTypeParameterType
         -> true
-        is ConeTypeParameterType -> type.isMarkedNullable || !hasNotNullUpperBound()
         else -> false
     }
 }

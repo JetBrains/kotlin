@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.typeContext
@@ -85,10 +84,7 @@ private fun mapTypeAliasArguments(
     }
     val typeAliasMap = typeAlias.typeParameters.map { it.symbol }.zip(abbreviatedType.typeArguments).toMap()
 
-    val substitutor = object : AbstractConeSubstitutor() {
-        override val typeInferenceContext: ConeInferenceContext
-            get() = useSiteSession.inferenceComponents.ctx
-
+    val substitutor = object : AbstractConeSubstitutor(useSiteSession.typeContext) {
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
             return null
         }

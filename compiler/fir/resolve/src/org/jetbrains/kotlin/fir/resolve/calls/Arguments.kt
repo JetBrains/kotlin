@@ -600,7 +600,7 @@ internal fun captureFromTypeParameterUpperBoundIfNeeded(
 
     val capturedType = context.captureFromExpression(chosenSupertype) as ConeKotlinType? ?: return argumentType
     return if (argumentType is ConeDefinitelyNotNullType) {
-        ConeDefinitelyNotNullType.create(capturedType) ?: capturedType
+        ConeDefinitelyNotNullType.create(capturedType, session.typeContext) ?: capturedType
     } else {
         capturedType
     }

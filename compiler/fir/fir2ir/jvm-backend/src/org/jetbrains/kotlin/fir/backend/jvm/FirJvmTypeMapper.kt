@@ -233,7 +233,10 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
             require(it is ConeKotlinType)
         }
         @Suppress("UNCHECKED_CAST")
-        return defaultType().withArguments((arguments as List<ConeKotlinType>).toTypedArray())
+        return defaultType().withArguments(
+            (arguments as List<ConeKotlinType>).toTypedArray(),
+            session.typeContext,
+        )
     }
 
     override fun TypeParameterMarker.representativeUpperBound(): ConeKotlinType {
