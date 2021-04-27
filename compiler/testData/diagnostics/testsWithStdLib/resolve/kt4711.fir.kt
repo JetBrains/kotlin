@@ -10,7 +10,7 @@ fun main() {
     val pi = 4.0.toDouble() * delta * (1..n).reduce(
             {t, i ->
                 val x = (i - 0.5) * delta
-                t + 1.0 / (1.0 + x * x)
+                <!ARGUMENT_TYPE_MISMATCH, TYPE_MISMATCH!>t + 1.0 / (1.0 + x * x)<!>
 
             })
     // !!! pi has error type here

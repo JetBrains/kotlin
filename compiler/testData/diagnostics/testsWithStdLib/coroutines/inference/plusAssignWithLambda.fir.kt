@@ -26,7 +26,7 @@ fun <T> id(x: T) = x
 
 fun foo2() = {
     var x = A()
-    x += { <!ARGUMENT_TYPE_MISMATCH!>""<!> }
+    x += <!ARGUMENT_TYPE_MISMATCH!>{ "" }<!>
     var y = A()
     y += 1
 }
@@ -37,6 +37,6 @@ class B {
 }
 
 fun foo3(x: B) = {
-    x += { "" }
-    x += id { "" }
+    x += { <!ARGUMENT_TYPE_MISMATCH!>""<!> }
+    x += id { <!ARGUMENT_TYPE_MISMATCH!>""<!> }
 }

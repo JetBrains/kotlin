@@ -10,7 +10,7 @@ class A {
             return 1
         }
         return
-        return foo()
+        return <!TYPE_MISMATCH!>foo()<!>
     }
 
     fun foo(): Int = 1

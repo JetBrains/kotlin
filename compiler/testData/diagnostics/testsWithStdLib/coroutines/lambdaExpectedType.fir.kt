@@ -29,7 +29,7 @@ fun foo() {
     i = genericBuilder { 1 }
     genericBuilder { 1 }
     genericBuilder<Int> { 1 }
-    genericBuilder<Int> { "" }
+    genericBuilder<Int> { <!ARGUMENT_TYPE_MISMATCH!>""<!> }
 
     val y = { 1 }
     genericBuilder(y)
@@ -44,7 +44,7 @@ fun foo() {
     val s: String = manyArgumentsBuilder({}, { "" }) { 1 }
 
     manyArgumentsBuilder<String>({}, { "" }, { 1 })
-    manyArgumentsBuilder<String>({}, { 1 }, { 2 })
+    manyArgumentsBuilder<String>({}, { <!ARGUMENT_TYPE_MISMATCH!>1<!> }, { 2 })
 
     severalParamsInLambda { x, y ->
         x checkType { _<String>() }

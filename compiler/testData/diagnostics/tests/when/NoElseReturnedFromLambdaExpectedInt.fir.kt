@@ -11,9 +11,9 @@
 
 fun foo(x: Int) {
     r {
-        when (x) {
+        <!ARGUMENT_TYPE_MISMATCH!>when (x) {
             2 -> 0
-        }
+        }<!>
     }
 }
 

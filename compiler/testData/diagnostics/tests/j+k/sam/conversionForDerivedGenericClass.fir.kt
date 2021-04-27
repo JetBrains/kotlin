@@ -18,5 +18,5 @@ fun test(a: A<Runnable>, b: B, c: C<Runnable>) {
     b.f { }
     c.f { }
     C<Runnable>().f { }
-    C.g<Runnable> { }
+    C.g<Runnable> <!TYPE_MISMATCH!>{ }<!>
 }

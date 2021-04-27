@@ -1,3 +1,3 @@
 open class C<T : C<T>>
 class TestOK : C<TestOK>()
-class TestFail : C<C<TestFail>>()
+class TestFail : <!UPPER_BOUND_VIOLATED!>C<C<TestFail>><!>()

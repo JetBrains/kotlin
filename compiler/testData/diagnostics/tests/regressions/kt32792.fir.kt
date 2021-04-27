@@ -5,6 +5,6 @@ inline fun <T> tryLambdas(lamb : () -> T) : T{
 }
 fun main() {
     <!INAPPLICABLE_CANDIDATE!>tryLambdas<!><String> {
-        return@tryLambdas
+        <!ARGUMENT_TYPE_MISMATCH!>return@tryLambdas<!>
     }
 }

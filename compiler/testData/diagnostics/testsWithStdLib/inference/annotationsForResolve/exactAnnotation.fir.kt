@@ -8,5 +8,5 @@ fun test1(l: List<Number>) {
 
     val i: Int = l.firstTyped()
 
-    val s: String = l.firstTyped()
+    val s: String = <!INITIALIZER_TYPE_MISMATCH, NEW_INFERENCE_ERROR!>l.firstTyped()<!>
 }

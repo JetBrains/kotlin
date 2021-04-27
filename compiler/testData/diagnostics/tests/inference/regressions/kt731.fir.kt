@@ -16,6 +16,6 @@ fun <T, G> A<T>.foo(x: (T)-> G): G {
 
 fun main() {
     val a = A(1)
-    val t: String = a.foo({p -> p})
+    val t: String = a.foo({p -> <!ARGUMENT_TYPE_MISMATCH!>p<!>})
     checkSubtype<String>(t)
 }

@@ -16,5 +16,5 @@ fun <S> test1(a: ParameterizedChild<S>?, b: Child): Base<S> = myRun {
 }
 
 fun <S> test2(a: S?, b: S): S = myRun {
-    select(a, b)
+    <!ARGUMENT_TYPE_MISMATCH!>select(a, b)<!>
 }

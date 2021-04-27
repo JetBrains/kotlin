@@ -10,6 +10,6 @@ operator fun String.provideDelegate(thisRef: Any?, prop: Any) = WrongDelegate(th
 
 operator fun String.getValue(thisRef: Any?, prop: Any) = this
 
-val test1: String by "OK"
+val test1: String by <!TYPE_MISMATCH!>"OK"<!>
 val test2: Int by "OK"
 val test3 by "OK"

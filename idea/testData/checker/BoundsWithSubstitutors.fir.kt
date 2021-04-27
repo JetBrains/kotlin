@@ -6,7 +6,7 @@
     class C : A<C>()
 
     val a = B<C>()
-    val a1 = B<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'A<kotlin/Int>'">Int</error>>()
+    val a1 = B<<error descr="[UPPER_BOUND_VIOLATED] Type argument is not within its bounds: should be subtype of 'A<TypeVariable(X)>'">Int</error>>()
 
     class X<A, B : A>()
 

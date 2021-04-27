@@ -7,10 +7,10 @@ class A {
 class B(other: B = <!NO_THIS!>this<!>)
 
 class C() {
-    constructor(x: Int) : this({
+    constructor(x: Int) : this(<!ARGUMENT_TYPE_MISMATCH!>{
         val a = 10
         <!ARGUMENT_TYPE_MISMATCH, INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>
-    }) {}
+    }<!>) {}
 }
 
 class D {
