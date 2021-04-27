@@ -156,7 +156,6 @@ internal class MockResultsConsumer : ResultsConsumer {
 
     override fun targetConsumed(target: CommonizerTarget) {
         check(!this::status.isInitialized)
-        check(target in _modulesByTargets.keys)
         check(target !in finishedTargets)
         finishedTargets += target
     }

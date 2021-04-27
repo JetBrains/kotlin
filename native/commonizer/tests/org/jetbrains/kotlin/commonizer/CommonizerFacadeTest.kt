@@ -89,14 +89,14 @@ class CommonizerFacadeTest {
         private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>) {
             val results = MockResultsConsumer()
             runCommonization(originalModules.toCommonizerParameters(results))
-            assertEquals(results.status, Status.NOTHING_TO_DO)
+            assertEquals(Status.NOTHING_TO_DO, results.status)
             assertTrue(results.modulesByTargets.isEmpty())
         }
 
         private fun doTestSuccessfulCommonization(originalModules: Map<String, List<String>>) {
             val results = MockResultsConsumer()
             runCommonization(originalModules.toCommonizerParameters(results))
-            assertEquals(results.status, Status.DONE)
+            assertEquals(Status.DONE, results.status)
 
             val expectedCommonModuleNames = mutableSetOf<String>()
             originalModules.values.forEachIndexed { index, moduleNames ->
@@ -128,7 +128,6 @@ class CommonizerFacadeTest {
             expectedMissingModuleNames: Set<String>,
             actualModuleResults: Collection<ModuleResult>
         ) {
-            assertEquals(expectedCommonizedModuleNames.size + expectedMissingModuleNames.size, actualModuleResults.size)
 
             val actualCommonizedModuleNames = mutableSetOf<String>()
             val actualMissingModuleNames = mutableSetOf<String>()
@@ -140,6 +139,7 @@ class CommonizerFacadeTest {
                 }
             }
 
+            assertEquals(expectedCommonizedModuleNames.size + expectedMissingModuleNames.size, actualModuleResults.size)
             assertEquals(expectedCommonizedModuleNames, actualCommonizedModuleNames)
             assertEquals(expectedMissingModuleNames, actualMissingModuleNames)
         }

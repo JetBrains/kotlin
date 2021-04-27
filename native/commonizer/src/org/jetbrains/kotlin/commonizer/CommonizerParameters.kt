@@ -20,17 +20,6 @@ class CommonizerParameters(
     val progressLogger: ((String) -> Unit)? = null,
 )
 
-fun CommonizerParameters.getCommonModuleNames(): Set<String> {
-    val supportedTargets = targetProviders.filterNonNull()
-    if (supportedTargets.size == 0) return emptySet() // Nothing to do
-
-    val allModuleNames: List<Set<String>> = supportedTargets.toList().map { targetProvider ->
-        targetProvider.modulesProvider.loadModuleInfos().mapTo(HashSet()) { it.name }
-    }
-
-    return allModuleNames.reduce { a, b -> a intersect b } // there are modules that are present in every target
-}
-
 internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget): CirProvidedClassifiers {
     val modules = outputTarget.withAllAncestors()
         .sortedBy { it.level }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult.Commonized
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
 import kotlin.test.assertIs
+import kotlin.test.fail
 
 data class HierarchicalCommonizationResult(
     val inlineSourceTestFactory: DependencyAwareInlineSourceTestFactory,
@@ -131,12 +132,15 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         fun build(): Target = Target(target, modules = modules)
     }
 
-    fun commonize(builder: ParametersBuilder.() -> Unit): HierarchicalCommonizationResult {
+    fun commonize(
+        expectedStatus: ResultsConsumer.Status = ResultsConsumer.Status.DONE,
+        builder: ParametersBuilder.() -> Unit
+    ): HierarchicalCommonizationResult {
         val consumer = MockResultsConsumer()
         val testParameters = ParametersBuilder(this).also(builder).build()
         val commonizerParameters = testParameters.toCommonizerParameters(consumer)
         runCommonization(commonizerParameters)
-        assertEquals(ResultsConsumer.Status.DONE, consumer.status)
+        assertEquals(expectedStatus, consumer.status)
         return HierarchicalCommonizationResult(
             inlineSourceTestFactory = DependencyAwareInlineSourceTestFactory(inlineSourceBuilder, testParameters.dependencies),
             testParameters = testParameters,
@@ -176,7 +180,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 /* ASSERTIONS */
 
 fun HierarchicalCommonizationResult.getTarget(target: CommonizerTarget): List<ResultsConsumer.ModuleResult> {
-    return this.results[target] ?: kotlin.test.fail("Missing target $target in results ${this.results.keys}")
+    return this.results[target] ?: fail("Missing target $target in results ${this.results.keys}")
 }
 
 fun HierarchicalCommonizationResult.getTarget(target: String): List<ResultsConsumer.ModuleResult> {
@@ -188,10 +192,16 @@ fun HierarchicalCommonizationResult.assertCommonized(
     moduleBuilder: InlineSourceBuilder.ModuleBuilder.() -> Unit
 ) {
     val inlineSourceTest = inlineSourceTestFactory[target]
-    val commonizedModule = getTarget(target).assertSingleCommonizedModule()
+
     val referenceModule = inlineSourceTest.createModule {
         moduleBuilder()
     }
+
+    val module = getTarget(target).firstOrNull { moduleResult -> moduleResult.libraryName == referenceModule.name }
+        ?: fail("Missing ${referenceModule.name} in target $target")
+
+    val commonizedModule = assertIs<Commonized>(module, "Expected ${module.libraryName} to be 'Commonized'")
+
     assertModulesAreEqual(
         inlineSourceTest.createMetadata(referenceModule), commonizedModule.metadata, target
     )
@@ -206,8 +216,10 @@ fun HierarchicalCommonizationResult.assertCommonized(target: CommonizerTarget, @
 fun HierarchicalCommonizationResult.assertCommonized(target: String, @Language("kotlin") sourceContent: String) =
     assertCommonized(parseCommonizerTarget(target), sourceContent)
 
-fun HierarchicalCommonizationResult.assertCommonized(target: String, moduleBuilder: InlineSourceBuilder.ModuleBuilder.() -> Unit) =
-    assertCommonized(parseCommonizerTarget(target), moduleBuilder)
+fun HierarchicalCommonizationResult.assertCommonized(
+    target: String,
+    moduleBuilder: InlineSourceBuilder.ModuleBuilder.() -> Unit
+) = assertCommonized(parseCommonizerTarget(target), moduleBuilder)
 
 fun Collection<ResultsConsumer.ModuleResult>.assertSingleCommonizedModule(): Commonized {
     kotlin.test.assertEquals(1, size, "Expected exactly one module. Found: ${this.map { it.libraryName }}")

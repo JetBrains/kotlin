@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
 fun runCommonization(parameters: CommonizerParameters) {
-    if (parameters.getCommonModuleNames().isEmpty()) {
+    if (!parameters.containsCommonModuleNames()) {
         parameters.resultsConsumer.allConsumed(Status.NOTHING_TO_DO)
         return
     }
@@ -109,11 +109,13 @@ private fun serialize(parameters: CommonizerParameters, mergedTree: CirRootNode,
 }
 
 private fun serializeMissingModules(parameters: CommonizerParameters, requestedTarget: CommonizerTarget) {
-    if (requestedTarget in parameters.targetProviders.targets) {
-        parameters.targetProviders[requestedTarget]?.modulesProvider?.loadModuleInfos().orEmpty()
-            .filter { it.name !in parameters.getCommonModuleNames() }
-            .forEach { missingModule -> parameters.resultsConsumer.consume(requestedTarget, Missing(missingModule.originalLocation)) }
-    }
+    val targetProvider = parameters.targetProviders.getOrNull(requestedTarget) ?: return
+    val commonModuleNames = parameters.commonModuleNames(targetProvider)
+
+    targetProvider.modulesProvider.loadModuleInfos()
+        .filter { it.name !in commonModuleNames }
+        .forEach { missingModule -> parameters.resultsConsumer.consume(requestedTarget, Missing(missingModule.originalLocation)) }
+
 }
 
 private val KLIB_FRAGMENT_WRITE_STRATEGY = ChunkedKlibModuleFragmentWriteStrategy()
