@@ -4,7 +4,7 @@
 import kotlin.reflect.KProperty
 
 abstract class MainActivity : DIAware1() {
-    val bar: Bar by instance1()
+    val bar: Bar by <!TYPE_MISMATCH!>instance1()<!>
 }
 
 class Bar

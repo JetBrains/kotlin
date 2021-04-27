@@ -8,5 +8,5 @@ object T3 {
     operator fun <T> Foo<T>.provideDelegate(host: T3, p: Any?): Foo<T> = TODO()
     operator fun <T> Foo<T>.getValue(receiver: T3, p: Any?): T = TODO()
 
-    val test1: String by delegate()
+    val test1: String by <!TYPE_MISMATCH!>delegate()<!>
 }

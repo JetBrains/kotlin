@@ -1,4 +1,4 @@
-val test: String by materializeDelegate()
+val test: String by <!TYPE_MISMATCH!>materializeDelegate()<!>
 
 fun <T> materializeDelegate(): Delegate<T> = Delegate()
 
