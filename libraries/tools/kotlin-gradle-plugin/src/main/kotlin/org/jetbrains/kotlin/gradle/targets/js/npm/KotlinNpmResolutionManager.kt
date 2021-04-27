@@ -81,8 +81,9 @@ import java.io.File
  * Note that in this case resolution process will be performed outside of task execution.
  */
 class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension) {
-    private val forceFullResolve: Boolean
-        get() = isInIdeaSync
+    private val forceFullResolve: Boolean by lazy {
+        nodeJsSettings.rootProject.isInIdeaSync
+    }
 
     internal val resolver = KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
 
