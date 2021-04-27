@@ -1847,6 +1847,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kt45905.kt")
+                public void testKt45905() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt45905.kt");
+                }
+
+                @Test
                 @TestMetadata("kt46173.kt")
                 public void testKt46173() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt46173.kt");
