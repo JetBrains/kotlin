@@ -7,6 +7,7 @@ dependencies {
     implementation(kotlinStdlib())
     implementation(project(":compiler:psi"))
     implementation(project(":compiler:light-classes"))
+    implementation(project(":plugins:uast-kotlin-base"))
 
     // BEWARE: Uast should not depend on IDEA.
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "asm-all", rootProject = rootProject) }

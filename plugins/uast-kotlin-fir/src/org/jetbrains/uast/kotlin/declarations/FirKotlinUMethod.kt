@@ -7,7 +7,6 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
-import com.intellij.psi.PsiParameter
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.psi.*
@@ -46,21 +45,12 @@ open class FirKotlinUMethod(
     }
 
     override val uastParameters: List<UParameter> by lz {
-
-        fun parameterOrigin(psiParameter: PsiParameter?): KtElement? {
-            return when (psiParameter) {
-                is KtLightElement<*, *> -> psiParameter.kotlinOrigin
-                // TODO: UastKotlinPsiParameter?
-                else -> null
-            }
-        }
-
         val lightParams = psi.parameterList.parameters
         val receiverTypeReference =
-            receiverTypeReference ?: return@lz lightParams.map { FirKotlinUParameter(it, parameterOrigin(it), this) }
+            receiverTypeReference ?: return@lz lightParams.map { FirKotlinUParameter(it, getKotlinMemberOrigin(it), this) }
         val lightReceiver = lightParams.firstOrNull() ?: return@lz emptyList<UParameter>()
         val uParameters = SmartList<UParameter>(FirKotlinReceiverUParameter(lightReceiver, receiverTypeReference, this))
-        lightParams.drop(1).mapTo(uParameters) { FirKotlinUParameter(it, parameterOrigin(it), this) }
+        lightParams.drop(1).mapTo(uParameters) { FirKotlinUParameter(it, getKotlinMemberOrigin(it), this) }
         uParameters
     }
 

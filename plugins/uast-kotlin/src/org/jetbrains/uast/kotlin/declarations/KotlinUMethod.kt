@@ -126,12 +126,6 @@ open class KotlinUMethod(
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
 
     companion object {
-        private fun getKotlinMemberOrigin(element: PsiElement?): KtDeclaration? {
-            (element as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement?.let { return it }
-            (element as? KtLightElement<*, *>)?.kotlinOrigin?.let { return it as? KtDeclaration }
-            return null
-        }
-
         fun create(psi: KtLightMethod, containingElement: UElement?): KotlinUMethod {
             val kotlinOrigin = psi.kotlinOrigin
             return if (kotlinOrigin is KtConstructor<*>) {
