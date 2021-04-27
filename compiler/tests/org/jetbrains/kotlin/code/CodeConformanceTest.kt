@@ -72,6 +72,7 @@ class CodeConformanceTest : TestCase() {
             File("."),
             listOf(
                 "build",
+                "buildSrc/build/generated-sources",
                 "buildSrc/prepare-deps/build",
                 "compiler/ir/serialization.js/build/fullRuntime",
                 "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
@@ -97,6 +98,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/node_modules",
                 "libraries/stdlib/wasm/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/.testKitDir",
                 "libraries/tools/kotlin-maven-plugin-test/target",
                 "libraries/tools/kotlin-test-js-runner/.gradle",
                 "libraries/tools/kotlin-test-js-runner/lib",
