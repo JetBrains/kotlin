@@ -69,16 +69,17 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val last
                 if (constExpr !is IrConst<*>) return false
                 if (!constExpr.isTrueConstant()) return false
 
-                when (branchExpr) {
+                return when (branchExpr) {
                     is IrWhen -> checkForPrimitiveOrPattern(branchExpr, constants)
-                    is IrCall -> {
-                        val constant = tryToExtractEqeqeqConst(branchExpr) ?: return false
-                        constants += constant
+                    is IrCall -> when (val constant = tryToExtractEqeqeqConst(branchExpr)) {
+                        null -> false
+                        else -> {
+                            constants += constant
+                            true
+                        }
                     }
-                    else -> return false
+                    else -> false
                 }
-
-                return true
             }
 
             if (!checkBranchIsOrPattern(thenBranch.result, thenBranch.condition)) return false

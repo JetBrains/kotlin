@@ -33484,6 +33484,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/when/switchOptimizationMultipleConditions.kt");
         }
 
+        @TestMetadata("switchOptimizationMultipleMixedConditions.kt")
+        public void testSwitchOptimizationMultipleMixedConditions() throws Exception {
+            runTest("compiler/testData/codegen/box/when/switchOptimizationMultipleMixedConditions.kt");
+        }
+
         @TestMetadata("switchOptimizationSingleStatementCase.kt")
         public void testSwitchOptimizationSingleStatementCase() throws Exception {
             runTest("compiler/testData/codegen/box/when/switchOptimizationSingleStatementCase.kt");

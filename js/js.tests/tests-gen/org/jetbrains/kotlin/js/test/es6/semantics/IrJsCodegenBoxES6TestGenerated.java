@@ -28119,6 +28119,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/when/switchOptimizationMultipleConditions.kt");
         }
 
+        @TestMetadata("switchOptimizationMultipleMixedConditions.kt")
+        public void testSwitchOptimizationMultipleMixedConditions() throws Exception {
+            runTest("compiler/testData/codegen/box/when/switchOptimizationMultipleMixedConditions.kt");
+        }
+
         @TestMetadata("switchOptimizationSingleStatementCase.kt")
         public void testSwitchOptimizationSingleStatementCase() throws Exception {
             runTest("compiler/testData/codegen/box/when/switchOptimizationSingleStatementCase.kt");
