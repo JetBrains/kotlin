@@ -213,6 +213,28 @@ internal class StructStubBuilder(
                             }
                         }.filterNotNull()
 
+        // Here's what we have for C++.
+        // Note that we account for constructors twice.
+        // class XXX {
+        //    // These go into `methods`
+        //    foo()
+        //    bar(x, y)
+        //
+        //    // These are in the `secondaryConstructors` variable.
+        //    // their signatures match the signatures of __init__ modulo `self` parameters.
+        //    // The primary constructor will be created for the class the same way as for interop structs.
+        //    constructor(z)
+        //    constructor(t, u)
+        //
+        //    Companion {
+        //      // These all go to `classMethods`
+        //      __init__(self, z)
+        //      __init__(self, t, u)
+        //      __destroy__(self)
+        //      aStaticMathod()
+        //    }
+        //  }
+
         val secondaryConstructors: List<ConstructorStub> =
                 def.methods
                     .filter { it.isCxxConstructor }
