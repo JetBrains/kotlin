@@ -10,8 +10,8 @@ public class A { void add(C c) {} }
 
 class B : A() {
     fun test(x: Any?) {
-        add(foo { { _ : String -> Unit } })
-        add(x?.let { { _ : String -> Unit } })
+        add(foo { <!TYPE_MISMATCH!>{ _ : String -> Unit }<!> })
+        add(x?.let { <!TYPE_MISMATCH!>{ _ : String -> Unit }<!> })
     }
 }
 
