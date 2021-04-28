@@ -165,6 +165,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         @Language("kotlin")
         source: String,
         expectedTransformed: String,
+        @Language("kotlin")
         extra: String = "",
         validator: (element: IrElement) -> Unit = { },
         dumpTree: Boolean = false,
