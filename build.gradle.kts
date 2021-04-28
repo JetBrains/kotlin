@@ -326,6 +326,37 @@ extra["compilerModulesForJps"] = listOf(
     ":compiler:compiler.version"
 )
 
+extra["compilerArtifactsForIde"] = listOf(
+    ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-compiler-cli-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:compiler-components-for-jps",
+    ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
+    ":kotlin-script-runtime",
+    ":kotlin-script-util",
+    ":kotlin-scripting-common",
+    ":kotlin-scripting-jvm",
+    ":kotlin-scripting-compiler",
+    ":kotlin-scripting-compiler-impl",
+    ":kotlin-android-extensions-runtime",
+    ":kotlin-stdlib-common",
+    ":kotlin-stdlib",
+    ":kotlin-stdlib-jdk7",
+    ":kotlin-stdlib-jdk8",
+    ":kotlin-reflect",
+    ":kotlin-main-kts"
+)
+
 // TODO: fix remaining warnings and remove this property.
 extra["tasksWithWarnings"] = listOf(
     ":kotlin-stdlib:compileTestKotlin",
@@ -960,38 +991,13 @@ tasks {
 
     register("publishIdeArtifacts") {
         idePluginDependency {
-            val projectsToPublish = listOf(
-                ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
-                ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
-                ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
-                ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
-                ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
-                ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide",
-                ":prepare:ide-plugin-dependencies:kotlin-compiler-cli-for-ide",
-                ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
-                ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide",
-                ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",
-                ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
-                ":prepare:ide-plugin-dependencies:compiler-components-for-jps",
-                ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
-                ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
-                ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
-                ":kotlin-script-runtime",
-                ":kotlin-script-util",
-                ":kotlin-scripting-common",
-                ":kotlin-scripting-jvm",
-                ":kotlin-scripting-compiler",
-                ":kotlin-scripting-compiler-impl",
-                ":kotlin-android-extensions-runtime",
-                ":kotlin-stdlib-common",
-                ":kotlin-stdlib",
-                ":kotlin-stdlib-jdk7",
-                ":kotlin-stdlib-jdk8",
-                ":kotlin-reflect",
-                ":kotlin-main-kts"
-            )
+            dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:publish" })
+        }
+    }
 
-            dependsOn(projectsToPublish.map { "$it:publish" })
+    register("installIdeArtifacts") {
+        idePluginDependency {
+            dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:install" })
         }
     }
 }
