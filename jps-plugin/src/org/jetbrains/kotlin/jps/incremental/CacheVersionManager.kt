@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import java.io.File
 import java.io.IOException
+import java.nio.file.Path
+import kotlin.io.path.*
 
 /**
  * Manages files with actual version [loadActual] and provides expected version [expected].
@@ -18,7 +20,7 @@ import java.io.IOException
  * Based on that status system may perform required actions (i.e. rebuild something, clearing caches, etc...).
  */
 class CacheVersionManager(
-    private val versionFile: File,
+    private val versionFile: Path,
     expectedOwnVersion: Int?
 ) : CacheAttributesManager<CacheVersion> {
     override val expected: CacheVersion? =
@@ -26,7 +28,7 @@ class CacheVersionManager(
         else CacheVersion(expectedOwnVersion, JvmBytecodeBinaryVersion.INSTANCE, JvmMetadataVersion.INSTANCE)
 
     override fun loadActual(): CacheVersion? =
-        if (!versionFile.exists()) null
+        if (versionFile.notExists()) null
         else try {
             CacheVersion(versionFile.readText().toInt())
         } catch (e: NumberFormatException) {
@@ -36,16 +38,16 @@ class CacheVersionManager(
         }
 
     override fun writeVersion(values: CacheVersion?) {
-        if (values == null) versionFile.delete()
+        if (values == null) versionFile.deleteIfExists()
         else {
-            versionFile.parentFile.mkdirs()
+            versionFile.parent.createDirectories()
             versionFile.writeText(values.intValue.toString())
         }
     }
 
     @get:TestOnly
     val versionFileForTesting: File
-        get() = versionFile
+        get() = versionFile.toFile()
 }
 
 fun CacheVersion(own: Int, bytecode: JvmBytecodeBinaryVersion, metadata: JvmMetadataVersion): CacheVersion {
