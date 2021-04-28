@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -42,7 +43,7 @@ abstract class GlobalDeclarationTable(
     constructor(mangler: KotlinMangler.IrMangler) : this(mangler, IdSignatureClashTracker.DEFAULT_TRACKER)
 
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
-        builtIns.knownBuiltins.forEach {
+        (builtIns as IrBuiltInsOverDescriptors).knownBuiltins.forEach {
             val symbol = (it as IrSymbolOwner).symbol
             table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
         }
@@ -104,5 +105,5 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
 }
 
 // This is what we pre-populate tables with
-val IrBuiltIns.knownBuiltins: List<IrDeclaration>
+val IrBuiltInsOverDescriptors.knownBuiltins: List<IrDeclaration>
     get() = packageFragment.declarations

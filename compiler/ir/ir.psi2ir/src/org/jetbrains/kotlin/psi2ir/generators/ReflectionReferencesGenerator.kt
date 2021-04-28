@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -537,7 +535,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     }
 
     private fun KotlinType.kFunctionTypeToFunctionType(suspendFunction: Boolean) = createFunctionType(
-        statementGenerator.context.builtIns,
+        (statementGenerator.context.irBuiltIns as IrBuiltInsOverDescriptors).builtIns,
         annotations,
         null,
         arguments.dropLast(1).map { it.type },

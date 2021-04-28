@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetObject
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext

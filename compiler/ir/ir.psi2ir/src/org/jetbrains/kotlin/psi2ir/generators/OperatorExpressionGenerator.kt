@@ -45,7 +45,18 @@ import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import kotlin.collections.Map
+import kotlin.collections.contains
+import kotlin.collections.get
+import kotlin.collections.listOf
+import kotlin.collections.mapOf
+import kotlin.collections.mapTo
+import kotlin.collections.set
+import kotlin.collections.toMap
+import kotlin.collections.zip
 
 
 class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -205,7 +216,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         // Infer type for elvis manually. Take into account possibly nested elvises.
         val rightType = getResultTypeForElvis(binaryExpression.right!!).unwrap()
         val leftType = getResultTypeForElvis(binaryExpression.left!!).unwrap()
-        val leftNNType = intersectTypes(listOf(leftType, context.builtIns.anyType))
+        val leftNNType = intersectTypes(listOf(leftType, context.irBuiltInsOverDescriptors.any))
         return NewCommonSuperTypeCalculator.commonSuperType(listOf(rightType, leftNNType))
     }
 
@@ -432,7 +443,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         return memberScope.findSingleFunction(Name.identifier("to$targetTypeName"))
     }
 
-    private val primitiveTypeMapping = context.irBuiltIns.run { primitiveTypes.zip(primitiveIrTypes).toMap() }
+    private val primitiveTypeMapping = context.irBuiltInsOverDescriptors.run { primitiveTypes.zip(primitiveIrTypes).toMap() }
     private fun kotlinTypeToIrType(kotlinType: KotlinType?) = kotlinType?.let { primitiveTypeMapping[it] }
 
     private fun generateComparisonOperator(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {

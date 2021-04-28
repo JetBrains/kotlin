@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.Opera
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockReturn
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -43,8 +44,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference as ProtoRawFunctionReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
@@ -54,7 +53,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitial
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation as ProtoOperation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrRawFunctionReference as ProtoRawFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn as ProtoReturn
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField as ProtoSetField
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue as ProtoSetValue
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement as ProtoSpreadElement

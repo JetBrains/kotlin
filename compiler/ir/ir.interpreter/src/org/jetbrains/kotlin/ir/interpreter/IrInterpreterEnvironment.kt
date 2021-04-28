@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.state.Complex

@@ -15,10 +15,11 @@ import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CREATE_METHOD_NAME
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -55,6 +55,8 @@ class JvmSymbols(
     private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
     private val javaUtilPackage: IrPackageFragment = createPackage(FqName("java.util"))
+
+    private val kotlinInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.internal"))
 
     // Special package for functions representing dynamic symbols referenced by 'INVOKEDYNAMIC' instruction - e.g.,
     //  'get(Ljava/lang/String;)Ljava/util/function/Supplier;'
@@ -95,6 +97,7 @@ class JvmSymbols(
                 "kotlin.reflect" -> kotlinReflectPackage
                 "java.lang" -> javaLangPackage
                 "java.util" -> javaUtilPackage
+                "kotlin.internal" -> kotlinInternalPackage
                 else -> error("Other packages are not supported yet: $fqName")
             }
             createImplicitParameterDeclarationWithWrappedDescriptor()
@@ -363,7 +366,7 @@ class JvmSymbols(
         }
     }
 
-    fun getFunction(parameterCount: Int): IrClassSymbol = irBuiltIns.function(parameterCount)
+    fun getFunction(parameterCount: Int): IrClassSymbol = irBuiltIns.functionN(parameterCount).symbol
 
     private val jvmFunctionClasses = storageManager.createMemoizedFunction { n: Int ->
         createFunctionClass(n, false)
@@ -545,6 +548,42 @@ class JvmSymbols(
             addValueParameter("v", src.defaultType)
             returnType = dst.defaultType
         }.symbol
+
+    private val progressionUtilClasses by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        listOf(
+            "kotlin.internal.ProgressionUtilKt" to listOf(int, long),
+            "kotlin.internal.UProgressionUtilKt" to listOfNotNull(uInt, uLong)
+        ).map { (fqn, types) ->
+            createClass(FqName(fqn)) { klass ->
+                for (type in types) {
+                    klass.addFunction("getProgressionLastElement", type.owner.defaultType, isStatic = true).apply {
+                        for (paramName in arrayOf("s", "e")) {
+                            addValueParameter(paramName, type.owner.defaultType)
+                        }
+                        addValueParameter(
+                            "st",
+                            when (type) {
+                                uInt -> int.owner.defaultType
+                                uLong -> long.owner.defaultType
+                                else -> type.owner.defaultType
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol?, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        progressionUtilClasses.flatMap { klass ->
+            klass.functions.filter {
+                it.owner.name.identifier == "getProgressionLastElement"
+            }.map {
+                it.owner.returnType.classifierOrFail to it
+            }
+        }.toMap()
+    }
+
 
     val arrayOfAnyType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyType)
     val arrayOfAnyNType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)

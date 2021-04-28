@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.serialization.KonanFileMetadataSource
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.klibModuleOrigin
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall

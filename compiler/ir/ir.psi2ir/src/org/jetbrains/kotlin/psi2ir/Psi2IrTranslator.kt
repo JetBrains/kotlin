@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -63,7 +63,7 @@ class Psi2IrTranslator(
             symbolTable,
             extensions,
             typeTranslator,
-            IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable),
+            IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable),
         )
     }
 

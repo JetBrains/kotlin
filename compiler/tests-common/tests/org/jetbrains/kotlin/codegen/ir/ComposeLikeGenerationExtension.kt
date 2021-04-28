@@ -274,7 +274,7 @@ class ComposeLikeDefaultArgumentRewriter(
     }
 
     private fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
-        context.symbols.getBinaryOperator(name, this, paramType)
+        context.irBuiltIns.getBinaryOperator(name, this, paramType)
 
     private fun irAnd(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         return irCall(

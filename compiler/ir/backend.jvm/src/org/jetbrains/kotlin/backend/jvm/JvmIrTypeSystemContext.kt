@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.ir.IrJvmFlexibleType
 import org.jetbrains.kotlin.backend.jvm.ir.asJvmFlexibleType
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext

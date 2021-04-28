@@ -92,7 +92,7 @@ class DataClassMembersGenerator(
 
             private fun getHashCodeFunction(type: KotlinType): FunctionDescriptor =
                 type.memberScope.findHashCodeFunctionOrNull()
-                    ?: context.builtIns.any.unsubstitutedMemberScope.findHashCodeFunctionOrNull()!!
+                    ?: context.irBuiltIns.anyClass.descriptor.unsubstitutedMemberScope.findHashCodeFunctionOrNull()!!
 
             private fun getHashCodeFunction(
                 type: KotlinType,

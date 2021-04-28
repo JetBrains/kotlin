@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -64,6 +65,8 @@ class GeneratorContext private constructor(
     val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
 
     val samTypeApproximator = SamTypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
+
+    val irBuiltInsOverDescriptors: IrBuiltInsOverDescriptors get() = irBuiltIns as IrBuiltInsOverDescriptors
 
     fun createFileScopeContext(ktFile: KtFile): GeneratorContext {
         return GeneratorContext(

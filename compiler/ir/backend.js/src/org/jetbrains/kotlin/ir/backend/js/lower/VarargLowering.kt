@@ -41,8 +41,7 @@ private class VarargTransformer(
     private fun List<IrExpression>.toArrayLiteral(type: IrType, varargElementType: IrType): IrExpression {
 
         // TODO: Use symbols when builtins symbol table is fixes
-        val primitiveType = context.intrinsics.primitiveArrays
-            .mapKeys { it.key }[type.classifierOrNull]
+        val primitiveType = context.intrinsics.primitiveArrays.mapKeys { it.key }[type.classifierOrNull]
 
         val intrinsic =
             if (primitiveType != null)

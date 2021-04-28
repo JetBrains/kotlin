@@ -12,13 +12,16 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 // Transforms klib into js code in script-friendly way
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsScriptDependencyCompiler(
     private val configuration: CompilerConfiguration,
     private val nameTables: NameTables,
@@ -43,10 +47,8 @@ class JsScriptDependencyCompiler(
         }
 
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
-        val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, symbolTable)
-        val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
-        irBuiltIns.functionFactory = functionFactory
-        val jsLinker = JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, functionFactory, null)
+        val irBuiltIns = IrBuiltInsOverDescriptors(builtIns, typeTranslator, symbolTable)
+        val jsLinker = JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, null)
 
         val irDependencies = dependencies.map { jsLinker.deserializeFullModule(it, it.kotlinLibrary) }
         val moduleFragment = irDependencies.last()

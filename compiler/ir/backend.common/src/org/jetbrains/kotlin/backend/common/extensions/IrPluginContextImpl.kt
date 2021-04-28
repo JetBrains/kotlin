@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -35,8 +34,7 @@ open class IrPluginContextImpl constructor(
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     val linker: IrDeserializer,
-    private val diagnosticReporter: IrMessageLogger,
-    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, irBuiltIns.builtIns, st)
+    private val diagnosticReporter: IrMessageLogger
 ) : IrPluginContext {
 
     override val platform: TargetPlatform? = module.platform

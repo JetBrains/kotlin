@@ -32,6 +32,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
+    testRuntimeOnly(project(":generators"))
 
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
@@ -55,6 +56,14 @@ sourceSets {
     "test" {
         projectDefault()
         this.java.srcDir(generationRoot.name)
+    }
+}
+
+tasks {
+    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+        kotlinOptions {
+            freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+        }
     }
 }
 

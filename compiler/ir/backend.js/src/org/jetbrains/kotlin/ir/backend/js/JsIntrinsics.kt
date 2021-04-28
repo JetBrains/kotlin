@@ -6,23 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
-import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.isLong
-import org.jetbrains.kotlin.ir.types.typeWithParameters
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
@@ -32,7 +22,8 @@ import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
-class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+class JsIntrinsics(private val irBuiltIns: IrBuiltInsOverDescriptors, val context: JsIrBackendContext) {
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
@@ -224,10 +215,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsEnsureNonNull = getFunctionInKotlinPackage("ensureNotNull")
 
     // Arrays:
-    val array = context.symbolTable.referenceClass(irBuiltIns.builtIns.array)
+    val array get() = irBuiltIns.arrayClass
 
-    val primitiveArrays = PrimitiveType.values()
-        .associate { context.symbolTable.referenceClass(irBuiltIns.builtIns.getPrimitiveArrayClassDescriptor(it)) to it }
+    val primitiveArrays get() = irBuiltIns.primitiveArraysToPrimitiveTypes
 
     val jsArray = getInternalFunction("arrayWithFun")
     val jsFillArray = getInternalFunction("fillArrayFun")

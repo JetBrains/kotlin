@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.FqName
 
 internal class RTTIGenerator(override val context: Context) : ContextUtils {
@@ -30,8 +30,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             context.irBuiltIns.byteClass, context.irBuiltIns.shortClass, context.irBuiltIns.intClass,
             context.irBuiltIns.longClass,
             context.irBuiltIns.floatClass,context.irBuiltIns.doubleClass) +
-            context.ir.symbols.primitiveArrays.values +
-            context.ir.symbols.unsignedArrays.values
+            context.ir.symbols.primitiveArrays +
+            context.ir.symbols.unsignedArrays
 
     // TODO: extend logic here by taking into account final acyclic classes.
     private fun checkAcyclicFieldType(type: IrType): Boolean = acyclicCache.getOrPut(type) {

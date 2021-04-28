@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -242,7 +243,7 @@ interface IrBuilderExtension {
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
         val typeArguments = listOf(arrayElementType)
 
-        return irCall(compilerContext.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
+        return irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)
         }
     }
@@ -265,7 +266,7 @@ interface IrBuilderExtension {
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementPrimitiveType, arrayElements)
         val typeArguments = listOf(elementPrimitiveType)
 
-        return irCall(compilerContext.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
+        return irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)
         }
     }
@@ -701,7 +702,7 @@ interface IrBuilderExtension {
     }
 
     fun kClassTypeFor(projection: TypeProjection): SimpleType {
-        val kClass = compilerContext.builtIns.kClass
+        val kClass = (compilerContext.irBuiltIns as IrBuiltInsOverDescriptors).builtIns.kClass
         return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(projection))
     }
 
@@ -1098,7 +1099,7 @@ interface IrBuilderExtension {
         val ctorDecl = ctor.owner
         if (needToCopyAnnotations) {
             val classAnnotations = copyAnnotationsFrom(thisIrType.getClass()?.annotations.orEmpty())
-            args = args + createArrayOfExpression(compilerContext.builtIns.annotationType.toIrType(), classAnnotations)
+            args = args + createArrayOfExpression(compilerContext.irBuiltIns.annotationType, classAnnotations)
         }
 
         val typeParameters = ctorDecl.parentAsClass.typeParameters

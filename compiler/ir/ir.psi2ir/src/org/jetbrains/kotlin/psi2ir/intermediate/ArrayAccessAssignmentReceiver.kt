@@ -71,7 +71,7 @@ class ArrayAccessAssignmentReceiver(
                 ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
         val hasResult = origin.isAssignmentOperatorWithResult()
-        val resultType = if (hasResult) kotlinType else callGenerator.context.builtIns.unitType
+        val resultType = if (hasResult) kotlinType else callGenerator.context.irBuiltInsOverDescriptors.unit
         val irResultType = callGenerator.translateType(resultType)
 
         if (indexedGetDescriptor?.isDynamic() != false && indexedSetDescriptor?.isDynamic() != false) {

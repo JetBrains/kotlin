@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 open class IrTypeCheckerContext(override val typeSystemContext: IrTypeSystemContext): AbstractTypeCheckerContext() {
 

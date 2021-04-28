@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class IrAbstractFunctionFactory {
+abstract class IrAbstractDescriptorBasedFunctionFactory {
 
     abstract fun functionClassDescriptor(arity: Int): FunctionClassDescriptor
     abstract fun kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor
@@ -74,11 +74,16 @@ abstract class IrAbstractFunctionFactory {
         val classOrigin = object : IrDeclarationOriginImpl("FUNCTION_INTERFACE_CLASS") {}
         val memberOrigin = object : IrDeclarationOriginImpl("FUNCTION_INTERFACE_MEMBER") {}
         const val offset = SYNTHETIC_OFFSET
+
+        internal fun functionClassName(isK: Boolean, isSuspend: Boolean, arity: Int): String =
+            "${if (isK) "K" else ""}${if (isSuspend) "Suspend" else ""}Function$arity"
     }
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTable: SymbolTable) : IrAbstractFunctionFactory() {
+class IrDescriptorBasedFunctionFactory(
+    private val irBuiltIns: IrBuiltInsOverDescriptors, private val symbolTable: SymbolTable
+) : IrAbstractDescriptorBasedFunctionFactory() {
 
     // TODO: Lazieness
 
@@ -89,8 +94,24 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
 
     private val irFactory: IrFactory get() = symbolTable.irFactory
 
+    val functionClass = symbolTable.referenceClass(irBuiltIns.builtIns.getBuiltInClassByFqName(FqName("kotlin.Function")))
+    val kFunctionClass = symbolTable.referenceClass(irBuiltIns.builtIns.getBuiltInClassByFqName(FqName("kotlin.reflect.KFunction")))
+
     override fun functionClassDescriptor(arity: Int): FunctionClassDescriptor =
         irBuiltIns.builtIns.getFunction(arity) as FunctionClassDescriptor
+
+    override fun suspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor =
+        irBuiltIns.builtIns.getSuspendFunction(arity) as FunctionClassDescriptor
+
+    override fun kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
+        val kFunctionFqn = reflectFunctionClassFqn(reflectionFunctionClassName(false, arity))
+        return irBuiltIns.builtIns.getBuiltInClassByFqName(kFunctionFqn) as FunctionClassDescriptor
+    }
+
+    override fun kSuspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
+        val kFunctionFqn = reflectFunctionClassFqn(reflectionFunctionClassName(true, arity))
+        return irBuiltIns.builtIns.getBuiltInClassByFqName(kFunctionFqn) as FunctionClassDescriptor
+    }
 
     override fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         return functionNMap.getOrPut(arity) {
@@ -102,9 +123,6 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         }
     }
 
-    override fun suspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor =
-        irBuiltIns.builtIns.getSuspendFunction(arity) as FunctionClassDescriptor
-
     override fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         return suspendFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
@@ -113,11 +131,6 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                 createFunctionClass(symbol, false, true, arity, irBuiltIns.functionClass, kotlinCoroutinesPackageFragment, descriptorFactory)
             }
         }
-    }
-
-    override fun kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
-        val kFunctionFqn = reflectFunctionClassFqn(reflectionFunctionClassName(false, arity))
-        return irBuiltIns.builtIns.getBuiltInClassByFqName(kFunctionFqn) as FunctionClassDescriptor
     }
 
     override fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
@@ -130,11 +143,6 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         }
     }
 
-    override fun kSuspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
-        val kFunctionFqn = reflectFunctionClassFqn(reflectionFunctionClassName(true, arity))
-        return irBuiltIns.builtIns.getBuiltInClassByFqName(kFunctionFqn) as FunctionClassDescriptor
-    }
-
     override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         return kSuspendFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
@@ -145,21 +153,11 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         }
     }
 
-    companion object {
-        private fun reflectFunctionClassFqn(shortName: Name): FqName = KOTLIN_REFLECT_FQ_NAME.child(shortName)
-        private fun reflectionFunctionClassName(isSuspend: Boolean, arity: Int): Name =
-            Name.identifier("K${if (isSuspend) "Suspend" else ""}Function$arity")
-
-        private fun functionClassName(isK: Boolean, isSuspend: Boolean, arity: Int): String =
-            "${if (isK) "K" else ""}${if (isSuspend) "Suspend" else ""}Function$arity"
-    }
-
     private sealed class FunctionDescriptorFactory(protected val symbolTable: SymbolTable) {
         abstract fun memberDescriptor(name: String, factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction): IrSimpleFunctionSymbol
         abstract fun FunctionDescriptor.valueParameterDescriptor(index: Int): ValueParameterDescriptor
         abstract fun typeParameterDescriptor(index: Int, factory: (IrTypeParameterSymbol) -> IrTypeParameter): IrTypeParameterSymbol
         abstract fun classReceiverParameterDescriptor(): ReceiverParameterDescriptor
-        abstract fun FunctionDescriptor.memberReceiverParameterDescriptor(): ReceiverParameterDescriptor
 
         class RealDescriptorFactory(private val classDescriptor: ClassDescriptor, symbolTable: SymbolTable) :
             FunctionDescriptorFactory(symbolTable) {
@@ -188,11 +186,6 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
 
             override fun classReceiverParameterDescriptor(): ReceiverParameterDescriptor {
                 return classDescriptor.thisAsReceiverParameter
-            }
-
-            override fun FunctionDescriptor.memberReceiverParameterDescriptor(): ReceiverParameterDescriptor {
-                assert(containingDeclaration === classDescriptor)
-                return dispatchReceiverParameter ?: error("Expected dispatch receiver at $this")
             }
         }
     }
@@ -274,24 +267,6 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         )
 
         return vDeclaration
-    }
-
-    private fun FunctionClassDescriptor.createFunctionClass(): IrClass {
-        val s = symbolTable.referenceClass(this)
-        if (s.isBound) return s.owner
-        return symbolTable.declareClass(this) {
-            val factory = FunctionDescriptorFactory.RealDescriptorFactory(this, symbolTable)
-            when (functionKind) {
-                FunctionClassKind.Function ->
-                    createFunctionClass(it, false, false, arity, irBuiltIns.functionClass, kotlinPackageFragment, factory)
-                FunctionClassKind.SuspendFunction ->
-                    createFunctionClass(it, false, true, arity, irBuiltIns.functionClass, kotlinCoroutinesPackageFragment, factory)
-                FunctionClassKind.KFunction ->
-                    createFunctionClass(it, true, false, arity, irBuiltIns.kFunctionClass, kotlinReflectPackageFragment, factory)
-                FunctionClassKind.KSuspendFunction ->
-                    createFunctionClass(it, true, true, arity, irBuiltIns.kFunctionClass, kotlinReflectPackageFragment, factory)
-            }
-        }
     }
 
     private fun IrClass.createMembers(isK: Boolean, isSuspend: Boolean, descriptorFactory: FunctionDescriptorFactory) {
@@ -467,4 +442,29 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
 
         return klass
     }
+}
+
+private fun reflectFunctionClassFqn(shortName: Name): FqName = KOTLIN_REFLECT_FQ_NAME.child(shortName)
+private fun reflectionFunctionClassName(isSuspend: Boolean, arity: Int): Name =
+    Name.identifier("K${if (isSuspend) "Suspend" else ""}Function$arity")
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun KotlinBuiltIns.functionClassDescriptor(arity: Int): FunctionClassDescriptor =
+    getFunction(arity) as FunctionClassDescriptor
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun KotlinBuiltIns.suspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor =
+    getSuspendFunction(arity) as FunctionClassDescriptor
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun KotlinBuiltIns.kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
+    val kFunctionFqn = reflectFunctionClassFqn(reflectionFunctionClassName(false, arity))
+    return getBuiltInClassByFqName(kFunctionFqn) as FunctionClassDescriptor
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun KotlinBuiltIns.kSuspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
+    val kFunctionFqn =
+        reflectFunctionClassFqn(reflectionFunctionClassName(true, arity))
+    return getBuiltInClassByFqName(kFunctionFqn) as FunctionClassDescriptor
 }

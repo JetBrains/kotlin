@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
-import java.lang.RuntimeException
 
 
 interface Generator : IrGenerator {
@@ -55,7 +54,7 @@ fun Generator.getExpressionTypeWithCoercionToUnit(key: KtExpression): KotlinType
     if (key.isUsedAsExpression(context.bindingContext))
         getTypeInferredByFrontend(key)
     else
-        context.builtIns.unitType
+        context.irBuiltInsOverDescriptors.unit
 
 fun Generator.getExpressionTypeWithCoercionToUnitOrFail(key: KtExpression): KotlinType =
     getExpressionTypeWithCoercionToUnit(key) ?: throw RuntimeException("No type for expression: ${key.text}")

@@ -475,8 +475,7 @@ class Fir2IrVisitor(
             )
             is FirUnitExpression -> expression.convertWithOffsets { startOffset, endOffset ->
                 IrGetObjectValueImpl(
-                    startOffset, endOffset, irBuiltIns.unitType,
-                    this.symbolTable.referenceClass(this.irBuiltIns.builtIns.unit)
+                    startOffset, endOffset, irBuiltIns.unitType, this.irBuiltIns.unitClass
                 )
             }
             else -> {

@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
-import org.jetbrains.kotlin.fir.symbols.FirBuiltinSymbols
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
@@ -251,6 +251,7 @@ class Fir2IrConverter(
     }
 
     companion object {
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         fun createModuleFragment(
             session: FirSession,
             scopeSession: ScopeSession,
@@ -267,8 +268,8 @@ class Fir2IrConverter(
             val symbolTable = SymbolTable(signaturer, irFactory)
             val typeTranslator =
                 TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor, extensions = generatorExtensions)
-            val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-            FirBuiltinSymbols(irBuiltIns, moduleDescriptor.builtIns, symbolTable)
+            val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+//            FirBuiltinSymbols(irBuiltIns, symbolTable)
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irBuiltIns, irFactory, mangler)
             val conversionScope = Fir2IrConversionScope()
             val classifierStorage = Fir2IrClassifierStorage(components)

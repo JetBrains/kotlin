@@ -19,8 +19,11 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -125,7 +128,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             ).toMap()
 
     private fun intrinsicsThatShouldHaveBeenLowered() =
-        (symbols.primitiveArrays.values.map { primitiveClassSymbol ->
+        (symbols.primitiveArrays.map { primitiveClassSymbol ->
             val name = primitiveClassSymbol.owner.name.asString()
             // IntArray -> intArrayOf
             val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
@@ -168,7 +171,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 numberConversionMethods(irBuiltIns.numberClass)
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
-        symbols.primitiveArrays.flatMap { (key, value) -> arrayMethods(key.symbol, value) } +
+        symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
                 arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
 
     private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =

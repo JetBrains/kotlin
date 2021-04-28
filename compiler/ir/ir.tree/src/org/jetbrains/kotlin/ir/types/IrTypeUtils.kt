@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol

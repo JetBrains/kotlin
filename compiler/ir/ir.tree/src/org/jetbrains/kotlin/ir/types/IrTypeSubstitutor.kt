@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType

@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.ir.interpreter.checker
 
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.interpreter.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.interpreter.compileTimeAnnotation
+import org.jetbrains.kotlin.ir.interpreter.contractsDslAnnotation
+import org.jetbrains.kotlin.ir.interpreter.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
+import org.jetbrains.kotlin.ir.interpreter.isUnsigned
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString

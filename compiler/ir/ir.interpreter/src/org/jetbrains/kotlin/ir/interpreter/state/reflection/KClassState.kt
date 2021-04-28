@@ -51,7 +51,7 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
                             else -> TODO()
                         }
                     }
-                    is IrFunction -> KFunctionProxy(KFunctionState(it, callInterceptor.irBuiltIns.functionFactory), callInterceptor)
+                    is IrFunction -> KFunctionProxy(KFunctionState(it, callInterceptor.irBuiltIns), callInterceptor)
                     else -> TODO()
                 }
             }
@@ -62,7 +62,7 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
         if (_constructors != null) return _constructors!!
         _constructors = classReference.declarations
             .filterIsInstance<IrConstructor>()
-            .map { KFunctionProxy(KFunctionState(it, callInterceptor.irBuiltIns.functionFactory), callInterceptor) }
+            .map { KFunctionProxy(KFunctionState(it, callInterceptor.irBuiltIns), callInterceptor) }
         return _constructors!!
     }
 

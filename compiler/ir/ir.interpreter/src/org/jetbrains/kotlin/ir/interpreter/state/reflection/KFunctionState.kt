@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
@@ -29,8 +29,8 @@ internal class KFunctionState(val irFunction: IrFunction, override val irClass: 
     private var _typeParameters: List<KTypeParameter>? = null
 
     constructor(functionReference: IrFunctionReference) : this(functionReference.symbol.owner, functionReference.type.classOrNull!!.owner)
-    constructor(irFunction: IrFunction, functionFactory: IrAbstractFunctionFactory) :
-            this(irFunction, functionFactory.kFunctionN(irFunction.valueParameters.size))
+    constructor(irFunction: IrFunction, irBuiltIns: IrBuiltIns) :
+            this(irFunction, irBuiltIns.kFunctionN(irFunction.valueParameters.size))
 
     fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
         if (_parameters != null) return _parameters!!

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -37,7 +36,6 @@ class JvmIrLinker(
     messageLogger: IrMessageLogger,
     typeSystem: IrTypeSystemContext,
     symbolTable: SymbolTable,
-    override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler

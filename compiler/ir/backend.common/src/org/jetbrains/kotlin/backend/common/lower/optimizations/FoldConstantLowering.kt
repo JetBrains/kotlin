@@ -9,13 +9,17 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.ir.BuiltInOperatorNames
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getPrimitiveType
+import org.jetbrains.kotlin.ir.types.isStringClassType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -71,29 +75,29 @@ class FoldConstantLowering(
 
         init {
             // IrBuiltins
-            registerBuiltinBinaryOp(DOUBLE, IrBuiltIns.OperatorNames.LESS) { a, b -> a < b }
-            registerBuiltinBinaryOp(DOUBLE, IrBuiltIns.OperatorNames.LESS_OR_EQUAL) { a, b -> a <= b }
-            registerBuiltinBinaryOp(DOUBLE, IrBuiltIns.OperatorNames.GREATER) { a, b -> a > b }
-            registerBuiltinBinaryOp(DOUBLE, IrBuiltIns.OperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
-            registerBuiltinBinaryOp(DOUBLE, IrBuiltIns.OperatorNames.IEEE754_EQUALS) { a, b -> a == b }
+            registerBuiltinBinaryOp(DOUBLE, BuiltInOperatorNames.LESS) { a, b -> a < b }
+            registerBuiltinBinaryOp(DOUBLE, BuiltInOperatorNames.LESS_OR_EQUAL) { a, b -> a <= b }
+            registerBuiltinBinaryOp(DOUBLE, BuiltInOperatorNames.GREATER) { a, b -> a > b }
+            registerBuiltinBinaryOp(DOUBLE, BuiltInOperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
+            registerBuiltinBinaryOp(DOUBLE, BuiltInOperatorNames.IEEE754_EQUALS) { a, b -> a == b }
 
-            registerBuiltinBinaryOp(FLOAT, IrBuiltIns.OperatorNames.LESS) { a, b -> a < b }
-            registerBuiltinBinaryOp(FLOAT, IrBuiltIns.OperatorNames.LESS_OR_EQUAL) { a, b -> a <= b }
-            registerBuiltinBinaryOp(FLOAT, IrBuiltIns.OperatorNames.GREATER) { a, b -> a > b }
-            registerBuiltinBinaryOp(FLOAT, IrBuiltIns.OperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
-            registerBuiltinBinaryOp(FLOAT, IrBuiltIns.OperatorNames.IEEE754_EQUALS) { a, b -> a == b }
+            registerBuiltinBinaryOp(FLOAT, BuiltInOperatorNames.LESS) { a, b -> a < b }
+            registerBuiltinBinaryOp(FLOAT, BuiltInOperatorNames.LESS_OR_EQUAL) { a, b -> a <= b }
+            registerBuiltinBinaryOp(FLOAT, BuiltInOperatorNames.GREATER) { a, b -> a > b }
+            registerBuiltinBinaryOp(FLOAT, BuiltInOperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
+            registerBuiltinBinaryOp(FLOAT, BuiltInOperatorNames.IEEE754_EQUALS) { a, b -> a == b }
 
-            registerBuiltinBinaryOp(INT, IrBuiltIns.OperatorNames.LESS) { a, b -> a < b }
-            registerBuiltinBinaryOp(INT, IrBuiltIns.OperatorNames.LESS_OR_EQUAL) { a, b -> a <= b }
-            registerBuiltinBinaryOp(INT, IrBuiltIns.OperatorNames.GREATER) { a, b -> a > b }
-            registerBuiltinBinaryOp(INT, IrBuiltIns.OperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
-            registerBuiltinBinaryOp(INT, IrBuiltIns.OperatorNames.EQEQ) { a, b -> a == b }
+            registerBuiltinBinaryOp(INT, BuiltInOperatorNames.LESS) { a, b -> a < b }
+            registerBuiltinBinaryOp(INT, BuiltInOperatorNames.LESS_OR_EQUAL) { a, b -> a <= b }
+            registerBuiltinBinaryOp(INT, BuiltInOperatorNames.GREATER) { a, b -> a > b }
+            registerBuiltinBinaryOp(INT, BuiltInOperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
+            registerBuiltinBinaryOp(INT, BuiltInOperatorNames.EQEQ) { a, b -> a == b }
 
-            registerBuiltinBinaryOp(LONG, IrBuiltIns.OperatorNames.LESS) { a, b -> a < b }
-            registerBuiltinBinaryOp(LONG, IrBuiltIns.OperatorNames.LESS_OR_EQUAL) { a, b -> a <= b }
-            registerBuiltinBinaryOp(LONG, IrBuiltIns.OperatorNames.GREATER) { a, b -> a > b }
-            registerBuiltinBinaryOp(LONG, IrBuiltIns.OperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
-            registerBuiltinBinaryOp(LONG, IrBuiltIns.OperatorNames.EQEQ) { a, b -> a == b }
+            registerBuiltinBinaryOp(LONG, BuiltInOperatorNames.LESS) { a, b -> a < b }
+            registerBuiltinBinaryOp(LONG, BuiltInOperatorNames.LESS_OR_EQUAL) { a, b -> a <= b }
+            registerBuiltinBinaryOp(LONG, BuiltInOperatorNames.GREATER) { a, b -> a > b }
+            registerBuiltinBinaryOp(LONG, BuiltInOperatorNames.GREATER_OR_EQUAL) { a, b -> a >= b }
+            registerBuiltinBinaryOp(LONG, BuiltInOperatorNames.EQEQ) { a, b -> a == b }
         }
     }
 

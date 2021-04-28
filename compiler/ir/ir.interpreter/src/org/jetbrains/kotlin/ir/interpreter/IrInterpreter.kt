@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 /**
  * A platform-, frontend-independent logic for generating synthetic members of data class: equals, hashCode, toString, componentN, and copy.
@@ -139,19 +138,6 @@ abstract class DataClassMembersGenerator(
             +irReturnTrue()
         }
 
-        private val intClass = context.builtIns.int
-        private val intType = context.builtIns.intType
-
-        private val intTimesSymbol: IrSimpleFunctionSymbol =
-            intClass.unsubstitutedMemberScope.findFirstFunction("times") {
-                KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType)
-            }.let { symbolTable.referenceSimpleFunction(it) }
-
-        private val intPlusSymbol: IrSimpleFunctionSymbol =
-            intClass.unsubstitutedMemberScope.findFirstFunction("plus") {
-                KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType)
-            }.let { symbolTable.referenceSimpleFunction(it) }
-
         fun generateHashCodeMethodBody(properties: List<IrProperty>) {
             if (properties.isEmpty()) {
                 +irReturn(irInt(0))
@@ -176,8 +162,8 @@ abstract class DataClassMembersGenerator(
             +irResultVar
 
             for (property in properties.drop(1)) {
-                val shiftedResult = irCallOp(intTimesSymbol, irIntType, irGet(irResultVar), irInt(31))
-                val irRhs = irCallOp(intPlusSymbol, irIntType, shiftedResult, getHashCodeOfProperty(property))
+                val shiftedResult = irCallOp(context.irBuiltIns.intTimesSymbol, irIntType, irGet(irResultVar), irInt(31))
+                val irRhs = irCallOp(context.irBuiltIns.intPlusSymbol, irIntType, shiftedResult, getHashCodeOfProperty(property))
                 +irSet(irResultVar.symbol, irRhs)
             }
 

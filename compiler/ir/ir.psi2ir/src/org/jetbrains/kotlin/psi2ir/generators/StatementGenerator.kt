@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -191,7 +190,7 @@ class StatementGenerator(
         val irReturnedExpression = expression.returnedExpression?.let { generateExpression(it) }
             ?: IrGetObjectValueImpl(
                 expression.startOffsetSkippingComments, expression.endOffset, context.irBuiltIns.unitType,
-                context.symbolTable.referenceClass(context.builtIns.unit)
+                context.irBuiltIns.unitClass
             )
         return IrReturnImpl(
             expression.startOffsetSkippingComments, expression.endOffset, context.irBuiltIns.nothingType,

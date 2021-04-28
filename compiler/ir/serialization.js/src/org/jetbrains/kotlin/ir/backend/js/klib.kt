@@ -28,14 +28,15 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -170,8 +171,6 @@ fun generateKLib(
     val allDependencies = depsDescriptors.allDependencies
     val (psi2IrContext, hasErrors) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
     val irBuiltIns = psi2IrContext.irBuiltIns
-    val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
-    irBuiltIns.functionFactory = functionFactory
 
     val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
     val feContext = psi2IrContext.run {
@@ -182,7 +181,6 @@ fun generateKLib(
         messageLogger,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
-        functionFactory,
         feContext,
         serializedIrFiles?.let { ICData(it, errorPolicy.allowErrors) }
     )
@@ -246,6 +244,7 @@ private fun sortDependencies(resolvedDependencies: List<KotlinResolvedLibrary>, 
     }.reversed()
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun loadIr(
     project: Project,
     mainModule: MainModule,
@@ -266,14 +265,12 @@ fun loadIr(
             val (psi2IrContext, _) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
             val irBuiltIns = psi2IrContext.irBuiltIns
             val symbolTable = psi2IrContext.symbolTable
-            val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
-            irBuiltIns.functionFactory = functionFactory
             val feContext = psi2IrContext.run {
                 JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
             }
             val moduleFragmentToUniqueName = mutableMapOf<IrModuleFragment, String>()
             val irLinker =
-                JsIrLinker(psi2IrContext.moduleDescriptor, messageLogger, irBuiltIns, symbolTable, functionFactory, feContext, null)
+                JsIrLinker(psi2IrContext.moduleDescriptor, messageLogger, irBuiltIns, symbolTable, feContext, null)
             val deserializedModuleFragments = sortDependencies(allDependencies, depsDescriptors.descriptors).map { klib ->
                 irLinker.deserializeIrModuleHeader(
                     depsDescriptors.getModuleDescriptor(klib),
@@ -301,7 +298,7 @@ fun loadIr(
             }
 
             if (verifySignatures) {
-                irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
+                (irBuiltIns as IrBuiltInsOverDescriptors).knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
             }
 
             return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker, moduleFragmentToUniqueName)
@@ -315,10 +312,9 @@ fun loadIr(
             val symbolTable = SymbolTable(signaturer, irFactory)
             val typeTranslator =
                 TypeTranslatorImpl(symbolTable, depsDescriptors.compilerConfiguration.languageVersionSettings, moduleDescriptor)
-            val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-            val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
+            val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             val irLinker =
-                JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, functionFactory, null, null)
+                JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, null, null)
 
             val moduleFragmentToUniqueName = mutableMapOf<IrModuleFragment, String>()
 
@@ -335,7 +331,6 @@ fun loadIr(
                     }
                 }
             }
-            irBuiltIns.functionFactory = functionFactory
 
             val moduleFragment = deserializedModuleFragments.last()
 

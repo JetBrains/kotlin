@@ -20,15 +20,14 @@ import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrScript
-import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import kotlin.script.experimental.api.valueOr
@@ -77,10 +76,6 @@ class JsCoreScriptingCompiler(
         val psi2irContext = psi2ir.createGeneratorContext(module, bindingContext, symbolTable, generatorExtensions)
         val providers = generateTypicalIrProviderList(module, psi2irContext.irBuiltIns, psi2irContext.symbolTable)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, providers, emptyList(), null) // TODO: deserializer
-
-        psi2irContext.irBuiltIns.let { irBuiltIns ->
-            irBuiltIns.functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
-        }
 
         val context = JsIrBackendContext(
             irModuleFragment.descriptor,
