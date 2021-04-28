@@ -164,7 +164,17 @@ fun Project.configureDefaultPublishing() {
 private fun Project.configureSigning() {
     configure<SigningExtension> {
         sign(extensions.getByType<PublishingExtension>().publications) // all publications
-        useGpgCmd()
+
+        val signKeyId = project.findProperty("signKeyId") as? String
+        if (!signKeyId.isNullOrBlank()) {
+            val signKeyPrivate = project.findProperty("signKeyPrivate") as? String
+                ?: error("Parameter `signKeyPrivate` not found")
+            val signKeyPassphrase = project.findProperty("signKeyPassphrase") as? String
+                ?: error("Parameter `signKeyPassphrase` not found")
+            useInMemoryPgpKeys(signKeyId, signKeyPrivate, signKeyPassphrase)
+        } else {
+            useGpgCmd()
+        }
     }
 }
 
