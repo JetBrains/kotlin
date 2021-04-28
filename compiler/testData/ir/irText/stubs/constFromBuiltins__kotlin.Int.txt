@@ -14,7 +14,7 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassPublicSymbolImpl>
   FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int [operator]
     overridden:
-      public abstract fun compareTo (other: <unbound IrTypeParameterSymbolImpl>): kotlin.Int [operator] declared in kotlin.Comparable
+      public abstract fun compareTo (other: <unbound IrTypeParameterPublicSymbolImpl>): kotlin.Int [operator] declared in kotlin.Comparable
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
   FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassPublicSymbolImpl>) returnType:kotlin.Int [operator]
