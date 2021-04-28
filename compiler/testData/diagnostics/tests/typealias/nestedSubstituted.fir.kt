@@ -6,4 +6,4 @@ class C<T> {
     typealias P2 = Pair<T, Int>
 }
 
-val p1: C<String>.P2 = Pair("", 1)
+val p1: C<String>.P2 = <!TYPE_MISMATCH, TYPE_MISMATCH!>Pair("", 1)<!>
