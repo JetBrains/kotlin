@@ -42,9 +42,6 @@ open class PodspecTask : DefaultTask() {
     @get:Input
     internal lateinit var needPodspec: Provider<Boolean>
 
-    @get:Input
-    internal lateinit var useDynamicFrameworks: Provider<Boolean>
-
     @get:Nested
     val pods = project.objects.listProperty(CocoapodsDependency::class.java)
 
@@ -115,7 +112,6 @@ open class PodspecTask : DefaultTask() {
             }
         }
 
-        val staticFrameworks = if (useDynamicFrameworks.get().not()) "|    spec.static_framework = true" else ""
         with(outputFileProvider.get()) {
             writeText(
                 """
@@ -128,7 +124,6 @@ open class PodspecTask : DefaultTask() {
                 |    spec.license                  = '${license.getOrEmpty()}'
                 |    spec.summary                  = '${summary.getOrEmpty()}'
                 |
-                $staticFrameworks 
                 |    spec.vendored_frameworks      = "$frameworkDir/${frameworkName.get()}.framework"
                 |    spec.libraries                = "c++"
                 |    spec.module_name              = "#{spec.name}_umbrella"

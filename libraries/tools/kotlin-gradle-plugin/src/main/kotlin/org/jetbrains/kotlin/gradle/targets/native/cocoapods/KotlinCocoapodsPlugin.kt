@@ -338,7 +338,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for CocoaPods import"
             it.needPodspec = project.provider { cocoapodsExtension.needPodspec }
-            it.useDynamicFrameworks = project.provider { cocoapodsExtension.useDynamicFramework }
             it.pods.set(cocoapodsExtension.pods)
             it.version = project.provider { cocoapodsExtension.version }
             it.homepage.set(cocoapodsExtension.homepage)
