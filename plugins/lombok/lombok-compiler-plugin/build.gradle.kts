@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:util"))
+    implementation(project(":compiler:cli"))
     implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.java"))

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.lombok
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -28,6 +30,12 @@ class LombokComponentRegistrar : ComponentRegistrar {
     }
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            ?.report(
+                CompilerMessageSeverity.WARNING,
+                "Lombok Kotlin compiler plugin is an experimental feature." +
+                        " See: https://kotlinlang.org/docs/components-stability.html."
+            )
         registerComponents(project, configuration)
     }
 }
