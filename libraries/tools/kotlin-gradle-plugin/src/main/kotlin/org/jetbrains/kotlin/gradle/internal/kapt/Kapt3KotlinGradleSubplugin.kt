@@ -550,7 +550,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
         }
 
-        kotlinCompilation.output.classesDirs.from(kaptTaskProvider.map { it.destinationDir })
+        kotlinCompilation.output.classesDirs.from(kaptTaskProvider.map { it.classesDir })
 
         kotlinCompilation.compileKotlinTaskProvider.configure {
             it as SourceTask
