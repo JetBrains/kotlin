@@ -203,9 +203,11 @@ class KotlinGradleIT : BaseGradleIT() {
 
     private fun removeFirWarning(output: String): String {
         return output.replace(
-            """w: ATTENTION!
- This build uses in-dev FIR: 
-  -Xuse-fir""", ""
+            """
+               |w: ATTENTION!
+               | This build uses in-dev FIR: 
+               |  -Xuse-fir
+            """.trimMargin().replace("\n", SYSTEM_LINE_SEPARATOR), ""
         )
     }
 
