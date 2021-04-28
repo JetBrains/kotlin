@@ -42,7 +42,6 @@ class PersistentFlow : Flow {
     var logicStatements: PersistentImplications
     val level: Int
     var approvedTypeStatementsDiff: PersistentApprovedTypeStatements = persistentHashMapOf()
-    var updatedAliasDiff: PersistentSet<RealVariable> = persistentSetOf()
 
     /*
      * val x = a
@@ -204,7 +203,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun removeLocalVariableAlias(flow: PersistentFlow, alias: RealVariable) {
-        flow.updatedAliasDiff += alias
         val original = flow.directAliasMap[alias]?.variable ?: return
         flow.directAliasMap = flow.directAliasMap.remove(alias)
         val variables = flow.backwardsAliasMap.getValue(original)
@@ -300,7 +298,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             } else {
                 flow.backwardsAliasMap.put(existedAlias, updatedBackwardsAliasList)
             }
-            flow.updatedAliasDiff = flow.updatedAliasDiff.add(variable)
         }
     }
 
