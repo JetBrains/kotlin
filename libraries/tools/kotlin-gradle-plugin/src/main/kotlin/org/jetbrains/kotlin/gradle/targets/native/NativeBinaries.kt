@@ -275,8 +275,7 @@ class Framework(
             isStaticProvider = project.provider { value }
         }
 
-    internal var isStaticProvider: Provider<Boolean> = project.provider { isStaticProvided }
-    private var isStaticProvided = false;
+    internal var isStaticProvider: Provider<Boolean> = project.provider { false }
 
     object BitcodeEmbeddingMode {
         val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
