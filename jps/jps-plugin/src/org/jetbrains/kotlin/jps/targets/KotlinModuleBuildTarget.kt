@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
+import kotlin.io.path.notExists
+import kotlin.io.path.readText
 
 /**
  * Properties and actions for Kotlin test / production module build target.
@@ -69,7 +71,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     @Suppress("LeakingThis")
     val localCacheVersionManager = localCacheVersionManager(
-        kotlinContext.dataPaths.getTargetDataRoot(jpsModuleBuildTarget),
+        kotlinContext.dataPaths.getTargetDataRoot(jpsModuleBuildTarget).toPath(),
         isIncrementalCompilationEnabled
     )
 
@@ -330,7 +332,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     fun isVersionChanged(chunk: KotlinChunk, buildMetaInfo: BuildMetaInfo): Boolean {
         val file = chunk.buildMetaInfoFile(jpsModuleBuildTarget)
-        if (!file.exists()) return false
+        if (file.notExists()) return false
 
         val prevBuildMetaInfo =
             try {
