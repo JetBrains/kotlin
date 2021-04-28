@@ -9,13 +9,13 @@ abstract class View4
 interface View5
 
 fun <T: View1> findViewById1(): T = null as T
-fun test1(): I = findViewById1()
+fun test1(): I = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById1()<!>
 
 fun <T: View2> findViewById2(): T = null as T
 fun test2(): I = findViewById2()
 
 inline fun <reified T: View1> findViewById3(): T = null as T
-fun test3(): I = findViewById3()
+fun test3(): I = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById3()<!>
 
 inline fun <reified T: View2> findViewById4(): T = null as T
 fun test4(): I = findViewById4()
@@ -39,17 +39,17 @@ inline fun <reified T> findViewById10(): T where T: View3, T: View5 = null as T
 fun test10(): I = findViewById10()
 
 fun <T: View2> findViewById11(): T = null as T
-fun test11(): View4 = findViewById11()
+fun test11(): View4 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById11()<!>
 
 object Obj {
     fun <T: I> findViewById1(): T = null as T
-    fun test1(): View1 = findViewById1()
+    fun test1(): View1 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById1()<!>
 
     fun <T: I> findViewById2(): T = null as T
     fun test2(): View2 = findViewById2()
 
     inline fun <reified T: I> findViewById3(): T = null as T
-    fun test3(): View1 = findViewById3()
+    fun test3(): View1 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById3()<!>
 
     inline fun <reified T: I> findViewById4(): T = null as T
     fun test4(): View2 = findViewById4()
@@ -67,13 +67,13 @@ object Obj {
     fun test8(): View4 = findViewById8()
 
     fun <T> findViewById9(): T where T: View3, T: View5 = null as T
-    fun test9(): View1 = findViewById9()
+    fun test9(): View1 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById9()<!>
 
     inline fun <reified T> findViewById10(): T where T: View3, T: View5 = null as T
-    fun test10(): View1 = findViewById10()
+    fun test10(): View1 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById10()<!>
 
     fun <T: View2> findViewById11(): T = null as T
-    fun test11(): View4 = findViewById11()
+    fun test11(): View4 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById11()<!>
 }
 
 interface A

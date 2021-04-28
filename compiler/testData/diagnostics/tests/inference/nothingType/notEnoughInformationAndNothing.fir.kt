@@ -17,19 +17,19 @@ fun test1(b: Boolean?) {
 }
 
 fun test2() {
-    select(
+    <!NEW_INFERENCE_ERROR!>select(
         materialize()
-    )
+    )<!>
     select(materialize(), materialize<String>())
     select(materialize(), null, Inv<String>())
-    select(
+    <!NEW_INFERENCE_ERROR!>select(
         materialize(),
         null
-    )
-    select(
+    )<!>
+    <!NEW_INFERENCE_ERROR!>select(
         materialize(),
         materialize()
-    )
+    )<!>
     select(
         materialize(),
         materialize(),

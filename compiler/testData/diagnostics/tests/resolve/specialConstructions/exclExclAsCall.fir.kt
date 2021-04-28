@@ -14,7 +14,7 @@ fun <T: A> emptyNullableListOfA(): List<T>? = null
 
 fun testExclExcl() {
     doList(emptyNullableListOfA()!!) //should be an error here
-    val l: List<Int> = id(emptyNullableListOfA()!!)
+    val l: List<Int> = <!INITIALIZER_TYPE_MISMATCH, NEW_INFERENCE_ERROR!>id(emptyNullableListOfA()!!)<!>
 
     doList(strangeNullableList { doInt(it) }!!) //lambda should be analyzed (at completion phase)
 }

@@ -9,5 +9,5 @@ fun <T: Inv2<T>> foo(klass: Inv<T>): String? = null
 fun <X> bar(): Inv<X> = null!!
 
 fun test() {
-    foo(bar())
+    <!NEW_INFERENCE_ERROR!>foo(bar())<!>
 }

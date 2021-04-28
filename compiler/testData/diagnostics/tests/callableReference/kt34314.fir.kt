@@ -2,5 +2,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun main() {
-    val x = run { ::run } // no error
+    val x = <!NEW_INFERENCE_ERROR!>run { ::run }<!> // no error
 }

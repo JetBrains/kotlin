@@ -24,7 +24,7 @@ fun test(z: Z) {
 operator fun <T> Z.plus(a: A<T>): A<T> = a
 
 fun test1(z: Z) {
-    id(z + newA())
+    <!NEW_INFERENCE_ERROR!>id(z + newA())<!>
     val a: A<Z> = z + newA()
     val b: A<Z> = z.plus(newA())
     val c: A<Z> = id(z + newA())

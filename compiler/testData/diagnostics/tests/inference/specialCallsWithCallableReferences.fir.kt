@@ -284,7 +284,7 @@ fun poll82() {
 }
 
 fun poll83() {
-    val inv = ::bar4 in setOf(::foo4)
+    val inv = <!NEW_INFERENCE_ERROR!>::bar4 in <!NEW_INFERENCE_ERROR!>setOf(::foo4)<!><!>
     inv
 }
 
@@ -299,7 +299,7 @@ fun poll85() {
 }
 
 fun poll86() {
-    val inv = ::Foo7 in setOf(::Foo7)
+    val inv = <!NEW_INFERENCE_ERROR!>::Foo7 in <!NEW_INFERENCE_ERROR!>setOf(::Foo7)<!><!>
     inv
 }
 
@@ -309,6 +309,6 @@ fun poll87() {
 }
 
 fun poll88() {
-    val inv = foo7() in setOf(::Foo7)
+    val inv = foo7() in <!NEW_INFERENCE_ERROR!>setOf(::Foo7)<!>
     inv
 }

@@ -20,7 +20,7 @@ suspend fun yield() {}
 
 fun test() {
     builder {
-        send(<!ARGUMENT_TYPE_MISMATCH!>run {
+        send(<!ARGUMENT_TYPE_MISMATCH, NEW_INFERENCE_ERROR!>run {
             yield() // No error but `yield` is not inside "suspension" context actually
         }<!>)
     }

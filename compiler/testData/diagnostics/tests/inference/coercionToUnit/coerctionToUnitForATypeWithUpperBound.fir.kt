@@ -9,6 +9,6 @@ fun foo(f: (Foo) -> Unit) {}
 
 fun main() {
     foo { f: Foo ->
-        myRun { f }
+        <!NEW_INFERENCE_ERROR!>myRun { f }<!>
     }
 }
