@@ -1,0 +1,11 @@
+// "Wrap with '?.let { ... }' call" "true"
+// WITH_RUNTIME
+
+val it = ""
+
+fun test(s: String?) {
+    val name = ""
+    s?.let { it1 -> bar(it1) }
+}
+
+fun bar(name: String) {}

@@ -1,0 +1,12 @@
+// "Wrap with '?.let { ... }' call" "true"
+// WITH_RUNTIME
+
+interface A
+
+operator fun A?.plus(a: A?): A? = this
+
+fun test(a1: A, a2: A) {
+    (a1 + a2<caret>)?.let { notNull(it) }
+}
+
+fun notNull(t: A): A = t

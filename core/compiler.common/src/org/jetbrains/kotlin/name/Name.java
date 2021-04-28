@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.name;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class Name implements Comparable<Name> {
     @NotNull
@@ -83,6 +84,12 @@ public final class Name implements Comparable<Name> {
         else {
             return identifier(name);
         }
+    }
+
+    @Nullable
+    public String getIdentifierOrNullIfSpecial() {
+        if (special) return null;
+        return asString();
     }
 
     @Override

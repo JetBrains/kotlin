@@ -10,32 +10,30 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.calls.*
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCallResolver
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtElement
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -74,16 +72,19 @@ internal class KtFirCallResolver(
         }
     }
 
-    private fun FirFunctionCall.createCallByVariableLikeSymbolCall(variableLikeSymbol: KtVariableLikeSymbol) =
-        when (val callReference = calleeReference) {
+    private fun FirFunctionCall.createCallByVariableLikeSymbolCall(variableLikeSymbol: KtVariableLikeSymbol): KtCall? {
+        return when (val callReference = calleeReference) {
             is FirResolvedNamedReference -> {
                 val functionSymbol = callReference.resolvedSymbol as? FirNamedFunctionSymbol
-                when (functionSymbol?.callableId) {
-                    null -> null
-                    in kotlinFunctionInvokeCallableIds -> KtFunctionalTypeVariableCall(variableLikeSymbol)
-                    else -> (callReference.resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionSymbol)
-                        ?.let { KtVariableWithInvokeFunctionCall(variableLikeSymbol, KtSuccessCallTarget(it)) }
-                }
+                val callableId = functionSymbol?.callableId ?: return null
+                (callReference.resolvedSymbol.fir.buildSymbol(firSymbolBuilder) as? KtFunctionSymbol)
+                    ?.let {
+                        if (callableId in kotlinFunctionInvokeCallableIds) {
+                            KtFunctionalTypeVariableCall(variableLikeSymbol, KtSuccessCallTarget(it))
+                        } else {
+                            KtVariableWithInvokeFunctionCall(variableLikeSymbol, KtSuccessCallTarget(it))
+                        }
+                    }
             }
             is FirErrorNamedReference -> KtVariableWithInvokeFunctionCall(
                 variableLikeSymbol,
@@ -91,6 +92,7 @@ internal class KtFirCallResolver(
             )
             else -> error("Unexpected call reference ${callReference::class.simpleName}")
         }
+    }
 
     private fun FirFunctionCall.asSimpleFunctionCall(): KtFunctionCall? {
         val target = when (val calleeReference = calleeReference) {

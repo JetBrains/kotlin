@@ -1,0 +1,12 @@
+// "Wrap with '?.let { ... }' call" "true"
+// WITH_RUNTIME
+
+interface Foo {
+    val f: ((() -> Unit) -> String)?
+}
+
+fun test(foo: Foo) {
+    foo.f?<caret>.let { bar(it {}) }
+}
+
+fun bar(s: String) {}

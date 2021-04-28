@@ -347,6 +347,8 @@ fun PsiElement.parameterIndex(): Int {
     }
 }
 
+val KtValueArgument.argumentIndex: Int get() = (parent as KtValueArgumentList).arguments.indexOf(this)
+
 fun KtModifierListOwner.isPrivate(): Boolean = hasModifier(KtTokens.PRIVATE_KEYWORD)
 
 fun KtModifierListOwner.isProtected(): Boolean = hasModifier(KtTokens.PROTECTED_KEYWORD)
