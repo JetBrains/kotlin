@@ -148,6 +148,10 @@ class ToolDriverHelper(private val driver: ToolDriver, val root:Path) {
         driver.compile(it, this, "-produce", "framework", *args)
     }
 
+    fun Array<Path>.binary(name:String, vararg args:String = emptyArray()):Path = root.resolve("$name.kexe").also {
+        driver.compile(it, this, *args)
+    }
+
     fun swiftc(output: String, swiftSrc: Path, vararg args: String) = root.resolve(output).also {
         driver.swiftc(it, swiftSrc, *args, "-Xlinker", "-rpath", "-Xlinker", "@executable_path")
     }
