@@ -688,8 +688,13 @@ internal class FunctionStubBuilder(
             annotations = buildFunctionAnnotations(func)
             mustBeExternal = true
         }
+        val name = if (context.configuration.library.language == Language.CPP && !func.isCxxMethod) {
+            func.fullName
+        } else {
+            func.name
+        }
         val functionStub = FunctionStub(
-            func.name,
+            name,
             returnType,
             parameters.toList(),
             StubOrigin.Function(func),

@@ -155,7 +155,7 @@ internal class ModuleMetadataEmitter(
                                 annotations = listOf(AnnotationStub.Deprecated.unableToImport)
                         )
                     }
-                    KmFunction(function.flags, function.qualifiedName()).also { km ->
+                    KmFunction(function.flags, function.name).also { km ->
                         km.receiverParameterType = function.receiver?.type?.map()
                         function.typeParameters.mapTo(km.typeParameters) { it.map() }
                         function.parameters.mapTo(km.valueParameters) { it.map() }
