@@ -169,4 +169,34 @@ class LldbTests {
             Breakpoint 1: where = [..]`kfun:#question(kotlin.String;kotlin.Array<kotlin.String>){}kotlin.String [..] at kt33055.kt:2:12, [..]
         """.trimIndent().lldb(kt33055)
     }
+
+    @Test
+    fun `kt42208`() = lldbComplexTest {
+        val kt42208One = """
+            fun main() {
+                foo()()
+            }
+        """.feedOutput("kt42208-1.kt")
+        val kt42208Two = """
+             // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+             inline fun foo() = {
+                 throw Error()
+             }
+        """.feedOutput("kt42208-2.kt")
+        val binary = arrayOf(kt42208One, kt42208Two).binary("kt42208", "-g")
+        """
+            > b ThrowException
+            > ${lldbCommandRunOrContinue()}
+            > bt
+            * thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+            * frame #0: [..] kt42208.kexe`ThrowException
+              frame #1: [..] kt42208.kexe`kfun:main${'$'}<anonymous>_1#internal at kt42208-2.kt:3:18
+              frame #2: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.invoke#internal(_this=[..]) at kt42208-1.kt:2:5
+              frame #3: [..] kt42208.kexe`kfun:${'$'}main${'$'}<anonymous>_1${'$'}FUNCTION_REFERENCE${'$'}0.${'$'}<bridge-UNN>invoke(_this=[..]){}kotlin.Nothing#internal at kt42208-1.kt:2:5
+              frame #4: [..] kt42208.kexe`kfun:#main(){} at kt42208-1.kt:2:5
+              frame #5: [..] kt42208.kexe`Konan_start(args=[..]) at kt42208-1.kt:1:1
+              frame #6: [..]
+              frame #7: [..]
+        """.trimIndent().lldb(binary)
+    }
 }
