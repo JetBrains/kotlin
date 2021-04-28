@@ -249,6 +249,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("kt42208.kt")
+    public void testKt42208() throws Exception {
+        runTest("compiler/testData/debug/stepping/kt42208.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaStepInline.kt")
     public void testLambdaStepInline() throws Exception {
         runTest("compiler/testData/debug/stepping/lambdaStepInline.kt");
