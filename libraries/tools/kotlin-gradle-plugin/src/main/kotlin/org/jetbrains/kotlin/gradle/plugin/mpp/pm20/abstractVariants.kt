@@ -98,12 +98,12 @@ abstract class KotlinGradleVariantWithRuntimeInternal(
 
     override lateinit var runtimeDependencyFiles: FileCollection
 
-    override val runtimeFiles: ConfigurableFileCollection by lazy {
-        project.files(
+    override val runtimeFiles: ConfigurableFileCollection = project.files(
+        listOf(
             { compilationOutputs.allOutputs },
             { runtimeDependencyFiles }
         )
-    }
+    )
 
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
     override val runtimeElementsConfigurationName: String
