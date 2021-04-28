@@ -1,13 +1,14 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.annotations.TestOnly
-import java.io.File
 import java.io.IOException
+import java.nio.file.Path
+import kotlin.io.path.*
 
 /**
  * Attributes manager for global lookups cache that may contain lookups for several compilers (jvm, js).
@@ -16,7 +17,7 @@ import java.io.IOException
  * TODO(1.2.80): got rid of shared lookup cache, replace with individual lookup cache for each compiler
  */
 class CompositeLookupsCacheAttributesManager(
-    rootPath: File,
+    rootPath: Path,
     expectedComponents: Set<String>
 ) : CacheAttributesManager<CompositeLookupsCacheAttributes> {
     private val versionManager = lookupsCacheVersionManager(
@@ -24,7 +25,7 @@ class CompositeLookupsCacheAttributesManager(
         expectedComponents.isNotEmpty()
     )
 
-    private val actualComponentsFile = File(rootPath, "components.txt")
+    private val actualComponentsFile = rootPath.resolve("components.txt")
 
     override val expected: CompositeLookupsCacheAttributes? =
         if (expectedComponents.isEmpty()) null
@@ -33,7 +34,7 @@ class CompositeLookupsCacheAttributesManager(
     override fun loadActual(): CompositeLookupsCacheAttributes? {
         val version = versionManager.loadActual() ?: return null
 
-        if (!actualComponentsFile.exists()) return null
+        if (actualComponentsFile.notExists()) return null
 
         val components = try {
             actualComponentsFile.readLines().toSet()
@@ -47,11 +48,11 @@ class CompositeLookupsCacheAttributesManager(
     override fun writeVersion(values: CompositeLookupsCacheAttributes?) {
         if (values == null) {
             versionManager.writeVersion(null)
-            actualComponentsFile.delete()
+            actualComponentsFile.deleteIfExists()
         } else {
             versionManager.writeVersion(CacheVersion(values.version))
 
-            actualComponentsFile.parentFile.mkdirs()
+            actualComponentsFile.parent.createDirectories()
             actualComponentsFile.writeText(values.components.joinToString("\n"))
         }
     }
