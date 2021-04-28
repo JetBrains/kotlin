@@ -208,8 +208,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir,
                 jsOutputName = moduleName
-                    .replace(":", "-")
-                    .replace(".", "-"),
+                    .substringAfterLast(":"),
             )
         }
 
