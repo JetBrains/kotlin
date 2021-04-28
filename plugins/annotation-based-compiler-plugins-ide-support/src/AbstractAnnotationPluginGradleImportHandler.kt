@@ -10,13 +10,15 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup.PluginOption
+import org.jetbrains.kotlin.plugin.ide.CompilerPluginSetup.PluginOption
 import org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.plugin.ide.CompilerPluginSetup
+import org.jetbrains.kotlin.plugin.ide.modifyCompilerArgumentsForPlugin
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import java.io.File
 
-abstract class AbstractGradleImportHandler<T : AnnotationBasedPluginModel> : GradleProjectImportHandler {
+abstract class AbstractAnnotationPluginGradleImportHandler<T : AnnotationBasedPluginModel> : GradleProjectImportHandler {
     abstract val compilerPluginId: String
     abstract val pluginName: String
     abstract val annotationOptionName: String
@@ -42,7 +44,7 @@ abstract class AbstractGradleImportHandler<T : AnnotationBasedPluginModel> : Gra
 
     private fun getPluginSetupByModule(
             moduleNode: DataNode<ModuleData>
-    ): AnnotationBasedCompilerPluginSetup? {
+    ): CompilerPluginSetup? {
         val pluginModel = moduleNode.getCopyableUserData(modelKey)?.takeIf { it.isEnabled } ?: return null
         val annotations = pluginModel.annotations
         val presets = pluginModel.presets
@@ -54,7 +56,7 @@ abstract class AbstractGradleImportHandler<T : AnnotationBasedPluginModel> : Gra
         // So we use ones from the IDEA plugin.
         val classpath = listOf(pluginJarFileFromIdea.absolutePath)
 
-        return AnnotationBasedCompilerPluginSetup(options, classpath)
+        return CompilerPluginSetup(options, classpath)
     }
 
     private fun getPluginSetupBySourceSet(sourceSetNode: DataNode<GradleSourceSetData>) =

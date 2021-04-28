@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.allopen.ide
 
 import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor
-import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup.PluginOption
+import org.jetbrains.kotlin.plugin.ide.CompilerPluginSetup.PluginOption
+import org.jetbrains.kotlin.plugin.ide.AbstractMavenImportHandler
 import org.jetbrains.kotlin.utils.PathUtil
 
 class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
@@ -28,7 +28,6 @@ class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
 
     override val compilerPluginId = AllOpenCommandLineProcessor.PLUGIN_ID
     override val pluginName = "allopen"
-    override val mavenPluginArtifactName = "kotlin-maven-allopen"
     override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.allOpenPluginJarPath
 
     override fun getOptions(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<PluginOption>? {

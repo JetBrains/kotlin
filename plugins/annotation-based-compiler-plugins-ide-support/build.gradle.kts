@@ -13,6 +13,7 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
     compile(project(":idea:idea-gradle"))
     compile(project(":idea:idea-maven"))
+    api(project(":plugins:base-compiler-plugins-ide-support"))
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijDep())

@@ -17,12 +17,6 @@
 package org.jetbrains.kotlin.annotation.plugin.ide
 
 import com.intellij.openapi.module.Module
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtDeclaration
-import java.io.File
 
 fun Module.getSpecialAnnotations(prefix: String): List<String> {
     val kotlinFacet = org.jetbrains.kotlin.idea.facet.KotlinFacet.get(this) ?: return emptyList()
@@ -32,42 +26,4 @@ fun Module.getSpecialAnnotations(prefix: String): List<String> {
         ?.filter { it.startsWith(prefix) }
         ?.map { it.substring(prefix.length) }
         ?: emptyList()
-}
-
-class AnnotationBasedCompilerPluginSetup(val options: List<PluginOption>, val classpath: List<String>) {
-    class PluginOption(val key: String, val value: String)
-}
-
-internal fun modifyCompilerArgumentsForPlugin(
-    facet: KotlinFacet,
-    setup: AnnotationBasedCompilerPluginSetup?,
-    compilerPluginId: String,
-    pluginName: String
-) {
-    val facetSettings = facet.configuration.settings
-
-    // investigate why copyBean() sometimes throws exceptions
-    val commonArguments = facetSettings.compilerArguments ?: CommonCompilerArguments.DummyImpl()
-
-    /** See [CommonCompilerArguments.PLUGIN_OPTION_FORMAT] **/
-    val newOptionsForPlugin = setup?.options?.map { "plugin:$compilerPluginId:${it.key}=${it.value}" } ?: emptyList()
-
-    val oldAllPluginOptions =
-        (commonArguments.pluginOptions ?: emptyArray()).filterTo(mutableListOf()) { !it.startsWith("plugin:$compilerPluginId:") }
-    val newAllPluginOptions = oldAllPluginOptions + newOptionsForPlugin
-
-    val oldPluginClasspaths = (commonArguments.pluginClasspaths ?: emptyArray()).filterTo(mutableListOf()) {
-        val lastIndexOfFile = it.lastIndexOfAny(charArrayOf('/', File.separatorChar))
-        if (lastIndexOfFile < 0) {
-            return@filterTo true
-        }
-        !it.drop(lastIndexOfFile + 1).matches("(kotlin-)?(maven-)?$pluginName-.*\\.jar".toRegex())
-    }
-
-    val newPluginClasspaths = oldPluginClasspaths + (setup?.classpath ?: emptyList())
-
-    commonArguments.pluginOptions = newAllPluginOptions.toTypedArray()
-    commonArguments.pluginClasspaths = newPluginClasspaths.toTypedArray()
-
-    facetSettings.compilerArguments = commonArguments
 }

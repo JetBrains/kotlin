@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import java.io.File
 
-//todo this is basically a copy-paste of the same file from annotation-based-compiler-plugins-ide-support
-//and should be merged together later
-
 class CompilerPluginSetup(val options: List<PluginOption>, val classpath: List<String>) {
     class PluginOption(val key: String, val value: String)
 }
 
-internal fun modifyCompilerArgumentsForPlugin(
+fun modifyCompilerArgumentsForPlugin(
     facet: KotlinFacet,
     setup: CompilerPluginSetup?,
     compilerPluginId: String,

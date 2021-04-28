@@ -23,9 +23,9 @@ class LombokMavenProjectImportHandler : AbstractMavenImportHandler() {
     ): List<PluginOption>? {
         if (!enabledCompilerPlugins.contains(pluginName)) return null
 
-        return compilerPluginOptions.mapNotNull { v ->
-            if (v.startsWith(CONFIG_FILE_PREFIX)) {
-                val location = v.substring(CONFIG_FILE_PREFIX.length)
+        return compilerPluginOptions.mapNotNull { option ->
+            if (option.startsWith(CONFIG_FILE_PREFIX)) {
+                val location = option.substring(CONFIG_FILE_PREFIX.length)
                 PluginOption(CONFIG_FILE_OPTION.optionName, location)
             } else {
                 null

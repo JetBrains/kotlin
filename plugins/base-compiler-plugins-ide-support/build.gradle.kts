@@ -5,14 +5,11 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:cli-common"))
-    compile(project(":idea"))
-    compile(project(":idea:idea-jvm"))
-    compile(project(":idea:idea-jps-common"))
-    compile(project(":idea:idea-gradle"))
-    compile(project(":idea:idea-maven"))
+    implementation(project(":idea"))
+    implementation(project(":idea:idea-jvm"))
+    implementation(project(":idea:idea-jps-common"))
+    implementation(project(":idea:idea-gradle"))
+    implementation(project(":idea:idea-maven"))
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijDep())

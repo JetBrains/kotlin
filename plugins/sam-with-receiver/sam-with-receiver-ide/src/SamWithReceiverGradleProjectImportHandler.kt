@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.samWithReceiver.ide
 
-import org.jetbrains.kotlin.annotation.plugin.ide.AbstractGradleImportHandler
+import org.jetbrains.kotlin.annotation.plugin.ide.AbstractAnnotationPluginGradleImportHandler
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor
 import org.jetbrains.kotlin.utils.PathUtil
 
-class SamWithReceiverGradleProjectImportHandler : AbstractGradleImportHandler<SamWithReceiverModel>() {
+class SamWithReceiverGradleProjectImportHandler : AbstractAnnotationPluginGradleImportHandler<SamWithReceiverModel>() {
     override val compilerPluginId = SamWithReceiverCommandLineProcessor.PLUGIN_ID
     override val pluginName = "sam-with-receiver"
     override val annotationOptionName = SamWithReceiverCommandLineProcessor.ANNOTATION_OPTION.optionName
