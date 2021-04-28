@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // SKIP_JAVAC
 // FILE: JavaClass.java
 public class JavaClass {

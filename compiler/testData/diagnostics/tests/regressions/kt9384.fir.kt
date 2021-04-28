@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 fun main(args: Array<String>) {
     fun f() = run {

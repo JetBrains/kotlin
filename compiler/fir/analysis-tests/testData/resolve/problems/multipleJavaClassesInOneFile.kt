@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // FILE: foo/Some.java
 
 package foo;

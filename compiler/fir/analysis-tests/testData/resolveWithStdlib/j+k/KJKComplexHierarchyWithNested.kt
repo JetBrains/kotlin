@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // FILE: K1.kt
 class KSub : J1()
 

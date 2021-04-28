@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
 import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ALL_JAVA_AS_BINARY
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
@@ -46,8 +45,6 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator.Companion.JSR_305_TEST_ANNOTATIONS_PATH
 import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -56,7 +53,6 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.createTempDirectory
 
 class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
@@ -100,11 +96,9 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             }
         }
 
-        fun getLibraryFiles(configurationKind: ConfigurationKind, directives: RegisteredDirectives): List<File> {
+        fun getLibraryFilesExceptRealRuntime(configurationKind: ConfigurationKind, directives: RegisteredDirectives): List<File> {
             val files = mutableListOf<File>()
             if (configurationKind.withRuntime) {
-                files.add(ForTestCompileRuntime.runtimeJarForTests())
-                files.add(ForTestCompileRuntime.scriptRuntimeJarForTests())
                 files.add(ForTestCompileRuntime.kotlinTestJarForTests())
             } else if (configurationKind.withMockRuntime) {
                 files.add(ForTestCompileRuntime.minimalRuntimeJarForTests())
@@ -118,6 +112,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             if (JvmEnvironmentConfigurationDirectives.STDLIB_JDK8 in directives) {
                 files.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
             }
+            files.add(KtTestUtil.getAnnotationsJar())
             return files
         }
     }
@@ -185,10 +180,17 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             configuration.put(TEST_CONFIGURATION_KIND_KEY, it)
         }
 
-        configuration.addJvmClasspathRoots(getLibraryFiles(configurationKind, module.directives))
+        val javaVersionToCompile = registeredDirectives[COMPILE_JAVA_USING].singleOrNull()
+        val javaBinaryFiles = if (ALL_JAVA_AS_BINARY !in registeredDirectives) {
+            module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY in it.directives }
+        } else module.javaFiles
 
+        val useJava9ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_9
 
-        configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
+        if (configurationKind.withRuntime) {
+            configuration.configureStandardLibs(PathUtil.kotlinPathsForDistDirectory, K2JVMCompilerArguments().also { it.noReflect = true })
+        }
+        configuration.addJvmClasspathRoots(getLibraryFilesExceptRealRuntime(configurationKind, module.directives))
 
         val isIr = module.targetBackend?.isIR == true
         configuration.put(JVMConfigurationKeys.IR, isIr)

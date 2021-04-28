@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // FILE: f1.kt
 package test
 

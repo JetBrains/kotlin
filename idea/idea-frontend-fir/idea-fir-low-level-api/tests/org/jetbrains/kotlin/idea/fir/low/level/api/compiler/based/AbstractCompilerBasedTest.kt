@@ -13,6 +13,7 @@ import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.serviceContainer.ComponentManagerImpl
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.MockExternalAnnotationsManager
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
@@ -181,7 +182,14 @@ abstract class AbstractCompilerBasedTest : KotlinLightCodeInsightFixtureTestCase
         val configurationKind = JvmEnvironmentConfigurator.extractConfigurationKind(allDirectives)
         val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(allDirectives)
 
-        val libraryFiles = JvmEnvironmentConfigurator.getLibraryFiles(configurationKind, allDirectives)
+        @OptIn(ExperimentalStdlibApi::class)
+        val libraryFiles = buildList {
+            if (configurationKind.withRuntime) {
+                add(ForTestCompileRuntime.runtimeJarForTests())
+                add(ForTestCompileRuntime.scriptRuntimeJarForTests())
+            }
+            addAll(JvmEnvironmentConfigurator.getLibraryFilesExceptRealRuntime(configurationKind, allDirectives))
+        }
 
         return object : KotlinJdkAndLibraryProjectDescriptor(libraryFiles) {
             override fun getSdk(): Sdk = PluginTestCaseBase.jdk(jdkKind)

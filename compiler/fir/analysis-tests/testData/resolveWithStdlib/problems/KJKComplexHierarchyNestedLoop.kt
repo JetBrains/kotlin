@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // FILE: K1.kt
 class K2: J1() {
     class Q : <!UNRESOLVED_REFERENCE!>Nested<!>()

@@ -14,7 +14,7 @@ import java.io.File
 class FirOldFrontendMetaConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun transformTestDataPath(testDataFileName: String): String {
         val originalFile = File(testDataFileName)
-        val isFirIdentical = originalFile.useLines { it.first() == "// ${FirDiagnosticsDirectives.FIR_IDENTICAL.name}" }
+        val isFirIdentical = originalFile.useLines { lines -> lines.any { it == "// ${FirDiagnosticsDirectives.FIR_IDENTICAL.name}" } }
         return if (isFirIdentical) {
             testDataFileName
         } else {

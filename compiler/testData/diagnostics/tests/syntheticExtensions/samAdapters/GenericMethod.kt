@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // JAVAC_EXPECTED_FILE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass): String {
