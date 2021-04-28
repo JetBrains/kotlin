@@ -30,6 +30,10 @@ fun main(args: Array<String>) {
                 model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
             }
 
+            testClass<AbstractLegacyBoxJsTest> {
+                model("legacyBox/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
+            }
+
             testClass<AbstractIrBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
             }
@@ -45,11 +49,6 @@ fun main(args: Array<String>) {
             testClass<AbstractIrJsTypeScriptExportES6Test> {
                 model("typescript-export/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR_ES6)
             }
-
-            testClass<AbstractLegacyJsTypeScriptExportTest> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
-            }
-
 
             testClass<AbstractSourceMapGenerationSmokeTest> {
                 model("sourcemap/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)

@@ -1,4 +1,6 @@
-import foo = JS_TESTS.foo;
+import { Module } from "./JS_TESTS/index.js";
+
+const foo = new Module();
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -63,7 +65,3 @@ assert(foo._n_higher_order_fun(
     n => String(n),
     s => (s == null ? 10 : s.length)
 )(1000) === 4);
-
-function box(): string {
-    return "OK";
-}

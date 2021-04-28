@@ -42,9 +42,12 @@ open class OC(
 
 final class FC : OC(true, "FC")
 
+// TODO: Test nested objects as top-level objects are nonger supported
+/*
 object O1 : OC(true, "O1")
 
 object O2 : OC(true, "O2") {
     @JsName("foo")  // TODO: Should work without JsName
     fun foo(): Int = 10
 }
+ */

@@ -2,7 +2,6 @@
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JS_IR
 
 import kotlin.contracts.*
 

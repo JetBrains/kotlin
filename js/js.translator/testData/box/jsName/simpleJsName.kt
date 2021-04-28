@@ -1,5 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1291
 
+// IGNORE_BACKEND: JS_IR
+
 @JsExport
 object A {
     @JsName("js_f") fun f(x: Int) = "f($x)"

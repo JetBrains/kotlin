@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -33,6 +34,12 @@ class CompilerResult(
 
 class JsCode(val mainModule: String, val dependencies: Iterable<Pair<String, String>> = emptyList())
 
+class LoweredIr(
+    val context: JsIrBackendContext,
+    val mainModule: IrModuleFragment,
+    val allModules: List<IrModuleFragment>
+)
+
 fun compile(
     project: Project,
     mainModule: MainModule,
@@ -42,17 +49,14 @@ fun compile(
     irFactory: IrFactory,
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
-    mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
-    generateFullJs: Boolean = true,
-    generateDceJs: Boolean = false,
     dceDriven: Boolean = false,
     dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
     es6mode: Boolean = false,
-    multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
-): CompilerResult {
+    granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM
+): LoweredIr {
+
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
 
@@ -73,6 +77,7 @@ fun compile(
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,
+        granularity = granularity
     )
 
     // Load declarations referenced during `context` initialization
@@ -100,28 +105,11 @@ fun compile(
         eliminateDeadDeclarations(allModules, context)
 
         irFactory.stageController = StageController(controller.currentStage)
-
-        val transformer = IrModuleToJsTransformer(
-            context,
-            mainArguments,
-            fullJs = true,
-            dceJs = false,
-            multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath
-        )
-        return transformer.generateModule(allModules)
     } else {
         jsPhases.invokeToplevel(phaseConfig, context, allModules)
-        val transformer = IrModuleToJsTransformer(
-            context,
-            mainArguments,
-            fullJs = generateFullJs,
-            dceJs = generateDceJs,
-            multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath
-        )
-        return transformer.generateModule(allModules)
     }
+
+    return LoweredIr(context, moduleFragment, allModules)
 }
 
 fun generateJsCode(

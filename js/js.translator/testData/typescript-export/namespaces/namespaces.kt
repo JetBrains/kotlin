@@ -14,7 +14,7 @@ import C3
 data class C1(val value: String)
 
 @JsExport
-fun f(x1: C1, x2: C2, x3: C3): String {
+fun f1(x1: C1, x2: C2, x3: C3): String {
     return "foo.bar.baz.f($x1, $x2, $x3)"
 }
 
@@ -28,7 +28,7 @@ import foo.bar.baz.*
 import C3
 
 data class C2(val value: String)
-fun f(x1: C1, x2: C2, x3: C3): String {
+fun f2(x1: C1, x2: C2, x3: C3): String {
     return "a.b.f($x1, $x2, $x3)"
 }
 
@@ -43,6 +43,6 @@ import foo.bar.baz.*
 data class C3(val value: String)
 
 @JsExport
-fun f(x1: C1, x2: C2, x3: C3): String {
+fun f3(x1: C1, x2: C2, x3: C3): String {
     return "f($x1, $x2, $x3)"
 }

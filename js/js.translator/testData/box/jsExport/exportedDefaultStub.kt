@@ -1,7 +1,6 @@
-// MODULE_KIND: COMMON_JS
+// DONT_TARGET_EXACT_BACKEND: JS
 // SKIP_DCE_DRIVEN
 // SKIP_MINIFICATION
-package api
 
 @JsExport
 fun ping(a: String = "A", b: Int = 1): String {
@@ -59,7 +58,7 @@ external interface JsResult {
     val Foo: String
 }
 
-@JsModule("lib")
+@JsModule("./exportedDefaultStub.mjs")
 external fun jsBox(): JsResult
 
 fun box(): String {

@@ -1,15 +1,13 @@
-"use strict";
-var foo = JS_TESTS.foo;
+import { exportedFun, ExportedClass, fileLevelExportedFun, FileLevelExportedClass } from "./JS_TESTS/index.js";
 function box() {
-    var tens = [
-        foo.exportedVal,
-        foo.exportedFun(),
-        new foo.ExportedClass().value,
-        foo.fileLevelExportedVal,
-        foo.fileLevelExportedFun(),
-        new foo.FileLevelExportedClass().value
+    const tens = [
+        exportedFun(),
+        new ExportedClass().value,
+        fileLevelExportedFun(),
+        new FileLevelExportedClass().value
     ];
-    if (tens.every(function (value) { return value === 10; }))
+    if (tens.every((value) => value === 10))
         return "OK";
     return "FAIL";
 }
+console.assert(box() == "OK");

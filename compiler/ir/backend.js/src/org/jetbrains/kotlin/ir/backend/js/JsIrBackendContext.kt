@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -45,6 +46,7 @@ class JsIrBackendContext(
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
     override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false,
+    val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
     val dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
     val propertyLazyInitialization: Boolean = false,
 ) : JsCommonBackendContext {

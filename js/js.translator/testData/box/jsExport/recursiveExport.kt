@@ -1,8 +1,7 @@
-// MODULE_KIND: COMMON_JS
+// DONT_TARGET_EXACT_BACKEND: JS
 // SKIP_MINIFICATION
 
 // FILE: api.kt
-package api
 @JsExport
 class Something<T: Something<T>> {
     fun ping(): String {
@@ -20,7 +19,7 @@ external interface JsResult {
     val pingCall: () -> String
 }
 
-@JsModule("lib")
+@JsModule("./recursiveExport.mjs")
 external fun jsBox(): JsResult
 
 fun box(): String {

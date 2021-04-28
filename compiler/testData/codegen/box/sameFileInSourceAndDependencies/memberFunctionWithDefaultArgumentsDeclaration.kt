@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JS_IR
+
 // MODULE: lib
 // FILE: 2.kt
 abstract class A {

@@ -1,8 +1,7 @@
-// MODULE_KIND: COMMON_JS
+// DONT_TARGET_EXACT_BACKEND: JS
 // SKIP_MINIFICATION
 
 // FILE: api.kt
-package api
 
 @JsExport
 class A() {
@@ -26,7 +25,7 @@ external interface JsResult {
     val res: String
 }
 
-@JsModule("lib")
+@JsModule("./jsExportInClass.mjs")
 external fun jsBox(): JsResult
 
 fun box(): String {

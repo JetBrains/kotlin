@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.jsRecordExtractedLocalClasses
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.jsRecordExtractedLocalClasses
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -372,7 +372,7 @@ private val removeInitializersForLazyProperties = makeDeclarationTransformerPhas
 )
 
 private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(
-    ::PropertyAccessorInlineLowering,
+    ::JsPropertyAccessorInlineLowering,
     name = "PropertyAccessorInlineLowering",
     description = "[Optimization] Inline property accessors"
 )
@@ -714,6 +714,11 @@ private val cleanupLoweringPhase = makeBodyLoweringPhase(
     name = "CleanupLowering",
     description = "Clean up IR before codegen"
 )
+private val moveOpenClassesToSeparatePlaceLowering = makeCustomJsModulePhase(
+    { _, module -> moveOpenClassesToSeparateFiles(module) },
+    name = "MoveOpenClassesToSeparateFiles",
+    description = "Move open classes to separate files"
+).toModuleLowering()
 
 private val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
@@ -803,11 +808,13 @@ private val loweringList = listOf<Lowering>(
     captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
     cleanupLoweringPhase,
+    staticMembersLoweringPhase,
+    moveOpenClassesToSeparatePlaceLowering,
     validateIrAfterLowering
 )
 
 // TODO comment? Eliminate ModuleLowering's? Don't filter them here?
-val pirLowerings = loweringList.filter { it is DeclarationLowering || it is BodyLowering } + staticMembersLoweringPhase
+val pirLowerings = loweringList.filter { it is DeclarationLowering || it is BodyLowering }  + staticMembersLoweringPhase
 
 val jsPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
