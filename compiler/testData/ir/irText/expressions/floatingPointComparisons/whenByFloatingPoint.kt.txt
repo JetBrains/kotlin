@@ -45,22 +45,6 @@ fun testSmartCastInWhenConditionInBranch(x: Any): Int {
   }
 }
 
-fun testSmartCastToDifferentTypes(x: Any, y: Any): Int {
-  when {
-    x !is Double -> return -1
-  }
-  when {
-    y !is Float -> return -1
-  }
-  return { // BLOCK
-    val tmp0_subject: Any = x
-    when {
-      ieee754equals(arg0 = tmp0_subject /*as Double */, arg1 = y /*as Float */.toDouble()) -> 0
-      else -> 1
-    }
-  }
-}
-
 fun foo(x: Double): Double {
   return x
 }

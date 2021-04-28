@@ -27,14 +27,15 @@ fun testSmartCastInWhenConditionInBranch(x: Any) =
         else -> 1
     }
 
-fun testSmartCastToDifferentTypes(x: Any, y: Any): Int {
-    if (x !is Double) return -1
-    if (y !is Float) return -1
-    return when (x) {
-        y -> 0
-        else -> 1
-    }
-}
+// TODO: FE1.0 allows comparison of incompatible type after smart cast (KT-46383) but FIR rejects it. We need to figure out a transition plan.
+//fun testSmartCastToDifferentTypes(x: Any, y: Any): Int {
+//    if (x !is Double) return -1
+//    if (y !is Float) return -1
+//    return when (x) {
+//        y -> 0
+//        else -> 1
+//    }
+//}
 
 fun foo(x: Double) = x
 

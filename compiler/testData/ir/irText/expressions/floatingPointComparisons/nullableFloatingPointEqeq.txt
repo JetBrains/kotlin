@@ -63,39 +63,3 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:testDI2 visibility:public modality:FINAL <> (x:kotlin.Any?, y:kotlin.Any?) returnType:kotlin.Boolean
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any?
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any?
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testDI2 (x: kotlin.Any?, y: kotlin.Any?): kotlin.Boolean declared in <root>'
-        WHEN type=kotlin.Boolean origin=ANDAND
-          BRANCH
-            if: WHEN type=kotlin.Boolean origin=ANDAND
-              BRANCH
-                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int?
-                  GET_VAR 'x: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
-                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                  GET_VAR 'y: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: CONST Boolean type=kotlin.Boolean value=false
-            then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: BLOCK type=kotlin.Double? origin=SAFE_CALL
-                VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any? [val]
-                  GET_VAR 'x: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
-                WHEN type=kotlin.Double? origin=null
-                  BRANCH
-                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      arg0: GET_VAR 'val tmp_2: kotlin.Any? [val] declared in <root>.testDI2' type=kotlin.Any? origin=null
-                      arg1: CONST Null type=kotlin.Nothing? value=null
-                    then: CONST Null type=kotlin.Nothing? value=null
-                  BRANCH
-                    if: CONST Boolean type=kotlin.Boolean value=true
-                    then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
-                      $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                        GET_VAR 'val tmp_2: kotlin.Any? [val] declared in <root>.testDI2' type=kotlin.Any? origin=null
-              arg1: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
-                GET_VAR 'y: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: CONST Boolean type=kotlin.Boolean value=false

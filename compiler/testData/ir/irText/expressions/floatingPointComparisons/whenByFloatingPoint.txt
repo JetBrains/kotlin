@@ -84,38 +84,6 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Int type=kotlin.Int value=1
-  FUN name:testSmartCastToDifferentTypes visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Int
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any
-    BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
-            GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='public final fun testSmartCastToDifferentTypes (x: kotlin.Any, y: kotlin.Any): kotlin.Int declared in <root>'
-            CONST Int type=kotlin.Int value=-1
-      WHEN type=kotlin.Unit origin=IF
-        BRANCH
-          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Float
-            GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
-          then: RETURN type=kotlin.Nothing from='public final fun testSmartCastToDifferentTypes (x: kotlin.Any, y: kotlin.Any): kotlin.Int declared in <root>'
-            CONST Int type=kotlin.Int value=-1
-      RETURN type=kotlin.Nothing from='public final fun testSmartCastToDifferentTypes (x: kotlin.Any, y: kotlin.Any): kotlin.Int declared in <root>'
-        BLOCK type=kotlin.Int origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Any [val]
-            GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
-          WHEN type=kotlin.Int origin=WHEN
-            BRANCH
-              if: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
-                  GET_VAR 'val tmp_4: kotlin.Any [val] declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
-                arg1: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
-                  $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
-                    GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
-              then: CONST Int type=kotlin.Int value=0
-            BRANCH
-              if: CONST Boolean type=kotlin.Boolean value=true
-              then: CONST Int type=kotlin.Int value=1
   FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Double) returnType:kotlin.Double
     VALUE_PARAMETER name:x index:0 type:kotlin.Double
     BLOCK_BODY
@@ -126,12 +94,12 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testWithPrematureExitInConditionSubexpression (x: kotlin.Any): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Any [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Any [val]
             GET_VAR 'x: kotlin.Any declared in <root>.testWithPrematureExitInConditionSubexpression' type=kotlin.Any origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_5: kotlin.Any [val] declared in <root>.testWithPrematureExitInConditionSubexpression' type=kotlin.Any origin=null
+                arg0: GET_VAR 'val tmp_4: kotlin.Any [val] declared in <root>.testWithPrematureExitInConditionSubexpression' type=kotlin.Any origin=null
                 arg1: CALL 'public final fun foo (x: kotlin.Double): kotlin.Double declared in <root>' type=kotlin.Double origin=null
                   x: WHEN type=kotlin.Double origin=IF
                     BRANCH

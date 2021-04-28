@@ -41,30 +41,6 @@ FILE fqName:<root> fileName:/kt23030.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:testEqualsWithSmartCast visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Boolean
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testEqualsWithSmartCast (x: kotlin.Any, y: kotlin.Any): kotlin.Boolean declared in <root>'
-        WHEN type=kotlin.Boolean origin=ANDAND
-          BRANCH
-            if: WHEN type=kotlin.Boolean origin=ANDAND
-              BRANCH
-                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-                  GET_VAR 'x: kotlin.Any declared in <root>.testEqualsWithSmartCast' type=kotlin.Any origin=null
-                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Char
-                  GET_VAR 'y: kotlin.Any declared in <root>.testEqualsWithSmartCast' type=kotlin.Any origin=null
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: CONST Boolean type=kotlin.Boolean value=false
-            then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                GET_VAR 'x: kotlin.Any declared in <root>.testEqualsWithSmartCast' type=kotlin.Any origin=null
-              arg1: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
-                GET_VAR 'y: kotlin.Any declared in <root>.testEqualsWithSmartCast' type=kotlin.Any origin=null
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: CONST Boolean type=kotlin.Boolean value=false
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]

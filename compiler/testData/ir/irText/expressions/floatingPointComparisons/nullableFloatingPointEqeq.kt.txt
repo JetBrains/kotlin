@@ -28,19 +28,3 @@ fun testDI(x: Double?, y: Any?): Boolean {
   }
 }
 
-fun testDI2(x: Any?, y: Any?): Boolean {
-  return when {
-    when {
-      x is Int? -> y is Double
-      else -> false
-    } -> ieee754equals(arg0 = { // BLOCK
-      val tmp0_safe_receiver: Any? = x
-      when {
-        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        else -> tmp0_safe_receiver /*as Int */.toDouble()
-      }
-    }, arg1 = y /*as Double? */)
-    else -> false
-  }
-}
-

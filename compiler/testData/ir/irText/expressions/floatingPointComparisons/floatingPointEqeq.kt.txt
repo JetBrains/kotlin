@@ -64,23 +64,3 @@ fun test6f(x: Any, y: Any): Boolean {
   }
 }
 
-fun testFD(x: Any, y: Any): Boolean {
-  return when {
-    when {
-      x is Float -> y is Double
-      else -> false
-    } -> ieee754equals(arg0 = x /*as Float */.toDouble(), arg1 = y /*as Double */)
-    else -> false
-  }
-}
-
-fun testDF(x: Any, y: Any): Boolean {
-  return when {
-    when {
-      x is Double -> y is Float
-      else -> false
-    } -> ieee754equals(arg0 = x /*as Double */, arg1 = y /*as Float */.toDouble())
-    else -> false
-  }
-}
-

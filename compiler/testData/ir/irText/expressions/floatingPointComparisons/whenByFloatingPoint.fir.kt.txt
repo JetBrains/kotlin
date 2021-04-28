@@ -45,31 +45,15 @@ fun testSmartCastInWhenConditionInBranch(x: Any): Int {
   }
 }
 
-fun testSmartCastToDifferentTypes(x: Any, y: Any): Int {
-  when {
-    x !is Double -> return -1
-  }
-  when {
-    y !is Float -> return -1
-  }
-  return { // BLOCK
-    val tmp4_subject: Double = x /*as Double */
-    when {
-      ieee754equals(arg0 = tmp4_subject, arg1 = y /*as Float */.toDouble()) -> 0
-      else -> 1
-    }
-  }
-}
-
 fun foo(x: Double): Double {
   return x
 }
 
 fun testWithPrematureExitInConditionSubexpression(x: Any): Int {
   return { // BLOCK
-    val tmp5_subject: Any = x
+    val tmp4_subject: Any = x
     when {
-      EQEQ(arg0 = tmp5_subject, arg1 = foo(x = when {
+      EQEQ(arg0 = tmp4_subject, arg1 = foo(x = when {
         x !is Double -> return 42
         else -> x /*as Double */
       })) -> 0

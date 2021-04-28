@@ -16,16 +16,6 @@ fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
   }
 }
 
-fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
-  return when {
-    when {
-      x is Int -> y is Char
-      else -> false
-    } -> EQEQ(arg0 = x, arg1 = y)
-    else -> false
-  }
-}
-
 class C {
   constructor() /* primary */ {
     super/*Any*/()
