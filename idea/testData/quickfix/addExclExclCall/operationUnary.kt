@@ -1,5 +1,9 @@
 // "Add non-null asserted (!!) call" "true"
 
-fun foo(i: Int?) {
-    <caret>-i
+class SafeType {
+    operator fun unaryMinus() {}
+}
+
+fun safeB(p: SafeType?) {
+    val v = <caret>-p
 }

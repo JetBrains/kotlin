@@ -1,7 +1,9 @@
 // "Add non-null asserted (!!) call" "true"
 
-infix fun Int.bar(i: Int) = this
+class SafeType {
+    infix fun op(arg: Int) {}
+}
 
-fun foo(i: Int?) {
-    i <caret>bar 1
+fun safeB(p: SafeType?) {
+    val v = p <caret>op 42
 }
