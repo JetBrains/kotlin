@@ -222,7 +222,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 }
 
 fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =
-    irOnly || irProduceJs || irProduceKlibFile
+    irOnly || irProduceJs || irProduceKlibFile || irBuildCache
 
 fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
-    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm
+    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache
