@@ -19,7 +19,7 @@ class KtFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunct
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         val call = expression.resolveCall() ?: return emptyList()
         if (call is KtVariableWithInvokeFunctionCall) {
-            return call.invokeFunction.candidates
+            return call.targetFunction.candidates
         }
         return emptyList()
     }

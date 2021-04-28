@@ -6,4 +6,4 @@ fun Int.foo(x: Int) = this + x
 
 val arg: Int? = 42
 
-val res = arg?.let { 24.hashCode().foo(it) } + 1
+val res: Int = 24.hashCode().foo(<caret>arg) + 1

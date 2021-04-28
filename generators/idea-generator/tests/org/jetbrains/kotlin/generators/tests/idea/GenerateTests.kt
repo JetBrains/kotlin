@@ -1146,6 +1146,7 @@ fun main(args: Array<String>) {
                 model("quickfix/addInitializer", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/addPropertyAccessors", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/when", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/wrapWithSafeLetCall", pattern = pattern, filenameStartsLowerCase = true)
             }
 
             testClass<AbstractHighLevelQuickFixMultiFileTest> {

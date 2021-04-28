@@ -1,0 +1,8 @@
+// "Wrap with '?.let { ... }' call" "true"
+// WITH_RUNTIME
+
+fun test(s: String?): String {
+    while (true) s?.let { notNull<caret>(notNull(it)) }
+}
+
+fun notNull(name: String): String = name

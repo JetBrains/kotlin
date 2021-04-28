@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.idea.frontend.api.calls
 
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
 
 /**
  * Represents direct or indirect (via invoke) function call from Kotlin code
  */
 sealed class KtCall {
     abstract val isErrorCall: Boolean
+    abstract val targetFunction: KtCallTarget
 }
 
 /**
@@ -22,7 +24,10 @@ sealed class KtCall {
  *    f() // functional type call
  * }
  */
-class KtFunctionalTypeVariableCall(val target: KtVariableLikeSymbol) : KtCall() {
+class KtFunctionalTypeVariableCall(
+    val target: KtVariableLikeSymbol,
+    override val targetFunction: KtCallTarget
+) : KtCall() {
     override val isErrorCall: Boolean get() = false
 }
 
@@ -30,7 +35,6 @@ class KtFunctionalTypeVariableCall(val target: KtVariableLikeSymbol) : KtCall() 
  * Direct or indirect call of function declared by user
  */
 sealed class KtDeclaredFunctionCall : KtCall() {
-    abstract val targetFunction: KtCallTarget
     override val isErrorCall: Boolean
         get() = targetFunction is KtErrorCallTarget
 }
@@ -46,10 +50,8 @@ sealed class KtDeclaredFunctionCall : KtCall() {
  */
 class KtVariableWithInvokeFunctionCall(
     val target: KtVariableLikeSymbol,
-    val invokeFunction: KtCallTarget,
-) : KtDeclaredFunctionCall() {
-    override val targetFunction: KtCallTarget get() = invokeFunction
-}
+    override val targetFunction: KtCallTarget
+) : KtDeclaredFunctionCall()
 
 /**
  * Simple function call, e.g.,

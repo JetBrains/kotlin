@@ -1,0 +1,8 @@
+// "Wrap with '?.let { ... }' call" "true"
+// WITH_RUNTIME
+
+fun Int.foo(x: Int) = this + x
+
+val arg: Int? = 42
+
+val res = arg?.let { 24.hash<caret>Code().foo(it) + 1 }
