@@ -7,18 +7,12 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.createCache
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -27,43 +21,68 @@ import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
+class PackagePartsCacheData(
+    val proto: ProtoBuf.Package,
+    val context: FirDeserializationContext,
+) {
+    val topLevelFunctionNameIndex by lazy {
+        proto.functionList.withIndex()
+            .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
+    }
+    val topLevelPropertyNameIndex by lazy {
+        proto.propertyList.withIndex()
+            .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
+    }
+    val typeAliasNameIndex by lazy {
+        proto.typeAliasList.withIndex()
+            .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
+    }
+}
+
+typealias DeserializedClassPostProcessor = (FirRegularClassSymbol) -> Unit
+
 abstract class AbstractFirDeserializedSymbolsProvider(
     session: FirSession,
-    val packagePartProvider: PackagePartProvider,
-    val kotlinClassFinder: KotlinClassFinder,
-    val kotlinScopeProvider: FirKotlinScopeProvider,
+    val kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSymbolProvider(session) {
 
     // ------------------------ Caches ------------------------
 
     private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
     private val typeAliasCache = session.firCachesFactory.createCache(::findAndDeserializeTypeAlias)
-    private val classCache =
-        session.firCachesFactory.createCacheWithPostCompute<ClassId, FirRegularClassSymbol?, FirDeserializationContext?, KotlinClassFinder.Result.KotlinClass?>(
+    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, FirDeserializationContext?> =
+        session.firCachesFactory.createCacheWithPostCompute(
             createValue = { classId, context -> findAndDeserializeClass(classId, context) },
-            postCompute = { _, symbol, result ->
-                if (result != null && symbol != null) {
-                    postProcessDeserializedClass(result, symbol)
+            postCompute = { _, symbol, postProcessor ->
+                if (postProcessor != null && symbol != null) {
+                    postProcessor.invoke(symbol)
                 }
             }
         )
 
     // ------------------------ Abstract members ------------------------
 
-    protected abstract val knownNameInPackageCache: KnownNameInPackageCache
-
-    protected abstract fun readClassFromClassFile(
-        classId: ClassId,
-        classFile: KotlinClassFinder.Result.ClassFileContent
-    ): FirRegularClassSymbol?
-
-    protected abstract fun KotlinClassFinder.Result.KotlinClass.extractMetadata(): Pair<NameResolver, ProtoBuf.Class>?
     protected abstract fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData>
-    protected abstract fun createAnnotationDeserializer(kotlinClass: KotlinClassFinder.Result.KotlinClass): AbstractAnnotationDeserializer
-    protected abstract fun createSourceElement(kotlinClass: KotlinClassFinder.Result.KotlinClass): DeserializedContainerSource
-    protected open fun postProcessDeserializedClass(kotlinClass: KotlinClassFinder.Result.KotlinClass, symbol: FirRegularClassSymbol) {}
+    protected abstract fun extractClassMetadata(
+        classId: ClassId,
+        parentContext: FirDeserializationContext? = null
+    ): ClassMetadataFindResult?
 
     // ------------------------ Deserialization methods ------------------------
+
+    sealed class ClassMetadataFindResult {
+        data class Metadata(
+            val nameResolver: NameResolver,
+            val classProto: ProtoBuf.Class,
+            val annotationDeserializer: AbstractAnnotationDeserializer,
+            val sourceElement: DeserializedContainerSource,
+            val classPostProcessor: DeserializedClassPostProcessor
+        ) : ClassMetadataFindResult()
+
+        class ClassWithoutMetadata(val symbol: FirRegularClassSymbol?) : ClassMetadataFindResult()
+
+        object ShouldDeserializeViaParent : ClassMetadataFindResult()
+    }
 
     private fun tryComputePackagePartInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         return try {
@@ -85,36 +104,25 @@ abstract class AbstractFirDeserializedSymbolsProvider(
     private fun findAndDeserializeClass(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
-    ): Pair<FirRegularClassSymbol?, KotlinClassFinder.Result.KotlinClass?> {
-        if (knownNameInPackageCache.hasNoTopLevelClassOf(classId)) return null to null
-        val result = try {
-            kotlinClassFinder.findKotlinClassOrContent(classId)
-        } catch (e: ProcessCanceledException) {
-            return null to null
+    ): Pair<FirRegularClassSymbol?, DeserializedClassPostProcessor?> {
+        return when (val result = extractClassMetadata(classId, parentContext)) {
+            is ClassMetadataFindResult.Metadata -> {
+                val (nameResolver, classProto, annotationDeserializer, sourceElement, postProcessor) = result
+                val symbol = FirRegularClassSymbol(classId)
+                deserializeClassToSymbol(
+                    classId, classProto, symbol, nameResolver, session,
+                    annotationDeserializer,
+                    kotlinScopeProvider,
+                    parentContext,
+                    sourceElement,
+                    deserializeNestedClass = this::getClass,
+                )
+                symbol to postProcessor
+            }
+            is ClassMetadataFindResult.ClassWithoutMetadata -> result.symbol to null
+            ClassMetadataFindResult.ShouldDeserializeViaParent -> findAndDeserializeClassViaParent(classId) to null
+            null -> null to null
         }
-        val kotlinClass = when (result) {
-            is KotlinClassFinder.Result.KotlinClass -> result
-            is KotlinClassFinder.Result.ClassFileContent -> return readClassFromClassFile(classId, result) to null
-            null -> return findAndDeserializeClassViaParent(classId) to null
-        }
-        if (kotlinClass.kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null to null
-        val (nameResolver, classProto) = kotlinClass.extractMetadata() ?: return null to null
-
-        if (parentContext == null && Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
-            return findAndDeserializeClassViaParent(classId) to null
-        }
-
-        val symbol = FirRegularClassSymbol(classId)
-        deserializeClassToSymbol(
-            classId, classProto, symbol, nameResolver, session,
-            createAnnotationDeserializer(kotlinClass),
-            kotlinScopeProvider,
-            parentContext,
-            createSourceElement(kotlinClass),
-            deserializeNestedClass = this::getClass,
-        )
-
-        return symbol to kotlinClass
     }
 
     private fun findAndDeserializeClassViaParent(classId: ClassId): FirRegularClassSymbol? {
@@ -183,32 +191,4 @@ abstract class AbstractFirDeserializedSymbolsProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? = null
-
-    // ------------------------ Additional classes ------------------------
-
-    protected class PackagePartsCacheData(
-        val proto: ProtoBuf.Package,
-        val context: FirDeserializationContext,
-    ) {
-        val topLevelFunctionNameIndex by lazy {
-            proto.functionList.withIndex()
-                .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
-        }
-        val topLevelPropertyNameIndex by lazy {
-            proto.propertyList.withIndex()
-                .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
-        }
-        val typeAliasNameIndex by lazy {
-            proto.typeAliasList.withIndex()
-                .groupBy({ context.nameResolver.getName(it.value.name) }) { (index) -> index }
-        }
-    }
-
-    protected abstract class KnownNameInPackageCache {
-        /**
-         * This function returns true if we are sure that no top-level class with this id is available
-         * If it returns false, it means we can say nothing about this id
-         */
-        abstract fun hasNoTopLevelClassOf(classId: ClassId): Boolean
-    }
 }
