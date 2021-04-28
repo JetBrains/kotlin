@@ -780,7 +780,7 @@ class ComposableFunctionBodyTransformer(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.shouldElideGroups(): Boolean {
-        return descriptor.hasReadonlyComposableAnnotation() ||
+        return (!collectSourceInformation && descriptor.hasReadonlyComposableAnnotation()) ||
             descriptor.hasExplicitGroupsAnnotation()
     }
 
