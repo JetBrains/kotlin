@@ -31,7 +31,13 @@ fun runLlvmClangToolWithTarget(args: Array<String>) {
 
     val toolPath = "$llvmHome/bin/$toolName"
 
-    runCommand(toolPath, *platform.clang.clangArgs, *toolArguments.toTypedArray())
+    val compilerArgs: Array<String> = when (toolName) {
+        "clang++" -> platform.clang.clangXXArgs
+        "clang" -> platform.clang.clangArgs
+        else -> error("Unknown tool name: $toolName. Use either `clang` or `clang++`")
+    }
+
+    runCommand(toolPath, *compilerArgs, *toolArguments.toTypedArray())
 }
 
 private fun platformManager() = PlatformManager(KonanHomeProvider.determineKonanHome())
