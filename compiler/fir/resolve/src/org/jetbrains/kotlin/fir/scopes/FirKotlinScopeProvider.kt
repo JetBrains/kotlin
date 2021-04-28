@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 
-class KotlinScopeProvider(
+class FirKotlinScopeProvider(
     val declaredMemberScopeDecorator: (
         klass: FirClass<*>,
         declaredMemberScope: FirScope,

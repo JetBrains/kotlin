@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -46,7 +46,7 @@ import java.io.InputStream
 
 //TODO make thread safe
 @ThreadSafeMutableState
-open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider(session) {
+open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: FirKotlinScopeProvider) : FirSymbolProvider(session) {
 
     private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassKind, val arity: Int)
 
@@ -256,7 +256,7 @@ open class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider
 
     private class BuiltInsPackageFragment(
         stream: InputStream, val fqName: FqName, val session: FirSession,
-        val kotlinScopeProvider: KotlinScopeProvider,
+        val kotlinScopeProvider: FirKotlinScopeProvider,
     ) {
         lateinit var version: BuiltInsBinaryVersion
 

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -31,7 +31,7 @@ abstract class AbstractFirDeserializedSymbolsProvider(
     session: FirSession,
     val packagePartProvider: PackagePartProvider,
     val kotlinClassFinder: KotlinClassFinder,
-    val kotlinScopeProvider: KotlinScopeProvider,
+    val kotlinScopeProvider: FirKotlinScopeProvider,
 ) : FirSymbolProvider(session) {
 
     // ------------------------ Caches ------------------------

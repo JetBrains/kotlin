@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
-import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -83,7 +83,7 @@ object FirSessionFactory {
             registerResolveComponents(lookupTracker)
             registerJavaSpecificResolveComponents()
 
-            val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
             val firProvider = FirProviderImpl(this, kotlinScopeProvider)
             register(FirProvider::class, firProvider)
@@ -135,7 +135,7 @@ object FirSessionFactory {
 
             val javaSymbolProvider = JavaSymbolProvider(this, project, scope)
 
-            val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
             val deserializedJvmSymbolsProvider = makeDeserializedJvmSymbolsProvider(
                 project, scope, packagePartProvider, javaSymbolProvider, kotlinScopeProvider
@@ -161,7 +161,7 @@ object FirSessionFactory {
         scope: GlobalSearchScope,
         packagePartProvider: PackagePartProvider,
         javaSymbolProvider: JavaSymbolProvider,
-        kotlinScopeProvider: KotlinScopeProvider
+        kotlinScopeProvider: FirKotlinScopeProvider
     ): KotlinDeserializedJvmSymbolsProvider {
 
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(scope)

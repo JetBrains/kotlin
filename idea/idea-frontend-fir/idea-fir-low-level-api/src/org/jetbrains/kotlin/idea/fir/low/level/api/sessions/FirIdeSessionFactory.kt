@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseCheckingPhaseManager
 import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
-import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
@@ -66,7 +66,7 @@ internal object FirIdeSessionFactory {
     ): FirIdeSourcesSession {
         sessionsCache[moduleInfo]?.let { return it }
         val languageVersionSettings = moduleInfo.module.languageVersionSettings
-        val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+        val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
         val searchScope = ModuleProductionSourceScope(moduleInfo.module)
         val dependentModules = moduleInfo.dependenciesWithoutSelf()
@@ -177,7 +177,7 @@ internal object FirIdeSessionFactory {
 
             val javaSymbolProvider = JavaSymbolProvider(this, project, searchScope)
 
-            val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
             val symbolProvider = FirCompositeSymbolProvider(
                 this,
@@ -217,7 +217,7 @@ internal object FirIdeSessionFactory {
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)
 
-            val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             val symbolProvider = FirCompositeSymbolProvider(
                 this,
                 listOf(

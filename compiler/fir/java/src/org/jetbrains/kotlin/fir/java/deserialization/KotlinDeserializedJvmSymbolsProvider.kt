@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.fir.resolve.providers.*
-import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.*
@@ -38,7 +38,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     session: FirSession,
     packagePartProvider: PackagePartProvider,
     kotlinClassFinder: KotlinClassFinder,
-    kotlinScopeProvider: KotlinScopeProvider,
+    kotlinScopeProvider: FirKotlinScopeProvider,
     private val javaSymbolProvider: JavaSymbolProvider,
     javaClassFinder: JavaClassFinder,
 ) : AbstractFirDeserializedSymbolsProvider(session, packagePartProvider, kotlinClassFinder, kotlinScopeProvider) {
