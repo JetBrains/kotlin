@@ -1,5 +1,5 @@
-"use strict";
-var foo = JS_TESTS.foo;
+import { Module } from "./JS_TESTS/index.js";
+const foo = new Module();
 function assert(condition) {
     if (!condition) {
         throw "Assertion failed";
@@ -33,7 +33,7 @@ foo._fun_unit();
 foo._fun_int_unit(10);
 assert(foo._fun_boolean_int_string_intarray(true, 20, "A") instanceof Int32Array);
 assert(foo._curried_fun(1)(2)(3)(4)(5) == 15);
-assert(foo._higher_order_fun(function (n) { return String(n); }, function (s) { return s.length; })(1000) == 4);
+assert(foo._higher_order_fun((n) => String(n), (s) => s.length)(1000) == 4);
 assert(foo._n_any != null);
 assert(foo._n_nothing == null);
 assert(foo._n_throwable instanceof Error);
@@ -45,14 +45,11 @@ assert(foo._n_array_int instanceof Array);
 assert(foo._array_n_int instanceof Array);
 assert(foo._n_array_n_int instanceof Array);
 assert(foo._array_n_array_string instanceof Array);
-var x = foo._array_n_array_string[0];
+let x = foo._array_n_array_string[0];
 assert(x != null);
 assert(x instanceof Array);
 assert(x == null ? false : (x[0] === ":)"));
 foo._fun_n_int_unit(null);
 assert(foo._fun_n_boolean_n_int_n_string_n_intarray(false, undefined, "ZZZ") == null);
 assert(foo._n_curried_fun(10)(null)(30) === 40);
-assert(foo._n_higher_order_fun(function (n) { return String(n); }, function (s) { return (s == null ? 10 : s.length); })(1000) === 4);
-function box() {
-    return "OK";
-}
+assert(foo._n_higher_order_fun(n => String(n), s => (s == null ? 10 : s.length))(1000) === 4);

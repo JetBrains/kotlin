@@ -1,6 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1270
+// DONT_TARGET_EXACT_BACKEND: JS
 // SKIP_MINIFICATION
-// RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 // SKIP_NODE_JS
 
@@ -10,7 +9,7 @@
 @JsExport
 public fun foo(k: String): String = "O$k"
 
-// FILE: test.js
-function box() {
-    return this["non-identifier-module-name"].foo("K");
-}
+// FILE: entry.mjs
+// ENTRY_ES_MODULE
+import { foo } from "./non-identifier-module-name/index.js";
+console.assert(foo("K") == "OK");

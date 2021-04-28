@@ -25,24 +25,19 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ExportModelGenerator(val context: JsIrBackendContext) {
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
-        val namespaceFqName = file.fqName
-        val exports = file.declarations.flatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
-        return when {
-            exports.isEmpty() -> emptyList()
-            namespaceFqName.isRoot -> exports
-            else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
-        }
+        return file.declarations.flatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
     }
 
     fun generateExport(modules: Iterable<IrModuleFragment>): ExportedModule =
         ExportedModule(
             context.configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-            context.configuration[JSConfigurationKeys.MODULE_KIND]!!,
+            ModuleKind.COMMON_JS, // TODO: Clean up. These should be ES modules but COMMON_JS d.ts looks the same.
             (context.externalPackageFragment.values + modules.flatMap { it.files }).flatMap {
                 generateExport(it)
             }
@@ -288,7 +283,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
-                val name = klass.fqNameWhenAvailable!!.asString()
+                val name = klass.name.identifier
 
                 when (klass.kind) {
                     ClassKind.ANNOTATION_CLASS,

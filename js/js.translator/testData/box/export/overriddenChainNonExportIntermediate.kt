@@ -1,6 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1252
 // IGNORE_BACKEND: JS
-// RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 
 // MODULE: overriden-chain-non-export-intermediate
@@ -26,14 +25,14 @@ class C : B() {
     fun bay(): String = "bay"
 }
 
-// FILE: test.js
-
-function box() {
-    return test(new this["overriden-chain-non-export-intermediate"].C());
-}
+// FILE: entry.mjs
+// ENTRY_ES_MODULE
+import { C } from "./overriden-chain-non-export-intermediate/index.js";
 
 function test(c) {
     if (c.foo() === "foo" && c.bar() === "bar" && c.bay() == "bay") return "OK"
 
     return "fail"
 }
+
+console.assert(test(new C()) == "OK");

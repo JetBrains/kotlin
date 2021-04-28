@@ -1,8 +1,4 @@
-import OC = JS_TESTS.foo.OC;
-import AC = JS_TESTS.foo.AC;
-import FC = JS_TESTS.foo.FC;
-import O1 = JS_TESTS.foo.O1;
-import O2 = JS_TESTS.foo.O2;
+import { OC, AC, FC } from "./JS_TESTS/index.js";
 
 class Impl extends AC {
     z(z: number): void {
@@ -31,10 +27,7 @@ function box(): string {
     if (fc.acAbstractProp !== "FC") return "Fail 6";
     fc.z(10);
 
-    if (O1.y !== true || O2.y !== true) return "Fail 7";
-    if (O1.acAbstractProp != "O1") return "Fail 8";
-    if (O2.acAbstractProp != "O2") return "Fail 9";
-    if (O2.foo() != 10) return "Fail 10";
-
     return "OK";
 }
+
+console.assert(box() === "OK");

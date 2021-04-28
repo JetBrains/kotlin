@@ -1,8 +1,7 @@
-// EXPECTED_REACHABLE_NODES: 1284
-// MODULE_KIND: AMD
+// DONT_TARGET_EXACT_BACKEND: JS
 package foo
 
-@JsModule("lib")
+@JsModule("./externalFunction.mjs")
 external fun foo(y: Int): Int = definedExternally
 
 fun box(): String {

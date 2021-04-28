@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -118,6 +119,7 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext?): 
     }
 
     val nameBuilder = StringBuilder()
+    nameBuilder.append(declarationName)
 
     // TODO should we skip type parameters and use upper bound of type parameter when print type of value parameters?
     declaration.typeParameters.ifNotEmpty {
@@ -202,6 +204,11 @@ class NameTables(
             when (memberDecl) {
                 is IrField ->
                     generateNameForMemberField(memberDecl)
+                is IrSimpleFunction -> {
+                    if (declaration.isInterface && memberDecl.body != null) {
+                        globalNames.declareFreshName(memberDecl, memberDecl.name.asString())
+                    }
+                }
             }
         }
     }
@@ -299,8 +306,7 @@ class NameTables(
 
 }
 
-class LocalNameGenerator(parentScope: NameScope) : IrElementVisitorVoid {
-    val variableNames = NameTable<IrDeclarationWithName>(parentScope)
+class LocalNameGenerator(val variableNames: NameTable<IrDeclaration>) : IrElementVisitorVoid {
     val localLoopNames = NameTable<IrLoop>()
     val localReturnableBlockNames = NameTable<IrReturnableBlock>()
 

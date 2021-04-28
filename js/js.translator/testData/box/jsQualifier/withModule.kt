@@ -1,16 +1,18 @@
-// EXPECTED_REACHABLE_NODES: 1282
+// DONT_TARGET_EXACT_BACKEND: JS
+
+// TODO: Support JS module qualifiers
+// IGNORE_BACKEND: JS_IR
+
 // MODULE: lib
 // FILE: lib.kt
-// MODULE_KIND: AMD
 @file:JsQualifier("a.b")
-@file:JsModule("libjs")
+@file:JsModule("./withModule.mjs")
 package ab
 
 external fun c(): String
 
 // MODULE: main(lib)
 // FILE: main.kt
-// MODULE_KIND: AMD
 package main
 
 fun box() = ab.c()

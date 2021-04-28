@@ -146,7 +146,7 @@ class IrModuleToJsTransformer(
             currentFile = null,
             currentFunction = null,
             staticContext = staticContext,
-            localNames = LocalNameGenerator(NameScope.EmptyScope)
+            localNames = LocalNameGenerator(NameTable())
         )
 
         val (importStatements, importedJsModules) =
@@ -159,9 +159,9 @@ class IrModuleToJsTransformer(
 
         val internalModuleName = JsName("_")
         val globalNames = NameTable<String>(namer.globalNames)
-        val exportStatements = ExportModelToJsStatements(internalModuleName, nameGenerator, { globalNames.declareFreshName(it, it)}).generateModuleExport(exportedModule)
+        val exportStatements = ExportModelToJsStatements(nameGenerator) { globalNames.declareFreshName(it, it) }
+            .generateModuleExport(exportedModule, internalModuleName)
 
-        val callToMain = generateCallToMain(modules, rootContext)
 
         val (crossModuleImports, importedKotlinModules) = generateCrossModuleImports(nameGenerator, modules, dependencies, { JsName(sanitizeName(it)) })
         val crossModuleExports = generateCrossModuleExports(modules, refInfo, internalModuleName)
@@ -181,7 +181,6 @@ class IrModuleToJsTransformer(
                     statements.addWithComment("block: imports", importStatements + crossModuleImports)
                     statements += moduleBody
                     statements.addWithComment("block: exports", exportStatements + crossModuleExports)
-                    statements += callToMain
                     statements += JsReturn(internalModuleName.makeRef())
                 }
             }
@@ -334,6 +333,9 @@ class IrModuleToJsTransformer(
         statements.addWithComment("block: post-declaration", postDeclarationBlock.statements)
         statements.addWithComment("block: init", context.staticContext.initializerBlock.statements)
 
+
+        statements += generateCallToMain(modules, context)
+
         modules.forEach {
             backendContext.testRoots[it]?.let { testContainer ->
                 statements.startRegion("block: tests")
@@ -420,27 +422,6 @@ class IrModuleToJsTransformer(
         return Pair(importStatements, importedJsModules)
     }
 
-    private fun processClassModels(
-        classModelMap: Map<IrClassSymbol, JsIrClassModel>,
-        preDeclarationBlock: JsBlock,
-        postDeclarationBlock: JsBlock
-    ) {
-        val declarationHandler = object : DFS.AbstractNodeHandler<IrClassSymbol, Unit>() {
-            override fun result() {}
-            override fun afterChildren(current: IrClassSymbol) {
-                classModelMap[current]?.let {
-                    preDeclarationBlock.statements += it.preDeclarationBlock.statements
-                    postDeclarationBlock.statements += it.postDeclarationBlock.statements
-                }
-            }
-        }
-
-        DFS.dfs(
-            classModelMap.keys,
-            { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
-            declarationHandler
-        )
-    }
 
     private fun MutableList<JsStatement>.startRegion(description: String = "") {
         if (generateRegionComments) {
@@ -468,3 +449,26 @@ class IrModuleToJsTransformer(
         endRegion()
     }
 }
+
+fun processClassModels(
+    classModelMap: Map<IrClassSymbol, JsIrClassModel>,
+    preDeclarationBlock: JsBlock,
+    postDeclarationBlock: JsBlock
+) {
+    val declarationHandler = object : DFS.AbstractNodeHandler<IrClassSymbol, Unit>() {
+        override fun result() {}
+        override fun afterChildren(current: IrClassSymbol) {
+            classModelMap[current]?.let {
+                preDeclarationBlock.statements += it.preDeclarationBlock.statements
+                postDeclarationBlock.statements += it.postDeclarationBlock.statements
+            }
+        }
+    }
+
+    DFS.dfs(
+        classModelMap.keys,
+        { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
+        declarationHandler
+    )
+}
+

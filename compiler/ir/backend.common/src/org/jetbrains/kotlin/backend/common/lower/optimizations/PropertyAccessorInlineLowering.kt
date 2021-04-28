@@ -23,9 +23,15 @@ import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class PropertyAccessorInlineLowering(private val context: CommonBackendContext) : BodyLoweringPass {
+open class PropertyAccessorInlineLowering(
+    private val context: CommonBackendContext,
+) : BodyLoweringPass {
 
-    private val IrProperty.isSafeToInline: Boolean get() = isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
+    fun IrProperty.isSafeToInlineInClosedWorld() =
+        isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
+
+    open val IrProperty.isSafeToInline: Boolean
+        get() = isSafeToInlineInClosedWorld()
 
     // TODO: implement general function inlining optimization and replace it with
     private inner class AccessorInliner : IrElementTransformerVoid() {
@@ -58,8 +64,10 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
                 val constExpression = initializer.expression.deepCopyWithSymbols()
                 val receiver = expression.dispatchReceiver
                 if (receiver != null && !receiver.isPure(true)) {
-                    val builder = context.createIrBuilder(expression.symbol,
-                            expression.startOffset, expression.endOffset)
+                    val builder = context.createIrBuilder(
+                        expression.symbol,
+                        expression.startOffset, expression.endOffset
+                    )
                     return builder.irBlock(expression) {
                         +receiver
                         +constExpression

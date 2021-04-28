@@ -41,6 +41,10 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.buildCache
 import org.jetbrains.kotlin.ir.backend.js.ic.checkCaches
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.backend.js.codegen.CompilerOutputSink
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationOptions
+import org.jetbrains.kotlin.ir.backend.js.codegen.generateEsModules
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
@@ -288,7 +292,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val start = System.currentTimeMillis()
 
-            val compiledModule = compile(
+            val granularity = when {
+                arguments.irPerModule -> JsGenerationGranularity.PER_MODULE
+                arguments.irPerFile -> JsGenerationGranularity.PER_FILE
+                else -> JsGenerationGranularity.WHOLE_PROGRAM
+            }
+
+            val ir = compile(
                 projectJs,
                 mainModule,
                 AnalyzerWithCompilerReport(config.configuration),
@@ -304,9 +314,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     arguments.irDceRuntimeDiagnostic,
                     messageCollector
                 ),
-                dceDriven = arguments.irDceDriven,
-                multiModule = arguments.irPerModule,
-                relativeRequirePath = true,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 legacyPropertyAccess = arguments.irLegacyPropertyAccess,
                 baseClassIntoMetadata = arguments.irBaseClassInMetadata,
@@ -318,7 +325,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 lowerPerModule = icCaches.isNotEmpty(),
                 useStdlibCache = icCaches.isNotEmpty(),
                 icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).data else emptyMap(),
+                granularity = granularity
             )
+            if (arguments.irDce) {
+                eliminateDeadDeclarations(ir.allModules, ir.context)
+            }
 
             messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
@@ -327,10 +338,17 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             outputs.dependencies.forEach { (name, content) ->
                 outputFile.resolveSibling("$name.js").write(content)
             }
+
             if (arguments.generateDts) {
                 val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
                 dtsFile.writeText(compiledModule.tsDefinitions ?: error("No ts definitions"))
             }
+
+            val jsGenerationOptions = JsGenerationOptions(
+                generateTypeScriptDefinitions = arguments.generateDts
+            )
+
+            generateEsModules(ir, outputSink = basicOutputSink, mainCallArguments, granularity, jsGenerationOptions)
         }
 
         return OK

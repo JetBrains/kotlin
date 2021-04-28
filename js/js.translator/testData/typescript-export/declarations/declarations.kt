@@ -40,26 +40,6 @@ inline fun inlineFun(x: Int, callback: (Int) -> Unit) {
     callback(x)
 }
 
-// Properties
-
-const val _const_val: Int = 1
-val _val: Int = 1
-var _var: Int = 1
-
-val _valCustom: Int
-    get() = 1
-
-val _valCustomWithField: Int = 1
-    get() = field + 1
-
-var _varCustom: Int
-    get() = 1
-    set(value) {}
-
-var _varCustomWithField: Int = 1
-    get() = field * 10
-    set(value) { field = value * 10 }
-
 // Classes
 
 class A
@@ -85,21 +65,11 @@ class A4 {
 }
 
 
-object O0
-
-object O {
-    val x = 10
-    @JsName("foo")  // TODO: Should work without JsName
-    fun foo() = 20
-}
-
-fun takesO(o: O): Int =
-    O.x + O.foo()
-
 // Test that JsExport with companion object compiles without error.
 // Usage is not supported yet.
 class KT_37829 {
-    companion object {
-        val x = 10
-    }
+    // TODO: Support companions
+//    companion object {
+//        val x = 10
+//    }
 }

@@ -1,5 +1,6 @@
-// SKIP_MINIFICATION
-// Contains calls from external JS code
+// DONT_TARGET_EXACT_BACKEND: JS
+
+// FILE: main.kt
 
 @JsExport
 open class A {
@@ -19,16 +20,39 @@ open class B {
     open fun bar(n: Int) = 142
 }
 
-external fun createA(): A
+// FILE: entry.mjs
+// ENTRY_ES_MODULE
 
-external fun createB(): B
+import { A, B } from "./JS_TESTS/index.js";
 
-fun box(): String {
-    val a = createA()
-    if (a.bar(0) != 124) return "fail1: ${a.bar(0)}"
-
-    val b = createB()
-    if (b.bar(0) != 42) return "fail2: ${b.bar(0)}"
-
-    return "OK"
+function createA() {
+    function ADerived() {
+    }
+    ADerived.prototype = Object.create(A.prototype);
+    ADerived.prototype.foo = function(n) {
+        return 24;
+    };
+    return new ADerived();
 }
+
+function createB() {
+    function BDerived() {
+    }
+    BDerived.prototype = Object.create(B.prototype);
+    BDerived.prototype.bar = function(n) {
+        return this.foo(n);
+    };
+    return new BDerived();
+}
+
+function box() {
+    let a = createA();
+    if (a.bar(0) != 124) return "fail1";
+
+    let b = createB();
+    if (b.bar(0) != 42) return "fail2";
+
+    return "OK";
+}
+
+console.assert(box() == "OK");
