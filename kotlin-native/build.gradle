@@ -145,46 +145,6 @@ void setupClang(Project project) {
 
     project.convention.plugins.platformManager = project.project(":kotlin-native").ext.platformManager
     project.convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
-
-    project.plugins.withType(NativeComponentPlugin) {
-        project.model {
-            if (isWindows()) {
-                platforms {
-                    host {
-                        architecture 'x86_64'
-                    }
-                }
-
-                components {
-                    withType(NativeComponentSpec) {
-                        targetPlatform 'host'
-                    }
-                }
-
-                toolChains {
-                    gcc(Gcc) {
-                        path "$llvmDir/bin"
-                    }
-                }
-            } else {
-
-                toolChains {
-                    clang(Clang) {
-                        hostPlatform.clang.clangPaths.each {
-                            path it
-                        }
-
-                        eachPlatform { // TODO: will not work when cross-compiling
-                            [cCompiler, cppCompiler, linker].each {
-                                it.withArguments { it.addAll(project.hostPlatform.clang.clangArgs) }
-                            }
-
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 void loadLocalProperties() {
