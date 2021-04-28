@@ -9,9 +9,9 @@ interface B{
     }
 }
 
-interface AB: A, B
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface AB<!>: A, B
 
-interface BA: B, A
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface BA<!>: B, A
 
 class C : A, B {
     override fun test() {

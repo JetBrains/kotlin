@@ -37,7 +37,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val sourceKind = source.kind
         if (sourceKind is FirFakeSourceElementKind && sourceKind != FirFakeSourceElementKind.EnumInitializer) return
         val modality = declaration.modality()
-        if (modality == Modality.ABSTRACT || modality == Modality.SEALED) return
+        val canHaveAbstractDeclarations = modality == Modality.ABSTRACT || modality == Modality.SEALED
         if (declaration is FirRegularClass && declaration.isExpect) return
         val classKind = declaration.classKind
         if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) return
@@ -67,7 +67,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             classScope.processPropertiesByName(name, ::collectSymbol)
         }
 
-        if (notImplementedSymbols.isNotEmpty()) {
+        if (!canHaveAbstractDeclarations && notImplementedSymbols.isNotEmpty()) {
             val notImplemented = notImplementedSymbols.first().unwrapFakeOverrides().fir
             if (notImplemented.isFromInterfaceOrEnum(context)) {
                 reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
@@ -75,7 +75,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                 reporter.reportOn(source, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, declaration, notImplemented, context)
             }
         }
-        if (invisibleSymbols.isNotEmpty()) {
+        if (!canHaveAbstractDeclarations && invisibleSymbols.isNotEmpty()) {
             val invisible = invisibleSymbols.first().fir
             if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses)) {
                 reporter.reportOn(source, INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER, declaration, invisible, context)
