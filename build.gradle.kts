@@ -381,7 +381,7 @@ apply {
 }
 
 apply {
-    if (extra["isSonatypeRelease"] as? Boolean == true) {
+    if (extra["isSonatypeRelease"] as? Boolean == true && (extra["deployRepoUrlCustom"] as? String) == null) {
         logger.info("Applying configuration for sonatype release")
         from("libraries/prepareSonatypeStaging.gradle")
     }
