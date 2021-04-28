@@ -16,12 +16,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 // Use apply plugin: 'kotlin-parcelize' to enable Android Extensions in an Android project.
 class ParcelizeSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun apply(target: Project) {
-        addParcelizeRuntime(target)
 
-        target.afterEvaluate {
-            if (target.plugins.hasPlugin(AndroidSubplugin::class.java)) {
-                throw GradleException("${target.path}: 'kotlin-parcelize' can't be applied together with 'kotlin-android-extensions'")
-            }
+        target.plugins.withType(AndroidSubplugin::class.java) {
+            throw GradleException("${target.path}: 'kotlin-parcelize' can't be applied together with 'kotlin-android-extensions'")
+        }
+
+        val kotlinPluginVersion = target.getKotlinPluginVersion()
+        val dependency = target.dependencies.create("org.jetbrains.kotlin:kotlin-parcelize-runtime:$kotlinPluginVersion")
+        target.forEachVariant {
+            it.runtimeConfiguration.dependencies.add(dependency)
+            it.compileConfiguration.dependencies.add(dependency)
         }
     }
 
@@ -44,30 +48,4 @@ class ParcelizeSubplugin : KotlinCompilerPluginSupportPlugin {
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.parcelize"
     override fun getPluginArtifact(): SubpluginArtifact = JetBrainsSubpluginArtifact(artifactId = "kotlin-parcelize-compiler")
-
-    private fun addParcelizeRuntime(project: Project) {
-        val kotlinPluginVersion = project.getKotlinPluginVersion() ?: run {
-            project.logger.error("Kotlin plugin should be enabled before 'kotlin-parcelize'")
-            return
-        }
-
-        project.configurations.all { configuration ->
-            val name = configuration.name
-            if (name != "implementation" && name != "compile") return@all
-
-            androidPluginVersion ?: return@all
-            val requiredConfigurationName = when {
-                compareVersionNumbers(androidPluginVersion, "2.5") > 0 -> "implementation"
-                else -> "compile"
-            }
-
-            if (name != requiredConfigurationName) return@all
-
-            configuration.dependencies.add(
-                project.dependencies.create(
-                    "org.jetbrains.kotlin:kotlin-parcelize-runtime:$kotlinPluginVersion"
-                )
-            )
-        }
-    }
 }
