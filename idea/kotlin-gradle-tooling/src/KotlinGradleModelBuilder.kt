@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.provider.Property
+import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -94,8 +96,16 @@ abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
 
         val kotlinPluginWrapper = "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapperKt"
 
+        private val propertyClassPresent = GradleVersion.current() >= GradleVersion.version("4.3")
+
         fun Task.getSourceSetName(): String = try {
-            javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterTypes.isEmpty() }?.invoke(this) as? String
+            val method = javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterTypes.isEmpty() }
+            val sourceSetName = method?.invoke(this)
+            when {
+                sourceSetName is String -> sourceSetName
+                propertyClassPresent && sourceSetName is Property<*> -> sourceSetName.get() as? String
+                else -> null
+            }
         } catch (e: InvocationTargetException) {
             null // can be thrown if property is not initialized yet
         } ?: "main"
