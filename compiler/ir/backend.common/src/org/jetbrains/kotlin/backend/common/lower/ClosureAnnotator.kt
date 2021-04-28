@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -160,6 +159,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             this.valueParameters.forEach { closureBuilder.declareVariable(it) }
             closureBuilder.declareVariable(this.dispatchReceiverParameter)
             closureBuilder.declareVariable(this.extensionReceiverParameter)
+            closureBuilder.seeType(this.returnType)
 
             if (this is IrConstructor) {
                 val constructedClass = (this.parent as IrClass)
@@ -174,20 +174,18 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
         }
 
     private fun collectPotentiallyCapturedTypeParameters(closureBuilder: ClosureBuilder) {
+        var current = closureBuilder.owner.parentClosureBuilder
+        while (current != null) {
+            val container = current.owner
 
-        fun ClosureBuilder.doCollect() {
-            if (owner !is IrClass) {
-                (owner as? IrTypeParametersContainer)?.let { container ->
-                    for (tp in container.typeParameters) {
-                        closureBuilder.addPotentiallyCapturedTypeParameter(tp)
-                    }
+            if (container is IrTypeParametersContainer) {
+                for (typeParameter in container.typeParameters) {
+                    closureBuilder.addPotentiallyCapturedTypeParameter(typeParameter)
                 }
-
-                owner.parentClosureBuilder?.doCollect()
             }
-        }
 
-        closureBuilder.owner.parentClosureBuilder?.doCollect()
+            current = container.parentClosureBuilder
+        }
     }
 
     private val IrDeclaration.parentClosureBuilder: ClosureBuilder?
@@ -205,7 +203,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             else -> null
         }
 
-    private inner class ClosureCollectorVisitor() : IrElementVisitor<Unit, ClosureBuilder?> {
+    private inner class ClosureCollectorVisitor : IrElementVisitor<Unit, ClosureBuilder?> {
 
         override fun visitElement(element: IrElement, data: ClosureBuilder?) {
             element.acceptChildren(this, data)

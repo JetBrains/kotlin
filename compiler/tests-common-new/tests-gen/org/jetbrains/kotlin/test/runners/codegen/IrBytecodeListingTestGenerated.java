@@ -1749,6 +1749,24 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @Test
+        @TestMetadata("genericClass.kt")
+        public void testGenericClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/localFunctions/genericClass.kt");
+        }
+
+        @Test
+        @TestMetadata("genericInnerClass.kt")
+        public void testGenericInnerClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/localFunctions/genericInnerClass.kt");
+        }
+
+        @Test
+        @TestMetadata("genericLocalClass.kt")
+        public void testGenericLocalClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/localFunctions/genericLocalClass.kt");
+        }
+
+        @Test
         @TestMetadata("inInitBlock.kt")
         public void testInInitBlock() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/localFunctions/inInitBlock.kt");
