@@ -171,7 +171,7 @@ object FirSessionFactory {
         }
 
         return KotlinDeserializedJvmSymbolsProvider(
-            this, project, packagePartProvider, javaSymbolProvider, kotlinClassFinder, javaClassFinder, kotlinScopeProvider
+            this, packagePartProvider, kotlinClassFinder, kotlinScopeProvider, javaSymbolProvider, javaClassFinder
         )
     }
 

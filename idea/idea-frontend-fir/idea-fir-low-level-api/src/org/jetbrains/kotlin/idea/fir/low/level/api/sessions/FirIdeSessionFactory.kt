@@ -187,12 +187,11 @@ internal object FirIdeSessionFactory {
                         FirThreadSafeSymbolProviderWrapper(
                             KotlinDeserializedJvmSymbolsProvider(
                                 this@apply,
-                                project,
                                 packagePartProvider,
-                                javaSymbolProvider,
                                 kotlinClassFinder,
-                                javaClassFinder,
-                                kotlinScopeProvider
+                                kotlinScopeProvider,
+                                javaSymbolProvider,
+                                javaClassFinder
                             )
                         )
                     )
