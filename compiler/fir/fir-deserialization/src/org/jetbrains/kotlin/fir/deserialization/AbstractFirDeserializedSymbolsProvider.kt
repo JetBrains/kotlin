@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isOneSegmentFQN
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
@@ -59,6 +56,9 @@ abstract class AbstractFirDeserializedSymbolsProvider(
                 }
             }
         )
+
+    private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
+    private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
     // ------------------------ Abstract members ------------------------
 
@@ -131,41 +131,45 @@ abstract class AbstractFirDeserializedSymbolsProvider(
         return classCache.getValueIfComputed(classId)
     }
 
-    private fun loadFunctionsByName(part: PackagePartsCacheData, name: Name): List<FirNamedFunctionSymbol> {
-        val functionIds = part.topLevelFunctionNameIndex[name] ?: return emptyList()
-        return functionIds.map {
-            part.context.memberDeserializer.loadFunction(part.proto.getFunction(it)).symbol
+    private fun loadFunctionsByCallableId(callableId: CallableId): List<FirNamedFunctionSymbol> {
+        return getPackageParts(callableId.packageName).flatMap { part ->
+            val functionIds = part.topLevelFunctionNameIndex[callableId.callableName] ?: return@flatMap emptyList()
+            functionIds.map {
+                part.context.memberDeserializer.loadFunction(part.proto.getFunction(it)).symbol
+            }
         }
     }
 
-    private fun loadPropertiesByName(part: PackagePartsCacheData, name: Name): List<FirPropertySymbol> {
-        val propertyIds = part.topLevelPropertyNameIndex[name] ?: return emptyList()
-        return propertyIds.map {
-            part.context.memberDeserializer.loadProperty(part.proto.getProperty(it)).symbol
+    private fun loadPropertiesByCallableId(callableId: CallableId): List<FirPropertySymbol> {
+        return getPackageParts(callableId.packageName).flatMap { part ->
+            val propertyIds = part.topLevelPropertyNameIndex[callableId.callableName] ?: return@flatMap emptyList()
+            propertyIds.map {
+                part.context.memberDeserializer.loadProperty(part.proto.getProperty(it)).symbol
+            }
         }
+    }
+
+    private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
+        return packagePartsCache.getValue(packageFqName)
     }
 
     // ------------------------ SymbolProvider methods ------------------------
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        getPackageParts(packageFqName).flatMapTo(destination) { part ->
-            loadFunctionsByName(part, name) + loadPropertiesByName(part, name)
-        }
+        val callableId = CallableId(packageFqName, name)
+        destination += functionCache.getValue(callableId)
+        destination += propertyCache.getValue(callableId)
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        getPackageParts(packageFqName).flatMapTo(destination) { part ->
-            loadFunctionsByName(part, name)
-        }
+        destination += functionCache.getValue(CallableId(packageFqName, name))
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        getPackageParts(packageFqName).flatMapTo(destination) { part ->
-            loadPropertiesByName(part, name)
-        }
+        destination += propertyCache.getValue(CallableId(packageFqName, name))
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
@@ -184,10 +188,6 @@ abstract class AbstractFirDeserializedSymbolsProvider(
     ): FirTypeAliasSymbol? {
         if (!classId.relativeClassName.isOneSegmentFQN()) return null
         return typeAliasCache.getValue(classId)
-    }
-
-    private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
-        return packagePartsCache.getValue(packageFqName)
     }
 
     override fun getPackage(fqName: FqName): FqName? = null
