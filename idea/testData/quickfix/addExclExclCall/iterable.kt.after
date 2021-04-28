@@ -1,6 +1,6 @@
 // "Add non-null asserted (!!) call" "true"
-// WITH_RUNTIME
-
-fun foo(a: List<String>?) {
-    for (s in a!!) {}
+fun foo() {
+    val test : Collection<Int>? = null!!
+    for (i in <caret>test!!) { }
 }
+
