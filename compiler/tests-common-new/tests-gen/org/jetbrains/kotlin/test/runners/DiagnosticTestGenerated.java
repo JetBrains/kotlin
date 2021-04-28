@@ -621,6 +621,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("RecursiveTypeParameterEqualityCheck.kt")
+        public void testRecursiveTypeParameterEqualityCheck() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/RecursiveTypeParameterEqualityCheck.kt");
+        }
+
+        @Test
         @TestMetadata("ReserveYield.kt")
         public void testReserveYield() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ReserveYield.kt");

@@ -98,7 +98,8 @@ internal object ConeTypeCompatibilityChecker {
     private fun ConeInferenceContext.areCompatible(
         upperBounds: Set<ConeClassLikeType>,
         lowerBounds: Set<ConeClassLikeType>,
-        compatibilityUpperBound: Compatibility
+        compatibilityUpperBound: Compatibility,
+        checkedTypeParameters: MutableSet<FirTypeParameterRef> = mutableSetOf(),
     ): Compatibility {
         val upperBoundClasses: Set<FirClassWithSuperClasses> = upperBounds.mapNotNull { it.toFirClassWithSuperClasses(this) }.toSet()
 
@@ -134,8 +135,17 @@ internal object ConeTypeCompatibilityChecker {
             }
         }
         var result = Compatibility.COMPATIBLE
-        val typeArgsCompatibility = typeArgumentMapping.values.asSequence()
-            .map { (upper, lower, compatibilityUpperBound) -> areCompatible(upper, lower, compatibilityUpperBound) }
+        val typeArgsCompatibility = typeArgumentMapping.asSequence()
+            .map { (paramRef, boundTypeArguments) ->
+                val (upper, lower, compatibility) = boundTypeArguments
+                if (paramRef in checkedTypeParameters) {
+                    // if we are already checking this type parameter, simply bail out to prevent infinite recursion.
+                    Compatibility.COMPATIBLE
+                } else {
+                    checkedTypeParameters.add(paramRef)
+                    areCompatible(upper, lower, compatibility, checkedTypeParameters)
+                }
+            }
         for (compatibility in typeArgsCompatibility) {
             if (compatibility == compatibilityUpperBound) return compatibility
             if (compatibility > result) {
