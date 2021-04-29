@@ -17,7 +17,7 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
         INFORMATIONAL,
         COMMONIZATION(
             prologue = null,
-            epilogue = "\n",
+            epilogue = null,
             logEachStep = true
         )
     }

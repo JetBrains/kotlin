@@ -50,12 +50,14 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val dependencyLibraries = getOptional<List<CommonizerDependency>, DependencyLibrariesOptionType>().orEmpty()
         val outputCommonizerTarget = compatGetOutputTarget()
         val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
+        val logLevel = getOptional<CommonizerLogLevel, LogLevelOptionType>() ?: CommonizerLogLevel.Quiet
+
 
         val konanTargets = outputCommonizerTarget.konanTargets
         val commonizerTargets = konanTargets.map(::CommonizerTarget)
 
-        val progressLogger = ProgressLogger(CliLoggerAdapter(2))
-        val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
+        val logger = ProgressLogger(CliLoggerAdapter(logLevel, 2))
+        val libraryLoader = DefaultNativeLibraryLoader(logger)
         val statsCollector = StatsCollector(statsType, commonizerTargets)
         val repository = FilesRepository(targetLibraries.toSet(), libraryLoader)
 
@@ -74,7 +76,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
                     CommonizerDependencyRepository(dependencyLibraries.toSet(), libraryLoader),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
-            progressLogger = progressLogger
+            progressLogger = logger
         ).run()
 
         statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))
@@ -97,9 +99,10 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val copyStdlib = getOptional<Boolean, BooleanOptionType> { it == "copy-stdlib" } ?: false
         val copyEndorsedLibs = getOptional<Boolean, BooleanOptionType> { it == "copy-endorsed-libs" } ?: false
         val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
+        val logLevel = getOptional<CommonizerLogLevel, LogLevelOptionType>() ?: CommonizerLogLevel.Quiet
 
-        val progressLogger = ProgressLogger(CliLoggerAdapter(2))
-        val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
+        val logger = ProgressLogger(CliLoggerAdapter(logLevel, 2))
+        val libraryLoader = DefaultNativeLibraryLoader(logger)
         val repository = KonanDistributionRepository(distribution, outputTarget.konanTargets, libraryLoader)
         val statsCollector = StatsCollector(statsType, outputTarget.withAllAncestors().toList())
 
@@ -112,8 +115,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         }
 
         val descriptionSuffix = estimateLibrariesCount(repository, outputTarget.allLeaves()).let { " ($it items)" }
-        val description = "${logPrefix}Preparing commonized Kotlin/Native libraries for $outputTarget$descriptionSuffix"
-        println(description)
+        logger.log("${logPrefix}Preparing commonized Kotlin/Native libraries for $outputTarget$descriptionSuffix")
 
         LibraryCommonizer(
             outputTarget = outputTarget,
@@ -121,7 +123,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             dependencies = StdlibRepository(distribution, libraryLoader),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
-            progressLogger = progressLogger
+            progressLogger = logger
         ).run()
 
         statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))

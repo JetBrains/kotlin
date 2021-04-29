@@ -5,24 +5,34 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
+import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
 import org.jetbrains.kotlin.util.Logger
 import kotlin.system.exitProcess
 
-internal class CliLoggerAdapter(indentSize: Int = 0) : Logger {
+
+internal class CliLoggerAdapter(
+    private val level: CommonizerLogLevel,
+    indentSize: Int = 0
+) : Logger {
     private val indent = " ".repeat(indentSize)
 
-    override fun log(message: String) = printlnIndented(message)
+    override fun log(message: String) = printlnIndented(message, CommonizerLogLevel.Info)
 
-    override fun warning(message: String) = printlnIndented("Warning: $message")
+    override fun warning(message: String) = printlnIndented("Warning: $message", *CommonizerLogLevel.values())
 
     override fun error(message: String) = fatal(message)
 
     override fun fatal(message: String): Nothing {
-        printlnIndented("Error: $message\n")
+        printlnIndented("Error: $message\n", *CommonizerLogLevel.values())
         exitProcess(1)
     }
 
-    private fun printlnIndented(text: String) =
-        if (indent.isEmpty()) println(text)
-        else text.split('\n').forEach { println(indent + it) }
+    private fun printlnIndented(text: String, vararg levels: CommonizerLogLevel) {
+        if (level in levels) {
+            if (indent.isEmpty()) println(text)
+            else text.split('\n').forEach {
+                println(indent + it)
+            }
+        }
+    }
 }

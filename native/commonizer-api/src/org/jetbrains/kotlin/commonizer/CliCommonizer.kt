@@ -27,7 +27,8 @@ public class CliCommonizer(private val executor: Executor) : Commonizer {
         inputLibraries: Set<File>,
         dependencyLibraries: Set<CommonizerDependency>,
         outputCommonizerTarget: SharedCommonizerTarget,
-        outputDirectory: File
+        outputDirectory: File,
+        logLevel: CommonizerLogLevel
     ) {
         if (inputLibraries.isEmpty()) return
         val arguments = mutableListOf<String>().apply {
@@ -39,6 +40,7 @@ public class CliCommonizer(private val executor: Executor) : Commonizer {
             if (dependencyLibraries.isNotEmpty()) {
                 add("-dependency-libraries"); add(dependencyLibraries.joinToString(";"))
             }
+            add("-log-level"); add(logLevel.name.lowercase())
         }
         executor(arguments)
     }

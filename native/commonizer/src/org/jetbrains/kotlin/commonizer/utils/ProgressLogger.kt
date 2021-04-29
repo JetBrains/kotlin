@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 import org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
+import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
 import org.jetbrains.kotlin.util.Logger
 
 class ProgressLogger(
-    private val wrapped: Logger = CliLoggerAdapter(0),
+    private val wrapped: Logger = CliLoggerAdapter(CommonizerLogLevel.Info, 0),
     private val indent: Int = 0,
 ) : Logger by wrapped {
     private val clockMark = ResettableClockMark()
