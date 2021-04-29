@@ -87,15 +87,12 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 private class CaptureCollector {
@@ -331,7 +328,10 @@ class ComposerLambdaMemoization(
         }
     }
 
-    override fun lower(module: IrModuleFragment) = module.transformChildrenVoid(this)
+    override fun lower(module: IrModuleFragment) {
+        super.lower(module)
+        module.transformChildrenVoid(this)
+    }
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
         if (declaration is IrFunction)
@@ -488,7 +488,7 @@ class ComposerLambdaMemoization(
             // Only memoize non-composable lambdas in a context we can use remember
             !functionContext.canRemember ||
             // Don't memoize inlined lambdas
-            expression.isInlineArgument()
+            expression.function.isInlinedLambda()
         ) {
             return super.visitFunctionExpression(expression)
         }
@@ -534,7 +534,9 @@ class ComposerLambdaMemoization(
         val functionExpression = result as? IrFunctionExpression ?: return result
 
         // Do not wrap target of an inline function
-        if (expression.isInlineArgument()) return functionExpression
+        if (expression.function.isInlinedLambda()) {
+            return functionExpression
+        }
 
         // Do not wrap composable lambdas with return results
         if (!functionExpression.function.descriptor.returnType.let { it == null || it.isUnit() }) {
@@ -869,22 +871,6 @@ class ComposerLambdaMemoization(
             true
         )
         return this
-    }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun IrFunctionExpression.isInlineArgument(): Boolean {
-        function.descriptor.findPsi()?.let { psi ->
-            (psi as? KtFunctionLiteral)?.let {
-                if (InlineUtil.isInlinedArgument(
-                        it,
-                        @Suppress("DEPRECATION") context.bindingContext,
-                        false
-                    )
-                )
-                    return true
-            }
-        }
-        return false
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
