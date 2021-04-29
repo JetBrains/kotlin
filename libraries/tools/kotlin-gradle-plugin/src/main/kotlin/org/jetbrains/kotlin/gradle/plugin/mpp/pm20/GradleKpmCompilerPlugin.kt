@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.FilesSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerPluginData
 import org.jetbrains.kotlin.gradle.utils.newProperty
 import org.jetbrains.kotlin.project.model.*
+import java.io.File
 
 internal fun Project.compilerPluginProviderForMetadata(
     fragment: KotlinGradleFragment,
@@ -35,29 +37,69 @@ private fun Project.compilerPluginDataProvider(
     compilationData: KotlinCompilationData<*>,
     pluginDataList: () -> List<PluginData>
 ): Provider<KotlinCompilerPluginData> {
-    val configurationName = compilationData.pluginClasspathConfigurationName()
-    val pluginClasspathConfiguration =
-        configurations.maybeCreate(configurationName).apply {
-            isCanBeConsumed = false
-            isCanBeResolved = true
-            isVisible = false
-        }
-
-    val pluginOptions = CompilerPluginOptions()
     return newProperty {
-        for (pluginData in pluginDataList()) {
-            dependencies.add(pluginClasspathConfiguration.name, pluginData.artifact.toGradleCoordinates(project))
-            pluginData.options.forEach { (key, value) ->
-                pluginOptions.addPluginArgument(pluginData.pluginId, SubpluginOption(key, value))
-            }
-        }
-
-        KotlinCompilerPluginData(
-            classpath = pluginClasspathConfiguration,
-            options = pluginOptions
-        )
+        val configurationName = compilationData.pluginClasspathConfigurationName()
+        val builder = CompilerPluginOptionsBuilder(project, configurationName)
+        builder += pluginDataList()
+        builder.build()
     }.apply { finalizeValueOnRead() }
 }
 
-private fun PluginData.ArtifactCoordinates.toGradleCoordinates(project: Project): String =
-    "$group:$artifact:${version ?: project.getKotlinPluginVersion()}"
+internal class CompilerPluginOptionsBuilder(
+    private val project: Project,
+    private val configurationName: String
+) {
+    private val pluginOptions = CompilerPluginOptions()
+    private val artifacts = mutableListOf<String>()
+    private val gradleInputs = mutableMapOf<String, String>()
+    private val gradleInputFiles = mutableSetOf<File>()
+
+    operator fun plusAssign(pluginData: PluginData) {
+        artifacts += pluginData.artifact.toGradleCoordinates()
+
+        for (option in pluginData.options) {
+            pluginOptions.addPluginArgument(pluginData.pluginId, option.toSubpluginOption())
+
+            if (option.sensitive) {
+                addToInputs(pluginData.pluginId, option)
+            }
+        }
+    }
+
+    operator fun plusAssign(pluginDataCollection: Collection<PluginData>) {
+        for (pluginData in pluginDataCollection) {
+            this += pluginData
+        }
+    }
+
+    private fun addToInputs(pluginId: String, option: PluginOption) = when(option) {
+        is FilesOption -> gradleInputFiles += option.files
+        is StringOption -> gradleInputs["${pluginId}.${option.key}"] = option.value
+    }
+
+    fun build(): KotlinCompilerPluginData {
+        val pluginClasspathConfiguration =
+            project.configurations.maybeCreate(configurationName).apply {
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                isVisible = false
+            }
+        artifacts.forEach { project.dependencies.add(configurationName, it) }
+
+        return KotlinCompilerPluginData(
+            classpath = pluginClasspathConfiguration,
+            options = pluginOptions,
+            inputs = gradleInputs,
+            inputFiles = gradleInputFiles
+        )
+    }
+
+
+    private fun PluginOption.toSubpluginOption() = when (this) {
+        is FilesOption -> FilesSubpluginOption(key, files)
+        is StringOption -> SubpluginOption(key, value)
+    }
+
+    private fun PluginData.ArtifactCoordinates.toGradleCoordinates(): String =
+        "$group:$artifact:${version ?: project.getKotlinPluginVersion()}"
+}

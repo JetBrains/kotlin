@@ -118,7 +118,7 @@ class KpmCompilerPluginTest {
                 group = "test",
                 artifact = artifact
             ),
-            options = options.map { PluginData.PluginOption(it.key, it.value) }
+            options = options.map { StringOption(it.key, it.value) }
         )
 
         override fun forMetadataCompilation(fragment: KotlinModuleFragment) = metadataArtifact?.let(::pluginData)

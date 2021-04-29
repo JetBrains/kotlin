@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.project.model
 
+import java.io.File
+
 /**
  * Adapts Kotlin Compiler Plugin for Multiplatform Kotlin Project Model
  * Build System uses this interface to identify applicable plugin artifacts and its options
@@ -45,12 +47,29 @@ data class PluginData(
         val artifact: String,
         val version: String? = null
     )
-
-    data class PluginOption(
-        val key: String,
-        val value: String
-    )
 }
+
+sealed class PluginOption {
+    abstract val key: String
+
+    /**
+     * when true a value of given plugin option is sensitive for incremental compilation
+     * when false compilation task can be skipped even if value differs from previous one
+     */
+    abstract val sensitive: Boolean
+}
+
+data class StringOption(
+    override val key: String,
+    val value: String,
+    override val sensitive: Boolean = true
+) : PluginOption()
+
+data class FilesOption(
+    override val key: String,
+    val files: List<File>,
+    override val sensitive: Boolean = true
+) : PluginOption()
 
 // TODO: It should be part of "Compilation Process": KotlinModule.compilationRequestFor(METADATA | PLATFORM) -> CompilationRequest
 //  But there is no such thing at the moment :)
@@ -81,8 +100,7 @@ abstract class BasicKpmCompilerPlugin : KpmCompilerPlugin {
 
     protected abstract fun nativePluginArtifact(): PluginData.ArtifactCoordinates?
 
-    protected abstract val pluginOptions: List<PluginData.PluginOption>
-
+    protected abstract val pluginOptions: List<PluginOption>
 
     override fun forMetadataCompilation(fragment: KotlinModuleFragment) = pluginDataOrNull(commonPluginArtifact())
 

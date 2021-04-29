@@ -783,5 +783,19 @@ data class KotlinCompilerPluginData(
     val classpath: FileCollection,
 
     @get:Internal
-    val options: CompilerPluginOptions
+    val options: CompilerPluginOptions,
+
+    /**
+     * Used only for Up-to-date checks
+     */
+    @get:Input
+    val inputs: Map<String, String>,
+
+    /**
+     * Used only for Up-to-date checks
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val inputFiles: Set<File>
 )
+
