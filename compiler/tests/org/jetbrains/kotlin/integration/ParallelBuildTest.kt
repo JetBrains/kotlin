@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.integration
 
-import com.intellij.execution.configurations.GeneralCommandLine
-import org.jetbrains.kotlin.cli.AbstractCliTest
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.PathUtil.kotlinPathsForDistDirectory
 import java.io.File
 
 class ParallelBuildTest : KotlinIntegrationTestBase() {
@@ -18,7 +13,8 @@ class ParallelBuildTest : KotlinIntegrationTestBase() {
         fun rawString(text: String): String = "\"\"\"$text\"\"\""
 
         val testDataDir = KtTestUtil.getTestDataPathBase() + "/integration/smoke/helloApp"
-        val programText = """
+        val program = ProgramWithDependencyOnCompiler(
+            tmpdir, """
             import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
             import org.jetbrains.kotlin.cli.common.ExitCode
             import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -56,44 +52,12 @@ class ParallelBuildTest : KotlinIntegrationTestBase() {
                     System.exit(1)
                 }
             }
-        """.trimIndent()
-
-        val programSource = File(tmpdir, "program.kt")
-        programSource.writeText(programText)
-
-        val program = File(tmpdir, "program").absolutePath
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
-            K2JVMCompiler(),
-            listOf(
-                programSource.path,
-                "-d", program,
-                "-cp", kotlinPathsForDistDirectory.compilerPath.absolutePath,
-            ),
+            """.trimIndent()
         )
-        assertEquals("Compilation failed:\n$output", ExitCode.OK, exitCode)
 
-        val result = runJava(
-            testDataDir,
-            "-cp",
-            listOf(
-                program,
-                kotlinPathsForDistDirectory.compilerPath.absolutePath,
-            ).joinToString(File.pathSeparator),
-            "ProgramKt",
-        )
-        assertEquals(
-            "Run failed:\n$result",
-            "OUT:\n0 errors\n\nReturn code: 0\n", result
-        )
-    }
+        program.compile()
 
-    private fun runJava(testDataDir: String, vararg arguments: String): String {
-        val commandLine = GeneralCommandLine().withWorkDirectory(testDataDir)
-        commandLine.exePath = getJavaRuntime().absolutePath
-        commandLine.addParameters(*arguments)
-        val executionLog = StringBuilder()
-        val exitCode = runProcess(commandLine, executionLog)
-        assertEquals("Non-zero exit code ($exitCode):\n$executionLog", 0, exitCode)
-        return executionLog.toString()
+        val result = program.run(File(testDataDir))
+        assertEquals("0 errors", result)
     }
 }
