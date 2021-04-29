@@ -63,7 +63,7 @@ open class VersionGenerator: DefaultTask() {
     open var versionFile: File? = project.file("${versionSourceDirectory.path}/org/jetbrains/kotlin/konan/CompilerVersionGenerated.kt")
 
     @Input
-    open val konanVersion =  kotlinNativeProperties["konanVersion"].toString()
+    open val konanVersion =  project.findProperty("konanVersion") as? String ?: kotlinNativeProperties["konanVersion"].toString()
 
 
     // TeamCity passes all configuration parameters into a build script as project properties.
@@ -73,7 +73,7 @@ open class VersionGenerator: DefaultTask() {
     open val buildNumber = project.findProperty("build.number")?.toString()
 
     @Input
-    open val meta = kotlinNativeProperties["konanMetaVersion"]?.let{ MetaVersion.valueOf(it.toString().toUpperCase()) } ?: MetaVersion.DEV
+    open val meta = (project.findProperty("konanMetaVersion") as? String ?: kotlinNativeProperties["konanMetaVersion"])?.let{ MetaVersion.valueOf(it.toString().toUpperCase()) } ?: MetaVersion.DEV
 
     private val versionPattern = Pattern.compile(
         "^(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-M(\\p{Digit}))?(?:-(\\p{Alpha}\\p{Alnum}*))?(?:-(\\d+))?$"
