@@ -952,7 +952,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     )
                 }
             }
-            firstSucceed -> firstResult
+            firstSucceed -> {
+                //checking secondResult leave erroneous nodes in dfa graph,
+                //we add another block so final type of expression will be correct
+                //todo replace this hack with proper graph cleaning
+                transformer.components.dataFlowAnalyzer.enterBlock(augmentedArraySetCall.setGetBlock)
+                transformer.components.dataFlowAnalyzer.exitBlock(augmentedArraySetCall.setGetBlock)
+                firstResult
+            }
             secondSucceed -> secondResult
             else -> {
                 augmentedArraySetCall.also {
