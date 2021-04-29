@@ -224,6 +224,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableCInteropCommonization: Boolean
         get() = booleanProperty("kotlin.mpp.enableCInteropCommonization") ?: false
 
+
+    val commonizerLogLevel: String?
+        get() = property("kotlin.mpp.commonizerLogLevel")
+
     /**
      * Enables experimental commonization of 'higher level' shared native source sets
      */

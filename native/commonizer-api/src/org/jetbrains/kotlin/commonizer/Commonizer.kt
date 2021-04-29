@@ -15,6 +15,7 @@ public interface Commonizer : Serializable {
         inputLibraries: Set<File>,
         dependencyLibraries: Set<CommonizerDependency>,
         outputCommonizerTarget: SharedCommonizerTarget,
-        outputDirectory: File
+        outputDirectory: File,
+        logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet
     )
 }
