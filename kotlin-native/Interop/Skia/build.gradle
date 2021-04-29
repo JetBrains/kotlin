@@ -19,26 +19,14 @@ buildscript {
 }
 
 apply plugin: 'kotlin'
-apply plugin: 'application'
 
 dependencies {
     implementation project(":kotlin-native:Interop:Indexer")
     implementation project(":kotlin-native:Interop:StubGenerator")
-    testImplementation "junit:junit:4.12"
-    testImplementation project(":kotlin-test:kotlin-test-junit")
 }
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xopt-in=kotlin.ExperimentalUnsignedTypes', '-Xskip-metadata-version-check']
         allWarningsAsErrors=true
-    }
-}
-
-sourceSets{
-    main {
-        kotlin {
-
-        }
     }
 }
