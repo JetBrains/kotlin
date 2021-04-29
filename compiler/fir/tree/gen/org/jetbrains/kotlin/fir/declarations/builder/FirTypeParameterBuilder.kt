@@ -44,7 +44,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirTypeParameter {
         return FirTypeParameterImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,

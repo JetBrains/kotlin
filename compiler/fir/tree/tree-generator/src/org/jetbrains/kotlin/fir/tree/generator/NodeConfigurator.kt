@@ -75,7 +75,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         declaration.configure {
-            +field("declarationSiteSession", firSessionType)
+            +field("moduleData", firModuleDataType)
             +field("resolvePhase", resolvePhaseType, withReplace = true).apply { isMutable = true }
             +field("origin", declarationOriginType)
             +field("attributes", declarationAttributesType)

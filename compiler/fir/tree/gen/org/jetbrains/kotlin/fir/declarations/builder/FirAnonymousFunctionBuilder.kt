@@ -58,7 +58,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override fun build(): FirAnonymousFunction {
         return FirAnonymousFunctionImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             origin,
             attributes,
             annotations,

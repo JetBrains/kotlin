@@ -55,7 +55,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override fun build(): FirRegularClass {
         return FirRegularClassImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,
@@ -89,7 +89,7 @@ inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClas
     }
     val copyBuilder = FirRegularClassBuilder()
     copyBuilder.source = original.source
-    copyBuilder.declarationSiteSession = original.declarationSiteSession
+    copyBuilder.moduleData = original.moduleData
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

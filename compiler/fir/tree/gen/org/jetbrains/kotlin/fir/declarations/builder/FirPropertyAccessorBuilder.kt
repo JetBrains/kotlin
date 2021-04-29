@@ -60,7 +60,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override fun build(): FirPropertyAccessor {
         return FirPropertyAccessorImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,
@@ -95,7 +95,7 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     }
     val copyBuilder = FirPropertyAccessorBuilder()
     copyBuilder.source = original.source
-    copyBuilder.declarationSiteSession = original.declarationSiteSession
+    copyBuilder.moduleData = original.moduleData
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

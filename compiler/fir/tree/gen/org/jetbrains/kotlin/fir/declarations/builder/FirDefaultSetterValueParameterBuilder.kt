@@ -56,7 +56,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirValueParameter {
         return FirDefaultSetterValueParameter(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,

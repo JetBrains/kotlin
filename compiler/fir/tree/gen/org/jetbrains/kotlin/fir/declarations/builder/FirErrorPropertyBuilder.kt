@@ -48,7 +48,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirErrorProperty {
         return FirErrorPropertyImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,

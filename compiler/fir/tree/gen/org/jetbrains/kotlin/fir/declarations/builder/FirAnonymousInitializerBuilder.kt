@@ -38,7 +38,7 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder {
     override fun build(): FirAnonymousInitializer {
         return FirAnonymousInitializerImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,

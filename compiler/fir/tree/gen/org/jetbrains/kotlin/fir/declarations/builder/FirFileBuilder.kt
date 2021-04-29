@@ -42,7 +42,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirFile {
         return FirFileImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,

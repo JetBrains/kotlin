@@ -49,7 +49,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirValueParameter {
         return FirValueParameterImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,
@@ -81,7 +81,7 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     }
     val copyBuilder = FirValueParameterBuilder()
     copyBuilder.source = original.source
-    copyBuilder.declarationSiteSession = original.declarationSiteSession
+    copyBuilder.moduleData = original.moduleData
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()

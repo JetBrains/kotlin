@@ -53,7 +53,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirEnumEntry {
         return FirEnumEntryImpl(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase,
             origin,
             attributes,
