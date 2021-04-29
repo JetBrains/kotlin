@@ -63,7 +63,7 @@ class Android25ProjectHandler(
 
             kotlinTaskInstance.classpath = project.files()
                 .from(variantData.getCompileClasspath(preJavaClasspathKey))
-                .from(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
+                .from(Callable { AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) })
 
             kotlinTaskInstance.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
         }
