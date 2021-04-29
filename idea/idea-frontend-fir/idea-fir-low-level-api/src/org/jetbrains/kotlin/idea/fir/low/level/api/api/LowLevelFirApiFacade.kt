@@ -109,8 +109,12 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
  */
 fun <D : FirDeclaration, R> D.withFirDeclarationInWriteLock(
     resolveState: FirModuleResolveState,
+    phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (D) -> R,
-): R = resolveState.withLock(this, DeclarationLockType.WRITE_LOCK, action)
+): R {
+    resolvedFirToPhase(phase, resolveState)
+    return resolveState.withLock(this, DeclarationLockType.WRITE_LOCK, action)
+}
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtElement]
