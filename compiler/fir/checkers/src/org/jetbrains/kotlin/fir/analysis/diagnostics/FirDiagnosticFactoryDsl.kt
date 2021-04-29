@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -58,6 +58,11 @@ fun <P : PsiElement, A : Any, B : Any, C : Any> error3(
     return DiagnosticFactory3DelegateProvider(Severity.ERROR, positioningStrategy)
 }
 
+fun <P : PsiElement, A : Any, B : Any, C : Any, D : Any> error4(
+    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT
+): DiagnosticFactory4DelegateProvider<P, A, B, C, D> {
+    return DiagnosticFactory4DelegateProvider(Severity.ERROR, positioningStrategy)
+}
 
 // ------------------------------ Providers ------------------------------
 
@@ -96,6 +101,16 @@ class DiagnosticFactory3DelegateProvider<P : PsiElement, A : Any, B : Any, C : A
         return DummyDelegate(FirDiagnosticFactory3(prop.name, severity, positioningStrategy))
     }
 }
+
+class DiagnosticFactory4DelegateProvider<P : PsiElement, A : Any, B : Any, C : Any, D : Any>(
+    private val severity: Severity,
+    private val positioningStrategy: SourceElementPositioningStrategy<P>
+) {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory4<P, A, B, C, D>> {
+        return DummyDelegate(FirDiagnosticFactory4(prop.name, severity, positioningStrategy))
+    }
+}
+
 
 private class DummyDelegate<T>(val value: T) : ReadOnlyProperty<Any?, T> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {

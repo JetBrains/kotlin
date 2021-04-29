@@ -45,6 +45,17 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         put(factory, FirDiagnosticWithParameters3Renderer(message, rendererA, rendererB, rendererC))
     }
 
+    fun <A : Any, B : Any, C : Any, D : Any> put(
+        factory: FirDiagnosticFactory4<*, A, B, C, D>,
+        message: String,
+        rendererA: DiagnosticParameterRenderer<A>?,
+        rendererB: DiagnosticParameterRenderer<B>?,
+        rendererC: DiagnosticParameterRenderer<C>?,
+        rendererD: DiagnosticParameterRenderer<D>?
+    ) {
+        put(factory, FirDiagnosticWithParameters4Renderer(message, rendererA, rendererB, rendererC, rendererD))
+    }
+
     private fun put(factory: AbstractFirDiagnosticFactory<*, *>, renderer: FirDiagnosticRenderer<*>) {
         renderersMap[factory] = renderer
         psiDiagnosticMap.put(factory, renderer)

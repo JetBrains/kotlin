@@ -60,3 +60,21 @@ class FirDiagnosticWithParameters3Renderer<A : Any, B : Any, C : Any>(
         )
     }
 }
+
+class FirDiagnosticWithParameters4Renderer<A : Any, B : Any, C : Any, D : Any>(
+    message: String,
+    private val rendererForA: DiagnosticParameterRenderer<A>?,
+    private val rendererForB: DiagnosticParameterRenderer<B>?,
+    private val rendererForC: DiagnosticParameterRenderer<C>?,
+    private val rendererForD: DiagnosticParameterRenderer<D>?,
+) : AbstractFirDiagnosticWithParametersRenderer<FirDiagnosticWithParameters4<*, A, B, C, D>>(message) {
+    override fun renderParameters(diagnostic: FirDiagnosticWithParameters4<*, A, B, C, D>): Array<out Any> {
+        val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c)
+        return arrayOf(
+            renderParameter(diagnostic.a, rendererForA, context),
+            renderParameter(diagnostic.b, rendererForB, context),
+            renderParameter(diagnostic.c, rendererForC, context),
+            renderParameter(diagnostic.d, rendererForD, context),
+        )
+    }
+}

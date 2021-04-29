@@ -51,6 +51,14 @@ sealed class FirDiagnosticWithParameters3<out E : FirSourceElement, A : Any, B :
     abstract override val factory: FirDiagnosticFactory3<*, A, B, C>
 }
 
+sealed class FirDiagnosticWithParameters4<out E : FirSourceElement, A : Any, B : Any, C : Any, D : Any> : FirDiagnostic<E>() {
+    abstract val a: A
+    abstract val b: B
+    abstract val c: C
+    abstract val d: D
+    abstract override val factory: FirDiagnosticFactory4<*, A, B, C, D>
+}
+
 // ------------------------------ psi diagnostics ------------------------------
 
 interface FirPsiDiagnostic<P : PsiElement> : Diagnostic {
@@ -93,6 +101,16 @@ data class FirPsiDiagnosticWithParameters3<P : PsiElement, A : Any, B : Any, C :
     override val factory: FirDiagnosticFactory3<P, A, B, C>
 ) : FirDiagnosticWithParameters3<FirPsiSourceElement<P>, A, B, C>(), FirPsiDiagnostic<P>
 
+data class FirPsiDiagnosticWithParameters4<P : PsiElement, A : Any, B : Any, C : Any, D : Any>(
+    override val element: FirPsiSourceElement<P>,
+    override val a: A,
+    override val b: B,
+    override val c: C,
+    override val d: D,
+    override val severity: Severity,
+    override val factory: FirDiagnosticFactory4<P, A, B, C, D>
+) : FirDiagnosticWithParameters4<FirPsiSourceElement<P>, A, B, C, D>(), FirPsiDiagnostic<P>
+
 // ------------------------------ light tree diagnostics ------------------------------
 
 interface FirLightDiagnostic : UnboundDiagnostic {
@@ -128,3 +146,13 @@ data class FirLightDiagnosticWithParameters3<A : Any, B : Any, C : Any>(
     override val severity: Severity,
     override val factory: FirDiagnosticFactory3<*, A, B, C>
 ) : FirDiagnosticWithParameters3<FirLightSourceElement, A, B, C>(), FirLightDiagnostic
+
+data class FirLightDiagnosticWithParameters4<A : Any, B : Any, C : Any, D : Any>(
+    override val element: FirLightSourceElement,
+    override val a: A,
+    override val b: B,
+    override val c: C,
+    override val d: D,
+    override val severity: Severity,
+    override val factory: FirDiagnosticFactory4<*, A, B, C, D>
+) : FirDiagnosticWithParameters4<FirLightSourceElement, A, B, C, D>(), FirLightDiagnostic
