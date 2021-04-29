@@ -16,27 +16,31 @@ import kotlin.test.fail
 class CommonizerIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
+    companion object {
+        private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"
+    }
+
     @Test
     fun `test commonizeNativeDistributionWithIosLinuxWindows`() {
         with(Project("commonizeNativeDistributionWithIosLinuxWindows")) {
             build(":p1:commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
                 assertTasksExecuted(":p1:commonizeNativeDistribution")
                 assertContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
-                assertContains("Kotlin KLIB commonizer:")
+                assertContains(commonizerOutput)
                 assertSuccessful()
             }
 
             build(":p1:commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
                 assertTasksExecuted(":p1:commonizeNativeDistribution")
                 assertContains("Native Distribution Commonization: Cache hit")
-                assertNotContains("Kotlin KLIB commonizer:")
+                assertNotContains(commonizerOutput)
                 assertSuccessful()
             }
 
             build(":p1:commonize", "--rerun-tasks", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
                 assertTasksExecuted(":p1:commonizeNativeDistribution")
                 assertContains("Native Distribution Commonization: Cache disabled")
-                assertContains("Kotlin KLIB commonizer:")
+                assertContains(commonizerOutput)
                 assertSuccessful()
             }
         }
