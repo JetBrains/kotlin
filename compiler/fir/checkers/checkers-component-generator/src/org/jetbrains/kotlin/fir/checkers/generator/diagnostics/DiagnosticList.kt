@@ -47,8 +47,8 @@ class DiagnosticBuilder(
 
     @OptIn(PrivateForInline::class, ExperimentalStdlibApi::class)
     inline fun <reified T> parameter(name: String) {
-        if (parameters.size == 3) {
-            error("Diagnostic cannot have more than 3 parameters")
+        if (parameters.size >= MAX_DIAGNOSTIC_PARAMETER_COUNT) {
+            error("Diagnostic cannot have more than $MAX_DIAGNOSTIC_PARAMETER_COUNT parameters")
         }
         parameters += DiagnosticParameter(
             name = name,
@@ -64,4 +64,8 @@ class DiagnosticBuilder(
         parameters,
         positioningStrategy,
     )
+
+    companion object {
+        const val MAX_DIAGNOSTIC_PARAMETER_COUNT = 4
+    }
 }

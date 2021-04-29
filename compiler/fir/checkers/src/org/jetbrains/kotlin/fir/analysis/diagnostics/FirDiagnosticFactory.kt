@@ -9,7 +9,8 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
@@ -120,6 +121,29 @@ class FirDiagnosticFactory3<P : PsiElement, A : Any, B : Any, C : Any>(
     }
 }
 
+class FirDiagnosticFactory4<P : PsiElement, A : Any, B : Any, C : Any, D : Any>(
+    name: String,
+    severity: Severity,
+    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<FirDiagnosticWithParameters4<*, A, B, C, D>, P>(name, severity, positioningStrategy) {
+    override val firRenderer: FirDiagnosticRenderer<FirDiagnosticWithParameters4<*, A, B, C, D>> = FirDiagnosticWithParameters4Renderer(
+        "{0}, {1}, {2}, {3}",
+        FirDiagnosticRenderers.TO_STRING,
+        FirDiagnosticRenderers.TO_STRING,
+        FirDiagnosticRenderers.TO_STRING,
+        FirDiagnosticRenderers.TO_STRING
+    )
+
+    fun on(element: FirSourceElement, a: A, b: B, c: C, d: D): FirDiagnosticWithParameters4<*, A, B, C, D> {
+        return when (element) {
+            is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters4(
+                element as FirPsiSourceElement<P>, a, b, c, d, severity, this
+            )
+            is FirLightSourceElement -> FirLightDiagnosticWithParameters4(element, a, b, c, d, severity, this)
+            else -> incorrectElement(element)
+        }
+    }
+}
 private fun incorrectElement(element: FirSourceElement): Nothing {
     throw IllegalArgumentException("Unknown element type: ${element::class}")
 }
