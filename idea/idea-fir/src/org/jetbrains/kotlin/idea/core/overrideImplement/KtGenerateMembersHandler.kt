@@ -308,7 +308,6 @@ internal abstract class KtGenerateMembersHandler : AbstractGenerateMembersHandle
             typeRendererOptions = KtTypeRendererOptions(
                 shortQualifiedNames = true,
                 renderFunctionType = true,
-                renderAnnotations = false
             )
         )
     }

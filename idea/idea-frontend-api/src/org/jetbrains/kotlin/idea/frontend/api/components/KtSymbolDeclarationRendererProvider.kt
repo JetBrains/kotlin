@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import javax.swing.Icon
 
 /**
  * KtType to string renderer options
@@ -25,8 +24,6 @@ data class KtTypeRendererOptions(
      * @sample Function0<Int> returns () -> Int
      */
     val renderFunctionType: Boolean = true,
-
-    val renderAnnotations: Boolean = true,
 ) {
     companion object {
         val DEFAULT = KtTypeRendererOptions()
