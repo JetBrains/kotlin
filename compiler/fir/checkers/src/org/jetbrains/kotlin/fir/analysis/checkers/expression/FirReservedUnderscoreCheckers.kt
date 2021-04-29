@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtParameterElementType
 
 object FirReservedUnderscoreExpressionChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -156,49 +155,30 @@ private fun reportIfUnderscore(
 
     reportIfUnderscore(rawIdentifier, source, context, reporter, isSingleUnderscoreAllowed)
 
-    fun reportIfAnyDescendantIsUnderscore(typeRefSource: FirSourceElement?) {
-        if (typeRefSource == null) return
+    val returnOrReceiverTypeRef = when (declaration) {
+        is FirValueParameter -> declaration.returnTypeRef.source
+        is FirFunction<*> -> declaration.receiverTypeRef?.source
+        else -> null
+    }
 
-        val isReport = when (typeRefSource) {
-            is FirPsiSourceElement<*> -> {
-                val psi = typeRefSource.psi
-                psi !is KtFunctionLiteral && psi.anyDescendantOfType<LeafPsiElement> { isUnderscore(it.text) }
-            }
-            is FirLightSourceElement ->
-                source?.treeStructure?.findFirstDescendant(typeRefSource.lighterASTNode) { node -> isUnderscore(node.toString()) } != null
-            else ->
-                false
+    val isReportUnderscoreInReturnOrReceiverTypeRef = when (returnOrReceiverTypeRef) {
+        is FirPsiSourceElement<*> -> {
+            val psi = returnOrReceiverTypeRef.psi
+            psi is KtTypeReference && psi.anyDescendantOfType<LeafPsiElement> { isUnderscore(it.text) }
         }
-
-        if (isReport) {
-            reporter.reportOn(
-                typeRefSource,
-                FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS,
-                context
-            )
+        is FirLightSourceElement -> {
+            val lighterASTNode = returnOrReceiverTypeRef.lighterASTNode
+            lighterASTNode.tokenType == KtNodeTypes.TYPE_REFERENCE &&
+                    source?.treeStructure?.findFirstDescendant(lighterASTNode)
+                    { it.tokenType == KtNodeTypes.REFERENCE_EXPRESSION && isUnderscore(it.toString()) } != null
+        }
+        else -> {
+            false
         }
     }
 
-    if (declaration is FirValueParameter) {
-        val isReport = when (val returnTypeRefSource = declaration.returnTypeRef.source) {
-            is FirPsiSourceElement<*> -> {
-                val psi = returnTypeRefSource.psi
-                psi !is KtFunctionLiteral && psi !is KtParameter
-            }
-            is FirLightSourceElement -> {
-                val tokenType = returnTypeRefSource.lighterASTNode.tokenType
-                tokenType !is KtParameterElementType && tokenType != KtNodeTypes.CLASS
-            }
-            else -> {
-                false
-            }
-        }
-
-        if (isReport) {
-            reportIfAnyDescendantIsUnderscore(declaration.returnTypeRef.source)
-        }
-    } else if (declaration is FirFunction<*>) {
-        reportIfAnyDescendantIsUnderscore(declaration.receiverTypeRef?.source)
+    if (isReportUnderscoreInReturnOrReceiverTypeRef) {
+        reporter.reportOn(returnOrReceiverTypeRef, FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS, context)
     }
 }
 
