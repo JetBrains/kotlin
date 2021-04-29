@@ -36,6 +36,21 @@ open class EmptyContinuation(override val context: CoroutineContext = EmptyCorou
     }
 }
 
+abstract class ContinuationAdapter<in T> : Continuation<T> {
+    override val context: CoroutineContext = EmptyCoroutineContext
+
+    override fun resumeWith(result: Result<T>) {
+       if (result.isSuccess) {
+           resume(result.getOrThrow())
+       } else {
+           resumeWithException(result.exceptionOrNull()!!)
+       }
+    }
+
+    abstract fun resumeWithException(exception: Throwable)
+    abstract fun resume(value: T)
+}
+
 class StateMachineCheckerClass {
     private var counter = 0
     var finished = false
@@ -66,7 +81,7 @@ class StateMachineCheckerClass {
     }
 }
 val StateMachineChecker = StateMachineCheckerClass()
-object CheckStateMachineContinuation: Continuation<Unit>() {
+object CheckStateMachineContinuation: Continuation<Unit> {
     override val context: CoroutineContext
         get() = EmptyCoroutineContext
 
