@@ -20,8 +20,8 @@ inline operator fun B?.plusAssign( c: ()->Any) { } //(1)
 @JvmName("aa")
 inline  operator fun B?.plusAssign( c: ()->C) { //(2)
 
-    this <!RECURSION_IN_INLINE!>+=<!> {1}
-    <!DEBUG_INFO_CALL("fqName: testPackCase1.plusAssign; typeCall: inline operator extension function")!>this <!RECURSION_IN_INLINE!>+=<!> {1}<!>
+    this += {<!ARGUMENT_TYPE_MISMATCH!>1<!>}
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>this += {<!ARGUMENT_TYPE_MISMATCH!>1<!>}<!>
 }
 
 class C
