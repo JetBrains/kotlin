@@ -110,11 +110,14 @@ task preparePublication {
     project.ext.isSonatypePublish = repoProvider == 'sonatype'
     project.ext.isSonatypeRelease = isSonatypePublish && isRelease
 
-    project.ext.deployRepoUrlCustom = properties["deployRepoUrl"] ?: properties["deploy-url"]
+    String deployRepoUrl = properties["deployRepoUrl"] ?: properties["deploy-url"]
+    String deployFolder = properties["deployRepoFolder"] != null ? "file://${rootProject.buildDir}/${properties["deployRepoFolder"]}" : null
     String sonatypeSnapshotsUrl = (isSonatypePublish && !isRelease) ? "https://oss.sonatype.org/content/repositories/snapshots/" : null
-    String repoFolder = properties["deployRepoFolder"] ?: "repo"
+    String deployUrlFromParameters = deployRepoUrl ?: deployFolder ?: sonatypeSnapshotsUrl
 
-    ext.repoUrl = project.ext.deployRepoUrlCustom ?: sonatypeSnapshotsUrl ?: "file://${rootProject.buildDir}/${repoFolder}"
+    project.ext.isDeployStagingRepoGenerationRequired = project.ext.isSonatypeRelease && deployUrlFromParameters == null
+
+    ext.repoUrl = deployUrlFromParameters ?: "file://${rootProject.buildDir}/repo"
     logger.info("Deployment repository preliminary url: $repoUrl ($repoProvider)")
 
     ext.username = properties["deployRepoUsername"] ?: properties["kotlin.${repoProvider}.user"]
