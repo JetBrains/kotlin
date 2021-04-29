@@ -27,16 +27,16 @@ internal class NativeDistributionCommonizationCache(
 
     private fun isCached(args: List<String>): Boolean {
         if (!runner.project.isNativeDistributionCommonizationCacheEnabled) {
-            runner.project.logger.info("Native Distribution Commonization: Cache disabled")
+            logInfo("Cache disabled")
             return false
         }
 
         if (successMarker.exists() && successMarker.isFile) {
             if (successMarker.readText() == successMarkerText(args)) {
-                runner.project.logger.info("Native Distribution Commonization: Cache hit for ${outputDirectory.path}")
+                logInfo("Cache hit for ${outputDirectory.path}")
                 return true
             } else {
-                runner.project.logger.info("Native Distribution Commonization: Cache miss. Different args")
+                logQuiet("Cache miss. Different arguments for ${outputDirectory.path}")
                 successMarker.delete()
             }
         }
@@ -52,5 +52,13 @@ internal class NativeDistributionCommonizationCache(
 
     private fun successMarkerText(args: List<String>): String {
         return args.joinToString("\n")
+    }
+
+    private fun logInfo(message: String) = runner.project.logger.info("${Logging.prefix}: $message")
+
+    private fun logQuiet(message: String) = runner.project.logger.quiet("${Logging.prefix}: $message")
+
+    private object Logging {
+        const val prefix = "Native Distribution Commonization"
     }
 }
