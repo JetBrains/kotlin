@@ -72,6 +72,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         val implFun = reference.symbol.owner
 
+        // Don't generate references to intrinsic functions as invokedynamic (no such method exists at run-time).
+        if (context.irIntrinsics.getIntrinsic(implFun.symbol) != null)
+            return null
+
         if (implFun is IrConstructor && implFun.visibility.isPrivate) {
             // Kotlin generates constructor accessors differently from Java.
             // TODO more precise accessibility check (see SyntheticAccessorLowering::isAccessible)
