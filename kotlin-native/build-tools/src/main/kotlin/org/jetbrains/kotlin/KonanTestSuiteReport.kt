@@ -83,7 +83,16 @@ class KonanTestSuiteReportEnvironment(val name: String, val project: Project, va
         tests += KonanTestCaseReport(name, TestStatus.SKIPPED)
     }
 
-    fun abort(throwable: Throwable, count:Int) {
+    fun abort(comment: String, throwable: Throwable, testNames: List<String>) {
+        testNames.forEach {
+            tc?.startTest(it)
+            tc?.errorTest(it, java.lang.Exception(throwable))
+            tests += KonanTestCaseReport(it, TestStatus.ERROR, "$comment\n${throwable.toString()}")
+        }
+        abort(throwable, testNames.size)
+    }
+
+    fun abort(throwable: Throwable, count: Int) {
         statistics.error(count)
         project.logger.quiet("suite `$name` aborted with exception", throwable)
     }
