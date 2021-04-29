@@ -954,6 +954,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("genericReified.kt")
+        public void testGenericReified() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/genericReified.kt");
+        }
+
         @TestMetadata("inlineOnly.kt")
         public void testInlineOnly() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inline/inlineOnly.kt");
