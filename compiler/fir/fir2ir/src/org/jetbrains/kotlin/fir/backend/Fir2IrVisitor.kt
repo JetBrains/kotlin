@@ -574,7 +574,7 @@ class Fir2IrVisitor(
     override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: Any?): IrElement {
         val firLhsVariable = buildProperty {
             source = elvisExpression.source
-            declarationSiteSession = session
+            moduleData = session.moduleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = elvisExpression.lhs.typeRef
             name = Name.special("<elvis>")

@@ -14,7 +14,7 @@ sealed class FirMetadataSource : MetadataSource {
     abstract val fir: FirDeclaration
 
     val declarationSiteSession: FirSession
-        get() = fir.declarationSiteSession
+        get() = fir.moduleData.session
 
     override val name: Name?
         get() = when (val fir = fir) {

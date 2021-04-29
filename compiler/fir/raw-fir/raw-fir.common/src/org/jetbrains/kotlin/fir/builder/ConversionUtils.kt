@@ -271,14 +271,12 @@ fun generateResolvedAccessExpression(source: FirSourceElement?, variable: FirVar
         }
     }
 
-
-
 fun generateTemporaryVariable(
-    session: FirSession, source: FirSourceElement?, name: Name, initializer: FirExpression, typeRef: FirTypeRef? = null,
+    moduleData: FirModuleData, source: FirSourceElement?, name: Name, initializer: FirExpression, typeRef: FirTypeRef? = null,
 ): FirVariable<*> =
     buildProperty {
         this.source = source
-        declarationSiteSession = session
+        this.moduleData = moduleData
         origin = FirDeclarationOrigin.Source
         returnTypeRef = typeRef ?: buildImplicitTypeRef {
             this.source = source
@@ -292,13 +290,13 @@ fun generateTemporaryVariable(
     }
 
 fun generateTemporaryVariable(
-    session: FirSession, source: FirSourceElement?, specialName: String, initializer: FirExpression,
-): FirVariable<*> = generateTemporaryVariable(session, source, Name.special("<$specialName>"), initializer)
+    moduleData: FirModuleData, source: FirSourceElement?, specialName: String, initializer: FirExpression,
+): FirVariable<*> = generateTemporaryVariable(moduleData, source, Name.special("<$specialName>"), initializer)
 
 fun FirPropertyBuilder.generateAccessorsByDelegate(
     delegateBuilder: FirWrappedDelegateExpressionBuilder?,
     ownerClassBuilder: FirClassBuilder?,
-    session: FirSession,
+    moduleData: FirModuleData,
     isExtension: Boolean,
     stubMode: Boolean,
     receiver: FirExpression?
@@ -402,7 +400,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         getter = buildPropertyAccessor {
             this.source = fakeSource
-            declarationSiteSession = session
+            this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = buildImplicitTypeRef()
             isGetter = true
@@ -434,14 +432,14 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         val annotations = setter?.annotations
         setter = buildPropertyAccessor {
             this.source = fakeSource
-            declarationSiteSession = session
+            this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = session.builtinTypes.unitType
+            returnTypeRef = moduleData.session.builtinTypes.unitType
             isGetter = false
             status = FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
             val parameter = buildValueParameter {
                 source = fakeSource
-                declarationSiteSession = session
+                this.moduleData = moduleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
                 name = DELEGATED_SETTER_PARAM

@@ -31,7 +31,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
         collector: FileStructureElementDiagnosticsCollector,
         lockProvider: LockProvider<FirFile>
     ): FileStructureElementDiagnosticList {
-        val sessionHolder = SessionHolderImpl.createWithEmptyScopeSession(firFile.declarationSiteSession)
+        val sessionHolder = SessionHolderImpl.createWithEmptyScopeSession(firFile.moduleData.session)
         val context = lockProvider.withReadLock(firFile) {
             PersistenceContextCollector.collectContext(sessionHolder, firFile, structureElementDeclaration)
         }
@@ -105,7 +105,7 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
         firFile: FirFile,
         components: List<AbstractDiagnosticCollectorComponent>
     ) : FirIdeDiagnosticVisitor(
-        PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(SessionHolderImpl.createWithEmptyScopeSession(firFile.declarationSiteSession)),
+        PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(SessionHolderImpl.createWithEmptyScopeSession(firFile.moduleData.session)),
         components,
     ) {
         override fun visitFile(file: FirFile, data: Nothing?) {

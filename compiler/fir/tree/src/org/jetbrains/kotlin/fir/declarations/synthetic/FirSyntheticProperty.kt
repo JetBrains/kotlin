@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class FirSyntheticProperty(
-    override val declarationSiteSession: FirSession,
+    override val moduleData: FirModuleData,
     override val name: Name,
     override val isVar: Boolean,
     override val symbol: FirAccessorSymbol,

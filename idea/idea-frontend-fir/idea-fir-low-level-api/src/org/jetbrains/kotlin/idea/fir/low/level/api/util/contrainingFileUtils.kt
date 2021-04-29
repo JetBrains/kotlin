@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.firProvider
 
 fun FirDeclaration.getContainingFile(): FirFile? {
-    val provider = declarationSiteSession.firProvider
+    val provider = moduleData.session.firProvider
     return when (this) {
         is FirFile -> this
         is FirCallableDeclaration<*> -> provider.getFirCallableContainerFile(symbol)

@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
     if (bounds.isEmpty()) {
+        val builtinTypes = moduleData.session.builtinTypes
         val type = if (isFlexible) {
-            val session = declarationSiteSession
             buildResolvedTypeRef {
-                type = ConeFlexibleType(session.builtinTypes.anyType.type, session.builtinTypes.nullableAnyType.type)
+                type = ConeFlexibleType(builtinTypes.anyType.type, builtinTypes.nullableAnyType.type)
             }
         } else {
-            declarationSiteSession.builtinTypes.nullableAnyType
+            builtinTypes.nullableAnyType
         }
         bounds += type
     }

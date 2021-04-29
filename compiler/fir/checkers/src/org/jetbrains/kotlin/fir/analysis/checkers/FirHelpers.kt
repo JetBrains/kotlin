@@ -420,8 +420,9 @@ fun FirCallableMemberDeclaration<*>.isVisibleInClass(parentClass: FirClass<*>): 
     if (visibility == Visibilities.Private ||
         !visibility.visibleFromPackage(classPackage, symbol.callableId.packageName)
     ) return false
-    if (visibility == Visibilities.Internal &&
-        declarationSiteSession !== parentClass.declarationSiteSession
+    if (
+        visibility == Visibilities.Internal &&
+        (moduleData != parentClass.moduleData || parentClass.moduleData in moduleData.friendDependencies)
     ) return false
     return true
 }

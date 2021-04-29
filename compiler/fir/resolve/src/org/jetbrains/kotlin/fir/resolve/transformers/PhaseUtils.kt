@@ -23,7 +23,7 @@ fun AbstractFirBasedSymbol<*>.ensureResolved(
     // TODO: Decide which one session should be used and probably get rid of the parameter if use-site session is not needed
     @Suppress("UNUSED_PARAMETER") useSiteSession: FirSession,
 ) {
-    val session = (fir as FirDeclaration).declarationSiteSession
+    val session = (fir as FirDeclaration).moduleData.session
     val phaseManager = session.phaseManager
     phaseManager.ensureResolved(this, requiredPhase)
 }

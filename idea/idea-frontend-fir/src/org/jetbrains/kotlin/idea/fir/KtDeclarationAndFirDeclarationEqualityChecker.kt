@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.Variance
@@ -30,7 +30,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             && !isTheSameTypes(
                 psi.receiverTypeReference!!,
                 fir.receiverTypeRef!!,
-                fir.declarationSiteSession,
+                fir.moduleData.session,
                 isVararg = false
             )
         ) {
@@ -44,7 +44,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             if (!isTheSameTypes(
                     candidateParameterType,
                     expectedParameter.returnTypeRef,
-                    fir.declarationSiteSession,
+                    fir.moduleData.session,
                     isVararg = expectedParameter.isVararg
                 )
             ) {

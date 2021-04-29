@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
@@ -33,7 +33,7 @@ import kotlin.properties.Delegates
 @OptIn(FirImplementationDetail::class)
 class FirJavaField @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
-    override val declarationSiteSession: FirSession,
+    override val moduleData: FirModuleData,
     override val symbol: FirFieldSymbol,
     override val name: Name,
     override var resolvePhase: FirResolvePhase,
@@ -156,7 +156,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     override fun build(): FirJavaField {
         return FirJavaField(
             source,
-            declarationSiteSession,
+            moduleData,
             symbol as FirFieldSymbol,
             name,
             resolvePhase,

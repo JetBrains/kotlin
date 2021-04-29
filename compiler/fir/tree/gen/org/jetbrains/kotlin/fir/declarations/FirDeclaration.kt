@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 sealed interface FirDeclaration : FirElement {
     override val source: FirSourceElement?
-    val declarationSiteSession: FirSession
+    val moduleData: FirModuleData
     val resolvePhase: FirResolvePhase
     val origin: FirDeclarationOrigin
     val attributes: FirDeclarationAttributes

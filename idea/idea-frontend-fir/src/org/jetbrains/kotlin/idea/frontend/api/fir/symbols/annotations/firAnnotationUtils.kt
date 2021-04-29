@@ -25,12 +25,12 @@ internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.toAnnotationsList(
 
 internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.containsAnnotation(classId: ClassId): Boolean =
     withFir(AnnotationPhases.PHASE_FOR_ANNOTATION_CLASS_ID) { fir ->
-        fir.annotations.any { it.getClassId(fir.declarationSiteSession) == classId }
+        fir.annotations.any { it.getClassId(fir.moduleData.session) == classId }
     }
 
 internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.getAnnotationClassIds(): Collection<ClassId> =
     withFir(AnnotationPhases.PHASE_FOR_ANNOTATION_CLASS_ID) { fir ->
-        fir.annotations.mapNotNull { it.getClassId(fir.declarationSiteSession) }
+        fir.annotations.mapNotNull { it.getClassId(fir.moduleData.session) }
     }
 
 

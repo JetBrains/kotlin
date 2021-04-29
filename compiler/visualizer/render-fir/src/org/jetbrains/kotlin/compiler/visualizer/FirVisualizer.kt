@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
@@ -316,10 +315,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
     }
 
     inner class FirRendererForVisualizer : FirVisitor<Unit, StringBuilder>() {
-        private val session = firFile.declarationSiteSession
+        private val session = firFile.moduleData.session
         private val filePackage = firFile.packageFqName.toString()
         private val filePackageWithSlash = filePackage.replace(".", "/")
-        private val symbolProvider = firFile.declarationSiteSession.symbolProvider
 
         private fun ConeTypeProjection.tryToRenderConeAsFunctionType(): String {
             if (this !is ConeKotlinType) return localTypeRenderer()

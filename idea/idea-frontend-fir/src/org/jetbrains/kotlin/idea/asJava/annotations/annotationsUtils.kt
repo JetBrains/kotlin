@@ -49,7 +49,7 @@ internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: An
                     annotationCall.classId?.asString() == "kotlin/Deprecated"
         } ?: return@withFir false
 
-        val qualifiedExpression = mapAnnotationParameters(deprecatedAnnotationCall, it.declarationSiteSession)["level"] as? FirQualifiedAccessExpression
+        val qualifiedExpression = mapAnnotationParameters(deprecatedAnnotationCall, it.moduleData.session)["level"] as? FirQualifiedAccessExpression
             ?: return@withFir false
 
         val calleeReference = (qualifiedExpression.calleeReference as? FirNamedReference)?.name?.asString()

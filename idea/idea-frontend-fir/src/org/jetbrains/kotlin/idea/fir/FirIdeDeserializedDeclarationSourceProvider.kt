@@ -10,8 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -160,4 +158,4 @@ fun FirElement.findPsi(session: FirSession): PsiElement? =
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
 fun FirDeclaration.findReferencePsi(): PsiElement? =
-    psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (declarationSiteSession as FirIdeSession).project)
+    psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as FirIdeSession).project)

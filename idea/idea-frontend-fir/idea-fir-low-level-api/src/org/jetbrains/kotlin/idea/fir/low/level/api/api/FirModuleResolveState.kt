@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
-import org.jetbrains.annotations.TestOnly
 import com.intellij.openapi.project.Project
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -43,7 +42,7 @@ abstract class FirModuleResolveState {
 
     internal inline fun <D : FirDeclaration, R> withLock(declaration: D, declarationLockType: DeclarationLockType, action: (D) -> R): R {
         val originalDeclaration = (declaration as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: declaration
-        val session = originalDeclaration.declarationSiteSession
+        val session = originalDeclaration.moduleData.session
         return when {
             originalDeclaration.origin == FirDeclarationOrigin.Source
                     && session is FirIdeSourcesSession

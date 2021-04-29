@@ -187,7 +187,7 @@ class FirCallCompleter(
                     val itType = parameters.single()
                     buildValueParameter {
                         source = lambdaAtom.atom.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
-                        declarationSiteSession = session
+                        moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = itType.approximateLambdaInputType().toFirResolvedTypeRef()
                         this.name = name

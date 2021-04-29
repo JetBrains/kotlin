@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.RawFirFragmentForLazyBodiesBuilder
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.*
@@ -131,7 +131,7 @@ object DeclarationCopyBuilder {
     ) {
         resolvePhase = minOf(originalDeclaration.resolvePhase, FirResolvePhase.DECLARATIONS)
         source = builtDeclaration.source
-        declarationSiteSession = state.rootModuleSession
+        moduleData = state.rootModuleSession.moduleData
     }
 
     internal inline fun <reified T : FirDeclaration> createCopy(
@@ -139,8 +139,8 @@ object DeclarationCopyBuilder {
         originalFirDeclaration: T,
     ): T {
         return RawFirFragmentForLazyBodiesBuilder.build(
-            session = originalFirDeclaration.declarationSiteSession,
-            baseScopeProvider = originalFirDeclaration.declarationSiteSession.firIdeProvider.kotlinScopeProvider,
+            session = originalFirDeclaration.moduleData.session,
+            baseScopeProvider = originalFirDeclaration.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = originalFirDeclaration.collectDesignation().fullDesignation,
             declaration = fakeKtDeclaration
         ) as T

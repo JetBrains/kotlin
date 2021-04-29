@@ -93,3 +93,8 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirJsr305StateContainer::class, FirJsr305StateContainer.Default)
 }
+
+@OptIn(SessionConfiguration::class)
+fun FirSession.registerModuleData(moduleData: FirModuleData) {
+    register(FirModuleData::class, moduleData)
+}

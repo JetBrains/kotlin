@@ -63,7 +63,7 @@ internal class FirPhaseRunner {
     }
 
     private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase, scopeSession: ScopeSession) {
-        val phaseProcessor = phase.createTransformerBasedProcessorByPhase(firFile.declarationSiteSession, scopeSession)
+        val phaseProcessor = phase.createTransformerBasedProcessorByPhase(firFile.moduleData.session, scopeSession)
         executeWithoutPCE {
             FirLazyBodiesCalculator.calculateLazyBodiesIfPhaseRequires(firFile, phase)
             phaseProcessor.processFile(firFile)

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.AllOpenPluginKey
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
@@ -37,7 +38,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
     ): List<GeneratedDeclaration<FirRegularClass>> {
         val owner = annotatedDeclaration as? FirRegularClass ?: return emptyList()
         val newClass = buildRegularClass {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
@@ -60,7 +61,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
 
         val classId = klass.symbol.classId
         val constructor = buildConstructor {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = buildResolvedTypeRef {
@@ -75,7 +76,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
         }
 
         val function = buildSimpleFunction {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType

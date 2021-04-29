@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.builder
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 interface FirFunctionBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     abstract override var source: FirSourceElement?
-    abstract override var declarationSiteSession: FirSession
+    abstract override var moduleData: FirModuleData
     abstract override var resolvePhase: FirResolvePhase
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes

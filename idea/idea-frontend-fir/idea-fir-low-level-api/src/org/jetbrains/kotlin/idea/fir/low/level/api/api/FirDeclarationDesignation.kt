@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
-import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 
 class FirDeclarationDesignation(
     val path: List<FirDeclaration>,
@@ -28,10 +27,10 @@ class FirDeclarationDesignation(
 
 object DeclarationDesignationCollector {
     fun collectDesignation(declaration: FirDeclaration): FirDeclarationDesignation {
-        val firProvider = declaration.declarationSiteSession.firProvider
+        val firProvider = declaration.moduleData.session.firProvider
 
         val containingClass = when (declaration) {
-            is FirCallableDeclaration<*> -> declaration.containingClass()?.toFirRegularClass(declaration.declarationSiteSession)
+            is FirCallableDeclaration<*> -> declaration.containingClass()?.toFirRegularClass(declaration.moduleData.session)
             is FirClassLikeDeclaration<*> -> declaration.symbol.classId.outerClassId?.let(firProvider::getFirClassifierByFqName)
             else -> error("Invalid declaration ${declaration.renderWithType()}")
         } ?: return FirDeclarationDesignation(emptyList(), declaration, isLocalDesignation = false)
@@ -54,7 +53,7 @@ object DeclarationDesignationCollector {
 
     private fun FirRegularClass.collectForNonLocal(): List<FirClassLikeDeclaration<*>> {
         require(!isLocal)
-        val firProvider = declarationSiteSession.firProvider
+        val firProvider = moduleData.session.firProvider
         var containingClassId = classId.outerClassId
         val designation = mutableListOf<FirClassLikeDeclaration<*>>(this)
         while (containingClassId != null) {
@@ -70,7 +69,7 @@ object DeclarationDesignationCollector {
         var containingClassLookUp = containingClassForLocal()
         val designation = mutableListOf<FirClassLikeDeclaration<*>>(this)
         while (containingClassLookUp != null && containingClassLookUp.classId.isLocal) {
-            val currentClass = containingClassLookUp.toFirRegularClass(declarationSiteSession) ?: break
+            val currentClass = containingClassLookUp.toFirRegularClass(moduleData.session) ?: break
             designation.add(currentClass)
             containingClassLookUp = currentClass.containingClassForLocal()
         }

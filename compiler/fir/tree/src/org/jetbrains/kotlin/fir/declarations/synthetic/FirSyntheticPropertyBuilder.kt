@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.modality
-import org.jetbrains.kotlin.fir.declarations.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirSyntheticPropertyBuilder {
-    lateinit var declarationSiteSession: FirSession
+    lateinit var moduleData: FirModuleData
     lateinit var name: Name
     lateinit var symbol: FirAccessorSymbol
     lateinit var delegateGetter: FirSimpleFunction
@@ -24,7 +21,7 @@ class FirSyntheticPropertyBuilder {
     var delegateSetter: FirSimpleFunction? = null
 
     fun build(): FirSyntheticProperty = FirSyntheticProperty(
-        declarationSiteSession, name, isVar = delegateSetter != null, symbol = symbol,
+        moduleData, name, isVar = delegateSetter != null, symbol = symbol,
         status = status ?: delegateGetter.status,
         resolvePhase = delegateGetter.resolvePhase,
         getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true),

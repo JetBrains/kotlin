@@ -32,13 +32,13 @@ private val ENUM_VALUE_OF = Name.identifier("valueOf")
 private val VALUE = Name.identifier("value")
 
 fun FirRegularClassBuilder.generateValuesFunction(
-    session: FirSession, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
+    moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
 ) {
     val sourceElement = source?.fakeElement(FirFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source
-        declarationSiteSession = session
+        this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
@@ -63,13 +63,13 @@ fun FirRegularClassBuilder.generateValuesFunction(
 }
 
 fun FirRegularClassBuilder.generateValueOfFunction(
-    session: FirSession, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
+    moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
 ) {
     val sourceElement = source?.fakeElement(FirFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source
-        declarationSiteSession = session
+        this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
@@ -88,7 +88,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         valueParameters += buildValueParameter vp@{
             source = sourceElement
             origin = FirDeclarationOrigin.Source
-            declarationSiteSession = session
+            this.moduleData = moduleData
             returnTypeRef = FirImplicitStringTypeRef(source)
             name = VALUE
             this@vp.symbol = FirVariableSymbol(VALUE)

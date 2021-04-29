@@ -40,7 +40,7 @@ abstract class FirAbstractPhaseTransformer<D>(
     }
 
     protected fun checkSessionConsistency(file: FirFile) {
-        assert(session === file.declarationSiteSession) {
+        assert(session === file.moduleData.session) {
             "File ${file.name} and transformer ${this::class} have inconsistent sessions"
         }
     }

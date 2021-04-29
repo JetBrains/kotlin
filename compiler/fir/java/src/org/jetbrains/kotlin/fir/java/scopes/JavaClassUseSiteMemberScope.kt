@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmSignature
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
@@ -28,7 +26,9 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsRenamedInJvmBuiltin
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class JavaClassUseSiteMemberScope(
@@ -61,7 +61,7 @@ class JavaClassUseSiteMemberScope(
     ): FirAccessorSymbol {
         return accessorByNameMap.getOrPut(property.name) {
             buildSyntheticProperty {
-                declarationSiteSession = session
+                moduleData = session.moduleData
                 name = property.name
                 symbol = FirAccessorSymbol(
                     accessorId = getterSymbol.callableId,

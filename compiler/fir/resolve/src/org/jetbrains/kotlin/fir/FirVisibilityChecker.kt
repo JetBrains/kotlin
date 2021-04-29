@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -70,11 +70,11 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val symbol = declaration.symbol
         return when (declaration.visibility) {
             Visibilities.Internal -> {
-                declaration.declarationSiteSession == session || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
+                declaration.moduleData == session.moduleData || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
             }
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerId = symbol.getOwnerId()
-                if (declaration.declarationSiteSession == session) {
+                if (declaration.moduleData == session.moduleData) {
                     when {
                         ownerId == null -> {
                             val candidateFile = when (symbol) {

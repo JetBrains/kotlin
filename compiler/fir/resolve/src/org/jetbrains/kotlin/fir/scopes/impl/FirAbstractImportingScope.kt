@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.moduleVisibilityChecker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -37,7 +38,7 @@ enum class FirImportingScopeFilter {
             // though, "unknown" will always become public anyway.
             Visibilities.Unknown -> true
             Visibilities.Internal ->
-                symbol.fir.declarationSiteSession == session || session.moduleVisibilityChecker?.isInFriendModule(fir) == true
+                symbol.fir.moduleData == session.moduleData || session.moduleVisibilityChecker?.isInFriendModule(fir) == true
             // All non-`internal` visibilities are either even more restrictive (e.g. `private`) or must not
             // be checked in imports (e.g. `protected` may be valid in some use sites).
             else -> !fir.status.visibility.mustCheckInImports()

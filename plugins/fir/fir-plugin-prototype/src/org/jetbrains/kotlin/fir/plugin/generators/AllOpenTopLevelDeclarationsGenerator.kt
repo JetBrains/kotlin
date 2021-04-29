@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -33,7 +34,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
         val file = owners.first() as FirFile
         val klass = annotatedDeclaration as? FirRegularClass ?: return emptyList()
         val newClass = buildRegularClass {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
@@ -52,7 +53,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
     override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
         val klass = generatedClass.klass
         val function = buildSimpleFunction {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType

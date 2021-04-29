@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedContractsResolveTransformerForIDE
-import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedImplicitTypesTransformerForIDE
-import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirFileAnnotationsResolveTransformer
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -36,7 +33,7 @@ internal class FirLazyDeclarationResolver(
         scopeSession: ScopeSession,
     ) {
         firFileBuilder.runCustomResolveUnderLock(firFile, moduleFileCache) {
-            val transformer = FirFileAnnotationsResolveTransformer(firFile.declarationSiteSession, scopeSession)
+            val transformer = FirFileAnnotationsResolveTransformer(firFile.moduleData.session, scopeSession)
             firFile.accept(transformer, ResolutionMode.ContextDependent)
         }
     }
@@ -66,13 +63,13 @@ internal class FirLazyDeclarationResolver(
                 else -> error("Invalid source of property accessor ${psi::class}")
             }
             val containingProperty = ktContainingResolvableDeclaration
-                .findSourceNonLocalFirDeclaration(firFileBuilder, declaration.declarationSiteSession.symbolProvider, moduleFileCache)
+                .findSourceNonLocalFirDeclaration(firFileBuilder, declaration.moduleData.session.symbolProvider, moduleFileCache)
             return lazyResolveDeclaration(containingProperty, moduleFileCache, toPhase, towerDataContextCollector)
         }
 
         val firFile = declaration.getContainingFile()
             ?: error("FirFile was not found for\n${declaration.render()}")
-        val provider = firFile.declarationSiteSession.firIdeProvider
+        val provider = firFile.moduleData.session.firIdeProvider
         // Lazy since we want to read the resolve phase inside the lock. Otherwise, we may run the same resolve phase multiple times. See
         // KT-45121
         val fromPhase: FirResolvePhase by lazy(LazyThreadSafetyMode.NONE) {
@@ -194,18 +191,18 @@ internal class FirLazyDeclarationResolver(
     ) = when (this) {
         FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
             FirDesignation(designation),
-            containerFirFile.declarationSiteSession,
+            containerFirFile.moduleData.session,
             scopeSession,
         )
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> FirDesignatedImplicitTypesTransformerForIDE(
             FirDesignation(designation),
-            containerFirFile.declarationSiteSession,
+            containerFirFile.moduleData.session,
             scopeSession,
             towerDataContextCollector,
         )
         FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
             FirDesignation(designation),
-            containerFirFile.declarationSiteSession,
+            containerFirFile.moduleData.session,
             scopeSession,
             towerDataContextCollector
         )

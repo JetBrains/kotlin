@@ -29,7 +29,7 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
             ScopeSession(),
             withForcedTypeCalculator = false
         )
-        return analysisSession.chooseCandidateAndCreateSymbol(scope, owner.declarationSiteSession)
+        return analysisSession.chooseCandidateAndCreateSymbol(scope, owner.moduleData.session)
     }
 
     protected abstract fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(

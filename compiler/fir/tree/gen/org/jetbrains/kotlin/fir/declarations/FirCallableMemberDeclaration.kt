@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 sealed interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : FirCallableDeclaration<F>, FirMemberDeclaration {
     override val source: FirSourceElement?
-    override val declarationSiteSession: FirSession
+    override val moduleData: FirModuleData
     override val resolvePhase: FirResolvePhase
     override val origin: FirDeclarationOrigin
     override val attributes: FirDeclarationAttributes

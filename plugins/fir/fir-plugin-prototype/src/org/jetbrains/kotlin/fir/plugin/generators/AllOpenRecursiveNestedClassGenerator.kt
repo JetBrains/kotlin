@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
@@ -35,7 +36,7 @@ class AllOpenRecursiveNestedClassGenerator(session: FirSession) : FirDeclaration
         if (owners.size > 2) return emptyList()
         val owner = annotatedDeclaration as? FirRegularClass ?: return emptyList()
         val newClass = buildRegularClass {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(

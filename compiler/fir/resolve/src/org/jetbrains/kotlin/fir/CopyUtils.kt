@@ -61,7 +61,7 @@ fun FirFunctionCall.copy(
 fun FirAnonymousFunction.copy(
     receiverTypeRef: FirTypeRef? = this.receiverTypeRef,
     source: FirSourceElement? = this.source,
-    session: FirSession = this.declarationSiteSession,
+    moduleData: FirModuleData = this.moduleData,
     origin: FirDeclarationOrigin = this.origin,
     returnTypeRef: FirTypeRef = this.returnTypeRef,
     valueParameters: List<FirValueParameter> = this.valueParameters,
@@ -74,7 +74,7 @@ fun FirAnonymousFunction.copy(
 ): FirAnonymousFunction {
     return buildAnonymousFunction {
         this.source = source
-        declarationSiteSession = session
+        this.moduleData = moduleData
         this.origin = origin
         this.returnTypeRef = returnTypeRef
         this.receiverTypeRef = receiverTypeRef
@@ -122,7 +122,7 @@ fun FirTypeParameter.copy(
 ): FirTypeParameter {
     return buildTypeParameter {
         source = this@copy.source
-        declarationSiteSession = this@copy.declarationSiteSession
+        moduleData = this@copy.moduleData
         name = this@copy.name
         symbol = this@copy.symbol
         variance = this@copy.variance

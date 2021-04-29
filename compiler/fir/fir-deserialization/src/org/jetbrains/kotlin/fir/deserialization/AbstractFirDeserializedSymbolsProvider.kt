@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -39,9 +39,9 @@ class PackagePartsCacheData(
 typealias DeserializedClassPostProcessor = (FirRegularClassSymbol) -> Unit
 
 abstract class AbstractFirDeserializedSymbolsProvider(
-    session: FirSession,
+    val moduleData: FirModuleData,
     val kotlinScopeProvider: FirKotlinScopeProvider
-) : FirSymbolProvider(session) {
+) : FirSymbolProvider(moduleData.session) {
 
     // ------------------------ Caches ------------------------
 
@@ -110,7 +110,12 @@ abstract class AbstractFirDeserializedSymbolsProvider(
                 val (nameResolver, classProto, annotationDeserializer, sourceElement, postProcessor) = result
                 val symbol = FirRegularClassSymbol(classId)
                 deserializeClassToSymbol(
-                    classId, classProto, symbol, nameResolver, session,
+                    classId,
+                    classProto,
+                    symbol,
+                    nameResolver,
+                    session,
+                    moduleData,
                     annotationDeserializer,
                     kotlinScopeProvider,
                     parentContext,

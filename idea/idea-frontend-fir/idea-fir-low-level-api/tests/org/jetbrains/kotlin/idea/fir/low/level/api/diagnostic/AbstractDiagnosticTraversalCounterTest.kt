@@ -9,13 +9,10 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -112,7 +109,7 @@ abstract class AbstractDiagnosticTraversalCounterTest : KotlinLightCodeInsightFi
         firFile: FirElement,
     ): Set<FirElement> {
         val elementUsageCount = mutableMapOf<FirElement, Int>()
-        val sessionHolder = SessionHolderImpl((firFile as FirDeclaration).declarationSiteSession, ScopeSession())
+        val sessionHolder = SessionHolderImpl((firFile as FirDeclaration).moduleData.session, ScopeSession())
         val visitor = object : AbstractDiagnosticCollectorVisitor(
             PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(sessionHolder)
         ) {

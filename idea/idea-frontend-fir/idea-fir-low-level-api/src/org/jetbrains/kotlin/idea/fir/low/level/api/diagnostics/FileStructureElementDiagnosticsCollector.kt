@@ -22,7 +22,7 @@ internal class FileStructureElementDiagnosticsCollector private constructor(priv
     ): FileStructureElementDiagnosticList {
         val reporter = FirIdeDiagnosticReporter()
         val collector = FirIdeStructureElementDiagnosticsCollector(
-            firDeclaration.declarationSiteSession,
+            firDeclaration.moduleData.session,
             createVisitor,
             useExtendedCheckers,
         )

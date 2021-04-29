@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 @ThreadSafeMutableState
 class JavaSymbolProvider(
     session: FirSession,
+    val baseModuleData: FirModuleData,
     val project: Project,
     private val searchScope: GlobalSearchScope,
 ) : FirSymbolProvider(session) {
@@ -103,7 +104,7 @@ class JavaSymbolProvider(
         javaTypeParameterStack: JavaTypeParameterStack
     ): FirTypeParameter {
         return FirTypeParameterBuilder().apply {
-            declarationSiteSession = session
+            moduleData = this@JavaSymbolProvider.baseModuleData
             origin = FirDeclarationOrigin.Java
             this.name = this@toFirTypeParameter.name
             symbol = firSymbol
@@ -230,7 +231,7 @@ class JavaSymbolProvider(
         val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
         return buildJavaClass {
             source = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-            declarationSiteSession = session
+            moduleData = this@JavaSymbolProvider.baseModuleData
             symbol = classSymbol
             name = javaClass.name
             val visibility = javaClass.visibility
@@ -325,11 +326,11 @@ class JavaSymbolProvider(
 
             if (classKind == ClassKind.ENUM_CLASS) {
                 generateValuesFunction(
-                    session,
+                    baseModuleData,
                     classId.packageFqName,
                     classId.relativeClassName
                 )
-                generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
+                generateValueOfFunction(baseModuleData, classId.packageFqName, classId.relativeClassName)
             }
             if (classIsAnnotation) {
                 declarations +=
@@ -373,7 +374,7 @@ class JavaSymbolProvider(
         return when {
             javaField.isEnumEntry -> buildEnumEntry {
                 source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-                declarationSiteSession = session
+                moduleData = this@JavaSymbolProvider.baseModuleData
                 symbol = FirVariableSymbol(fieldId)
                 name = fieldName
                 status = FirResolvedDeclarationStatusImpl(
@@ -395,7 +396,7 @@ class JavaSymbolProvider(
             }
             else -> buildJavaField {
                 source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-                declarationSiteSession = session
+                moduleData = this@JavaSymbolProvider.baseModuleData
                 symbol = FirFieldSymbol(fieldId)
                 name = fieldName
                 status = FirResolvedDeclarationStatusImpl(
@@ -443,7 +444,7 @@ class JavaSymbolProvider(
         val methodSymbol = FirNamedFunctionSymbol(methodId)
         val returnType = javaMethod.returnType
         return buildJavaMethod {
-            declarationSiteSession = session
+            moduleData = this@JavaSymbolProvider.baseModuleData
             source = (javaMethod as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
             symbol = methodSymbol
             name = methodName
@@ -454,7 +455,7 @@ class JavaSymbolProvider(
             typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack)
             for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
                 valueParameters += valueParameter.toFirValueParameter(
-                    this@JavaSymbolProvider.session, index, javaTypeParameterStack,
+                    this@JavaSymbolProvider.session, moduleData, index, javaTypeParameterStack,
                 )
             }
             annotationBuilder = { javaMethod.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
@@ -491,7 +492,7 @@ class JavaSymbolProvider(
         buildJavaValueParameter {
             source = (javaMethod as? JavaElementImpl<*>)?.psi
                 ?.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
-            declarationSiteSession = session
+            moduleData = this@JavaSymbolProvider.baseModuleData
             returnTypeRef = firJavaMethod.returnTypeRef
             name = javaMethod.name
             isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == VALUE_METHOD_NAME
@@ -509,7 +510,7 @@ class JavaSymbolProvider(
         val constructorSymbol = FirConstructorSymbol(constructorId)
         return buildJavaConstructor {
             source = (javaConstructor as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-            declarationSiteSession = session
+            moduleData = this@JavaSymbolProvider.baseModuleData
             symbol = constructorSymbol
             isInner = javaClass.outerClass != null && !javaClass.isStatic
             val isThisInner = this.isInner
@@ -536,7 +537,7 @@ class JavaSymbolProvider(
                 annotationBuilder = { javaConstructor.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
                 for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
                     valueParameters += valueParameter.toFirValueParameter(
-                        this@JavaSymbolProvider.session, index, javaTypeParameterStack,
+                        this@JavaSymbolProvider.session, moduleData, index, javaTypeParameterStack,
                     )
                 }
             } else {
@@ -555,7 +556,7 @@ class JavaSymbolProvider(
     ): FirJavaConstructor {
         return buildJavaConstructor {
             source = classSource
-            declarationSiteSession = session
+            moduleData = this@JavaSymbolProvider.baseModuleData
             symbol = FirConstructorSymbol(constructorId)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {

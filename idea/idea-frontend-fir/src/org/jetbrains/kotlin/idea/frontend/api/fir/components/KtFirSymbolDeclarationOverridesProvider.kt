@@ -106,7 +106,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         containingDeclaration.firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { firContainer ->
             callableSymbol.firRef.withFirUnsafe { firCallableDeclaration ->
                 val firTypeScope = firContainer.unsubstitutedScope(
-                    firContainer.declarationSiteSession,
+                    firContainer.moduleData.session,
                     ScopeSession(),
                     withForcedTypeCalculator = false
                 )

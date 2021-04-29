@@ -30,7 +30,7 @@ internal class FileStructure(
     private val moduleFileCache: ModuleFileCache,
     private val collector: FirTowerDataContextCollector
 ) {
-    private val firIdeProvider = firFile.declarationSiteSession.firIdeProvider
+    private val firIdeProvider = firFile.moduleData.session.firIdeProvider
 
     private val structureElements = ConcurrentHashMap<KtAnnotated, FileStructureElement>()
 

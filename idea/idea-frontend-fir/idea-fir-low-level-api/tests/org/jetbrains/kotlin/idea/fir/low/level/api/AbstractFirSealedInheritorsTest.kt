@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.typeUtil.closure
-import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.io.File
 
 /**
@@ -27,7 +26,7 @@ abstract class AbstractFirSealedInheritorsTest : AbstractFirMultiModuleLazyResol
         val allClasses = firFile.listNestedClasses().closure { it.listNestedClasses() }
         val inheritorNames = allClasses.flatMap { firClass ->
             if (firClass.isSealed) {
-                firClass.getSealedClassInheritors(firFile.declarationSiteSession)
+                firClass.getSealedClassInheritors(firFile.moduleData.session)
             } else {
                 emptyList()
             }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -20,15 +21,19 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @NoMutableState
-class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopeProvider) : FirSymbolProvider(session) {
+class FirCloneableSymbolProvider(
+    session: FirSession,
+    moduleData: FirModuleData,
+    scopeProvider: FirScopeProvider
+) : FirSymbolProvider(session) {
     companion object {
         val CLONEABLE: Name = Name.identifier("Cloneable")
         val CLONEABLE_CLASS_ID: ClassId = ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, CLONEABLE)
@@ -39,7 +44,7 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
     private val klass = buildRegularClass {
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         origin = FirDeclarationOrigin.Library
-        declarationSiteSession = session
+        this.moduleData = moduleData
         status = FirDeclarationStatusImpl(
             Visibilities.Public,
             Modality.ABSTRACT
@@ -47,7 +52,7 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
         classKind = ClassKind.INTERFACE
         symbol = FirRegularClassSymbol(CLONEABLE_CLASS_ID)
         declarations += buildSimpleFunction {
-            declarationSiteSession = session
+            this.moduleData = moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Library
             returnTypeRef = buildResolvedTypeRef {

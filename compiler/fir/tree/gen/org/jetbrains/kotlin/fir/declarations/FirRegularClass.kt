@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirClass<FirRegularClass> {
     abstract override val source: FirSourceElement?
-    abstract override val declarationSiteSession: FirSession
+    abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes

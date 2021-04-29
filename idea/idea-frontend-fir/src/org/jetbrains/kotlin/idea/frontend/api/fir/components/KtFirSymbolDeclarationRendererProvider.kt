@@ -41,7 +41,7 @@ internal class KtFirSymbolDeclarationRendererProvider(
 
         return symbol.firRef.withFir(phaseNeeded) { fir ->
             val containingFir = containingSymbol?.firRef?.withFirUnsafe { it }
-            FirIdeRenderer.render(fir, containingFir, options, fir.declarationSiteSession)
+            FirIdeRenderer.render(fir, containingFir, options, fir.moduleData.session)
         }
     }
 }

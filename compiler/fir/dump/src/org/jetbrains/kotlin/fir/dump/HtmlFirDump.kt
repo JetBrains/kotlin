@@ -317,7 +317,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
         require(inModule)
 
         val dumpOutput = index.files[file] ?: error("No location for ${file.name}")
-        val dumper = HtmlFirDump(LinkResolver(dumpOutput), file.declarationSiteSession)
+        val dumper = HtmlFirDump(LinkResolver(dumpOutput), file.moduleData.session)
         val builder = StringBuilder()
         dumper.generate(file, builder)
 

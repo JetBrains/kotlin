@@ -82,7 +82,7 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
 }
 
 internal fun generateDestructuringBlock(
-    session: FirSession,
+    moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable<*>,
     tmpVariable: Boolean,
@@ -101,7 +101,7 @@ internal fun generateDestructuringBlock(
             val name = entry.nameAsSafeName
             statements += buildProperty {
                 source = entrySource
-                declarationSiteSession = session
+                this.moduleData = moduleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = entry.typeReference.toFirOrImplicitTypeRef()
                 this.name = name

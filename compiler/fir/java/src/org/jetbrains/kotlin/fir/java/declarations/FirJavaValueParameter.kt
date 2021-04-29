@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
@@ -27,7 +27,7 @@ import kotlin.contracts.contract
 @OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
-    override val declarationSiteSession: FirSession,
+    override val moduleData: FirModuleData,
     override var resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
@@ -146,7 +146,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 @FirBuilderDsl
 class FirJavaValueParameterBuilder {
     var source: FirSourceElement? = null
-    lateinit var declarationSiteSession: FirSession
+    lateinit var moduleData: FirModuleData
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     lateinit var name: Name
@@ -158,7 +158,7 @@ class FirJavaValueParameterBuilder {
     fun build(): FirJavaValueParameter {
         return FirJavaValueParameter(
             source,
-            declarationSiteSession,
+            moduleData,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             attributes,
             returnTypeRef,
@@ -182,7 +182,7 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     }
     val copyBuilder = FirJavaValueParameterBuilder()
     copyBuilder.source = original.source
-    copyBuilder.declarationSiteSession = original.declarationSiteSession
+    copyBuilder.moduleData = original.moduleData
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.name = original.name

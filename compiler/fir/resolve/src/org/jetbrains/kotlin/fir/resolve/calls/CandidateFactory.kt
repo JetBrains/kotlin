@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -82,7 +83,7 @@ class CandidateFactory private constructor(
     private fun createErrorFunctionSymbol(diagnostic: ConeDiagnostic): FirErrorFunctionSymbol {
         return FirErrorFunctionSymbol().also {
             buildErrorFunction {
-                declarationSiteSession = context.session
+                moduleData = context.session.moduleData
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Synthetic
                 this.diagnostic = diagnostic
@@ -94,7 +95,7 @@ class CandidateFactory private constructor(
     private fun createErrorPropertySymbol(diagnostic: ConeDiagnostic): FirErrorPropertySymbol {
         return FirErrorPropertySymbol(diagnostic).also {
             buildErrorProperty {
-                declarationSiteSession = context.session
+                moduleData = context.session.moduleData
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Synthetic
                 name = FirErrorPropertySymbol.NAME

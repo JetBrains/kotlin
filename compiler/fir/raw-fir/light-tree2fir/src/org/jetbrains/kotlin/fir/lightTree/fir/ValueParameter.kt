@@ -11,16 +11,16 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.name.CallableId
 
 class ValueParameter(
     private val isVal: Boolean,
@@ -34,7 +34,7 @@ class ValueParameter(
     }
 
     fun toFirProperty(
-        session: FirSession,
+        moduleData: FirModuleData,
         callableId: CallableId,
         isExpect: Boolean,
         currentDispatchReceiver: ConeClassLikeType?
@@ -51,7 +51,7 @@ class ValueParameter(
             source = parameterNode?.toFirLightSourceElement(
                 parameterSource.treeStructure, FirFakeSourceElementKind.PropertyFromParameter
             )
-            declarationSiteSession = session
+            this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
             this.name = name
@@ -76,14 +76,14 @@ class ValueParameter(
             annotations += this@ValueParameter.firValueParameter.annotations
             getter = FirDefaultPropertyGetter(
                 null,
-                session,
+                moduleData,
                 FirDeclarationOrigin.Source,
                 type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility()
             )
             setter = if (this.isVar) FirDefaultPropertySetter(
                 null,
-                session,
+                moduleData,
                 FirDeclarationOrigin.Source,
                 type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility()

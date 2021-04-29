@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -115,7 +113,7 @@ internal class FirModuleResolveStateImpl(
             sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
         )
         if (container.resolvePhase < FirResolvePhase.BODY_RESOLVE) {
-            val cache = (container.declarationSiteSession as FirIdeSourcesSession).cache
+            val cache = (container.moduleData.session as FirIdeSourcesSession).cache
             firLazyDeclarationResolver.lazyResolveDeclaration(
                 container,
                 cache,
@@ -142,7 +140,7 @@ internal class FirModuleResolveStateImpl(
     }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
-        val fileCache = when (val session = declaration.declarationSiteSession) {
+        val fileCache = when (val session = declaration.moduleData.session) {
             is FirIdeSourcesSession -> session.cache
             else -> return declaration
         }
@@ -165,7 +163,7 @@ internal class FirModuleResolveStateImpl(
                 firDeclaration,
                 rootModuleSession.cache,
                 containerFirFile,
-                containerFirFile.declarationSiteSession.firIdeProvider,
+                containerFirFile.moduleData.session.firIdeProvider,
                 fromPhase = firDeclaration.resolvePhase,
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 towerDataContextCollector = collector,

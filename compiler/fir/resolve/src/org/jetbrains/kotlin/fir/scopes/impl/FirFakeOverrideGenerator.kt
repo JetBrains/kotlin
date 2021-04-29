@@ -8,25 +8,26 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverrideAttr
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirFakeOverrideGenerator {
@@ -101,7 +102,7 @@ object FirFakeOverrideGenerator {
     ): FirSimpleFunction {
         return buildSimpleFunction {
             source = baseFunction.source
-            declarationSiteSession = session
+            moduleData = session.moduleData
             this.origin = origin
             name = baseFunction.name
             status = baseFunction.status.copy(isExpect, newModality, newVisibility)
@@ -130,14 +131,20 @@ object FirFakeOverrideGenerator {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             origin = FirDeclarationOrigin.SubstitutionOverride
             receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
             status = baseConstructor.status.copy(isExpect)
             symbol = fakeOverrideSymbol
 
             typeParameters += configureAnnotationsTypeParametersAndSignature(
-                session, baseConstructor, newParameterTypes, newTypeParameters, newReceiverType = null, newReturnType, fakeOverrideSubstitution
+                session,
+                baseConstructor,
+                newParameterTypes,
+                newTypeParameters,
+                newReceiverType = null,
+                newReturnType,
+                fakeOverrideSubstitution
             )
 
             dispatchReceiverType = newDispatchReceiverType
@@ -283,7 +290,7 @@ object FirFakeOverrideGenerator {
     ): FirProperty {
         return buildProperty {
             source = baseProperty.source
-            declarationSiteSession = session
+            moduleData = session.moduleData
             this.origin = origin
             name = baseProperty.name
             isVar = baseProperty.isVar
@@ -392,7 +399,7 @@ object FirFakeOverrideGenerator {
             CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseField.name)
         )
         buildField {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             this.symbol = symbol
             origin = FirDeclarationOrigin.SubstitutionOverride
             returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
@@ -448,7 +455,7 @@ object FirFakeOverrideGenerator {
             fakeOverrideSubstitution = fakeOverrideSubstitution
         )
         return buildSyntheticProperty {
-            declarationSiteSession = session
+            moduleData = session.moduleData
             name = baseProperty.name
             symbol = FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId)
             delegateGetter = getter
@@ -469,7 +476,7 @@ object FirFakeOverrideGenerator {
             if (typeParameter !is FirTypeParameter) return@map null
             FirTypeParameterBuilder().apply {
                 source = typeParameter.source
-                declarationSiteSession = typeParameter.declarationSiteSession
+                moduleData = typeParameter.moduleData
                 origin = FirDeclarationOrigin.SubstitutionOverride
                 name = typeParameter.name
                 symbol = FirTypeParameterSymbol()

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
@@ -18,18 +18,18 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class)
 abstract class FirDefaultPropertyAccessor(
     source: FirSourceElement?,
-    session: FirSession,
+    moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     valueParameters: MutableList<FirValueParameter>,
@@ -39,7 +39,7 @@ abstract class FirDefaultPropertyAccessor(
     symbol: FirPropertyAccessorSymbol
 ) : FirPropertyAccessorImpl(
     source,
-    session,
+    moduleData,
     resolvePhase = FirResolvePhase.BODY_RESOLVE,
     origin,
     FirDeclarationAttributes(),
@@ -69,16 +69,16 @@ abstract class FirDefaultPropertyAccessor(
     companion object {
         fun createGetterOrSetter(
             source: FirSourceElement?,
-            session: FirSession,
+            moduleData: FirModuleData,
             origin: FirDeclarationOrigin,
             propertyTypeRef: FirTypeRef,
             visibility: Visibility,
             isGetter: Boolean
         ): FirDefaultPropertyAccessor {
             return if (isGetter) {
-                FirDefaultPropertyGetter(source, session, origin, propertyTypeRef, visibility)
+                FirDefaultPropertyGetter(source, moduleData, origin, propertyTypeRef, visibility)
             } else {
-                FirDefaultPropertySetter(source, session, origin, propertyTypeRef, visibility)
+                FirDefaultPropertySetter(source, moduleData, origin, propertyTypeRef, visibility)
             }
         }
     }
@@ -86,7 +86,7 @@ abstract class FirDefaultPropertyAccessor(
 
 class FirDefaultPropertyGetter(
     source: FirSourceElement?,
-    session: FirSession,
+    moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
@@ -94,7 +94,7 @@ class FirDefaultPropertyGetter(
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
 ) : FirDefaultPropertyAccessor(
     source,
-    session,
+    moduleData,
     origin,
     propertyTypeRef,
     valueParameters = mutableListOf(),
@@ -106,7 +106,7 @@ class FirDefaultPropertyGetter(
 
 class FirDefaultPropertySetter(
     source: FirSourceElement?,
-    session: FirSession,
+    moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
@@ -114,13 +114,13 @@ class FirDefaultPropertySetter(
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
 ) : FirDefaultPropertyAccessor(
     source,
-    session,
+    moduleData,
     origin,
     FirImplicitUnitTypeRef(source),
     valueParameters = mutableListOf(
         buildDefaultSetterValueParameter builder@{
             this@builder.source = source
-            this@builder.declarationSiteSession = session
+            this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
             this@builder.symbol = FirVariableSymbol(CallableId(FqName.ROOT, Name.special("<default-setter-parameter>")))

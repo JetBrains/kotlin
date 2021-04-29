@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
 class FirTypeDeserializer(
-    val session: FirSession,
+    val moduleData: FirModuleData,
     val nameResolver: NameResolver,
     val typeTable: TypeTable,
     val annotationDeserializer: AbstractAnnotationDeserializer,
@@ -66,7 +66,7 @@ class FirTypeDeserializer(
                     typeParameterNames[name.asString()] = it
                 }
                 builders += FirTypeParameterBuilder().apply {
-                    declarationSiteSession = session
+                    moduleData = this@FirTypeDeserializer.moduleData
                     origin = FirDeclarationOrigin.Library
                     this.name = name
                     this.symbol = symbol
@@ -189,7 +189,7 @@ class FirTypeDeserializer(
         attributes: ConeAttributes
     ): ConeClassLikeType {
         val result =
-            when (functionTypeConstructor.toSymbol(session)!!.firUnsafe<FirTypeParameterRefsOwner>().typeParameters.size - arguments.size) {
+            when (functionTypeConstructor.toSymbol(moduleData.session)!!.firUnsafe<FirTypeParameterRefsOwner>().typeParameters.size - arguments.size) {
                 0 -> createSuspendFunctionTypeForBasicCase(functionTypeConstructor, arguments, isNullable, attributes)
                 1 -> {
                     val arity = arguments.size - 1

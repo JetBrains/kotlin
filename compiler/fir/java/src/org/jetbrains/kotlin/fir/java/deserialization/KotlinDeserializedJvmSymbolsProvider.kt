@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.*
@@ -34,13 +35,13 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 
 @ThreadSafeMutableState
 class KotlinDeserializedJvmSymbolsProvider(
-    session: FirSession,
+    moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaSymbolProvider: JavaSymbolProvider,
     javaClassFinder: JavaClassFinder,
-) : AbstractFirDeserializedSymbolsProvider(session, kotlinScopeProvider) {
+) : AbstractFirDeserializedSymbolsProvider(moduleData, kotlinScopeProvider) {
     private val knownNameInPackageCache = KnownNameInPackageCache(session, javaClassFinder)
     private val annotationsLoader = AnnotationsLoader(session)
 
@@ -68,7 +69,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             PackagePartsCacheData(
                 packageProto,
                 FirDeserializationContext.createForPackage(
-                    packageFqName, packageProto, nameResolver, session,
+                    packageFqName, packageProto, nameResolver, moduleData,
                     JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, byteContent),
                     FirConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
                     source

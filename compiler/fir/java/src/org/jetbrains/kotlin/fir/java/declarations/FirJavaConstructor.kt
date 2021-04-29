@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
@@ -29,7 +29,7 @@ import kotlin.properties.Delegates
 @OptIn(FirImplementationDetail::class)
 class FirJavaConstructor @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
-    override val declarationSiteSession: FirSession,
+    override val moduleData: FirModuleData,
     override val symbol: FirConstructorSymbol,
     override val isPrimary: Boolean,
     override var returnTypeRef: FirTypeRef,
@@ -151,7 +151,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     override fun build(): FirJavaConstructor {
         return FirJavaConstructor(
             source,
-            declarationSiteSession,
+            moduleData,
             symbol,
             isPrimary,
             returnTypeRef,
