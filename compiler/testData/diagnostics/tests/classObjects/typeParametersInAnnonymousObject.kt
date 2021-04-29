@@ -37,4 +37,14 @@ inline fun <reified T> case_5() {
         // z is {T!! & T!!} (smart cast from T)
         <!UNRESOLVED_REFERENCE!>println<!>(z)
     }
+
+    val a = object<!TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT!><A><!> {
+        fun test() = 42 <!UNCHECKED_CAST!>as A<!>
+    }
+
+    val b = a.test()
+
+    if (a is T) {
+        <!UNRESOLVED_REFERENCE!>println<!>(a)
+    }
 }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtAnnotation
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -1849,6 +1850,19 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.USELESS_ELVIS_RIGHT_IS_NULL) { firDiagnostic ->
         UselessElvisRightIsNullImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.USELESS_CAST) { firDiagnostic ->
+        UselessCastImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.USELESS_IS_CHECK) { firDiagnostic ->
+        UselessIsCheckImpl(
+            firDiagnostic.a,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

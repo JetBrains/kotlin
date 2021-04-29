@@ -94,6 +94,11 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirAnonymousFunctionChecker,
         )
 
+    override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
+        get() = setOf(
+            FirUselessTypeOperationCallChecker,
+        )
+
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
         get() = setOf(
             FirStandaloneQualifierChecker,

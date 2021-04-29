@@ -14,7 +14,7 @@ class Case1() {
 
             this.yield("") //UNRESOLVED_REFERENCE
 
-            this as SequenceScope<String>
+            this <!USELESS_CAST!>as SequenceScope<String><!>
 
             yield("") // resolved to SequenceScope.yield
 
@@ -31,7 +31,7 @@ fun case2() {
 
         this.yield("") //UNRESOLVED_REFERENCE
 
-        this as SequenceScope<String>
+        this <!USELESS_CAST!>as SequenceScope<String><!>
 
         yield("") // UNRESOLVED_REFERENCE
 

@@ -73,7 +73,7 @@ fun case_5(a: Any?) {
     if (
         a is ClassLevel1
         && if (true) {b = a; false} else {b = a;true}
-        && <!UNINITIALIZED_VARIABLE!>b<!> as ClassLevel2 is ClassLevel2
+        && <!USELESS_IS_CHECK!><!UNINITIALIZED_VARIABLE!>b<!> as ClassLevel2 is ClassLevel2<!>
         && if (true) {c = <!UNINITIALIZED_VARIABLE!>b<!>;false} else {c = <!UNINITIALIZED_VARIABLE!>b<!>;false}
         && try {<!UNINITIALIZED_VARIABLE!>c<!> as ClassLevel3;true} finally {<!UNINITIALIZED_VARIABLE!>c<!> as ClassLevel3;false}
         && when (true) {else -> {d = <!UNINITIALIZED_VARIABLE!>c<!>;true}}

@@ -13,7 +13,7 @@ fun f2(s: Number?) {
 }
 
 fun f3(s: Number?) {
-    if (s is Int && s as Int == 42);
+    if (s is Int && s <!USELESS_CAST!>as Int<!> == 42);
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }
 

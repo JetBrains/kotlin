@@ -31,8 +31,8 @@ fun test(a: Any) {
     a !in's'
     a !in<!EMPTY_CHARACTER_LITERAL!>''<!>
 
-    if("s"is Any) {}
-    if("s"is Any) {}
+    if(<!USELESS_IS_CHECK!>"s"is Any<!>) {}
+    if(<!USELESS_IS_CHECK!>"s"is Any<!>) {}
     test("s"as Any)
 
     a foo""<!SYNTAX!>1<!>

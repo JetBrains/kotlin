@@ -26,7 +26,7 @@ fun foo() {
 }
 
 fun bar(a: Ann = Ann()) {
-    if (a is Ann) {}
+    if (<!USELESS_IS_CHECK!>a is Ann<!>) {}
 }
 
 operator fun String.invoke() {}

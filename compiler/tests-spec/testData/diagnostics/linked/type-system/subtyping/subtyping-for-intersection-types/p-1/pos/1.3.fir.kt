@@ -70,7 +70,7 @@ interface A3
 // TESTCASE NUMBER: 4
 
 fun case4(x: C?) {
-    if (x is B4 && x is A4) {
+    if (x is B4 && <!USELESS_IS_CHECK!>x is A4<!>) {
         x
         <!DEBUG_INFO_EXPRESSION_TYPE("C? & C")!>x<!>
         x.foo()

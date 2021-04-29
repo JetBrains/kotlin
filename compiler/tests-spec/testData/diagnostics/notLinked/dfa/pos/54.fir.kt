@@ -13,7 +13,7 @@ fun case_1() {
         var b = a
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
-        while (a is String) {
+        while (<!USELESS_IS_CHECK!>a is String<!>) {
             b = a
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
@@ -119,7 +119,7 @@ fun case_6() {
         var b = a
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
-        if (a is String) {
+        if (<!USELESS_IS_CHECK!>a is String<!>) {
             b = a
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length

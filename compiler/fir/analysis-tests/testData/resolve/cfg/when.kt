@@ -13,6 +13,6 @@ interface B
 
 fun test_2(x: Any?) {
     if (x is A && x is B) {
-        x is A
+        <!USELESS_IS_CHECK!>x is A<!>
     }
 }

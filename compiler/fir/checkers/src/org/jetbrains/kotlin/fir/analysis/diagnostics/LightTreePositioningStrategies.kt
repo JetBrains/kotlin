@@ -594,7 +594,7 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val USELESS_ELVIS = object : LightTreePositioningStrategy() {
+    private val OPERATION_TO_END = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
@@ -604,6 +604,10 @@ object LightTreePositioningStrategies {
             return markRange(tree.operationReference(node) ?: node, tree.lastChild(node) ?: node, startOffset, endOffset, tree, node)
         }
     }
+
+    val AS_TYPE = OPERATION_TO_END
+
+    val USELESS_ELVIS = OPERATION_TO_END
 
     val RETURN_WITH_LABEL = object : LightTreePositioningStrategy() {
         override fun mark(

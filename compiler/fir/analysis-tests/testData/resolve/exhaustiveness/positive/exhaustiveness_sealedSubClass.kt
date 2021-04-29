@@ -27,7 +27,7 @@ fun test_1(e: A) {
 
     val d = when (e) {
         is E -> 1
-        is A -> 2
+        <!USELESS_IS_CHECK!>is A<!> -> 2
     }.plus(0)
 }
 

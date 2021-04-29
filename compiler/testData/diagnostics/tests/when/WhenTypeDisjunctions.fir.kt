@@ -23,7 +23,7 @@ fun foo(s: Any): String {
 
 fun bar(s: Any): String {
     val x = when (s) {
-        is String -> s as String // meaningless
+        is String -> s <!USELESS_CAST!>as String<!> // meaningless
         is Int -> "$s"
         else -> return ""
     }

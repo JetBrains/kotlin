@@ -654,6 +654,13 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val USELESS_ELVIS_RIGHT_IS_NULL by warning<KtBinaryExpression>(PositioningStrategy.USELESS_ELVIS)
     }
 
+    val CASTS_AND_IS_CHECKS by object : DiagnosticGroup("Casts and is-checks") {
+        val USELESS_CAST by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.AS_TYPE)
+        val USELESS_IS_CHECK by warning<KtElement> {
+            parameter<Boolean>("compileTimeCheckResult")
+        }
+    }
+
     val WHEN_EXPRESSIONS by object : DiagnosticGroup("When expressions") {
         val NO_ELSE_IN_WHEN by error<KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<List<WhenMissingCase>>("missingWhenCases")

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //  Type inference failed after smart cast
 
 interface A<T>

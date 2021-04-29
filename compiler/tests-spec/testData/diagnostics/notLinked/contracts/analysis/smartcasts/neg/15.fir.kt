@@ -43,7 +43,7 @@ fun case_2(value: Any) {
 
 // TESTCASE NUMBER: 3
 fun case_3(value: String?) {
-    if (!value.isNullOrEmpty() is Boolean) {
+    if (<!USELESS_IS_CHECK!>!value.isNullOrEmpty() is Boolean<!>) {
         value<!UNSAFE_CALL!>.<!>length
     }
 }

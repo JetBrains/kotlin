@@ -17,5 +17,5 @@ val asStarList = foo() as List<*>
 
 val safeAs = foo() as? String
 
-val fromIs = foo() is String
-val fromNoIs = foo() !is String
+val fromIs = <!USELESS_IS_CHECK!>foo() is String<!>
+val fromNoIs = <!USELESS_IS_CHECK!>foo() !is String<!>

@@ -33,8 +33,18 @@ inline fun <reified T> case_5() {
 
     val z = x.test()
 
-    if (z is T) {
+    if (<!USELESS_IS_CHECK!>z is T<!>) {
         // z is {T!! & T!!} (smart cast from T)
         <!UNRESOLVED_REFERENCE!>println<!>(z)
+    }
+
+    val a = object<A> {
+        fun test() = 42 as <!UNRESOLVED_REFERENCE!>A<!>
+    }
+
+    val b = a.test()
+
+    if (a is T) {
+        <!UNRESOLVED_REFERENCE!>println<!>(a)
     }
 }

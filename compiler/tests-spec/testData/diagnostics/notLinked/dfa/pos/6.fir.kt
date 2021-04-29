@@ -1386,7 +1386,7 @@ fun case_74(t: Any?) {
  * ISSUES: KT-28362
  */
 fun case_75(t: Any?, z: Nothing?) {
-    if (t !is ClassLevel2? || t !is ClassLevel1?) else {
+    if (t !is ClassLevel2? || <!USELESS_IS_CHECK!>t !is ClassLevel1?<!>) else {
         if (t === ((((((z)))))) || t !is Interface1?) else {
             if (t !is Interface2? || t !is Interface3?) {} else {
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2? & Interface1? & Interface2? & Interface3?")!>t<!><!UNSAFE_CALL!>.<!>itest2()

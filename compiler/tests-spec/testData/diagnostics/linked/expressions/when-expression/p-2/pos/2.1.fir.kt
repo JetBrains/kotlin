@@ -73,7 +73,7 @@ fun case_6(value_1: Any) {
         value_1 is String -> {}
         value_1 is Number -> {}
         value_1 is Float -> {}
-        value_1 is Any -> {}
+        <!USELESS_IS_CHECK!>value_1 is Any<!> -> {}
     }
 }
 
@@ -85,8 +85,8 @@ fun case_7(value_1: Any) {
     when {
         value_1 !is Number -> {}
         value_1 is Float -> {}
-        value_1 is Number -> {}
-        value_1 is Any -> {}
+        <!USELESS_IS_CHECK!>value_1 is Number<!> -> {}
+        <!USELESS_IS_CHECK!>value_1 is Any<!> -> {}
     }
 }
 
