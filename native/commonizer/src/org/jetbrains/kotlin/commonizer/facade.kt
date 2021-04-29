@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 fun runCommonization(parameters: CommonizerParameters) {
     if (!parameters.containsCommonModuleNames()) {
-        parameters.resultsConsumer.allConsumed(Status.NOTHING_TO_DO)
+        parameters.resultsConsumer.allConsumed(parameters, Status.NOTHING_TO_DO)
         return
     }
 
     val storageManager = LockBasedStorageManager("Declarations commonization")
     commonize(parameters, storageManager, parameters.outputTarget)
-    parameters.resultsConsumer.allConsumed(Status.DONE)
+    parameters.resultsConsumer.allConsumed(parameters, Status.DONE)
 }
 
 private fun commonize(
@@ -41,7 +41,7 @@ private fun commonize(
     target: SharedCommonizerTarget,
 ): CirRootNode? {
     val cirTrees = getCirTree(parameters, storageManager, target)
-    parameters.progressLogger?.invoke("Build cir tree for $target")
+    parameters.logProgress("Built declaration tree for $target")
 
     // build merged tree:
     val classifiers = CirKnownClassifiers(
@@ -51,10 +51,9 @@ private fun commonize(
 
     val mergedTree = merge(storageManager, classifiers, cirTrees) ?: return null
     mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
-    parameters.progressLogger?.invoke("Commonized declarations for $target")
+    parameters.logProgress("Commonized declarations for $target")
 
     serialize(parameters, mergedTree, target)
-    parameters.progressLogger?.invoke("Commonized target $target")
 
     return mergedTree
 }
@@ -65,7 +64,9 @@ private fun getCirTree(
     return EagerTargetDependent(target.targets) { childTarget ->
         when (childTarget) {
             is LeafCommonizerTarget -> deserialize(parameters, childTarget)
-            is SharedCommonizerTarget -> commonize(parameters, storageManager, childTarget)?.assembleCirTree()
+            is SharedCommonizerTarget -> commonize(parameters.fork(), storageManager, childTarget)?.assembleCirTree().also {
+                parameters.logProgress("Commonized target $childTarget")
+            }
         }
     }
 }
@@ -103,9 +104,9 @@ private fun serialize(parameters: CommonizerParameters, mergedTree: CirRootNode,
             SerializedMetadata(header, fragments, fragmentNames)
         }
         val manifestData = parameters.manifestProvider[target].buildManifest(libraryName)
-        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
+        parameters.resultsConsumer.consume(parameters, target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
     }
-    parameters.resultsConsumer.targetConsumed(target)
+    parameters.resultsConsumer.targetConsumed(parameters, target)
 }
 
 private fun serializeMissingModules(parameters: CommonizerParameters, requestedTarget: CommonizerTarget) {
@@ -114,8 +115,14 @@ private fun serializeMissingModules(parameters: CommonizerParameters, requestedT
 
     targetProvider.modulesProvider.loadModuleInfos()
         .filter { it.name !in commonModuleNames }
-        .forEach { missingModule -> parameters.resultsConsumer.consume(requestedTarget, Missing(missingModule.originalLocation)) }
-
+        .forEach { missingModule ->
+            parameters.resultsConsumer.consume(parameters, requestedTarget, Missing(missingModule.originalLocation))
+        }
 }
 
+private fun CommonizerParameters.fork(): CommonizerParameters = with(logger?.fork())
+
+private fun CommonizerParameters.logProgress(message: String) = logger?.progress(message)
+
 private val KLIB_FRAGMENT_WRITE_STRATEGY = ChunkedKlibModuleFragmentWriteStrategy()
+

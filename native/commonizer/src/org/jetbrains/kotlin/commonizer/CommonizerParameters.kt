@@ -9,15 +9,16 @@ import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.CirFictitiousFunctionClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
+import org.jetbrains.kotlin.commonizer.utils.ProgressLogger
 
-class CommonizerParameters(
+data class CommonizerParameters(
     val outputTarget: SharedCommonizerTarget,
     val manifestProvider: TargetDependent<NativeManifestDataProvider>,
     val dependenciesProvider: TargetDependent<ModulesProvider?>,
     val targetProviders: TargetDependent<TargetProvider?>,
     val resultsConsumer: ResultsConsumer,
     val statsCollector: StatsCollector? = null,
-    val progressLogger: ((String) -> Unit)? = null,
+    val logger: ProgressLogger? = null,
 )
 
 internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget): CirProvidedClassifiers {
@@ -30,3 +31,5 @@ internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget
         CirProvidedClassifiers.of(classifiers, CirProvidedClassifiers.by(module))
     }
 }
+
+internal fun CommonizerParameters.with(logger: ProgressLogger?) = copy(logger = logger)

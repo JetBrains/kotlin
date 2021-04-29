@@ -146,7 +146,7 @@ internal class MockResultsConsumer : ResultsConsumer {
 
     lateinit var status: ResultsConsumer.Status
 
-    override fun consume(target: CommonizerTarget, moduleResult: ModuleResult) {
+    override fun consume(parameters: CommonizerParameters, target: CommonizerTarget, moduleResult: ModuleResult) {
         check(!this::status.isInitialized)
         check(target !in finishedTargets) { "$target already finished" }
         val moduleResults: ModuleResults = _modulesByTargets.getOrPut(target) { ModuleResults() }
@@ -154,13 +154,13 @@ internal class MockResultsConsumer : ResultsConsumer {
         check(oldResult == null) // to avoid accidental overwriting
     }
 
-    override fun targetConsumed(target: CommonizerTarget) {
+    override fun targetConsumed(parameters: CommonizerParameters, target: CommonizerTarget) {
         check(!this::status.isInitialized)
         check(target !in finishedTargets)
         finishedTargets += target
     }
 
-    override fun allConsumed(status: ResultsConsumer.Status) {
+    override fun allConsumed(parameters: CommonizerParameters, status: ResultsConsumer.Status) {
         check(!this::status.isInitialized)
         check(finishedTargets.containsAll(_modulesByTargets.keys))
         this.status = status

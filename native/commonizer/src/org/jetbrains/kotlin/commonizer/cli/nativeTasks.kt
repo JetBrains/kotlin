@@ -54,7 +54,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val konanTargets = outputCommonizerTarget.konanTargets
         val commonizerTargets = konanTargets.map(::CommonizerTarget)
 
-        val progressLogger = ProgressLogger(CliLoggerAdapter(2), startImmediately = true)
+        val progressLogger = ProgressLogger(CliLoggerAdapter(2))
         val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
         val statsCollector = StatsCollector(statsType, commonizerTargets)
         val repository = FilesRepository(targetLibraries.toSet(), libraryLoader)
@@ -62,9 +62,9 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val resultsConsumer = buildResultsConsumer {
             this add ModuleSerializer(destination, HierarchicalCommonizerOutputLayout)
             this add CopyUnconsumedModulesAsIsConsumer(
-                repository, destination, commonizerTargets.toSet(), NativeDistributionCommonizerOutputLayout, progressLogger
+                repository, destination, commonizerTargets.toSet(), NativeDistributionCommonizerOutputLayout
             )
-            this add LoggingResultsConsumer(outputCommonizerTarget, progressLogger)
+            this add LoggingResultsConsumer(outputCommonizerTarget)
         }
 
         LibraryCommonizer(
@@ -98,17 +98,17 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val copyEndorsedLibs = getOptional<Boolean, BooleanOptionType> { it == "copy-endorsed-libs" } ?: false
         val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
 
-        val progressLogger = ProgressLogger(CliLoggerAdapter(2), startImmediately = true)
+        val progressLogger = ProgressLogger(CliLoggerAdapter(2))
         val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
         val repository = KonanDistributionRepository(distribution, outputTarget.konanTargets, libraryLoader)
         val statsCollector = StatsCollector(statsType, outputTarget.withAllAncestors().toList())
 
         val resultsConsumer = buildResultsConsumer {
             this add ModuleSerializer(destination, outputLayout)
-            this add CopyUnconsumedModulesAsIsConsumer(repository, destination, outputTarget.allLeaves(), outputLayout, progressLogger)
-            if (copyStdlib) this add CopyStdlibResultsConsumer(distribution, destination, progressLogger)
-            if (copyEndorsedLibs) this add CopyEndorsedLibrairesResultsConsumer(distribution, destination, progressLogger)
-            this add LoggingResultsConsumer(outputTarget, progressLogger)
+            this add CopyUnconsumedModulesAsIsConsumer(repository, destination, outputTarget.allLeaves(), outputLayout)
+            if (copyStdlib) this add CopyStdlibResultsConsumer(distribution, destination)
+            if (copyEndorsedLibs) this add CopyEndorsedLibrairesResultsConsumer(distribution, destination)
+            this add LoggingResultsConsumer(outputTarget)
         }
 
         val descriptionSuffix = estimateLibrariesCount(repository, outputTarget.allLeaves()).let { " ($it items)" }

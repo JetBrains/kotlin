@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer.konan
 
-import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.ResultsConsumer
-import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.commonizer.prettyName
-import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.commonizer.*
 
 internal class LoggingResultsConsumer(
-    private val outputCommonizerTarget: SharedCommonizerTarget, private val logger: Logger
+    private val outputCommonizerTarget: SharedCommonizerTarget
 ) : ResultsConsumer {
-    override fun targetConsumed(target: CommonizerTarget) {
-        logger.log("Written libraries for ${outputCommonizerTarget.prettyName(target)}")
+    override fun targetConsumed(parameters: CommonizerParameters, target: CommonizerTarget) {
+        parameters.logger?.progress("Written libraries for ${outputCommonizerTarget.prettyName(target)}")
     }
 }

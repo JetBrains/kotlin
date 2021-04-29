@@ -31,19 +31,19 @@ interface ResultsConsumer {
     /**
      * Consume a single [ModuleResult] for the specified [CommonizerTarget].
      */
-    fun consume(target: CommonizerTarget, moduleResult: ModuleResult) = Unit
+    fun consume(parameters: CommonizerParameters, target: CommonizerTarget, moduleResult: ModuleResult) = Unit
 
     /**
      * Mark the specified [CommonizerTarget] as fully consumed.
      * It's forbidden to make subsequent [consume] calls for fully consumed targets.
      */
-    fun targetConsumed(target: CommonizerTarget) = Unit
+    fun targetConsumed(parameters: CommonizerParameters, target: CommonizerTarget) = Unit
 
     /**
      * Notify that all results have been consumed.
      * It's forbidden to make any subsequent [consume] and [targetConsumed] calls after this call.
      */
-    fun allConsumed(status: Status) = Unit
+    fun allConsumed(parameters: CommonizerParameters, status: Status) = Unit
 }
 
 internal class ResultsConsumerBuilder {
@@ -72,21 +72,21 @@ operator fun ResultsConsumer.plus(other: ResultsConsumer?): ResultsConsumer {
 }
 
 private class CompositeResultsConsumer(val consumers: List<ResultsConsumer>) : ResultsConsumer {
-    override fun consume(target: CommonizerTarget, moduleResult: ResultsConsumer.ModuleResult) {
+    override fun consume(parameters: CommonizerParameters, target: CommonizerTarget, moduleResult: ResultsConsumer.ModuleResult) {
         consumers.forEach { consumer ->
-            consumer.consume(target, moduleResult)
+            consumer.consume(parameters, target, moduleResult)
         }
     }
 
-    override fun targetConsumed(target: CommonizerTarget) {
+    override fun targetConsumed(parameters: CommonizerParameters, target: CommonizerTarget) {
         consumers.forEach { consumer ->
-            consumer.targetConsumed(target)
+            consumer.targetConsumed(parameters, target)
         }
     }
 
-    override fun allConsumed(status: ResultsConsumer.Status) {
+    override fun allConsumed(parameters: CommonizerParameters, status: ResultsConsumer.Status) {
         consumers.forEach { consumer ->
-            consumer.allConsumed(status)
+            consumer.allConsumed(parameters, status)
         }
     }
 }
