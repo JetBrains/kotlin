@@ -30,8 +30,6 @@ if (intellijVersionDelimiterIndex == -1) {
     error("Invalid IDEA version $intellijVersion")
 }
 
-val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
-
 logger.info("intellijUltimateEnabled: $intellijUltimateEnabled")
 logger.info("intellijVersion: $intellijVersion")
 logger.info("androidStudioRelease: $androidStudioRelease")
@@ -93,7 +91,6 @@ val dependenciesDir = (findProperty("kotlin.build.dependencies.dir") as String?)
 val customDepsRepoDir = dependenciesDir.resolve("repo")
 
 val customDepsOrg: String by rootProject.extra
-val customDepsRevision = intellijVersion
 val repoDir = File(customDepsRepoDir, customDepsOrg)
 
 dependencies {
