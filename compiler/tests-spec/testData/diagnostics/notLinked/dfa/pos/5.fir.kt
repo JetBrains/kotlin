@@ -338,7 +338,7 @@ fun case_14(x: Any?) {
  * ISSUES: KT-28362
  */
 fun case_15(x: Any?) {
-    if (x !is ClassLevel2? || x !is ClassLevel1?) else {
+    if (x !is ClassLevel2? || <!USELESS_IS_CHECK!>x !is ClassLevel1?<!>) else {
         if (x === null || x !is Interface1?) else {
             if (x !is Interface2? || x !is Interface3?) {} else {
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2 & Interface1 & Interface2 & Interface3")!>x<!>

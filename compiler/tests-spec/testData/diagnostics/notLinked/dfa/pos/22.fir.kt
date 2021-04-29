@@ -5,7 +5,7 @@
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
     if (x is Int) {
-        if (x !is Int) {
+        if (<!USELESS_IS_CHECK!>x !is Int<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv()
         }
@@ -35,7 +35,7 @@ fun case_3(x: Any?) {
 // TESTCASE NUMBER: 4
 fun case_4(x: Any) {
     if (x !is EnumClass) else {
-        if (x !is EnumClass) {
+        if (<!USELESS_IS_CHECK!>x !is EnumClass<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & EnumClass")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & EnumClass")!>x<!>.fun_1()
         }
@@ -45,7 +45,7 @@ fun case_4(x: Any) {
 // TESTCASE NUMBER: 5
 fun case_5(x: Any?) {
     if (!(x !is Class.NestedClass?)) {
-        if (!!(x !is Class.NestedClass?)) {
+        if (!!(<!USELESS_IS_CHECK!>x !is Class.NestedClass?<!>)) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>?.prop_4
         }
@@ -106,7 +106,7 @@ fun case_10(x: Any?) {
 // TESTCASE NUMBER: 11
 fun case_11(x: Any?) {
     if (x is SealedMixedChildObject1?) {
-        if (x is SealedMixedChildObject1?) {
+        if (<!USELESS_IS_CHECK!>x is SealedMixedChildObject1?<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>?.prop_1
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>?.prop_2
@@ -117,7 +117,7 @@ fun case_11(x: Any?) {
 // TESTCASE NUMBER: 12
 inline fun <reified T, reified K>case_12(x: Any?) {
     if (x is T) {
-        if (x is T is K) {
+        if (<!USELESS_IS_CHECK!>x is T<!> is K) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
         }
     }
@@ -135,7 +135,7 @@ inline fun <reified T, reified K>case_13(x: Any?) {
 // TESTCASE NUMBER: 14
 inline fun <reified T, reified K>case_14(x: Any?) {
     if (x is T) {
-        if (x !is T) {
+        if (<!USELESS_IS_CHECK!>x !is T<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
         }
     }

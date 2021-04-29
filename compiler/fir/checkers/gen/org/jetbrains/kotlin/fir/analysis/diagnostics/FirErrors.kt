@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotation
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -389,6 +390,10 @@ object FirErrors {
     val NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE by warning0<KtExpression>(SourceElementPositioningStrategies.OPERATOR)
     val USELESS_ELVIS by warning1<KtBinaryExpression, ConeKotlinType>(SourceElementPositioningStrategies.USELESS_ELVIS)
     val USELESS_ELVIS_RIGHT_IS_NULL by warning0<KtBinaryExpression>(SourceElementPositioningStrategies.USELESS_ELVIS)
+
+    // Casts and is-checks
+    val USELESS_CAST by warning0<KtBinaryExpressionWithTypeRHS>(SourceElementPositioningStrategies.AS_TYPE)
+    val USELESS_IS_CHECK by warning1<KtElement, Boolean>()
 
     // When expressions
     val NO_ELSE_IN_WHEN by error1<KtWhenExpression, List<WhenMissingCase>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)

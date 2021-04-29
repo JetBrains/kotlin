@@ -78,7 +78,7 @@ fun case_5(x: Pair<*, *>?) {
 fun case_6(x: Any?) {
     when (x) {
         is Nothing? -> return
-        is Any? -> {
+        <!USELESS_IS_CHECK!>is Any?<!> -> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }

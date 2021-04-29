@@ -1,5 +1,5 @@
 fun asCall() {
-    1 as Int
+    1 <!USELESS_CAST!>as Int<!>
     1 as Byte
     1 as Short
     1 as Long
@@ -12,7 +12,7 @@ fun asCall() {
     1.0 as Short
     1.0 as Long
     1.0 as Char
-    1.0 as Double
+    1.0 <!USELESS_CAST!>as Double<!>
     1.0 as Float
 
     1f as Int
@@ -21,7 +21,7 @@ fun asCall() {
     1f as Long
     1f as Char
     1f as Double
-    1f as Float
+    1f <!USELESS_CAST!>as Float<!>
 }
 
 fun asSafe() {

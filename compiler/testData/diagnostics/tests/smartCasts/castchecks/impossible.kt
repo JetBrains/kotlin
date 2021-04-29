@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +SafeCastCheckBoundSmartCasts
 // See KT-20752
 

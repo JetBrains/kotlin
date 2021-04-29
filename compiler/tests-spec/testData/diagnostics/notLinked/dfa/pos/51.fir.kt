@@ -264,7 +264,7 @@ fun case_23(z: Any?) {
     val y = z.run {
         when (this) {
             true -> this<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
-            0.0 -> this as Any
+            0.0 -> this <!USELESS_CAST!>as Any<!>
             else -> this!!
         }
     }
@@ -277,7 +277,7 @@ fun case_24(z: Any?) {
     val y = z.let {
         when (it) {
             true -> it<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
-            0.0 -> it as Any
+            0.0 -> it <!USELESS_CAST!>as Any<!>
             else -> it!!
         }
     }

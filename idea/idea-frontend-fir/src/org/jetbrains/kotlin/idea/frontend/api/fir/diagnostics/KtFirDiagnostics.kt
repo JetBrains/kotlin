@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotation
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -1300,6 +1301,15 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class UselessElvisRightIsNull : KtFirDiagnostic<KtBinaryExpression>() {
         override val diagnosticClass get() = UselessElvisRightIsNull::class
+    }
+
+    abstract class UselessCast : KtFirDiagnostic<KtBinaryExpressionWithTypeRHS>() {
+        override val diagnosticClass get() = UselessCast::class
+    }
+
+    abstract class UselessIsCheck : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = UselessIsCheck::class
+        abstract val compileTimeCheckResult: Boolean
     }
 
     abstract class NoElseInWhen : KtFirDiagnostic<KtWhenExpression>() {

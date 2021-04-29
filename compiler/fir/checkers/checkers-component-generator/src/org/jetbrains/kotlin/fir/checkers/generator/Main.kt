@@ -38,6 +38,7 @@ fun main(args: Array<String>) {
         alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
         alias<FirAnonymousFunction>("AnonymousFunctionAsExpressionChecker")
         alias<FirStringConcatenationCall>("StringConcatenationCallChecker")
+        alias<FirTypeOperatorCall>("TypeOperatorCallChecker")
         alias<FirResolvedQualifier>("ResolvedQualifierChecker")
     }
 

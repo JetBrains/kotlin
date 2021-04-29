@@ -30,7 +30,7 @@ open class Case1<K : Number> {
 // TESTCASE NUMBER: 2
 inline fun <reified T : CharSequence>case_2(x: Any?) {
     x as T
-    if (x !is T) {
+    if (<!USELESS_IS_CHECK!>x !is T<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.length
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.get(0)
@@ -60,7 +60,7 @@ inline fun <reified T : CharSequence>case_4(x: Any?) {
 // TESTCASE NUMBER: 5
 inline fun <reified T : CharSequence>case_5(x: Any?) {
     if (x as? T != null) {
-        if (x is T?) {
+        if (<!USELESS_IS_CHECK!>x is T?<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.length
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.get(0)

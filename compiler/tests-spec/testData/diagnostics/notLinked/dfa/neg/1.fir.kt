@@ -37,7 +37,7 @@ fun case_3() {
 
 // TESTCASE NUMBER: 4
 fun case_4(x: Char?) {
-    if (x != null || false is Boolean) {
+    if (x != null || <!USELESS_IS_CHECK!>false is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.propT
@@ -55,7 +55,7 @@ fun case_4(x: Char?) {
 fun case_5() {
     val x: Unit? = null
 
-    if (x !== null is Boolean?) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>
+    if (x !== <!USELESS_IS_CHECK!>null is Boolean?<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>
     if (x !== null == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
     if (x !== null == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!>.propT
     if (x !== null == null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit?")!>x<!><!UNSAFE_CALL!>.<!>propAny
@@ -71,7 +71,7 @@ fun case_5() {
 fun case_6(x: EmptyClass?) {
     val y = true
 
-    if ((x != null && !y) is Boolean) {
+    if (<!USELESS_IS_CHECK!>(x != null && !y) is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyClass?")!>x<!>.propT
@@ -111,7 +111,7 @@ fun case_8(x: TypealiasNullableString) {
 fun case_9(x: TypealiasNullableString?) {
     if (x === null === null) {
 
-    } else if (false is Boolean) {
+    } else if (<!USELESS_IS_CHECK!>false is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString?")!>x<!><!UNSAFE_CALL!>.<!>get(0)
     }
@@ -121,7 +121,7 @@ fun case_9(x: TypealiasNullableString?) {
 fun case_10() {
     val a = Class()
 
-    if (a.prop_4 === null || true is Boolean) {
+    if (a.prop_4 === null || <!USELESS_IS_CHECK!>true is Boolean<!>) {
         if (a.prop_4 != null !== null) {
             a.prop_4
             a.prop_4<!UNSAFE_CALL!>.<!>equals(null)
@@ -145,7 +145,7 @@ fun case_11(x: TypealiasNullableStringIndirect?, y: TypealiasNullableStringIndir
 
     } else {
         if (y != null is Boolean == true) {
-            if ((nullableStringProperty == null) !is Boolean) {
+            if (<!USELESS_IS_CHECK!>(nullableStringProperty == null) !is Boolean<!>) {
                 if (t != null is Boolean) {
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>
                     <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.equals(null)
@@ -165,8 +165,8 @@ fun case_11(x: TypealiasNullableStringIndirect?, y: TypealiasNullableStringIndir
 
 // TESTCASE NUMBER: 12
 fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndirect) =
-    if ((x == null) !is Boolean === false) "1"
-    else if ((y === null !== null) is Boolean) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>
+    if (<!USELESS_IS_CHECK!>(x == null) !is Boolean<!> === false) "1"
+    else if (<!USELESS_IS_CHECK!>(y === null !== null) is Boolean<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.equals(null)
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propT
     else if (y === null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!><!UNSAFE_CALL!>.<!>propAny
@@ -198,19 +198,19 @@ class Case14 {
 fun case_14() {
     val a = Case14()
 
-    if (a.x != null !is Boolean !is Boolean) {
+    if (a.x != <!USELESS_IS_CHECK!>null !is Boolean !is Boolean<!>) {
         if (a.x != null == true) {
             if (a.x !== null == false) {
                 if (a.x != null == null) {
                     if (a.x != null !== null) {
                         if (a.x != null === true) {
-                            if (a.x !== null === true !is Boolean == true) {
+                            if (a.x !== null === <!USELESS_IS_CHECK!>true !is Boolean<!> == true) {
                                 if (a.x != null !== false) {
                                     if (a.x != null === false) {
                                         if (a.x !== null === true) {
-                                            if ((a.x != null != true) !is Boolean) {
+                                            if (<!USELESS_IS_CHECK!>(a.x != null != true) !is Boolean<!>) {
                                                 if (a.x != null is Boolean) {
-                                                    if (a.x != null is Boolean is Boolean) {
+                                                    if (a.x != <!USELESS_IS_CHECK!>null is Boolean is Boolean<!>) {
                                                         if (a.x !== null is Boolean) {
                                                             if (a.x != null is Boolean) {
                                                                 if ((a.x !== null !is Boolean) == false) {
@@ -236,7 +236,7 @@ fun case_14() {
 
 // TESTCASE NUMBER: 15
 fun case_15(x: EmptyObject) {
-    val t = if (x === null is Boolean is Boolean is Boolean) "" else {
+    val t = if (x === <!USELESS_IS_CHECK!><!USELESS_IS_CHECK!>null is Boolean is Boolean<!> is Boolean<!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject")!>x<!>.propT
@@ -254,7 +254,7 @@ fun case_15(x: EmptyObject) {
 fun case_16() {
     val x: TypealiasNullableNothing = null
 
-    if (x != null !is Boolean !is Boolean !is Boolean !is Boolean !is Boolean) {
+    if (x != <!USELESS_IS_CHECK!><!USELESS_IS_CHECK!><!USELESS_IS_CHECK!><!USELESS_IS_CHECK!>null !is Boolean !is Boolean<!> !is Boolean<!> !is Boolean<!> !is Boolean<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!><!UNSAFE_CALL!>.<!>java
     }
@@ -344,7 +344,7 @@ fun case_20(b: Boolean) {
 
 // TESTCASE NUMBER: 21
 fun case_21() {
-    if (EnumClassWithNullableProperty.B.prop_1 !== null is Boolean == true !is Boolean != true) {
+    if (EnumClassWithNullableProperty.B.prop_1 !== null is Boolean == <!USELESS_IS_CHECK!>true !is Boolean<!> != true) {
         EnumClassWithNullableProperty.B.prop_1
         EnumClassWithNullableProperty.B.prop_1<!UNSAFE_CALL!>.<!>equals(null)
         EnumClassWithNullableProperty.B.prop_1.propT
@@ -458,7 +458,7 @@ fun case_26(a: ((Float) -> Int?)?, b: Float?) {
 
 // TESTCASE NUMBER: 27
 fun case_27() {
-    if (Object.prop_1 == null == true == true == true == true == true == true == true == true == true == true == true == true == true == true is Boolean)
+    if (Object.prop_1 == null == true == true == true == true == true == true == true == true == true == true == true == true == true == <!USELESS_IS_CHECK!>true is Boolean<!>)
     else {
         Object.prop_1
         Object.prop_1<!UNSAFE_CALL!>.<!>equals(null)

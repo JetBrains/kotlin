@@ -25,8 +25,8 @@ fun testRun() {
     }
 
     run<Int?> {
-        1 as Int
-        1 as Int
+        1 <!USELESS_CAST!>as Int<!>
+        1 <!USELESS_CAST!>as Int<!>
     }
 
     runWithoutReturn {

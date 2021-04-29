@@ -7,7 +7,7 @@ fun <T> T?.let(f: (T) -> Unit) {
 }
 
 fun test(your: Your?) {
-    (your?.foo() as? Any)?.let {}
+    (your?.foo() <!USELESS_CAST!>as? Any<!>)?.let {}
     // strange smart cast to 'Your' at this point
     your<!UNSAFE_CALL!>.<!>hashCode()
 }

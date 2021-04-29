@@ -83,7 +83,7 @@ fun case_5(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_6(x: Class?) {
-    if ((x?.prop_8?.prop_8?.prop_8 as Class?)?.prop_8 == null == true) else {
+    if ((x?.prop_8?.prop_8?.prop_8 <!USELESS_CAST!>as Class?<!>)?.prop_8 == null == true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8

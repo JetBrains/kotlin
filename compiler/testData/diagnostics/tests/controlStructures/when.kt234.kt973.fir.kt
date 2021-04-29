@@ -26,7 +26,7 @@ fun t1(x: Int) = when(x) {
 }
 
 fun t5(x: Int) = <!NO_ELSE_IN_WHEN!>when<!> (x) {
-    is Int -> 1
+    <!USELESS_IS_CHECK!>is Int<!> -> 1
     2 -> 2
 }
 

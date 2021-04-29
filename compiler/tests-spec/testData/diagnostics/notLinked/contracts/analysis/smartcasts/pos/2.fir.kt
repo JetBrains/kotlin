@@ -158,7 +158,7 @@ class case_10_class {
  * ISSUES: KT-26747
  */
 fun case_11(value_1: Any?, value_2: Any?, value_3: Any?) {
-    funWithReturnsAndInvertCondition(value_1 !is String || value_2 !is Number || value_3 !is Any?)
+    funWithReturnsAndInvertCondition(value_1 !is String || value_2 !is Number || <!USELESS_IS_CHECK!>value_3 !is Any?<!>)
     println(value_1<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length)
     println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
 }

@@ -33,7 +33,7 @@ fun test() {
     checkSubtype<Float>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 
     1 as Byte
-    1 as Int
+    1 <!USELESS_CAST!>as Int<!>
     0xff as Long
 
     1.1 as Int

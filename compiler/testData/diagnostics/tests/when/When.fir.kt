@@ -20,9 +20,9 @@ fun foo() : Int {
     val x = 1
     when (x) {
       is String -> 1
-      !is Int -> 1
-      is Any? -> 1
-      is Any -> 1
+      <!USELESS_IS_CHECK!>!is Int<!> -> 1
+      <!USELESS_IS_CHECK!>is Any?<!> -> 1
+      <!USELESS_IS_CHECK!>is Any<!> -> 1
       s -> 1
       1 -> 1
       1 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!UNRESOLVED_REFERENCE!>a<!> -> 1

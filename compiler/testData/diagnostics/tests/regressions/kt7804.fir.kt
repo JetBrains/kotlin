@@ -6,7 +6,7 @@ class A
 
 fun <T> test(v: T): T {
     val a = if (v !is A) {
-        foo(v) as T
+        foo(v) <!USELESS_CAST!>as T<!>
     }
     else {
         v
@@ -18,7 +18,7 @@ fun <T> test(v: T): T {
 
 fun <T> test2(v: T): T {
     val a = if (v !is A) {
-        foo(v) as T
+        foo(v) <!USELESS_CAST!>as T<!>
     }
     else {
         v as T
@@ -42,7 +42,7 @@ fun <T> test3(v: T): T {
 
 fun <T> test4(v: T): T {
     val a: T = if (v !is A) {
-        foo(v) as T
+        foo(v) <!USELESS_CAST!>as T<!>
     }
     else {
         v

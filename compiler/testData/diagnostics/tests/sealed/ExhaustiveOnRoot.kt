@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 sealed class Stmt
 
 class ForStmt : Stmt()

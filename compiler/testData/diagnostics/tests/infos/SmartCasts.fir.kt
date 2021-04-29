@@ -36,7 +36,7 @@ fun f10(init : A?) {
   if (!(a is B)) {
     return;
   }
-  if (!(a is B)) {
+  if (!(<!USELESS_IS_CHECK!>a is B<!>)) {
     return;
   }
 }
@@ -58,7 +58,7 @@ fun f11(a : A?) {
     is B -> a.bar()
     is A -> a.foo()
     is Any -> a.foo()
-    is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!USELESS_IS_CHECK!>is Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
     else -> a?.foo()
   }
 }
@@ -68,12 +68,12 @@ fun f12(a : A?) {
     is B -> a.bar()
     is A -> a.foo()
     is Any -> a.foo();
-    is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!USELESS_IS_CHECK!>is Any?<!> -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
     is C -> a.bar()
     else -> a?.foo()
   }
 
-  if (a is Any?) {
+  if (<!USELESS_IS_CHECK!>a is Any?<!>) {
     a?.<!UNRESOLVED_REFERENCE!>bar<!>()
   }
   if (a is B) {
@@ -198,7 +198,7 @@ fun mergeSmartCasts(a: Any?) {
   when (a) {
     is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
   }
-  if (a is String && a is Any) {
+  if (a is String && <!USELESS_IS_CHECK!>a is Any<!>) {
     val i: Int = a.compareTo("")
   }
   if (a is String && a.compareTo("") == 0) {}

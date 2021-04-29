@@ -118,7 +118,6 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.SUSPEND_MODIFIER
     )
 
-
     val OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR
@@ -192,6 +191,11 @@ object SourceElementPositioningStrategies {
     val SAFE_ACCESS = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.SAFE_ACCESS,
         PositioningStrategies.SAFE_ACCESS
+    )
+
+    val AS_TYPE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.AS_TYPE,
+        PositioningStrategies.AS_TYPE
     )
 
     val USELESS_ELVIS = SourceElementPositioningStrategy(

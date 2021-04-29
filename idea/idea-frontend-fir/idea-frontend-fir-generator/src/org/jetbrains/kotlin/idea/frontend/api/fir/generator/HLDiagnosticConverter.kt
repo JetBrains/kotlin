@@ -203,6 +203,7 @@ private object FirToKtConversionCreator {
     )
 
     private val allowedTypesWithoutTypeParams = setOf(
+        Boolean::class,
         String::class,
         Int::class,
         Name::class,

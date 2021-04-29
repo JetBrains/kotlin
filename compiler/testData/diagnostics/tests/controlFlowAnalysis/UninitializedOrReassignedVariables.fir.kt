@@ -39,7 +39,7 @@ fun t1(b : Boolean) {
         return;
     }
     doSmth(i)
-    if (i is Int) {
+    if (<!USELESS_IS_CHECK!>i is Int<!>) {
         return;
     }
 }

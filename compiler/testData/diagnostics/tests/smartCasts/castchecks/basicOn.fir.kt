@@ -14,7 +14,7 @@ fun g(a: SomeClass?) {
         a.hashCode()
         a.foo
         (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
-        (a as SomeSubClass).foo
+        (a <!USELESS_CAST!>as SomeSubClass<!>).foo
     }
     val b = (a as? SomeSubClass)?.foo
     if (b != null) {
@@ -22,7 +22,7 @@ fun g(a: SomeClass?) {
         a.hashCode()
         a.foo
         (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
-        (a as SomeSubClass).foo
+        (a <!USELESS_CAST!>as SomeSubClass<!>).foo
     }
     val c = a as? SomeSubClass
     if (c != null) {
