@@ -30,9 +30,10 @@ fun main(args: Array<String>) {
             category.prologue?.let(::println)
 
             sortedTasks.forEachIndexed { index, task ->
-                val logPrefix = if (category.logEachStep) "[Step ${index + 1} of ${sortedTasks.size}] " else ""
+                val logPrefix = if (category.logEachStep && sortedTasks.size > 1) "[Step ${index + 1} of ${sortedTasks.size}] " else ""
                 task.execute(logPrefix)
             }
+
 
             category.epilogue?.let(::println)
         }
