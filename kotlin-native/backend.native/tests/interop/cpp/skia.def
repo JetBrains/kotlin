@@ -1,6 +1,6 @@
 language = C++
 compilerOpts = -std=c++17
-plugin = org.jetbrains.kotlin.native.cinterop.plugin.skia
+plugin = org.jetbrains.kotlin.native.interop.skia
 
 ---
 // TODO: this one checks the syntactic aspect for now.

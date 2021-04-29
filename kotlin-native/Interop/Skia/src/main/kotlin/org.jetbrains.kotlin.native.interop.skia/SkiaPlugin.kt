@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.native.interop.indexer.NativeLibrary
 import org.jetbrains.kotlin.native.interop.indexer.Type
 
 class SkiaPlugin : Plugin {
+    override val name = "Skia"
     override fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult =
             buildSkiaNativeIndexImpl(library, verbose)
 

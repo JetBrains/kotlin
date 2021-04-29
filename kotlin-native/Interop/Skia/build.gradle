@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2021 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +21,9 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: 'application'
 
-mainClassName = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
-
 dependencies {
     implementation project(":kotlin-native:Interop:Indexer")
-    implementation project(":kotlin-native:utilities:basic-utils")
-    api project(path: ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
-
-    api project(":kotlin-stdlib")
-    api project(kotlinCompilerModule)
-    api project(":kotlinx-metadata-klib")
-    api project(":native:kotlin-native-utils")
-    implementation(project(":compiler:util"))
-    implementation(project(":compiler:ir.serialization.common"))
-
+    implementation project(":kotlin-native:Interop:StubGenerator")
     testImplementation "junit:junit:4.12"
     testImplementation project(":kotlin-test:kotlin-test-junit")
 }
@@ -49,9 +38,7 @@ compileKotlin {
 sourceSets{
     main {
         kotlin {
-            srcDir("../../shared/src/library/kotlin")
-            srcDir("../../shared/src/main/kotlin")
-            srcDir(VersionGeneratorKt.kotlinNativeVersionSrc(project))
+
         }
     }
 }

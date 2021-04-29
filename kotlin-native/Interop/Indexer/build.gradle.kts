@@ -127,7 +127,6 @@ sourceSets {
     "main" {
         java {
             srcDirs("prebuilt/nativeInteropStubs/kotlin")
-            srcDir("../Skia/Indexer/src/main/kotlin")
         }
         kotlin{
             target {

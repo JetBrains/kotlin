@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.indexer.*
-import org.jetbrains.kotlin.native.interop.skia.*
 
 object Plugins {
     fun plugin(pluginName: String?): Plugin = when (pluginName) {
-        "org.jetbrains.kotlin.native.cinterop.plugin.skia" -> SkiaPlugin()
-        else -> DefaultPlugin
+        "org.jetbrains.kotlin.native.interop.skia" ->
+            Class.forName("$pluginName.SkiaPlugin").newInstance() as Plugin
+        null -> DefaultPlugin
+        else -> error("Unexected interop plugin: $pluginName")
     }
 }
 
 interface Plugin {
+    val name: String
     fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult
     val managedTypePassing: ManagedTypePassing
     val ManagedType.stringRepresentation: String
@@ -24,6 +26,7 @@ interface Plugin {
 }
 
 object DefaultPlugin : Plugin {
+    override val name = "Default"
     override fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult =
             buildNativeIndexImpl(library, verbose)
     override val managedTypePassing = ManagedTypePassing()
