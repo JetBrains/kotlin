@@ -8,7 +8,7 @@
  */
 open class Case1<K : Number> {
     open inner class Case1_1<L>: Case1<Int>() where L : CharSequence {
-        inner class Case1_2<M>: Case1<K>.Case1_1<M>() where M : Map<K, L> {
+        inner class Case1_2<M>: <!UPPER_BOUND_VIOLATED!>Case1<K>.Case1_1<M><!>() where M : Map<K, L> {
             inline fun <reified T>case_1(x: Any?) {
                 x as M
                 x as L
