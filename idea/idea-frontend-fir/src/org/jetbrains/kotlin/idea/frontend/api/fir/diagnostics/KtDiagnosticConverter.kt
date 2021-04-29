@@ -15,19 +15,19 @@ internal fun interface KtFirDiagnostic0Creator : KtFirDiagnosticCreator {
     fun KtFirAnalysisSession.create(diagnostic: FirSimpleDiagnostic<*>): KtFirDiagnostic<*>
 }
 
-internal fun interface KtFirDiagnostic1Creator<A : Any> : KtFirDiagnosticCreator {
+internal fun interface KtFirDiagnostic1Creator<A> : KtFirDiagnosticCreator {
     fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters1<*, A>): KtFirDiagnostic<*>
 }
 
-internal fun interface KtFirDiagnostic2Creator<A : Any, B : Any> : KtFirDiagnosticCreator {
+internal fun interface KtFirDiagnostic2Creator<A, B> : KtFirDiagnosticCreator {
     fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters2<*, A, B>): KtFirDiagnostic<*>
 }
 
-internal fun interface KtFirDiagnostic3Creator<A : Any, B : Any, C : Any> : KtFirDiagnosticCreator {
+internal fun interface KtFirDiagnostic3Creator<A, B, C> : KtFirDiagnosticCreator {
     fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters3<*, A, B, C>): KtFirDiagnostic<*>
 }
 
-internal fun interface KtFirDiagnostic4Creator<A : Any, B : Any, C : Any, D : Any> : KtFirDiagnosticCreator {
+internal fun interface KtFirDiagnostic4Creator<A, B, C, D> : KtFirDiagnosticCreator {
     fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters4<*, A, B, C, D>): KtFirDiagnostic<*>
 }
 
@@ -42,17 +42,17 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractFirDia
                 is KtFirDiagnostic0Creator -> with(creator) {
                     create(diagnostic as FirSimpleDiagnostic<*>)
                 }
-                is KtFirDiagnostic1Creator<*> -> with(creator as KtFirDiagnostic1Creator<Any>) {
-                    create(diagnostic as FirDiagnosticWithParameters1<FirSourceElement, Any>)
+                is KtFirDiagnostic1Creator<*> -> with(creator as KtFirDiagnostic1Creator<Any?>) {
+                    create(diagnostic as FirDiagnosticWithParameters1<FirSourceElement, Any?>)
                 }
-                is KtFirDiagnostic2Creator<*, *> -> with(creator as KtFirDiagnostic2Creator<Any, Any>) {
-                    create(diagnostic as FirDiagnosticWithParameters2<FirSourceElement, Any, Any>)
+                is KtFirDiagnostic2Creator<*, *> -> with(creator as KtFirDiagnostic2Creator<Any?, Any?>) {
+                    create(diagnostic as FirDiagnosticWithParameters2<FirSourceElement, Any?, Any?>)
                 }
-                is KtFirDiagnostic3Creator<*, *, *> -> with(creator as KtFirDiagnostic3Creator<Any, Any, Any>) {
-                    create(diagnostic as FirDiagnosticWithParameters3<FirSourceElement, Any, Any, Any>)
+                is KtFirDiagnostic3Creator<*, *, *> -> with(creator as KtFirDiagnostic3Creator<Any?, Any?, Any?>) {
+                    create(diagnostic as FirDiagnosticWithParameters3<FirSourceElement, Any?, Any?, Any?>)
                 }
-                is KtFirDiagnostic4Creator<*, *, *, *> -> with(creator as KtFirDiagnostic4Creator<Any, Any, Any, Any>) {
-                    create(diagnostic as FirDiagnosticWithParameters4<FirSourceElement, Any, Any, Any, Any>)
+                is KtFirDiagnostic4Creator<*, *, *, *> -> with(creator as KtFirDiagnostic4Creator<Any?, Any?, Any?, Any?>) {
+                    create(diagnostic as FirDiagnosticWithParameters4<FirSourceElement, Any?, Any?, Any?, Any?>)
                 }
                 else -> error("Invalid KtFirDiagnosticCreator ${creator::class.simpleName}")
             }
@@ -67,19 +67,19 @@ internal class KtDiagnosticConverterBuilder private constructor() {
         conversions[diagnostic] = creator
     }
 
-    fun <A : Any> add(diagnostic: FirDiagnosticFactory1<*, A>, creator: KtFirDiagnostic1Creator<A>) {
+    fun <A> add(diagnostic: FirDiagnosticFactory1<*, A>, creator: KtFirDiagnostic1Creator<A>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A : Any, B : Any> add(diagnostic: FirDiagnosticFactory2<*, A, B>, creator: KtFirDiagnostic2Creator<A, B>) {
+    fun <A, B> add(diagnostic: FirDiagnosticFactory2<*, A, B>, creator: KtFirDiagnostic2Creator<A, B>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A : Any, B : Any, C : Any> add(diagnostic: FirDiagnosticFactory3<*, A, B, C>, creator: KtFirDiagnostic3Creator<A, B, C>) {
+    fun <A, B, C> add(diagnostic: FirDiagnosticFactory3<*, A, B, C>, creator: KtFirDiagnostic3Creator<A, B, C>) {
         conversions[diagnostic] = creator
     }
 
-    fun <A : Any, B : Any, C : Any, D : Any> add(diagnostic: FirDiagnosticFactory4<*, A, B, C, D>, creator: KtFirDiagnostic4Creator<A, B, C, D>) {
+    fun <A, B, C, D> add(diagnostic: FirDiagnosticFactory4<*, A, B, C, D>, creator: KtFirDiagnostic4Creator<A, B, C, D>) {
         conversions[diagnostic] = creator
     }
 

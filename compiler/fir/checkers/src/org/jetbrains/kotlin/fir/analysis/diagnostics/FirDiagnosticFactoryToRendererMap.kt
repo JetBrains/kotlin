@@ -18,7 +18,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         put(factory, SimpleFirDiagnosticRenderer(message))
     }
 
-    fun <A : Any> put(
+    fun <A> put(
         factory: FirDiagnosticFactory1<*, A>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?
@@ -26,7 +26,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         put(factory, FirDiagnosticWithParameters1Renderer(message, rendererA))
     }
 
-    fun <A : Any, B : Any> put(
+    fun <A, B> put(
         factory: FirDiagnosticFactory2<*, A, B>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?,
@@ -35,7 +35,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         put(factory, FirDiagnosticWithParameters2Renderer(message, rendererA, rendererB))
     }
 
-    fun <A : Any, B : Any, C : Any> put(
+    fun <A, B, C> put(
         factory: FirDiagnosticFactory3<*, A, B, C>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?,
@@ -45,7 +45,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         put(factory, FirDiagnosticWithParameters3Renderer(message, rendererA, rendererB, rendererC))
     }
 
-    fun <A : Any, B : Any, C : Any, D : Any> put(
+    fun <A, B, C, D> put(
         factory: FirDiagnosticFactory4<*, A, B, C, D>,
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?,

@@ -11,13 +11,14 @@ import kotlin.reflect.KType
 
 internal fun SmartPrinter.printTypeWithShortNames(type: KType) {
     fun typeConversion(type: KType): String {
+        val nullableSuffix = if (type.isMarkedNullable) "?" else ""
         val simpleName = (type.classifier as KClass<*>).simpleName!!
-        return if (type.arguments.isEmpty()) simpleName
+        return if (type.arguments.isEmpty()) simpleName + nullableSuffix
         else simpleName + type.arguments.joinToString(separator = ", ", prefix = "<", postfix = ">") {
             when (val typeArgument = it.type) {
                 null -> "*"
                 else -> typeConversion(typeArgument)
-            }
+            } + nullableSuffix
         }
     }
     print(typeConversion(type))

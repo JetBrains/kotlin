@@ -38,7 +38,7 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val TO_STRING = Renderer { element: Any ->
+    val TO_STRING = Renderer { element: Any? ->
         element.toString()
     }
 
@@ -109,7 +109,7 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val NOT_RENDERED = Renderer<Any> {
+    val NOT_RENDERED = Renderer<Any?> {
         ""
     }
 }

@@ -33,25 +33,25 @@ sealed class FirSimpleDiagnostic<out E : FirSourceElement> : FirDiagnostic<E>() 
     abstract override val factory: FirDiagnosticFactory0<*>
 }
 
-sealed class FirDiagnosticWithParameters1<out E : FirSourceElement, A : Any> : FirDiagnostic<E>() {
+sealed class FirDiagnosticWithParameters1<out E : FirSourceElement, A> : FirDiagnostic<E>() {
     abstract val a: A
     abstract override val factory: FirDiagnosticFactory1<*, A>
 }
 
-sealed class FirDiagnosticWithParameters2<out E : FirSourceElement, A : Any, B : Any> : FirDiagnostic<E>() {
+sealed class FirDiagnosticWithParameters2<out E : FirSourceElement, A, B> : FirDiagnostic<E>() {
     abstract val a: A
     abstract val b: B
     abstract override val factory: FirDiagnosticFactory2<*, A, B>
 }
 
-sealed class FirDiagnosticWithParameters3<out E : FirSourceElement, A : Any, B : Any, C : Any> : FirDiagnostic<E>() {
+sealed class FirDiagnosticWithParameters3<out E : FirSourceElement, A, B, C> : FirDiagnostic<E>() {
     abstract val a: A
     abstract val b: B
     abstract val c: C
     abstract override val factory: FirDiagnosticFactory3<*, A, B, C>
 }
 
-sealed class FirDiagnosticWithParameters4<out E : FirSourceElement, A : Any, B : Any, C : Any, D : Any> : FirDiagnostic<E>() {
+sealed class FirDiagnosticWithParameters4<out E : FirSourceElement, A, B, C, D> : FirDiagnostic<E>() {
     abstract val a: A
     abstract val b: B
     abstract val c: C
@@ -77,14 +77,14 @@ data class FirPsiSimpleDiagnostic<P : PsiElement>(
     override val factory: FirDiagnosticFactory0<P>
 ) : FirSimpleDiagnostic<FirPsiSourceElement<P>>(), FirPsiDiagnostic<P>
 
-data class FirPsiDiagnosticWithParameters1<P : PsiElement, A : Any>(
+data class FirPsiDiagnosticWithParameters1<P : PsiElement, A>(
     override val element: FirPsiSourceElement<P>,
     override val a: A,
     override val severity: Severity,
     override val factory: FirDiagnosticFactory1<P, A>
 ) : FirDiagnosticWithParameters1<FirPsiSourceElement<P>, A>(), FirPsiDiagnostic<P>
 
-data class FirPsiDiagnosticWithParameters2<P : PsiElement, A : Any, B : Any>(
+data class FirPsiDiagnosticWithParameters2<P : PsiElement, A, B>(
     override val element: FirPsiSourceElement<P>,
     override val a: A,
     override val b: B,
@@ -92,7 +92,7 @@ data class FirPsiDiagnosticWithParameters2<P : PsiElement, A : Any, B : Any>(
     override val factory: FirDiagnosticFactory2<P, A, B>
 ) : FirDiagnosticWithParameters2<FirPsiSourceElement<P>, A, B>(), FirPsiDiagnostic<P>
 
-data class FirPsiDiagnosticWithParameters3<P : PsiElement, A : Any, B : Any, C : Any>(
+data class FirPsiDiagnosticWithParameters3<P : PsiElement, A, B, C>(
     override val element: FirPsiSourceElement<P>,
     override val a: A,
     override val b: B,
@@ -101,7 +101,7 @@ data class FirPsiDiagnosticWithParameters3<P : PsiElement, A : Any, B : Any, C :
     override val factory: FirDiagnosticFactory3<P, A, B, C>
 ) : FirDiagnosticWithParameters3<FirPsiSourceElement<P>, A, B, C>(), FirPsiDiagnostic<P>
 
-data class FirPsiDiagnosticWithParameters4<P : PsiElement, A : Any, B : Any, C : Any, D : Any>(
+data class FirPsiDiagnosticWithParameters4<P : PsiElement, A, B, C, D>(
     override val element: FirPsiSourceElement<P>,
     override val a: A,
     override val b: B,
@@ -123,14 +123,14 @@ data class FirLightSimpleDiagnostic(
     override val factory: FirDiagnosticFactory0<*>
 ) : FirSimpleDiagnostic<FirLightSourceElement>(), FirLightDiagnostic
 
-data class FirLightDiagnosticWithParameters1<A : Any>(
+data class FirLightDiagnosticWithParameters1<A>(
     override val element: FirLightSourceElement,
     override val a: A,
     override val severity: Severity,
     override val factory: FirDiagnosticFactory1<*, A>
 ) : FirDiagnosticWithParameters1<FirLightSourceElement, A>(), FirLightDiagnostic
 
-data class FirLightDiagnosticWithParameters2<A : Any, B : Any>(
+data class FirLightDiagnosticWithParameters2<A, B>(
     override val element: FirLightSourceElement,
     override val a: A,
     override val b: B,
@@ -138,7 +138,7 @@ data class FirLightDiagnosticWithParameters2<A : Any, B : Any>(
     override val factory: FirDiagnosticFactory2<*, A, B>
 ) : FirDiagnosticWithParameters2<FirLightSourceElement, A, B>(), FirLightDiagnostic
 
-data class FirLightDiagnosticWithParameters3<A : Any, B : Any, C : Any>(
+data class FirLightDiagnosticWithParameters3<A, B, C>(
     override val element: FirLightSourceElement,
     override val a: A,
     override val b: B,
@@ -147,7 +147,7 @@ data class FirLightDiagnosticWithParameters3<A : Any, B : Any, C : Any>(
     override val factory: FirDiagnosticFactory3<*, A, B, C>
 ) : FirDiagnosticWithParameters3<FirLightSourceElement, A, B, C>(), FirLightDiagnostic
 
-data class FirLightDiagnosticWithParameters4<A : Any, B : Any, C : Any, D : Any>(
+data class FirLightDiagnosticWithParameters4<A, B, C, D>(
     override val element: FirLightSourceElement,
     override val a: A,
     override val b: B,

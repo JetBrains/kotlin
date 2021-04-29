@@ -38,7 +38,7 @@ open class DiagnosticCodeMetaInfoRenderConfiguration(
             else -> DefaultErrorMessages.getRendererForDiagnostic(codeMetaInfo.diagnostic)
         }
         if (renderer is AbstractDiagnosticWithParametersRenderer) {
-            renderer.renderParameters(codeMetaInfo.diagnostic).mapTo(params, Any::toString)
+            renderer.renderParameters(codeMetaInfo.diagnostic).mapTo(params, Any?::toString)
         }
         if (renderSeverity)
             params.add("severity='${codeMetaInfo.diagnostic.severity}'")
