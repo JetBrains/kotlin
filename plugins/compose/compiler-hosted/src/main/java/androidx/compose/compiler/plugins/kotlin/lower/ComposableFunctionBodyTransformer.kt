@@ -147,13 +147,10 @@ import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.ifEmpty
 import kotlin.math.abs
@@ -456,6 +453,7 @@ class ComposableFunctionBodyTransformer(
     ModuleLoweringPass {
 
     override fun lower(module: IrModuleFragment) {
+        super.lower(module)
         module.transformChildrenVoid(this)
         applySourceFixups()
         module.patchDeclarationParents()
@@ -744,17 +742,7 @@ class ComposableFunctionBodyTransformer(
             return false
 
         // Do not insert an observe scope in an inline composable lambda
-        descriptor.findPsi()?.let { psi ->
-            (psi as? KtFunctionLiteral)?.let {
-                if (InlineUtil.isInlinedArgument(
-                        it,
-                        context.bindingContext,
-                        false
-                    )
-                )
-                    return false
-            }
-        }
+        if (this.isInlinedLambda()) return false
 
         // Do not insert an observe scope if the function has a return result
         if (descriptor.returnType.let { it == null || !it.isUnit() })

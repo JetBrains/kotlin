@@ -83,12 +83,9 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.min
@@ -111,6 +108,7 @@ class ComposerParamTransformer(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun lower(module: IrModuleFragment) {
+        super.lower(module)
         currentModule = module
 
         module.transformChildrenVoid(this)
@@ -630,15 +628,11 @@ class ComposerParamTransformer(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.isNonComposableInlinedLambda(): Boolean {
-        descriptor.findPsi()?.let { psi ->
-            (psi as? KtFunctionLiteral)?.let {
-                val arg = InlineUtil.getInlineArgumentDescriptor(
-                    it,
-                    context.bindingContext
-                ) ?: return false
-
-                return !arg.type.hasComposableAnnotation()
-            }
+        for (element in inlinedFunctions) {
+            if (element.argument.function != this)
+                continue
+            if (!element.parameter.descriptor.type.hasComposableAnnotation())
+                return true
         }
         return false
     }
