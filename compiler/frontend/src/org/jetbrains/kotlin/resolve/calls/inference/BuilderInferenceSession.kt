@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.model.freshTypeConstructor
+import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -59,12 +61,13 @@ class BuilderInferenceSession(
     private var nestedBuilderInferenceSessions: MutableSet<BuilderInferenceSession> = mutableSetOf()
 
     private lateinit var lambda: ResolvedLambdaAtom
-    private lateinit var commonSystem: NewConstraintSystemImpl
+    private val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns)
 
     init {
         if (topLevelCallContext.inferenceSession is BuilderInferenceSession) {
             topLevelCallContext.inferenceSession.nestedBuilderInferenceSessions.add(this)
         }
+        stubsForPostponedVariables.keys.forEach(commonSystem::registerVariable)
     }
 
     private val commonCalls = arrayListOf<PSICompletedCallInfo>()
@@ -195,11 +198,10 @@ class BuilderInferenceSession(
         completionMode: ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder,
     ): Map<TypeConstructor, UnwrappedType>? {
-        val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(initialStorage)
+        val effectivelyEmptyConstraintSystem = initializeCommonSystem(initialStorage)
         val initialStorageSubstitutor = initialStorage.buildResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false)
 
         this.lambda = lambda
-        this.commonSystem = commonSystem
 
         if (effectivelyEmptyConstraintSystem) {
             if (isTopLevelBuilderInferenceCall()) {
@@ -262,12 +264,15 @@ class BuilderInferenceSession(
     private fun createNonFixedTypeToVariableSubstitutor() = NewTypeSubstitutorByConstructorMap(createNonFixedTypeToVariableMap())
 
     private fun integrateConstraints(
-        commonSystem: NewConstraintSystemImpl,
         storage: ConstraintStorage,
         nonFixedToVariablesSubstitutor: NewTypeSubstitutor,
         shouldIntegrateAllConstraints: Boolean
     ): Boolean {
-        storage.notFixedTypeVariables.values.forEach { commonSystem.registerVariable(it.typeVariable) }
+        storage.notFixedTypeVariables.values.forEach {
+            if (it.typeVariable.freshTypeConstructor(commonSystem.typeSystemContext) !in commonSystem.allTypeVariables) {
+                commonSystem.registerVariable(it.typeVariable)
+            }
+        }
 
         for (parentSession in findAllParentBuildInferenceSessions()) {
             parentSession.stubsForPostponedVariables.keys.forEach { commonSystem.registerVariable(it) }
@@ -338,41 +343,39 @@ class BuilderInferenceSession(
     }
 
     private fun extractCommonCapturedTypes(a: KotlinType, b: KotlinType): List<NewCapturedType> {
-        val extractedCapturedTypes = mutableSetOf<NewCapturedType>().also { extractCapturedTypes(a, it) }
+        val extractedCapturedTypes = mutableSetOf<NewCapturedType>().also { extractCapturedTypesTo(a, it) }
         return extractedCapturedTypes.filter { capturedType -> b.contains { it.constructor === capturedType.constructor } }
     }
 
-    private fun extractCapturedTypes(type: KotlinType, capturedTypes: MutableSet<NewCapturedType>) {
+    private fun extractCapturedTypesTo(type: KotlinType, to: MutableSet<NewCapturedType>) {
         if (type is NewCapturedType) {
-            capturedTypes.add(type)
+            to.add(type)
         }
         for (typeArgument in type.arguments) {
             if (typeArgument.isStarProjection) continue
-            extractCapturedTypes(typeArgument.type, capturedTypes)
+            extractCapturedTypesTo(typeArgument.type, to)
         }
     }
 
-    private fun buildCommonSystem(initialStorage: ConstraintStorage): Pair<NewConstraintSystemImpl, Boolean> {
-        val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns)
-
+    private fun initializeCommonSystem(initialStorage: ConstraintStorage): Boolean {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
-        integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor, false)
+        integrateConstraints(initialStorage, nonFixedToVariablesSubstitutor, false)
 
         var effectivelyEmptyCommonSystem = true
 
         for (call in commonCalls) {
             val hasConstraints =
-                integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, false)
+                integrateConstraints(call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, false)
             if (hasConstraints) effectivelyEmptyCommonSystem = false
         }
         for (call in partiallyResolvedCallsInfo) {
             val hasConstraints =
-                integrateConstraints(commonSystem, call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, true)
+                integrateConstraints(call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, true)
             if (hasConstraints) effectivelyEmptyCommonSystem = false
         }
 
-        return commonSystem to effectivelyEmptyCommonSystem
+        return effectivelyEmptyCommonSystem
     }
 
     private fun reportErrors(completedCall: CallInfo, resolvedCall: ResolvedCall<*>, errors: List<ConstraintSystemError>) {
