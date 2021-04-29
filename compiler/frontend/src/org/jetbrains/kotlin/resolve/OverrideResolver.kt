@@ -253,9 +253,9 @@ class OverrideResolver(
         ) {
             assert(delegate.kind == DELEGATION) { "Delegate expected, got " + delegate + " of kind " + delegate.kind }
 
-            if (!onceErrorsReported.contains(diagnosticFactory) && (relevantDiagnosticFromInheritance == null || !onceErrorsReported.contains(
-                    relevantDiagnosticFromInheritance
-                ))) {
+            if (!onceErrorsReported.contains(diagnosticFactory) &&
+                (relevantDiagnosticFromInheritance == null || !onceErrorsReported.contains(relevantDiagnosticFromInheritance))
+            ) {
                 onceErrorsReported.add(diagnosticFactory)
                 trace.report(diagnosticFactory.on(klass, delegate, overridden))
             }
@@ -313,7 +313,7 @@ class OverrideResolver(
         }
 
         val member = DescriptorToSourceUtils.descriptorToDeclaration(declared) as KtNamedDeclaration?
-                ?: throw IllegalStateException("declared descriptor is not resolved to declaration: " + declared)
+            ?: throw IllegalStateException("declared descriptor is not resolved to declaration: $declared")
 
         val modifierList = member.modifierList
         val hasOverrideNode = modifierList != null && modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
@@ -322,53 +322,57 @@ class OverrideResolver(
         if (hasOverrideNode) {
             checkOverridesForMemberMarkedOverride(
                 declared, kotlinTypeRefiner, object : CheckOverrideReportForDeclaredMemberStrategy {
-                private var finalOverriddenError = false
-                private var typeMismatchError = false
-                private var kindMismatchError = false
+                    private var finalOverriddenError = false
+                    private var typeMismatchError = false
+                    private var kindMismatchError = false
 
-                override fun overridingFinalMember(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
-                    if (!finalOverriddenError) {
-                        finalOverriddenError = true
-                        trace.report(OVERRIDING_FINAL_MEMBER.on(member, overridden, overridden.containingDeclaration))
-                    }
-                }
-
-                override fun returnTypeMismatchOnOverride(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
-                    if (!typeMismatchError) {
-                        typeMismatchError = true
-
-                        when {
-                            overridden is PropertyDescriptor && overridden.isVar ->
-                                trace.report(VAR_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
-
-                            overridden is PropertyDescriptor && !overridden.isVar ->
-                                trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
-
-                            else -> trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(
-                                member, declared, DeclarationWithDiagnosticComponents(overridden, platformSpecificDiagnosticComponents)
-                            ))
+                    override fun overridingFinalMember(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                        if (!finalOverriddenError) {
+                            finalOverriddenError = true
+                            trace.report(OVERRIDING_FINAL_MEMBER.on(member, overridden, overridden.containingDeclaration))
                         }
                     }
-                }
 
-                override fun varOverriddenByVal(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
-                    if (!kindMismatchError) {
-                        kindMismatchError = true
-                        trace.report(VAR_OVERRIDDEN_BY_VAL.on(member, declared as PropertyDescriptor, overridden as PropertyDescriptor))
+                    override fun returnTypeMismatchOnOverride(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                        if (!typeMismatchError) {
+                            typeMismatchError = true
+
+                            when {
+                                overridden is PropertyDescriptor && overridden.isVar ->
+                                    trace.report(VAR_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
+
+                                overridden is PropertyDescriptor && !overridden.isVar ->
+                                    trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
+
+                                else -> trace.report(
+                                    RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(
+                                        member, declared,
+                                        DeclarationWithDiagnosticComponents(overridden, platformSpecificDiagnosticComponents)
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    override fun varOverriddenByVal(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                        if (!kindMismatchError) {
+                            kindMismatchError = true
+                            trace.report(VAR_OVERRIDDEN_BY_VAL.on(member, declared as PropertyDescriptor, overridden as PropertyDescriptor))
+                        }
+                    }
+
+                    override fun cannotOverrideInvisibleMember(
+                        overriding: CallableMemberDescriptor,
+                        invisibleOverridden: CallableMemberDescriptor
+                    ) {
+                        trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverridden))
+                    }
+
+                    override fun nothingToOverride(overriding: CallableMemberDescriptor) {
+                        trace.report(NOTHING_TO_OVERRIDE.on(member, declared))
                     }
                 }
-
-                override fun cannotOverrideInvisibleMember(
-                    overriding: CallableMemberDescriptor,
-                    invisibleOverridden: CallableMemberDescriptor
-                ) {
-                    trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverridden))
-                }
-
-                override fun nothingToOverride(overriding: CallableMemberDescriptor) {
-                    trace.report(NOTHING_TO_OVERRIDE.on(member, declared))
-                }
-            })
+            )
         } else if (!overriddenDescriptors.isEmpty() && !overridesBackwardCompatibilityHelper.overrideCanBeOmitted(declared)) {
             val overridden = overriddenDescriptors.first()
             trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.containingDeclaration))
@@ -458,7 +462,7 @@ class OverrideResolver(
 
     private fun checkNameAndDefaultForDeclaredParameter(descriptor: ValueParameterDescriptor, multipleDefaultsInSuper: Boolean) {
         val parameter = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtParameter
-                ?: error("Declaration not found for parameter: " + descriptor)
+            ?: error("Declaration not found for parameter: $descriptor")
 
         if (descriptor.declaresDefaultValue()) {
             trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter))
@@ -489,7 +493,7 @@ class OverrideResolver(
     ) {
         val containingClass = containingFunction.containingDeclaration
         val classElement = DescriptorToSourceUtils.descriptorToDeclaration(containingClass) as KtClassOrObject?
-                ?: error("Declaration not found for class: " + containingClass)
+            ?: error("Declaration not found for class: $containingClass")
 
         if (multipleDefaultsInSuper) {
             trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, descriptor))
@@ -561,7 +565,7 @@ class OverrideResolver(
         }
 
         fun createCannotInferVisibilityReporter(trace: BindingTrace): Function1<CallableMemberDescriptor, Unit> {
-            return fun(descriptor: CallableMemberDescriptor): Unit {
+            return fun(descriptor: CallableMemberDescriptor) {
                 val reportOn: DeclarationDescriptor = when {
                     descriptor.kind == FAKE_OVERRIDE || descriptor.kind == DELEGATION ->
                         DescriptorUtils.getContainingClass(descriptor) ?: throw AssertionError("Class member expected: $descriptor")
@@ -575,7 +579,7 @@ class OverrideResolver(
                 if (element is KtDeclaration) {
                     trace.report(CANNOT_INFER_VISIBILITY.on(element, descriptor))
                 }
-                return Unit
+                return
             }
         }
 
@@ -599,7 +603,9 @@ class OverrideResolver(
         ) {
             for (member in DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)) {
                 if (member is CallableMemberDescriptor) {
-                    checkInheritedAndDelegatedSignatures(member, inheritedReportStrategy, overrideReportStrategyForDelegates, kotlinTypeRefiner)
+                    checkInheritedAndDelegatedSignatures(
+                        member, inheritedReportStrategy, overrideReportStrategyForDelegates, kotlinTypeRefiner
+                    )
                 }
             }
         }
@@ -827,7 +833,7 @@ class OverrideResolver(
             for (descriptor in directOverriddenDescriptors) {
                 val overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor)
                 val filteredOverrides = OverridingUtil.filterOutOverridden(overriddenDeclarations)
-                overriddenDeclarationsByDirectParent.put(descriptor, LinkedHashSet(filteredOverrides))
+                overriddenDeclarationsByDirectParent[descriptor] = LinkedHashSet(filteredOverrides)
             }
             return overriddenDeclarationsByDirectParent
         }
@@ -947,7 +953,7 @@ class OverrideResolver(
                 }
             }
 
-            throw IllegalStateException("No data modifier is found for data class " + dataClass)
+            throw IllegalStateException("No data modifier is found for data class $dataClass")
         }
 
         private fun findInvisibleOverriddenDescriptor(
