@@ -36,7 +36,7 @@ internal class ConeTypeIdeRenderer(
     private var filterExtensionFunctionType: Boolean = false
 
     private fun StringBuilder.renderAnnotationList(annotations: List<FirAnnotationCall>?) {
-        if (annotations != null && options.renderAnnotations) {
+        if (annotations != null) {
             val filteredExtensionIfNeeded = annotations.applyIf(filterExtensionFunctionType) {
                 annotations.filterNot { it.toAnnotationClassId() == StandardClassIds.extensionFunctionType }
             }
