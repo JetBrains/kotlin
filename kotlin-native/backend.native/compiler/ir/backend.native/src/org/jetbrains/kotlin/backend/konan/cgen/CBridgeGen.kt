@@ -109,7 +109,6 @@ private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberA
                 transformCall
         )
 
-private fun IrType.isCStruct(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.cStruct) ?: false
 private fun IrType.isManagedType(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.managedType) ?: false
 
 internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
@@ -184,7 +183,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
 private fun KotlinToCCallBuilder.addArguments(arguments: List<IrExpression?>, callee: IrFunction) {
     arguments.forEachIndexed { index, argument ->
         val parameter = if (callee.dispatchReceiverParameter != null &&
-            (callee.dispatchReceiverParameter?.type?.isCStruct() == true)) {
+            (callee.dispatchReceiverParameter?.type?.isManagedType() == true)) {
 
             if (index == 0) callee.dispatchReceiverParameter!! else callee.valueParameters[index-1]
         } else {
