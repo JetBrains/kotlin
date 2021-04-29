@@ -39,7 +39,7 @@ internal class LibraryCommonizer internal constructor(
                 )
         }
 
-        progressLogger.log("Resolved libraries to be commonized")
+        progressLogger.progress("Resolved libraries to be commonized")
         return libraries
     }
 
@@ -51,7 +51,7 @@ internal class LibraryCommonizer internal constructor(
             dependenciesProvider = createDependenciesProvider(),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
-            progressLogger = progressLogger::log
+            logger = progressLogger
         )
         runCommonization(parameters)
     }

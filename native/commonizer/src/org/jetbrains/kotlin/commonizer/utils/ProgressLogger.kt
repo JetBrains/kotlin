@@ -5,33 +5,35 @@
 
 package org.jetbrains.kotlin.commonizer.utils
 
+import org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
 import org.jetbrains.kotlin.util.Logger
 
 class ProgressLogger(
-    private val wrapped: Logger,
-    startImmediately: Boolean = false
+    private val wrapped: Logger = CliLoggerAdapter(0),
+    private val indent: Int = 0,
 ) : Logger by wrapped {
     private val clockMark = ResettableClockMark()
-    private var finished = true
+    private var finished = false
+
+    private val prefix = "  ".repeat(indent) + " * "
 
     init {
-        if (startImmediately)
-            reset()
-    }
-
-    fun reset() {
         clockMark.reset()
-        finished = false
+        require(indent >= 0) { "Required indent >= 1" }
     }
 
-    override fun log(message: String) {
+    fun progress(message: String) {
         check(!finished)
-        wrapped.log("* $message in ${clockMark.elapsedSinceLast()}")
+        wrapped.log("$prefix$message in ${clockMark.elapsedSinceLast()}")
     }
 
     fun logTotal() {
         check(!finished)
         wrapped.log("TOTAL: ${clockMark.elapsedSinceStart()}")
         finished = true
+    }
+
+    fun fork(): ProgressLogger {
+        return ProgressLogger(this, indent + 1)
     }
 }

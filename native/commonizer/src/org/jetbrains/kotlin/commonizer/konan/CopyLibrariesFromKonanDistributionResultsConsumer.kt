@@ -7,23 +7,22 @@
 
 package org.jetbrains.kotlin.commonizer.konan
 
+import org.jetbrains.kotlin.commonizer.CommonizerParameters
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.ResultsConsumer
 import org.jetbrains.kotlin.commonizer.klibDir
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 internal fun CopyStdlibResultsConsumer(
     konanDistribution: KonanDistribution,
-    destination: File,
-    logger: Logger
+    destination: File
 ): ResultsConsumer {
     return CopyLibrariesFromKonanDistributionResultsConsumer(
         konanDistribution,
         destination,
-        invokeWhenCopied = { logger.log("Copied standard library") },
+        invokeWhenCopied = { logger?.progress("Copied standard library") },
         copyFileIf = { file -> file.endsWith(KONAN_STDLIB_NAME) }
     )
 }
@@ -31,12 +30,11 @@ internal fun CopyStdlibResultsConsumer(
 internal fun CopyEndorsedLibrairesResultsConsumer(
     konanDistribution: KonanDistribution,
     destination: File,
-    logger: Logger
 ): ResultsConsumer {
     return CopyLibrariesFromKonanDistributionResultsConsumer(
         konanDistribution,
         destination,
-        invokeWhenCopied = { logger.log("Copied endorsed libraries") },
+        invokeWhenCopied = { logger?.progress("Copied endorsed libraries") },
         copyFileIf = { file -> !file.endsWith(KONAN_STDLIB_NAME) }
     )
 }
@@ -44,10 +42,10 @@ internal fun CopyEndorsedLibrairesResultsConsumer(
 private class CopyLibrariesFromKonanDistributionResultsConsumer(
     private val konanDistribution: KonanDistribution,
     private val destination: File,
-    private val invokeWhenCopied: () -> Unit = {},
+    private val invokeWhenCopied: CommonizerParameters.() -> Unit = {},
     private val copyFileIf: (File) -> Boolean = { true }
 ) : ResultsConsumer {
-    override fun allConsumed(status: ResultsConsumer.Status) {
+    override fun allConsumed(parameters: CommonizerParameters, status: ResultsConsumer.Status) {
         konanDistribution.klibDir
             .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
             .listFiles().orEmpty()
@@ -57,6 +55,6 @@ private class CopyLibrariesFromKonanDistributionResultsConsumer(
                 val libraryDestination = destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR).resolve(libraryOrigin.name)
                 libraryOrigin.copyRecursively(libraryDestination)
             }
-        invokeWhenCopied()
+        parameters.invokeWhenCopied()
     }
 }
