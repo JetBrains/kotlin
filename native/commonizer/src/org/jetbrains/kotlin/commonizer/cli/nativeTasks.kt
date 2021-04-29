@@ -111,9 +111,8 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             this add LoggingResultsConsumer(outputTarget, progressLogger)
         }
 
-        val targetNames = outputTarget.allLeaves().joinToString { it.prettyName }
         val descriptionSuffix = estimateLibrariesCount(repository, outputTarget.allLeaves()).let { " ($it items)" }
-        val description = "${logPrefix}Preparing commonized Kotlin/Native libraries for targets $targetNames$descriptionSuffix"
+        val description = "${logPrefix}Preparing commonized Kotlin/Native libraries for $outputTarget$descriptionSuffix"
         println(description)
 
         LibraryCommonizer(
@@ -126,8 +125,6 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         ).run()
 
         statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))
-
-        println("$description: Done")
     }
 
     companion object {
