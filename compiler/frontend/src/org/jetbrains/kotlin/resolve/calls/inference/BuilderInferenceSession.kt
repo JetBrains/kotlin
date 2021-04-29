@@ -324,6 +324,23 @@ class BuilderInferenceSession(
         return introducedConstraint
     }
 
+    fun addExpectedTypeConstraint(
+        callExpression: KtExpression,
+        a: KotlinType,
+        b: KotlinType
+    ) {
+        val nonFixedToVariablesSubstitutor: NewTypeSubstitutor = createNonFixedTypeToVariableSubstitutor()
+        val (lower, upper) = substituteNotFixedVariables(a, b, nonFixedToVariablesSubstitutor)
+        val position = BuilderInferenceExpectedTypeConstraintPosition(callExpression)
+        val currentSubstitutor = commonSystem.buildCurrentSubstitutor()
+
+        commonSystem.addSubtypeConstraint(
+            currentSubstitutor.safeSubstitute(commonSystem.typeSystemContext, lower),
+            currentSubstitutor.safeSubstitute(commonSystem.typeSystemContext, upper),
+            position
+        )
+    }
+
     private fun substituteNotFixedVariables(
         lowerType: KotlinType,
         upperType: KotlinType,
@@ -530,3 +547,5 @@ class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubsti
 
     override val isEmpty: Boolean get() = left.isEmpty && right.isEmpty
 }
+
+class BuilderInferenceExpectedTypeConstraintPosition(callElement: KtExpression) : ExpectedTypeConstraintPosition<KtExpression>(callElement)

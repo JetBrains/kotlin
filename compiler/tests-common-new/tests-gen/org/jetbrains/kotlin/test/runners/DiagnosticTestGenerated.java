@@ -12693,6 +12693,22 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/addingConstraints")
+                @TestDataPath("$PROJECT_ROOT")
+                public class AddingConstraints {
+                    @Test
+                    public void testAllFilesPresentInAddingConstraints() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/addingConstraints"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("bySpecifiedReturnType.kt")
+                    public void testBySpecifiedReturnType() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/addingConstraints/bySpecifiedReturnType.kt");
+                    }
+                }
+
+                @Nested
                 @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes")
                 @TestDataPath("$PROJECT_ROOT")
                 public class StubTypes {

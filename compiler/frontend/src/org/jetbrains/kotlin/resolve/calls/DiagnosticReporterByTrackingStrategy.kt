@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.reportTrailingLambdaErrorOr
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -394,6 +395,13 @@ class DiagnosticReporterByTrackingStrategy(
                     if (call != null) {
                         report(typeMismatchDiagnostic.on(call, error.upperKotlinType, inferredType))
                     }
+                }
+
+                (position as? BuilderInferenceExpectedTypeConstraintPosition)?.let {
+                    val inferredType =
+                        if (!error.lowerKotlinType.isNullableNothing()) error.lowerKotlinType
+                        else error.upperKotlinType.makeNullable()
+                    trace.report(TYPE_MISMATCH.on(it.topLevelCall, error.upperKotlinType, inferredType))
                 }
 
                 (position as? ExplicitTypeParameterConstraintPositionImpl)?.let {
