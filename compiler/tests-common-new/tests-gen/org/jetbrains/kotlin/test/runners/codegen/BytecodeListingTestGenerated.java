@@ -1027,6 +1027,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @Test
+        @TestMetadata("genericReified.kt")
+        public void testGenericReified() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/genericReified.kt");
+        }
+
+        @Test
         @TestMetadata("inlineOnly.kt")
         public void testInlineOnly() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inline/inlineOnly.kt");
