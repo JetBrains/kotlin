@@ -41,9 +41,10 @@ internal abstract class KtGenerateMembersHandler : AbstractGenerateMembersHandle
     ) {
         // Using hackyAllowRunningOnEdt here because we don't want to pre-populate all possible textual overrides before user selection.
         val (commands, insertedBlocks) = hackyAllowRunningOnEdt {
-            val insertedBlocks = analyse(classOrObject) {
+            val entryMembers = analyse(classOrObject) {
                 this.generateMembers(editor, classOrObject, selectedElements, copyDoc)
             }
+            val insertedBlocks = insertMembersAccordingToPreferredOrder(entryMembers, editor, classOrObject)
             // Reference shortening is done in a separate analysis session because the session need to be aware of the newly generated
             // members.
             val commands = analyse(classOrObject) {
@@ -81,7 +82,7 @@ internal abstract class KtGenerateMembersHandler : AbstractGenerateMembersHandle
         currentClass: KtClassOrObject,
         selectedElements: Collection<KtClassMember>,
         copyDoc: Boolean
-    ): List<InsertedBlock> {
+    ): List<MemberEntry> {
         if (selectedElements.isEmpty()) return emptyList()
         val selectedMemberSymbolsAndGeneratedPsi: Map<KtCallableSymbol, KtCallableDeclaration> = selectedElements.associate {
             it.symbol to generateMember(currentClass.project, it, currentClass, copyDoc)
@@ -93,14 +94,11 @@ internal abstract class KtGenerateMembersHandler : AbstractGenerateMembersHandle
         // Insert members at the cursor position if the cursor is within the class body. Or, if there is no body, generate the body and put
         // stuff in it.
         if (classBody == null || isCursorInsideClassBodyExcludingBraces(classBody, offset)) {
-            return runWriteAction {
-                listOf(InsertedBlock(insertMembersAfter(editor, currentClass, selectedMemberSymbolsAndGeneratedPsi.values)))
-            }
+            return selectedMemberSymbolsAndGeneratedPsi.values.map { MemberEntry.NewEntry(it) }
         }
 
         // Insert members at positions such that the result aligns with ordering of members in super types.
-        val orderedMembers = getMembersOrderedByRelativePositionsInSuperTypes(currentClass, selectedMemberSymbolsAndGeneratedPsi)
-        return insertMembersAccordingToPreferredOrder(orderedMembers, classBody.lBrace, editor, currentClass)
+        return getMembersOrderedByRelativePositionsInSuperTypes(currentClass, selectedMemberSymbolsAndGeneratedPsi)
     }
 
     private fun isCursorInsideClassBodyExcludingBraces(classBody: KtClassBody, offset: Int): Boolean {
@@ -222,16 +220,15 @@ internal abstract class KtGenerateMembersHandler : AbstractGenerateMembersHandle
     @OptIn(ExperimentalStdlibApi::class)
     private fun insertMembersAccordingToPreferredOrder(
         symbolsInPreferredOrder: List<MemberEntry>,
-        classLeftBrace: PsiElement?,
         editor: Editor,
         currentClass: KtClassOrObject
     ): List<InsertedBlock> {
-        require(symbolsInPreferredOrder.isNotEmpty()) { "symbolsInPreferredOrder must not be empty" }
+        if (symbolsInPreferredOrder.isEmpty()) return emptyList()
         var firstAnchor: PsiElement? = null
         if (symbolsInPreferredOrder.first() is MemberEntry.NewEntry) {
             val firstExistingEntry = symbolsInPreferredOrder.firstIsInstanceOrNull<MemberEntry.ExistingEntry>()
             if (firstExistingEntry != null) {
-                firstAnchor = firstExistingEntry.psi.prevSiblingOfSameType() ?: classLeftBrace
+                firstAnchor = firstExistingEntry.psi.prevSiblingOfSameType() ?: currentClass.body?.lBrace
             }
         }
 

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtIconProvider.getIcon
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
