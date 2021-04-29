@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## 1.4.32
+
+### IDE
+
+- [`KT-43824`](https://youtrack.jetbrains.com/issue/KT-43824) KtLightClassForSourceDeclaration#isInheritor works in a different way than java implementation
+- [`KT-45287`](https://youtrack.jetbrains.com/issue/KT-45287) LightClasses: `KtLightSimpleModifierList` is no more a parent of `KtLightAnnotationForSourceEntry`
+- [`KT-45291`](https://youtrack.jetbrains.com/issue/KT-45291) LightClasses: can't get annotations for constructor val-parameter
+- [`KT-45417`](https://youtrack.jetbrains.com/issue/KT-45417) ULC leakage of primitive type annotations
+
+### Tools. CLI
+
+- [`KT-44758`](https://youtrack.jetbrains.com/issue/KT-44758) kotlin-compiler-embeddable dependency includes unshaded `fastutil` package
+- [`KT-45007`](https://youtrack.jetbrains.com/issue/KT-45007) Concurrent Kotlin script compilation/execution results in NullPointerException in KeyedExtensionCollector.getPoint()
+
+## 1.4.31
+
+### Compiler
+
+- [`KT-39776`](https://youtrack.jetbrains.com/issue/KT-39776) 2020.3+: Unresolved reference to Kotlin stdlib function
+
+### IDE. Gradle Integration
+
+- [`KT-44845`](https://youtrack.jetbrains.com/issue/KT-44845) After update to Kotlin 1.4.30 all external dependencies is unresolved in IDE with kotlin.mpp.enableGranularSourceSetsMetadata=true
+
+### IDE. Gradle. Script
+
+- [`KTIJ-11137`](https://youtrack.jetbrains.com/issue/KTIJ-1137) build.gradle.kts: Fatal error during save/load standalone scripts settings
+- [`KTIJ-898`](https://youtrack.jetbrains.com/issue/KTIJ-898) Unable to import with Kotlin DSL buildscript - NullPointerException in KotlinDslScriptModelProcessorKt.toListOfScriptModels
+
+### IDE. Multiplatform
+
+- [`KTIJ-1200`](https://youtrack.jetbrains.com/issue/KTIJ-1200) KotlinIconProviderKt.addExpectActualMarker takes up to 180+ seconds
+
+### IDE
+
+#### Fixes
+
+- [`KT-44697`](https://youtrack.jetbrains.com/issue/KT-44697) New JVM IR backend notification - narrow its triggering to Kotlin projects
+- [`KT-44523`](https://youtrack.jetbrains.com/issue/KT-44523) IDE notification for trying new JVM backend
+- [`KTIJ-696`](https://youtrack.jetbrains.com/issue/KTIJ-696) Freeze during startup of IDEA with intellij project with Kotlin (211-1.4.10-release-IJ1440)
 
 ## 1.4.30
 
