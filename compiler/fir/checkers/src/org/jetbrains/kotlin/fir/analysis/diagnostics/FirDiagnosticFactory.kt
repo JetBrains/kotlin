@@ -55,7 +55,7 @@ class FirDiagnosticFactory0<P : PsiElement>(
     }
 }
 
-class FirDiagnosticFactory1<P : PsiElement, A : Any>(
+class FirDiagnosticFactory1<P : PsiElement, A>(
     name: String,
     severity: Severity,
     positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
@@ -76,7 +76,7 @@ class FirDiagnosticFactory1<P : PsiElement, A : Any>(
     }
 }
 
-class FirDiagnosticFactory2<P : PsiElement, A : Any, B : Any>(
+class FirDiagnosticFactory2<P : PsiElement, A, B>(
     name: String,
     severity: Severity,
     positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
@@ -98,7 +98,7 @@ class FirDiagnosticFactory2<P : PsiElement, A : Any, B : Any>(
     }
 }
 
-class FirDiagnosticFactory3<P : PsiElement, A : Any, B : Any, C : Any>(
+class FirDiagnosticFactory3<P : PsiElement, A, B, C>(
     name: String,
     severity: Severity,
     positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
@@ -121,7 +121,7 @@ class FirDiagnosticFactory3<P : PsiElement, A : Any, B : Any, C : Any>(
     }
 }
 
-class FirDiagnosticFactory4<P : PsiElement, A : Any, B : Any, C : Any, D : Any>(
+class FirDiagnosticFactory4<P : PsiElement, A, B, C, D>(
     name: String,
     severity: Severity,
     positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
@@ -152,13 +152,13 @@ fun <P : PsiElement> FirDiagnosticFactory0<P>.on(element: FirSourceElement?): Fi
     return element?.let { on(it) }
 }
 
-fun <P : PsiElement, A : Any> FirDiagnosticFactory1<P, A>.on(
+fun <P : PsiElement, A> FirDiagnosticFactory1<P, A>.on(
     element: FirSourceElement?, a: A
 ): FirDiagnosticWithParameters1<*, A>? {
     return element?.let { on(it, a) }
 }
 
-fun <P : PsiElement, A : Any, B : Any> FirDiagnosticFactory2<P, A, B>.on(
+fun <P : PsiElement, A, B> FirDiagnosticFactory2<P, A, B>.on(
     element: FirSourceElement?,
     a: A,
     b: B
@@ -166,7 +166,7 @@ fun <P : PsiElement, A : Any, B : Any> FirDiagnosticFactory2<P, A, B>.on(
     return element?.let { on(it, a, b) }
 }
 
-fun <P : PsiElement, A : Any, B : Any, C : Any> FirDiagnosticFactory3<P, A, B, C>.on(
+fun <P : PsiElement, A, B, C> FirDiagnosticFactory3<P, A, B, C>.on(
     element: FirSourceElement?,
     a: A,
     b: B,

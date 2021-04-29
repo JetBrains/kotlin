@@ -89,6 +89,9 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             }
             print(">")
         }
+        if (type.isMarkedNullable) {
+            print("?")
+        }
     }
 
     private fun SmartPrinter.printTypeArgument(typeArgument: KTypeProjection) {

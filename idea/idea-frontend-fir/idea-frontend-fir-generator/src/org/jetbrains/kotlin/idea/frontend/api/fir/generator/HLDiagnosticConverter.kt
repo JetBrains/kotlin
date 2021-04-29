@@ -73,16 +73,21 @@ object HLDiagnosticConverter {
 
 private object FirToKtConversionCreator {
     fun createConversion(type: KType): HLParameterConversion {
+        val nullable = type.isMarkedNullable
         val kClass = type.classifier as KClass<*>
         return tryMapAllowedType(kClass)
             ?: tryMapPsiElementType(type, kClass)
-            ?: tryMapFirTypeToKtType(kClass)
+            ?: tryMapFirTypeToKtType(kClass, nullable)
             ?: tryMapPlatformType(type, kClass)
             ?: error("Unsupported type $type, consider add corresponding mapping")
     }
 
-    private fun tryMapFirTypeToKtType(kClass: KClass<*>): HLParameterConversion? {
-        return typeMapping[kClass]
+    private fun tryMapFirTypeToKtType(kClass: KClass<*>, nullable: Boolean): HLParameterConversion? {
+        return if (nullable) {
+            nullableTypeMapping[kClass] ?: typeMapping[kClass]
+        } else {
+            typeMapping[kClass]
+        }
     }
 
     private fun tryMapAllowedType(kClass: KClass<*>): HLParameterConversion? {
@@ -115,6 +120,17 @@ private object FirToKtConversionCreator {
         }
         return null
     }
+
+    private val nullableTypeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(
+        FirExpression::class to HLFunctionCallConversion(
+            "{0}?.source?.psi as? KtExpression",
+            KtExpression::class.createType(nullable = true),
+            importsToAdd = listOf(
+                "org.jetbrains.kotlin.psi.KtExpression",
+                "org.jetbrains.kotlin.fir.psi"
+            )
+        ),
+    )
 
     private val typeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(
         AbstractFirBasedSymbol::class to HLFunctionCallConversion(

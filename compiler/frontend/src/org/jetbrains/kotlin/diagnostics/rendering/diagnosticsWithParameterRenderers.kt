@@ -27,29 +27,29 @@ abstract class AbstractDiagnosticWithParametersRenderer<in D : UnboundDiagnostic
         return messageFormat.format(renderParameters(diagnostic))
     }
 
-    abstract fun renderParameters(diagnostic: D): Array<out Any>
+    abstract fun renderParameters(diagnostic: D): Array<out Any?>
 
 }
 
 
-class DiagnosticWithParameters1Renderer<A : Any>(
+class DiagnosticWithParameters1Renderer<A>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?
 ) : AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters1<*, A>>(message) {
 
-    override fun renderParameters(diagnostic: DiagnosticWithParameters1<*, A>): Array<out Any> {
+    override fun renderParameters(diagnostic: DiagnosticWithParameters1<*, A>): Array<out Any?> {
         val context = RenderingContext.of(diagnostic.a)
         return arrayOf(renderParameter(diagnostic.a, rendererForA, context))
     }
 }
 
-class DiagnosticWithParameters2Renderer<A : Any, B : Any>(
+class DiagnosticWithParameters2Renderer<A, B>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
     private val rendererForB: DiagnosticParameterRenderer<B>?
 ) : AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters2<*, A, B>>(message) {
 
-    override fun renderParameters(diagnostic: DiagnosticWithParameters2<*, A, B>): Array<out Any> {
+    override fun renderParameters(diagnostic: DiagnosticWithParameters2<*, A, B>): Array<out Any?> {
         val context = RenderingContext.of(diagnostic.a, diagnostic.b)
         return arrayOf(
             renderParameter(diagnostic.a, rendererForA, context),
@@ -58,14 +58,14 @@ class DiagnosticWithParameters2Renderer<A : Any, B : Any>(
     }
 }
 
-class DiagnosticWithParameters3Renderer<A : Any, B : Any, C : Any>(
+class DiagnosticWithParameters3Renderer<A, B, C>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
     private val rendererForB: DiagnosticParameterRenderer<B>?,
     private val rendererForC: DiagnosticParameterRenderer<C>?
 ) : AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters3<*, A, B, C>>(message) {
 
-    override fun renderParameters(diagnostic: DiagnosticWithParameters3<*, A, B, C>): Array<out Any> {
+    override fun renderParameters(diagnostic: DiagnosticWithParameters3<*, A, B, C>): Array<out Any?> {
         val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c)
         return arrayOf(
             renderParameter(diagnostic.a, rendererForA, context),
