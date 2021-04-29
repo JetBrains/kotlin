@@ -65,7 +65,8 @@ class FunctionCodegen(
             signature.asmMethod.descriptor,
             signature.genericsSignature
                 .takeIf {
-                    !isSynthetic && irFunction.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                    (irFunction.isInline && irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) ||
+                            !isSynthetic && irFunction.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 },
             getThrownExceptions(irFunction)?.toTypedArray()
         )

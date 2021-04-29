@@ -24,7 +24,7 @@ public final class<null>  test/SamAdapterAndInlinedOneKt {
     public final static @org.jetbrains.annotations.NotNull <(Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;)Ljava/lang/Runnable;> method makeRunnable2(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable
     public final static @org.jetbrains.annotations.NotNull <(Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;)Ljava/lang/Runnable;> method noInline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable
     public final static @org.jetbrains.annotations.NotNull <(Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;)Ljava/lang/Runnable;> method noInline2(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable
-    public synthetic final static <null> method makeRunnable(p0: kotlin.jvm.functions.Function0): java.lang.Runnable
+    public synthetic final static <<T:Ljava/lang/Object;>(Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;)Ljava/lang/Runnable;> method makeRunnable(p0: kotlin.jvm.functions.Function0): java.lang.Runnable
     inner (anonymous) class test/SamAdapterAndInlinedOneKt$sam$i$java_lang_Runnable$0
     inner (anonymous) class test/SamAdapterAndInlinedOneKt$sam$java_lang_Runnable$0
 }

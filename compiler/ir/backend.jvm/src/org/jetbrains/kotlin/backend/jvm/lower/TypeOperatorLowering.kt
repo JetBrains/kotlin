@@ -54,13 +54,13 @@ internal val typeOperatorLowering = makeIrFilePhase(
     description = "Lower IrTypeOperatorCalls to (implicit) casts and instanceof checks"
 )
 
+val IrType.isReifiedTypeParameter: Boolean
+    get() = classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
+
 private class TypeOperatorLowering(private val context: JvmBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private fun IrExpression.transformVoid() = transform(this@TypeOperatorLowering, null)
-
-    private val IrType.isReifiedTypeParameter: Boolean
-        get() = classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
 
     private fun lowerInstanceOf(argument: IrExpression, type: IrType) = with(builder) {
         when {

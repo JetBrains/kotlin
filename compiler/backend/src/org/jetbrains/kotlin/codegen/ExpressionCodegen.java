@@ -265,13 +265,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         );
     }
 
-    private static void addReifiedParametersFromSignature(@NotNull MemberCodegen member, @NotNull ClassDescriptor descriptor) {
+    private static void addReifiedParametersFromSignature(@NotNull MemberCodegen<?> member, @NotNull ClassDescriptor descriptor) {
         for (KotlinType type : descriptor.getTypeConstructor().getSupertypes()) {
-            for (TypeProjection supertypeArgument : type.getArguments()) {
-                TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(supertypeArgument.getType());
-                if (parameterDescriptor != null && parameterDescriptor.isReified()) {
+            processTypeArguments(member, type);
+        }
+    }
+
+    private static void processTypeArguments(@NotNull MemberCodegen<?> member, KotlinType type) {
+        for (TypeProjection supertypeArgument : type.getArguments()) {
+            if (supertypeArgument.isStarProjection()) continue;
+
+            TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(supertypeArgument.getType());
+            if (parameterDescriptor != null) {
+                if (parameterDescriptor.isReified()) {
                     member.getReifiedTypeParametersUsages().addUsedReifiedParameter(parameterDescriptor.getName().asString());
                 }
+            } else {
+                processTypeArguments(member, supertypeArgument.getType());
             }
         }
     }
