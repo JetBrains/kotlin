@@ -3455,6 +3455,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         public void testCastToBareType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/types/castToBareType.kt");
         }
+
+        @TestMetadata("typeAliasInArguments.kt")
+        public void testTypeAliasInArguments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/types/typeAliasInArguments.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/visibility")

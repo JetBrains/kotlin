@@ -222,8 +222,8 @@ object AbstractTypeChecker {
             if (a === b) return true
 
             if (isCommonDenotableType(a) && isCommonDenotableType(b)) {
-                val refinedA = context.refineType(a)
-                val refinedB = context.refineType(b)
+                val refinedA = context.prepareType(context.refineType(a))
+                val refinedB = context.prepareType(context.refineType(b))
                 val simpleA = refinedA.lowerBoundIfFlexible()
                 if (!areEqualTypeConstructors(refinedA.typeConstructor(), refinedB.typeConstructor())) return false
                 if (simpleA.argumentsCount() == 0) {

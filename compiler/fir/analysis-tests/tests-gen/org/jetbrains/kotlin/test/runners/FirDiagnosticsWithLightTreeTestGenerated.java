@@ -3852,6 +3852,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             public void testCastToBareType() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/types/castToBareType.kt");
             }
+
+            @Test
+            @TestMetadata("typeAliasInArguments.kt")
+            public void testTypeAliasInArguments() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/types/typeAliasInArguments.kt");
+            }
         }
 
         @Nested
