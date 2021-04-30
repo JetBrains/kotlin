@@ -101,11 +101,24 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         }
 
     private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle {
-        val irFun = irRawFunctionReference.symbol.owner
+        val irFun = when (val irFun0 = irRawFunctionReference.symbol.owner) {
+            is IrConstructor ->
+                irFun0
+            is IrSimpleFunction -> {
+                // Note that if the given function is a fake override, we emit a method handle with explicit super class.
+                // This has the same binary compatibility guarantees as in Java.
+                codegen.methodSignatureMapper.findSuperDeclaration(irFun0, false)
+            }
+            else ->
+                throw java.lang.AssertionError("Simple function or constructor expected: ${irFun0.render()}")
+        }
+
         val irParentClass = irFun.parent as? IrClass
             ?: throw AssertionError("Unexpected parent: ${irFun.parent.render()}")
         val owner = codegen.typeMapper.mapOwner(irParentClass)
+
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFun)
+
         val handleTag = when {
             irFun is IrConstructor ->
                 Opcodes.H_NEWINVOKESPECIAL
@@ -116,6 +129,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             else ->
                 Opcodes.H_INVOKEVIRTUAL
         }
+
         return Handle(handleTag, owner.internalName, asmMethod.name, asmMethod.descriptor, irParentClass.isJvmInterface)
     }
 
