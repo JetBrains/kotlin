@@ -2828,6 +2828,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             public void testTypeDepthForTypeAlias() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/typeDepthForTypeAlias.kt");
             }
+
+            @Test
+            @TestMetadata("unitUpperBound.kt")
+            public void testUnitUpperBound() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inference/unitUpperBound.kt");
+            }
         }
 
         @Nested

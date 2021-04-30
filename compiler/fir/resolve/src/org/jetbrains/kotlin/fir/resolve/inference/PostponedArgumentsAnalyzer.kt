@@ -197,10 +197,9 @@ class PostponedArgumentsAnalyzer(
         }
 
         if (!hasExpressionInReturnArguments && lambdaReturnType != null) {
-            /*LambdaArgumentConstraintPosition(lambda)*/
-            c.getBuilder().addEqualityConstraint(
-                lambdaReturnType,
+            c.getBuilder().addSubtypeConstraint(
                 components.session.builtinTypes.unitType.type,
+                lambdaReturnType,
                 ConeLambdaArgumentConstraintPosition(lambda.atom)
             )
         }

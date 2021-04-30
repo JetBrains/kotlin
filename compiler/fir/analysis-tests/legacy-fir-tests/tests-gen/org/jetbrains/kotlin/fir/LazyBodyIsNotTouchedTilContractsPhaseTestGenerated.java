@@ -2485,6 +2485,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         public void testTypeDepthForTypeAlias() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/typeDepthForTypeAlias.kt");
         }
+
+        @TestMetadata("unitUpperBound.kt")
+        public void testUnitUpperBound() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/unitUpperBound.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inlineClasses")
