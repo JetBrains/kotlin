@@ -14,8 +14,11 @@ buildscript {
 
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
+            maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2")
+
         } else {
             maven("https://plugins.gradle.org/m2")
+            mavenCentral()
         }
     }
 
@@ -27,7 +30,7 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.26")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.27")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath(kotlin("serialization", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
