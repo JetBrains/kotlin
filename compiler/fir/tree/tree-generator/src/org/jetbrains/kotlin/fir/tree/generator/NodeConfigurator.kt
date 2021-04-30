@@ -459,6 +459,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("originalType", typeRef)
         }
 
+        expressionWithSmartcastToNull.configure {
+            +field("originalExpression", qualifiedAccessExpression)
+            +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
+            +field("originalType", typeRef)
+        }
+
         safeCallExpression.configure {
             +field("receiver", expression).withTransform()
             // Special node that might be used as a reference to receiver of a safe call after null check

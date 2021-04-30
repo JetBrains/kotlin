@@ -39,7 +39,7 @@ fun case_1(x: Any?) {
  */
 fun case_2(x: Nothing?) {
     if (x !== null && x !== null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing?")!>x<!>
     }
 }
 
@@ -115,7 +115,7 @@ fun case_6(x: Class?) {
 // TESTCASE NUMBER: 7
 fun case_7() {
     val x: EmptyObject? = null
-    if (x != null || x != null || <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject?")!>x<!> != null) {
+    if (x != null || x != null || <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & EmptyObject?")!>x<!> != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & EmptyObject")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & EmptyObject")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("EmptyObject? & EmptyObject")!>x<!>.propT

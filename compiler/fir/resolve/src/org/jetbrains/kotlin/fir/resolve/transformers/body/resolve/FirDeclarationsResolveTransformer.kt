@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -793,7 +794,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             val resultType = when {
                 initializer != null -> {
-                    val unwrappedInitializer = (initializer as? FirExpressionWithSmartcast)?.originalExpression ?: initializer
+                    val unwrappedInitializer = initializer.unwrapSmartcastExpression()
                     unwrappedInitializer.resultType
                 }
                 variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> variable.getter?.returnTypeRef

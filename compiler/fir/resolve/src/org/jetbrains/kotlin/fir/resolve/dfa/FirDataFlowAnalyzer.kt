@@ -119,9 +119,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                         }
 
                         override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
+                            if (this.isNullableNothing) return false
                             return when (this) {
                                 is ConeClassLikeType -> {
-                                    val symbol = fullyExpandedType(components.session).lookupTag.toSymbol(components.session) ?: return false
+                                    val symbol =
+                                        fullyExpandedType(components.session).lookupTag.toSymbol(components.session) ?: return false
                                     val declaration = symbol.fir as? FirRegularClass ?: return true
                                     visibilityChecker.isVisible(
                                         declaration,
@@ -545,9 +547,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 flow.addImplication((expressionVariable notEq isEq) implies (operandVariable typeEq any))
             }
 
-//            TODO: design do we need casts to Nothing?
-//            flow.addImplication((expressionVariable eq !isEq) implies (operandVariable typeEq nullableNothing))
-//            flow.addImplication((expressionVariable notEq !isEq) implies (operandVariable typeNotEq nullableNothing))
+            if (shouldAddImplicationForStatement(expressionVariable eq !isEq)) {
+                flow.addImplication((expressionVariable eq !isEq) implies (operandVariable typeNotEq nullableNothing))
+            }
+            if (shouldAddImplicationForStatement(expressionVariable notEq !isEq)) {
+                flow.addImplication((expressionVariable notEq !isEq) implies (operandVariable typeEq nullableNothing))
+            }
         }
         node.flow = flow
     }

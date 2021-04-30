@@ -122,7 +122,7 @@ fun case_6(x: EmptyClass?) {
 
 // TESTCASE NUMBER: 7
 fun case_7() {
-    if (nullableNumberProperty != null || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumberProperty<!> != null) {
+    if (nullableNumberProperty != null || <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number?")!>nullableNumberProperty<!> != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>nullableNumberProperty<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>nullableNumberProperty<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Number")!>nullableNumberProperty<!>.propT

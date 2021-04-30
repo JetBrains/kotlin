@@ -24,6 +24,6 @@ fun g(x: B<Int>) {
 
     if (y is Nothing?) {
         f(y)
-        <!NONE_APPLICABLE!>g<!>(y)
+        g(y)
     }
 }

@@ -277,6 +277,14 @@ class Fir2IrImplicitCastInserter(
         return implicitCastOrExpression(data as IrExpression, expressionWithSmartcast.typeRef)
     }
 
+    override fun visitExpressionWithSmartcastToNull(
+        expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull,
+        data: IrElement
+    ): IrElement {
+        // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
+        return data
+    }
+
     internal fun implicitCastFromDispatchReceiver(
         original: IrExpression,
         originalTypeRef: FirTypeRef,

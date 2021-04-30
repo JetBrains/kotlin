@@ -118,6 +118,13 @@ class ConeEffectExtractor(
         return expressionWithSmartcast.originalExpression.accept(this, data)
     }
 
+    override fun visitExpressionWithSmartcastToNull(
+        expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull,
+        data: Nothing?
+    ): ConeContractDescriptionElement? {
+        return expressionWithSmartcastToNull.originalExpression.accept(this, data)
+    }
+
     override fun visitQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: Nothing?

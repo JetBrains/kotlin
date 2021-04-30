@@ -151,8 +151,8 @@ fun case_12() {
     while (true) {
         y += if (x == null) break else 10
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
 }
 
 // TESTCASE NUMBER: 13
