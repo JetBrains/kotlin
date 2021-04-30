@@ -119,13 +119,14 @@ fun KJvmCompiledScript.getOrCreateActualClassloader(evaluationConfiguration: Scr
         val module = compiledModule
             ?: throw IllegalStateException("Illegal call sequence, actualClassloader should be set before calling function on the class without module")
         val baseClassLoader = evaluationConfiguration[ScriptEvaluationConfiguration.jvm.baseClassLoader]
+        val lastClassLoader = evaluationConfiguration[ScriptEvaluationConfiguration.jvm.lastSnippetClassLoader] ?: baseClassLoader
         val classLoaderWithDeps =
             if (evaluationConfiguration[ScriptEvaluationConfiguration.jvm.loadDependencies] == false) baseClassLoader
-            else makeClassLoaderFromDependencies(baseClassLoader)
+            else makeClassLoaderFromDependencies(baseClassLoader, lastClassLoader)
         return module.createClassLoader(classLoaderWithDeps)
     }
 
-private fun CompiledScript.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?): ClassLoader? {
+private fun CompiledScript.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?, lastClassLoader: ClassLoader?): ClassLoader? {
     val processedScripts = mutableSetOf<CompiledScript>()
     fun recursiveScriptsSeq(res: Sequence<CompiledScript>, script: CompiledScript): Sequence<CompiledScript> =
         if (processedScripts.add(script)) script.otherScripts.asSequence().fold(res + script, ::recursiveScriptsSeq)
@@ -139,17 +140,17 @@ private fun CompiledScript.makeClassLoaderFromDependencies(baseClassLoader: Clas
     val processedClasspathElements = mutableSetOf<URL>()
     fun recursiveClassPath(res: Sequence<URL>, classLoader: ClassLoader?): Sequence<URL> =
         when (classLoader) {
-            null -> res
+            null, baseClassLoader -> res
             is DualClassLoader -> recursiveClassPath(res, classLoader.parent) +
                     recursiveClassPath(emptySequence(), classLoader.fallbackClassLoader)
             is URLClassLoader -> recursiveClassPath(res + classLoader.urLs, classLoader.parent)
             else -> recursiveClassPath(res, classLoader.parent)
         }
-    recursiveClassPath(emptySequence(), baseClassLoader).forEach { processedClasspathElements.add(it) }
+    recursiveClassPath(emptySequence(), lastClassLoader).forEach { processedClasspathElements.add(it) }
 
     val processedClassloaders = mutableSetOf<ClassLoader>()
 
-    return dependenciesWithConfigurations.fold(baseClassLoader) { parentClassLoader, (compilationConfiguration, scriptDependency) ->
+    return dependenciesWithConfigurations.fold(lastClassLoader) { parentClassLoader, (compilationConfiguration, scriptDependency) ->
         when (scriptDependency) {
             is JvmDependency -> {
                 scriptDependency.classpath.mapNotNull {

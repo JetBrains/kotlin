@@ -34,6 +34,11 @@ val JvmScriptEvaluationConfigurationKeys.baseClassLoader by PropertiesCollection
 )
 
 /**
+ * Classloader of the last snippet (supposed to be used in REPL)
+ */
+val JvmScriptEvaluationConfigurationKeys.lastSnippetClassLoader by PropertiesCollection.key<ClassLoader?>(isTransient = true)
+
+/**
  * Load script dependencies before evaluation, true by default
  * If false, it is assumed that the all dependencies will be provided via baseClassLoader
  */
