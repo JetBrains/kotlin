@@ -57,6 +57,9 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
     fun replacedQualifier(qualifiedAccess: FirQualifiedAccess): FirStatement? =
         if (qualifierPartsToDrop > 0) {
             qualifierPartsToDrop--
+            if (qualifierPartsToDrop == 0) {
+                reset()
+            }
             qualifiedAccess.explicitReceiver ?: qualifiedAccess
         } else {
             null

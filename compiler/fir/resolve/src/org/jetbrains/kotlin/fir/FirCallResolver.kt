@@ -195,9 +195,8 @@ class FirCallResolver(
                 qualifiedResolver.tryResolveAsQualifier(qualifiedAccess.source)?.let { resolvedQualifier ->
                     return resolvedQualifier
                 }
-            } else {
-                qualifiedResolver.reset()
             }
+            qualifiedResolver.reset()
         }
 
         val referencedSymbol = when (nameReference) {
