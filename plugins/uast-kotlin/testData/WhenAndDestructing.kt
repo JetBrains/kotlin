@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 fun getElementsAdditionalResolve(string: String): String {
 
     val arr = listOf("1", "2")

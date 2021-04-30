@@ -11,12 +11,12 @@ import org.jetbrains.uast.asRecursiveLogString
 import java.io.File
 
 interface FirUastRenderLogTestBase : FirUastPluginSelection {
-    fun getTestFileFromPath(filePath: String, ext: String): File {
+    fun getTestMetadataFileFromPath(filePath: String, ext: String): File {
         return File(filePath.removeSuffix(".kt") + '.' + ext)
     }
 
-    private fun getRenderFile(filePath: String) = getTestFileFromPath(filePath, "render$pluginSuffix.txt")
-    private fun getLogFile(filePath: String) = getTestFileFromPath(filePath, "log$pluginSuffix.txt")
+    private fun getRenderFile(filePath: String) = getTestMetadataFileFromPath(filePath, "render$pluginSuffix.txt")
+    private fun getLogFile(filePath: String) = getTestMetadataFileFromPath(filePath, "log$pluginSuffix.txt")
 
     fun check(filePath: String, file: UFile) {
         val renderFile = getRenderFile(filePath)

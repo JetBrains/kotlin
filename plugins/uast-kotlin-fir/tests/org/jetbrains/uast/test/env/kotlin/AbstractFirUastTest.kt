@@ -14,6 +14,7 @@ import com.intellij.testFramework.registerServiceInstance
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.UastFacade
 import org.jetbrains.uast.UastLanguagePlugin
@@ -24,6 +25,15 @@ import org.jetbrains.uast.kotlin.internal.FirCliKotlinUastResolveProviderService
 import java.io.File
 
 abstract class AbstractFirUastTest : KotlinLightCodeInsightFixtureTestCase(), FirUastPluginSelection {
+    companion object {
+        private const val IGNORE_FIR_DIRECTIVE = "IGNORE_FIR"
+
+        val String.withIgnoreFirDirective: Boolean
+            get() {
+                return IGNORE_FIR_DIRECTIVE in KotlinTestUtils.parseDirectives(this)
+            }
+    }
+
     private fun registerExtensionPointAndServiceIfNeeded() {
         if (!isFirPlugin) return
 
@@ -62,7 +72,10 @@ abstract class AbstractFirUastTest : KotlinLightCodeInsightFixtureTestCase(), Fi
         val virtualFile = getVirtualFile(filePath)
 
         val testName = filePath.substring(filePath.lastIndexOf('/') + 1).removeSuffix(".kt")
-        val psiFile = myFixture.configureByText(virtualFile.name, File(virtualFile.canonicalPath!!).readText())
+        val fileContent = File(virtualFile.canonicalPath!!).readText()
+        if (isFirPlugin && fileContent.withIgnoreFirDirective) return
+
+        val psiFile = myFixture.configureByText(virtualFile.name, fileContent)
         val uFile = UastFacade.convertElementWithParent(psiFile, null) ?: error("Can't get UFile for $testName")
         checkCallback(filePath, uFile as UFile)
     }

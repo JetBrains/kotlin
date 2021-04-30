@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 inline fun <reified T> functionWithLambda(t: T, process: (T) -> Int): Int = process(t)
 
 inline fun <reified T> functionWithVararg(i: Int?, vararg t: T): T = t[0]

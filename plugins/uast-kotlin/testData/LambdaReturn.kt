@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 package org.jetbrains.uast.kotlin
 
 fun foo() {

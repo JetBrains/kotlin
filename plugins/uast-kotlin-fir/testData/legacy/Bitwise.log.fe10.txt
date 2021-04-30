@@ -1,0 +1,98 @@
+UFile (package = )
+    UClass (name = BitwiseKt)
+        UMethod (name = foo)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = mask)
+                        ULiteralExpression (value = 127)
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        ULiteralExpression (value = 2863311530)
+                UDeclarationsExpression
+                    ULocalVariable (name = pos)
+                        UBinaryExpression (operator = &)
+                            USimpleNameReferenceExpression (identifier = x)
+                            USimpleNameReferenceExpression (identifier = mask)
+                UDeclarationsExpression
+                    ULocalVariable (name = max)
+                        UBinaryExpression (operator = |)
+                            USimpleNameReferenceExpression (identifier = x)
+                            USimpleNameReferenceExpression (identifier = mask)
+                UDeclarationsExpression
+                    ULocalVariable (name = zebra)
+                        UBinaryExpression (operator = ^)
+                            USimpleNameReferenceExpression (identifier = x)
+                            USimpleNameReferenceExpression (identifier = mask)
+                UDeclarationsExpression
+                    ULocalVariable (name = signed)
+                        UBinaryExpression (operator = >>)
+                            USimpleNameReferenceExpression (identifier = x)
+                            ULiteralExpression (value = 2)
+                UDeclarationsExpression
+                    ULocalVariable (name = one)
+                        UBinaryExpression (operator = >>>)
+                            USimpleNameReferenceExpression (identifier = x)
+                            ULiteralExpression (value = 31)
+                UDeclarationsExpression
+                    ULocalVariable (name = zero)
+                        UBinaryExpression (operator = <<)
+                            USimpleNameReferenceExpression (identifier = x)
+                            ULiteralExpression (value = 32)
+                UReturnExpression
+                    UBinaryExpression (operator = -)
+                        UBinaryExpression (operator = +)
+                            USimpleNameReferenceExpression (identifier = pos)
+                            USimpleNameReferenceExpression (identifier = zero)
+                        UBinaryExpression (operator = /)
+                            UBinaryExpression (operator = *)
+                                USimpleNameReferenceExpression (identifier = zebra)
+                                USimpleNameReferenceExpression (identifier = signed)
+                            USimpleNameReferenceExpression (identifier = one)
+        UMethod (name = bar)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = mask)
+                        ULiteralExpression (value = 127)
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        ULiteralExpression (value = 6148914691236517205)
+                UDeclarationsExpression
+                    ULocalVariable (name = pos)
+                        UBinaryExpression (operator = &)
+                            USimpleNameReferenceExpression (identifier = x)
+                            USimpleNameReferenceExpression (identifier = mask)
+                UDeclarationsExpression
+                    ULocalVariable (name = max)
+                        UBinaryExpression (operator = |)
+                            USimpleNameReferenceExpression (identifier = x)
+                            USimpleNameReferenceExpression (identifier = mask)
+                UDeclarationsExpression
+                    ULocalVariable (name = zebra)
+                        UBinaryExpression (operator = ^)
+                            USimpleNameReferenceExpression (identifier = x)
+                            USimpleNameReferenceExpression (identifier = mask)
+                UDeclarationsExpression
+                    ULocalVariable (name = signed)
+                        UBinaryExpression (operator = >>)
+                            USimpleNameReferenceExpression (identifier = x)
+                            ULiteralExpression (value = 2)
+                UDeclarationsExpression
+                    ULocalVariable (name = one)
+                        UBinaryExpression (operator = >>>)
+                            USimpleNameReferenceExpression (identifier = x)
+                            ULiteralExpression (value = 63)
+                UDeclarationsExpression
+                    ULocalVariable (name = zero)
+                        UBinaryExpression (operator = <<)
+                            USimpleNameReferenceExpression (identifier = x)
+                            ULiteralExpression (value = 64)
+                UReturnExpression
+                    UBinaryExpression (operator = -)
+                        UBinaryExpression (operator = +)
+                            USimpleNameReferenceExpression (identifier = pos)
+                            USimpleNameReferenceExpression (identifier = zero)
+                        UBinaryExpression (operator = /)
+                            UBinaryExpression (operator = *)
+                                USimpleNameReferenceExpression (identifier = zebra)
+                                USimpleNameReferenceExpression (identifier = signed)
+                            USimpleNameReferenceExpression (identifier = one)

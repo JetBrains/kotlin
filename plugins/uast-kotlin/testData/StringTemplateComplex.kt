@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 val muchRecur = "${"${"${"abc"}"}"}"
 
 val case4 = "a ${"literal"} z"

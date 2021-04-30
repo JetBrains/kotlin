@@ -1,0 +1,10 @@
+UFile (package = )
+    UClass (name = AssertionKt)
+        UMethod (name = foo)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = s)
+                        ULiteralExpression (value = "Not Null")
+                UReturnExpression
+                    UPostfixExpression (operator = !!)
+                        USimpleNameReferenceExpression (identifier = s)

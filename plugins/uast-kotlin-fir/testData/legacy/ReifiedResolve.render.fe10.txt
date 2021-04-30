@@ -1,0 +1,15 @@
+public final class ReifiedResolveKt {
+    public static final fun bar(@org.jetbrains.annotations.NotNull init: kotlin.jvm.functions.Function1<? super T,kotlin.Unit>) : T {
+        TODO("message")
+    }
+    public static final fun resolve() : void {
+        foo()
+        var x: java.lang.String = foo()
+        bar()
+        var y: java.lang.String = bar()
+        var z: java.util.List<? extends java.lang.String> = listOf("foo").filterIsInstance()
+    }
+    static fun foo(@org.jetbrains.annotations.NotNull init: kotlin.jvm.functions.Function1<? super T,? extends kotlin.Unit>) : T {
+        TODO("message")
+    }
+}

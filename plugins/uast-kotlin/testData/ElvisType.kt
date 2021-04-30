@@ -1,3 +1,4 @@
+// !IGNORE_FIR
 
 fun foo(text: String?) = bar(text ?: return)
 

@@ -1,0 +1,10 @@
+UFile (package = )
+    UClass (name = MethodReferenceKt)
+        UField (name = x)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UCallableReferenceExpression (name = bar)
+        UMethod (name = getX)
+    UClass (name = Foo)
+        UMethod (name = bar)
+            UBlockExpression
+        UMethod (name = Foo)

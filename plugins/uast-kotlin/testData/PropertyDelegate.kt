@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 val sdCardPath by lazy { "/sdcard" }
 
 fun localPropertyTest() {

@@ -1,0 +1,12 @@
+UFile (package = )
+    UClass (name = Demo)
+        UField (name = foo)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UQualifiedReferenceExpression
+                USimpleNameReferenceExpression (identifier = X)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (bar))
+                    USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                    ULiteralExpression (value = "lorem")
+        UMethod (name = getFoo)
+        UMethod (name = Demo)

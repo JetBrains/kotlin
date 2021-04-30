@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 fun foo(): Boolean {
     class Local
     fun bar() = Local()

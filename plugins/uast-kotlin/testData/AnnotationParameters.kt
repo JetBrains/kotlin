@@ -1,3 +1,4 @@
+// !IGNORE_FIR
 
 annotation class IntRange(val from: Long, val to: Long)
 

@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 class TryCatch {
     fun catches() {
         try {

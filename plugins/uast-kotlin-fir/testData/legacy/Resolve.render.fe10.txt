@@ -1,0 +1,37 @@
+public final class ResolveKt {
+    public static final fun bar() : void {
+        <init>().foo()
+        <init>().inlineFoo()
+        listOf(<init>()).forEach({ var it: A ->
+
+            println(it)
+        })
+        listOf("").joinToString()
+        listOf("").size
+        listOf("").indices
+        var date: java.util.Date = java.util.<init>()
+        date.time = 1000
+        listOf("").last()
+        mutableMapOf(1 <other> "1").entries.first().setValue("123")
+        var intRange: kotlin.ranges.LongRange = 0 .. 3
+        intRange.contains(2 as int)
+        <init>(1, 2)
+    }
+    public static final fun barT(@org.jetbrains.annotations.NotNull t: T) : void {
+        t.foo()
+    }
+    public static final fun barTL(@org.jetbrains.annotations.NotNull listT: T) : void {
+        listT.isEmpty()
+        for (a : listT) {
+            a.foo()
+        }
+    }
+}
+
+public class A {
+    public final fun foo() : void {
+    }
+    public final fun inlineFoo() : void {
+    }
+    public fun A() = UastEmptyExpression
+}

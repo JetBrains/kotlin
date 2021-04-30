@@ -1,0 +1,17 @@
+package test.pkg
+
+public final class SuspendKt {
+    public static final fun top(@org.jetbrains.annotations.NotNull $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>) : java.lang.Object {
+        return <init>().inner()
+    }
+}
+
+public final class Context {
+    public final fun inner(@org.jetbrains.annotations.NotNull $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>) : java.lang.Object {
+        return suspendPrivate()
+    }
+    private final fun suspendPrivate(@null $completion: kotlin.coroutines.Continuation<? super java.lang.Integer>) : java.lang.Object {
+        return inner()
+    }
+    public fun Context() = UastEmptyExpression
+}

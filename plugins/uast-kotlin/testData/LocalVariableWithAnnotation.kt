@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 annotation class TestAnnotation
 
 fun foo() {

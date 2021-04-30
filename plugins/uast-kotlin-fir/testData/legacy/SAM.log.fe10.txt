@@ -1,0 +1,126 @@
+UFile (package = )
+    UImportStatement (isOnDemand = false)
+    UImportStatement (isOnDemand = false)
+    UImportStatement (isOnDemand = false)
+    UImportStatement (isOnDemand = false)
+    UClass (name = SAMKt)
+        UField (name = notSam)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            ULambdaExpression
+                UBlockExpression
+        UField (name = foo)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            ULambdaExpression
+                UBlockExpression
+        UField (name = baz)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UQualifiedReferenceExpression
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = java)
+                    USimpleNameReferenceExpression (identifier = lang)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (Runnable))
+                    USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable)
+                    ULambdaExpression
+                        UBlockExpression
+        UMethod (name = getNotSam)
+        UMethod (name = getFoo)
+        UMethod (name = setFoo)
+            UParameter (name = foo)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+        UMethod (name = bar)
+            UBlockExpression
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = foo)
+                    ULambdaExpression
+                        UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = a)
+                        UBinaryExpressionWithType
+                            ULambdaExpression
+                                UBlockExpression
+                            UTypeReferenceExpression (name = java.lang.Runnable)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (runRunnable))
+                    USimpleNameReferenceExpression (identifier = runRunnable, resolvesTo = null)
+                    ULambdaExpression
+                        UBlockExpression
+                UReturnExpression
+                    ULambdaExpression
+                        UBlockExpression
+        UMethod (name = getBaz)
+        UMethod (name = runRunnable)
+            UParameter (name = r)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (r))
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+        UMethod (name = test1)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = thread1)
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
+                            UIdentifier (Identifier (Thread))
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Thread)
+                            ULambdaExpression
+                                UBlockExpression
+                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                        UIdentifier (Identifier (println))
+                                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null)
+                                        ULiteralExpression (value = "hello1")
+        UMethod (name = test2)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = thread2)
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
+                            UIdentifier (Identifier (Thread))
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Thread)
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                UIdentifier (Identifier (Runnable))
+                                USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable)
+                                ULambdaExpression
+                                    UBlockExpression
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                            UIdentifier (Identifier (println))
+                                            USimpleNameReferenceExpression (identifier = println, resolvesTo = null)
+                                            ULiteralExpression (value = "hello2")
+        UMethod (name = test3)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (ambiguousSamAcceptor))
+                    USimpleNameReferenceExpression (identifier = ambiguousSamAcceptor, resolvesTo = null)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (Supplier))
+                        USimpleNameReferenceExpression (identifier = Supplier, resolvesTo = PsiClass: Supplier)
+                        ULambdaExpression
+                            UBlockExpression
+                                UReturnExpression
+                                    ULiteralExpression (value = "Supplier")
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (ambiguousSamAcceptor))
+                    USimpleNameReferenceExpression (identifier = ambiguousSamAcceptor, resolvesTo = null)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (Callable))
+                        USimpleNameReferenceExpression (identifier = Callable, resolvesTo = PsiClass: Callable)
+                        ULambdaExpression
+                            UBlockExpression
+                                UReturnExpression
+                                    ULiteralExpression (value = "Callable")
+        UMethod (name = ambiguousSamAcceptor)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (TODO))
+                        USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null)
+        UMethod (name = ambiguousSamAcceptor)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (TODO))
+                        USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null)

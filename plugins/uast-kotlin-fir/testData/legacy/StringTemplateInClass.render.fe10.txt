@@ -1,0 +1,5 @@
+public final class Demo {
+    @org.jetbrains.annotations.NotNull private final var foo: error.NonExistentClass = X.<anonymous class>("lorem")
+    public final fun getFoo() : error.NonExistentClass = UastEmptyExpression
+    public fun Demo() = UastEmptyExpression
+}

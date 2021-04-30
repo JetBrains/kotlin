@@ -1,0 +1,12 @@
+UFile (package = )
+    UClass (name = PropertyInitializerWithoutSetterKt)
+        UField (name = withoutSetter)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            ULiteralExpression (value = "/sdcard")
+        UMethod (name = getWithoutSetter)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = field)
+        UMethod (name = setWithoutSetter)
+            UParameter (name = withoutSetter)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
