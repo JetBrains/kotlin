@@ -77,8 +77,8 @@ object FirSessionFactory {
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
         init: FirSessionConfigurator.() -> Unit = {}
-    ): FirJavaModuleBasedSession {
-        return FirJavaModuleBasedSession(sessionProvider).apply session@{
+    ): FirSession {
+        return FirCliSession(sessionProvider, FirCliSession.Kind.Source).apply session@{
             val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents()
@@ -136,8 +136,8 @@ object FirSessionFactory {
         project: Project,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-    ): FirLibrarySession {
-        return FirLibrarySession(sessionProvider).apply session@{
+    ): FirSession {
+        return FirCliSession(sessionProvider, FirCliSession.Kind.Library).apply session@{
             val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
             sessionProvider.registerSession(moduleData, this)
             registerCliCompilerOnlyComponents()

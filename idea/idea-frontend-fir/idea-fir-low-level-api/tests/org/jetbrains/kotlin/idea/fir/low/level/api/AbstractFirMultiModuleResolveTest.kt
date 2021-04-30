@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.moduleInfoUnsafe
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.moduleSourceInfo
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
@@ -55,20 +53,20 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
         doFirResolveTest(dirPath)
     }
 
-    private fun createSession(module: Module, provider: FirProjectSessionProvider): FirJavaModuleBasedSession {
+    private fun createSession(module: Module, provider: FirProjectSessionProvider): FirSession {
         val moduleInfo = module.productionSourceInfo()!!
         return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, moduleInfo.contentScope(), project)
     }
 
-    private fun createLibrarySession(moduleInfo: IdeaModuleInfo, provider: FirProjectSessionProvider): FirLibrarySession {
+    private fun createLibrarySession(moduleInfo: IdeaModuleInfo, provider: FirProjectSessionProvider): FirSession {
         val contentScope = moduleInfo.contentScope()
         return FirSessionFactory.createLibrarySession(moduleInfo, provider, contentScope, project, IDEPackagePartProvider(contentScope))
     }
 
     private fun doFirResolveTest(dirPath: String) {
-        val firFilesPerSession = mutableMapOf<FirJavaModuleBasedSession, List<FirFile>>()
-        val processorsPerSession = mutableMapOf<FirJavaModuleBasedSession, List<FirTransformerBasedResolveProcessor>>()
-        val sessions = mutableListOf<FirJavaModuleBasedSession>()
+        val firFilesPerSession = mutableMapOf<FirSession, List<FirFile>>()
+        val processorsPerSession = mutableMapOf<FirSession, List<FirTransformerBasedResolveProcessor>>()
+        val sessions = mutableListOf<FirSession>()
         val provider = FirProjectSessionProvider()
         for (module in project.allModules().drop(1)) {
             val session = createSession(module, provider)
