@@ -45,8 +45,14 @@ inline fun <R> KtDeclaration.withFirDeclaration(
     action: (FirDeclaration) -> R
 ): R {
     val firDeclaration = resolveState.findSourceFirDeclaration(this)
-    firDeclaration.resolvedFirToPhase(phase, resolveState)
-    return action(firDeclaration)
+
+    val resolvedDeclaration = if (firDeclaration.resolvePhase < phase) {
+        firDeclaration.resolvedFirToPhase(phase, resolveState)
+    } else {
+        firDeclaration
+    }
+
+    return action(resolvedDeclaration)
 }
 
 /**
