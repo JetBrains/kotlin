@@ -130,13 +130,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WITH_SUSPEND_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
@@ -968,7 +968,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(
                 UNSAFE_CALL,
                 "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}",
-                RENDER_TYPE
+                RENDER_TYPE,
+                NOT_RENDERED,
             )
             map.put(
                 UNSAFE_IMPLICIT_INVOKE_CALL,
@@ -981,14 +982,14 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                         "Use ''?.''-qualified call instead",
                 FIR,
                 TO_STRING,
-                FIR
+                FIR,
             )
             map.put(
                 UNSAFE_OPERATOR_CALL,
                 "Operator call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. ",
                 FIR,
                 TO_STRING,
-                FIR
+                FIR,
             )
             map.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE)
             map.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression")

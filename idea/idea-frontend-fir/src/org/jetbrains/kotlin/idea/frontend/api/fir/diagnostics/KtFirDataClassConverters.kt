@@ -2035,6 +2035,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.UNSAFE_CALL) { firDiagnostic ->
         UnsafeCallImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic.b?.source?.psi as? KtExpression,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

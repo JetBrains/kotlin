@@ -2321,6 +2321,7 @@ internal class WrongImpliesConditionImpl(
 
 internal class UnsafeCallImpl(
     override val receiverType: KtType,
+    override val receiverExpression: KtExpression?,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UnsafeCall(), KtAbstractFirDiagnostic<PsiElement> {
@@ -2336,9 +2337,9 @@ internal class UnsafeImplicitInvokeCallImpl(
 }
 
 internal class UnsafeInfixCallImpl(
-    override val lhs: KtExpression,
+    override val receiverExpression: KtExpression,
     override val operator: String,
-    override val rhs: KtExpression,
+    override val argumentExpression: KtExpression,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UnsafeInfixCall(), KtAbstractFirDiagnostic<KtExpression> {
@@ -2346,9 +2347,9 @@ internal class UnsafeInfixCallImpl(
 }
 
 internal class UnsafeOperatorCallImpl(
-    override val lhs: KtExpression,
+    override val receiverExpression: KtExpression,
     override val operator: String,
-    override val rhs: KtExpression,
+    override val argumentExpression: KtExpression,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.UnsafeOperatorCall(), KtAbstractFirDiagnostic<KtExpression> {
