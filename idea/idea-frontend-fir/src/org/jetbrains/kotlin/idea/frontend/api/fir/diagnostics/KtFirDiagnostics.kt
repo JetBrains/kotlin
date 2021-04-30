@@ -371,6 +371,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AnnotationUsedAsAnnotationArgument::class
     }
 
+    abstract class IllegalKotlinVersionStringValue : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = IllegalKotlinVersionStringValue::class
+    }
+
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = ExposedTypealiasExpandedType::class
         abstract val elementVisibility: EffectiveVisibility

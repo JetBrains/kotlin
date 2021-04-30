@@ -153,6 +153,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val VAR_ANNOTATION_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE)
         val SUPERTYPES_FOR_ANNOTATION_CLASS by error<KtClass>(PositioningStrategy.SUPERTYPES_LIST)
         val ANNOTATION_USED_AS_ANNOTATION_ARGUMENT by error<KtAnnotation>()
+        val ILLEGAL_KOTLIN_VERSION_STRING_VALUE by error<KtExpression>()
     }
 
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {

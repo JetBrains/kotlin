@@ -1,30 +1,31 @@
+// FIR_IDENTICAL
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 package test
 
 import kotlin.internal.RequireKotlin
 
-@RequireKotlin("")
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>""<!>)
 fun f01() {}
 
-@RequireKotlin("x")
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"x"<!>)
 fun f02() {}
 
-@RequireKotlin("1")
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1"<!>)
 fun f03() {}
 
-@RequireKotlin("1.0-beta")
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1.0-beta"<!>)
 fun f04() {}
 
-@RequireKotlin("1.1.0-dev-1111")
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1.1.0-dev-1111"<!>)
 fun f05() {}
 
-@RequireKotlin("1.5.3.7")
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1.5.3.7"<!>)
 fun f06() {}
 
-@RequireKotlin("1..0")
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1..0"<!>)
 fun f07() {}
 
-@RequireKotlin(" 1.0")
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>" 1.0"<!>)
 fun f08() {}
 
 

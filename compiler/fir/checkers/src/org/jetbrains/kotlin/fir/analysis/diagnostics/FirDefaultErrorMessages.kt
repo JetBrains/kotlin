@@ -127,6 +127,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_THROWABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_INFIX_MODIFIER
@@ -421,6 +422,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'")
             map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
             map.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes")
+            map.put(ILLEGAL_KOTLIN_VERSION_STRING_VALUE, "Invalid value in version annotation (should be 'major.minor' or 'major.minor.patch')")
 
             // Exposed visibility group // #
             map.put(
