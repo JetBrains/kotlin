@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.fir.resolve.providers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -51,13 +55,24 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 }
 
-fun FirSymbolProvider.getClassDeclaredPropertySymbols(classId: ClassId, name: Name): List<FirVariableSymbol<*>> {
-    val classSymbol = getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return emptyList()
-    val declaredMemberScope = session.declaredMemberScope(classSymbol.fir)
-    val result = mutableListOf<FirVariableSymbol<*>>()
-    declaredMemberScope.processPropertiesByName(name, result::add)
+private fun FirSymbolProvider.getClassDeclaredMemberScope(classId: ClassId): FirScope? {
+    val classSymbol = getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return null
+    return session.declaredMemberScope(classSymbol.fir)
+}
 
-    return result
+fun FirSymbolProvider.getClassDeclaredConstructors(classId: ClassId): List<FirConstructorSymbol> {
+    val classMemberScope = getClassDeclaredMemberScope(classId)
+    return classMemberScope?.getDeclaredConstructors().orEmpty()
+}
+
+fun FirSymbolProvider.getClassDeclaredFunctionSymbols(classId: ClassId, name: Name): List<FirNamedFunctionSymbol> {
+    val classMemberScope = getClassDeclaredMemberScope(classId)
+    return classMemberScope?.getFunctions(name).orEmpty()
+}
+
+fun FirSymbolProvider.getClassDeclaredPropertySymbols(classId: ClassId, name: Name): List<FirVariableSymbol<*>> {
+    val classMemberScope = getClassDeclaredMemberScope(classId)
+    return classMemberScope?.getProperties(name).orEmpty()
 }
 
 inline fun <reified T : AbstractFirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(typeRef: FirTypeRef): T? {

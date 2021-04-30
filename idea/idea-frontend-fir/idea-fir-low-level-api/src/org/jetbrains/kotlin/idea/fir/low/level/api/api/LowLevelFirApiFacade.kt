@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.findNonLocalDeclarationForCompiledElement
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -44,7 +46,11 @@ inline fun <R> KtDeclaration.withFirDeclaration(
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (FirDeclaration) -> R
 ): R {
-    val firDeclaration = resolveState.findSourceFirDeclaration(this)
+    val firDeclaration = if (containingKtFile.isCompiled) {
+        findNonLocalDeclarationForCompiledElement(resolveState.rootModuleSession.symbolProvider)
+    } else {
+        resolveState.findSourceFirDeclaration(this)
+    }
 
     val resolvedDeclaration = if (firDeclaration.resolvePhase < phase) {
         firDeclaration.resolvedFirToPhase(phase, resolveState)
