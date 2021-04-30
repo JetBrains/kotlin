@@ -179,12 +179,29 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     val clangArgsForKonanSources =
             clangXXArgs + clangArgsSpecificForKonanSources
 
-    val targetLibclangArgs: List<String> =
+    private val libclangSpecificArgs =
             // libclang works not exactly the same way as the clang binary and
             // (in particular) uses different default header search path.
             // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
             // We workaround the problem with -isystem flag below.
-            listOf("-isystem", "$absoluteLlvmHome/lib/clang/$llvmVersion/include", *clangArgs)
+            // TODO: Revise after update to LLVM 10.
+            listOf("-isystem", "$absoluteLlvmHome/lib/clang/$llvmVersion/include")
+
+    /**
+     * libclang args for plain C and Objective-C.
+     *
+     * Note that it's different from [clangArgs].
+     */
+    val libclangArgs: List<String> =
+            libclangSpecificArgs + clangArgs
+
+    /**
+     * libclang args for C++.
+     *
+     * Note that it's different from [clangXXArgs].
+     */
+    val libclangXXArgs: List<String> =
+            libclangSpecificArgs + clangXXArgs
 
     private val targetClangCmd
             = listOf("${absoluteLlvmHome}/bin/clang") + clangArgs

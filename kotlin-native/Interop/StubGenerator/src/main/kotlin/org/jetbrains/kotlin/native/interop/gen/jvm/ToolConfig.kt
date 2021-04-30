@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
+import org.jetbrains.kotlin.native.interop.indexer.Language
 
 class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform) {
 
@@ -41,8 +42,11 @@ class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform) {
 
     fun downloadDependencies() = platform.downloadDependencies()
 
-    val defaultCompilerOpts =
-            platform.clang.targetLibclangArgs.toList()
+    fun getDefaultCompilerOptsForLanguage(language: Language): List<String> = when (language) {
+        Language.C,
+        Language.OBJECTIVE_C -> platform.clang.libclangArgs.toList()
+        Language.CPP -> platform.clang.libclangXXArgs.toList()
+    }
 
     val platformCompilerOpts = if (flavor == KotlinPlatform.JVM)
             platform.clang.hostCompilerArgsForJni.toList() else emptyList()
