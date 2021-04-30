@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 class FirModuleInfoBasedModuleData(val moduleInfo: ModuleInfo) : FirModuleData() {
     override val name: Name
@@ -26,6 +27,9 @@ class FirModuleInfoBasedModuleData(val moduleInfo: ModuleInfo) : FirModuleData()
         .map { FirModuleInfoBasedModuleData(it) }
     override val platform: TargetPlatform
         get() = moduleInfo.platform
+
+    override val analyzerServices: PlatformDependentAnalyzerServices
+        get() = moduleInfo.analyzerServices
 
     override fun equals(other: Any?): Boolean {
         if (other !is FirModuleInfoBasedModuleData) return false

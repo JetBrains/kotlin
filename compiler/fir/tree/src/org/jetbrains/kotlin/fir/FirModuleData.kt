@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 abstract class FirModuleData : FirSessionComponent {
     abstract val name: Name
@@ -14,6 +15,10 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val dependsOnDependencies: List<FirModuleData>
     abstract val friendDependencies: List<FirModuleData>
     abstract val platform: TargetPlatform
+
+    // TODO: analyzerServices are needed only as default imports providers
+    //   refactor them to make API clearer
+    abstract val analyzerServices: PlatformDependentAnalyzerServices
 
     private var _session: FirSession? = null
     val session: FirSession
@@ -32,7 +37,8 @@ class FirModuleDataImpl(
     override val dependencies: List<FirModuleData>,
     override val dependsOnDependencies: List<FirModuleData>,
     override val friendDependencies: List<FirModuleData>,
-    override val platform: TargetPlatform
+    override val platform: TargetPlatform,
+    override val analyzerServices: PlatformDependentAnalyzerServices
 ) : FirModuleData()
 
 val FirSession.moduleData: FirModuleData by FirSession.sessionComponentAccessor()

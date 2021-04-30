@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal object FirIdeSessionFactory {
@@ -222,7 +223,8 @@ internal object FirIdeSessionFactory {
                 emptyList(),
                 emptyList(),
                 emptyList(),
-                JvmPlatforms.unspecifiedJvmPlatform
+                JvmPlatforms.unspecifiedJvmPlatform,
+                JvmPlatformAnalyzerServices
             ).apply {
                 bindSession(this@session)
             }
