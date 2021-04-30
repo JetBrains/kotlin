@@ -228,20 +228,8 @@ private class MetadataCompilationTasksConfigurator(project: Project) : KotlinCom
     fun createKotlinNativeMetadataCompilationTask(
         fragment: KotlinGradleFragment,
         compilationData: KotlinNativeFragmentMetadataCompilationData
-    ): TaskProvider<KotlinNativeCompile> {
-        val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
-
-        val allSources = getSourcesForFragmentCompilation(fragment)
-        val commonSources = getCommonSourcesForFragmentCompilation(fragment)
-
-        compileTask.configure {
-            it.source(allSources)
-            it.commonSources.from(commonSources)
-
-            it.kotlinPluginData = project.compilerPluginProviderForNativeMetadata(fragment, compilationData)
-        }
-
-        return compileTask
+    ): TaskProvider<KotlinNativeCompile> = createKotlinNativeCompilationTask(fragment, compilationData) {
+        kotlinPluginData = project.compilerPluginProviderForNativeMetadata(fragment, compilationData)
     }
 
     override fun getSourcesForFragmentCompilation(fragment: KotlinGradleFragment): MultipleSourceRootsProvider {

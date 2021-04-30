@@ -43,21 +43,29 @@ open class KotlinCompilationTaskConfigurator(
         }
     }
 
-    fun createKotlinNativeCompilationTask(
-        variant: KotlinGradleVariant,
-        compilationData: KotlinNativeCompilationData<*>
+    protected fun createKotlinNativeCompilationTask(
+        fragment: KotlinGradleFragment,
+        compilationData: KotlinNativeCompilationData<*>,
+        configure: KotlinNativeCompile.() -> Unit
     ): TaskProvider<KotlinNativeCompile> {
         val compileTask = KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationData)
 
-        val allSources = getSourcesForFragmentCompilation(variant)
-        val commonSources = getCommonSourcesForFragmentCompilation(variant)
+        val allSources = getSourcesForFragmentCompilation(fragment)
+        val commonSources = getCommonSourcesForFragmentCompilation(fragment)
 
         compileTask.configure {
             it.source(allSources)
             it.commonSources.from(commonSources)
 
-            it.kotlinPluginData = project.compilerPluginProviderForPlatformCompilation(variant, compilationData)
+            it.configure()
         }
         return compileTask
     }
-}
+
+    fun createKotlinNativeCompilationTask(
+        variant: KotlinGradleVariant,
+        compilationData: KotlinNativeCompilationData<*>
+    ): TaskProvider<KotlinNativeCompile> = createKotlinNativeCompilationTask(variant, compilationData) {
+        kotlinPluginData = project.compilerPluginProviderForPlatformCompilation(variant, compilationData)
+    }
+ }
