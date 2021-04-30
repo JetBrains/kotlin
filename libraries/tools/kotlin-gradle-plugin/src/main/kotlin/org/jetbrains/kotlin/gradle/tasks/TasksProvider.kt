@@ -89,7 +89,7 @@ internal open class KotlinTasksProvider {
     ): TaskProvider<out KotlinCompile> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
-        val result = project.registerTask(name, taskClass) {
+        val result = project.registerTask(name, taskClass, constructorArgs = listOf(compilation.kotlinOptions)) {
             configureAction(it)
             KotlinCompile.Configurator(compilation).configure(it)
         }
@@ -105,7 +105,7 @@ internal open class KotlinTasksProvider {
     ): TaskProvider<out Kotlin2JsCompile> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<Kotlin2JsCompile, Kotlin2JsCompileWithWorkers>(properties)
-        val result = project.registerTask(name, taskClass) {
+        val result = project.registerTask(name, taskClass, constructorArgs = listOf(compilation.kotlinOptions)) {
             configureAction(it)
             Kotlin2JsCompile.Configurator<Kotlin2JsCompile>(compilation).configure(it)
         }
@@ -137,7 +137,7 @@ internal open class KotlinTasksProvider {
     ): TaskProvider<out KotlinCompileCommon> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompileCommon, KotlinCompileCommonWithWorkers>(properties)
-        val result = project.registerTask(name, taskClass) {
+        val result = project.registerTask(name, taskClass, constructorArgs = listOf(compilation.kotlinOptions)) {
             configureAction(it)
             KotlinCompileCommon.Configurator(compilation).configure(it)
         }
