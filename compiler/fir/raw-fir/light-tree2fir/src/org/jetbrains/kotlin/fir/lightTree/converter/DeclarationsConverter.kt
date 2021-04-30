@@ -336,7 +336,12 @@ class DeclarationsConverter(
             useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
             annotationTypeRef = constructorCalleePair.first
             calleeReference = buildSimpleNamedReference {
-                source = this@buildAnnotationCall.source
+                source = unescapedAnnotation
+                    .getChildNodeByType(CONSTRUCTOR_CALLEE)
+                    ?.getChildNodeByType(TYPE_REFERENCE)
+                    ?.getChildNodeByType(USER_TYPE)
+                    ?.getChildNodeByType(REFERENCE_EXPRESSION)
+                    ?.toFirSourceElement()
                 this.name = name
             }
             extractArgumentsFrom(constructorCalleePair.second, stubMode)

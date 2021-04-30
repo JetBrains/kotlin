@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 class PersistentCheckerContext private constructor(
     override val implicitReceiverStack: PersistentImplicitReceiverStack,
     override val containingDeclarations: PersistentList<FirDeclaration>,
-    override val qualifiedAccesses: PersistentList<FirQualifiedAccess>,
+    override val qualifiedAccessOrAnnotationCalls: PersistentList<FirStatement>,
     override val getClassCalls: PersistentList<FirGetClassCall>,
     override val sessionHolder: SessionHolder,
     override val returnTypeCalculator: ReturnTypeCalculator,
@@ -47,7 +47,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack.add(name, value),
             containingDeclarations,
-            qualifiedAccesses,
+            qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             sessionHolder,
             returnTypeCalculator,
@@ -62,7 +62,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations.add(declaration),
-            qualifiedAccesses,
+            qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             sessionHolder,
             returnTypeCalculator,
@@ -73,11 +73,11 @@ class PersistentCheckerContext private constructor(
         )
     }
 
-    fun addQualifiedAccess(qualifiedAccess: FirQualifiedAccess): PersistentCheckerContext {
+    fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): PersistentCheckerContext {
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccesses.add(qualifiedAccess),
+            this.qualifiedAccessOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall),
             getClassCalls,
             sessionHolder,
             returnTypeCalculator,
@@ -92,7 +92,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccesses,
+            qualifiedAccessOrAnnotationCalls,
             getClassCalls.add(getClassCall),
             sessionHolder,
             returnTypeCalculator,
@@ -113,7 +113,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccesses,
+            qualifiedAccessOrAnnotationCalls,
             getClassCalls,
             sessionHolder,
             returnTypeCalculator,

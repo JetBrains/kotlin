@@ -184,8 +184,8 @@ object FirInlineDeclarationChecker : FirMemberDeclarationChecker() {
 
         private fun FirQualifiedAccess.partOfCall(context: CheckerContext): Boolean {
             if (this !is FirExpression) return false
-            val containingQualifiedAccess = context.qualifiedAccesses.getOrNull(context.qualifiedAccesses.size - 2) ?: return false
-            if (this == containingQualifiedAccess.explicitReceiver) return true
+            val containingQualifiedAccess = context.qualifiedAccessOrAnnotationCalls.getOrNull(context.qualifiedAccessOrAnnotationCalls.size - 2) ?: return false
+            if (this == (containingQualifiedAccess as? FirQualifiedAccess)?.explicitReceiver) return true
             val call = containingQualifiedAccess as? FirCall ?: return false
             return call.arguments.any { it.unwrapArgument() == this }
         }

@@ -46,9 +46,13 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
         val source = errorNamedReference.source ?: return
-        val qualifiedAccess = data.qualifiedAccesses.lastOrNull()?.takeIf {
+        val qualifiedAccessOrAnnotationCall = data.qualifiedAccessOrAnnotationCalls.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccessExpression if it is exactly the call to the erroneous callee.
-            it is FirQualifiedAccessExpression && it.calleeReference == errorNamedReference
+            when (it) {
+                is FirQualifiedAccessExpression -> it.calleeReference == errorNamedReference
+                is FirAnnotationCall -> it.calleeReference == errorNamedReference
+                else -> false
+            }
         }
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
@@ -58,12 +62,14 @@ class ErrorNodeDiagnosticCollectorComponent(
         ) return
 
         // If the receiver cannot be resolved, we skip reporting any further problems for this call.
-        if (qualifiedAccess?.dispatchReceiver.hasUnresolvedNameError() ||
-            qualifiedAccess?.extensionReceiver.hasUnresolvedNameError() ||
-            qualifiedAccess?.explicitReceiver.hasUnresolvedNameError()
-        ) return
+        if (qualifiedAccessOrAnnotationCall is FirQualifiedAccess) {
+            if (qualifiedAccessOrAnnotationCall.dispatchReceiver.hasUnresolvedNameError() ||
+                qualifiedAccessOrAnnotationCall.extensionReceiver.hasUnresolvedNameError() ||
+                qualifiedAccessOrAnnotationCall.explicitReceiver.hasUnresolvedNameError()
+            ) return
+        }
 
-        reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccess?.source)
+        reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccessOrAnnotationCall?.source)
     }
 
     private fun FirExpression?.hasUnresolvedNameError(): Boolean {
