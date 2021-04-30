@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -218,7 +219,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
 
         val wholeClassifierId = resolvedTypeRef.type.lowerBoundIfFlexible().classId ?: return
-        val wholeTypeElement = wholeTypeReference.typeElement.unwrapNullable() as? KtUserType ?: return
+        val wholeTypeElement = wholeTypeReference.typeElement?.unwrapNullability() as? KtUserType ?: return
 
         if (wholeTypeElement.qualifier == null) return
 
@@ -455,9 +456,6 @@ private fun CallableId.asImportableFqName(): FqName? = if (classId == null) pack
 
 private fun KtElement.getDotQualifiedExpressionForSelector(): KtDotQualifiedExpression? =
     getQualifiedExpressionForSelector() as? KtDotQualifiedExpression
-
-private tailrec fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
-    if (this is KtNullableType) this.innerType.unwrapNullable() else this
 
 private fun KtDotQualifiedExpression.deleteQualifier(): KtExpression? {
     val selectorExpression = selectorExpression ?: return null

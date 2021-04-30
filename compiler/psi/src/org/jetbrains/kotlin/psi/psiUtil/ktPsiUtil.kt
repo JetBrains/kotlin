@@ -676,3 +676,11 @@ fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
 
 val KtNameReferenceExpression.isUnderscoreInBackticks
     get() = getReferencedName() == "`_`"
+
+tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
+    return when (this) {
+        is KtNullableType -> this.innerType?.unwrapNullability()
+        is KtDefinitelyNotNullType -> this.innerType?.unwrapNullability()
+        else -> this
+    }
+}

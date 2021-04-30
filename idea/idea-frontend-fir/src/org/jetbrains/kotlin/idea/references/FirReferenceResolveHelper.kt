@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal object FirReferenceResolveHelper {
@@ -420,7 +421,7 @@ internal object FirReferenceResolveHelper {
         // FIXME make it work with generics in functional types (like () -> AA.BB<CC, AA.DD>)
         val wholeType = when (val psi = wholeTypeFir.psi) {
             is KtUserType -> psi
-            is KtTypeReference -> psi.typeElement?.unwrapNullable() as? KtUserType
+            is KtTypeReference -> psi.typeElement?.unwrapNullability() as? KtUserType
             else -> null
         } ?: return null
 
@@ -445,10 +446,6 @@ internal object FirReferenceResolveHelper {
         val qualifierIndex = generateSequence(wholeType) { it.qualifier }.indexOf(nestedType)
         require(qualifierIndex != -1) { "Whole type $wholeType should contain $nestedType, but it didn't" }
         return qualifierIndex
-    }
-
-    private tailrec fun KtTypeElement.unwrapNullable(): KtTypeElement? {
-        return if (this is KtNullableType) innerType?.unwrapNullable() else this
     }
 
     private val syntheticTokenTypes = TokenSet.create(KtTokens.ELVIS, KtTokens.EXCLEXCL)
