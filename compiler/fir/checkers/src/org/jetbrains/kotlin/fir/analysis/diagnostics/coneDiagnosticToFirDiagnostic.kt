@@ -98,24 +98,34 @@ private fun mapUnsafeCallError(
 
     val candidateFunction = candidate.symbol.fir as? FirSimpleFunction
     val candidateFunctionName = candidateFunction?.name
-    val left = candidate.callInfo.explicitReceiver
-    val right = candidate.callInfo.argumentList.arguments.singleOrNull()
-    if (left != null && right != null &&
+    val receiverExpression = candidate.callInfo.explicitReceiver
+    val singleArgument = candidate.callInfo.argumentList.arguments.singleOrNull()
+    if (receiverExpression != null && singleArgument != null &&
         source.elementType == KtNodeTypes.OPERATION_REFERENCE &&
         (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
     ) {
         val operationToken = source.getChild(KtTokens.IDENTIFIER)
         if (candidateFunction.isInfix && operationToken?.elementType == KtTokens.IDENTIFIER) {
-            return FirErrors.UNSAFE_INFIX_CALL.on(source, left, candidateFunctionName!!.asString(), right)
+            return FirErrors.UNSAFE_INFIX_CALL.on(
+                source,
+                receiverExpression,
+                candidateFunctionName!!.asString(),
+                singleArgument,
+            )
         }
         if (candidateFunction.isOperator && operationToken == null) {
-            return FirErrors.UNSAFE_OPERATOR_CALL.on(source, left, candidateFunctionName!!.asString(), right)
+            return FirErrors.UNSAFE_OPERATOR_CALL.on(
+                source,
+                receiverExpression,
+                candidateFunctionName!!.asString(),
+                singleArgument,
+            )
         }
     }
     return if (source.kind == FirFakeSourceElementKind.ArrayAccessNameReference) {
-        FirErrors.UNSAFE_CALL.on(source, rootCause.actualType)
+        FirErrors.UNSAFE_CALL.on(source, rootCause.actualType, receiverExpression)
     } else {
-        FirErrors.UNSAFE_CALL.on(qualifiedAccessSource ?: source, rootCause.actualType)
+        FirErrors.UNSAFE_CALL.on(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression)
     }
 }
 

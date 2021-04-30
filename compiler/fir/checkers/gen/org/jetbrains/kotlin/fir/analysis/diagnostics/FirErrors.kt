@@ -419,7 +419,7 @@ object FirErrors {
     val WRONG_IMPLIES_CONDITION by warning0<PsiElement>()
 
     // Nullability
-    val UNSAFE_CALL by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.DOT_BY_QUALIFIED)
+    val UNSAFE_CALL by error2<PsiElement, ConeKotlinType, FirExpression?>(SourceElementPositioningStrategies.DOT_BY_QUALIFIED)
     val UNSAFE_IMPLICIT_INVOKE_CALL by error1<PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNSAFE_INFIX_CALL by error3<KtExpression, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val UNSAFE_OPERATOR_CALL by error3<KtExpression, FirExpression, String, FirExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

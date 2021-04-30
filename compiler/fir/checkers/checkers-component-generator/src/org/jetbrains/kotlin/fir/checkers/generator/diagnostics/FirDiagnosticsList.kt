@@ -715,19 +715,20 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val NULLABILITY by object : DiagnosticGroup("Nullability") {
         val UNSAFE_CALL by error<PsiElement>(PositioningStrategy.DOT_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
+            parameter<FirExpression?>("receiverExpression")
         }
         val UNSAFE_IMPLICIT_INVOKE_CALL by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
         }
         val UNSAFE_INFIX_CALL by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<FirExpression>("lhs")
+            parameter<FirExpression>("receiverExpression")
             parameter<String>("operator")
-            parameter<FirExpression>("rhs")
+            parameter<FirExpression>("argumentExpression")
         }
         val UNSAFE_OPERATOR_CALL by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<FirExpression>("lhs")
+            parameter<FirExpression>("receiverExpression")
             parameter<String>("operator")
-            parameter<FirExpression>("rhs")
+            parameter<FirExpression>("argumentExpression")
         }
         val ITERATOR_ON_NULLABLE by error<KtExpression>()
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {
