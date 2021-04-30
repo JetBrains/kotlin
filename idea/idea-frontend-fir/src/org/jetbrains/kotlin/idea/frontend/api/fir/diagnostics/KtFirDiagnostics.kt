@@ -688,6 +688,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ArgumentTypeMismatch::class
         abstract val expectedType: KtType
         abstract val actualType: KtType
+        abstract val isMismatchDueToNullability: Boolean
     }
 
     abstract class NullForNonnullType : KtFirDiagnostic<PsiElement>() {

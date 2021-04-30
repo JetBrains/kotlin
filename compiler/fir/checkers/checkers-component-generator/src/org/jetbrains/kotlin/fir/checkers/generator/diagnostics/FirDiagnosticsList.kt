@@ -288,6 +288,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val ARGUMENT_TYPE_MISMATCH by error<PsiElement> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<Boolean>("isMismatchDueToNullability")
         }
 
         val NULL_FOR_NONNULL_TYPE by error<PsiElement> { }

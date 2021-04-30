@@ -93,7 +93,8 @@ sealed class UnstableSmartCast(
 class ArgumentTypeMismatch(
     val expectedType: ConeKotlinType,
     val actualType: ConeKotlinType,
-    val argument: FirExpression
+    val argument: FirExpression,
+    val isMismatchDueToNullability: Boolean,
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class NullForNotNullType(

@@ -136,7 +136,8 @@ private fun mapInapplicableCandidateError(
             is ArgumentTypeMismatch -> FirErrors.ARGUMENT_TYPE_MISMATCH.on(
                 rootCause.argument.source ?: source,
                 rootCause.expectedType,
-                rootCause.actualType
+                rootCause.actualType,
+                rootCause.isMismatchDueToNullability
             )
             is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.on(
                 rootCause.argument.source ?: source

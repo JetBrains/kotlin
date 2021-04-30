@@ -375,10 +375,18 @@ private fun checkApplicabilityForArgumentType(
             return type
         }
 
+        // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
+        // relation with nullable expected type.
+        val isMismatchDueToNullability = AbstractTypeChecker.isSubtypeOf(
+            context.session.typeContext,
+            argumentType,
+            actualExpectedType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
+        )
         return ArgumentTypeMismatch(
             tryGetConeTypeThatCompatibleWithKtType(actualExpectedType),
             tryGetConeTypeThatCompatibleWithKtType(argumentType),
-            argument
+            argument,
+            isMismatchDueToNullability
         )
     }
 
