@@ -49,7 +49,7 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     ) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
             group = taskGroupName
-            inputFileProperty.fileProvider(compilation.compileKotlinTaskProvider.flatMap { it.outputFile })
+            inputFileProperty.fileProvider(compilation.compileKotlinTaskProvider.flatMap { it.outputFileProperty })
         }
         target.runTask.dependsOn(runTaskHolder)
     }

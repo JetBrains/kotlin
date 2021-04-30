@@ -106,7 +106,7 @@ internal class CompilationSpecificPluginPath {
         // And each compilation task should have its own plugin classpath
         val compileDesktop = project.tasks.getByName("compileKotlinDesktop") as KotlinCompile
         val expectedConfig = project.configurations.getByName(pluginClassPathConfiguration("desktop", "main"))
-        assertEquals(expectedConfig, compileDesktop.pluginClasspath)
+        assertEquals(expectedConfig, compileDesktop.pluginClasspath.from.single())
     }
 
     @Test
@@ -216,7 +216,7 @@ internal class CompilationSpecificPluginPath {
         .let {
             when (it) {
                 is AbstractKotlinNativeCompile<*, *> -> it.compilerPluginClasspath
-                is AbstractKotlinCompile<*> -> it.pluginClasspath
+                is AbstractKotlinCompile<*> -> it.pluginClasspath.from.single()
                 else -> error("Unexpected task type with name $taskName. Is it kotlin compile task?")
             }
         }

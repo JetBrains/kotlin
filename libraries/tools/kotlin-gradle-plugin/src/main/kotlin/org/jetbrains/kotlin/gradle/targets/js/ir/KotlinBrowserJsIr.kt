@@ -103,7 +103,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 ) { task ->
                     val entryFileProvider = binary.linkSyncTask.map {
                         it.destinationDir
-                            .resolve(binary.linkTask.get().outputFile.get().name)
+                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
                     }
 
                     webpackMajorVersion.choose(
@@ -173,7 +173,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 ) { task ->
                     val entryFileProvider = binary.linkSyncTask.map {
                         it.destinationDir
-                            .resolve(binary.linkTask.get().outputFile.get().name)
+                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
                     }
 
                     task.description = "build webpack ${mode.name.toLowerCase()} bundle"

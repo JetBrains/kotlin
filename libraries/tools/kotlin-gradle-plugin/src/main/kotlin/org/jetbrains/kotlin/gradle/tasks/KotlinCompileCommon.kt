@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
@@ -38,14 +37,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
+import javax.inject.Inject
 
 @CacheableTask
-abstract class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
+abstract class KotlinCompileCommon @Inject constructor(
+    override val kotlinOptions: KotlinMultiplatformCommonOptions
+) : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
     class Configurator(compilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<KotlinCompileCommon>(compilation) {
         override fun configure(task: KotlinCompileCommon) {
             super.configure(task)
-            task.kotlinOptionsProperty.value(compilation.kotlinOptions as KotlinMultiplatformCommonOptionsImpl).disallowChanges()
             task.refinesMetadataPaths.from(getRefinesMetadataPaths(task.project)).disallowChanges()
             task.expectActualLinker
                 .value(task.project.provider { (compilation as? KotlinCommonCompilation)?.isKlibCompilation == true || compilation is KotlinMetadataCompilationData })
@@ -75,8 +76,6 @@ abstract class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArg
             }
         }
     }
-
-    override val kotlinOptionsProperty: Property<KotlinMultiplatformCommonOptions> = objects.property(KotlinMultiplatformCommonOptions::class.java)
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
