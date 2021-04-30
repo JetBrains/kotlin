@@ -484,11 +484,7 @@ open class SerializerIrGenerator(
             val ctor: IrConstructorSymbol = serializableSyntheticConstructor(serializableIrClass)
             +irReturn(irInvoke(null, ctor, typeArgs, args))
         } else {
-            // check properties presence
-            val serialDescIrProperty = irClass.searchForProperty(generatedSerialDescPropertyDescriptor!!)
-            val serialDescriptorExpr = irGetField(null, serialDescIrProperty.backingField!!)
-            generateGoldenMaskCheck(bitMasks, properties, serialDescriptorExpr)
-
+            generateGoldenMaskCheck(bitMasks, properties, localSerialDesc.get())
 
             val ctor: IrConstructorSymbol =
                 compilerContext.referenceConstructors(serializableDescriptor.fqNameSafe).single { it.owner.isPrimary }
