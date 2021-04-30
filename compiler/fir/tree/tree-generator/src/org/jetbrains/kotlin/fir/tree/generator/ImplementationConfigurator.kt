@@ -156,6 +156,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(qualifiedAccessExpression)
 
         noImpl(expressionWithSmartcast)
+        noImpl(expressionWithSmartcastToNull)
 
         impl(getClassCall) {
             default("argument") {

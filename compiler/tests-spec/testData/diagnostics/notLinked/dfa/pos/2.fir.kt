@@ -288,7 +288,7 @@ fun case_11(b: Boolean) {
         if (z != null || b) {
 
         } else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>? & <anonymous>?")!>z<!>
         }
     }
 }

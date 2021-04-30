@@ -99,7 +99,10 @@ internal val FirElement.symbol: AbstractFirBasedSymbol<*>?
         is FirWhenSubjectExpression -> whenRef.value.subject?.symbol
         is FirSafeCallExpression -> regularQualifiedAccess.symbol
         else -> null
-    }?.takeIf { this.unwrapSmartcastExpression() is FirThisReceiverExpression || (it !is FirFunctionSymbol<*> && it !is FirAccessorSymbol) }
+    }?.takeIf {
+        (this as? FirExpression)?.unwrapSmartcastExpression() is FirThisReceiverExpression ||
+                (it !is FirFunctionSymbol<*> && it !is FirAccessorSymbol)
+    }
 
 @DfaInternals
 internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
@@ -110,4 +113,8 @@ internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
         else -> null
     }
 
-private fun FirElement.unwrapSmartcastExpression(): FirElement = if (this is FirExpressionWithSmartcast) originalExpression else this
+internal fun FirExpression.unwrapSmartcastExpression(): FirExpression =
+    when (this) {
+        is FirExpressionWithSmartcast -> originalExpression
+        else -> this
+    }

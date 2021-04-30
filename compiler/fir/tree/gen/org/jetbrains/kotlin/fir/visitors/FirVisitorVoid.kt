@@ -91,6 +91,7 @@ import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -477,6 +478,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
         visitElement(expressionWithSmartcast)
+    }
+
+    open fun visitExpressionWithSmartcastToNull(expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull) {
+        visitElement(expressionWithSmartcastToNull)
     }
 
     open fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
@@ -977,6 +982,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Nothing?) {
         visitExpressionWithSmartcast(expressionWithSmartcast)
+    }
+
+    final override fun visitExpressionWithSmartcastToNull(expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull, data: Nothing?) {
+        visitExpressionWithSmartcastToNull(expressionWithSmartcastToNull)
     }
 
     final override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: Nothing?) {

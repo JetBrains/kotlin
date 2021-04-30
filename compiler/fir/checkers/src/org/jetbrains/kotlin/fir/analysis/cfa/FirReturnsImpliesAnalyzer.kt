@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.intersectTypesOrNull
-import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -56,7 +53,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
                 throw IllegalStateException("Update of all receivers is not possible for this logic system")
 
             override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
-                return true
+                return !isNullableNothing
             }
         }
 

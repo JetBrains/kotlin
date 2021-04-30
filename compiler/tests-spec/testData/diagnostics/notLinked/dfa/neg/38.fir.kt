@@ -15,8 +15,8 @@ fun case_1() {
             break@outer
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 /*
@@ -32,8 +32,8 @@ fun case_2() {
             break@outer
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 /*
@@ -145,8 +145,8 @@ fun case_9() {
         inner@ do {
             x = null
         } while (x != null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
     }
 }
 
