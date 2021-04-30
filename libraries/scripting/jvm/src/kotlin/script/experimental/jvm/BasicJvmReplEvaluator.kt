@@ -42,7 +42,7 @@ class BasicJvmReplEvaluator(val scriptEvaluator: ScriptEvaluator = BasicJvmScrip
             }
             if (lastSnippetClass != null) {
                 jvm {
-                    baseClassLoader(lastSnippetClass.java.classLoader)
+                    lastSnippetClassLoader(lastSnippetClass.java.classLoader)
                 }
             }
         }
