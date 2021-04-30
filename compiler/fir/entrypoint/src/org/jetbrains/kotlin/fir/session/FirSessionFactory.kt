@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 object FirSessionFactory {
     class FirSessionConfigurator(private val session: FirSession) {
-        private val registeredExtensions = mutableListOf<BunchOfRegisteredExtensions>(BunchOfRegisteredExtensions.empty())
+        private val registeredExtensions: MutableList<BunchOfRegisteredExtensions> = mutableListOf(BunchOfRegisteredExtensions.empty())
 
         fun registerExtensions(extensions: BunchOfRegisteredExtensions) {
             registeredExtensions += extensions
@@ -78,7 +78,7 @@ object FirSessionFactory {
         lookupTracker: LookupTracker? = null,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirJavaModuleBasedSession {
-        return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply session@{
+        return FirJavaModuleBasedSession(sessionProvider).apply session@{
             val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents()
@@ -137,8 +137,9 @@ object FirSessionFactory {
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirLibrarySession {
-        return FirLibrarySession(moduleInfo, sessionProvider).apply session@{
+        return FirLibrarySession(sessionProvider).apply session@{
             val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
+            sessionProvider.registerSession(moduleData, this)
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
 

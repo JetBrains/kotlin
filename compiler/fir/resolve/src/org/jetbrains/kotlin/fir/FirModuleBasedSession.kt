@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-
 @OptIn(PrivateSessionConstructor::class)
 abstract class FirModuleBasedSession @PrivateSessionConstructor constructor(
-    override val moduleInfo: ModuleInfo,
     sessionProvider: FirSessionProvider?
 ) : FirSession(sessionProvider)

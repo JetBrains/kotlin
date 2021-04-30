@@ -41,4 +41,7 @@ class FirModuleDataImpl(
     override val analyzerServices: PlatformDependentAnalyzerServices
 ) : FirModuleData()
 
-val FirSession.moduleData: FirModuleData by FirSession.sessionComponentAccessor()
+val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()
+val FirSession.moduleData: FirModuleData
+    get() = nullableModuleData ?: error("Module data is not registered in $this")
+

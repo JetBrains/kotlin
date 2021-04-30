@@ -71,7 +71,7 @@ internal object FirIdeSessionFactory {
         val searchScope = ModuleProductionSourceScope(moduleInfo.module)
         val dependentModules = moduleInfo.dependenciesWithoutSelf()
             .filterIsInstanceTo<ModuleSourceInfo, MutableList<ModuleSourceInfo>>(mutableListOf())
-        val session = FirIdeSourcesSession(moduleInfo, dependentModules, project, searchScope, firBuilder, builtinTypes)
+        val session = FirIdeSourcesSession(dependentModules, project, searchScope, firBuilder, builtinTypes)
         sessionsCache[moduleInfo] = session
 
 
@@ -172,7 +172,7 @@ internal object FirIdeSessionFactory {
         val packagePartProvider = IDEPackagePartProvider(searchScope)
 
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
-        FirIdeLibrariesSession(moduleInfo, project, searchScope, builtinTypes).apply session@{
+        FirIdeLibrariesSession(project, searchScope, builtinTypes).apply session@{
             val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
 
             registerIdeComponents()

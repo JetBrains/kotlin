@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirModuleBasedSession
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
@@ -20,6 +18,5 @@ abstract class FirIdeSession(override val builtinTypes: BuiltinTypes) : FirSessi
 
 @OptIn(PrivateSessionConstructor::class)
 abstract class FirIdeModuleSession(builtinTypes: BuiltinTypes) : FirIdeSession(builtinTypes) {
-    abstract override val moduleInfo: ModuleInfo
     abstract val scope: GlobalSearchScope
 }

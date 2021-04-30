@@ -18,8 +18,6 @@ class FirJavaEnhancementContext private constructor(
             this(session, lazy(LazyThreadSafetyMode.NONE, typeQualifiersComputation))
 
     val defaultTypeQualifiers: JavaTypeQualifiersByElementType? by delegateForDefaultTypeQualifiers
-
-    val moduleInfo get() = session.moduleInfo
 }
 
 fun extractDefaultNullabilityQualifier(

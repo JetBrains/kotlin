@@ -5,38 +5,26 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.*
 
 @OptIn(PrivateSessionConstructor::class)
 class FirJavaModuleBasedSession @PrivateSessionConstructor constructor(
-    moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider,
-) : FirModuleBasedSession(moduleInfo, sessionProvider) {
-    init {
-        sessionProvider.registerSession(moduleInfo, this)
-    }
-}
+) : FirModuleBasedSession(sessionProvider)
 
 @OptIn(PrivateSessionConstructor::class)
 class FirLibrarySession @PrivateSessionConstructor constructor(
-    override val moduleInfo: ModuleInfo,
-    sessionProvider: FirProjectSessionProvider,
-) : FirSession(sessionProvider) {
-    init {
-        sessionProvider.registerSession(moduleInfo, this)
-    }
-}
+    sessionProvider: FirProjectSessionProvider
+) : FirSession(sessionProvider)
 
-open class FirProjectSessionProvider : FirSessionProvider {
-    override fun getSession(moduleInfo: ModuleInfo): FirSession? {
-        return sessionCache[moduleInfo]
+open class FirProjectSessionProvider : FirSessionProvider() {
+    override fun getSession(moduleData: FirModuleData): FirSession? {
+        return sessionCache[moduleData]
     }
 
-    fun registerSession(moduleInfo: ModuleInfo, session: FirSession) {
-        sessionCache[moduleInfo] = session
+    fun registerSession(moduleData: FirModuleData, session: FirSession) {
+        sessionCache[moduleData] = session
     }
 
-    protected open val sessionCache: MutableMap<ModuleInfo, FirSession> = mutableMapOf()
+    protected open val sessionCache: MutableMap<FirModuleData, FirSession> = mutableMapOf()
 }

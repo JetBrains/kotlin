@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
@@ -27,8 +26,6 @@ abstract class FirSession @PrivateSessionConstructor constructor(val sessionProv
         }
     }
 
-    open val moduleInfo: ModuleInfo? get() = null
-
     val javaTypeEnhancementState: JavaTypeEnhancementState? get() = null
 
     open val builtinTypes: BuiltinTypes = BuiltinTypes()
@@ -41,8 +38,8 @@ abstract class FirSession @PrivateSessionConstructor constructor(val sessionProv
     }
 }
 
-interface FirSessionProvider {
-    fun getSession(moduleInfo: ModuleInfo): FirSession?
+abstract class FirSessionProvider {
+    abstract fun getSession(moduleData: FirModuleData): FirSession?
 }
 
 class BuiltinTypes {

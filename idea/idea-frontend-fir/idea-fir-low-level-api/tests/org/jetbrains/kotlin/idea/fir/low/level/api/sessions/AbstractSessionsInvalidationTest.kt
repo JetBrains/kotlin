@@ -11,6 +11,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.PsiTestUtil
 import junit.framework.Assert
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.TestProjectModule
@@ -19,11 +20,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.TestProjectStructureReader
 import org.jetbrains.kotlin.idea.fir.low.level.api.incModificationTracker
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import java.nio.file.Files
 import java.nio.file.Paths
-import kotlin.io.path.writeText
 
 abstract class AbstractSessionsInvalidationTest : AbstractMultiModuleTest() {
     override fun getTestDataPath(): String =
@@ -60,7 +58,7 @@ abstract class AbstractSessionsInvalidationTest : AbstractMultiModuleTest() {
         val sessionsAfterOOBM = storage.getFirSessions(rootModuleSourceInfo)
 
         val changedSessions = Sets.symmetricDifference(initialSessions, sessionsAfterOOBM)
-        val changedSessionsModulesNamesSorted = changedSessions.map { (it.moduleInfo as ModuleSourceInfo).module.name }.distinct().sorted()
+        val changedSessionsModulesNamesSorted = changedSessions.map { it.moduleData.moduleSourceInfo.module.name }.distinct().sorted()
 
         Assert.assertEquals(testStructure.expectedInvalidatedModules, changedSessionsModulesNamesSorted)
     }

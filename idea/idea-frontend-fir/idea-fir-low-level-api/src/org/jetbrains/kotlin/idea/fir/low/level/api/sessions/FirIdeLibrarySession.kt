@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
  */
 @OptIn(PrivateSessionConstructor::class)
 internal class FirIdeLibrariesSession @PrivateSessionConstructor constructor(
-    override val moduleInfo: ModuleInfo,
     override val project: Project,
     override val scope: GlobalSearchScope,
     builtinTypes: BuiltinTypes,

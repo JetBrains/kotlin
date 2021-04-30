@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
@@ -21,8 +22,11 @@ class FirIdeSessionProvider internal constructor(
     val project: Project,
     internal val rootModuleSession: FirIdeSourcesSession,
     val sessions: Map<ModuleSourceInfo, FirIdeSession>
-) : FirSessionProvider {
-    override fun getSession(moduleInfo: ModuleInfo): FirSession? =
+) : FirSessionProvider() {
+    override fun getSession(moduleData: FirModuleData): FirSession? =
+        sessions[moduleData.moduleSourceInfo]
+
+    fun getSession(moduleInfo: IdeaModuleInfo): FirSession? =
         sessions[moduleInfo]
 
     internal fun getModuleCache(moduleSourceInfo: ModuleSourceInfo): ModuleFileCache =

@@ -10,14 +10,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
-import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.java.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
@@ -28,6 +25,8 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.moduleInfoUnsafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.moduleSourceInfo
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -79,7 +78,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
             val psiManager = PsiManager.getInstance(project)
 
-            val ideaModuleInfo = session.moduleInfo.cast<IdeaModuleInfo>()
+            val ideaModuleInfo = session.moduleData.moduleInfoUnsafe<IdeaModuleInfo>()
 
             ideaModuleInfo.dependenciesWithoutSelf().forEach {
                 if (it is IdeaModuleInfo && it.isLibraryClasses()) {

@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.checkers.*
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.moduleSourceInfo
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 
@@ -36,7 +37,7 @@ private object CheckersFactory {
         reporter: DiagnosticReporter,
         useExtendedCheckers: Boolean
     ): List<AbstractDiagnosticCollectorComponent> {
-        val moduleInfo = session.moduleInfo as ModuleSourceInfo
+        val moduleInfo = session.moduleData.moduleSourceInfo
         val platform = moduleInfo.platform.componentPlatforms.single()
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform)
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers)

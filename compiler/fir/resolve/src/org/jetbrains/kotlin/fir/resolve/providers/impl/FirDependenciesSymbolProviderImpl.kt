@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -31,10 +29,10 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolPro
 
 
     protected open val dependencyProviders by lazy {
-        val moduleInfo = session.moduleInfo ?: return@lazy emptyList()
-        moduleInfo.dependenciesWithoutSelf().mapNotNull {
+        val moduleData = session.nullableModuleData ?: return@lazy emptyList()
+        moduleData.dependencies.mapNotNull {
             session.sessionProvider?.getSession(it)?.symbolProvider
-        }.toList()
+        }
     }
 
     @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)

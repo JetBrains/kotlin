@@ -9,12 +9,14 @@ import com.intellij.openapi.project.Project
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
-import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.BuiltinTypes
+import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.session.FirModuleInfoBasedModuleData
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.addValueFor
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import org.jetbrains.kotlin.idea.util.*
@@ -65,7 +67,7 @@ private class FromModuleViewSessionCache(
     private var mappings: PersistentMap<ModuleSourceInfo, FirSessionWithModificationTracker> = persistentMapOf()
 
     val sessionInvalidator: FirSessionInvalidator = FirSessionInvalidator { session ->
-        mappings[session.moduleInfo]?.invalidate()
+        mappings[session.moduleData.moduleSourceInfo]?.invalidate()
     }
 
 
@@ -104,7 +106,7 @@ private class FromModuleViewSessionCache(
         }
         return wasSessionInvalidated.entries
             .mapNotNull { (session, wasInvalidated) -> session.takeUnless { wasInvalidated } }
-            .associate { session -> session.firSession.moduleInfo to session.firSession }
+            .associate { session -> session.firSession.moduleData.moduleSourceInfo to session.firSession }
     }
 
     private fun <T> Collection<T>.reversedDependencies(getDependencies: (T) -> List<T>): Map<T, List<T>> {
@@ -121,7 +123,8 @@ private class FromModuleViewSessionCache(
 private class FirSessionWithModificationTracker(
     val firSession: FirIdeSourcesSession,
 ) {
-    private val modificationTracker = firSession.moduleInfo.module.createModuleWithoutDependenciesOutOfBlockModificationTracker()
+    private val modificationTracker =
+        firSession.moduleData.moduleSourceInfo.module.createModuleWithoutDependenciesOutOfBlockModificationTracker()
 
     private val timeStamp = modificationTracker.modificationCount
 
@@ -134,3 +137,9 @@ private class FirSessionWithModificationTracker(
 
     val isValid: Boolean get() = !isInvalidated && modificationTracker.modificationCount == timeStamp
 }
+
+val FirModuleData.moduleSourceInfo: ModuleSourceInfo
+    get() = moduleInfoUnsafe()
+
+inline fun <reified T : ModuleInfo> FirModuleData.moduleInfoUnsafe(): T = (this as FirModuleInfoBasedModuleData).moduleInfo as T
+inline fun <reified T : ModuleInfo> FirModuleData.moduleInfoSafe(): T? = (this as FirModuleInfoBasedModuleData).moduleInfo as? T

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirModuleVisibilityChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.containerSource
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
@@ -18,7 +19,7 @@ import java.nio.file.Paths
 
 class FirJvmModuleVisibilityChecker(private val session: FirSession) : FirModuleVisibilityChecker {
     override fun isInFriendModule(declaration: FirMemberDeclaration): Boolean {
-        val moduleInfo = session.moduleInfo as? FirJvmModuleInfo ?: return false
+        val moduleInfo = (session.moduleData as? FirModuleInfoBasedModuleData)?.moduleInfo as? FirJvmModuleInfo ?: return false
         val binaryClass = when (val source = declaration.containerSource) {
             is KotlinJvmBinarySourceElement -> source.binaryClass
             is JvmPackagePartSource -> source.knownJvmBinaryClass
