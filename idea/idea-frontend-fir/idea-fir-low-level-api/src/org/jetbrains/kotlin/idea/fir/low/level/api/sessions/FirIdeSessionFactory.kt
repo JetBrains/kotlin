@@ -74,8 +74,8 @@ internal object FirIdeSessionFactory {
         sessionsCache[moduleInfo] = session
 
 
-        return session.apply {
-            val moduleData = FirModuleInfoBasedModuleData(moduleInfo, this)
+        return session.apply session@{
+            val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
             registerModuleData(moduleData)
 
             val cache = ModuleFileCacheImpl(this)
@@ -107,7 +107,7 @@ internal object FirIdeSessionFactory {
                     this,
                     providers = listOf(
                         provider.symbolProvider,
-                        JavaSymbolProvider(this@apply, moduleData, project, searchScope),
+                        JavaSymbolProvider(this@session, moduleData, project, searchScope),
                     ),
                     dependentProviders = buildList {
                         add(
@@ -171,8 +171,8 @@ internal object FirIdeSessionFactory {
         val packagePartProvider = IDEPackagePartProvider(searchScope)
 
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
-        FirIdeLibrariesSession(moduleInfo, project, searchScope, builtinTypes).apply {
-            val moduleData = FirModuleInfoBasedModuleData(moduleInfo, this)
+        FirIdeLibrariesSession(moduleInfo, project, searchScope, builtinTypes).apply session@{
+            val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
 
             registerIdeComponents()
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
@@ -216,15 +216,16 @@ internal object FirIdeSessionFactory {
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         configureSession: (FirIdeSession.() -> Unit)? = null,
     ): FirIdeBuiltinsAndCloneableSession {
-        return FirIdeBuiltinsAndCloneableSession(project, builtinTypes).apply {
+        return FirIdeBuiltinsAndCloneableSession(project, builtinTypes).apply session@{
             val moduleData = FirModuleDataImpl(
                 Name.special("<builtins module>"),
                 emptyList(),
                 emptyList(),
                 emptyList(),
-                JvmPlatforms.unspecifiedJvmPlatform,
-                this
-            )
+                JvmPlatforms.unspecifiedJvmPlatform
+            ).apply {
+                bindSession(this@session)
+            }
             registerIdeComponents()
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
             registerCommonComponents(languageVersionSettings)

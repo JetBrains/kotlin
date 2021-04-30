@@ -7,27 +7,23 @@ package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
-class FirModuleInfoBasedModuleData(
-    val moduleInfo: ModuleInfo,
-    override val session: FirSession
-) : FirModuleData() {
+class FirModuleInfoBasedModuleData(val moduleInfo: ModuleInfo) : FirModuleData() {
     override val name: Name
         get() = moduleInfo.name
     override val dependencies: List<FirModuleData> = moduleInfo.dependencies()
         .filterNot { it == moduleInfo }
-        .map { FirModuleInfoBasedModuleData(it, session) }
+        .map { FirModuleInfoBasedModuleData(it) }
 
     override val dependsOnDependencies: List<FirModuleData> = moduleInfo.expectedBy
         .filterNot { it == moduleInfo }
-        .map { FirModuleInfoBasedModuleData(it, session) }
+        .map { FirModuleInfoBasedModuleData(it) }
 
     override val friendDependencies: List<FirModuleData> = moduleInfo.modulesWhoseInternalsAreVisible()
         .filterNot { it == moduleInfo }
-        .map { FirModuleInfoBasedModuleData(it, session) }
+        .map { FirModuleInfoBasedModuleData(it) }
     override val platform: TargetPlatform
         get() = moduleInfo.platform
 

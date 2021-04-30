@@ -14,7 +14,17 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val dependsOnDependencies: List<FirModuleData>
     abstract val friendDependencies: List<FirModuleData>
     abstract val platform: TargetPlatform
-    abstract val session: FirSession
+
+    private var _session: FirSession? = null
+    val session: FirSession
+        get() = _session!!
+
+    fun bindSession(session: FirSession) {
+        if (_session != null) {
+            error("session already bound to $this")
+        }
+        _session = session
+    }
 }
 
 class FirModuleDataImpl(
@@ -22,8 +32,7 @@ class FirModuleDataImpl(
     override val dependencies: List<FirModuleData>,
     override val dependsOnDependencies: List<FirModuleData>,
     override val friendDependencies: List<FirModuleData>,
-    override val platform: TargetPlatform,
-    override val session: FirSession,
+    override val platform: TargetPlatform
 ) : FirModuleData()
 
 val FirSession.moduleData: FirModuleData by FirSession.sessionComponentAccessor()
