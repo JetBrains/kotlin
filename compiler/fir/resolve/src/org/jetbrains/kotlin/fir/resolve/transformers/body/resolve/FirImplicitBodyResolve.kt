@@ -58,6 +58,7 @@ fun <F : FirClassLikeDeclaration<F>> F.runContractAndBodiesResolutionForLocalCla
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
     localClassesNavigationInfo: LocalClassesNavigationInfo,
+    firTowerDataContextCollector: FirTowerDataContextCollector? = null
 ): F {
     val (designationMap, targetedClasses) = localClassesNavigationInfo.run {
         designationMap to parentForClass.keys + this@runContractAndBodiesResolutionForLocalClass
@@ -85,7 +86,8 @@ fun <F : FirClassLikeDeclaration<F>> F.runContractAndBodiesResolutionForLocalCla
         FirResolvePhase.BODY_RESOLVE,
         implicitTypeOnly = false,
         returnTypeCalculator,
-        outerBodyResolveContext = newContext
+        outerBodyResolveContext = newContext,
+        firTowerDataContextCollector = firTowerDataContextCollector
     )
 
     val graphBuilder = components.context.dataFlowAnalyzerContext.graphBuilder
@@ -124,14 +126,16 @@ open class FirImplicitAwareBodyResolveTransformer(
     phase: FirResolvePhase,
     implicitTypeOnly: Boolean,
     returnTypeCalculator: ReturnTypeCalculator,
-    outerBodyResolveContext: BodyResolveContext? = null
+    outerBodyResolveContext: BodyResolveContext? = null,
+    firTowerDataContextCollector: FirTowerDataContextCollector? = null,
 ) : FirBodyResolveTransformer(
     session,
     phase,
     implicitTypeOnly,
     scopeSession,
     returnTypeCalculator,
-    outerBodyResolveContext
+    outerBodyResolveContext,
+    firTowerDataContextCollector
 ) {
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,

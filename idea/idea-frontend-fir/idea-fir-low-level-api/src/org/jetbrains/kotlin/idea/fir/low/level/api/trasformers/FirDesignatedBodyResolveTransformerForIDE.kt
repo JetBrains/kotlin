@@ -9,22 +9,21 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 
 internal class FirDesignatedBodyResolveTransformerForIDE(
     private val firFile: FirFile,
     designation: FirDeclarationDesignation,
     session: FirSession,
     scopeSession: ScopeSession,
-    private val towerDataContextCollector: FirTowerDataContextCollector? = null
+    towerDataContextCollector: FirTowerDataContextCollector? = null
 ) : FirLazyTransformerForIDE, FirBodyResolveTransformer(
     session,
     phase = FirResolvePhase.BODY_RESOLVE,
@@ -35,7 +34,8 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         scopeSession,
         ImplicitBodyResolveComputationSession(),
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
-    )
+    ),
+    firTowerDataContextCollector = towerDataContextCollector
 ) {
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation.toDesignationIterator())
 
@@ -44,18 +44,6 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) { declaration, data ->
             super.transformDeclarationContent(declaration, data)
         }
-
-    override fun onBeforeFileContentResolution(file: FirFile) {
-        towerDataContextCollector?.addFileContext(file, context.towerDataContext)
-    }
-
-    override fun onBeforeDeclarationContentResolve(declaration: FirDeclaration) {
-        towerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
-    }
-
-    override fun onBeforeStatementResolution(statement: FirStatement) {
-        towerDataContextCollector?.addStatementContext(statement, context.towerDataContext)
-    }
 
     override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
         ideDeclarationTransformer.needReplacePhase(firDeclaration)

@@ -30,7 +30,8 @@ open class FirBodyResolveTransformer(
     override var implicitTypeOnly: Boolean,
     scopeSession: ScopeSession,
     val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve(),
-    outerBodyResolveContext: BodyResolveContext? = null
+    outerBodyResolveContext: BodyResolveContext? = null,
+    val firTowerDataContextCollector: FirTowerDataContextCollector? = null
 ) : FirAbstractBodyResolveTransformer(phase) {
 
     final override val context: BodyResolveContext =
@@ -47,7 +48,7 @@ open class FirBodyResolveTransformer(
     override fun transformFile(file: FirFile, data: ResolutionMode): FirFile {
         checkSessionConsistency(file)
         return context.withFile(file, components) {
-            onBeforeFileContentResolution(file)
+            firTowerDataContextCollector?.addFileContext(file, context.towerDataContext)
 
             file.replaceResolvePhase(transformerPhase)
             @Suppress("UNCHECKED_CAST")
@@ -76,12 +77,6 @@ open class FirBodyResolveTransformer(
             return implicitTypeRef
         return data.expectedTypeRef
     }
-
-    open fun onBeforeFileContentResolution(file: FirFile) {}
-
-    open fun onBeforeStatementResolution(statement: FirStatement) {}
-
-    open fun onBeforeDeclarationContentResolve(declaration: FirDeclaration) {}
 
     // ------------------------------------- Expressions -------------------------------------
 

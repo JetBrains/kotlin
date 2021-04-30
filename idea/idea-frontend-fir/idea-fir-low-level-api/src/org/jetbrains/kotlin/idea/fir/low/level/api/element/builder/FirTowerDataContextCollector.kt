@@ -11,17 +11,12 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.psi.*
 
 interface FirTowerContextProvider {
     fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext?
-}
-
-interface FirTowerDataContextCollector {
-    fun addFileContext(file: FirFile, context: FirTowerDataContext)
-    fun addStatementContext(statement: FirStatement, context: FirTowerDataContext)
-    fun addDeclarationContext(declaration: FirDeclaration, context: FirTowerDataContext)
 }
 
 internal class SingleElementTowerProvider(
