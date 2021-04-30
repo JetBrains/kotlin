@@ -12639,6 +12639,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("labaledCall.kt")
+                public void testLabaledCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/labaledCall.kt");
+                }
+
+                @Test
                 @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
                 public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
