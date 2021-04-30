@@ -1,0 +1,10 @@
+package test.pkg
+
+public final class Test {
+    public final fun test1() : void {
+    }
+    public fun Test() = UastEmptyExpression
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "nothing")
+    fun test2() : void {
+    }
+}

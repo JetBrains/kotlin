@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 inline fun <T> function1(t: T, i: Int, s: String) {}
 inline fun <T> function2(t: T, i: Int, s: String): T = t
 inline fun <T : CharSequence> function2CharSequence(t: T, i: Int, s: String): T = t

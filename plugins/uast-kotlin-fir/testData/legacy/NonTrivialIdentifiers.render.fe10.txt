@@ -1,0 +1,20 @@
+public final class NonTrivialIdentifiersKt {
+    public static final fun main(@org.jetbrains.annotations.Nullable a: A) : void {
+        invoke()
+        var p: A = <init>()
+        invoke({
+            invoke({
+                invoke()
+            })
+        })
+    }
+}
+
+public final class A {
+    public final fun invoke() : void {
+        invoke()
+    }
+    public final fun invoke(@org.jetbrains.annotations.NotNull f: kotlin.jvm.functions.Function0<kotlin.Unit>) : void {
+    }
+    public fun A() = UastEmptyExpression
+}

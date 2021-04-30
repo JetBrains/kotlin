@@ -1,0 +1,32 @@
+UFile (package = test.pkg)
+    UClass (name = SuspendKt)
+        UMethod (name = top)
+            UParameter (name = $completion)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UQualifiedReferenceExpression
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
+                            UIdentifier (Identifier (Context))
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Context)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                            UIdentifier (Identifier (inner))
+                            USimpleNameReferenceExpression (identifier = inner, resolvesTo = null)
+    UClass (name = Context)
+        UMethod (name = inner)
+            UParameter (name = $completion)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (suspendPrivate))
+                        USimpleNameReferenceExpression (identifier = suspendPrivate, resolvesTo = null)
+        UMethod (name = suspendPrivate)
+            UParameter (name = $completion)
+                UAnnotation (fqName = null)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (inner))
+                        USimpleNameReferenceExpression (identifier = inner, resolvesTo = null)
+        UMethod (name = Context)

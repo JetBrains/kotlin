@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 package test.pkg
 
 class Context {

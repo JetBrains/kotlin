@@ -1,0 +1,50 @@
+UFile (package = )
+    UClass (name = ReifiedResolveKt)
+        UMethod (name = bar)
+            UParameter (name = init)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                ULambdaExpression
+                    UBlockExpression
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (TODO))
+                    USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null)
+                    ULiteralExpression (value = "message")
+        UMethod (name = resolve)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UIdentifier (Identifier (foo))
+                    USimpleNameReferenceExpression (identifier = foo, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                            UIdentifier (Identifier (foo))
+                            USimpleNameReferenceExpression (identifier = foo, resolvesTo = null)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UIdentifier (Identifier (bar))
+                    USimpleNameReferenceExpression (identifier = bar, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = y)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                            UIdentifier (Identifier (bar))
+                            USimpleNameReferenceExpression (identifier = bar, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = z)
+                        UQualifiedReferenceExpression
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                UIdentifier (Identifier (listOf))
+                                USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
+                                ULiteralExpression (value = "foo")
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                UIdentifier (Identifier (filterIsInstance))
+                                USimpleNameReferenceExpression (identifier = filterIsInstance, resolvesTo = null)
+        UMethod (name = foo)
+            UParameter (name = init)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                ULambdaExpression
+                    UBlockExpression
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (TODO))
+                    USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null)
+                    ULiteralExpression (value = "message")

@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 interface Base {
     fun print()
 }

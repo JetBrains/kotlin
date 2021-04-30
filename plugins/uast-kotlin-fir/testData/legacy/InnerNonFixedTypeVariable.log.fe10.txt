@@ -1,0 +1,22 @@
+UFile (package = )
+    UClass (name = InnerNonFixedTypeVariableKt)
+        UMethod (name = test)
+            UParameter (name = list)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UQualifiedReferenceExpression
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = list)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                            UIdentifier (Identifier (filterIsInstance))
+                            USimpleNameReferenceExpression (identifier = filterIsInstance, resolvesTo = null)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2))
+                        UIdentifier (Identifier (mapTo))
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                            UIdentifier (Identifier (mutableSetOf))
+                            USimpleNameReferenceExpression (identifier = mutableSetOf, resolvesTo = null)
+                        ULambdaExpression
+                            UBlockExpression
+    UClass (name = Some)
+        UMethod (name = Some)

@@ -1,0 +1,44 @@
+UFile (package = test.pkg)
+    UClass (name = ReifiedKt)
+        UMethod (name = systemService2)
+            UParameter (name = $this$systemService2)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (getSystemService))
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                        UQualifiedReferenceExpression
+                            UClassLiteralExpression
+                            USimpleNameReferenceExpression (identifier = java)
+        UMethod (name = systemService1)
+            UParameter (name = $this$systemService1)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (getSystemService))
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                        UQualifiedReferenceExpression
+                            UClassLiteralExpression
+                            USimpleNameReferenceExpression (identifier = java)
+    UClass (name = Context)
+        UMethod (name = ownSystemService2)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (getSystemService))
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                        UQualifiedReferenceExpression
+                            UClassLiteralExpression
+                            USimpleNameReferenceExpression (identifier = java)
+        UMethod (name = Context)
+        UMethod (name = ownSystemService1)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (getSystemService))
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                        UQualifiedReferenceExpression
+                            UClassLiteralExpression
+                            USimpleNameReferenceExpression (identifier = java)

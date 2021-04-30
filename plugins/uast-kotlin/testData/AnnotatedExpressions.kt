@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 fun foo() {
 
     @Suppress

@@ -1,0 +1,18 @@
+UFile (package = )
+    UClass (name = InferenceInsideUnresolvedConstructorKt)
+        UMethod (name = getBar)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (Unresolved))
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                            UIdentifier (Identifier (id))
+                            USimpleNameReferenceExpression (identifier = id, resolvesTo = null)
+                            ULiteralExpression (value = 42)
+        UMethod (name = id)
+            UParameter (name = x)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = x)

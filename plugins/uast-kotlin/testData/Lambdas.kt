@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 import java.util.stream.Stream
 
 fun foo() {

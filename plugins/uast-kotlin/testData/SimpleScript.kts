@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 println("Hello World!")
 
 fun getBarOrNull(flag: Boolean): Bar? {

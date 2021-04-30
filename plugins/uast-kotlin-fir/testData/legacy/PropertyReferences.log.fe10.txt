@@ -1,0 +1,82 @@
+UFile (package = )
+    UClass (name = PropertyReferencesKt)
+        UMethod (name = properties)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = a)
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
+                            UIdentifier (Identifier (A))
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A)
+                            ULiteralExpression (value = 17)
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        UPrefixExpression (operator = -)
+                            UQualifiedReferenceExpression
+                                USimpleNameReferenceExpression (identifier = a)
+                                USimpleNameReferenceExpression (identifier = mutableProp)
+                UBinaryExpression (operator = =)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = a)
+                        USimpleNameReferenceExpression (identifier = mutableProp)
+                    ULiteralExpression (value = 1)
+                UBinaryExpression (operator = +=)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = a)
+                        USimpleNameReferenceExpression (identifier = mutableProp)
+                    USimpleNameReferenceExpression (identifier = x)
+                UPrefixExpression (operator = ++)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = a)
+                        USimpleNameReferenceExpression (identifier = mutableProp)
+                UPostfixExpression (operator = --)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = a)
+                        USimpleNameReferenceExpression (identifier = mutableProp)
+        UMethod (name = ext)
+            UParameter (name = $this$ext)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        UPrefixExpression (operator = -)
+                            USimpleNameReferenceExpression (identifier = mutableProp)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = mutableProp)
+                    ULiteralExpression (value = 1)
+                UBinaryExpression (operator = +=)
+                    USimpleNameReferenceExpression (identifier = mutableProp)
+                    USimpleNameReferenceExpression (identifier = x)
+                UPrefixExpression (operator = ++)
+                    USimpleNameReferenceExpression (identifier = mutableProp)
+                UPostfixExpression (operator = --)
+                    USimpleNameReferenceExpression (identifier = mutableProp)
+    UClass (name = A)
+        UField (name = privateProp)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            ULiteralExpression (value = 0)
+        UField (name = mutableProp)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+        UMethod (name = getMutableProp)
+        UMethod (name = setMutableProp)
+            UParameter (name = mutableProp)
+                UAnnotation (fqName = null)
+        UMethod (name = add)
+            UParameter (name = x)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = result)
+                        USimpleNameReferenceExpression (identifier = privateProp)
+                UBinaryExpression (operator = =)
+                    USimpleNameReferenceExpression (identifier = privateProp)
+                    USimpleNameReferenceExpression (identifier = x)
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = privateProp)
+        UMethod (name = A)
+            UParameter (name = init)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UBlockExpression
+                    UBinaryExpression (operator = =)
+                        USimpleNameReferenceExpression (identifier = mutableProp)
+                        USimpleNameReferenceExpression (identifier = init)

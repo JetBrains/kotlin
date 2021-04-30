@@ -1,0 +1,30 @@
+public final class AnnotatedExpressionsKt {
+    public static final fun foo() : void {
+        foo()
+        @kotlin.Suppress var a: int = 1
+        @kotlin.Suppress var b: int = 2
+        b = a
+        if (a > 2) a else b
+        var c: int = elvis {
+            var varae5075f4: int = a
+            if (varae5075f4 != null) varae5075f4 else b
+        }
+    }
+    public static final fun annotatedSwitch(@org.jetbrains.annotations.NotNull str: java.lang.String) : java.lang.Integer {
+        return switch  {
+            str.isBlank() -> {
+                yield null
+            }
+
+            str.isNotEmpty() != null -> {
+                yield null
+            }
+
+             -> {
+                yield 1
+            }
+
+        }
+
+    }
+}

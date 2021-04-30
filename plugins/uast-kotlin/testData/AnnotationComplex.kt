@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 annotation class Annotation(vararg val strings: String)
 
 @Annotation

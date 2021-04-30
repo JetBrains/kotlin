@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 open class A {
     fun foo() {}
     inline fun inlineFoo() {

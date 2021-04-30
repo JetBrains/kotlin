@@ -200,7 +200,9 @@ import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeLi
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
 import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationPluginIdeDiagnosticTest
 import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationQuickFixTest
+import org.jetbrains.uast.test.kotlin.AbstractFE1LegacyUastDeclarationTest
 import org.jetbrains.uast.test.kotlin.AbstractFE1UastDeclarationTest
+import org.jetbrains.uast.test.kotlin.AbstractFirLegacyUastDeclarationTest
 import org.jetbrains.uast.test.kotlin.AbstractFirUastDeclarationTest
 
 fun main(args: Array<String>) {
@@ -1847,14 +1849,24 @@ fun main(args: Array<String>) {
         testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin-fir/testData") {
             testClass<AbstractFirUastDeclarationTest> {
                 model("declaration")
-                model("legacy")
+            }
+        }
+
+        testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin/testData") {
+            testClass<AbstractFirLegacyUastDeclarationTest> {
+                model("")
             }
         }
 
         testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin-fir/testData") {
             testClass<AbstractFE1UastDeclarationTest> {
                 model("declaration")
-                model("legacy")
+            }
+        }
+
+        testGroup("plugins/uast-kotlin-fir/tests", "plugins/uast-kotlin/testData") {
+            testClass<AbstractFE1LegacyUastDeclarationTest> {
+                model("")
             }
         }
 

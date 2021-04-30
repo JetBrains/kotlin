@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 interface Callback {
     fun onError(throwable: Throwable)
 }

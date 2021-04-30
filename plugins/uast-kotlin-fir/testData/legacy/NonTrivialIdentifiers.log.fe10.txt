@@ -1,0 +1,38 @@
+UFile (package = )
+    UClass (name = NonTrivialIdentifiersKt)
+        UMethod (name = main)
+            UParameter (name = a)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UIdentifier (Identifier (())
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = p)
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
+                            UIdentifier (Identifier (A))
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier ({))
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+                    ULambdaExpression
+                        UBlockExpression
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                UIdentifier (Identifier (p))
+                                USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+                                ULambdaExpression
+                                    UBlockExpression
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                            UIdentifier (Identifier (())
+                                            USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+    UClass (name = A)
+        UMethod (name = invoke)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UIdentifier (Identifier (())
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+        UMethod (name = invoke)
+            UParameter (name = f)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+        UMethod (name = A)

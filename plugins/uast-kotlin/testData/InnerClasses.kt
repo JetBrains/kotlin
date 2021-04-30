@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 class Foo {
     class Bar(val a: Int, val b: Int) {
         fun getAPlusB() = a + b

@@ -1,0 +1,31 @@
+public final class BrokenMethodKt {
+    public static final fun main(@org.jetbrains.annotations.NotNull args: java.lang.String[]) : void {
+        public static final class TestUsed {
+            @org.jetbrains.annotations.NotNull private final var parameter: java.lang.CharSequence
+            public final fun getParameter() : java.lang.CharSequence = UastEmptyExpression
+            public fun TestUsed(@org.jetbrains.annotations.NotNull parameter: java.lang.CharSequence) = UastEmptyExpression
+            public final fun component1() : java.lang.CharSequence = UastEmptyExpression
+            public final fun copy(@org.jetbrains.annotations.NotNull parameter: java.lang.CharSequence) : TestUsed = UastEmptyExpression
+            public fun toString() : java.lang.String = UastEmptyExpression
+            public fun hashCode() : int = UastEmptyExpression
+            public fun equals(@org.jetbrains.annotations.Nullable other: java.lang.Object) : boolean = UastEmptyExpression
+            private static final class Used {
+                @null public static final var Companion: Companion
+                @org.jetbrains.annotations.NotNull private final var parameter: java.lang.Object
+                public final fun getParameter() : java.lang.Object = UastEmptyExpression
+                public fun Used(@org.jetbrains.annotations.NotNull parameter: java.lang.Object) = UastEmptyExpression
+                public final fun component1() : java.lang.Object = UastEmptyExpression
+                public final fun copy(@org.jetbrains.annotations.NotNull parameter: java.lang.Object) : Used = UastEmptyExpression
+                public fun toString() : java.lang.String = UastEmptyExpression
+                public fun hashCode() : int = UastEmptyExpression
+                public fun equals(@org.jetbrains.annotations.Nullable other: java.lang.Object) : boolean = UastEmptyExpression
+                public static final class Companion {
+                    public final fun doStuff1(@org.jetbrains.annotations.NotNull $this$doStuff1: java.lang.Object) : Used {
+                        return <init>(this)
+                    }
+                    private fun Companion() = UastEmptyExpression
+                }
+            }
+        }
+    }
+}

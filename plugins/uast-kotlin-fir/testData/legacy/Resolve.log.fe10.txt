@@ -1,0 +1,147 @@
+UFile (package = )
+    UClass (name = ResolveKt)
+        UMethod (name = bar)
+            UBlockExpression
+                UQualifiedReferenceExpression
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
+                        UIdentifier (Identifier (A))
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (foo))
+                        USimpleNameReferenceExpression (identifier = foo, resolvesTo = null)
+                UQualifiedReferenceExpression
+                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
+                        UIdentifier (Identifier (A))
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (inlineFoo))
+                        USimpleNameReferenceExpression (identifier = inlineFoo, resolvesTo = null)
+                UQualifiedReferenceExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (listOf))
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
+                            UIdentifier (Identifier (A))
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (forEach))
+                        USimpleNameReferenceExpression (identifier = forEach, resolvesTo = null)
+                        ULambdaExpression
+                            UParameter (name = it)
+                            UBlockExpression
+                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                    UIdentifier (Identifier (println))
+                                    USimpleNameReferenceExpression (identifier = println, resolvesTo = null)
+                                    USimpleNameReferenceExpression (identifier = it)
+                UQualifiedReferenceExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (listOf))
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
+                        ULiteralExpression (value = "")
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (joinToString))
+                        USimpleNameReferenceExpression (identifier = joinToString, resolvesTo = null)
+                UQualifiedReferenceExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (listOf))
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
+                        ULiteralExpression (value = "")
+                    USimpleNameReferenceExpression (identifier = size)
+                UQualifiedReferenceExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (listOf))
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
+                        ULiteralExpression (value = "")
+                    USimpleNameReferenceExpression (identifier = indices)
+                UDeclarationsExpression
+                    ULocalVariable (name = date)
+                        UQualifiedReferenceExpression
+                            UQualifiedReferenceExpression
+                                USimpleNameReferenceExpression (identifier = java)
+                                USimpleNameReferenceExpression (identifier = util)
+                            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
+                                UIdentifier (Identifier (Date))
+                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Date)
+                UBinaryExpression (operator = =)
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = date)
+                        USimpleNameReferenceExpression (identifier = time)
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                UIdentifier (Identifier (time))
+                                ULiteralExpression (value = 1000)
+                    ULiteralExpression (value = 1000)
+                UQualifiedReferenceExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (listOf))
+                        USimpleNameReferenceExpression (identifier = listOf, resolvesTo = null)
+                        ULiteralExpression (value = "")
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (last))
+                        USimpleNameReferenceExpression (identifier = last, resolvesTo = null)
+                UQualifiedReferenceExpression
+                    UQualifiedReferenceExpression
+                        UQualifiedReferenceExpression
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                UIdentifier (Identifier (mutableMapOf))
+                                USimpleNameReferenceExpression (identifier = mutableMapOf, resolvesTo = null)
+                                UBinaryExpression (operator = <other>)
+                                    ULiteralExpression (value = 1)
+                                    ULiteralExpression (value = "1")
+                            USimpleNameReferenceExpression (identifier = entries)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                            UIdentifier (Identifier (first))
+                            USimpleNameReferenceExpression (identifier = first, resolvesTo = null)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (setValue))
+                        USimpleNameReferenceExpression (identifier = setValue, resolvesTo = null)
+                        ULiteralExpression (value = "123")
+                UDeclarationsExpression
+                    ULocalVariable (name = intRange)
+                        UBinaryExpression (operator = ..)
+                            ULiteralExpression (value = 0)
+                            ULiteralExpression (value = 3)
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = intRange)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (contains))
+                        USimpleNameReferenceExpression (identifier = contains, resolvesTo = null)
+                        UBinaryExpressionWithType
+                            ULiteralExpression (value = 2)
+                            UTypeReferenceExpression (name = int)
+                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 2))
+                    UIdentifier (Identifier (IntRange))
+                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: IntRange)
+                    ULiteralExpression (value = 1)
+                    ULiteralExpression (value = 2)
+        UMethod (name = barT)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = t)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (foo))
+                        USimpleNameReferenceExpression (identifier = foo, resolvesTo = null)
+        UMethod (name = barTL)
+            UParameter (name = listT)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = listT)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (isEmpty))
+                        USimpleNameReferenceExpression (identifier = isEmpty, resolvesTo = null)
+                UForEachExpression
+                    USimpleNameReferenceExpression (identifier = listT)
+                    UBlockExpression
+                        UQualifiedReferenceExpression
+                            USimpleNameReferenceExpression (identifier = a)
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                UIdentifier (Identifier (foo))
+                                USimpleNameReferenceExpression (identifier = foo, resolvesTo = null)
+    UClass (name = A)
+        UMethod (name = foo)
+            UBlockExpression
+        UMethod (name = inlineFoo)
+            UBlockExpression
+        UMethod (name = A)

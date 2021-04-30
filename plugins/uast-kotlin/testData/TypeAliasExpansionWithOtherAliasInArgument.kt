@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 typealias A = String
 typealias My = (Map<A, Int>) -> Unit
 

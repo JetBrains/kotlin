@@ -1,0 +1,74 @@
+UFile (package = )
+    UClass (name = AnnotatedExpressionsKt)
+        UMethod (name = foo)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UAnnotation (fqName = kotlin.Suppress)
+                    UIdentifier (Identifier (foo))
+                    USimpleNameReferenceExpression (identifier = foo, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = a)
+                        UAnnotation (fqName = kotlin.Suppress)
+                        ULiteralExpression (value = 1)
+                UDeclarationsExpression
+                    ULocalVariable (name = b)
+                        UAnnotation (fqName = kotlin.Suppress)
+                        ULiteralExpression (value = 2)
+                UBinaryExpression (operator = =)
+                    UAnnotation (fqName = kotlin.Suppress)
+                    USimpleNameReferenceExpression (identifier = b)
+                    USimpleNameReferenceExpression (identifier = a)
+                UIfExpression
+                    UAnnotation (fqName = kotlin.Suppress)
+                    UBinaryExpression (operator = >)
+                        USimpleNameReferenceExpression (identifier = a)
+                        ULiteralExpression (value = 2)
+                    USimpleNameReferenceExpression (identifier = a)
+                    USimpleNameReferenceExpression (identifier = b)
+                UDeclarationsExpression
+                    ULocalVariable (name = c)
+                        UExpressionList (elvis)
+                            UDeclarationsExpression
+                                ULocalVariable (name = varae5075f4)
+                                    USimpleNameReferenceExpression (identifier = a)
+                                        UAnnotation (fqName = kotlin.Suppress)
+                            UIfExpression
+                                UBinaryExpression (operator = !=)
+                                    USimpleNameReferenceExpression (identifier = varae5075f4)
+                                    ULiteralExpression (value = null)
+                                USimpleNameReferenceExpression (identifier = varae5075f4)
+                                USimpleNameReferenceExpression (identifier = b)
+        UMethod (name = annotatedSwitch)
+            UParameter (name = str)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USwitchExpression
+                        UExpressionList (when)
+                            USwitchClauseExpressionWithBody
+                                UQualifiedReferenceExpression
+                                    UAnnotation (fqName = kotlin.Suppress)
+                                        UNamedExpression (name = names)
+                                            ULiteralExpression (value = "DEPRECATION")
+                                    USimpleNameReferenceExpression (identifier = str)
+                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                        UIdentifier (Identifier (isBlank))
+                                        USimpleNameReferenceExpression (identifier = isBlank, resolvesTo = null)
+                                UExpressionList (when_entry)
+                                    UYieldExpression
+                                        ULiteralExpression (value = null)
+                            USwitchClauseExpressionWithBody
+                                UBinaryExpression (operator = !=)
+                                    UQualifiedReferenceExpression
+                                        USimpleNameReferenceExpression (identifier = str)
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                            UIdentifier (Identifier (isNotEmpty))
+                                            USimpleNameReferenceExpression (identifier = isNotEmpty, resolvesTo = null)
+                                    ULiteralExpression (value = null)
+                                UExpressionList (when_entry)
+                                    UYieldExpression
+                                        ULiteralExpression (value = null)
+                            USwitchClauseExpressionWithBody
+                                UExpressionList (when_entry)
+                                    UYieldExpression
+                                        ULiteralExpression (value = 1)

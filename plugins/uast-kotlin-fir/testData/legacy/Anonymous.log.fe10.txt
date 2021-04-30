@@ -1,0 +1,59 @@
+UFile (package = )
+    UImportStatement (isOnDemand = false)
+    UImportStatement (isOnDemand = false)
+    UClass (name = AnonymousKt)
+        UMethod (name = foo)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = runnable)
+                        UObjectLiteralExpression
+                            UClass (name = null)
+                                UMethod (name = run)
+                                    UBlockExpression
+                                UMethod (name = )
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = runnable)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (run))
+                        USimpleNameReferenceExpression (identifier = run, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = runnable2)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                            UIdentifier (Identifier (Runnable))
+                            USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable)
+                            ULambdaExpression
+                                UBlockExpression
+                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                        UIdentifier (Identifier (println))
+                                        USimpleNameReferenceExpression (identifier = println, resolvesTo = null)
+                UQualifiedReferenceExpression
+                    USimpleNameReferenceExpression (identifier = runnable2)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (run))
+                        USimpleNameReferenceExpression (identifier = run, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = closeableRunnable)
+                        UObjectLiteralExpression
+                            UClass (name = null)
+                                UMethod (name = close)
+                                    UBlockExpression
+                                UMethod (name = run)
+                                    UBlockExpression
+                                UMethod (name = )
+                UDeclarationsExpression
+                    ULocalVariable (name = runnableIs)
+                        UObjectLiteralExpression
+                            UClass (name = null)
+                                UMethod (name = read)
+                                    UBlockExpression
+                                        UReturnExpression
+                                            ULiteralExpression (value = 0)
+                                UMethod (name = run)
+                                    UBlockExpression
+                                UMethod (name = )
+        UMethod (name = withErr)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = runnable)
+                        UObjectLiteralExpression
+                            UClass (name = <invalid object code>)

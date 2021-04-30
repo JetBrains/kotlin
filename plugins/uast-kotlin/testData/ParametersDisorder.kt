@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 fun global(a: Int, b: Float) {}
 
 fun withDefault(c: Int = 1, d: String = "aaa") {}

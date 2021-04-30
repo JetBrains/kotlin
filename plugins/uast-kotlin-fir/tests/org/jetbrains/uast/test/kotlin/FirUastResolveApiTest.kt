@@ -27,7 +27,7 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
         // Bogus
     }
 
-    @TestMetadata("plugins/uast-kotlin-fir/testData/legacy")
+    @TestMetadata("plugins/uast-kotlin/testData")
     @TestDataPath("\$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners::class)
     class Legacy : AbstractFirUastTest() {
@@ -39,7 +39,7 @@ class FirUastResolveApiTest : AbstractFirUastTest() {
 
         @TestMetadata("Imports.kt")
         fun testImports() {
-            doCheck("plugins/uast-kotlin-fir/testData/legacy/Imports.kt") { _, uFile ->
+            doCheck("plugins/uast-kotlin/testData/Imports.kt") { _, uFile ->
                 uFile.imports.forEach { uImport ->
                     val resolvedImport = uImport.resolve()
                         ?: throw IllegalStateException("Unresolved import: ${uImport.asRenderString()}")

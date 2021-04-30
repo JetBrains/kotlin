@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 inline fun <reified T : Any> foo(init: T.() -> Unit = {}): T {
     TODO("message")
 }

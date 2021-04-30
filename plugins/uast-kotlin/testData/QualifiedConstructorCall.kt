@@ -1,3 +1,5 @@
+// !IGNORE_FIR
+
 package A.B.C
 
 internal class Foo

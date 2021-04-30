@@ -1,0 +1,34 @@
+public final class PropertyReferencesKt {
+    public static final fun properties() : void {
+        var a: A = <init>(17)
+        var x: int = -a.mutableProp
+        a.mutableProp = 1
+        a.mutableProp += x
+        ++a.mutableProp
+        a.mutableProp--
+    }
+    public static final fun ext(@org.jetbrains.annotations.NotNull $this$ext: A) : void {
+        var x: int = -mutableProp
+        mutableProp = 1
+        mutableProp += x
+        ++mutableProp
+        mutableProp--
+    }
+}
+
+public final class A {
+    @org.jetbrains.annotations.NotNull private var privateProp: int = 0
+    @org.jetbrains.annotations.NotNull private var mutableProp: int
+    public final fun getMutableProp() : int = UastEmptyExpression
+    public final fun setMutableProp(@null mutableProp: int) : void = UastEmptyExpression
+    public final fun add(@org.jetbrains.annotations.NotNull x: int) : int {
+        var result: int = privateProp
+        privateProp = x
+        return privateProp
+    }
+    public fun A(@org.jetbrains.annotations.NotNull init: int) {
+        {
+            mutableProp = init
+        }
+    }
+}

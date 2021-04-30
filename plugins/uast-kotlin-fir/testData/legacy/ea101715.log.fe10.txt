@@ -1,0 +1,14 @@
+UFile (package = )
+    UClass (name = Ea101715Kt)
+        UMethod (name = a)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = a)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                            UIdentifier (Identifier (Obj))
+                            USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                            ULiteralExpression (value = 555)
+    UClass (name = Obj)
+        UField (name = INSTANCE)
+            UAnnotation (fqName = null)
+        UMethod (name = Obj)

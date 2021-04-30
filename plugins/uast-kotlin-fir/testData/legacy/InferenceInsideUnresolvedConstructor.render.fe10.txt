@@ -1,0 +1,8 @@
+public final class InferenceInsideUnresolvedConstructorKt {
+    public static final fun getBar() : java.lang.Object {
+        return <anonymous class>(id(42))
+    }
+    public static final fun id(@org.jetbrains.annotations.Nullable x: T) : T {
+        return x
+    }
+}
