@@ -130,6 +130,14 @@ any distributions of the compiler, libraries or plugin:
       - License: Apache 2 ([license/third_party/testdata/rxjava_license.txt][rxjava])
       - Origin: RxJava, Copyright (c) 2016-present, RxJava Contributors
 
+ - Path: third-party/java8-annotations/org/jspecify
+      - License: Apache 2 ([license/third_party/testdata/jspecify_license.txt][jspecify])
+      - Origin: JSpecify, Copyright (C) 2020 The JSpecify Authors
+
+ - Path: third-party/java9-annotations/org/jspecify
+      - License: Apache 2 ([license/third_party/testdata/jspecify_license.txt][jspecify])
+      - Origin: JSpecify, Copyright (C) 2020 The JSpecify Authors
+
  - Path: third-party/annotations/lombok
       - License: MIT ([license/third_party/testdata/lombok_license.txt][lombok])
       - Origin: Project Lombok, Copyright (C) 2009-2013 The Project Lombok Authors
