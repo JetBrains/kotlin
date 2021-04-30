@@ -51,7 +51,7 @@ internal class CompilerPluginOptionsBuilder(
 ) {
     private val pluginOptions = CompilerPluginOptions()
     private val artifacts = mutableListOf<String>()
-    private val gradleInputs = mutableMapOf<String, String>()
+    private val gradleInputs = mutableMapOf<String, MutableList<String>>()
     private val gradleInputFiles = mutableSetOf<File>()
 
     operator fun plusAssign(pluginData: PluginData) {
@@ -72,9 +72,13 @@ internal class CompilerPluginOptionsBuilder(
         }
     }
 
-    private fun addToInputs(pluginId: String, option: PluginOption) = when(option) {
-        is FilesOption -> gradleInputFiles += option.files
-        is StringOption -> gradleInputs["${pluginId}.${option.key}"] = option.value
+    private fun addToInputs(pluginId: String, option: PluginOption) {
+        when(option) {
+            is FilesOption -> gradleInputFiles += option.files
+            is StringOption -> gradleInputs
+                .getOrPut("${pluginId}.${option.key}") { mutableListOf() }
+                .add(option.value)
+        }
     }
 
     fun build(): KotlinCompilerPluginData {
@@ -89,11 +93,22 @@ internal class CompilerPluginOptionsBuilder(
         return KotlinCompilerPluginData(
             classpath = pluginClasspathConfiguration,
             options = pluginOptions,
-            inputs = gradleInputs,
+            inputs = gradleInputs.flattenWithIndex(),
             inputFiles = gradleInputFiles
         )
     }
 
+    private fun Map<String,List<String>>.flattenWithIndex(): Map<String, String> {
+        val result = mutableMapOf<String, String>()
+
+        for ((key, values) in this) {
+            for ((index, value) in values.withIndex()) {
+                result["${key}.$index"] = value
+            }
+        }
+
+        return result
+    }
 
     private fun PluginOption.toSubpluginOption() = when (this) {
         is FilesOption -> FilesSubpluginOption(key, files)
