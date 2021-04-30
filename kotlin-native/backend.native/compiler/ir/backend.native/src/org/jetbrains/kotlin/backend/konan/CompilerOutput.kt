@@ -50,7 +50,7 @@ internal fun produceCStubs(context: Context) {
             context.messageCollector,
             context.inVerbosePhase
     ).forEach {
-        parseAndLinkBitcodeFile(llvmModule, it.absolutePath)
+        parseAndLinkBitcodeFile(context, llvmModule, it.absolutePath)
     }
 }
 
@@ -76,7 +76,7 @@ private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<St
 
     val llvmModule = context.llvmModule!!
     bitcodeFiles.forEach {
-        parseAndLinkBitcodeFile(llvmModule, it)
+        parseAndLinkBitcodeFile(context, llvmModule, it)
     }
 }
 
@@ -182,9 +182,9 @@ internal fun produceOutput(context: Context) {
     }
 }
 
-private fun parseAndLinkBitcodeFile(llvmModule: LLVMModuleRef, path: String) {
+private fun parseAndLinkBitcodeFile(context: Context, llvmModule: LLVMModuleRef, path: String) {
     val parsedModule = parseBitcodeFile(path)
-    val failed = LLVMLinkModules2(llvmModule, parsedModule)
+    val failed = llvmLinkModules2(context, llvmModule, parsedModule)
     if (failed != 0) {
         throw Error("failed to link $path") // TODO: retrieve error message from LLVM.
     }

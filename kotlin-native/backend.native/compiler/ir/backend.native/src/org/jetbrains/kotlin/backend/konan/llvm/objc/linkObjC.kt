@@ -25,7 +25,7 @@ internal fun linkObjC(context: Context) {
 
     patchBuilder.buildAndApply(parsedModule)
 
-    val failed = LLVMLinkModules2(context.llvmModule!!, parsedModule)
+    val failed = llvmLinkModules2(context, context.llvmModule!!, parsedModule)
     if (failed != 0) {
         throw Error("failed to link $bitcodeFile")
     }
