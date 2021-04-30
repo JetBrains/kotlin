@@ -34,7 +34,7 @@ import java.io.File
 import java.util.concurrent.Callable
 
 @CacheableTask
-abstract class KaptGenerateStubsTask : KotlinCompile() {
+abstract class KaptGenerateStubsTask : KotlinCompile(KotlinJvmOptionsImpl()) {
 
     class Configurator(private val kotlinCompileTask: KotlinCompile, kotlinCompilation: KotlinCompilationData<*>) :
         AbstractKotlinCompile.Configurator<KaptGenerateStubsTask>(kotlinCompilation) {
@@ -63,10 +63,8 @@ abstract class KaptGenerateStubsTask : KotlinCompile() {
                     }
                 }
             )
-            task.kotlinOptionsProperty.value(KotlinJvmOptionsImpl()).disallowChanges()
         }
     }
-
 
     @field:Transient
     override val sourceRootsContainer = FilteringSourceRootsContainer(objects, { isSourceRootAllowed(it) })

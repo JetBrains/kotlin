@@ -257,7 +257,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         entryProperty.set(
             project.layout.file(actualDceTaskProvider.map {
-                it.destinationDir.resolve(compilation.compileKotlinTask.outputFile.get().name)
+                it.destinationDir.resolve(compilation.compileKotlinTask.outputFileProperty.get().name)
             })
         )
 
@@ -300,7 +300,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 ?: compilation.npmProject.dir.resolve(if (dev) DCE_DEV_DIR else DCE_DIR)
             it.defaultCompilerClasspath.setFrom(project.configurations.named(COMPILER_CLASSPATH_CONFIGURATION_NAME))
 
-            it.source(kotlinTask.map { it.outputFile.get() })
+            it.source(kotlinTask.map { it.outputFileProperty.get() })
         }
     }
 

@@ -385,20 +385,15 @@ internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
     get() = checkNotNull(project.locateTask<T>(name))
 
 @CacheableTask
-abstract class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
+abstract class KotlinCompile @Inject constructor(
+    override val kotlinOptions: KotlinJvmOptions
+) : AbstractKotlinCompile<K2JVMCompilerArguments>(), KotlinJvmCompile {
 
     class Configurator(kotlinCompilation: KotlinCompilationData<*>) : AbstractKotlinCompile.Configurator<KotlinCompile>(kotlinCompilation) {
-        override fun configure(task: KotlinCompile) {
-            super.configure(task)
-
-            task.kotlinOptionsProperty.set(compilation.kotlinOptions as KotlinJvmOptions)
-        }
     }
 
     @get:Internal
     internal val parentKotlinOptionsImpl: Property<KotlinJvmOptions> = objects.property(KotlinJvmOptions::class.java)
-
-    override val kotlinOptionsProperty: Property<KotlinJvmOptions> = objects.property(KotlinJvmOptions::class.java)
 
     @get:Internal
     @field:Transient
@@ -528,8 +523,9 @@ abstract class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), 
 
 @CacheableTask
 internal abstract class KotlinCompileWithWorkers @Inject constructor(
+    kotlinOptions: KotlinJvmOptions,
     private val workerExecutor: WorkerExecutor
-) : KotlinCompile() {
+) : KotlinCompile(kotlinOptions) {
 
     override fun compilerRunner(
         javaExecutable: File,
@@ -544,9 +540,10 @@ internal abstract class KotlinCompileWithWorkers @Inject constructor(
 
 @CacheableTask
 internal abstract class Kotlin2JsCompileWithWorkers @Inject constructor(
+    kotlinOptions: KotlinJsOptions,
     objectFactory: ObjectFactory,
     private val workerExecutor: WorkerExecutor
-) : Kotlin2JsCompile(objectFactory) {
+) : Kotlin2JsCompile(kotlinOptions, objectFactory) {
 
     override fun compilerRunner(
         javaExecutable: File,
@@ -561,8 +558,9 @@ internal abstract class Kotlin2JsCompileWithWorkers @Inject constructor(
 
 @CacheableTask
 internal abstract class KotlinCompileCommonWithWorkers @Inject constructor(
+    kotlinOptions: KotlinMultiplatformCommonOptions,
     private val workerExecutor: WorkerExecutor
-) : KotlinCompileCommon() {
+) : KotlinCompileCommon(kotlinOptions) {
     override fun compilerRunner(
         javaExecutable: File,
         jdkToolsJar: File?
@@ -576,6 +574,7 @@ internal abstract class KotlinCompileCommonWithWorkers @Inject constructor(
 
 @CacheableTask
 abstract class Kotlin2JsCompile @Inject constructor(
+    override val kotlinOptions: KotlinJsOptions,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
 
@@ -588,23 +587,21 @@ abstract class Kotlin2JsCompile @Inject constructor(
         override fun configure(task: T) {
             super.configure(task)
 
-            task.kotlinOptionsProperty.set(compilation.kotlinOptions as KotlinJsOptions)
-            task.outputFile.value(
-                task.kotlinOptionsProperty.map {
-                    it.outputFile?.let(::File)
+            task.outputFileProperty.value(
+                task.project.provider {
+                    task.kotlinOptions.outputFile?.let(::File)
                         ?: task.destinationDirectory.locationOnly.get().asFile.resolve("${compilation.ownModuleName}.js")
                 }
             ).disallowChanges()
             task.optionalOutputFile.fileProvider(
-                task.kotlinOptionsProperty.flatMap { jsOptions ->
-                    task.outputFile.takeIf { !jsOptions.isProduceUnzippedKlib() }
-                        ?: task.project.objects.fileProperty().asFile
+                task.outputFileProperty.flatMap { outputFile ->
+                    task.project.provider {
+                        outputFile.takeUnless { task.kotlinOptions.isProduceUnzippedKlib() }
+                    }
                 }
             ).disallowChanges()
         }
     }
-
-    override val kotlinOptionsProperty: Property<KotlinJsOptions> = objectFactory.property(KotlinJsOptions::class.java)
 
     @get:Input
     internal var incrementalJsKlib: Boolean = true
@@ -619,7 +616,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     // This can be file or directory
     @get:Internal
-    abstract val outputFile: Property<File>
+    abstract val outputFileProperty: Property<File>
+
+    @Deprecated("Please use outputFileProperty, this is kept for backwards compatibility.", replaceWith = ReplaceWith("outputFileProperty"))
+    @get:Internal
+    val outputFile: File
+        get() = outputFileProperty.get()
 
     @get:OutputFile
     @get:Optional
@@ -636,13 +638,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         try {
-            outputFile.get().canonicalPath
+            outputFileProperty.get().canonicalPath
         } catch (ex: Throwable) {
-            logger.warn("IO EXCEPTION: outputFile: ${outputFile.get().path}")
+            logger.warn("IO EXCEPTION: outputFile: ${outputFileProperty.get().path}")
             throw ex
         }
 
-        args.outputFile = outputFile.get().absoluteFile.normalize().absolutePath
+        args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
 
         if (defaultsOnly) return
 

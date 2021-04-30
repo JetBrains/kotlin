@@ -261,7 +261,7 @@ internal class Kotlin2JsSourceSetProcessor(
         project.whenEvaluated {
             kotlinTask.configure { kotlinTaskInstance ->
                 val kotlinOptions = kotlinTaskInstance.kotlinOptions
-                val outputFile = kotlinTaskInstance.outputFile.get()
+                val outputFile = kotlinTaskInstance.outputFileProperty.get()
                 val outputDir: File = outputFile.parentFile
                 kotlinOptions.outputFile = if (!kotlinOptions.isProduceUnzippedKlib()) {
                     outputFile.absolutePath

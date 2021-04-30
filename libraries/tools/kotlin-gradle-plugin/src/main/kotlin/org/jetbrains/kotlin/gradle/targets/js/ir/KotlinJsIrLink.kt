@@ -23,7 +23,7 @@ import javax.inject.Inject
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
     objectFactory: ObjectFactory
-): Kotlin2JsCompile(objectFactory) {
+): Kotlin2JsCompile(KotlinJsOptionsImpl(), objectFactory) {
 
     class Configurator(compilation: KotlinCompilationData<*>): Kotlin2JsCompile.Configurator<KotlinJsIrLink>(compilation) {
 
@@ -33,8 +33,7 @@ abstract class KotlinJsIrLink @Inject constructor(
             task.entryModule.fileProvider(
                 (compilation as KotlinJsIrCompilation).output.classesDirs.elements.map { it.single().asFile }
             ).disallowChanges()
-            task.kotlinOptionsProperty.value(KotlinJsOptionsImpl()).disallowChanges()
-            task.destinationDirectory.fileProvider(task.outputFile.map { it.parentFile }).disallowChanges()
+            task.destinationDirectory.fileProvider(task.outputFileProperty.map { it.parentFile }).disallowChanges()
         }
     }
 
