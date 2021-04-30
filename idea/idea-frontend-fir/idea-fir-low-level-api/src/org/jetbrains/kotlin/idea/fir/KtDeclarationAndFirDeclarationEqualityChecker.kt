@@ -167,7 +167,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     @TestOnly
-    internal fun renderPsi(ktFunction: KtFunction): String = buildString {
+    fun renderPsi(ktFunction: KtFunction): String = buildString {
         appendLine("receiver: ${ktFunction.receiverTypeReference?.toKotlinTypReference()?.renderTypeAsKotlinType()}")
         ktFunction.valueParameters.forEach { parameter ->
             appendLine("${parameter.name}: ${parameter.typeReference?.toKotlinTypReference()?.renderTypeAsKotlinType()}")
@@ -176,7 +176,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     @TestOnly
-    internal fun renderFir(firFunction: FirFunction<*>): String = buildString {
+    fun renderFir(firFunction: FirFunction<*>): String = buildString {
         appendLine("receiver: ${firFunction.receiverTypeRef?.renderTypeAsKotlinType()}")
         firFunction.valueParameters.forEach { parameter ->
             appendLine("${parameter.name}: ${parameter.returnTypeRef.renderTypeAsKotlinType()}")
