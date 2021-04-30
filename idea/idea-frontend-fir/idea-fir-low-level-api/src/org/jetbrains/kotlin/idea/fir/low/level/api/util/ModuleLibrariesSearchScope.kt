@@ -9,19 +9,25 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 
-private class ModuleLibrariesSearchScope(private val module: Module) : GlobalSearchScope(module.project) {
+private class ModuleLibrariesSearchScope(module: Module) : GlobalSearchScope(module.project) {
+    private val projectFileIndex = ProjectRootManager.getInstance(module.project).fileIndex
+    private val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
+
     override fun contains(file: VirtualFile): Boolean {
-        val orderEntry = ModuleRootManager.getInstance(module).fileIndex.getOrderEntryForFile(file)
+        // We want this scope to work only on .class files, not on source files
+        if (!projectFileIndex.isInLibraryClasses(file)) return false
+
+        val orderEntry = moduleFileIndex.getOrderEntryForFile(file)
         return orderEntry is JdkOrderEntry || orderEntry is LibraryOrderEntry
     }
 
     override fun compare(file1: VirtualFile, file2: VirtualFile): Int {
-        val fileIndex = ModuleRootManager.getInstance(module).fileIndex
-        return Comparing.compare(fileIndex.getOrderEntryForFile(file2), fileIndex.getOrderEntryForFile(file1))
+        return Comparing.compare(moduleFileIndex.getOrderEntryForFile(file2), moduleFileIndex.getOrderEntryForFile(file1))
     }
 
     override fun isSearchInModuleContent(aModule: Module): Boolean = false
