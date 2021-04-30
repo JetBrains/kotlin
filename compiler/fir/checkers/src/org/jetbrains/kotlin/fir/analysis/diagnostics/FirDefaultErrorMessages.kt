@@ -106,6 +106,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_SUPER_CLA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_SUPER_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPE_PARAMETER_BOUND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT
@@ -183,6 +184,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_LOOP_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_COMPANION_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ELSE_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_GET_METHOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_SET_METHOD
@@ -879,6 +881,12 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot",
                 SYMBOL
             )
+            map.put(
+                NO_COMPANION_OBJECT,
+                "Classifier ''{0}'' does not have a companion object, and thus must be initialized here",
+                SYMBOL
+            )
+            map.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found")
 
             // Function contracts
             map.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description", TO_STRING)

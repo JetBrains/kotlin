@@ -669,6 +669,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val TYPE_PARAMETER_ON_LHS_OF_DOT by error<KtSimpleNameExpression> {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
+        val NO_COMPANION_OBJECT by error<KtSimpleNameExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
+            parameter<FirRegularClassSymbol>("klass")
+        }
+        val EXPRESSION_EXPECTED_PACKAGE_FOUND by error<KtSimpleNameExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
     }
 
     val FUNCTION_CONTRACTS by object : DiagnosticGroup("Function contracts") {

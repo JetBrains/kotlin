@@ -1888,6 +1888,19 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NO_COMPANION_OBJECT) { firDiagnostic ->
+        NoCompanionObjectImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a.fir),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND) { firDiagnostic ->
+        ExpressionExpectedPackageFoundImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.ERROR_IN_CONTRACT_DESCRIPTION) { firDiagnostic ->
         ErrorInContractDescriptionImpl(
             firDiagnostic.a,

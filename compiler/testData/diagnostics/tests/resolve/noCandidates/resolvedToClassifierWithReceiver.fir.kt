@@ -9,10 +9,10 @@ object X {
 
 fun testX() {
     val interface_as_fun = X.<!UNRESOLVED_REFERENCE!>A<!>()
-    val interface_as_val = X.A
+    val interface_as_val = X.<!NO_COMPANION_OBJECT!>A<!>
 
     val object_as_fun = X.<!INVISIBLE_REFERENCE!>B<!>()
-    val class_as_val = X.C
+    val class_as_val = X.<!NO_COMPANION_OBJECT!>C<!>
 }
 
 class Y {
@@ -24,10 +24,10 @@ class Y {
 
 fun testY() {
     val interface_as_fun = Y.<!UNRESOLVED_REFERENCE!>A<!>()
-    val interface_as_val = Y.A
+    val interface_as_val = Y.<!NO_COMPANION_OBJECT!>A<!>
 
     val object_as_fun = Y.<!INVISIBLE_REFERENCE!>B<!>()
-    val class_as_val = Y.C
+    val class_as_val = Y.<!NO_COMPANION_OBJECT!>C<!>
 }
 
 fun test(x: X) {

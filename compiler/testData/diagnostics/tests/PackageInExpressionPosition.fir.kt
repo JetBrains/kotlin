@@ -2,25 +2,25 @@ package foo
 
 class X {}
 
-val s = java
-val ss = System
-val sss = X
-val x = "${System}"
-val xs = java.lang
-val xss = java.lang.System
-val xsss = foo.X
-val xssss = foo
-val f = { System }
+val s = <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>java<!>
+val ss = <!NO_COMPANION_OBJECT!>System<!>
+val sss = <!NO_COMPANION_OBJECT!>X<!>
+val x = "${<!NO_COMPANION_OBJECT!>System<!>}"
+val xs = java.<!EXPRESSION_EXPECTED_PACKAGE_FOUND!>lang<!>
+val xss = java.lang.<!NO_COMPANION_OBJECT!>System<!>
+val xsss = foo.<!NO_COMPANION_OBJECT!>X<!>
+val xssss = <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>foo<!>
+val f = { <!NO_COMPANION_OBJECT!>System<!> }
 
 fun main() {
-    java = null
-    System = null
-    System!!
-    java.lang.System = null
-    java.lang.System!!
-    System is Int
+    <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>java<!> = null
+    <!NO_COMPANION_OBJECT!>System<!> = null
+    <!NO_COMPANION_OBJECT!>System<!>!!
+    java.lang.<!NO_COMPANION_OBJECT!>System<!> = null
+    java.lang.<!NO_COMPANION_OBJECT!>System<!>!!
+    <!NO_COMPANION_OBJECT!>System<!> is Int
     <!INVISIBLE_REFERENCE!>System<!>()
-    (System)
-    foo@ System
+    (<!NO_COMPANION_OBJECT!>System<!>)
+    foo@ <!NO_COMPANION_OBJECT!>System<!>
     null <!UNRESOLVED_REFERENCE!>in<!> System
 }

@@ -7,10 +7,10 @@ class C
 
 fun test() {
     val interface_as_fun = <!UNRESOLVED_REFERENCE!>A<!>()
-    val interface_as_val = A
+    val interface_as_val = <!NO_COMPANION_OBJECT!>A<!>
 
     val object_as_fun = <!INVISIBLE_REFERENCE!>B<!>()
-    val class_as_val = C
+    val class_as_val = <!NO_COMPANION_OBJECT!>C<!>
 }
 
 fun <T> bar() {

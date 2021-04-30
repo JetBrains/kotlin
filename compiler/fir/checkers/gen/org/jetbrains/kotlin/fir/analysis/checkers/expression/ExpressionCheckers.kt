@@ -33,6 +33,7 @@ abstract class ExpressionCheckers {
     open val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker> = emptySet()
     open val anonymousFunctionAsExpressionCheckers: Set<FirAnonymousFunctionAsExpressionChecker> = emptySet()
     open val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = emptySet()
+    open val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker> = emptySet()
 
     @CheckersComponentInternal internal val allBasicExpressionCheckers: Set<FirBasicExpressionChecker> get() = basicExpressionCheckers
     @CheckersComponentInternal internal val allQualifiedAccessCheckers: Set<FirQualifiedAccessChecker> get() = qualifiedAccessCheckers + basicExpressionCheckers
@@ -50,4 +51,5 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allEqualityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker> get() = equalityOperatorCallCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allAnonymousFunctionAsExpressionCheckers: Set<FirAnonymousFunctionAsExpressionChecker> get() = anonymousFunctionAsExpressionCheckers + basicExpressionCheckers
     @CheckersComponentInternal internal val allStringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> get() = stringConcatenationCallCheckers + basicExpressionCheckers
+    @CheckersComponentInternal internal val allResolvedQualifierCheckers: Set<FirResolvedQualifierChecker> get() = resolvedQualifierCheckers + basicExpressionCheckers
 }

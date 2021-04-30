@@ -22,6 +22,6 @@ package e
 fun e() {}
 
 // FILE: f.kt
-@file:JvmPackageName(f)
+@file:JvmPackageName(<!EXPRESSION_EXPECTED_PACKAGE_FOUND!>f<!>)
 package f
 const val name = "f"

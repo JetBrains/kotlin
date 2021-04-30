@@ -2151,6 +2151,21 @@ internal class TypeParameterOnLhsOfDotImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class NoCompanionObjectImpl(
+    override val klass: KtClassLikeSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoCompanionObject(), KtAbstractFirDiagnostic<KtSimpleNameExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ExpressionExpectedPackageFoundImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ExpressionExpectedPackageFound(), KtAbstractFirDiagnostic<KtSimpleNameExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ErrorInContractDescriptionImpl(
     override val reason: String,
     firDiagnostic: FirPsiDiagnostic<*>,

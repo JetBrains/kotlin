@@ -182,6 +182,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
         visitWithQualifiedAccess(qualifiedAccessExpression)
     }
 
+    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?) {
+        visitWithQualifiedAccess(variableAssignment)
+    }
+
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?) {
         visitWithGetClassCall(getClassCall)
     }

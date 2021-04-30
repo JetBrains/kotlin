@@ -441,6 +441,13 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.BINARY_EXPRESSION &&
+                tree.findDescendantByTypes(node, KtTokens.ALL_ASSIGNMENTS) != null
+            ) {
+                tree.findExpressionDeep(node)?.let {
+                    return markElement(it, startOffset, endOffset, tree, node)
+                }
+            }
             if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION && node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION) {
                 return super.mark(node, startOffset, endOffset, tree)
             }
@@ -492,7 +499,7 @@ object LightTreePositioningStrategies {
                 return markElement(tree.referenceExpression(node, locateReferencedName) ?: node, startOffset, endOffset, tree, node)
             }
             if (node.tokenType == KtNodeTypes.PROPERTY_DELEGATE) {
-                return markElement(tree.findReferenceExpressionDeep(node) ?: node, startOffset, endOffset, tree, node)
+                return markElement(tree.findExpressionDeep(node) ?: node, startOffset, endOffset, tree, node)
             }
             if (node.tokenType in nodeTypesWithOperation) {
                 return markElement(tree.operationReference(node) ?: node, startOffset, endOffset, tree, node)
@@ -661,7 +668,7 @@ object LightTreePositioningStrategies {
             }
 
             val descendants =
-                tree.collectDescendantsOfType(node, KtTokens.IDENTIFIER) { descendant -> descendant.toString().all { it == '_' } };
+                tree.collectDescendantsOfType(node, KtTokens.IDENTIFIER) { descendant -> descendant.toString().all { it == '_' } }
             if (descendants.isNotEmpty())
                 return descendants.map { markSingleElement(it, it, startOffset, endOffset, tree, node) }
             return super.mark(node, startOffset, endOffset, tree)
@@ -756,7 +763,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     return result
 }
 
-private fun FlyweightCapableTreeStructure<LighterASTNode>.findReferenceExpressionDeep(node: LighterASTNode): LighterASTNode? =
+private fun FlyweightCapableTreeStructure<LighterASTNode>.findExpressionDeep(node: LighterASTNode): LighterASTNode? =
     findFirstDescendant(node) { it.isExpression() }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node: LighterASTNode): LighterASTNode? =
@@ -863,7 +870,7 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByType(node: Lig
         ?.firstNotNullResult { child -> child?.let { findDescendantByType(it, type) } }
 }
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByTypes(node: LighterASTNode, types: Set<IElementType>): LighterASTNode? {
+fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByTypes(node: LighterASTNode, types: TokenSet): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     return childrenRef.get()?.firstOrNull { types.contains(it?.tokenType) } ?: childrenRef.get()

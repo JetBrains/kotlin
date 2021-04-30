@@ -3,7 +3,7 @@
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any): String {
     when (value_1) {
-        EmptyClass -> return ""
+        <!NO_COMPANION_OBJECT!>EmptyClass<!> -> return ""
     }
 
     return ""
@@ -12,7 +12,7 @@ fun case_1(value_1: Any): String {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any): String {
     when (value_1) {
-        Any -> return ""
+        <!NO_COMPANION_OBJECT!>Any<!> -> return ""
     }
 
     return ""
@@ -21,7 +21,7 @@ fun case_2(value_1: Any): String {
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Any): String {
     when (value_1) {
-        Nothing -> return ""
+        <!NO_COMPANION_OBJECT!>Nothing<!> -> return ""
     }
 
     return ""

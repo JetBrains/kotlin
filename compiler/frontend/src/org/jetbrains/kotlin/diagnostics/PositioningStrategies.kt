@@ -776,6 +776,9 @@ object PositioningStrategies {
 
     val SELECTOR_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtBinaryExpression && element.operationToken in KtTokens.ALL_ASSIGNMENTS) {
+                element.left?.let { return mark(it) }
+            }
             if (element is KtQualifiedExpression) {
                 when (val selectorExpression = element.selectorExpression) {
                     is KtElement -> return mark(selectorExpression)
