@@ -7,95 +7,125 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
-fun createSessionWithDependencies(
+@OptIn(PrivateForInline::class)
+inline fun createSessionWithDependencies(
     name: Name,
-    friendPaths: List<String>,
-    outputDirectory: String?,
+    platform: TargetPlatform,
+    analyzerServices: PlatformDependentAnalyzerServices,
+    externalSessionProvider: FirProjectSessionProvider?,
     project: Project,
     languageVersionSettings: LanguageVersionSettings,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
     lookupTracker: LookupTracker?,
     getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-    getAdditionalModulePackagePartProvider: (GlobalSearchScope) -> PackagePartProvider?,
-    sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit = {}
+    getProviderAndScopeForIncrementalCompilation: () -> FirSessionFactory.ProviderAndScopeForIncrementalCompilation?,
+    dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
+    noinline sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit = {},
 ): FirSession {
-    return createSessionWithDependencies(
-        name.identifier,
+    val dependencyList = DependencyListForCliModule.build(name, platform, analyzerServices, dependenciesConfigurator)
+    return createSessionWithDependenciesImpl(
+        name,
+        dependencyList,
+        externalSessionProvider,
         project,
         languageVersionSettings,
         sourceScope,
         librariesScope,
         lookupTracker,
         getPackagePartProvider,
-        getAdditionalModulePackagePartProvider,
+        getProviderAndScopeForIncrementalCompilation,
         sessionConfigurator
-    ) {
-        FirJvmModuleInfo(name, it, friendPaths, outputDirectory)
-    }
+    )
 }
 
-fun createSessionWithDependencies(
+@OptIn(PrivateForInline::class)
+inline fun createSessionWithDependencies(
     module: Module,
+    platform: TargetPlatform,
+    analyzerServices: PlatformDependentAnalyzerServices,
+    externalSessionProvider: FirProjectSessionProvider?,
     project: Project,
     languageVersionSettings: LanguageVersionSettings,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
     lookupTracker: LookupTracker?,
     getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-    getAdditionalModulePackagePartProvider: (GlobalSearchScope) -> PackagePartProvider?,
-    sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit = {}
+    getProviderAndScopeForIncrementalCompilation: () -> FirSessionFactory.ProviderAndScopeForIncrementalCompilation?,
+    noinline sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit = {},
 ): FirSession {
-    return createSessionWithDependencies(
-        module.getModuleName(),
+    val moduleName = Name.identifier(module.getModuleName())
+    val dependencyList = DependencyListForCliModule.build(
+        moduleName,
+        platform,
+        analyzerServices
+    ) {
+        friendDependencies(module.getFriendPaths())
+        dependencies(module.getClasspathRoots())
+    }
+    return createSessionWithDependenciesImpl(
+        moduleName,
+        dependencyList,
+        externalSessionProvider,
         project,
         languageVersionSettings,
         sourceScope,
         librariesScope,
         lookupTracker,
         getPackagePartProvider,
-        getAdditionalModulePackagePartProvider,
+        getProviderAndScopeForIncrementalCompilation,
         sessionConfigurator
-    ) {
-        FirJvmModuleInfo(module, it)
-    }
+    )
 }
 
-private inline fun createSessionWithDependencies(
-    moduleName: String,
+@PrivateForInline
+inline fun createSessionWithDependenciesImpl(
+    moduleName: Name,
+    dependencyListForCliModule: DependencyListForCliModule,
+    externalSessionProvider: FirProjectSessionProvider?,
     project: Project,
     languageVersionSettings: LanguageVersionSettings,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
     lookupTracker: LookupTracker?,
     getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-    getAdditionalModulePackagePartProvider: (GlobalSearchScope) -> PackagePartProvider?,
+    getProviderAndScopeForIncrementalCompilation: () -> FirSessionFactory.ProviderAndScopeForIncrementalCompilation?,
     noinline sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit,
-    moduleInfoProvider: (dependencies: List<ModuleInfo>) -> ModuleInfo,
 ): FirSession {
-    val provider = FirProjectSessionProvider()
-    val librariesModuleInfo = FirJvmModuleInfo.createForLibraries(moduleName)
+    val sessionProvider = externalSessionProvider ?: FirProjectSessionProvider()
     FirSessionFactory.createLibrarySession(
-        librariesModuleInfo, provider, librariesScope,
-        project, getPackagePartProvider(librariesScope)
+        moduleName,
+        sessionProvider,
+        dependencyListForCliModule.moduleDataProvider,
+        librariesScope,
+        project,
+        getPackagePartProvider(librariesScope)
+    )
+
+    val mainModuleData = FirModuleDataImpl(
+        moduleName,
+        dependencyListForCliModule.regularDependencies,
+        dependencyListForCliModule.dependsOnDependencies,
+        dependencyListForCliModule.friendsDependencies,
+        dependencyListForCliModule.platform,
+        dependencyListForCliModule.analyzerServices
     )
     return FirSessionFactory.createJavaModuleBasedSession(
-        moduleInfoProvider(listOf(librariesModuleInfo)),
-        provider,
+        mainModuleData,
+        sessionProvider,
         sourceScope,
         project,
-        additionalPackagePartProvider = getAdditionalModulePackagePartProvider(sourceScope),
-        additionalScope = librariesScope,
+        providerAndScopeForIncrementalCompilation = getProviderAndScopeForIncrementalCompilation(),
         languageVersionSettings = languageVersionSettings,
         lookupTracker = lookupTracker,
         init = sessionConfigurator

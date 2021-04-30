@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -91,6 +92,7 @@ object GenerationUtils {
         return state
     }
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     private fun compileFilesUsingFrontendIR(
         project: Project,
         files: List<KtFile>,

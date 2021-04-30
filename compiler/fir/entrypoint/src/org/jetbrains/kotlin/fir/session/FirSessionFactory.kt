@@ -9,13 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateSessionConstructor
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
@@ -23,6 +20,8 @@ import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
+import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
@@ -37,6 +36,11 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 object FirSessionFactory {
@@ -66,20 +70,24 @@ object FirSessionFactory {
         }
     }
 
+    data class ProviderAndScopeForIncrementalCompilation(
+        val packagePartProvider: PackagePartProvider,
+        val scope: GlobalSearchScope
+    )
+
     fun createJavaModuleBasedSession(
-        moduleInfo: ModuleInfo,
+        moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         scope: GlobalSearchScope,
         project: Project,
-        additionalPackagePartProvider: PackagePartProvider? = null,
-        additionalScope: GlobalSearchScope? = null,
-        dependenciesProvider: FirSymbolProvider? = null,
+        providerAndScopeForIncrementalCompilation: ProviderAndScopeForIncrementalCompilation?,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
         return FirCliSession(sessionProvider, FirCliSession.Kind.Source).apply session@{
-            val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
+            moduleData.bindSession(this@session)
+            sessionProvider.registerSession(moduleData, this@session)
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
@@ -91,20 +99,19 @@ object FirSessionFactory {
             val firProvider = FirProviderImpl(this, kotlinScopeProvider)
             register(FirProvider::class, firProvider)
 
-            val deserializedJvmSymbolsProvider =
-                if (additionalPackagePartProvider == null) null
-                else {
-                    val javaSymbolProvider = JavaSymbolProvider(this, moduleData, project, additionalScope ?: scope)
+            val symbolProviderForBinariesFromIncrementalCompilation = providerAndScopeForIncrementalCompilation?.let {
+                val javaSymbolProvider = JavaSymbolProvider(this, moduleData, project, it.scope)
 
-                    makeDeserializedJvmSymbolsProvider(
-                        moduleData,
-                        project,
-                        additionalScope ?: scope,
-                        additionalPackagePartProvider,
-                        javaSymbolProvider,
-                        kotlinScopeProvider
-                    )
-                }
+                makeDeserializedJvmSymbolsProvider(
+                    this@session,
+                    SingleModuleDataProvider(moduleData),
+                    project,
+                    it.scope,
+                    it.packagePartProvider,
+                    javaSymbolProvider,
+                    kotlinScopeProvider
+                )
+            }
 
             register(
                 FirSymbolProvider::class,
@@ -112,11 +119,11 @@ object FirSessionFactory {
                     this,
                     listOfNotNull(
                         firProvider.symbolProvider,
+                        symbolProviderForBinariesFromIncrementalCompilation,
                         JavaSymbolProvider(this, moduleData, project, scope),
-                        dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this),
-                        deserializedJvmSymbolsProvider
+                        FirDependenciesSymbolProviderImpl(this)
                     )
-                ) as FirSymbolProvider
+                )
             )
 
             FirSessionConfigurator(this).apply {
@@ -130,34 +137,50 @@ object FirSessionFactory {
     }
 
     fun createLibrarySession(
-        moduleInfo: ModuleInfo,
+        mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
+        moduleDataProvider: ModuleDataProvider,
         scope: GlobalSearchScope,
         project: Project,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirSession {
         return FirCliSession(sessionProvider, FirCliSession.Kind.Library).apply session@{
-            val moduleData = FirModuleInfoBasedModuleData(moduleInfo).apply { bindSession(this@session) }
-            sessionProvider.registerSession(moduleData, this)
+            moduleDataProvider.allModuleData.forEach {
+                sessionProvider.registerSession(it, this)
+                it.bindSession(this)
+            }
+
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
 
-            val javaSymbolProvider = JavaSymbolProvider(this, moduleData, project, scope)
+            val javaSymbolProvider = JavaSymbolProvider(this, moduleDataProvider.allModuleData.last(), project, scope)
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
             val deserializedJvmSymbolsProvider = makeDeserializedJvmSymbolsProvider(
-                moduleData, project, scope, packagePartProvider, javaSymbolProvider, kotlinScopeProvider
+                librarySession = this,
+                moduleDataProvider,
+                project,
+                scope,
+                packagePartProvider,
+                javaSymbolProvider,
+                kotlinScopeProvider
             )
+
+            val builtinsModuleData = createModuleDataForBuiltins(
+                mainModuleName,
+                moduleDataProvider.platform,
+                moduleDataProvider.analyzerServices
+            ).also { it.bindSession(this@session) }
 
             val symbolProvider = FirCompositeSymbolProvider(
                 this,
                 listOf(
                     deserializedJvmSymbolsProvider,
-                    FirBuiltinSymbolProvider(this, moduleData, kotlinScopeProvider),
-                    FirCloneableSymbolProvider(this, moduleData, kotlinScopeProvider),
-                    javaSymbolProvider,
+                    FirBuiltinSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
+                    FirCloneableSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
+                    javaSymbolProvider, // TODO: looks like it can be removed
                     FirDependenciesSymbolProviderImpl(this)
                 )
             )
@@ -167,7 +190,8 @@ object FirSessionFactory {
     }
 
     private fun makeDeserializedJvmSymbolsProvider(
-        moduleData: FirModuleData,
+        librarySession: FirSession,
+        moduleDataProvider: ModuleDataProvider,
         project: Project,
         scope: GlobalSearchScope,
         packagePartProvider: PackagePartProvider,
@@ -182,12 +206,41 @@ object FirSessionFactory {
         }
 
         return KotlinDeserializedJvmSymbolsProvider(
-            moduleData, kotlinScopeProvider, packagePartProvider, kotlinClassFinder, javaSymbolProvider, javaClassFinder
+            librarySession,
+            moduleDataProvider,
+            kotlinScopeProvider,
+            packagePartProvider,
+            kotlinClassFinder,
+            javaSymbolProvider,
+            javaClassFinder
         )
     }
 
     @TestOnly
     fun createEmptySession(): FirSession {
-        return object : FirSession(null) {}
+        return object : FirSession(null) {}.apply {
+            val moduleData = FirModuleDataImpl(
+                Name.identifier("<stub module>"),
+                dependencies = emptyList(),
+                dependsOnDependencies = emptyList(),
+                friendDependencies = emptyList(),
+                platform = JvmPlatforms.unspecifiedJvmPlatform,
+                analyzerServices = JvmPlatformAnalyzerServices
+            )
+            registerModuleData(moduleData)
+            moduleData.bindSession(this)
+        }
+    }
+
+    fun createModuleDataForBuiltins(
+        parentModuleName: Name,
+        platform: TargetPlatform,
+        analyzerServices: PlatformDependentAnalyzerServices
+    ): FirModuleData {
+        return DependencyListForCliModule.createDependencyModuleData(
+            Name.special("<builtins of ${parentModuleName.identifier}"),
+            platform,
+            analyzerServices,
+        )
     }
 }

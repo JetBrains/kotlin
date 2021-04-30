@@ -22,11 +22,11 @@ abstract class FirModuleData : FirSessionComponent {
 
     private var _session: FirSession? = null
     val session: FirSession
-        get() = _session!!
+        get() = _session ?: error("module data not bound to session")
 
     fun bindSession(session: FirSession) {
         if (_session != null) {
-            error("session already bound to $this")
+            error("module data already bound to $this")
         }
         _session = session
     }

@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.createSessionWithDependencies
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -65,11 +66,13 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvid
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleGenericDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
@@ -337,24 +340,29 @@ object KotlinToJVMBytecodeCompiler {
             val languageVersionSettings = moduleConfiguration.languageVersionSettings
             val session = createSessionWithDependencies(
                 module,
+                JvmPlatforms.unspecifiedJvmPlatform,
+                JvmPlatformAnalyzerServices,
+                externalSessionProvider = null,
                 project,
                 languageVersionSettings,
                 sourceScope,
                 librariesScope,
                 lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
                 getPackagePartProvider = { environment.createPackagePartProvider(it) },
-                getAdditionalModulePackagePartProvider = {
-                    if (targetIds == null || incrementalComponents == null) null
-                    else IncrementalPackagePartProvider(
-                        environment.createPackagePartProvider(it),
+                getProviderAndScopeForIncrementalCompilation = get@{
+                    if (targetIds == null || incrementalComponents == null) return@get null
+                    val packagePartProvider = IncrementalPackagePartProvider(
+                        environment.createPackagePartProvider(sourceScope),
                         targetIds.map(incrementalComponents::getIncrementalCache)
                     )
+                    FirSessionFactory.ProviderAndScopeForIncrementalCompilation(packagePartProvider, librariesScope)
+                },
+                sessionConfigurator = {
+                    if (extendedAnalysisMode) {
+                        registerExtendedCommonCheckers()
+                    }
                 }
-            ) {
-                if (extendedAnalysisMode) {
-                    registerExtendedCommonCheckers()
-                }
-            }
+            )
 
             val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles)
 

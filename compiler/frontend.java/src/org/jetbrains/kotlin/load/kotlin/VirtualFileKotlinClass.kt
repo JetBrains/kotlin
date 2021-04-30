@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.nio.file.Path
+import java.nio.file.Paths
 
 class VirtualFileKotlinClass private constructor(
     val file: VirtualFile,
@@ -37,6 +39,9 @@ class VirtualFileKotlinClass private constructor(
 
     override val location: String
         get() = file.path
+
+    override val containingLibrary: Path?
+        get() = file.path.split("!/").firstOrNull()?.let { Paths.get(it) }
 
     override fun getFileContents(): ByteArray {
         try {
@@ -61,7 +66,7 @@ class VirtualFileKotlinClass private constructor(
                 try {
                     val byteContent = fileContent ?: file.contentsToByteArray(false)
                     if (byteContent.isNotEmpty()) {
-                        val kotlinJvmBinaryClass = FileBasedKotlinClass.create(byteContent) { name, classVersion, header, innerClasses ->
+                        val kotlinJvmBinaryClass = create(byteContent) { name, classVersion, header, innerClasses ->
                             VirtualFileKotlinClass(file, name, classVersion, header, innerClasses)
                         }
 

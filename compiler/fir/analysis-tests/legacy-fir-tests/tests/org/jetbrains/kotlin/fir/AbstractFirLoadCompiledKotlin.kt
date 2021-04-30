@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -30,6 +31,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirLoadBinariesTest() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_NO_RUNTIME)
     }
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     fun doTest(path: String) {
         val moduleDescriptor = compileKtFileToTmpDir(path)
 

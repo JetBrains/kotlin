@@ -12,6 +12,7 @@ import com.intellij.psi.search.ProjectScope
 import com.sun.jna.Library
 import com.sun.jna.Native
 import com.sun.management.HotSpotDiagnosticMXBean
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.profiling.AsyncProfilerHelper
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
@@ -149,6 +150,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         }
     }
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
         val project = environment.project
         val ktFiles = environment.getSourceFiles()
@@ -161,7 +163,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             scope,
             librariesScope,
             moduleData.qualifiedName,
-            moduleData.friendDirs.map { it.canonicalPath }
+            moduleData.friendDirs.map { it.toPath() }
         )
         val scopeSession = ScopeSession()
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {

@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.AssertionFailedError
 import junit.framework.TestCase
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -41,8 +38,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.fir.AbstractFirOldFrontendDiagnosticsTest
-import org.jetbrains.kotlin.fir.loadTestDataWithoutDiagnostics
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker

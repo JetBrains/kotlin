@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -191,7 +192,8 @@ internal object FirIdeSessionFactory {
                     add(
                         FirThreadSafeSymbolProviderWrapper(
                             KotlinDeserializedJvmSymbolsProvider(
-                                moduleData,
+                                this@session,
+                                SingleModuleDataProvider(moduleData),
                                 kotlinScopeProvider,
                                 packagePartProvider,
                                 kotlinClassFinder,

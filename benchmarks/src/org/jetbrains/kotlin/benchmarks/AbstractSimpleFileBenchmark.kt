@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -147,6 +148,7 @@ abstract class AbstractSimpleFileBenchmark {
         bh.consume(result.shouldGenerateCode)
     }
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     private fun analyzeGreenFileIr(bh: Blackhole) {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))

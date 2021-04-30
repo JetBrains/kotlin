@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.*
@@ -35,13 +34,14 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 
 @ThreadSafeMutableState
 class KotlinDeserializedJvmSymbolsProvider(
-    moduleData: FirModuleData,
+    session: FirSession,
+    moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaSymbolProvider: JavaSymbolProvider,
     javaClassFinder: JavaClassFinder,
-) : AbstractFirDeserializedSymbolsProvider(moduleData, kotlinScopeProvider) {
+) : AbstractFirDeserializedSymbolsProvider(session, moduleDataProvider, kotlinScopeProvider) {
     private val knownNameInPackageCache = KnownNameInPackageCache(session, javaClassFinder)
     private val annotationsLoader = AnnotationsLoader(session)
 
@@ -55,6 +55,8 @@ class KotlinDeserializedJvmSymbolsProvider(
             val facadeName = kotlinJvmBinaryClass.classHeader.multifileClassName?.takeIf { it.isNotEmpty() }
             val facadeFqName = facadeName?.let { JvmClassName.byInternalName(it).fqNameForTopLevelClassMaybeWithDollars }
             val facadeBinaryClass = facadeFqName?.let { kotlinClassFinder.findKotlinClass(ClassId.topLevel(it)) }
+
+            val moduleData = moduleDataProvider.getModuleData(kotlinJvmBinaryClass.containingLibrary) ?: return@mapNotNull null
 
             val header = kotlinJvmBinaryClass.classHeader
             val data = header.data ?: header.incompatibleData ?: return@mapNotNull null
@@ -113,6 +115,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             nameResolver,
             classProto,
             JvmBinaryAnnotationDeserializer(session, kotlinClass.kotlinJvmBinaryClass, kotlinClassFinder, kotlinClass.byteContent),
+            kotlinClass.kotlinJvmBinaryClass.containingLibrary,
             KotlinJvmBinarySourceElement(kotlinClass.kotlinJvmBinaryClass),
             classPostProcessor = { loadAnnotationsFromClassFile(kotlinClass, it) }
         )

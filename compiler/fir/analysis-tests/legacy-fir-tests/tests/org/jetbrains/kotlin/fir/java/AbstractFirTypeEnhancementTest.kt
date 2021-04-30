@@ -16,6 +16,7 @@ import com.intellij.psi.PsiPackageStatement
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -82,6 +83,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         }
     }
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     fun doTest(path: String) {
         val javaFile = File(path)
         val javaLines = javaFile.readLines()

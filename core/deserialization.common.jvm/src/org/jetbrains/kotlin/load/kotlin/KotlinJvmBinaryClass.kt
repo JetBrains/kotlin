@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
+import java.nio.file.Path
 
 interface KotlinJvmBinaryClass {
     val classId: ClassId
@@ -18,6 +19,9 @@ interface KotlinJvmBinaryClass {
      * @return path to the class file (to be reported to the user upon error)
      */
     val location: String
+
+    val containingLibrary: Path?
+        get() = null
 
     fun loadClassAnnotations(visitor: AnnotationVisitor, cachedContents: ByteArray?)
 

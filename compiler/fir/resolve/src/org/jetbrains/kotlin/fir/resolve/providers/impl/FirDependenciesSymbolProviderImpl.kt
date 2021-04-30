@@ -30,7 +30,7 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolPro
 
     protected open val dependencyProviders by lazy {
         val moduleData = session.nullableModuleData ?: return@lazy emptyList()
-        moduleData.dependencies.mapNotNull {
+        (moduleData.dependencies + moduleData.friendDependencies + moduleData.dependsOnDependencies).mapNotNull {
             session.sessionProvider?.getSession(it)?.symbolProvider
         }
     }

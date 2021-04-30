@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import java.nio.file.Path
 
 class PackagePartsCacheData(
     val proto: ProtoBuf.Package,
@@ -36,13 +37,30 @@ class PackagePartsCacheData(
     }
 }
 
+abstract class LibraryPathFilter {
+    abstract fun accepts(path: Path?): Boolean
+
+    object TakeAll : LibraryPathFilter() {
+        override fun accepts(path: Path?): Boolean {
+            return true
+        }
+    }
+
+    class LibraryList(val libs: Set<Path>) : LibraryPathFilter() {
+        override fun accepts(path: Path?): Boolean {
+            if (path == null) return false
+            return libs.any { path.startsWith(it) }
+        }
+    }
+}
+
 typealias DeserializedClassPostProcessor = (FirRegularClassSymbol) -> Unit
 
 abstract class AbstractFirDeserializedSymbolsProvider(
-    val moduleData: FirModuleData,
-    val kotlinScopeProvider: FirKotlinScopeProvider
-) : FirSymbolProvider(moduleData.session) {
-
+    session: FirSession,
+    val moduleDataProvider: ModuleDataProvider,
+    val kotlinScopeProvider: FirKotlinScopeProvider,
+) : FirSymbolProvider(session) {
     // ------------------------ Caches ------------------------
 
     private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
@@ -75,6 +93,7 @@ abstract class AbstractFirDeserializedSymbolsProvider(
             val nameResolver: NameResolver,
             val classProto: ProtoBuf.Class,
             val annotationDeserializer: AbstractAnnotationDeserializer,
+            val containingLibraryPath: Path?,
             val sourceElement: DeserializedContainerSource,
             val classPostProcessor: DeserializedClassPostProcessor
         ) : ClassMetadataFindResult()
@@ -107,7 +126,8 @@ abstract class AbstractFirDeserializedSymbolsProvider(
     ): Pair<FirRegularClassSymbol?, DeserializedClassPostProcessor?> {
         return when (val result = extractClassMetadata(classId, parentContext)) {
             is ClassMetadataFindResult.Metadata -> {
-                val (nameResolver, classProto, annotationDeserializer, sourceElement, postProcessor) = result
+                val (nameResolver, classProto, annotationDeserializer, containingLibrary, sourceElement, postProcessor) = result
+                val moduleData = moduleDataProvider.getModuleData(containingLibrary) ?: return null to null
                 val symbol = FirRegularClassSymbol(classId)
                 deserializeClassToSymbol(
                     classId,
@@ -158,6 +178,20 @@ abstract class AbstractFirDeserializedSymbolsProvider(
         return packagePartsCache.getValue(packageFqName)
     }
 
+    private fun getClass(
+        classId: ClassId,
+        parentContext: FirDeserializationContext? = null
+    ): FirRegularClassSymbol? {
+        return classCache.getValue(classId, parentContext)
+    }
+
+    private fun getTypeAlias(
+        classId: ClassId,
+    ): FirTypeAliasSymbol? {
+        if (!classId.relativeClassName.isOneSegmentFQN()) return null
+        return typeAliasCache.getValue(classId)
+    }
+
     // ------------------------ SymbolProvider methods ------------------------
 
     @FirSymbolProviderInternals
@@ -179,20 +213,6 @@ abstract class AbstractFirDeserializedSymbolsProvider(
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
         return getClass(classId) ?: getTypeAlias(classId)
-    }
-
-    private fun getClass(
-        classId: ClassId,
-        parentContext: FirDeserializationContext? = null
-    ): FirRegularClassSymbol? {
-        return classCache.getValue(classId, parentContext)
-    }
-
-    private fun getTypeAlias(
-        classId: ClassId,
-    ): FirTypeAliasSymbol? {
-        if (!classId.relativeClassName.isOneSegmentFQN()) return null
-        return typeAliasCache.getValue(classId)
     }
 
     override fun getPackage(fqName: FqName): FqName? = null

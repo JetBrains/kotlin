@@ -5,36 +5,40 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.dependencyProvider
-import org.jetbrains.kotlin.test.model.TestModule
 
-class FirModuleInfoProvider(
-    private val testServices: TestServices
-) : TestService {
+class FirModuleInfoProvider(private val testServices: TestServices) : TestService {
     val firSessionProvider = FirProjectSessionProvider()
 
-    private val builtinsByModule: MutableMap<TestModule, FirJvmModuleInfo> = mutableMapOf()
-    private val firModuleInfoByModule: MutableMap<TestModule, FirJvmModuleInfo> = mutableMapOf()
+    private val firModuleDataByModule: MutableMap<TestModule, FirModuleData> = mutableMapOf()
 
-    fun convertToFirModuleInfo(module: TestModule): FirJvmModuleInfo {
-        return firModuleInfoByModule.getOrPut(module) {
-            val dependencies = mutableListOf(builtinsModuleInfoForModule(module))
-            module.dependencies.filter { it.kind == DependencyKind.Source }.mapTo(dependencies) {
-                convertToFirModuleInfo(testServices.dependencyProvider.getTestModule(it.moduleName))
-            }
-            FirJvmModuleInfo(Name.identifier(module.name), dependencies)
-        }
+    fun registerModuleData(module: TestModule, moduleData: FirModuleData) {
+        if (module in firModuleDataByModule) error("module data for module $module already registered")
+        firModuleDataByModule[module] = moduleData
     }
 
-    fun builtinsModuleInfoForModule(module: TestModule): FirJvmModuleInfo {
-        return builtinsByModule.getOrPut(module) {
-            FirJvmModuleInfo(Name.special("<built-ins>"))
+    fun getCorrespondingModuleData(module: TestModule): FirModuleData {
+        return firModuleDataByModule[module] ?: error("module data for module $module is not registered")
+    }
+
+    fun getDependentSourceModules(module: TestModule): List<FirModuleData> {
+        return getDependentModulesImpl(module.dependencies)
+    }
+
+    fun getDependentFriendSourceModules(module: TestModule): List<FirModuleData> {
+        return getDependentModulesImpl(module.friends)
+    }
+
+    private fun getDependentModulesImpl(dependencies: List<DependencyDescription>): List<FirModuleData> {
+        return dependencies.filter { it.kind == DependencyKind.Source }.map {
+            getCorrespondingModuleData(testServices.dependencyProvider.getTestModule(it.moduleName))
         }
     }
 }

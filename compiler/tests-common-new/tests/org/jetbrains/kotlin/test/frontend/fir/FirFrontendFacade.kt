@@ -5,19 +5,29 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.createSessionWithDependencies
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.*
@@ -48,28 +58,43 @@ class FirFrontendFacade(
             testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
 
-        val sessionProvider = moduleInfoProvider.firSessionProvider
-
         val languageVersionSettings = module.languageVersionSettings
-        val builtinsModuleInfo = moduleInfoProvider.builtinsModuleInfoForModule(module)
         val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
 
-        createSessionForBuiltins(builtinsModuleInfo, sessionProvider, project, packagePartProviderFactory)
-        createSessionForBinaryDependencies(module, sessionProvider, project, packagePartProviderFactory)
+        val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
+        val librariesScope = ProjectScope.getLibrariesScope(project)
         val sourcesScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)
-        val sourcesModuleInfo = moduleInfoProvider.convertToFirModuleInfo(module)
-        val session = FirSessionFactory.createJavaModuleBasedSession(
-            sourcesModuleInfo,
-            sessionProvider,
-            sourcesScope,
+
+        val session = createSessionWithDependencies(
+            Name.identifier(module.name),
+            module.targetPlatform,
+            module.targetPlatform.getAnalyzerServices(),
+            moduleInfoProvider.firSessionProvider,
             project,
-            languageVersionSettings = languageVersionSettings
-        ) {
-            if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
-                registerExtendedCommonCheckers()
+            languageVersionSettings,
+            sourcesScope,
+            librariesScope,
+            lookupTracker = null,
+            getPackagePartProvider = packagePartProviderFactory,
+            getProviderAndScopeForIncrementalCompilation = { null },
+            dependenciesConfigurator = {
+                dependencies(configuration.jvmModularRoots.map { it.toPath() })
+                dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
+
+                friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+
+                sourceDependencies(moduleInfoProvider.getDependentSourceModules(module))
+                sourceFriendsDependencies(moduleInfoProvider.getDependentFriendSourceModules(module))
+            },
+            sessionConfigurator = {
+                if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
+                    registerExtendedCommonCheckers()
+                }
             }
-        }
+        )
+
+        moduleInfoProvider.registerModuleData(module, session.moduleData)
 
         val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles, originalFiles, lightTreeEnabled)
         val firFiles = firAnalyzerFacade.runResolution()
@@ -81,35 +106,13 @@ class FirFrontendFacade(
         return FirOutputArtifactImpl(session, filesMap, firAnalyzerFacade)
     }
 
-    private fun createSessionForBuiltins(
-        builtinsModuleInfo: FirJvmModuleInfo,
-        sessionProvider: FirProjectSessionProvider,
-        project: Project,
-        packagePartProviderFactory: (GlobalSearchScope) -> JvmPackagePartProvider,
-    ) {
-        //For BuiltIns, registered in sessionProvider automatically
-        val allProjectScope = GlobalSearchScope.allScope(project)
-
-        FirSessionFactory.createLibrarySession(
-            builtinsModuleInfo, sessionProvider, allProjectScope, project,
-            packagePartProviderFactory(allProjectScope)
-        )
-    }
-
-    private fun createSessionForBinaryDependencies(
-        module: TestModule,
-        sessionProvider: FirProjectSessionProvider,
-        project: Project,
-        packagePartProviderFactory: (GlobalSearchScope) -> JvmPackagePartProvider,
-    ) {
-        val librariesScope = ProjectScope.getLibrariesScope(project)
-        val librariesModuleInfo = FirJvmModuleInfo.createForLibraries(module.name)
-        FirSessionFactory.createLibrarySession(
-            librariesModuleInfo,
-            sessionProvider,
-            librariesScope,
-            project,
-            packagePartProviderFactory(librariesScope)
-        )
+    private fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
+        return when {
+            isJvm() -> JvmPlatformAnalyzerServices
+            isJs() -> JsPlatformAnalyzerServices
+            isNative() -> NativePlatformAnalyzerServices
+            isCommon() -> CommonPlatformAnalyzerServices
+            else -> error("Unknown target platform: $this")
+        }
     }
 }

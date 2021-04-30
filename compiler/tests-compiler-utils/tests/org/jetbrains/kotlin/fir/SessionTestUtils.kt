@@ -7,50 +7,55 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import java.nio.file.Path
 
+@ObsoleteTestInfrastructure
 fun createSessionForTests(
     environment: KotlinCoreEnvironment,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope),
     moduleName: String = "TestModule",
-    friendPaths: List<String> = emptyList(),
-    lookupTracker: LookupTracker? = null
+    friendsPaths: List<Path> = emptyList(),
 ): FirSession = createSessionForTests(
     environment.project,
     sourceScope,
     librariesScope,
     moduleName,
-    friendPaths,
-    lookupTracker,
+    friendsPaths,
     environment::createPackagePartProvider
 )
 
+@ObsoleteTestInfrastructure
 fun createSessionForTests(
     project: Project,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
     moduleName: String = "TestModule",
-    friendPaths: List<String> = emptyList(),
-    lookupTracker: LookupTracker? = null,
+    friendsPaths: List<Path> = emptyList(),
     getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-    getAdditionalModulePackagePartProvider: (GlobalSearchScope) -> PackagePartProvider? = { null }
 ): FirSession {
     return createSessionWithDependencies(
         Name.identifier(moduleName),
-        friendPaths,
-        outputDirectory = null,
+        JvmPlatforms.unspecifiedJvmPlatform,
+        JvmPlatformAnalyzerServices,
+        externalSessionProvider = null,
         project,
         languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         sourceScope,
         librariesScope,
-        lookupTracker,
+        lookupTracker = null,
         getPackagePartProvider,
-        getAdditionalModulePackagePartProvider
+        getProviderAndScopeForIncrementalCompilation = { null },
+        dependenciesConfigurator = {
+            friendDependencies(friendsPaths)
+        }
     )
 }
 
