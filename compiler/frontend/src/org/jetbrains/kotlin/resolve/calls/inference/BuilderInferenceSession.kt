@@ -267,7 +267,7 @@ class BuilderInferenceSession(
         storage: ConstraintStorage,
         nonFixedToVariablesSubstitutor: NewTypeSubstitutor,
         shouldIntegrateAllConstraints: Boolean
-    ): Boolean {
+    ) {
         storage.notFixedTypeVariables.values.forEach {
             if (it.typeVariable.freshTypeConstructor(commonSystem.typeSystemContext) !in commonSystem.allTypeVariables) {
                 commonSystem.registerVariable(it.typeVariable)
@@ -287,8 +287,6 @@ class BuilderInferenceSession(
         * */
         val callSubstitutor = storage.buildResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false)
 
-        var introducedConstraint = false
-
         for (initialConstraint in storage.initialConstraints) {
             val lowerCallSubstituted = callSubstitutor.safeSubstitute(initialConstraint.a as UnwrappedType)
             val upperCallSubstituted = callSubstitutor.safeSubstitute(initialConstraint.b as UnwrappedType)
@@ -296,8 +294,6 @@ class BuilderInferenceSession(
             val (lower, upper) = substituteNotFixedVariables(lowerCallSubstituted, upperCallSubstituted, nonFixedToVariablesSubstitutor)
 
             if (commonSystem.isProperType(lower) && commonSystem.isProperType(upper)) continue
-
-            introducedConstraint = true
 
             when (initialConstraint.constraintKind) {
                 ConstraintKind.LOWER -> error("LOWER constraint shouldn't be used, please use UPPER")
@@ -317,11 +313,8 @@ class BuilderInferenceSession(
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
                 commonSystem.registerVariable(typeVariable)
                 commonSystem.addEqualityConstraint((typeVariable as NewTypeVariable).defaultType, type, CoroutinePosition)
-                introducedConstraint = true
             }
         }
-
-        return introducedConstraint
     }
 
     fun addExpectedTypeConstraint(
@@ -379,20 +372,14 @@ class BuilderInferenceSession(
 
         integrateConstraints(initialStorage, nonFixedToVariablesSubstitutor, false)
 
-        var effectivelyEmptyCommonSystem = true
-
         for (call in commonCalls) {
-            val hasConstraints =
-                integrateConstraints(call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, false)
-            if (hasConstraints) effectivelyEmptyCommonSystem = false
+            integrateConstraints(call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, false)
         }
         for (call in partiallyResolvedCallsInfo) {
-            val hasConstraints =
-                integrateConstraints(call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, true)
-            if (hasConstraints) effectivelyEmptyCommonSystem = false
+            integrateConstraints(call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, true)
         }
 
-        return effectivelyEmptyCommonSystem
+        return commonSystem.notFixedTypeVariables.all { it.value.constraints.isEmpty() }
     }
 
     private fun reportErrors(completedCall: CallInfo, resolvedCall: ResolvedCall<*>, errors: List<ConstraintSystemError>) {

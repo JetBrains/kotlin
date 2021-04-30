@@ -12693,18 +12693,24 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Nested
-                @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/addingConstraints")
+                @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/constraints")
                 @TestDataPath("$PROJECT_ROOT")
-                public class AddingConstraints {
+                public class Constraints {
                     @Test
-                    public void testAllFilesPresentInAddingConstraints() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/addingConstraints"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    public void testAllFilesPresentInConstraints() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/constraints"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
 
                     @Test
-                    @TestMetadata("bySpecifiedReturnType.kt")
-                    public void testBySpecifiedReturnType() throws Exception {
-                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/addingConstraints/bySpecifiedReturnType.kt");
+                    @TestMetadata("violating.kt")
+                    public void testViolating() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/constraints/violating.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("withExpectedType.kt")
+                    public void testWithExpectedType() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/constraints/withExpectedType.kt");
                     }
                 }
 

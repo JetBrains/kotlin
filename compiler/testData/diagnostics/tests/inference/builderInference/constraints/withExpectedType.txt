@@ -1,0 +1,19 @@
+package
+
+public fun </*0*/ K, /*1*/ V> build(/*0*/ @kotlin.BuilderInference builderAction: kotlin.collections.MutableMap<K, V>.() -> V): kotlin.Unit
+public fun </*0*/ K, /*1*/ V> build2(/*0*/ @kotlin.BuilderInference builderAction: kotlin.collections.MutableMap<K, V>.() -> K): kotlin.Unit
+public fun </*0*/ K, /*1*/ V> build3(/*0*/ @kotlin.BuilderInference builderAction: kotlin.collections.MutableMap<K, V>.(K) -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ K, /*1*/ V> build4(/*0*/ @kotlin.BuilderInference builderAction: kotlin.collections.MutableMap<K, V>.() -> kotlin.collections.MutableMap<kotlin.String, kotlin.Int>): kotlin.Unit
+public fun </*0*/ K : V, /*1*/ V : kotlin.CharSequence> build5(/*0*/ @kotlin.BuilderInference builderAction: kotlin.collections.MutableMap<K, V>.() -> kotlin.collections.MutableMap<kotlin.String, V>): kotlin.Unit
+public fun </*0*/ K : V, /*1*/ V : kotlin.CharSequence> build6(/*0*/ @kotlin.BuilderInference builderAction: kotlin.collections.MutableMap<K, V>.() -> kotlin.collections.MutableMap<K, kotlin.String>): kotlin.Unit
+public fun </*0*/ K> id(/*0*/ x: K): K
+@kotlin.ExperimentalStdlibApi public fun main(): kotlin.Unit
+public fun take(/*0*/ x: kotlin.String): kotlin.Unit
+public fun kotlin.collections.MutableMap<kotlin.String, kotlin.Int>.foo(): kotlin.Unit
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.collections.MutableList<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
