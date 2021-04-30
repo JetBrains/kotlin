@@ -2,6 +2,7 @@
 // FULL_JDK
 // WITH_RUNTIME
 // IGNORE_BACKEND: ANDROID
+// SKIP_JDK6
 // FILE: 1.kt
 
 package test
