@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import java.nio.file.Path
+import java.nio.file.Paths
 
 @ThreadSafeMutableState
 class KotlinDeserializedJvmSymbolsProvider(
@@ -56,7 +58,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             val facadeFqName = facadeName?.let { JvmClassName.byInternalName(it).fqNameForTopLevelClassMaybeWithDollars }
             val facadeBinaryClass = facadeFqName?.let { kotlinClassFinder.findKotlinClass(ClassId.topLevel(it)) }
 
-            val moduleData = moduleDataProvider.getModuleData(kotlinJvmBinaryClass.containingLibrary) ?: return@mapNotNull null
+            val moduleData = moduleDataProvider.getModuleData(kotlinJvmBinaryClass.containingLibrary.toPath()) ?: return@mapNotNull null
 
             val header = kotlinJvmBinaryClass.classHeader
             val data = header.data ?: header.incompatibleData ?: return@mapNotNull null
@@ -115,7 +117,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             nameResolver,
             classProto,
             JvmBinaryAnnotationDeserializer(session, kotlinClass.kotlinJvmBinaryClass, kotlinClassFinder, kotlinClass.byteContent),
-            kotlinClass.kotlinJvmBinaryClass.containingLibrary,
+            kotlinClass.kotlinJvmBinaryClass.containingLibrary.toPath(),
             KotlinJvmBinarySourceElement(kotlinClass.kotlinJvmBinaryClass),
             classPostProcessor = { loadAnnotationsFromClassFile(kotlinClass, it) }
         )
@@ -164,5 +166,9 @@ class KotlinDeserializedJvmSymbolsProvider(
             val knownNames = knownClassNamesInPackage.getValue(classId.packageFqName) ?: return false
             return classId.relativeClassName.topLevelName() !in knownNames
         }
+    }
+
+    private fun String?.toPath(): Path? {
+        return this?.let { Paths.get(it) }
     }
 }
