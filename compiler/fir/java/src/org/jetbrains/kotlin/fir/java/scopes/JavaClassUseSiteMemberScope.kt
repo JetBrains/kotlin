@@ -45,6 +45,8 @@ class JavaClassUseSiteMemberScope(
     private val typeParameterStack = klass.javaTypeParameterStack
     private val specialFunctions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val accessorByNameMap = hashMapOf<Name, FirAccessorSymbol>()
+    
+    private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
     override fun getCallableNames(): Set<Name> {
         return declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
@@ -136,7 +138,7 @@ class JavaClassUseSiteMemberScope(
     private fun FirPropertySymbol.findGetterOverride(
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
-        val specialGetterName = getBuiltinSpecialPropertyGetterName()
+        val specialGetterName = if (canUseSpecialGetters) getBuiltinSpecialPropertyGetterName() else null
         if (specialGetterName != null) {
             return findGetterByName(specialGetterName.asString(), scope)
         }
@@ -446,6 +448,28 @@ class JavaClassUseSiteMemberScope(
         }
 
         return result
+    }
+
+    /**
+     * Checks if class has any kotlin super-types apart from builtins and interfaces
+     */
+    private fun FirRegularClass.hasKotlinSuper(session: FirSession, visited: MutableSet<FirRegularClass> = mutableSetOf()): Boolean =
+        when {
+            !visited.add(this) -> false
+            this is FirJavaClass -> superConeTypes.any { type ->
+                type.toFir(session)?.hasKotlinSuper(session, visited) == true
+            }
+            isInterface || origin == FirDeclarationOrigin.BuiltIns -> false
+            else -> true
+        }
+
+    private fun ConeClassLikeType.toFir(session: FirSession): FirRegularClass? {
+        val symbol = this.toSymbol(session)
+        return if (symbol is FirRegularClassSymbol) {
+            symbol.fir
+        } else {
+            null
+        }
     }
 }
 
