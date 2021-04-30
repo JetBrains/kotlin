@@ -245,6 +245,7 @@ class GenerationState private constructor(
         this.moduleName,
         languageVersionSettings,
         useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
+        IncompatibleClassTracker.DoNothing,
         target,
         isIrBackend
     )

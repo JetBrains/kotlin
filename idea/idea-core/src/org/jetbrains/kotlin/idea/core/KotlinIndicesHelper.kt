@@ -136,6 +136,17 @@ class KotlinIndicesHelper(
         processIndex(KotlinTopLevelPropertyFqnNameIndex.getInstance())
     }
 
+    // Temporary returned to preserve binary compatibility with AS 203 (ComposeModifierCompletionContributor uses this method)
+    @Deprecated("Please migrate call side", level = DeprecationLevel.ERROR)
+    @Suppress("unused")
+    fun getCallableTopLevelExtensions(
+        callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+        position: KtExpression,
+        bindingContext: BindingContext,
+        nameFilter: (String) -> Boolean
+    ): Collection<CallableDescriptor> =
+        getCallableTopLevelExtensions(callTypeAndReceiver, position, bindingContext, null, nameFilter)
+
     fun getCallableTopLevelExtensions(
         callTypeAndReceiver: CallTypeAndReceiver<*, *>,
         position: KtExpression,
