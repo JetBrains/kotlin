@@ -235,7 +235,7 @@ object FirErrors {
     val TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val THROWABLE_TYPE_MISMATCH by error1<PsiElement, ConeKotlinType>()
     val CONDITION_TYPE_MISMATCH by error1<PsiElement, ConeKotlinType>()
-    val ARGUMENT_TYPE_MISMATCH by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val ARGUMENT_TYPE_MISMATCH by error3<PsiElement, ConeKotlinType, ConeKotlinType, Boolean>()
     val NULL_FOR_NONNULL_TYPE by error0<PsiElement>()
     val INAPPLICABLE_LATEINIT_MODIFIER by error1<KtModifierListOwner, String>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
     val VARARG_OUTSIDE_PARENTHESES by error0<KtExpression>()

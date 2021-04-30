@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -136,7 +137,8 @@ private fun mapInapplicableCandidateError(
             is ArgumentTypeMismatch -> FirErrors.ARGUMENT_TYPE_MISMATCH.on(
                 rootCause.argument.source ?: source,
                 rootCause.expectedType,
-                rootCause.actualType
+                rootCause.actualType,
+                rootCause.isMismatchDueToNullability
             )
             is NullForNotNullType -> FirErrors.NULL_FOR_NONNULL_TYPE.on(
                 rootCause.argument.source ?: source
@@ -219,7 +221,14 @@ private fun ConstraintSystemError.toDiagnostic(
                 }
 
             argument?.let {
-                return FirErrors.ARGUMENT_TYPE_MISMATCH.on(it.source ?: source, lowerConeType, upperConeType)
+                val lowerType = lowerConeType
+                val upperType = upperConeType
+                val isMismatchDueToNullability = lowerType.canBeNull && !upperType.isNullable && AbstractTypeChecker.isSubtypeOf(
+                    typeContext,
+                    lowerType,
+                    upperType.withNullability(ConeNullability.NULLABLE, typeContext)
+                )
+                return FirErrors.ARGUMENT_TYPE_MISMATCH.on(it.source ?: source, lowerType, upperType, isMismatchDueToNullability)
             }
 
             when (position) {

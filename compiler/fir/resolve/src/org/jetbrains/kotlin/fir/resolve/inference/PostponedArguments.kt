@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun Candidate.preprocessLambdaArgument(
@@ -57,7 +59,14 @@ fun Candidate.preprocessLambdaArgument(
             csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
         } else {
             if (!csBuilder.addSubtypeConstraintIfCompatible(lambdaType, expectedType, position)) {
-                sink.reportDiagnostic(ArgumentTypeMismatch(lambdaType, expectedType, argument))
+                // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
+                // relation with nullable expected type.
+                val isMismatchDueToNullability = lambdaType.canBeNull && !expectedType.isNullable && AbstractTypeChecker.isSubtypeOf(
+                    context.session.typeContext,
+                    lambdaType,
+                    expectedType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
+                )
+                sink.reportDiagnostic(ArgumentTypeMismatch(expectedType, lambdaType, argument, isMismatchDueToNullability))
             }
         }
     }
