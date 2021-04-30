@@ -61,7 +61,8 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest> {
                 model("diagnostics/foreignAnnotationsTests/tests")
-                model("diagnostics/foreignAnnotationsTests/java8Tests")
+                // TODO: remove exclusion of these dirs after advance dependent intellij platform
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancement/onCompiled"))
                 model("diagnostics/foreignAnnotationsTests/java9Tests")
             }
 
