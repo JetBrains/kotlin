@@ -2,6 +2,8 @@ idePluginDependency {
     val compilerModules: Array<String> by rootProject.extra
 
     val excludedCompilerModules = listOf(
+        ":compiler:cli",
+        ":compiler:cli-js",
         ":compiler:javac-wrapper",
         ":compiler:backend.js",
         ":compiler:backend.wasm",
@@ -15,10 +17,7 @@ idePluginDependency {
         ":kotlin-compiler-runner",
         ":kotlin-preloader",
         ":daemon-common",
-        ":daemon-common-new",
-        ":kotlin-daemon",
-        ":kotlin-daemon-client",
-        ":kotlin-daemon-client-new"
+        ":kotlin-daemon-client"
     )
 
     publishProjectJars(
