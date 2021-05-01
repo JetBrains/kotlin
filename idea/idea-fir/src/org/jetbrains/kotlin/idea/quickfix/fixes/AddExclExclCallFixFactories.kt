@@ -81,9 +81,11 @@ object AddExclExclCallFixFactories {
         val type = expression.getKtType()
         if (!type.canBeNull) return@diagnosticFixFactory emptyList()
 
+        // NOTE: This is different from FE1.0 in that we offer the fix even if the function does NOT have the `operator` modifier.
+        // Adding `!!` will then surface the error that `operator` should be added (with corresponding fix).
         val typeScope = type.getTypeScope() ?: return@diagnosticFixFactory emptyList()
         val hasValidIterator = typeScope.getCallableSymbols { it == OperatorNameConventions.ITERATOR }
-            .filter { it is KtFunctionSymbol && it.isOperator && it.valueParameters.isEmpty() }.singleOrNull() != null
+            .filter { it is KtFunctionSymbol && it.valueParameters.isEmpty() }.singleOrNull() != null
         if (hasValidIterator) {
             listOfNotNull(expression.asAddExclExclCallFix())
         } else {
@@ -93,4 +95,4 @@ object AddExclExclCallFixFactories {
 }
 
 internal fun PsiElement?.asAddExclExclCallFix(hasImplicitReceiver: Boolean = false) =
-    this?.let { AddExclExclCallFix(it, hasImplicitReceiver) } ?: null
+    this?.let { AddExclExclCallFix(it, hasImplicitReceiver) }
