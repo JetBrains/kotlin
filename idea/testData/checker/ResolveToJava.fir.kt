@@ -26,7 +26,7 @@ fun test(l : List<Int>) {
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
   Collections.singleton<Int>(<error descr="[ARGUMENT_TYPE_MISMATCH] Argument type mismatch: actual type is kotlin/Double but ft<TypeVariable(T), TypeVariable(T)?> was expected">1.0</error>)
 
-  List<Int>
+  <error descr="[NO_COMPANION_OBJECT] Classifier 'kotlin/collections/List' does not have a companion object, and thus must be initialized here">List</error><Int>
 
 
   val o = "sdf" as Object

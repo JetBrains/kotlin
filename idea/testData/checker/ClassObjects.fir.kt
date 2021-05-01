@@ -24,7 +24,7 @@ val a = A.x
 val c = B.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: x">x</error>
 val d = b.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: x">x</error>
 
-val s = System  // error
+val s = <error descr="[NO_COMPANION_OBJECT] Classifier 'java/lang/System' does not have a companion object, and thus must be initialized here">System</error>  // error
 fun test() {
   System.out.println()
   java.lang.System.out.println()
