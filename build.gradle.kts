@@ -38,10 +38,6 @@ buildscript {
     }
 }
 
-if (kotlinBuildProperties.buildScanServer != null) {
-    apply(from = "gradle/buildScanUserData.gradle")
-}
-
 plugins {
     base
     idea
