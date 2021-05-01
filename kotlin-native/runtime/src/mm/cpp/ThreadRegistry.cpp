@@ -40,4 +40,4 @@ mm::ThreadRegistry::ThreadRegistry() = default;
 mm::ThreadRegistry::~ThreadRegistry() = default;
 
 // static
-thread_local mm::ThreadRegistry::Node* mm::ThreadRegistry::currentThreadDataNode_ = nullptr;
+THREAD_LOCAL_VARIABLE mm::ThreadRegistry::Node* mm::ThreadRegistry::currentThreadDataNode_ = nullptr;

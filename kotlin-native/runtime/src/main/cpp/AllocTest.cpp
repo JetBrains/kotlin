@@ -18,7 +18,7 @@ class A : public KonanAllocatorAware {
 public:
     using DestructorHook = testing::StrictMock<testing::MockFunction<void(int)>>;
 
-    static thread_local DestructorHook* destructorHook;
+    static THREAD_LOCAL_VARIABLE DestructorHook* destructorHook;
 
     explicit A(int value = -1) : value_(value) {}
 
@@ -33,7 +33,7 @@ private:
 };
 
 // static
-thread_local A::DestructorHook* A::destructorHook = nullptr;
+THREAD_LOCAL_VARIABLE A::DestructorHook* A::destructorHook = nullptr;
 
 struct B {
     explicit B(int value) : a(value) {}

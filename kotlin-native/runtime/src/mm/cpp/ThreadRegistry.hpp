@@ -8,6 +8,7 @@
 
 #include <pthread.h>
 
+#include "Common.h"
 #include "SingleLockList.hpp"
 #include "Utils.hpp"
 
@@ -48,7 +49,7 @@ private:
     ThreadRegistry();
     ~ThreadRegistry();
 
-    static thread_local Node* currentThreadDataNode_;
+    static THREAD_LOCAL_VARIABLE Node* currentThreadDataNode_;
 
     SingleLockList<ThreadData> list_;
 };
