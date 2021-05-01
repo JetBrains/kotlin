@@ -45,20 +45,7 @@ class KotlinBuildProperties(
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 
-    val isInIdeaSync: Boolean = run {
-        // "idea.sync.active" was introduced in 2019.1
-        propertiesProvider.getSystemProperty("idea.sync.active")?.toBoolean() == true || let {
-            // before 2019.1 there is "idea.active" that was true only on sync,
-            // but since 2019.1 "idea.active" present in task execution too.
-            // So let's check Idea version
-            val majorIdeaVersion = propertiesProvider.getSystemProperty("idea.version")
-                ?.split(".")
-                ?.getOrNull(0)
-            val isBeforeIdea2019 = majorIdeaVersion == null || majorIdeaVersion.toInt() < 2019
-
-            isBeforeIdea2019 && propertiesProvider.getSystemProperty("idea.active")?.toBoolean() == true
-        }
-    }
+    val isInIdeaSync: Boolean = propertiesProvider.getSystemProperty("idea.sync.active")?.toBoolean() == true
 
     val isInJpsBuildIdeaSync: Boolean
         get() = isJpsBuildEnabled && isInIdeaSync
