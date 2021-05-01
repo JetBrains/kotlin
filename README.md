@@ -68,6 +68,28 @@ assert(
 )
 ```
 
+## Beyond Assert
+
+The plugin by default will transform `assert` function calls but can also
+transform other functions like `require`, `check`, `assertTrue`, and many, many
+more.
+
+Functions which can be transformed have specific requirements. A function must
+have a form which allows taking a `String` or `() -> String` value as the last
+parameter. This can either be as an overload or the original function.
+
+For example, the `assert` function has 2 definitions:
+* `fun assert(value: Boolean)`
+* `fun assert(value: Boolean, lazyMessage: () -> Any)`
+
+If the first function definition is called, it will be transformed into calling
+the second definition with the diagram message supplied as the last parameter.
+If the second definition is called, it will be transformed into calling the same
+function but with the diagram message appended to the last parameter.
+
+This transformed function call doesn't need to throw an exception either. See
+[Advanced Usage][#advanced-usage] for some examples.
+
 ## Gradle Plugin
 
 Builds of the Gradle plugin are available through the
@@ -75,38 +97,27 @@ Builds of the Gradle plugin are available through the
 
 ```kotlin
 plugins {
-  kotlin("multiplatform") version "1.4.30"
+  kotlin("multiplatform") version "1.5.0"
   id("com.bnorm.power.kotlin-power-assert") version "0.7.0"
 }
 ```
 
-The plugin by default will transform `assert` function call but can also
-transform other functions like `require`, `check`, and/or `assertTrue`. The
-function needs to validate the Boolean expression evaluates to `true` and has a
-form which also takes a String or String producing lambda.
+The Gradle plugin allows configuring the functions which should be transformed
+with a list of fully-qualified function names.
 
 ```kotlin
 configure<com.bnorm.power.PowerAssertGradleExtension> {
   functions = listOf("kotlin.assert", "kotlin.test.assertTrue")
 }
-``` 
+```
 
 ## Kotlin IR
 
 Using this compiler plugin only works if the code is compiled using Kotlin
-1.4.30 and IR is enabled. This plugin supports all IR based compiler backends:
-JVM, JS, and Native!
+1.5.0. This plugin supports all IR based compiler backends: JVM, JS, and Native!
+Only Kotlin/JS still uses the legacy compiler backend by default, use the
+following to make sure IR is enabled.
 
-##### Kotlin/JVM
-```kotlin
-tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions {
-    useIR = true
-  }
-}
-```
-
-##### Kotlin/JS
 ```kotlin
 target {
   js(IR) {
@@ -114,8 +125,63 @@ target {
 }
 ```
 
-##### Kotlin/Native
-IR already enabled by default!
+## Advanced Usage
+
+### Function Call Tracing
+
+Similar to Rust's `dbg!` macro, functions which take arbitrary parameters can
+be transformed. For example:
+
+```kotlin
+fun <T> dbg(value: T): T = value
+
+fun <T> dbg(value: T, msg: String): T {
+  println(msg)
+  return value
+}
+
+fun main() {
+  println(dbg(1 + 2 + 3))
+}
+```
+
+Prints the following:
+
+```text
+dbg(1 + 2 + 3)
+      |   |
+      |   6
+      3
+6
+```
+
+### Soft Assertion
+
+To achieve soft assertion, the following template can be implemented:
+
+```kotlin
+typealias LazyMessage = () -> Any
+
+interface AssertScope {
+  fun assert(assertion: Boolean, lazyMessage: LazyMessage? = null)
+}
+
+fun <R> assertSoftly(block: AssertScope.() -> R): R = TODO("implement")
+```
+
+You can then use the template as follows:
+
+```kotlin
+val jane: Person = TODO()
+assertSoftly {
+  assert(jane.firstName == "Jane")
+  assert(jane.lastName == "Doe")
+}
+```
+
+A working example is [available][soft-assert-example] in this repository in the
+sample directory.
 
 [groovy-power-assert]: https://groovy-lang.org/testing.html#_power_assertions
 [kotlin-power-assert-gradle]: https://plugins.gradle.org/plugin/com.bnorm.power.kotlin-power-assert
+[soft-assert-example]: https://github.com/bnorm/kotlin-power-assert/blob/master/sample/src/commonMain/kotlin/com/bnorm/power/AssertScope.kt
