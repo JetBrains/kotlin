@@ -252,7 +252,17 @@ class CycleDetector : private kotlin::Pinned, public KonanAllocatorAware {
 
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
-THREAD_LOCAL_VARIABLE FrameOverlay* currentFrame = nullptr;
+
+#ifdef KONAN_WINDOWS
+    #include <processthreadsapi.h>
+    static DWORD currentFrameTlsIndex = TlsAlloc();
+    inline FrameOverlay* getCurrentFrame() { return (FrameOverlay*)TlsGetValue(currentFrameTlsIndex); }
+    inline void setCurrentFrame(FrameOverlay* value) { TlsSetValue(currentFrameTlsIndex, value); }
+#else
+    THREAD_LOCAL_VARIABLE FrameOverlay* currentFrame = nullptr;
+    inline FrameOverlay* getCurrentFrame() { return currentFrame; }
+    inline void setCurrentFrame(FrameOverlay* value) { currentFrame = value; }
+#endif
 
 #if COLLECT_STATISTIC
 class MemoryStatistic {
@@ -1776,7 +1786,7 @@ inline size_t containerSize(const ContainerHeader* container) {
 
 #if USE_GC
 void incrementStack(MemoryState* state) {
-  FrameOverlay* frame = currentFrame;
+  FrameOverlay* frame = getCurrentFrame();
   while (frame != nullptr) {
     ObjHeader** current = reinterpret_cast<ObjHeader**>(frame + 1) + frame->parameters;
     ObjHeader** end = current + frame->count - kFrameOverlaySlots - frame->parameters;
@@ -1820,7 +1830,7 @@ void processDecrements(MemoryState* state) {
 void decrementStack(MemoryState* state) {
   RuntimeAssert(IsStrictMemoryModel(), "Only works in strict model now");
   state->gcSuspendCount++;
-  FrameOverlay* frame = currentFrame;
+  FrameOverlay* frame = getCurrentFrame();
   while (frame != nullptr) {
     ObjHeader** current = reinterpret_cast<ObjHeader**>(frame + 1) + frame->parameters;
     ObjHeader** end = current + frame->count - kFrameOverlaySlots - frame->parameters;
@@ -2528,8 +2538,8 @@ void enterFrame(ObjHeader** start, int parameters, int count) {
   MEMORY_LOG("EnterFrame %p: %d parameters %d locals\n", start, parameters, count)
   FrameOverlay* frame = reinterpret_cast<FrameOverlay*>(start);
   if (Strict) {
-    frame->previous = currentFrame;
-    currentFrame = frame;
+    frame->previous = getCurrentFrame();
+    setCurrentFrame(frame);
     // TODO: maybe compress in single value somehow.
     frame->parameters = parameters;
     frame->count = count;
@@ -2541,7 +2551,7 @@ void leaveFrame(ObjHeader** start, int parameters, int count) {
   MEMORY_LOG("LeaveFrame %p: %d parameters %d locals\n", start, parameters, count)
   FrameOverlay* frame = reinterpret_cast<FrameOverlay*>(start);
   if (Strict) {
-    currentFrame = frame->previous;
+    setCurrentFrame(frame->previous);
   } else {
     ObjHeader** current = start + parameters + kFrameOverlaySlots;
     count -= parameters;
