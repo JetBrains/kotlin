@@ -14,6 +14,6 @@ class JspecifyMarksCleanupPreprocessor(testServices: TestServices) : SourceFileP
 
     companion object {
         private val jspecifyMarks = diagnosticsToJspecifyMarks.values.map { it.values }.flatten().joinToString("|")
-        private val regexToCleanup = Regex("""[ ]*// ($jspecifyMarks)(, ($jspecifyMarks))*${System.lineSeparator()}""")
+        private val regexToCleanup = Regex("""[ ]*// ($jspecifyMarks)(, ($jspecifyMarks))*\n""")
     }
 }

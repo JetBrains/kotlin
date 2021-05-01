@@ -30,7 +30,7 @@ class JspecifyDiagnosticComplianceHandler(testServices: TestServices) : ClassicF
                 val jspecifyMark = diagnosticsToJspecifyMarks.getValue(jspecifyMode)[metaInfo.diagnostic.factory] ?: continue
                 val fileLines = ktFile.text.lines()
                 val fileLinePositions =
-                    fileLines.map { it.length }.runningReduce { sumLength, length -> sumLength + length + System.lineSeparator().length }
+                    fileLines.map { it.length }.runningReduce { sumLength, length -> sumLength + length + 1 }
                 val lineIndexToPasteJspecifyMark = fileLinePositions.indexOfLast { it < metaInfo.start }
                 val positionToPasteJspecifyMark = fileLinePositions[lineIndexToPasteJspecifyMark]
                 val offset = fileLines[lineIndexToPasteJspecifyMark + 1].takeWhile { it == ' ' }.length

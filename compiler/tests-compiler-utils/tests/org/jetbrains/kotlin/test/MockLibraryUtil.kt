@@ -121,7 +121,7 @@ object MockLibraryUtil {
                 add("-d")
                 add(classesDir.path)
 
-                if (useJava9) {
+                if (useJava9 && extraModulepath.isNotEmpty()) {
                     add("--module-path")
                     add(extraModulepath.joinToString(File.pathSeparator))
                 }

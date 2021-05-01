@@ -87,8 +87,8 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
         }
 
         forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/*") {
-//            useFrontendHandlers(::JspecifyDiagnosticComplianceHandler)
-//            useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
+            useFrontendHandlers(::JspecifyDiagnosticComplianceHandler)
+            useSourcePreprocessor(::JspecifyMarksCleanupPreprocessor)
         }
     }
 }
