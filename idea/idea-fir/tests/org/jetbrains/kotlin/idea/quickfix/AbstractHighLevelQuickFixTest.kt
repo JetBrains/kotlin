@@ -14,18 +14,29 @@ import java.nio.file.Paths
 
 abstract class AbstractHighLevelQuickFixTest : AbstractQuickFixTest() {
     override fun doTest(beforeFileName: String) {
+        val firBeforeFileName = getFirBeforeFileName(beforeFileName)
         IgnoreTests.runTestIfNotDisabledByFileDirective(
-            Paths.get(beforeFileName),
+            Paths.get(firBeforeFileName),
             disableTestDirective = IgnoreTests.DIRECTIVES.IGNORE_FIR_MULTILINE_COMMENT,
             directivePosition = IgnoreTests.DirectivePosition.LAST_LINE_IN_FILE,
             additionalFilesExtensions = arrayOf("after")
         ) {
-            super.doTest(beforeFileName)
+            super.doTest(firBeforeFileName)
+        }
+    }
+
+    private fun getFirBeforeFileName(beforeFileName: String): String {
+        val firBeforeFilename = beforeFileName.replace(".kt", ".fir.kt")
+        val firBeforeFile = File(firBeforeFilename)
+        return if (firBeforeFile.exists()) {
+            firBeforeFile.canonicalPath
+        } else {
+            beforeFileName
         }
     }
 
     override fun getAfterFileName(beforeFileName: String): String {
-        val firAfterFile = File(testPath(beforeFileName + ".fir.after"))
+        val firAfterFile = File(testPath(beforeFileName.replace(".kt", ".fir.kt.after")))
         return if (firAfterFile.exists()) {
             firAfterFile.name
         } else {
