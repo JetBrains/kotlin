@@ -102,7 +102,7 @@ UFile (package = org.jetbrains.uast.kotlin)
                         ULambdaExpression
                             UBlockExpression
                                 UDeclarationsExpression
-                                    ULocalVariable (name = vardbcd0724)
+                                    ULocalVariable (name = vardbcd09b4)
                                         UAnnotation (fqName = org.jetbrains.annotations.NotNull)
                                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2))
                                             UIdentifier (Identifier (listOf))
@@ -112,14 +112,14 @@ UFile (package = org.jetbrains.uast.kotlin)
                                     ULocalVariable (name = a)
                                         UAnnotation (fqName = org.jetbrains.annotations.NotNull)
                                         UQualifiedReferenceExpression
-                                            USimpleNameReferenceExpression (identifier = vardbcd0724)
+                                            USimpleNameReferenceExpression (identifier = vardbcd09b4)
                                             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                                 UIdentifier (Identifier (component1))
                                                 USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
                                     ULocalVariable (name = b)
                                         UAnnotation (fqName = org.jetbrains.annotations.NotNull)
                                         UQualifiedReferenceExpression
-                                            USimpleNameReferenceExpression (identifier = vardbcd0724)
+                                            USimpleNameReferenceExpression (identifier = vardbcd09b4)
                                             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                                                 UIdentifier (Identifier (component2))
                                                 USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)

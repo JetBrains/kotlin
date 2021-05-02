@@ -11,7 +11,7 @@ UTypeReferenceExpression (name = <ErrorType>) -> USimpleNameReferenceExpression 
 UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> Light PSI class: T: T
     ULocalVariable (name = a) -> USimpleNameReferenceExpression (identifier = arg) -> Light Parameter: arg
     UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> Light PSI class: T: T
-    ULocalVariable (name = var708e23eb) -> USimpleNameReferenceExpression (identifier = arg) -> Light Parameter: arg
+    ULocalVariable (name = var708e267b) -> USimpleNameReferenceExpression (identifier = arg) -> Light Parameter: arg
     UExpressionList (elvis) -> USimpleNameReferenceExpression (identifier = ?:) -> null: null
     UTypeReferenceExpression (name = java.util.List<? extends T>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifier = T) -> Light PSI class: T: T
