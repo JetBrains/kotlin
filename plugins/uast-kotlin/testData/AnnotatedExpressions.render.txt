@@ -6,8 +6,8 @@ public final class AnnotatedExpressionsKt {
         b = a
         if (a > 2) a else b
         var c: int = elvis {
-            var varae507364: int = a
-            if (varae507364 != null) varae507364 else b
+            var varae5075f4: int = a
+            if (varae5075f4 != null) varae5075f4 else b
         }
     }
     public static final fun annotatedSwitch(@org.jetbrains.annotations.NotNull str: java.lang.String) : java.lang.Integer {

@@ -7,11 +7,11 @@ public final class ElvisKt {
     }
     public static final fun baz() : java.lang.String {
         return elvis {
-            var var243c51a0: java.lang.String = elvis {
-                var varc4aef569: java.lang.String = foo("Lorem ipsum")
-                if (varc4aef569 != null) varc4aef569 else foo("dolor sit amet")
+            var var243c5407: java.lang.String = elvis {
+                var varc4aef7d0: java.lang.String = foo("Lorem ipsum")
+                if (varc4aef7d0 != null) varc4aef7d0 else foo("dolor sit amet")
             }
-            if (var243c51a0 != null) var243c51a0 else bar().toString()
+            if (var243c5407 != null) var243c5407 else bar().toString()
         }
     }
 }

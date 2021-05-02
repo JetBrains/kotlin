@@ -8,8 +8,8 @@ public final class TypeReferencesKt {
     public static final fun parameterizedFoo(@org.jetbrains.annotations.Nullable arg: T) : void {
         var a: T = arg
         var at: T = elvis {
-            var var708e23eb: T = arg
-            if (var708e23eb != null) var708e23eb else return
+            var var708e267b: T = arg
+            if (var708e267b != null) var708e267b else return
         }
         var tl: java.util.List<? extends T> = listOf(at)
         var tsl: java.util.List<? extends java.lang.String> = tl.map({ var it: T ->
