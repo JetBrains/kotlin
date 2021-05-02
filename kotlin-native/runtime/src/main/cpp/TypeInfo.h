@@ -29,17 +29,6 @@ struct WritableTypeInfo;
 struct ObjHeader;
 struct AssociatedObjectTableRecord;
 
-// Hash of open method name. Must be unique per class/scope (CityHash64 is being used).
-typedef int64_t MethodNameHash;
-
-// An element of sorted by hash in-place array representing methods.
-// For systems where introspection is not needed - only open methods are in
-// this table.
-struct MethodTableRecord {
-    MethodNameHash nameSignature_;
-    void* methodEntryPoint_;
-};
-
 // Type for runtime representation of Konan object.
 // Keep in sync with runtimeTypeMap in RTTIGenerator.
 enum Konan_RuntimeType {
@@ -123,9 +112,6 @@ struct TypeInfo {
     int32_t objOffsetsCount_;
     const TypeInfo* const* implementedInterfaces_;
     int32_t implementedInterfacesCount_;
-    // Null for abstract classes and interfaces.
-    const MethodTableRecord* openMethods_;
-    uint32_t openMethodsCount_;
     int32_t interfaceTableSize_;
     InterfaceTableRecord const* interfaceTable_;
 
@@ -181,14 +167,6 @@ struct TypeInfo {
 #ifdef __cplusplus
 extern "C" {
 #endif
-// Find open method by its hash. Other methods are resolved in compile-time.
-// Note, that we use attribute const, which assumes function doesn't
-// dereference global memory, while this function does. However, it seems
-// to be safe, as actual result of this computation depends only on 'type_info'
-// and 'hash' numeric values and doesn't really depends on global memory state
-// (as TypeInfo is compile time constant and type info pointers are stable).
-void* LookupOpenMethod(const TypeInfo* info, MethodNameHash nameSignature) RUNTIME_CONST;
-
 InterfaceTableRecord const* LookupInterfaceTableRecord(InterfaceTableRecord const* interfaceTable,
                                                        int interfaceTableSize, ClassId interfaceId) RUNTIME_CONST;
 

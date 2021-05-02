@@ -785,18 +785,24 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                             symbolTable.mapClassReferenceType(owner)
                                                         }
                                                     }
-                                            if (owner.isInterface) {
-                                                val calleeHash = callee.computeFunctionName().localHash.value
+
+                                            val isAnyMethod = callee.target.parentAsClass.isAny()
+                                            if (owner.isInterface && !isAnyMethod) {
+                                                val itablePlace = context.getLayoutBuilder(owner).itablePlace(callee)
                                                 DataFlowIR.Node.ItableCall(
                                                         symbolTable.mapFunction(callee.target),
                                                         receiverType,
-                                                        calleeHash,
+                                                        itablePlace.interfaceId,
+                                                        itablePlace.methodIndex,
                                                         arguments,
                                                         mapReturnType(value.type, callee.target.returnType),
                                                         value
                                                 )
                                             } else {
-                                                val vtableIndex = context.getLayoutBuilder(owner).vtableIndex(callee)
+                                                val vtableIndex = if (isAnyMethod)
+                                                    context.getLayoutBuilder(context.irBuiltIns.anyClass.owner).vtableIndex(callee.target)
+                                                else
+                                                    context.getLayoutBuilder(owner).vtableIndex(callee)
                                                 DataFlowIR.Node.VtableCall(
                                                         symbolTable.mapFunction(callee.target),
                                                         receiverType,

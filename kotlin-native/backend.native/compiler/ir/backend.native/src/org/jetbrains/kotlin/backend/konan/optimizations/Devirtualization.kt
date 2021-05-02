@@ -79,7 +79,7 @@ internal object Devirtualization {
                     } +
                             moduleDFG.symbolTable.classMap.values
                                     .filterIsInstance<DataFlowIR.Type.Declared>()
-                                    .flatMap { it.vtable + it.itable.values }
+                                    .flatMap { it.vtable + it.itable.values.flatten() }
                                     .filterIsInstance<DataFlowIR.FunctionSymbol.Declared>()
                                     .filter { moduleDFG.functions.containsKey(it) }
                 }
@@ -263,7 +263,7 @@ internal object Devirtualization {
                 vtable[callSite.calleeVtableIndex]
 
             is DataFlowIR.Node.ItableCall ->
-                itable[callSite.calleeHash]!!
+                itable[callSite.interfaceId]!![callSite.calleeItableIndex]
 
             else -> error("Unreachable")
         }
