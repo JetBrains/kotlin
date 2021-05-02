@@ -315,8 +315,8 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     @Test
     fun testSuperTypes() {
         doTest("SuperCalls") { _, file ->
-            file.checkUastSuperTypes("B", listOf("A"))
-            file.checkUastSuperTypes("O", listOf("A"))
+            file.checkUastSuperTypes("class B", listOf("A"))
+            file.checkUastSuperTypes("object O", listOf("A"))
             file.checkUastSuperTypes("InnerClass", listOf("A"))
             file.checkUastSuperTypes("object : A(\"textForAnon\")", listOf("A"))
         }
