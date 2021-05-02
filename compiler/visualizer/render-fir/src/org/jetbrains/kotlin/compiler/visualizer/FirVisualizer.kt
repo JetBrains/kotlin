@@ -412,7 +412,11 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     val lowerRendered = lowerBound.tryToRenderConeAsFunctionType()
                     if (lowerBound.nullability == ConeNullability.NOT_NULL && upperBound.nullability == ConeNullability.NULLABLE &&
                         AbstractStrictEqualityTypeChecker
-                            .strictEqualTypes(session.typeContext, lowerBound, upperBound.withNullability(ConeNullability.NOT_NULL))
+                            .strictEqualTypes(
+                                session.typeContext,
+                                lowerBound,
+                                upperBound.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+                            )
                     ) {
                         "$lowerRendered!"
                     } else {

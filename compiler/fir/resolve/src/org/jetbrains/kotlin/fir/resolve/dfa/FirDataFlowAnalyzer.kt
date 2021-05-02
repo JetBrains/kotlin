@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -777,7 +774,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         safeCall.receiver.let { receiver ->
             val type = receiver.coneType.takeIf { it.isMarkedNullable }
-                ?.withNullability(ConeNullability.NOT_NULL)
+                ?.withNullability(ConeNullability.NOT_NULL, components.session.typeContext)
                 ?: return@let
 
             val variable = variableStorage.getOrCreateVariable(flow, receiver)
@@ -998,7 +995,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         if (isAssignment) {
             if (initializer is FirConstExpression<*> && initializer.kind == ConstantValueKind.Null) {
-                flow.addTypeStatement(propertyVariable typeEq property.returnTypeRef.coneType.withNullability(ConeNullability.NULLABLE))
+                flow.addTypeStatement(
+                    propertyVariable typeEq
+                            property.returnTypeRef.coneType.withNullability(ConeNullability.NULLABLE, components.session.typeContext)
+                )
             } else {
                 flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
             }

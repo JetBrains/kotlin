@@ -113,7 +113,11 @@ fun <T : ConeKotlinType> T.withNullability(
                     return this
                 }
             }
-            coneFlexibleOrSimpleType(typeContext, lowerBound.withNullability(nullability), upperBound.withNullability(nullability))
+            coneFlexibleOrSimpleType(
+                typeContext,
+                lowerBound.withNullability(nullability, typeContext),
+                upperBound.withNullability(nullability, typeContext)
+            )
         }
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag)
         is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor, attributes)
@@ -127,8 +131,8 @@ fun <T : ConeKotlinType> T.withNullability(
         is ConeStubType -> ConeStubType(variable, nullability)
         is ConeDefinitelyNotNullType -> when (nullability) {
             ConeNullability.NOT_NULL -> this
-            ConeNullability.NULLABLE -> original.withNullability(nullability)
-            ConeNullability.UNKNOWN -> original.withNullability(nullability)
+            ConeNullability.NULLABLE -> original.withNullability(nullability, typeContext)
+            ConeNullability.UNKNOWN -> original.withNullability(nullability, typeContext)
         }
         is ConeIntegerLiteralType -> ConeIntegerLiteralTypeImpl(value, isUnsigned, nullability)
         else -> error("sealed: ${this::class}")
