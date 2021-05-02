@@ -174,6 +174,22 @@ fun ConeKotlinType.toSymbol(session: FirSession): AbstractFirBasedSymbol<*>? {
     return (this as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
 }
 
+fun ConeKotlinType.toFirResolvedTypeRef(
+    source: FirSourceElement? = null,
+): FirResolvedTypeRef {
+    return if (this is ConeKotlinErrorType) {
+        buildErrorTypeRef {
+            this.source = source
+            diagnostic = this@toFirResolvedTypeRef.diagnostic
+        }
+    } else {
+        buildResolvedTypeRef {
+            this.source = source
+            type = this@toFirResolvedTypeRef
+        }
+    }
+}
+
 fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
     return coneTypeSafe<ConeKotlinType>()?.isUnsafeVarianceType(session) == true
 }

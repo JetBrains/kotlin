@@ -255,7 +255,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return wrappedDelegateExpression.expression
                 .transformSingle(transformer, data)
                 .approximateIfIsIntegerConst()
-                
         } finally {
             dataFlowAnalyzer.exitDelegateExpression()
         }
@@ -658,7 +657,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                     source = lambda.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
                                     declarationSiteSession = session
                                     origin = FirDeclarationOrigin.Source
-                                    returnTypeRef = buildResolvedTypeRef { type = singleParameterType }
+                                    returnTypeRef = singleParameterType.toFirResolvedTypeRef()
                                     this.name = name
                                     symbol = FirVariableSymbol(name)
                                     isCrossinline = false

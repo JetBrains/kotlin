@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -188,7 +189,7 @@ class FirCallCompleter(
                         source = lambdaAtom.atom.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
                         declarationSiteSession = session
                         origin = FirDeclarationOrigin.Source
-                        returnTypeRef = buildResolvedTypeRef { type = itType.approximateLambdaInputType() }
+                        returnTypeRef = itType.approximateLambdaInputType().toFirResolvedTypeRef()
                         this.name = name
                         symbol = FirVariableSymbol(name)
                         defaultValue = null
@@ -212,10 +213,7 @@ class FirCallCompleter(
             lambdaArgument.valueParameters.forEachIndexed { index, parameter ->
                 val newReturnType = parameters[index].approximateLambdaInputType()
                 val newReturnTypeRef = if (parameter.returnTypeRef is FirImplicitTypeRef) {
-                    buildResolvedTypeRef {
-                        source = parameter.source
-                        type = newReturnType
-                    }
+                    newReturnType.toFirResolvedTypeRef(parameter.source)
                 } else parameter.returnTypeRef.resolvedTypeFromPrototype(newReturnType)
                 parameter.replaceReturnTypeRef(newReturnTypeRef)
                 lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, parameter.source, null)
