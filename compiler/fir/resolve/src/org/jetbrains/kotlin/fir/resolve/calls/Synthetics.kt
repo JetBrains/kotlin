@@ -91,8 +91,8 @@ class FirSyntheticPropertiesScope(
                     // I think details here are worth designing
                     if (!AbstractTypeChecker.isSubtypeOf(
                             session.typeContext,
-                            getterReturnType.withNullability(NOT_NULL),
-                            parameterType.withNullability(NOT_NULL)
+                            getterReturnType.withNullability(NOT_NULL, session.typeContext),
+                            parameterType.withNullability(NOT_NULL, session.typeContext)
                         )
                     ) {
                         return

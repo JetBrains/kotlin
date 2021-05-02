@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.WeakPair
@@ -58,14 +59,17 @@ fun ConeClassLikeType.directExpansionType(
     val typeAliasSymbol = lookupTag.toSymbol(useSiteSession) as? FirTypeAliasSymbol ?: return null
     val typeAlias = typeAliasSymbol.fir
 
-    val resultType = expandedConeType(typeAlias)?.applyNullabilityFrom(this) ?: return null
+    val resultType = expandedConeType(typeAlias)?.applyNullabilityFrom(useSiteSession, this) ?: return null
 
     if (resultType.typeArguments.isEmpty()) return resultType
     return mapTypeAliasArguments(typeAlias, this, resultType) as? ConeClassLikeType
 }
 
-private fun ConeClassLikeType.applyNullabilityFrom(abbreviation: ConeClassLikeType): ConeClassLikeType {
-    if (abbreviation.isMarkedNullable) return withNullability(ConeNullability.NULLABLE)
+private fun ConeClassLikeType.applyNullabilityFrom(
+    session: FirSession,
+    abbreviation: ConeClassLikeType
+): ConeClassLikeType {
+    if (abbreviation.isMarkedNullable) return withNullability(ConeNullability.NULLABLE, session.typeContext)
     return this
 }
 

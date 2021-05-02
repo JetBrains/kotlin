@@ -676,7 +676,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             AbstractStrictEqualityTypeChecker.strictEqualTypes(
                 session.typeContext,
                 flexibleType.lowerBound,
-                flexibleType.upperBound.withNullability(ConeNullability.NOT_NULL)
+                flexibleType.upperBound.withNullability(ConeNullability.NOT_NULL, session.typeContext)
             )
         ) {
             generate(flexibleType.lowerBound)

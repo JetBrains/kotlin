@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -217,7 +218,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         elvisExpression.transformAnnotations(transformer, data)
 
         val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
-        val resolutionModeForLhs = withExpectedType(expectedType?.withNullability(ConeNullability.NULLABLE))
+        val resolutionModeForLhs = withExpectedType(expectedType?.withNullability(ConeNullability.NULLABLE, session.typeContext))
         elvisExpression.transformLhs(transformer, resolutionModeForLhs)
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
 

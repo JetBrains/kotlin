@@ -582,7 +582,7 @@ class Fir2IrVisitor(
                 IrGetValueImpl(startOffset, endOffset, irLhsVariable.type, irLhsVariable.symbol)
 
             val originalType = firLhsVariable.returnTypeRef.coneType
-            val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
+            val notNullType = originalType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
             val irBranches = listOf(
                 IrBranchImpl(
                     startOffset, endOffset, primitiveOp2(
