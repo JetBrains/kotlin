@@ -13,5 +13,9 @@ import org.jetbrains.kotlin.name.CallableId
 abstract class KtCallableSymbol : KtSymbol, KtSymbolWithKind {
     abstract val callableIdIfNonLocal: CallableId?
     abstract val annotatedType: KtTypeAndAnnotations
+
+    abstract val receiverType: KtTypeAndAnnotations?
+    abstract val isExtension: Boolean
+
     abstract override fun createPointer(): KtSymbolPointer<KtCallableSymbol>
 }

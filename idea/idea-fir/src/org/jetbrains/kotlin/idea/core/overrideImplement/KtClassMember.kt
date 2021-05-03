@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtPossibleExtensionSymbol
 import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -85,7 +84,7 @@ internal fun KtAnalysisSession.generateMember(
 ): KtCallableDeclaration = with(ktClassMember) {
     val bodyType = when {
         targetClass?.hasExpectModifier() == true -> BodyType.NO_BODY
-        (symbol as? KtPossibleExtensionSymbol)?.isExtension == true && mode == MemberGenerateMode.OVERRIDE -> BodyType.FROM_TEMPLATE
+        symbol.isExtension && mode == MemberGenerateMode.OVERRIDE -> BodyType.FROM_TEMPLATE
         else -> bodyType
     }
 

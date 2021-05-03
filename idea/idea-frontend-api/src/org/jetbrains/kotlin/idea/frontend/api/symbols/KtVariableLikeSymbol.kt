@@ -36,6 +36,8 @@ abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
     final override val origin: KtSymbolOrigin get() = KtSymbolOrigin.PROPERTY_BACKING_FIELD
     final override val callableIdIfNonLocal: CallableId? get() = null
+    final override val isExtension: Boolean get() = false
+    final override val receiverType: KtTypeAndAnnotations? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 
@@ -47,7 +49,10 @@ abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
 
 abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMembers, KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    final override val isExtension: Boolean get() = false
+    final override val receiverType: KtTypeAndAnnotations? get() = null
     abstract val containingEnumClassIdIfNonLocal: ClassId?
+
 
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
@@ -64,12 +69,13 @@ abstract class KtJavaFieldSymbol :
     KtSymbolWithVisibility,
     KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    final override val isExtension: Boolean get() = false
+    final override val receiverType: KtTypeAndAnnotations? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol>
 }
 
 sealed class KtPropertySymbol : KtVariableSymbol(),
-    KtPossibleExtensionSymbol,
     KtPossibleMemberSymbol,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
@@ -114,6 +120,8 @@ abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
 
 abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
     final override val callableIdIfNonLocal: CallableId? get() = null
+    final override val isExtension: Boolean get() = false
+    final override val receiverType: KtTypeAndAnnotations? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol>
 }
@@ -121,6 +129,8 @@ abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
 abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtSymbolWithKind, KtAnnotatedSymbol {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
     final override val callableIdIfNonLocal: CallableId? get() = null
+    final override val isExtension: Boolean get() = false
+    final override val receiverType: KtTypeAndAnnotations? get() = null
 
     abstract val hasDefaultValue: Boolean
     abstract val isVararg: Boolean

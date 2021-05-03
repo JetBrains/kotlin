@@ -13,11 +13,3 @@ abstract class KtTypeAndAnnotations : ValidityTokenOwner {
     abstract val type: KtType
     abstract val annotations: List<KtAnnotationCall>
 }
-
-interface KtPossibleExtensionSymbol {
-    val receiverType: KtTypeAndAnnotations?
-    val isExtension: Boolean
-}
-
-val KtCallableSymbol.isExtension: Boolean
-    get() = (this as? KtPossibleExtensionSymbol)?.isExtension == true

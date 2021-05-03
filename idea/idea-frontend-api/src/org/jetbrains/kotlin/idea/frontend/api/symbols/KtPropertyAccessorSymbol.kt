@@ -17,6 +17,8 @@ sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     KtSymbolWithKind {
 
     final override val callableIdIfNonLocal: CallableId? get() = null
+    final override val isExtension: Boolean get() = false
+    final override val receiverType: KtTypeAndAnnotations? get() = null
 
     abstract val isDefault: Boolean
     abstract val isInline: Boolean
