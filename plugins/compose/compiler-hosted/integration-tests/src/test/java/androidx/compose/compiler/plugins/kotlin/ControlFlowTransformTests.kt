@@ -3478,4 +3478,81 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """
     )
+
+    @Test
+    fun testInlineReadOnlySourceLocations() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.ReadOnlyComposable
+
+            val current
+                @Composable
+                @ReadOnlyComposable
+                get() = 0
+
+            @Composable
+            @ReadOnlyComposable
+            fun calculateSometing(): Int {
+                return 0;
+            }
+
+            @Composable
+            fun Test() {
+                val c = current
+                val cl = calculateSometing()
+                Layout {
+                    Text("${'$'}c ${'$'}cl")
+                }
+            }
+        """,
+        """
+            val current: Int
+              @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
+              get() {
+                %composer.startReplaceableGroup(<>, "C:Test.kt")
+                val tmp0 = 0
+                %composer.endReplaceableGroup()
+                return tmp0
+              }
+            @Composable
+            @ReadOnlyComposable
+            fun calculateSometing(%composer: Composer?, %changed: Int): Int {
+              %composer.startReplaceableGroup(<>, "C(calculateSometing):Test.kt")
+              val tmp0 = 0
+              %composer.endReplaceableGroup()
+              return tmp0
+            }
+            @Composable
+            fun Test(%composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                val c = current
+                val cl = calculateSometing(%composer, 0)
+                Layout({ %composer: Composer?, %changed: Int ->
+                  %composer.startReplaceableGroup(<>, "C<Text("...>:Test.kt")
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    Text("%c %cl", %composer, 0)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endReplaceableGroup()
+                }, %composer, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
+              }
+            }
+        """,
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            inline fun Layout(content: @Composable () -> Unit) { content() }
+
+            @Composable
+            fun Text(text: String) { }
+        """
+    )
 }
