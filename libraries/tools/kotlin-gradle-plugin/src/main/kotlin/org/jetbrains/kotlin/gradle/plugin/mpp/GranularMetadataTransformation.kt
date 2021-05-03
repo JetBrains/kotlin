@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
@@ -15,11 +16,13 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.AnonymousConfiguration.createAnonymousConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import java.io.File
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
@@ -119,7 +122,7 @@ internal class GranularMetadataTransformation(
 
         requestedDependencies.forEach { dependency ->
             if (dependency !in originalDependencies) {
-                modifiedConfiguration = modifiedConfiguration ?: project.configurations.detachedConfiguration().apply {
+                modifiedConfiguration = modifiedConfiguration ?: project.configurations.createAnonymousConfiguration().apply {
                     fun <T> copyAttribute(key: Attribute<T>) {
                         attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
                     }
@@ -465,6 +468,15 @@ private open class JarArtifactMppDependencyMetadataExtractor(
 
             return resultFiles
         }
+    }
+}
+
+private object AnonymousConfiguration {
+    private val configurationCounter = AtomicInteger(0)
+
+    fun ConfigurationContainer.createAnonymousConfiguration(): Configuration {
+        //return detachedConfiguration()
+        return create("kotlinAnonymous${configurationCounter.getAndIncrement()}")
     }
 }
 
