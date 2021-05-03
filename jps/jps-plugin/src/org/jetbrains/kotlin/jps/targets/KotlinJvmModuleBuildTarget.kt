@@ -2,15 +2,13 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 package org.jetbrains.kotlin.jps.targets
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.FileCollectionFactory
 import com.intellij.util.io.URLUtil
-import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.storage.BuildDataPaths
@@ -356,7 +354,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             for (output in outputs) {
                 if (output !is GeneratedJvmClass) continue
 
-                val sourceFiles = THashSet(FileUtil.FILE_HASHING_STRATEGY)
+                val sourceFiles = FileCollectionFactory.createCanonicalFileSet()
                 sourceFiles.addAll(getOldSourceFiles(target, output))
                 sourceFiles.removeAll(targetDirtyFiles[target] ?: emptySet())
                 sourceFiles.addAll(output.sourceFiles)
