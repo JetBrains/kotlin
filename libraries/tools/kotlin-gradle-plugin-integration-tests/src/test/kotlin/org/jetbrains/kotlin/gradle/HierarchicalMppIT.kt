@@ -19,6 +19,7 @@ import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class HierarchicalMppIT : BaseGradleIT() {
@@ -506,12 +507,13 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency")) {
-        publishThirdPartyLib(withGranularMetadata = true)
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations() =
+        with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency")) {
+            publishThirdPartyLib(withGranularMetadata = true)
 
-        gradleBuildScript("my-lib-foo").appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
-        projectDir.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
-            """
+            gradleBuildScript("my-lib-foo").appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
+            projectDir.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
+                """
             import kotlin.test.Test
                 
             class UseCompileOnlyDependency {
@@ -519,12 +521,12 @@ class HierarchicalMppIT : BaseGradleIT() {
                 fun myTest() = Unit
             }
             """.trimIndent()
-        )
+            )
 
-        build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
-            assertSuccessful()
+            build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
+                assertSuccessful()
+            }
         }
-    }
 
     @Test
     fun testHmppDependenciesInJsTests() {
@@ -616,6 +618,18 @@ class HierarchicalMppIT : BaseGradleIT() {
                     assertTrue(report.useFiles.isNotEmpty(), "Expected non-empty useFiles for $report")
                     report.useFiles.forEach { assertTrue(it.isFile, "Expected $it to exist for $report") }
                 }
+            }
+        }
+    }
+
+    @Test
+    fun testNativeLeafTestSourceSetsKt46417() {
+        with(Project("kt-46417-ios-test-source-sets")) {
+            testDependencyTransformations("p2") { reports ->
+                val report = reports.singleOrNull { it.sourceSetName == "iosArm64Test" && it.scope == "implementation" }
+                assertNotNull(report, "No single report for 'iosArm64' and implementation scope")
+                assertEquals(setOf("commonMain", "iosMain"), report.allVisibleSourceSets)
+                assertTrue(report.groupAndModule.endsWith(":p1"))
             }
         }
     }
