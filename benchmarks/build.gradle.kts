@@ -1,11 +1,11 @@
 import kotlinx.benchmark.gradle.benchmark
 
-val benchmarks_version = "0.3.0"
+val benchmarks_version = "0.3.1"
 
 plugins {
     java
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.benchmark") version "0.3.0"
+    id("org.jetbrains.kotlinx.benchmark") version "0.3.1"
 }
 
 dependencies {
