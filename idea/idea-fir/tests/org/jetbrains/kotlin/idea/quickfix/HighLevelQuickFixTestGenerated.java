@@ -1311,4 +1311,157 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
             runTest("idea/testData/quickfix/addPropertyAccessors/varHasSetter.kt");
         }
     }
+
+    @TestMetadata("idea/testData/quickfix/when")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class When extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("addElseBranchEnumStatement.kt")
+        public void testAddElseBranchEnumStatement() throws Exception {
+            runTest("idea/testData/quickfix/when/addElseBranchEnumStatement.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesBlankLine.kt")
+        public void testAddRemainingBranchesBlankLine() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesBlankLine.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesBlankLineWithComment.kt")
+        public void testAddRemainingBranchesBlankLineWithComment() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesBlankLineWithComment.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesBoolean.kt")
+        public void testAddRemainingBranchesBoolean() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesBoolean.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesEnum.kt")
+        public void testAddRemainingBranchesEnum() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesEnum.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesEnumBackTicks.kt")
+        public void testAddRemainingBranchesEnumBackTicks() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesEnumBackTicks.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesEnumImport1.kt")
+        public void testAddRemainingBranchesEnumImport1() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesEnumImport1.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesEnumImport2.kt")
+        public void testAddRemainingBranchesEnumImport2() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesEnumImport2.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesEnumImport3.kt")
+        public void testAddRemainingBranchesEnumImport3() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesEnumImport3.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesEnumImport4.kt")
+        public void testAddRemainingBranchesEnumImport4() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesEnumImport4.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesEnumStatement.kt")
+        public void testAddRemainingBranchesEnumStatement() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesEnumStatement.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesInNonDefaultPackage.kt")
+        public void testAddRemainingBranchesInNonDefaultPackage() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesInNonDefaultPackage.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesSealed.kt")
+        public void testAddRemainingBranchesSealed() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesSealed.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesSealedBackTicks.kt")
+        public void testAddRemainingBranchesSealedBackTicks() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesSealedBackTicks.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesSealedStatement.kt")
+        public void testAddRemainingBranchesSealedStatement() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesSealedStatement.kt");
+        }
+
+        public void testAllFilesPresentInWhen() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/when"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("breakInWhen.kt")
+        public void testBreakInWhen() throws Exception {
+            runTest("idea/testData/quickfix/when/breakInWhen.kt");
+        }
+
+        @TestMetadata("breakInWhenInLabeled.kt")
+        public void testBreakInWhenInLabeled() throws Exception {
+            runTest("idea/testData/quickfix/when/breakInWhenInLabeled.kt");
+        }
+
+        @TestMetadata("commasInConditionWithNoArguments.kt")
+        public void testCommasInConditionWithNoArguments() throws Exception {
+            runTest("idea/testData/quickfix/when/commasInConditionWithNoArguments.kt");
+        }
+
+        @TestMetadata("commasInConditionWithNoArguments2.kt")
+        public void testCommasInConditionWithNoArguments2() throws Exception {
+            runTest("idea/testData/quickfix/when/commasInConditionWithNoArguments2.kt");
+        }
+
+        @TestMetadata("continueInWhen.kt")
+        public void testContinueInWhen() throws Exception {
+            runTest("idea/testData/quickfix/when/continueInWhen.kt");
+        }
+
+        @TestMetadata("continueInWhenInLabeled.kt")
+        public void testContinueInWhenInLabeled() throws Exception {
+            runTest("idea/testData/quickfix/when/continueInWhenInLabeled.kt");
+        }
+
+        @TestMetadata("continueInWhenWithLabel.kt")
+        public void testContinueInWhenWithLabel() throws Exception {
+            runTest("idea/testData/quickfix/when/continueInWhenWithLabel.kt");
+        }
+
+        @TestMetadata("elseNotLastInWhen.kt")
+        public void testElseNotLastInWhen() throws Exception {
+            runTest("idea/testData/quickfix/when/elseNotLastInWhen.kt");
+        }
+
+        @TestMetadata("noElseInWhenWithBranches.kt")
+        public void testNoElseInWhenWithBranches() throws Exception {
+            runTest("idea/testData/quickfix/when/noElseInWhenWithBranches.kt");
+        }
+
+        @TestMetadata("noElseInWhenWithoutBranches.kt")
+        public void testNoElseInWhenWithoutBranches() throws Exception {
+            runTest("idea/testData/quickfix/when/noElseInWhenWithoutBranches.kt");
+        }
+
+        @TestMetadata("removeRedundantBranch.kt")
+        public void testRemoveRedundantBranch() throws Exception {
+            runTest("idea/testData/quickfix/when/removeRedundantBranch.kt");
+        }
+
+        @TestMetadata("removeRedundantElse.kt")
+        public void testRemoveRedundantElse() throws Exception {
+            runTest("idea/testData/quickfix/when/removeRedundantElse.kt");
+        }
+
+        @TestMetadata("twoElseBranchesInWhen.kt")
+        public void testTwoElseBranchesInWhen() throws Exception {
+            runTest("idea/testData/quickfix/when/twoElseBranchesInWhen.kt");
+        }
+    }
 }

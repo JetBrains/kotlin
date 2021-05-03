@@ -7,3 +7,4 @@ fun test() {
         2 -> { /* some more code */ }
     }
 }
+/* IGNORE_FIR */

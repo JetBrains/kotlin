@@ -14,3 +14,4 @@ fun test(v: Variant?) {
         Variant.Singleton -> "s"
     }
 }
+/* IGNORE_FIR */

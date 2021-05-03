@@ -9,3 +9,4 @@ fun test(i: Int, j: Int) {
         else -> { /* other code */ }
     }
 }
+/* IGNORE_FIR */

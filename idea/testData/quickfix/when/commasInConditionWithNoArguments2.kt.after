@@ -6,3 +6,4 @@ fun test(a: Boolean, b: Boolean, c: Boolean) {
         else -> "e"
     }
 }
+/* IGNORE_FIR */

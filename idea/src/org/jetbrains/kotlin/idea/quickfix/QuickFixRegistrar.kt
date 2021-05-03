@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.inspections.InfixCallFixActionFactory
 import org.jetbrains.kotlin.idea.inspections.PlatformUnresolvedProvider
 import org.jetbrains.kotlin.idea.inspections.RemoveAnnotationFix
-import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.intentions.AddAccessorsIntention
+import org.jetbrains.kotlin.idea.intentions.AddValVarToConstructorParameterAction
+import org.jetbrains.kotlin.idea.intentions.ConvertPropertyInitializerToGetterIntention
+import org.jetbrains.kotlin.idea.intentions.MoveMemberToCompanionObjectIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory

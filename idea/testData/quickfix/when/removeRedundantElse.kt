@@ -7,3 +7,4 @@ fun foo(b: Boolean) {
         <caret>else -> error()
     }
 }
+/* IGNORE_FIR */

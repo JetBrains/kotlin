@@ -97,6 +97,9 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         registerPsiQuickFixes(KtFirDiagnostic.UnnecessarySafeCall::class, ReplaceWithDotCallFix)
         registerPsiQuickFixes(KtFirDiagnostic.UnnecessaryNotNullAssertion::class, RemoveExclExclCallFix)
         registerApplicator(ReplaceCallFixFactories.unsafeCallFactory)
+
+        // TODO: NON_EXHAUSTIVE_WHEN[_ON_SEALED_CLASS] will be replaced in future. We need to register the fix for those diagnostics as well
+        registerPsiQuickFixes(KtFirDiagnostic.NoElseInWhen::class, AddWhenElseBranchFix)
     }
 
     override val list: KtQuickFixesList = KtQuickFixesList.createCombined(
