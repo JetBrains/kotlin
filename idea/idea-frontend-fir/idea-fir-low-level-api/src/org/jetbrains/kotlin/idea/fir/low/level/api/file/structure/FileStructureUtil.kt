@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.replaceFirst
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -22,7 +23,8 @@ internal object FileStructureUtil {
         ktDeclaration !is KtClassOrObject && ktDeclaration !is KtDeclarationWithBody && ktDeclaration !is KtProperty && ktDeclaration !is KtTypeAlias -> false
         ktDeclaration is KtEnumEntry -> false
         ktDeclaration.containingClassOrObject is KtEnumEntry -> false
-        else -> !KtPsiUtil.isLocal(ktDeclaration)
+        ktDeclaration is KtNamedDeclaration -> !FirLazyDeclarationResolver.declarationCanBeLazilyResolved(ktDeclaration)
+        else -> false
     }
 
     fun replaceDeclaration(firFile: FirFile, from: FirCallableDeclaration<*>, to: FirCallableDeclaration<*>) {

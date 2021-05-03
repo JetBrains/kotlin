@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureElement
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.hasFqName
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.isNonAnonymousClassOrObject
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
@@ -112,7 +112,7 @@ internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate:
         if (container is KtNamedDeclaration
             && (container.isNonAnonymousClassOrObject() || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
             && container !is KtPrimaryConstructor
-            && container.hasFqName()
+            && FirLazyDeclarationResolver.declarationCanBeLazilyResolved(container)
             && container !is KtEnumEntry
             && container !is KtFunctionLiteral
             && container.containingClassOrObject !is KtEnumEntry

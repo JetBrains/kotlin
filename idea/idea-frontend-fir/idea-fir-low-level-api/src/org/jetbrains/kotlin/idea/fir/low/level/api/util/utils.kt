@@ -93,9 +93,6 @@ internal fun IdeaModuleInfo.collectTransitiveDependenciesWithSelf(): List<IdeaMo
     return result.toList()
 }
 
-internal fun KtDeclaration.hasFqName(): Boolean =
-    parentsOfType<KtDeclaration>(withSelf = false).all { it.isNonAnonymousClassOrObject() }
-
 internal fun KtDeclaration.isNonAnonymousClassOrObject() =
     this is KtClassOrObject
             && !this.isObjectLiteral()

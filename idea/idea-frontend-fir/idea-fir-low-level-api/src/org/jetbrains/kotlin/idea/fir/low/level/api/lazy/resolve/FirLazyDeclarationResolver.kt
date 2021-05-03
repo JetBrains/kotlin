@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirFileAnnotationsResolveTransformer
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 internal class FirLazyDeclarationResolver(
     private val firFileBuilder: FirFileBuilder
@@ -235,7 +236,7 @@ internal class FirLazyDeclarationResolver(
     private fun FirDeclaration.getNonLocalDeclarationToResolve(provider: FirProvider, moduleFileCache: ModuleFileCache): FirDeclaration {
         if (this is FirFile) return this
         val ktDeclaration = psi as? KtDeclaration ?: error("FirDeclaration should have a PSI of type KtDeclaration")
-        if (!KtPsiUtil.isLocal(ktDeclaration)) return this
+        if (declarationCanBeLazilyResolved(ktDeclaration)) return this
         val nonLocalPsi = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: error("Container for local declaration cannot be null")
         return nonLocalPsi.findSourceNonLocalFirDeclaration(firFileBuilder, provider.symbolProvider, moduleFileCache)
@@ -243,5 +244,26 @@ internal class FirLazyDeclarationResolver(
 
     companion object {
         private val LAST_NON_LAZY_PHASE = FirResolvePhase.STATUS
+
+        fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean {
+            return when (declaration) {
+                !is KtNamedDeclaration -> false
+                is KtDestructuringDeclarationEntry, is KtFunctionLiteral, is KtTypeParameter -> false
+                is KtPrimaryConstructor -> false
+                is KtParameter -> {
+                    if (declaration.hasValOrVar()) declaration.containingClassOrObject?.getClassId() != null
+                    else false
+                }
+                is KtCallableDeclaration, is KtEnumEntry -> {
+                    when (val parent = declaration.parent) {
+                        is KtFile -> true
+                        is KtClassBody -> (parent.parent as? KtClassOrObject)?.getClassId() != null
+                        else -> false
+                    }
+                }
+                is KtClassLikeDeclaration -> declaration.getClassId() != null
+                else -> error("Unexpected ${declaration::class.qualifiedName}")
+            }
+        }
     }
 }

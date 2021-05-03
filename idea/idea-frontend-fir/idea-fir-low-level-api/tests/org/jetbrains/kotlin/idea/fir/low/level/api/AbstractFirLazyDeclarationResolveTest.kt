@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -29,7 +29,9 @@ abstract class AbstractFirLazyDeclarationResolveTest : KotlinLightCodeInsightFix
     fun doTest(path: String) {
         val testDataFile = File(path)
         val ktFile = myFixture.configureByText(testDataFile.name, FileUtil.loadFile(testDataFile)) as KtFile
-        val lazyDeclarations = ktFile.collectDescendantsOfType<KtDeclaration> { ktDeclaration -> !KtPsiUtil.isLocal(ktDeclaration) }
+        val lazyDeclarations = ktFile.collectDescendantsOfType<KtDeclaration> { ktDeclaration ->
+            FirLazyDeclarationResolver.declarationCanBeLazilyResolved(ktDeclaration)
+        }
 
         val declarationToResolve = lazyDeclarations.firstOrNull { it.name?.lowercase() == "resolveme" }
             ?: error("declaration with name `resolveMe` was not found")
