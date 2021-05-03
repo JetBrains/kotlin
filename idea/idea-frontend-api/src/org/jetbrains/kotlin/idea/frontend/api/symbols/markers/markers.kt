@@ -18,10 +18,6 @@ interface KtNamedSymbol : KtPossiblyNamedSymbol {
     abstract override val name: Name
 }
 
-interface KtTypedSymbol : KtSymbol {
-    val annotatedType: KtTypeAndAnnotations
-}
-
 interface KtSymbolWithTypeParameters {
     val typeParameters: List<KtTypeParameterSymbol>
 }

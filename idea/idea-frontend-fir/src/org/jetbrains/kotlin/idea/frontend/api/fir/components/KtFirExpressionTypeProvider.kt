@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtExpressionTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtErrorType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -103,7 +102,7 @@ internal class KtFirExpressionTypeProvider(
     private fun getExpectedTypeByReturnExpression(expression: PsiElement): KtType? {
         val returnParent = expression.getReturnExpressionWithThisType() ?: return null
         val targetSymbol = with(analysisSession) { returnParent.getReturnTargetSymbol() } ?: return null
-        return (targetSymbol as? KtTypedSymbol)?.annotatedType?.type
+        return targetSymbol.annotatedType.type
     }
 
     private fun PsiElement.getReturnExpressionWithThisType(): KtReturnExpression? =

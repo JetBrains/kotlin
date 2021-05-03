@@ -28,7 +28,7 @@ sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     abstract override fun createPointer(): KtSymbolPointer<KtPropertyAccessorSymbol>
 }
 
-abstract class KtPropertyGetterSymbol : KtPropertyAccessorSymbol(), KtTypedSymbol {
+abstract class KtPropertyGetterSymbol : KtPropertyAccessorSymbol() {
     abstract override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol>
 }
 

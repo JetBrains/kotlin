@@ -9,8 +9,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.UserDataProperty
 
@@ -30,7 +30,7 @@ internal object ExpectedTypeWeigher {
         expectedType: KtType?
     ) = when {
         expectedType == null -> MatchesExpectedType.NON_TYPABLE
-        symbol !is KtTypedSymbol -> MatchesExpectedType.NON_TYPABLE
+        symbol !is KtCallableSymbol -> MatchesExpectedType.NON_TYPABLE
         else -> MatchesExpectedType.matches(symbol.annotatedType.type isSubTypeOf expectedType)
     }
 
