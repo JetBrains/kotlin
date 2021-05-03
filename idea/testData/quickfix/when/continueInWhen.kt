@@ -16,3 +16,4 @@ fun breakContinueInWhen(i: Int) {
         }
     }
 }
+/* IGNORE_FIR */

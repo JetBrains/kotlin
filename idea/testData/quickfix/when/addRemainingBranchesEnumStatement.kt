@@ -9,3 +9,4 @@ fun use(c: Color) {
 }
 
 fun red() {}
+/* IGNORE_FIR */

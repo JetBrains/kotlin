@@ -13,3 +13,4 @@ fun foo(chars: CharArray) {
         pos++
     }
 }
+/* IGNORE_FIR */

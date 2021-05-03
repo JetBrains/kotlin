@@ -12,3 +12,4 @@ sealed class Variant {
 fun test(v: Variant?) = wh<caret>en(v) {
     Variant.Singleton -> "s"
 }
+/* IGNORE_FIR */

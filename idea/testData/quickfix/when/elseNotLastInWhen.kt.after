@@ -7,3 +7,4 @@ fun test() {
         el<caret>se -> { /* other code */ }
     }
 }
+/* IGNORE_FIR */
