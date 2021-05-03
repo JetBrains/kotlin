@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
@@ -15,11 +16,13 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation.AnonymousConfiguration.createAnonymousConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import java.io.File
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
@@ -119,13 +122,14 @@ internal class GranularMetadataTransformation(
 
         requestedDependencies.forEach { dependency ->
             if (dependency !in originalDependencies) {
-                modifiedConfiguration = modifiedConfiguration ?: project.configurations.detachedConfiguration().apply {
-                    fun <T> copyAttribute(key: Attribute<T>) {
-                        attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
+                modifiedConfiguration = modifiedConfiguration ?:
+                project.configurations.createAnonymousConfiguration("${kotlinSourceSet.name}ResolvableMetadata").apply {
+                        fun <T> copyAttribute(key: Attribute<T>) {
+                            attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
+                        }
+                        allSourceSetsConfiguration.attributes.keySet().forEach { copyAttribute(it) }
+                        allSourceSetsConfiguration.extendsFrom.forEach { extendsFrom(it) }
                     }
-                    allSourceSetsConfiguration.attributes.keySet().forEach { copyAttribute(it) }
-                    allSourceSetsConfiguration.extendsFrom.forEach { extendsFrom(it) }
-                }
                 modifiedConfiguration!!.dependencies.add(dependency)
             }
         }
@@ -308,6 +312,14 @@ internal class GranularMetadataTransformation(
     ) {
         override fun getExtractableMetadataFiles(baseDir: File): ExtractableMetadataFiles =
             metadataExtractor.getExtractableMetadataFiles(visibleSourceSetNamesExcludingDependsOn, baseDir)
+    }
+
+    private object AnonymousConfiguration {
+        private val configurationCounter = AtomicInteger(0)
+
+        fun ConfigurationContainer.createAnonymousConfiguration(name: String): Configuration {
+            return create("$name${configurationCounter.getAndIncrement()}")
+        }
     }
 }
 
