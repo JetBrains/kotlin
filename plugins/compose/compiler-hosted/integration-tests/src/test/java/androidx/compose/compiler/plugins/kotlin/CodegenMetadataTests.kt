@@ -38,7 +38,7 @@ class CodegenMetadataTests : AbstractLoweringTests() {
             object Main { @JvmStatic fun main() { MyClass::class.java.kotlin.primaryConstructor!!.isAccessible = true } }
             """,
             fileName,
-            true
+            false
         )
         val main = loader.loadClass("Main").methods.single { it.name == "main" }
         main.invoke(null)
