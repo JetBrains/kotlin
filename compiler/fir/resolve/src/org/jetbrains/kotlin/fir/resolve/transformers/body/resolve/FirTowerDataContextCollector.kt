@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 
+/**
+ * Collector needed to collect TowerDataContext in IDE for in-air resolved fir elements.
+ */
 interface FirTowerDataContextCollector {
     fun addFileContext(file: FirFile, context: FirTowerDataContext)
     fun addStatementContext(statement: FirStatement, context: FirTowerDataContext)

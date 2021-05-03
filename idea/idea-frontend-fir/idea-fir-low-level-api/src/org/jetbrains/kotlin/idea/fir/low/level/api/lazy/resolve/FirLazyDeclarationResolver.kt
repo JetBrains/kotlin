@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
@@ -121,7 +122,8 @@ internal class FirLazyDeclarationResolver(
         toPhase: FirResolvePhase,
         towerDataContextCollector: FirTowerDataContextCollector? = null,
         checkPCE: Boolean,
-        lastNonLazyPhase: FirResolvePhase = LAST_NON_LAZY_PHASE
+        lastNonLazyPhase: FirResolvePhase = LAST_NON_LAZY_PHASE,
+        firProviderInterceptor: FirProviderInterceptorForSupertypeResolver? = null
     ) {
         if (fromPhase >= toPhase) return
         val nonLazyPhase = minOf(toPhase, lastNonLazyPhase)
@@ -157,7 +159,8 @@ internal class FirLazyDeclarationResolver(
                 currentPhase,
                 scopeSession,
                 towerDataContextCollector,
-                designation
+                firProviderInterceptor,
+                designation,
             )
         }
     }
@@ -167,6 +170,7 @@ internal class FirLazyDeclarationResolver(
         phase: FirResolvePhase,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?,
+        firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
         designation: FirDeclarationDesignation
     ) {
         if (designation.fullDesignation.all { it.resolvePhase >= phase }) {
@@ -177,7 +181,8 @@ internal class FirLazyDeclarationResolver(
             designation,
             containerFirFile,
             scopeSession,
-            towerDataContextCollector
+            towerDataContextCollector,
+            firProviderInterceptor,
         )
 
         firFileBuilder.firPhaseRunner.runPhaseWithCustomResolve(phase) {
@@ -189,13 +194,14 @@ internal class FirLazyDeclarationResolver(
         designation: FirDeclarationDesignation,
         containerFirFile: FirFile,
         scopeSession: ScopeSession,
-        towerDataContextCollector: FirTowerDataContextCollector?
+        towerDataContextCollector: FirTowerDataContextCollector?,
+        firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
     ): FirLazyTransformerForIDE = when (this) {
         FirResolvePhase.SUPER_TYPES -> FirDesignatedSupertypeResolverTransformerForIDE(
             designation,
-            containerFirFile,
             containerFirFile.moduleData.session,
-            scopeSession
+            scopeSession,
+            firProviderInterceptor,
         )
         FirResolvePhase.SEALED_CLASS_INHERITORS -> FirLazyTransformerForIDE.EMPTY
         FirResolvePhase.TYPES -> FirDesignatedTypeResolverTransformerForIDE(
@@ -226,7 +232,8 @@ internal class FirLazyDeclarationResolver(
             designation,
             containerFirFile.moduleData.session,
             scopeSession,
-            towerDataContextCollector
+            towerDataContextCollector,
+            firProviderInterceptor
         )
         else -> error("Non-lazy phase $this")
     }

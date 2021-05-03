@@ -283,9 +283,12 @@ private class TypeNamesProvider(private val indexHelper: IndexHelper) {
     fun KtAnalysisSession.findAllNames(type: KtType): Set<String> {
         if (type !is KtClassType) return emptySet()
 
-        val result = hashSetOf<String>()
-        val typeName = type.classId.shortClassName.identifier
+        val typeName = type.classId.shortClassName.let {
+            if (it.isSpecial) return emptySet()
+            it.identifier
+        }
 
+        val result = hashSetOf<String>()
         result += typeName
         result += indexHelper.getPossibleTypeAliasExpansionNames(typeName)
 

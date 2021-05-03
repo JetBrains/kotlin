@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
+import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
 
@@ -23,7 +21,8 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
     designation: FirDeclarationDesignation,
     session: FirSession,
     scopeSession: ScopeSession,
-    towerDataContextCollector: FirTowerDataContextCollector? = null
+    towerDataContextCollector: FirTowerDataContextCollector? = null,
+    firProviderInterceptor: FirProviderInterceptorForSupertypeResolver? = null,
 ) : FirLazyTransformerForIDE, FirBodyResolveTransformer(
     session,
     phase = FirResolvePhase.BODY_RESOLVE,
@@ -35,7 +34,8 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         ImplicitBodyResolveComputationSession(),
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
     ),
-    firTowerDataContextCollector = towerDataContextCollector
+    firTowerDataContextCollector = towerDataContextCollector,
+    firProviderInterceptor = firProviderInterceptor,
 ) {
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation.toDesignationIterator())
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataC
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.SingleElementTowerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirProviderInterceptorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
@@ -70,7 +71,12 @@ object LowLevelFirApiFacadeForDependentCopy {
         require(!elementToResolve.isPhysical)
 
         val collector = FirTowerDataContextAllElementsCollector()
-        val declaration = runBodyResolve(state, replacement = RawFirReplacement(place, elementToResolve))
+        val declaration = runBodyResolve(
+            state = state,
+            replacement = RawFirReplacement(place, elementToResolve),
+            collector = null,
+            useFirProviderInterceptor = true
+        )
 
         val expressionLocator = object : FirVisitorVoid() {
             var result: FirElement? = null
@@ -158,7 +164,8 @@ object LowLevelFirApiFacadeForDependentCopy {
         val copiedFirDeclaration = runBodyResolve(
             originalState,
             collector = collector,
-            replacement = RawFirReplacement(sameDeclarationInOriginalFile, dependencyNonLocalDeclaration)
+            replacement = RawFirReplacement(sameDeclarationInOriginalFile, dependencyNonLocalDeclaration),
+            useFirProviderInterceptor = true
         )
 
         val recordedMap = FirElementsRecorder.recordElementsFrom(copiedFirDeclaration, FirElementsRecorder())
@@ -169,6 +176,7 @@ object LowLevelFirApiFacadeForDependentCopy {
         state: FirModuleResolveStateImpl,
         replacement: RawFirReplacement<T>,
         collector: FirTowerDataContextCollector? = null,
+        useFirProviderInterceptor: Boolean = false
     ): FirDeclaration {
         val copiedFirDeclaration = DeclarationCopyBuilder.createDeclarationCopy(
             state = state,
@@ -176,6 +184,13 @@ object LowLevelFirApiFacadeForDependentCopy {
         )
 
         val originalFirFile = state.getOrBuildFirFor(replacement.from.containingKtFile) as FirFile
+
+        val firProviderInterceptor =
+            if (useFirProviderInterceptor) FirProviderInterceptorForIDE.createForFirElement(
+                session = originalFirFile.declarationSiteSession,
+                firFile = originalFirFile,
+                element = copiedFirDeclaration
+            ) else null
 
         state.firFileBuilder.runCustomResolveWithPCECheck(originalFirFile, state.rootModuleSession.cache) {
             state.firLazyDeclarationResolver.runLazyResolveWithoutLock(
@@ -187,7 +202,8 @@ object LowLevelFirApiFacadeForDependentCopy {
                 toPhase = FirResolvePhase.BODY_RESOLVE,
                 towerDataContextCollector = collector,
                 checkPCE = true,
-                lastNonLazyPhase = FirResolvePhase.IMPORTS
+                lastNonLazyPhase = FirResolvePhase.IMPORTS,
+                firProviderInterceptor = firProviderInterceptor,
             )
         }
 

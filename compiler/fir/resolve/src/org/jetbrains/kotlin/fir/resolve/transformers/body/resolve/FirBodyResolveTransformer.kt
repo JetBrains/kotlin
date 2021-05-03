@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
+import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
@@ -31,7 +32,8 @@ open class FirBodyResolveTransformer(
     scopeSession: ScopeSession,
     val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve(),
     outerBodyResolveContext: BodyResolveContext? = null,
-    val firTowerDataContextCollector: FirTowerDataContextCollector? = null
+    val firTowerDataContextCollector: FirTowerDataContextCollector? = null,
+    val firProviderInterceptor: FirProviderInterceptorForSupertypeResolver? = null,
 ) : FirAbstractBodyResolveTransformer(phase) {
 
     final override val context: BodyResolveContext =

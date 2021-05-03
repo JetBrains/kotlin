@@ -35,8 +35,17 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) :
+    FirTransformerBasedResolveProcessor(session, scopeSession) {
     override val transformer = FirSupertypeResolverTransformer(session, scopeSession)
+}
+
+/**
+ * Interceptor needed by IDE to resolve in-air created declarations.
+ */
+interface FirProviderInterceptorForSupertypeResolver {
+    fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile
+    fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>?
 }
 
 open class FirSupertypeResolverTransformer(
@@ -65,12 +74,14 @@ fun <F : FirClassLikeDeclaration<F>> F.runSupertypeResolvePhaseForLocalClass(
     scopeSession: ScopeSession,
     currentScopeList: List<FirScope>,
     localClassesNavigationInfo: LocalClassesNavigationInfo,
+    firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
 ): F {
     val supertypeComputationSession = SupertypeComputationSession()
     val supertypeResolverVisitor = FirSupertypeResolverVisitor(
         session, supertypeComputationSession, scopeSession,
         currentScopeList.toPersistentList(),
-        localClassesNavigationInfo
+        localClassesNavigationInfo,
+        firProviderInterceptor
     )
 
     this.accept(supertypeResolverVisitor, null)
@@ -172,20 +183,22 @@ fun FirRegularClass.resolveSupertypesInTheAir(session: FirSession): List<FirType
         .resolveSpecificClassLikeSupertypes(this, superTypeRefs)
 }
 
-open class FirSupertypeResolverVisitor(
+class FirSupertypeResolverVisitor(
     private val session: FirSession,
     private val supertypeComputationSession: SupertypeComputationSession,
     private val scopeSession: ScopeSession,
     private val scopeForLocalClass: PersistentList<FirScope>? = null,
-    private val localClassesNavigationInfo: LocalClassesNavigationInfo? = null
+    private val localClassesNavigationInfo: LocalClassesNavigationInfo? = null,
+    private val firProviderInterceptor: FirProviderInterceptorForSupertypeResolver? = null,
 ) : FirDefaultVisitor<Unit, Any?>() {
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
 
-    open fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile =
-        session.firProvider.getFirClassifierContainerFile(symbol.classId)
+    private fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile =
+        firProviderInterceptor?.getFirClassifierContainerFile(symbol) ?: session.firProvider.getFirClassifierContainerFile(symbol.classId)
 
-    open fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? =
-        session.firProvider.getFirClassifierByFqName(classId)
+    private fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? =
+        if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierByFqName(classId)
+        else session.firProvider.getFirClassifierByFqName(classId)
 
     override fun visitElement(element: FirElement, data: Any?) {}
 

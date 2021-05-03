@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.runStatusResolveForLocalClass
 import org.jetbrains.kotlin.fir.resolve.transformers.runSupertypeResolvePhaseForLocalClass
 import org.jetbrains.kotlin.fir.resolve.transformers.runTypeResolvePhaseForLocalClass
@@ -18,7 +19,8 @@ fun <F : FirClassLikeDeclaration<F>> F.runAllPhasesForLocalClass(
     transformer: FirAbstractBodyResolveTransformer,
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
-    firTowerDataContextCollector: FirTowerDataContextCollector?
+    firTowerDataContextCollector: FirTowerDataContextCollector?,
+    firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
 ): F {
     if (this.resolvePhase > FirResolvePhase.RAW_FIR) return this
     if (this is FirRegularClass) {
@@ -36,7 +38,8 @@ fun <F : FirClassLikeDeclaration<F>> F.runAllPhasesForLocalClass(
         components.session,
         components.scopeSession,
         components.createCurrentScopeList(),
-        localClassesNavigationInfo
+        localClassesNavigationInfo,
+        firProviderInterceptor
     )
     runTypeResolvePhaseForLocalClass(
         components.session,
