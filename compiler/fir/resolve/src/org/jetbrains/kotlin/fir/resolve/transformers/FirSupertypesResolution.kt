@@ -44,7 +44,7 @@ class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSess
  * Interceptor needed by IDE to resolve in-air created declarations.
  */
 interface FirProviderInterceptorForSupertypeResolver {
-    fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile
+    fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile?
     fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>?
 }
 
@@ -193,8 +193,9 @@ class FirSupertypeResolverVisitor(
 ) : FirDefaultVisitor<Unit, Any?>() {
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
 
-    private fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile =
-        firProviderInterceptor?.getFirClassifierContainerFile(symbol) ?: session.firProvider.getFirClassifierContainerFile(symbol.classId)
+    private fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
+        if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierContainerFileIfAny(symbol)
+        else session.firProvider.getFirClassifierContainerFileIfAny(symbol.classId)
 
     private fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? =
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierByFqName(classId)
@@ -259,7 +260,7 @@ class FirSupertypeResolverVisitor(
                 val outerClassFir = classId.outerClassId?.let(::getFirClassifierByFqName) as? FirRegularClass
                 prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf())
             }
-            else -> prepareFileScopes(getFirClassifierContainerFile(classLikeDeclaration.symbol))
+            else -> getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.let(::prepareFileScopes) ?: persistentListOf()
         }
 
         return result.pushIfNotNull(classLikeDeclaration.typeParametersScope())
@@ -303,7 +304,7 @@ class FirSupertypeResolverVisitor(
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
             if (!classLikeDeclaration.isLocalClassOrAnonymousObject()) {
                 session.lookupTracker?.let {
-                    val fileSource = getFirClassifierContainerFile(classLikeDeclaration.symbol).source
+                    val fileSource = getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.source
                     for (supertypeRef in supertypeRefs) {
                         it.recordTypeLookup(supertypeRef, scope.scopeOwnerLookupNames, fileSource)
                     }

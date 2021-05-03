@@ -19,10 +19,11 @@ internal class FirProviderInterceptorForIDE private constructor(
     private val firFile: FirFile,
     private val session: FirSession,
     private val symbolSet: Set<FirClassLikeSymbol<*>>,
-    private val classIdToElementMap: Map<ClassId, FirClassLikeDeclaration<*>>): FirProviderInterceptorForSupertypeResolver {
+    private val classIdToElementMap: Map<ClassId, FirClassLikeDeclaration<*>>
+) : FirProviderInterceptorForSupertypeResolver {
 
-    override fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile =
-        if (symbolSet.contains(symbol)) firFile else session.firProvider.getFirClassifierContainerFile(symbol)
+    override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
+        if (symbolSet.contains(symbol)) firFile else session.firProvider.getFirClassifierContainerFileIfAny(symbol)
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? =
         classIdToElementMap[classId] ?: session.firProvider.getFirClassifierByFqName(classId)
