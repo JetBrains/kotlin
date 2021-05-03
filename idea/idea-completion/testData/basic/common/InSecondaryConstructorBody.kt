@@ -12,3 +12,4 @@ class A(val prop: Int, arg: Int) {
 
 // EXIST: prop, abc, another, foo, local, topLevel
 // ABSENT: arg
+// FIR_COMPARISON

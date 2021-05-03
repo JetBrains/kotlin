@@ -10,3 +10,4 @@ class Some(testParam : Int) {
 }
 
 // EXIST: testParam, testExternal, testing
+// FIR_COMPARISON

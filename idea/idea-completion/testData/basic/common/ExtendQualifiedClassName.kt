@@ -14,3 +14,4 @@ class A() : Test.SubTest.AnotherTest.<caret> {
 // EXIST: TestClass
 // ABSENT: globalFun
 // ABSENT: globalProp
+// FIR_COMPARISON

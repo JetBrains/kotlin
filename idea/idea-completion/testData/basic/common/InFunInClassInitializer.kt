@@ -8,4 +8,4 @@ class Some(someParam : Int) {
 }
 
 // EXIST: some, someInternal, someParam
-
+// FIR_COMPARISON

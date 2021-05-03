@@ -5,3 +5,4 @@ class X {
     }
 }
 // EXIST: y
+// FIR_COMPARISON

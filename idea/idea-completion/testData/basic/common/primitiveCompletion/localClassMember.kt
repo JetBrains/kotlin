@@ -18,3 +18,4 @@ fun topLevelFun(param: T) {
 
 // EXIST: firstVariable, param, localClassField, localParam
 // ABSENT: secondVariable
+// FIR_COMPARISON

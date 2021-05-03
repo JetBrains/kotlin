@@ -9,3 +9,4 @@ val test : Int get() {
 }
 
 // EXIST: testGlobal, test, testParam
+// FIR_COMPARISON
