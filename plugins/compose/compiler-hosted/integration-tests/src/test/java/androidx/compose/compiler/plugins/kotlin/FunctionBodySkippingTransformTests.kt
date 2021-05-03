@@ -19,8 +19,8 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
-    private fun comparisonPropagation(
+abstract class FunctionBodySkippingTransfomrTestsBase : ComposeIrTransformTest() {
+    protected fun comparisonPropagation(
         @Language("kotlin")
         unchecked: String,
         @Language("kotlin")
@@ -44,6 +44,9 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """.trimIndent(),
         dumpTree = dumpTree
     )
+}
+
+class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBase() {
 
     @Test
     fun testIfInLambda(): Unit = comparisonPropagation(
@@ -2693,13 +2696,17 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               val current: Int
                 @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
                 get() {
+                  %composer.startReplaceableGroup(<>, "C:Test.kt")
                   val tmp0 = %composer.hashCode()
+                  %composer.endReplaceableGroup()
                   return tmp0
                 }
               @ReadOnlyComposable
               @Composable
               fun getHashCode(%composer: Composer?, %changed: Int): Int {
+                %composer.startReplaceableGroup(<>, "C(getHashCode):Test.kt")
                 val tmp0 = %composer.hashCode()
+                %composer.endReplaceableGroup()
                 return tmp0
               }
               static val %stable: Int = 0
@@ -2707,7 +2714,9 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             @ReadOnlyComposable
             @Composable
             fun getHashCode(%composer: Composer?, %changed: Int): Int {
+              %composer.startReplaceableGroup(<>, "C(getHashCode):Test.kt")
               val tmp0 = %composer.hashCode()
+              %composer.endReplaceableGroup()
               return tmp0
             }
         """
@@ -3087,6 +3096,57 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                   %composer.skipToGroupEnd()
                 }
               }
+            }
+        """
+    )
+}
+
+class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransfomrTestsBase() {
+    override val sourceInformationEnabled: Boolean get() = false
+
+    @Test
+    fun testGrouplessProperty(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            import androidx.compose.runtime.currentComposer
+
+            open class Foo {
+                inline val current: Int
+                    @Composable
+                    @ReadOnlyComposable get() = currentComposer.hashCode()
+
+                @ReadOnlyComposable
+                @Composable
+                fun getHashCode(): Int = currentComposer.hashCode()
+            }
+
+            @ReadOnlyComposable
+            @Composable
+            fun getHashCode(): Int = currentComposer.hashCode()
+        """,
+        """
+            @StabilityInferred(parameters = 0)
+            open class Foo {
+              val current: Int
+                @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
+                get() {
+                  val tmp0 = %composer.hashCode()
+                  return tmp0
+                }
+              @ReadOnlyComposable
+              @Composable
+              fun getHashCode(%composer: Composer?, %changed: Int): Int {
+                val tmp0 = %composer.hashCode()
+                return tmp0
+              }
+              static val %stable: Int = 0
+            }
+            @ReadOnlyComposable
+            @Composable
+            fun getHashCode(%composer: Composer?, %changed: Int): Int {
+              val tmp0 = %composer.hashCode()
+              return tmp0
             }
         """
     )
