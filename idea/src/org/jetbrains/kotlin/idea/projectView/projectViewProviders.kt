@@ -15,7 +15,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.idea.KotlinIconProviderBase
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -55,7 +55,7 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
 
     private fun Any.asKtFile(): KtFile? = when (this) {
         is KtFile -> this
-        is KtLightClassForFacade -> files.singleOrNull()
+        is KtLightClassForFacadeImpl -> files.singleOrNull()
         is KtLightClass -> kotlinOrigin?.containingFile as? KtFile
         else -> null
     }

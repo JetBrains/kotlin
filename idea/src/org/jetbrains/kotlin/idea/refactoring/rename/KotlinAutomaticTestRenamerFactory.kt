@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticTestRenamerFactory
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -46,7 +46,7 @@ class KotlinAutomaticTestRenamerFactory : AutomaticTestRenamerFactory() {
 
     override fun createRenamer(element: PsiElement, newName: String, usages: MutableCollection<UsageInfo>): AutomaticRenamer {
         val psiClass = getPsiClass(element)!!
-        val newPsiClassName = if (psiClass is KtLightClassForFacade) PackagePartClassUtils.getFilePartShortName(newName) else newName
+        val newPsiClassName = if (psiClass is KtLightClassForFacadeImpl) PackagePartClassUtils.getFilePartShortName(newName) else newName
         return super.createRenamer(psiClass, newPsiClassName, usages)
     }
 }

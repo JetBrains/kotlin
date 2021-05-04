@@ -19,7 +19,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import com.intellij.psi.util.PropertyUtil
 import com.intellij.psi.util.PropertyUtilBase
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.toLightMethods
@@ -143,7 +143,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
     private fun JvmClass.toKtClassOrFile(): KtElement? = when (val psi = sourceElement) {
         is KtClassOrObject -> psi
         is KtLightClassForSourceDeclaration -> psi.kotlinOrigin
-        is KtLightClassForFacade -> psi.files.firstOrNull()
+        is KtLightClassForFacadeImpl -> psi.files.firstOrNull()
         else -> null
     }
 

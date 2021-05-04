@@ -52,7 +52,7 @@ open class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSu
         manager: PsiManager,
         facadeClassFqName: FqName,
         searchScope: GlobalSearchScope
-    ): KtLightClass? = KtLightClassForFacade.createForFacade(psiManager, facadeClassFqName, searchScope)
+    ): KtLightClass? = KtLightClassForFacadeImpl.createForFacade(psiManager, facadeClassFqName, searchScope)
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
         val facadeFilesInPackage = project.runReadActionInSmartMode {

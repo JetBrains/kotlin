@@ -15,7 +15,7 @@ import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.idea.refactoring.move.logFusForMoveRefactoring
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesModel
@@ -100,7 +100,7 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
         reference: PsiReference?,
         editor: Editor?
     ): Boolean {
-        if (element is KtLightClassForFacade) {
+        if (element is KtLightClassForFacadeImpl) {
             doMove(project, element.files.toTypedArray(), dataContext?.getData(LangDataKeys.TARGET_PSI_ELEMENT), null)
             return true
         }

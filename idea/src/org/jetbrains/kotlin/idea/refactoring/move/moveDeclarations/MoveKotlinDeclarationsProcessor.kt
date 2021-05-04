@@ -31,7 +31,7 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.MultiMap
 import gnu.trove.THashMap
 import gnu.trove.TObjectHashingStrategy
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
@@ -236,7 +236,7 @@ class MoveKotlinDeclarationsProcessor(
                         )
                     }
 
-                    val facadeContainer = lightElement.parent as? KtLightClassForFacade
+                    val facadeContainer = lightElement.parent as? KtLightClassForFacadeImpl
                     if (facadeContainer != null) {
                         val oldFqNameWithFacade = StringUtil.getQualifiedName(facadeContainer.qualifiedName, elementName)
                         val newFqNameWithFacade = StringUtil.getQualifiedName(

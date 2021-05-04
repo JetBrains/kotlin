@@ -11,7 +11,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -256,7 +256,7 @@ class FirLightClassForFacade(
 
     override fun hashCode() = facadeClassFqName.hashCode()
 
-    override fun toString() = "${KtLightClassForFacade::class.java.simpleName}:$facadeClassFqName"
+    override fun toString() = "${KtLightClassForFacadeImpl::class.java.simpleName}:$facadeClassFqName"
 
     override val originKind: LightClassOriginKind
         get() = LightClassOriginKind.SOURCE
