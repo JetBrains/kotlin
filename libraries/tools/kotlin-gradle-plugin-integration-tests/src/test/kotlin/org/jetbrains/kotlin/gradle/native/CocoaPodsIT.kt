@@ -1277,7 +1277,6 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.authors                  = ''
                     spec.license                  = ''
                     spec.summary                  = 'CocoaPods test library'
-                    spec.static_framework         = true
                     spec.vendored_frameworks      = "build/cocoapods/framework/${frameworkName ?: "kotlin_library"}.framework"
                     spec.libraries                = "c++"
                     spec.module_name              = "#{spec.name}_umbrella"
@@ -1321,7 +1320,6 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.authors                  = ''
                     spec.license                  = ''
                     spec.summary                  = 'CocoaPods test library'
-                    spec.static_framework         = true
                     spec.vendored_frameworks      = "build/cocoapods/framework/${frameworkName ?: "second_library"}.framework"
                     spec.libraries                = "c++"
                     spec.module_name              = "#{spec.name}_umbrella"
