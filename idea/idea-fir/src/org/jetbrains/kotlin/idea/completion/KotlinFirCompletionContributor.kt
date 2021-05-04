@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 
@@ -140,7 +142,11 @@ private class KotlinCommonCompletionProvider(
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     fun addCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
+        val isJvmModule = TargetPlatformDetector.getPlatform(originalFile).isJvm()
+
         recordOriginalFile(parameters)
+
+        FirKeywordCompletion.completeKeywords(result, parameters.position, prefixMatcher, isJvmModule = isJvmModule)
 
         val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
         val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression } ?: return

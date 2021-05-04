@@ -16,6 +16,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.completion.handlers.isTextAt
 import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
@@ -395,8 +396,6 @@ private object ShortNamesRenderer {
         "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${param.annotatedType.type.render()}"
 }
 
-private fun Document.isTextAt(offset: Int, text: String) =
-    offset + text.length <= textLength && getText(TextRange(offset, offset + text.length)) == text
 
 private fun CharSequence.skipSpaces(index: Int): Int =
     (index until length).firstOrNull { val c = this[it]; c != ' ' && c != '\t' } ?: this.length
