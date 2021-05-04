@@ -19,12 +19,12 @@ interface FirTowerContextProvider {
     fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext?
 }
 
-internal class SingleElementTowerProvider(
-    private val element: KtElement,
+internal class FileTowerProvider(
+    private val file: KtFile,
     private val context: FirTowerDataContext
 ) : FirTowerContextProvider {
     override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? =
-        if (element == ktElement) context else null
+        if (file == ktElement.containingKtFile) context else null
 }
 
 internal class FirTowerDataContextAllElementsCollector : FirTowerDataContextCollector, FirTowerContextProvider {

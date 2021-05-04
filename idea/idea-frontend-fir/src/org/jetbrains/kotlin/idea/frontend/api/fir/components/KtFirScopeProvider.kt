@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForDependentCopy.getTowerContextProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir.getTowerContextProvider
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.components.KtImplicitReceiver

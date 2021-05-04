@@ -45,8 +45,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForDependentCopy
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForDependentCopy.getTowerContextProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
@@ -76,7 +75,7 @@ internal class KtFirReferenceShortener(
         val firDeclaration = declarationToVisit.getOrBuildFir(firResolveState)
 
         val towerContext =
-            LowLevelFirApiFacadeForDependentCopy.onAirGetTowerContextProvider(firResolveState, declarationToVisit)
+            LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveState, declarationToVisit)
 
         val collector = ElementsToShortenCollector(context, towerContext)
         firDeclaration.accept(collector)

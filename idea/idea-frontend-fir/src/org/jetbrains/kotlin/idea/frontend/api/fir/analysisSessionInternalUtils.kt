@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EntityWasGarbageCollectedException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
@@ -23,6 +24,6 @@ internal inline fun <R> analyzeWithSymbolAsContext(
     val analysisSessionProvider = resolveState.project.service<KtAnalysisSessionProvider>()
     check(analysisSessionProvider is KtFirAnalysisSessionProvider)
     val analysisSession = analysisSessionProvider.getCachedAnalysisSession(resolveState, token)
-        ?: error("KtAnalysisSession assotiated with symbol was invalidated")
+        ?: throw EntityWasGarbageCollectedException("KtAnalysisSession")
     return action(analysisSession)
 }

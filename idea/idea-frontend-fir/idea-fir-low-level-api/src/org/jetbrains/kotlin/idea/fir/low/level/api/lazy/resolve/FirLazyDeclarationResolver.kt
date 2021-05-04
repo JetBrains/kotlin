@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalCo
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -34,6 +34,7 @@ internal class FirLazyDeclarationResolver(
         moduleFileCache: ModuleFileCache,
         scopeSession: ScopeSession,
     ) {
+        check(firFile.resolvePhase >= FirResolvePhase.IMPORTS)
         firFileBuilder.runCustomResolveUnderLock(firFile, moduleFileCache) {
             val transformer = FirFileAnnotationsResolveTransformer(firFile.moduleData.session, scopeSession)
             firFile.accept(transformer, ResolutionMode.ContextDependent)

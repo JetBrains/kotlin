@@ -38,11 +38,11 @@ abstract class KtAnalysisSessionProvider : Disposable {
     @InvalidWayOfUsingAnalysisSession
     inline fun <R> analyseInDependedAnalysisSession(
         originalFile: KtFile,
-        dependencyExpression: KtElement,
+        elementToReanalyze: KtElement,
         action: KtAnalysisSession.() -> R
     ): R {
         val dependedAnalysisSession = getAnalysisSession(originalFile, ReadActionConfinementValidityTokenFactory)
-            .createContextDependentCopy(originalFile, dependencyExpression)
+            .createContextDependentCopy(originalFile, elementToReanalyze)
         return analyse(dependedAnalysisSession, ReadActionConfinementValidityTokenFactory, action)
     }
 
@@ -95,10 +95,10 @@ inline fun <R> analyseWithCustomToken(
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 inline fun <R> analyseInDependedAnalysisSession(
     originalFile: KtFile,
-    dependencyExpression: KtElement,
+    elementToReanalyze: KtElement,
     action: KtAnalysisSession.() -> R
 ): R =
-    originalFile.project.service<KtAnalysisSessionProvider>().analyseInDependedAnalysisSession(originalFile, dependencyExpression, action)
+    originalFile.project.service<KtAnalysisSessionProvider>().analyseInDependedAnalysisSession(originalFile, elementToReanalyze, action)
 
 /**
  * Execute given [action] in [KtAnalysisSession] context like [analyse] does but execute it in read action

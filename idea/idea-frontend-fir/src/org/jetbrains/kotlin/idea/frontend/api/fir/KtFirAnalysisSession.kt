@@ -73,16 +73,16 @@ private constructor(
 
     override val subtypingComponentImpl = KtFirSubtypingComponent(this, token)
 
-    override fun createContextDependentCopy(originalKtFile: KtFile, dependencyKtElement: KtElement): KtAnalysisSession {
+    override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {
             "Cannot create context-dependent copy of KtAnalysis session from a context dependent one"
         }
-        require(!dependencyKtElement.isPhysical) { "Depended context should be build only for non-physical elements" }
+        require(!elementToReanalyze.isPhysical) { "Depended context should be build only for non-physical elements" }
 
-        val contextResolveState = LowLevelFirApiFacadeForDependentCopy.getResolveStateForDependedCopy(
+        val contextResolveState = LowLevelFirApiFacadeForResolveOnAir.getResolveStateForDependentCopy(
             originalState = firResolveState,
             originalKtFile = originalKtFile,
-            dependencyKtElement = dependencyKtElement
+            elementToAnalyze = elementToReanalyze
         )
 
         return KtFirAnalysisSession(

@@ -11,26 +11,26 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.RawFirReplacement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateDepended
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextAllElementsCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.SingleElementTowerProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirProviderInterceptorForIDE
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirProviderInterceptorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-object LowLevelFirApiFacadeForDependentCopy {
+object LowLevelFirApiFacadeForResolveOnAir {
 
     private fun KtDeclaration.canBeEnclosingDeclaration(): Boolean = when (this) {
         is KtNamedFunction -> isTopLevel || containingClassOrObject?.isLocal == false
@@ -40,7 +40,7 @@ object LowLevelFirApiFacadeForDependentCopy {
         else -> false
     }
 
-    fun findEnclosingNonLocalDeclaration(position: KtElement): KtNamedDeclaration? =
+    private fun findEnclosingNonLocalDeclaration(position: KtElement): KtNamedDeclaration? =
         position.parentsOfType<KtNamedDeclaration>().firstOrNull { ktDeclaration ->
             ktDeclaration.canBeEnclosingDeclaration()
         }
@@ -71,7 +71,7 @@ object LowLevelFirApiFacadeForDependentCopy {
         require(!elementToResolve.isPhysical)
 
         val collector = FirTowerDataContextAllElementsCollector()
-        val declaration = runBodyResolve(
+        val declaration = runResolveBodyResolveOnAir(
             state = state,
             replacement = RawFirReplacement(place, elementToResolve),
             collector = null,
@@ -102,10 +102,10 @@ object LowLevelFirApiFacadeForDependentCopy {
         require(place.isPhysical)
 
         return if (place is KtFile) {
-            onAirGetTowerContextForFile(state, place)
+            FileTowerProvider(place, onAirGetTowerContextForFile(state, place))
         } else {
             FirTowerDataContextAllElementsCollector().also {
-                runBodyResolve(state, collector = it, replacement = RawFirReplacement(place, place))
+                runResolveBodyResolveOnAir(state, collector = it, replacement = RawFirReplacement(place, place))
             }
         }
     }
@@ -113,44 +113,38 @@ object LowLevelFirApiFacadeForDependentCopy {
     private fun onAirGetTowerContextForFile(
         state: FirModuleResolveState,
         file: KtFile,
-    ): FirTowerContextProvider {
+    ): FirTowerDataContext {
+        require(file.isPhysical)
+        val session = state.getSessionFor(file.getModuleInfo()) as FirIdeSourcesSession
+        val firFile = session.firFileBuilder.getFirFileResolvedToPhaseWithCaching(
+            file,
+            session.cache,
+            FirResolvePhase.IMPORTS,
+            ScopeSession(),
+            checkPCE = false
+        )
 
-        val firFile = state.getOrBuildFirFor(file) as FirFile
-
-        val fileTransformer = object : FirBodyResolveTransformer(
-            session = firFile.declarationSiteSession,
-            phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-            implicitTypeOnly = true,
-            scopeSession = ScopeSession()
-        ) {
-            var result: FirTowerDataContext? = null
-                private set
-
-            override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
-                check(declaration is FirFile)
-                result = context.towerDataContext
-                return declaration
-            }
-        }
-        firFile.transform<FirFile, ResolutionMode>(fileTransformer, ResolutionMode.ContextDependent)
-
-        val fileContext = fileTransformer.result
-        check(fileContext != null) { "File context not found for physical file" }
-
-        return SingleElementTowerProvider(file, fileContext)
+        val importingScopes = createImportingScopes(firFile, firFile.declarationSiteSession, ScopeSession(), useCaching = false)
+        val fileScopeElements = importingScopes.map { it.asTowerDataElement(isLocal = false) }
+        return FirTowerDataContext().addNonLocalTowerDataElements(fileScopeElements)
     }
 
-    fun getResolveStateForDependedCopy(
+    fun getResolveStateForDependentCopy(
         originalState: FirModuleResolveState,
         originalKtFile: KtFile,
-        dependencyKtElement: KtElement
+        elementToAnalyze: KtElement
     ): FirModuleResolveState {
         require(originalState is FirModuleResolveStateImpl)
-        require(dependencyKtElement !is KtFile) { "KtFile for dependency element not supported" }
-        require(!dependencyKtElement.isPhysical) { "Depended state should be build only for non-physical elements" }
+        require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
+        require(!elementToAnalyze.isPhysical) { "Depended state should be build only for non-physical elements" }
 
-        val dependencyNonLocalDeclaration = findEnclosingNonLocalDeclaration(dependencyKtElement)
-            ?: error("Cannot find enclosing declaration for ${dependencyKtElement.getElementTextInContext()}")
+        val dependencyNonLocalDeclaration = findEnclosingNonLocalDeclaration(elementToAnalyze)
+            ?: return FirModuleResolveStateDepended(
+                originalState,
+                FileTowerProvider(elementToAnalyze.containingKtFile, onAirGetTowerContextForFile(originalState, originalKtFile)),
+                emptyMap()
+            )
+
 
         val sameDeclarationInOriginalFile = locateDeclarationInFileByOffset(dependencyNonLocalDeclaration, originalKtFile)
             ?: error("Cannot find original function matching to ${dependencyNonLocalDeclaration.getElementTextInContext()} in $originalKtFile")
@@ -161,7 +155,7 @@ object LowLevelFirApiFacadeForDependentCopy {
         )
 
         val collector = FirTowerDataContextAllElementsCollector()
-        val copiedFirDeclaration = runBodyResolve(
+        val copiedFirDeclaration = runResolveBodyResolveOnAir(
             originalState,
             collector = collector,
             replacement = RawFirReplacement(sameDeclarationInOriginalFile, dependencyNonLocalDeclaration),
@@ -172,18 +166,24 @@ object LowLevelFirApiFacadeForDependentCopy {
         return FirModuleResolveStateDepended(originalState, collector, recordedMap)
     }
 
-    private fun <T : KtElement> runBodyResolve(
+    private fun <T : KtElement> runResolveBodyResolveOnAir(
         state: FirModuleResolveStateImpl,
         replacement: RawFirReplacement<T>,
         collector: FirTowerDataContextCollector? = null,
         useFirProviderInterceptor: Boolean = false
     ): FirDeclaration {
+
+        val nonLocalDeclaration = findEnclosingNonLocalDeclaration(replacement.from)
+            ?: error("Cannot find enclosing declaration for ${replacement.from.getElementTextInContext()}")
+
         val copiedFirDeclaration = DeclarationCopyBuilder.createDeclarationCopy(
             state = state,
+            nonLocalDeclaration = nonLocalDeclaration,
             replacement = replacement,
         )
 
-        val originalFirFile = state.getOrBuildFirFor(replacement.from.containingKtFile) as FirFile
+        val originalFirFile = state.getBuiltFirFileOrNull(replacement.from.containingKtFile)
+            ?: error("Original fir file should be already built")
 
         val firProviderInterceptor =
             if (useFirProviderInterceptor) FirProviderInterceptorForIDE.createForFirElement(

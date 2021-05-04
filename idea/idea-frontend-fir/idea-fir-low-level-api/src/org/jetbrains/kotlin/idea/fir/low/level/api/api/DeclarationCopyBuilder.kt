@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.psi.*
 object DeclarationCopyBuilder {
     fun <T : KtElement> createDeclarationCopy(
         state: FirModuleResolveState,
+        nonLocalDeclaration: KtDeclaration,
         replacement: RawFirReplacement<T>
     ): FirDeclaration {
-
-        val nonLocalDeclaration = LowLevelFirApiFacadeForDependentCopy.findEnclosingNonLocalDeclaration(replacement.from)
-            ?: error("Cannot find enclosing declaration for ${replacement.from.getElementTextInContext()}")
 
         return when (nonLocalDeclaration) {
             is KtNamedFunction -> createFunctionCopy(
