@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.ir.util.indexOrMinusOne
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
@@ -70,7 +71,8 @@ class FragmentFunctionGenerator(declarationGenerator: FragmentDeclarationGenerat
             IrDeclarationOrigin.DEFINED,
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
-            name
+            name,
+            isAssignable = true // TODO(kjaa): maybe not enough...?
         )
 
 }

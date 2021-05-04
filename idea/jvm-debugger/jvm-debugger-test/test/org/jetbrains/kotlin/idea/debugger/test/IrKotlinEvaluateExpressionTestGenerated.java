@@ -748,6 +748,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/typedArray.kt");
             }
 
+            @TestMetadata("varAssignment.kt")
+            public void testVarAssignment() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/varAssignment.kt");
+            }
+
             @TestMetadata("varModification.kt")
             public void testVarModification() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/varModification.kt");

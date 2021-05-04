@@ -179,7 +179,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val resolvedCall = getResolvedCall(ktExpr)
             ?: return generateExpressionAssignmentReceiver(ktExpr, origin, isAssignmentStatement)
         val descriptor = resolvedCall.resultingDescriptor
-
+        
         val startOffset = ktExpr.startOffsetSkippingComments
         val endOffset = ktExpr.endOffset
         return when (descriptor) {
@@ -239,6 +239,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         VariableLValue(
             context,
             ktExpression.startOffsetSkippingComments, ktExpression.endOffset,
+            //TODO(kjaa): Intercept this call?
             context.symbolTable.referenceValue(descriptor),
             descriptor.type.toIrType(),
             origin

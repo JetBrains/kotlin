@@ -13,3 +13,4 @@ fun main() {
 
 // EXPRESSION: O.definitelyNotAnIntrinsic()
 // RESULT: 0: I
+W

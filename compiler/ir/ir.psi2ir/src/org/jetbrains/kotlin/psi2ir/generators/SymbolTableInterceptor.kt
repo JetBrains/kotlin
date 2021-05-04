@@ -24,3 +24,4 @@ class PassThroughSymbolTableInterceptor : SymbolTableInterceptor {
 
     override fun remapDescriptor(symbolTable: SymbolTable, descriptor: DeclarationDescriptor): IrValueParameterSymbol? = null
 }
+

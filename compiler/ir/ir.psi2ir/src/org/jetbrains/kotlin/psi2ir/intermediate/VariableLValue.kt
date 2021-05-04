@@ -48,7 +48,7 @@ class VariableLValue(
         IrSetValueImpl(
             startOffset, endOffset,
             context.irBuiltIns.unitType,
-            symbol.assertedCast<IrVariableSymbol> { "Not a variable: ${symbol.descriptor}" },
+            symbol, // TODO(kjaa): Cast is obsolete, IrSetValue checks assignability: symbol.assertedCast<IrVariableSymbol> { "Not a variable: ${symbol.descriptor}" },
             irExpression, origin
         )
 

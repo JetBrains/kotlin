@@ -66,6 +66,17 @@ class EvaluatorValueConverter(val context: ExecutionContext) {
     }
 
     private fun coerceRef(value: Value?, type: AsmType): Result? {
+        //TODO(kjaa): can be cleaned up with the following, I think.
+        //            also, the return type should probably be non-null.
+//        return Result(
+//          if (type.isRefType && value == null) {
+//            ref(value)
+//          } else if (!type.isRefType && value != null && value.asmType().isRefType) {
+//            unref(value)
+//          } else {
+//            value
+//          }
+//         )
         when {
             type.isRefType -> {
                 if (value != null && value.asmType().isRefType) {

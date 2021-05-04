@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi2ir.generators.FragmentCompilerSymbolTableDecorator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo
@@ -108,7 +109,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
             JvmIrCodegenFactory(
                 PhaseConfig(jvmPhases),
                 EvaluatorFragmentPSI2IRInvoker(codegenInfo, moduleDescriptor)
-            )
+            ) { idSig, irFact, nameProvider -> FragmentCompilerSymbolTableDecorator(idSig, irFact, nameProvider, codegenInfo) }
         ).build()
 
 
