@@ -46,7 +46,7 @@ object CompilerRunnerUtil {
 
             // We might be inside jre.
             if (javaHome.name == "jre") {
-                toolsJar = javaHome.parent.resolve("lib/tools.jar")
+                toolsJar = javaHome.resolveSibling("lib/tools.jar")
                 if (toolsJar.exists()) {
                     return toolsJar.toFile()
                 }
