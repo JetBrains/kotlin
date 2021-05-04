@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
-import java.util.*
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 val KotlinLibrary.moduleName: String
@@ -243,7 +242,8 @@ fun loadIr(
                 JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
             }
             val moduleFragmentToUniqueName = mutableMapOf<IrModuleFragment, String>()
-            val irLinker = JsIrLinker(psi2IrContext.moduleDescriptor, messageLogger, irBuiltIns, symbolTable, functionFactory, feContext, null)
+            val irLinker =
+                JsIrLinker(psi2IrContext.moduleDescriptor, messageLogger, irBuiltIns, symbolTable, functionFactory, feContext, null)
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map { klib ->
                 irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(klib), klib).also { moduleFragment ->
                     klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
@@ -319,7 +319,11 @@ private fun runAnalysisAndPreparePsi2Ir(
         Psi2IrConfiguration(errorIgnorancePolicy.allowErrors)
     )
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
-    return psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable) to analysisResult.hasErrors
+    return psi2Ir.createGeneratorContext(
+        analysisResult.moduleDescriptor,
+        analysisResult.bindingContext,
+        symbolTable
+    ) to analysisResult.hasErrors
 }
 
 fun GeneratorContext.generateModuleFragmentWithPlugins(
@@ -571,20 +575,20 @@ fun serializeModuleIntoKlib(
         }
     }
 
-        buildKotlinLibrary(
-            linkDependencies = dependencies,
-            ir = fullSerializedIr,
-            metadata = serializedMetadata,
-            dataFlowGraph = null,
-            manifestProperties = properties,
-            moduleName = moduleName,
-            nopack = nopack,
-            perFile = perFile,
-            output = klibPath,
-            versions = versions,
-            builtInsPlatform = BuiltInsPlatform.JS
-        )
-    }
+    buildKotlinLibrary(
+        linkDependencies = dependencies,
+        ir = fullSerializedIr,
+        metadata = serializedMetadata,
+        dataFlowGraph = null,
+        manifestProperties = properties,
+        moduleName = moduleName,
+        nopack = nopack,
+        perFile = perFile,
+        output = klibPath,
+        versions = versions,
+        builtInsPlatform = BuiltInsPlatform.JS
+    )
+}
 
 const val KLIB_PROPERTY_JS_OUTPUT_NAME = "jsOutputName"
 
@@ -617,11 +621,12 @@ private fun compareMetadataAndGoToNextICRoundIfNeeded(
     if (nextRoundChecker.shouldGoToNextRound()) throw IncrementalNextRoundException()
 }
 
-private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration, project: Project, allowErrors: Boolean) = KlibMetadataIncrementalSerializer(
-    languageVersionSettings = configuration.languageVersionSettings,
-    metadataVersion = configuration.metadataVersion,
-    project = project,
-    exportKDoc = false,
-    skipExpects = !configuration.expectActualLinker,
-    allowErrorTypes = allowErrors
-)
+private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration, project: Project, allowErrors: Boolean) =
+    KlibMetadataIncrementalSerializer(
+        languageVersionSettings = configuration.languageVersionSettings,
+        metadataVersion = configuration.metadataVersion,
+        project = project,
+        exportKDoc = false,
+        skipExpects = !configuration.expectActualLinker,
+        allowErrorTypes = allowErrors
+    )

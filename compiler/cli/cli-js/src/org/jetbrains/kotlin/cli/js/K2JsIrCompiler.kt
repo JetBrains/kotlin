@@ -207,8 +207,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 irFactory = PersistentIrFactory(), // TODO IrFactoryImpl?
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir,
-                jsOutputName = moduleName
-                    .substringAfterLast(":"),
+                jsOutputName = arguments.irPerModuleOutputName,
             )
         }
 
@@ -277,7 +276,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 relativeRequirePath = true,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 legacyPropertyAccess = arguments.irLegacyPropertyAccess,
-                irPerModulePrefix = arguments.irPerModulePrefix
             )
 
             val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
