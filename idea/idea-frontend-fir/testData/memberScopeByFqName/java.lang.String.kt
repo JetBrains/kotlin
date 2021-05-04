@@ -7,20 +7,24 @@
 KtFirJavaFieldSymbol:
   annotatedType: [] ft<kotlin/CharArray, kotlin/CharArray?>
   callableIdIfNonLocal: java/lang/String.value
+  isExtension: false
   isVal: true
   modality: FINAL
   name: value
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   visibility: Private
 
 KtFirJavaFieldSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: java/lang/String.hash
+  isExtension: false
   isVal: false
   modality: OPEN
   name: hash
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   visibility: Private
 
@@ -48,10 +52,12 @@ KtFirFunctionSymbol:
 KtFirJavaFieldSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: java/lang/String.hash32
+  isExtension: false
   isVal: false
   modality: OPEN
   name: hash32
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   visibility: Private
 
@@ -1260,8 +1266,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
@@ -1274,8 +1282,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(original)]
@@ -1288,8 +1298,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(value)]
@@ -1302,8 +1314,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(value), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
@@ -1316,8 +1330,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(codePoints), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
@@ -1330,8 +1346,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ascii), KtFirValueParameterSymbol(hibyte), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count)]
@@ -1344,8 +1362,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(ascii), KtFirValueParameterSymbol(hibyte)]
@@ -1358,8 +1378,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length), KtFirValueParameterSymbol(charsetName)]
@@ -1372,8 +1394,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length), KtFirValueParameterSymbol(charset)]
@@ -1386,8 +1410,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(charsetName)]
@@ -1400,8 +1426,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(charset)]
@@ -1414,8 +1442,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes), KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(length)]
@@ -1428,8 +1458,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(bytes)]
@@ -1442,8 +1474,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(buffer)]
@@ -1456,8 +1490,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(builder)]
@@ -1470,8 +1506,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(value), KtFirValueParameterSymbol(share)]
@@ -1484,8 +1522,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(offset), KtFirValueParameterSymbol(count), KtFirValueParameterSymbol(value)]

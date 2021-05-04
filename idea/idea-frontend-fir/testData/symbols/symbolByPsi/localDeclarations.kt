@@ -10,9 +10,11 @@ fun yyy() {
 KtFirLocalVariableSymbol:
   annotatedType: [] kotlin/Int
   callableIdIfNonLocal: null
+  isExtension: false
   isVal: true
   name: q
   origin: SOURCE
+  receiverType: null
   symbolKind: LOCAL
 
 KtFirFunctionSymbol:

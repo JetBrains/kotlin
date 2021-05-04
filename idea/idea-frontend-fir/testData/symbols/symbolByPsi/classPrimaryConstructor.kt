@@ -10,8 +10,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  isExtension: false
   isPrimary: true
   origin: SOURCE
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []

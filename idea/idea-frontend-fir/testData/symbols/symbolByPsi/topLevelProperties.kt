@@ -35,10 +35,12 @@ KtFirPropertyGetterSymbol:
   dispatchType: null
   hasBody: true
   isDefault: false
+  isExtension: false
   isInline: false
   isOverride: false
   modality: FINAL
   origin: SOURCE
+  receiverType: null
   symbolKind: ACCESSOR
   visibility: Public
 

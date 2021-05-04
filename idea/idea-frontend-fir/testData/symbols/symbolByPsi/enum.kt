@@ -8,16 +8,20 @@ KtFirEnumEntrySymbol:
   annotatedType: [] X
   callableIdIfNonLocal: /X.Y
   containingEnumClassIdIfNonLocal: X
+  isExtension: false
   name: Y
   origin: SOURCE
+  receiverType: null
   symbolKind: MEMBER
 
 KtFirEnumEntrySymbol:
   annotatedType: [] X
   callableIdIfNonLocal: /X.Z
   containingEnumClassIdIfNonLocal: X
+  isExtension: false
   name: Z
   origin: SOURCE
+  receiverType: null
   symbolKind: MEMBER
 
 KtFirNamedClassOrObjectSymbol:

@@ -14,8 +14,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/util/ArrayList
   dispatchType: java/util/ArrayList<E>
+  isExtension: false
   isPrimary: false
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: [KtFirTypeParameterSymbol(E)]
   valueParameters: [KtFirValueParameterSymbol(c)]

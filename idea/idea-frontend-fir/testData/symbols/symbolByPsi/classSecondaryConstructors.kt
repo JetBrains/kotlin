@@ -12,8 +12,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  isExtension: false
   isPrimary: true
   origin: SOURCE
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []
@@ -25,9 +27,11 @@ KtFirValueParameterSymbol:
   annotations: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
+  isExtension: false
   isVararg: false
   name: x
   origin: SOURCE
+  receiverType: null
   symbolKind: LOCAL
 
 KtFirConstructorSymbol:
@@ -37,8 +41,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: SOURCE
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(x)]
@@ -50,9 +56,11 @@ KtFirValueParameterSymbol:
   annotations: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
+  isExtension: false
   isVararg: false
   name: y
   origin: SOURCE
+  receiverType: null
   symbolKind: LOCAL
 
 KtFirValueParameterSymbol:
@@ -61,9 +69,11 @@ KtFirValueParameterSymbol:
   annotations: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
+  isExtension: false
   isVararg: false
   name: z
   origin: SOURCE
+  receiverType: null
   symbolKind: LOCAL
 
 KtFirConstructorSymbol:
@@ -73,8 +83,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: A
   dispatchType: null
+  isExtension: false
   isPrimary: false
   origin: SOURCE
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: [KtFirValueParameterSymbol(y), KtFirValueParameterSymbol(z)]

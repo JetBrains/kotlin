@@ -1312,8 +1312,10 @@ KtFirConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: kotlin/Int
   dispatchType: null
+  isExtension: false
   isPrimary: true
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   typeParameters: []
   valueParameters: []

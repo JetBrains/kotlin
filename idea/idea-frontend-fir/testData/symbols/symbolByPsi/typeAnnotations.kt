@@ -117,9 +117,11 @@ KtFirValueParameterSymbol:
   annotations: []
   callableIdIfNonLocal: null
   hasDefaultValue: false
+  isExtension: false
   isVararg: false
   name: arg
   origin: SOURCE
+  receiverType: null
   symbolKind: LOCAL
 
 KtFirFunctionSymbol:
