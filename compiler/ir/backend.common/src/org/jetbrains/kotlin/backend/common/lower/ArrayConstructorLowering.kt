@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
+import org.jetbrains.kotlin.backend.common.ir.asInlinable
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -49,15 +48,6 @@ open class ArrayConstructorTransformer(
         }
     }
 
-    private fun IrExpression.asSingleArgumentLambda(): IrSimpleFunction? {
-        val function = asSimpleLambda() ?: return null
-        // Only match the one that has exactly one non-vararg argument, as the code below
-        // does not handle defaults or varargs.
-        if (function.valueParameters.size != 1)
-            return null
-        return function
-    }
-
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val sizeConstructor = arrayInlineToSizeConstructor(expression.symbol.owner)
             ?: return super.visitConstructorCall(expression)
@@ -82,9 +72,7 @@ open class ArrayConstructorTransformer(
                 putValueArgument(0, irGet(sizeVar))
             })
 
-            val lambda = invokable.asSingleArgumentLambda()
-            val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
-            val invokableVar = if (lambda == null) createTmpVariable(invokable) else null
+            val generator = invokable.asInlinable(this)
             +irWhile().apply {
                 condition = irCall(context.irBuiltIns.lessFunByOperandType[index.type.classifierOrFail]!!).apply {
                     putValueArgument(0, irGet(index))
@@ -92,13 +80,10 @@ open class ArrayConstructorTransformer(
                 }
                 body = irBlock {
                     val tempIndex = createTmpVariable(irGet(index))
-                    val value =
-                        lambda?.run { inline(parent, listOf(tempIndex)).patchDeclarationParents(scope.getLocalDeclarationParent()) }
-                            ?: irCallOp(invoke.symbol, invoke.returnType, irGet(invokableVar!!), irGet(tempIndex))
                     +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
                         dispatchReceiver = irGet(result)
                         putValueArgument(0, irGet(tempIndex))
-                        putValueArgument(1, value)
+                        putValueArgument(1, generator.inline(parent, listOf(tempIndex)).patchDeclarationParents(scope.getLocalDeclarationParent()))
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
                     +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))

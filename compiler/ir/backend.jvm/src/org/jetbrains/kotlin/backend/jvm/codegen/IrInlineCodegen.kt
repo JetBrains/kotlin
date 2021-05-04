@@ -263,4 +263,10 @@ fun IrStatementOrigin?.isInlineIrExpression() =
     isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
-    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline
+    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && (isInline || isInlineArrayConstructor(context))
+
+// Constructors can't be marked as inline in metadata, hence this hack.
+private fun IrFunction.isInlineArrayConstructor(context: JvmBackendContext): Boolean =
+    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.let {
+        it == context.irBuiltIns.arrayClass || it in context.irBuiltIns.primitiveArrays
+    }
