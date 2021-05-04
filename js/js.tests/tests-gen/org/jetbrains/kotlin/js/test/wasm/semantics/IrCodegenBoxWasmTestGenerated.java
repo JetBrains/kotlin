@@ -1265,6 +1265,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
+        @TestMetadata("inlineArrayConstructors.kt")
+        public void testInlineArrayConstructors() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
+        }
+
         @TestMetadata("kt37604.kt")
         public void testKt37604() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/kt37604.kt");
@@ -1356,6 +1361,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
 
             public void testAllFilesPresentInBound() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @TestMetadata("arrayConstructorArgument.kt")
+            public void testArrayConstructorArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/arrayConstructorArgument.kt");
             }
 
             @TestMetadata("captureVarInInitBlock.kt")

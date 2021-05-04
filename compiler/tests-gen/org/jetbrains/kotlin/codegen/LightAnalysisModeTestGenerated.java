@@ -2165,6 +2165,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/callableReference/genericLocalClassConstructorReference.kt");
         }
 
+        @TestMetadata("inlineArrayConstructors.kt")
+        public void testInlineArrayConstructors() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
+        }
+
         @TestMetadata("javaField.kt")
         public void testJavaField() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/javaField.kt");
@@ -2491,6 +2496,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("array.kt")
             public void testArray() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/array.kt");
+            }
+
+            @TestMetadata("arrayConstructorArgument.kt")
+            public void testArrayConstructorArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/arrayConstructorArgument.kt");
             }
 
             @TestMetadata("arrayGetIntrinsic.kt")
