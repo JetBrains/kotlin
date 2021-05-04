@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.DeclarationCopyBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.LockProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
@@ -45,7 +44,6 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration, S : Abstr
         cache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
-        towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzableStructureElement<KT, S>
 
     fun isUpToDate(): Boolean = psi.getModificationStamp() == timestamp
@@ -76,17 +74,15 @@ internal class ReanalyzableFunctionStructureElement(
         cache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
-        towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzableFunctionStructureElement {
         val originalFunction = firSymbol.fir as FirSimpleFunction
-        val newFunction = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalFunction)
+        val newFunction = DeclarationCopyBuilder.createCopy<FirSimpleFunction, KtElement>(newKtDeclaration, originalFunction)
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalFunction, newFunction) {
             firLazyDeclarationResolver.lazyResolveDeclaration(
                 newFunction,
                 cache,
                 FirResolvePhase.BODY_RESOLVE,
-                towerDataContextCollector,
                 checkPCE = true,
                 reresolveFile = true,
             )
@@ -118,17 +114,15 @@ internal class ReanalyzablePropertyStructureElement(
         cache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
-        towerDataContextCollector: FirTowerDataContextCollector,
     ): ReanalyzablePropertyStructureElement {
         val originalProperty = firSymbol.fir
-        val newProperty = DeclarationCopyBuilder.createCopy(newKtDeclaration, originalProperty)
+        val newProperty = DeclarationCopyBuilder.createCopy<FirProperty, KtElement>(newKtDeclaration, originalProperty)
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalProperty, newProperty) {
             firLazyDeclarationResolver.lazyResolveDeclaration(
                 newProperty,
                 cache,
                 FirResolvePhase.BODY_RESOLVE,
-                towerDataContextCollector,
                 checkPCE = true,
                 reresolveFile = true,
             )

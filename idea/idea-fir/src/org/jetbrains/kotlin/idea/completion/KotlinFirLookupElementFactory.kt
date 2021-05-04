@@ -17,9 +17,11 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.completion.handlers.isTextAt
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
+import org.jetbrains.kotlin.idea.frontend.api.analyseInDependedAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
@@ -415,7 +417,6 @@ private fun shortenReferences(targetFile: KtFile, textRange: TextRange) {
             collectPossibleReferenceShortenings(targetFile, textRange)
         }
     }
-
     shortenings.invokeShortening()
 }
 

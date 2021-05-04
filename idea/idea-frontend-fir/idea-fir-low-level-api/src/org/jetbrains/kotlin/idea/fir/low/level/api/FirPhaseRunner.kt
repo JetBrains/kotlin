@@ -36,6 +36,7 @@ internal class FirPhaseRunner {
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesResolveLock.withLock {
             runPhaseWithoutLock(firFile, phase, scopeSession)
         }
+        //TODO: Make correct sync for TYPES
         else -> {
             runPhaseWithoutLock(firFile, phase, scopeSession)
         }
@@ -51,6 +52,7 @@ internal class FirPhaseRunner {
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesResolveLock.withLock {
             runPhaseWithCustomResolveWithoutLock(resolve)
         }
+        //TODO: Make correct sync for TYPES
         else -> {
             runPhaseWithCustomResolveWithoutLock(resolve)
         }

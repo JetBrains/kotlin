@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForDependentCopy.getTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getTowerDataContextUnsafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.resolver.ResolutionParameters
 import org.jetbrains.kotlin.idea.fir.low.level.api.resolver.SingleCandidateResolutionMode
 import org.jetbrains.kotlin.idea.fir.low.level.api.resolver.SingleCandidateResolver
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -84,7 +85,9 @@ internal class KtFirCompletionCandidateChecker(
         firFile: FirFile,
         fakeNameExpression: KtSimpleNameExpression
     ): Sequence<ImplicitReceiverValue<*>?> {
-        val towerDataContext = analysisSession.firResolveState.getTowerDataContextUnsafe(fakeNameExpression)
+        val towerDataContext = analysisSession.firResolveState.getTowerContextProvider()
+            .getClosestAvailableParentContext(fakeNameExpression)
+            ?: error("Cannot find enclosing declaration for ${fakeNameExpression.getElementTextInContext()}")
 
         return sequence {
             yield(null) // otherwise explicit receiver won't be checked when there are no implicit receivers in completion position

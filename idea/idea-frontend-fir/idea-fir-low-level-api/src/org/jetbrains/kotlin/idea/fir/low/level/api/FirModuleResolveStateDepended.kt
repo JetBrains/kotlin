@@ -6,22 +6,19 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getClosestAvailableParentContext
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
-import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.containingKtFileIfAny
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -30,24 +27,29 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 internal class FirModuleResolveStateDepended(
-    dependencyFirDeclaration: FirDeclaration,
-    originalFirFile: FirFile,
     private val originalState: FirModuleResolveStateImpl,
+    val towerProviderBuiltUponElement: FirTowerContextProvider,
+    private val ktToFirMapping: Map<KtElement, FirElement>,
 ) : FirModuleResolveState() {
 
     override val project: Project get() = originalState.project
     override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
     override val rootModuleSession get() = originalState.rootModuleSession
-    private val fileStructureCache = originalState.fileStructureCache
-    private val completionMapping = mutableMapOf<KtElement, FirElement>()
-    private val collector = FirTowerDataContextCollector()
+    private val fileStructureCache get() = originalState.fileStructureCache
 
     override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
         originalState.getSessionFor(moduleInfo)
 
     override fun getOrBuildFirFor(element: KtElement): FirElement {
         val psi = originalState.elementBuilder.getPsiAsFirElementSource(element)
-        synchronized(completionMapping) { completionMapping[psi] }?.let { return it }
+
+        //TODO It return invalid elements for elements with invalid code, but try to return the most closest ones
+        var currentElement: PsiElement = psi
+        while (currentElement !is KtFile) {
+            ktToFirMapping[currentElement]?.let { return it }
+            currentElement = currentElement.parent
+        }
+
         return originalState.elementBuilder.getOrBuildFirFor(
             element,
             originalState.firFileBuilder,
@@ -82,24 +84,4 @@ internal class FirModuleResolveStateDepended(
     @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
         originalState.findSourceFirDeclaration(ktDeclaration)
-
-    override fun getTowerDataContextForElement(element: KtElement): FirTowerDataContext? =
-        collector.getClosestAvailableParentContext(element) ?: originalState.getTowerDataContextForElement(element)
-
-    init {
-        originalState.firFileBuilder.runCustomResolveWithPCECheck(originalFirFile, rootModuleSession.cache) {
-            originalState.firLazyDeclarationResolver.runLazyResolveWithoutLock(
-                dependencyFirDeclaration,
-                rootModuleSession.cache,
-                originalFirFile,
-                originalFirFile.session.firIdeProvider,
-                fromPhase = dependencyFirDeclaration.resolvePhase,
-                toPhase = FirResolvePhase.BODY_RESOLVE,
-                towerDataContextCollector = collector,
-                checkPCE = true
-            )
-        }
-
-        synchronized(completionMapping) { dependencyFirDeclaration.accept(FirElementsRecorder(), completionMapping) }
-    }
 }

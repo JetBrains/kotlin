@@ -45,7 +45,10 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForDependentCopy
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForDependentCopy.getTowerContextProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
@@ -72,7 +75,10 @@ internal class KtFirReferenceShortener(
 
         val firDeclaration = declarationToVisit.getOrBuildFir(firResolveState)
 
-        val collector = ElementsToShortenCollector(context)
+        val towerContext =
+            LowLevelFirApiFacadeForDependentCopy.onAirGetTowerContextProvider(firResolveState, declarationToVisit)
+
+        val collector = ElementsToShortenCollector(context, towerContext)
         firDeclaration.accept(collector)
 
         return ShortenCommandImpl(
@@ -139,9 +145,8 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun findScopesAtPosition(position: KtElement, newImports: List<FqName>): List<FirScope>? {
-        val towerDataContext = firResolveState.getTowerDataContextForElement(position) ?: return null
-
+    fun findScopesAtPosition(position: KtElement, newImports: List<FqName>, towerContextProvider: FirTowerContextProvider): List<FirScope>? {
+        val towerDataContext = towerContextProvider.getClosestAvailableParentContext(position) ?: return null
         val result = buildList<FirScope> {
             addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope })
             addIfNotNull(createFakeImportingScope(newImports))
@@ -181,7 +186,8 @@ private sealed class ElementToShorten
 private class ShortenType(val element: KtUserType, val nameToImport: FqName? = null) : ElementToShorten()
 private class ShortenQualifier(val element: KtDotQualifiedExpression, val nameToImport: FqName? = null) : ElementToShorten()
 
-private class ElementsToShortenCollector(private val shorteningContext: FirShorteningContext) : FirVisitorVoid() {
+private class ElementsToShortenCollector(private val shorteningContext: FirShorteningContext, private val towerContextProvider: FirTowerContextProvider) :
+    FirVisitorVoid() {
     val namesToImport: MutableList<FqName> = mutableListOf()
     val typesToShorten: MutableList<KtUserType> = mutableListOf()
     val qualifiersToShorten: MutableList<KtDotQualifiedExpression> = mutableListOf()
@@ -230,7 +236,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         val allClassIds = wholeClassifierId.outerClassesWithSelf
         val allTypeElements = wholeTypeElement.qualifiersWithSelf
 
-        val positionScopes = shorteningContext.findScopesAtPosition(wholeTypeElement, namesToImport) ?: return null
+        val positionScopes = shorteningContext.findScopesAtPosition(wholeTypeElement, namesToImport, towerContextProvider) ?: return null
 
         for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
             // if qualifier is null, then this type have no package and thus cannot be shortened
@@ -280,7 +286,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         wholeClassQualifier: ClassId,
         wholeQualifierElement: KtDotQualifiedExpression
     ): ShortenQualifier? {
-        val positionScopes = shorteningContext.findScopesAtPosition(wholeQualifierElement, namesToImport) ?: return null
+        val positionScopes = shorteningContext.findScopesAtPosition(wholeQualifierElement, namesToImport, towerContextProvider) ?: return null
 
         val allClassIds = wholeClassQualifier.outerClassesWithSelf
         val allQualifiers = wholeQualifierElement.qualifiersWithSelf
@@ -313,7 +319,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
 
         val propertyId = (resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId ?: return
 
-        val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, namesToImport) ?: return
+        val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, namesToImport, towerContextProvider) ?: return
         val singleAvailableProperty = shorteningContext.findPropertiesInScopes(scopes, propertyId.callableName)
 
         val propertyToShorten = when {
@@ -334,7 +340,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         val calleeReference = functionCall.calleeReference
         val callableId = findUnambiguousReferencedCallableId(calleeReference) ?: return
 
-        val scopes = shorteningContext.findScopesAtPosition(callExpression, namesToImport) ?: return
+        val scopes = shorteningContext.findScopesAtPosition(callExpression, namesToImport, towerContextProvider) ?: return
         val availableCallables = shorteningContext.findFunctionsInScopes(scopes, callableId.callableName)
 
         val callToShorten = when {

@@ -10,7 +10,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -67,9 +66,4 @@ abstract class FirModuleResolveState {
     internal abstract fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D
 
     internal abstract fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
-
-    abstract fun getTowerDataContextForElement(element: KtElement): FirTowerDataContext?
 }
-
-fun FirModuleResolveState.getTowerDataContextUnsafe(element: KtElement): FirTowerDataContext =
-    getTowerDataContextForElement(element) ?: error("No context for ${element.getElementTextInContext()}")

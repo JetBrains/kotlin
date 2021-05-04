@@ -14,14 +14,18 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
 internal object FirLazyBodiesCalculator {
-    fun calculateLazyBodiesInside(element: FirElement, designation: List<FirDeclaration>) {
-        element.transform<FirElement, MutableList<FirDeclaration>>(FirLazyBodiesCalculatorTransformer, designation.toMutableList())
+    fun calculateLazyBodiesInside(element: FirElement, designation: FirDeclarationDesignation) {
+        element.transform<FirElement, MutableList<FirDeclaration>>(
+            FirLazyBodiesCalculatorTransformer,
+            designation.fullDesignation.toMutableList()
+        )
     }
 
     fun calculateLazyBodiesIfPhaseRequires(firFile: FirFile, phase: FirResolvePhase) {
@@ -36,7 +40,7 @@ internal object FirLazyBodiesCalculator {
             session = simpleFunction.moduleData.session,
             baseScopeProvider = simpleFunction.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
-            declaration = simpleFunction.psi as KtNamedFunction
+            rootNonLocalDeclaration = simpleFunction.psi as KtNamedFunction
         ) as FirSimpleFunction
         simpleFunction.apply {
             replaceBody(newFunction.body)
@@ -52,7 +56,7 @@ internal object FirLazyBodiesCalculator {
             session = secondaryConstructor.moduleData.session,
             baseScopeProvider = secondaryConstructor.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
-            declaration = secondaryConstructor.psi as KtSecondaryConstructor
+            rootNonLocalDeclaration = secondaryConstructor.psi as KtSecondaryConstructor
         ) as FirSimpleFunction
 
         secondaryConstructor.apply {
@@ -67,7 +71,7 @@ internal object FirLazyBodiesCalculator {
             session = firProperty.moduleData.session,
             baseScopeProvider = firProperty.moduleData.session.firIdeProvider.kotlinScopeProvider,
             designation = designation,
-            declaration = firProperty.psi as KtProperty
+            rootNonLocalDeclaration = firProperty.psi as KtProperty
         ) as FirProperty
 
         firProperty.getter?.takeIf { it.body is FirLazyBlock }?.let { getter ->

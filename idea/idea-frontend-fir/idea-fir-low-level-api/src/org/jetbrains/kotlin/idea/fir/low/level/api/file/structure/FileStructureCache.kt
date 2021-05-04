@@ -18,12 +18,11 @@ import java.util.concurrent.ConcurrentHashMap
 internal class FileStructureCache(
     private val fileBuilder: FirFileBuilder,
     private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
-    private val collector: FirTowerDataContextCollector,
 ) {
     private val cache = ConcurrentHashMap<KtFile, FileStructure>()
 
     fun getFileStructure(ktFile: KtFile, moduleFileCache: ModuleFileCache): FileStructure = cache.computeIfAbsent(ktFile) {
         val firFile = fileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = false)
-        FileStructure(ktFile, firFile, firLazyDeclarationResolver, fileBuilder, moduleFileCache, collector)
+        FileStructure(ktFile, firFile, firLazyDeclarationResolver, fileBuilder, moduleFileCache)
     }
 }

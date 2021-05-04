@@ -77,6 +77,7 @@ private constructor(
         check(mode == AnalysisSessionMode.REGULAR) {
             "Cannot create context-dependent copy of KtAnalysis session from a context dependent one"
         }
+        require(!dependencyKtElement.isPhysical) { "Depended context should be build only for non-physical elements" }
 
         val contextResolveState = LowLevelFirApiFacadeForDependentCopy.getResolveStateForDependedCopy(
             originalState = firResolveState,
