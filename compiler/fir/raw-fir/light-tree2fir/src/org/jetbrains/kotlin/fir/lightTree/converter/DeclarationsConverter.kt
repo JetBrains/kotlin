@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.builder.Context
-import org.jetbrains.kotlin.fir.builder.extractContractDescriptionIfPossible
-import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
+import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -1041,10 +1039,12 @@ class DeclarationsConverter(
                 val receiver = delegateExpression?.let {
                     expressionConverter.getAsFirExpression<FirExpression>(it, "Incorrect delegate expression")
                 }
+
                 generateAccessorsByDelegate(
                     delegateBuilder,
-                    classWrapper?.classBuilder,
                     baseModuleData,
+                    classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
+                    classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                     isExtension = false,
                     stubMode = stubMode,
                     receiver = receiver
@@ -1111,8 +1111,9 @@ class DeclarationsConverter(
                     }
                     generateAccessorsByDelegate(
                         delegateBuilder,
-                        classWrapper?.classBuilder,
                         baseModuleData,
+                        classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
+                        classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                         isExtension = receiverType != null,
                         stubMode = stubMode,
                         receiver = receiver

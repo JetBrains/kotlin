@@ -154,12 +154,23 @@ open class RawFirBuilder(
             }
         }
 
-    protected inner class Visitor : KtVisitor<FirElement, Unit>() {
+    protected open inner class Visitor : KtVisitor<FirElement, Unit>() {
         private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
-            this?.accept(this@Visitor, Unit) as? R
+            this?.let(::convertElement) as? R
 
         private inline fun <reified R : FirElement> KtElement.convert(): R =
-            this.accept(this@Visitor, Unit) as R
+            convertElement(this) as R
+
+        open fun convertElement(element: KtElement): FirElement? =
+            element.accept(this@Visitor, Unit)
+
+        open fun convertProperty(
+            property: KtProperty, ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
+            ownerRegularClassTypeParametersCount: Int?,
+        ): FirProperty = property.toFirProperty(ownerRegularOrAnonymousObjectSymbol, ownerRegularClassTypeParametersCount)
+
+        open fun convertValueParameter(valueParameter: KtParameter, defaultTypeRef: FirTypeRef? = null): FirValueParameter =
+            valueParameter.toFirValueParameter(defaultTypeRef)
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
             convertSafe() ?: buildImplicitTypeRef {
@@ -230,7 +241,11 @@ open class RawFirBuilder(
                     }
                 }
                 is KtProperty -> {
-                    toFirProperty(ownerClassBuilder)
+                    convertProperty(
+                        this@toFirDeclaration,
+                        ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol,
+                        ownerClassBuilder.ownerRegularClassTypeParametersCount
+                    )
                 }
                 else -> convert()
             }
@@ -521,7 +536,7 @@ open class RawFirBuilder(
             defaultTypeRef: FirTypeRef? = null,
         ) {
             for (valueParameter in valueParameters) {
-                container.valueParameters += valueParameter.toFirValueParameter(defaultTypeRef)
+                container.valueParameters += convertValueParameter(valueParameter, defaultTypeRef)
             }
         }
 
@@ -1120,7 +1135,7 @@ open class RawFirBuilder(
                         val typeRef = valueParameter.typeReference?.convertSafe() ?: buildImplicitTypeRef {
                             source = implicitTypeRefSource
                         }
-                        valueParameter.toFirValueParameter(typeRef)
+                        convertValueParameter(valueParameter, typeRef)
                     }
                 }
                 val expressionSource = expression.toFirSourceElement()
@@ -1237,7 +1252,10 @@ open class RawFirBuilder(
             }
         }
 
-        fun KtProperty.toFirProperty(ownerClassBuilder: FirClassBuilder?): FirProperty {
+        private fun KtProperty.toFirProperty(
+            ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
+            ownerRegularClassTypeParametersCount: Int?,
+        ): FirProperty {
             val propertyType = typeReference.toFirOrImplicitType()
             val propertyName = nameAsSafeName
             val isVar = isVar
@@ -1280,8 +1298,9 @@ open class RawFirBuilder(
                     val receiver = delegateExpression?.toFirExpression("Incorrect delegate expression")
                     generateAccessorsByDelegate(
                         delegateBuilder,
-                        null,
                         baseModuleData,
+                        ownerRegularOrAnonymousObjectSymbol = null,
+                        ownerRegularClassTypeParametersCount = null,
                         isExtension = false,
                         stubMode = stubMode,
                         receiver = receiver
@@ -1328,8 +1347,9 @@ open class RawFirBuilder(
                         val receiver = delegateExpression?.toFirExpression("Should have delegate")
                         generateAccessorsByDelegate(
                             delegateBuilder,
-                            ownerClassBuilder,
                             baseModuleData,
+                            ownerRegularOrAnonymousObjectSymbol,
+                            ownerRegularClassTypeParametersCount,
                             isExtension = receiverTypeReference != null,
                             stubMode = stubMode,
                             receiver = receiver
@@ -1354,7 +1374,7 @@ open class RawFirBuilder(
         }
 
         override fun visitProperty(property: KtProperty, data: Unit): FirElement {
-            return property.toFirProperty(ownerClassBuilder = null)
+            return property.toFirProperty(ownerRegularOrAnonymousObjectSymbol = null, ownerRegularClassTypeParametersCount = null)
         }
 
         override fun visitTypeReference(typeReference: KtTypeReference, data: Unit): FirElement {
@@ -1534,7 +1554,7 @@ open class RawFirBuilder(
         }
 
         override fun visitParameter(parameter: KtParameter, data: Unit): FirElement =
-            parameter.toFirValueParameter()
+            convertValueParameter(parameter)
 
         override fun visitBlockExpression(expression: KtBlockExpression, data: Unit): FirElement {
             return configureBlockWithoutBuilding(expression).build()
@@ -1597,7 +1617,7 @@ open class RawFirBuilder(
                 tryBlock = expression.tryBlock.toFirBlock()
                 finallyBlock = expression.finallyBlock?.finalExpression?.toFirBlock()
                 for (clause in expression.catchClauses) {
-                    val parameter = clause.catchParameter?.toFirValueParameter() ?: continue
+                    val parameter = clause.catchParameter?.let { convertValueParameter(it) } ?: continue
                     catches += buildCatch {
                         source = clause.toFirSourceElement()
                         this.parameter = parameter

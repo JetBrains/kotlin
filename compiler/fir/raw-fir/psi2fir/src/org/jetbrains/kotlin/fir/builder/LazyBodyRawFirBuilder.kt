@@ -6,50 +6,127 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
-import org.jetbrains.kotlin.fir.containingClassAttr
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.isInner
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.*
 
-class RawFirFragmentForLazyBodiesBuilder private constructor(
+data class RawFirReplacement<T : KtElement>(val from: T, val to: T)
+
+class RawFirFragmentForLazyBodiesBuilder<T : KtElement> private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
-    private val declaration: KtDeclaration,
+    private val declarationToBuild: KtDeclaration,
+    private val replacement: RawFirReplacement<T>? = null
 ) : RawFirBuilder(session, baseScopeProvider, RawFirBuilderMode.NORMAL) {
 
+    private var replacementApplied = false
+
     companion object {
+        fun elementIsApplicable(element: KtElement) = when (element) {
+            is KtFile, is KtClassInitializer, is KtClassOrObject, is KtObjectLiteralExpression, is KtTypeAlias,
+            is KtNamedFunction, is KtLambdaExpression, is KtAnonymousInitializer, is KtProperty, is KtTypeReference,
+            is KtAnnotationEntry, is KtTypeParameter, is KtTypeProjection, is KtParameter, is KtBlockExpression,
+            is KtSimpleNameExpression, is KtConstantExpression, is KtStringTemplateExpression, is KtReturnExpression,
+            is KtTryExpression, is KtIfExpression, is KtWhenExpression, is KtDoWhileExpression, is KtWhileExpression,
+            is KtForExpression, is KtBreakExpression, is KtContinueExpression, is KtBinaryExpression, is KtBinaryExpressionWithTypeRHS,
+            is KtIsExpression, is KtUnaryExpression, is KtCallExpression, is KtArrayAccessExpression, is KtQualifiedExpression,
+            is KtThisExpression, is KtSuperExpression, is KtParenthesizedExpression, is KtLabeledExpression, is KtAnnotatedExpression,
+            is KtThrowExpression, is KtDestructuringDeclaration, is KtClassLiteralExpression, is KtCallableReferenceExpression,
+            is KtCollectionLiteralExpression -> true
+            else -> false
+        }
+
+        fun <T : KtElement> buildWithReplacement(
+            session: FirSession,
+            baseScopeProvider: FirScopeProvider,
+            designation: List<FirDeclaration>,
+            declarationToBuild: KtDeclaration,
+            replacement: RawFirReplacement<T>? = null
+        ): FirDeclaration {
+            if (replacement != null) {
+                require(elementIsApplicable(replacement.from)) {
+                    "Build with replacement is possible for applicable type but given ${replacement.from::class.simpleName}"
+                }
+                require(replacement.from::class == replacement.to::class) {
+                    "Build with replacement is possible for same type in replacements but given\n${replacement.from::class.simpleName} and ${replacement.to::class.simpleName}"
+                }
+            }
+
+            val builder = RawFirFragmentForLazyBodiesBuilder(session, baseScopeProvider, declarationToBuild, replacement)
+            builder.context.packageFqName = declarationToBuild.containingKtFile.packageFqName
+
+            val result = builder.moveNext(designation.iterator(), containingClass = null)
+            check(replacement == null || builder.replacementApplied) {
+                "Replacement requested but was not applied for ${replacement!!.from::class.simpleName}"
+            }
+            return result
+        }
+
         fun build(
             session: FirSession,
             baseScopeProvider: FirScopeProvider,
             designation: List<FirDeclaration>,
-            declaration: KtDeclaration,
+            rootNonLocalDeclaration: KtDeclaration
         ): FirDeclaration {
-            val builder = RawFirFragmentForLazyBodiesBuilder(session, baseScopeProvider, declaration)
-            builder.context.packageFqName = declaration.containingKtFile.packageFqName
-            return builder.moveNext(designation.iterator())
+            val builder = RawFirFragmentForLazyBodiesBuilder<KtElement>(session, baseScopeProvider, rootNonLocalDeclaration)
+            builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
+            return builder.moveNext(designation.iterator(), containingClass = null)
         }
     }
 
-    private fun moveNext(iterator: Iterator<FirDeclaration>): FirDeclaration {
+    private fun KtElement.replaced(): KtElement {
+        if (replacement == null || replacement.from != this) return this
+        replacementApplied = true
+        return replacement.to
+    }
+
+    private inner class VisitorWithReplacement : Visitor() {
+        override fun convertElement(element: KtElement): FirElement? =
+            super.convertElement(element.replaced())
+
+        override fun convertProperty(
+            property: KtProperty,
+            ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
+            ownerRegularClassTypeParametersCount: Int?
+        ): FirProperty {
+            val replacementProperty = property.replaced()
+            check(replacementProperty is KtProperty)
+            return super.convertProperty(
+                property = replacementProperty,
+                ownerRegularOrAnonymousObjectSymbol = ownerRegularOrAnonymousObjectSymbol,
+                ownerRegularClassTypeParametersCount = ownerRegularClassTypeParametersCount
+            )
+        }
+
+        override fun convertValueParameter(valueParameter: KtParameter, defaultTypeRef: FirTypeRef?): FirValueParameter {
+            val replacementParameter = valueParameter.replaced()
+            check(replacementParameter is KtParameter)
+            return super.convertValueParameter(
+                valueParameter = replacementParameter,
+                defaultTypeRef = defaultTypeRef
+            )
+        }
+    }
+
+    private fun moveNext(iterator: Iterator<FirDeclaration>, containingClass: FirRegularClass?): FirDeclaration {
         if (!iterator.hasNext()) {
-            return if (declaration is KtProperty) {
-                with(Visitor()) {
-                    declaration.toFirProperty(null)
+            val visitor = VisitorWithReplacement()
+            return when (declarationToBuild) {
+                is KtProperty -> {
+                    val ownerSymbol = containingClass?.symbol
+                    val ownerTypeArgumentsCount = containingClass?.typeParameters?.size
+                    visitor.convertProperty(declarationToBuild, ownerSymbol, ownerTypeArgumentsCount)
                 }
-            } else {
-                declaration.accept(Visitor(), Unit) as FirDeclaration
-            }
+                else -> visitor.convertElement(declarationToBuild)
+            } as FirDeclaration
         }
 
         val parent = iterator.next()
-        if (parent !is FirRegularClass) return moveNext(iterator)
+        if (parent !is FirRegularClass) return moveNext(iterator, containingClass = null)
 
         val classOrObject = parent.psi
         check(classOrObject is KtClassOrObject)
@@ -59,7 +136,7 @@ class RawFirFragmentForLazyBodiesBuilder private constructor(
                 if (!parent.isInner) context.capturedTypeParameters = context.capturedTypeParameters.clear()
                 addCapturedTypeParameters(parent.typeParameters.take(classOrObject.typeParameters.size))
                 registerSelfType(classOrObject.toDelegatedSelfType(parent))
-                return moveNext(iterator)
+                return moveNext(iterator, parent)
             }
         }
     }
