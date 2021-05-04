@@ -19,7 +19,8 @@ data class SourceCodeCompletionVariant(
     val text: String,
     val displayText: String,
     val tail: String,
-    val icon: String
+    val icon: String,
+    val deprecationLevel: DeprecationLevel? = null,
 )
 
 interface ReplAnalyzerResultKeys

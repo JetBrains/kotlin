@@ -128,6 +128,39 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     @Test
+    fun testDeprecatedCompletion() = test {
+        run {
+            doCompile
+            code = """
+                @Deprecated("deprecated")
+                class Clazz1
+                
+                @Deprecated("deprecated", level=DeprecationLevel.ERROR)
+                class Clazz2
+            """.trimIndent()
+        }
+        run {
+            doComplete
+            code = """
+                @Deprecated("deprecated1", level=DeprecationLevel.WA)
+                class Clazz3
+                
+                @Deprecated("deprecated1", level=kotlin.annotation.AnnotationRetention.SOURCE)
+                class Clazz4
+                
+                Claz
+            """.trimIndent()
+            cursor = code.length
+            expect {
+                addCompletion("Clazz3", "Clazz3", " (Line_2_simplescript)", "class", DeprecationLevel.WARNING)
+                addCompletion("Clazz4", "Clazz4", " (Line_2_simplescript)", "class", DeprecationLevel.WARNING)
+                addCompletion("Clazz1", "Clazz1", " (Line_1_simplescript)", "class", DeprecationLevel.WARNING)
+                addCompletion("Clazz2", "Clazz2", " (Line_1_simplescript)", "class", DeprecationLevel.ERROR)
+            }
+        }
+    }
+
+    @Test
     fun testExtensionMethods() = test {
         run {
             doCompile

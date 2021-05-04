@@ -72,8 +72,8 @@ class TestConf {
 
         class Expected(private val run: Run) {
             val completions = ExpectedList<SourceCodeCompletionVariant>(run::doComplete)
-            fun addCompletion(text: String, displayText: String, tail: String, icon: String) {
-                completions.add(SourceCodeCompletionVariant(text, displayText, tail, icon))
+            fun addCompletion(text: String, displayText: String, tail: String, icon: String, deprecationLevel: DeprecationLevel? = null) {
+                completions.add(SourceCodeCompletionVariant(text, displayText, tail, icon, deprecationLevel))
             }
 
             val errors = ExpectedList<ScriptDiagnostic>(run::doErrorCheck)

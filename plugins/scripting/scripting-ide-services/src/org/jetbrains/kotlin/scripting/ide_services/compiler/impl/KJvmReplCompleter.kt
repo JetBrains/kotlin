@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -27,16 +29,20 @@ import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
 import org.jetbrains.kotlin.scripting.ide_services.compiler.completion
 import org.jetbrains.kotlin.scripting.ide_services.compiler.filterOutShadowedDescriptors
 import org.jetbrains.kotlin.scripting.ide_services.compiler.nameFilter
+import org.jetbrains.kotlin.scripting.resolve.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
 import java.io.File
+import java.lang.IllegalArgumentException
+import java.util.*
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCodeCompletionVariant
 
@@ -252,14 +258,23 @@ private class KJvmReplCompleter(
                 .let {
                     if (isSortNeeded) it.sortedBy { descTriple -> descTriple.third } else it
                 }
-                .forEach {
-                    val descriptor = it.first
-                    val (rawName, presentableText, tailText, completionText) = it.second
+                .forEach { resultTriple ->
+                    val descriptor = resultTriple.first
+                    val (rawName, presentableText, tailText, completionText) = resultTriple.second
                     if (nameFilter(rawName, prefix)) {
                         val fullName: String =
                             formatName(
                                 presentableText
                             )
+                        val deprecationLevel = descriptor.annotations
+                            .findAnnotation(FqName("kotlin.Deprecated"))
+                            ?.let { annotationDescriptor ->
+                                val valuePair = annotationDescriptor.argumentValue("level")?.value as? Pair<*, *>
+                                val valueClass = (valuePair?.first as? ClassId)?.takeIf { DeprecationLevel::class.classId == it }
+                                val valueName = (valuePair?.second as? Name)?.identifier
+                                if (valueClass == null || valueName == null) return@let DeprecationLevel.WARNING
+                                DeprecationLevel.valueOf(valueName)
+                            }
                         yield(
                             SourceCodeCompletionVariant(
                                 completionText,
@@ -267,7 +282,8 @@ private class KJvmReplCompleter(
                                 tailText,
                                 getIconFromDescriptor(
                                     descriptor
-                                )
+                                ),
+                                deprecationLevel,
                             )
                         )
                     }
