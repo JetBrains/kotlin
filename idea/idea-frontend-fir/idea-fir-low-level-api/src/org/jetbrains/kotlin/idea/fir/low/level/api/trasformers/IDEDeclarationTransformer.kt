@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.trasformers
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-internal class IDEDeclarationTransformer(private val designation: FirDesignation) {
+internal class IDEDeclarationTransformer(private val designationIterator: FirDesignationIterator) {
     private var isInsideTargetDeclaration: Boolean = false
 
     private inline fun <R> insideTargetDeclaration(insideCurrent: Boolean, action: () -> R): R {
@@ -25,16 +24,16 @@ internal class IDEDeclarationTransformer(private val designation: FirDesignation
         }
     }
 
-    inline fun transformDeclarationContent(
-        transformer: FirAbstractBodyResolveTransformer,
-        declaration: FirDeclaration,
-        data: ResolutionMode,
-        transformDeclaration: (FirDeclaration, ResolutionMode) -> FirDeclaration
-    ): FirDeclaration {
-        return if (designation.canGoNext()) {
-            val declarationToTransform = designation.currentDeclaration
-            val isTargetDeclaration = designation.isTargetDeclaration()
-            designation.goNext()
+    inline fun <K, D> transformDeclarationContent(
+        transformer: FirAbstractPhaseTransformer<D>,
+        declaration: K,
+        data: D,
+        transformDeclaration: (K, D) -> K
+    ): K {
+        return if (designationIterator.canGoNext()) {
+            val declarationToTransform = designationIterator.currentDeclaration
+            val isTargetDeclaration = designationIterator.isTargetDeclaration()
+            designationIterator.goNext()
             insideTargetDeclaration(isTargetDeclaration) {
                 declarationToTransform.visitNoTransform(transformer, data)
             }

@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.trasformers
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 
-class FirDesignation(val designation: List<FirDeclaration>) {
+internal fun FirDeclarationDesignation.toDesignationIterator() =
+    FirDesignationIterator(fullDesignation)
+
+internal class FirDesignationIterator(val designation: List<FirDeclaration>) {
     private var currentIndex = 0
 
     fun canGoNext(): Boolean = currentIndex <= designation.lastIndex

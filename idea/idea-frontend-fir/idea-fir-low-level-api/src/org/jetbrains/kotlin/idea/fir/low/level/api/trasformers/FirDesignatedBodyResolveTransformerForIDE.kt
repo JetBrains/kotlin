@@ -15,15 +15,17 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 
 internal class FirDesignatedBodyResolveTransformerForIDE(
-    designation: FirDesignation,
+    private val firFile: FirFile,
+    designation: FirDeclarationDesignation,
     session: FirSession,
     scopeSession: ScopeSession,
     private val towerDataContextCollector: FirTowerDataContextCollector? = null
-) : FirBodyResolveTransformer(
+) : FirLazyTransformerForIDE, FirBodyResolveTransformer(
     session,
     phase = FirResolvePhase.BODY_RESOLVE,
     implicitTypeOnly = false,
@@ -35,7 +37,7 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
     )
 ) {
-    private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
+    private val ideDeclarationTransformer = IDEDeclarationTransformer(designation.toDesignationIterator())
 
     @Suppress("NAME_SHADOWING")
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
@@ -57,5 +59,9 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
 
     override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean =
         ideDeclarationTransformer.needReplacePhase(firDeclaration)
+
+    override fun transformDeclaration() {
+        firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextDependent)
+    }
 }
 

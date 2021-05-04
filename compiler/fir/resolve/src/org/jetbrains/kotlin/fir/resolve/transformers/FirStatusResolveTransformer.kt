@@ -109,7 +109,7 @@ class FirStatusResolveTransformer(
     }
 }
 
-private class FirDesignatedStatusResolveTransformer(
+open class FirDesignatedStatusResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     private val designation: Iterator<FirDeclaration>,
@@ -245,7 +245,7 @@ abstract class AbstractFirStatusResolveTransformer(
     protected val designationMapForLocalClasses: Map<FirClassLikeDeclaration<*>, FirClassLikeDeclaration<*>?>,
     private val scopeForLocalClass: FirScope?
 ) : FirAbstractTreeTransformer<FirResolvedDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
-    private val classes = mutableListOf<FirClass<*>>()
+    protected val classes = mutableListOf<FirClass<*>>()
     protected val statusResolver = FirStatusResolver(session, scopeSession)
 
     protected val containingClass: FirClass<*>? get() = classes.lastOrNull()
@@ -279,7 +279,7 @@ abstract class AbstractFirStatusResolveTransformer(
         return (data ?: declarationStatus)
     }
 
-    private inline fun storeClass(
+    protected inline fun storeClass(
         klass: FirClass<*>,
         computeResult: () -> FirDeclaration
     ): FirDeclaration {

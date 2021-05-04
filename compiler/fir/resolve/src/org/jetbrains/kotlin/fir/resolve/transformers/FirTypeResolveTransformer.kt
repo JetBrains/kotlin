@@ -37,7 +37,7 @@ fun <F : FirClassLikeDeclaration<F>> F.runTypeResolvePhaseForLocalClass(
     return this.transform<F, Nothing?>(transformer, null)
 }
 
-class FirTypeResolveTransformer(
+open class FirTypeResolveTransformer(
     override val session: FirSession,
     scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList()
