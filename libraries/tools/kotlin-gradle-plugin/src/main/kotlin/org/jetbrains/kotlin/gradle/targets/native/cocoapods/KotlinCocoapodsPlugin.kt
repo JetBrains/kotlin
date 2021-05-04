@@ -105,6 +105,31 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             else -> throw IllegalArgumentException("Bad target ${konanTarget.name}.")
         }
 
+    private val Project.shouldUseSyntheticProjectSettings: Boolean
+        get() = (findProperty(KotlinCocoapodsPlugin.TARGET_PROPERTY) == null &&
+                findProperty(KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY) == null)
+
+    private val PodBuildSettingsProperties.frameworkSearchPaths: List<String>
+        get() {
+            val frameworkPathsSelfIncluding = mutableListOf<String>()
+            frameworkPathsSelfIncluding += configurationBuildDir.trimQuotes()
+            frameworkPaths?.let { frameworkPathsSelfIncluding.addAll(it.splitQuotedArgs()) }
+            return frameworkPathsSelfIncluding
+        }
+
+    private fun Project.getPodBuildSettingsProperties(
+        target: KotlinNativeTarget,
+        pod: CocoapodsExtension.CocoapodsDependency
+    ): PodBuildSettingsProperties {
+        val podBuildTaskProvider =
+            tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
+        return podBuildTaskProvider.get().buildSettingsFile.get()
+            .reader()
+            .use {
+                PodBuildSettingsProperties.readSettingsFromReader(it)
+            }
+    }
+
     /**
      * Splits a string using a whitespace characters as delimiters.
      * Ignores whitespaces in quotes and drops quotes, e.g. a string
@@ -246,10 +271,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         _extraOptsProp.addAll(project.provider { pod.extraOpts })
                     }
 
-                    if (
+                    if (project.shouldUseSyntheticProjectSettings &&
                         isAvailableToProduceSynthetic
-                        && project.findProperty(TARGET_PROPERTY) == null
-                        && project.findProperty(CONFIGURATION_PROPERTY) == null
                     ) {
                         val podBuildTaskProvider =
                             project.tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
@@ -273,44 +296,55 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         // Since we cannot expand the configuration phase of interop tasks
                         // receiving the required environment variables happens on execution phase.
                         // TODO This needs to be fixed to improve UP-TO-DATE checks.
-                        if (
+                        if (project.shouldUseSyntheticProjectSettings &&
                             isAvailableToProduceSynthetic
-                            && project.findProperty(TARGET_PROPERTY) == null
-                            && project.findProperty(CONFIGURATION_PROPERTY) == null
                         ) {
-                            val podBuildTaskProvider =
-                                project.tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
-                            val buildSettings =
-                                podBuildTaskProvider.get().buildSettingsFile.get()
-                                    .reader()
-                                    .use {
-                                        PodBuildSettingsProperties.readSettingsFromReader(it)
-                                    }
+                            val podBuildSettings = project.getPodBuildSettingsProperties(target, pod)
 
-                            buildSettings.cflags?.let { args ->
+                            podBuildSettings.cflags?.let { args ->
                                 // Xcode quotes around paths with spaces.
                                 // Here and below we need to split such paths taking this into account.
                                 interop.compilerOpts.addAll(args.splitQuotedArgs())
                             }
-                            buildSettings.headerPaths?.let { args ->
+                            podBuildSettings.headerPaths?.let { args ->
                                 interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
                             }
 
-                            val frameworkPaths = buildSettings.frameworkPaths
-                            val configurationBuildDir = buildSettings.configurationBuildDir
-                            val frameworkPathsSelfIncluding = mutableListOf<String>()
-                            frameworkPathsSelfIncluding += configurationBuildDir.trimQuotes()
-                            frameworkPaths?.let { frameworkPathsSelfIncluding.addAll(it.splitQuotedArgs()) }
-
-                            interop.compilerOpts.addAll(frameworkPathsSelfIncluding.map { "-F$it" })
+                            interop.compilerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
                         }
                     }
                 }
-                if (cocoapodsExtension.useDynamicFramework) {
-                    target.binaries.withType(Framework::class.java) {
-                        it.linkerOpts("-framework", pod.moduleName)
-                        project.findProperty(FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
-                            it.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
+            }
+        }
+    }
+
+    private fun configureLinkingTask(
+        project: Project,
+        kotlinExtension: KotlinMultiplatformExtension,
+        cocoapodsExtension: CocoapodsExtension
+    ) {
+        cocoapodsExtension.pods.all { pod ->
+            kotlinExtension.supportedTargets().all { target ->
+                target.binaries.withType(Framework::class.java) { framework ->
+                    framework.linkTaskProvider.configure { task ->
+                        task.doFirst { _ ->
+                            if (cocoapodsExtension.useDynamicFramework.not()) {
+                                //No need for additional linker setup if static framework is used
+                                return@doFirst
+                            }
+
+                            framework.linkerOpts("-framework", pod.moduleName)
+
+                            project.findProperty(FRAMEWORK_PATHS_PROPERTY)?.toString()?.let { args ->
+                                framework.linkerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
+                            }
+
+                            if (project.shouldUseSyntheticProjectSettings &&
+                                isAvailableToProduceSynthetic
+                            ) {
+                                val podBuildSettings = project.getPodBuildSettingsProperties(target, pod)
+                                framework.linkerOpts.addAll(podBuildSettings.frameworkSearchPaths.map { "-F$it" })
+                            }
                         }
                     }
                 }
@@ -557,6 +591,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 )
             }
             createInterops(project, kotlinExtension, cocoapodsExtension)
+            configureLinkingTask(project, kotlinExtension, cocoapodsExtension)
         }
     }
 
