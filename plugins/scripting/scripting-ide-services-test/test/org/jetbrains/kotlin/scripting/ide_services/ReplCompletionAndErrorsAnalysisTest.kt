@@ -110,6 +110,29 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     @Test
+    fun testDeprecatedCompletion() = test {
+        run {
+            doCompile
+            code = """
+                @Deprecated("deprecated")
+                class Clazz1
+                
+                @Deprecated("deprecated", level=DeprecationLevel.ERROR)
+                class Clazz2
+            """.trimIndent()
+        }
+        run {
+            doComplete
+            code = """Claz"""
+            cursor = code.length
+            expect {
+                addCompletion("Clazz1", "Clazz1", " (Line_1_simplescript)", "class", DeprecationLevel.WARNING)
+                addCompletion("Clazz2", "Clazz2", " (Line_1_simplescript)", "class", DeprecationLevel.ERROR)
+            }
+        }
+    }
+
+    @Test
     fun testExtensionMethods() = test {
         run {
             doCompile
