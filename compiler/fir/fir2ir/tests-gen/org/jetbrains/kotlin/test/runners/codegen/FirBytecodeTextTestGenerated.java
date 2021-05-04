@@ -3513,6 +3513,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("genericNoUnbox.kt")
+        public void testGenericNoUnbox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/genericNoUnbox.kt");
+        }
+
+        @Test
         @TestMetadata("hashCodeIsCalledByInlineClass.kt")
         public void testHashCodeIsCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/hashCodeIsCalledByInlineClass.kt");

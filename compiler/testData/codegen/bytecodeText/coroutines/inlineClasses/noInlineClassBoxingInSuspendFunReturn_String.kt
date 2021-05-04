@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM_IR
-
 inline class ICString(val x: String)
 
 suspend fun suspendICString(): ICString = ICString("")

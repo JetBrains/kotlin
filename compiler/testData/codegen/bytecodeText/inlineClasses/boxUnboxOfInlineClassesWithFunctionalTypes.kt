@@ -1,7 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36783 Consider generating GETFIELD instructions instead of unbox-impl calls in special methods of inline classes in JVM_IR
 
 inline class UInt(val value: Int)
 inline class ULong(val value: Long)

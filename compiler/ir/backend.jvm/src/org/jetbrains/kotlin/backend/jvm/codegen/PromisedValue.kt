@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.inline.v
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -51,7 +53,17 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
                 }
 
                 !isFromTypeUnboxed && isToTypeUnboxed -> {
-                    StackValue.unboxInlineClass(type, erasedTargetType, mv, typeMapper)
+                    val irClass = codegen.irFunction.parentAsClass
+                    if (irClass.isInline && irClass.symbol == irType.classifierOrNull && !irType.isNullable()) {
+                        // Use getfield instead of unbox-impl inside inline classes
+                        codegen.v.getfield(
+                            typeMapper.classInternalName(irClass),
+                            irClass.inlineClassFieldName.asString(),
+                            typeMapper.mapType(irType).descriptor
+                        )
+                    } else {
+                        StackValue.unboxInlineClass(type, erasedTargetType, mv, typeMapper)
+                    }
                     return
                 }
             }
