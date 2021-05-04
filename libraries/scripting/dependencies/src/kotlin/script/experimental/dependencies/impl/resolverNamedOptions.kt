@@ -13,6 +13,9 @@ fun ExternalDependenciesResolver.Options.value(name: DependenciesResolverOptions
 fun ExternalDependenciesResolver.Options.flag(name: DependenciesResolverOptionsName) =
     flag(name.key)
 
+fun ExternalDependenciesResolver.Options.int(name: DependenciesResolverOptionsName) =
+    value(name.key)?.toInt()
+
 operator fun MutableMap<String, String>.set(key: DependenciesResolverOptionsName, value: String) {
     put(key.key, value)
 }
@@ -23,7 +26,9 @@ operator fun MutableMap<String, String>.set(key: DependenciesResolverOptionsName
  */
 enum class DependenciesResolverOptionsName(optionName: String? = null) {
     TRANSITIVE,
-    SCOPE;
+    SCOPE,
+    CONNECTION_TIMEOUT_MS,
+    READ_TIMEOUT_MS;
 
     val key = optionName ?: name.lowercase()
 }
@@ -33,3 +38,9 @@ val ExternalDependenciesResolver.Options.transitive
 
 val ExternalDependenciesResolver.Options.dependencyScopes
     get() = value(DependenciesResolverOptionsName.SCOPE)?.split(",")
+
+val ExternalDependenciesResolver.Options.connectionTimeoutMs
+    get() = int(DependenciesResolverOptionsName.CONNECTION_TIMEOUT_MS)
+
+val ExternalDependenciesResolver.Options.readTimeoutMs
+    get() = int(DependenciesResolverOptionsName.READ_TIMEOUT_MS)

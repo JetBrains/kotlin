@@ -13,6 +13,7 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor
 import org.apache.ivy.core.module.id.ModuleRevisionId
 import org.apache.ivy.core.resolve.ResolveOptions
 import org.apache.ivy.core.settings.IvySettings
+import org.apache.ivy.core.settings.NamedTimeoutConstraint
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter
 import org.apache.ivy.plugins.resolver.ChainResolver
 import org.apache.ivy.plugins.resolver.IBiblioResolver
@@ -23,9 +24,7 @@ import java.nio.file.Files
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
-import kotlin.script.experimental.dependencies.impl.dependencyScopes
-import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
-import kotlin.script.experimental.dependencies.impl.transitive
+import kotlin.script.experimental.dependencies.impl.*
 
 class IvyResolver : ExternalDependenciesResolver {
 
@@ -52,7 +51,7 @@ class IvyResolver : ExternalDependenciesResolver {
                 resolveArtifact(
                     artifactId[0], artifactId[1], artifactId[2],
                     if (artifactId.size > 3) artifactId[3] else null,
-                    if (artifactType.isNotEmpty()) artifactType else null,
+                    artifactType.ifEmpty { null },
                     options,
                     sourceCodeLocation
                 )
@@ -86,14 +85,23 @@ class IvyResolver : ExternalDependenciesResolver {
             )
         }
         val ivySettings = IvySettings().apply {
+            val timeoutConstraintName = "timeout-1"
+            addConfigured(NamedTimeoutConstraint(timeoutConstraintName).apply {
+                options.connectionTimeoutMs?.let { connectionTimeout = it }
+                options.readTimeoutMs?.let { readTimeout = it }
+            })
+
             val resolver =
                 if (ivyResolvers.size == 1) ivyResolvers.first()
                 else ChainResolver().also {
                     it.name = "chain"
                     for (resolver in ivyResolvers) {
+                        resolver.setTimeoutConstraint(timeoutConstraintName)
                         it.add(resolver)
                     }
                 }
+
+            resolver.setTimeoutConstraint(timeoutConstraintName)
             addResolver(resolver)
             setDefaultResolver(resolver.name)
         }
