@@ -18,6 +18,7 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
 
         plugins {
             id "org.jetbrains.kotlin.jvm" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.kapt" version "${'$'}kotlin_version"
         }
     }
     """.trimIndent()

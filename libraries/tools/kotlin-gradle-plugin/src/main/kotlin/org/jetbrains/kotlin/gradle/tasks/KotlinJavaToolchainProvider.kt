@@ -24,7 +24,8 @@ abstract class KotlinJavaToolchainProvider @Inject constructor(
     objects: ObjectFactory,
     files: ProjectLayout
 ) : KotlinJavaToolchain {
-    private val currentJvm: Property<Jvm> = objects
+    @get:Internal
+    internal val currentJvm: Property<Jvm> = objects
         .property<Jvm>(Jvm.current())
         .chainedFinalizeValueOnRead()
 

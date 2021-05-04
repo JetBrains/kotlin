@@ -11,6 +11,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class KotlinJavaToolchainTest : KGPBaseTest() {
@@ -102,6 +103,112 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             enableBuildCacheDebug()
             build("assemble") {
                 assertTasksExecuted(":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Kapt task should use only process worker isolation when kotlin java toolchain is set")
+    @GradleTest
+    internal fun kaptTasksShouldUseProcessWorkersIsolation(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleWithKapt".fullProjectName,
+            gradleVersion = gradleVersion,
+        ) {
+            useJdk9ToCompile()
+            gradleProperties.append(
+                "kapt.workers.isolation = none"
+            )
+
+            build("assemble") {
+                assertDaemonIsUsingJdk(getJdk9().javaExecutableRealPath)
+
+                assertOutputContains("Using workers PROCESS isolation mode to run kapt")
+                assertOutputContains("Using non-default Kotlin java toolchain - 'kapt.workers.isolation == none' property is ignored!")
+            }
+        }
+    }
+
+    @DisplayName("Kapt task should use worker no-isolation mode when build is using Gradle JDK")
+    @GradleTest
+    internal fun kaptTasksShouldUseNoIsolationModeOnDefaultJvm(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleWithKapt".fullProjectName,
+            gradleVersion = gradleVersion,
+        ) {
+            build("assemble") {
+                assertOutputContains("Using workers NONE isolation mode to run kapt")
+                assertOutputDoesNotContain("Using non-default Kotlin java toolchain - 'kapt.workers.isolation == none' property is ignored!")
+            }
+        }
+    }
+
+    @DisplayName("Kapt tasks with custom JDK should be cacheable")
+    @GradleTest
+    internal fun kaptTasksWithCustomJdkCacheable(gradleVersion: GradleVersion) {
+        val buildCache = workingDir.resolve("custom-jdk-build-cache")
+        project(
+            projectName = "simpleWithKapt".fullProjectName,
+            gradleVersion = gradleVersion,
+            projectPathAdditionalSuffix = "1/cache-test",
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
+        ) {
+            enableLocalBuildCache(buildCache)
+            useJdk9ToCompile()
+
+            build("assemble")
+        }
+
+        project(
+            projectName = "simpleWithKapt".fullProjectName,
+            gradleVersion = gradleVersion,
+            projectPathAdditionalSuffix = "2/cache-test",
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
+        ) {
+            enableLocalBuildCache(buildCache)
+            useJdk9ToCompile()
+
+            build("assemble") {
+                assertTasksFromCache(
+                    ":kaptGenerateStubsKotlin",
+                    ":kaptKotlin",
+                    ":compileKotlin"
+                )
+            }
+        }
+    }
+
+    @DisplayName("Kapt tasks with default JDK and different isolation modes should be cacheable")
+    @GradleTest
+    internal fun kaptCacheableOnSwitchingIsolationModeAndDefaultJDK(gradleVersion: GradleVersion) {
+        val buildCache = workingDir.resolve("custom-jdk-build-cache")
+        project(
+            projectName = "simpleWithKapt".fullProjectName,
+            gradleVersion = gradleVersion,
+            projectPathAdditionalSuffix = "1/cache-test",
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)
+        ) {
+            enableLocalBuildCache(buildCache)
+
+            build("assemble")
+        }
+
+        project(
+            projectName = "simpleWithKapt".fullProjectName,
+            gradleVersion = gradleVersion,
+            projectPathAdditionalSuffix = "2/cache-test",
+            buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
+        ) {
+            enableLocalBuildCache(buildCache)
+            gradleProperties.append(
+                "kapt.workers.isolation = process"
+            )
+
+            build("assemble") {
+                assertTasksFromCache(
+                    ":kaptGenerateStubsKotlin",
+                    ":kaptKotlin",
+                    ":compileKotlin"
+                )
             }
         }
     }

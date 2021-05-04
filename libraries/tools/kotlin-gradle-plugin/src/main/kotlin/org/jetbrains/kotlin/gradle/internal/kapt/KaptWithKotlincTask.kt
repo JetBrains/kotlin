@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
@@ -22,17 +21,14 @@ import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
 import javax.inject.Inject
 
 abstract class KaptWithKotlincTask @Inject constructor(
-    objectFactory: ObjectFactory,
-    providerFactory: ProviderFactory
-) : KaptTask(providerFactory),
-    CompilerArgumentAwareWithInput<K2JVMCompilerArguments>,
-    UsesKotlinJavaToolchain{
+    objectFactory: ObjectFactory
+) : KaptTask(objectFactory),
+    CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
 
     class Configurator(kotlinCompileTask: KotlinCompile): KaptTask.Configurator<KaptWithKotlincTask>(kotlinCompileTask) {
         override fun configure(task: KaptWithKotlincTask) {
@@ -55,9 +51,6 @@ abstract class KaptWithKotlincTask @Inject constructor(
 
     @get:Internal
     val taskProvider by lazy { GradleCompileTaskProvider(this) }
-
-    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> =
-        objectFactory.propertyWithNewInstance()
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
