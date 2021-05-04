@@ -25,14 +25,13 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
-
+class ArrayConstructorLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(ArrayConstructorTransformer(context, container as IrSymbolOwner))
     }
 }
 
-open class ArrayConstructorTransformer(
+private class ArrayConstructorTransformer(
     val context: CommonBackendContext,
     val container: IrSymbolOwner
 ) : IrElementTransformerVoidWithContext() {
@@ -63,8 +62,6 @@ open class ArrayConstructorTransformer(
         val invokable = expression.getValueArgument(1)!!.transform(this, null)
         val scope = (currentScope ?: createScope(container)).scope
         return context.createIrBuilder(scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
-            beforeArrayConstructorBody(this)
-
             val index = createTmpVariable(irInt(0), isMutable = true)
             val sizeVar = createTmpVariable(size)
             val result = createTmpVariable(irCall(sizeConstructor, expression.type).apply {
@@ -89,13 +86,7 @@ open class ArrayConstructorTransformer(
                     +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
                 }
             }
-
-            afterArrayConstructorBody(this)
-
             +irGet(result)
         }
     }
-
-    protected open fun beforeArrayConstructorBody(builder: IrBlockBuilder) {}
-    protected open fun afterArrayConstructorBody(builder: IrBlockBuilder) {}
 }
