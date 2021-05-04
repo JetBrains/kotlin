@@ -35,7 +35,7 @@ import com.intellij.psi.util.PsiUtil
 import com.intellij.reference.SoftReference
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -127,7 +127,7 @@ open class FakeFileForLightClass(
     override fun isEquivalentTo(another: PsiElement?) = this == another
 
     override fun setPackageName(packageName: String) {
-        if (lightClass() is KtLightClassForFacade) {
+        if (lightClass() is KtLightClassForFacadeImpl) {
             ktFile.packageDirective?.fqName = FqName(packageName)
         } else {
             super.setPackageName(packageName)

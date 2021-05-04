@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.StubComputationTracker
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -271,7 +271,7 @@ object LightClassLazinessChecker {
     }
 
     private fun checkAnnotationConsistency(modifierListOwner: KtLightElement<*, PsiModifierListOwner>) {
-        if (modifierListOwner is KtLightClassForFacade) return
+        if (modifierListOwner is KtLightClassForFacadeImpl) return
 
         modifierListOwner.clsDelegate.modifierList!!.annotations.groupBy { delegateAnnotation ->
             delegateAnnotation.qualifiedName!!

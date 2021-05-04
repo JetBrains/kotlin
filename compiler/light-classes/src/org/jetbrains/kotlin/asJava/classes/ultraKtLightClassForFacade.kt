@@ -29,7 +29,7 @@ class KtUltraLightClassForFacade(
     lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
     files: Collection<KtFile>,
     private val filesWithSupports: Collection<Pair<KtFile, KtUltraLightSupport>>
-) : KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files) {
+) : KtLightClassForFacadeImpl(manager, facadeClassFqName, lightClassDataCache, files) {
 
     override fun getDelegate(): PsiClass = invalidAccess()
 
@@ -147,6 +147,6 @@ class KtUltraLightClassForFacade(
 
     override fun getOwnMethods() = _ownMethods
 
-    override fun copy(): KtLightClassForFacade =
+    override fun copy(): KtLightClassForFacadeImpl =
         KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files, filesWithSupports)
 }

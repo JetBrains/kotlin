@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -84,7 +84,7 @@ private fun Converter.convertImport(fqName: FqName, ref: PsiJavaCodeReferenceEle
 
 private fun Converter.convertStaticImportOnDemand(fqName: FqName, target: PsiElement?): List<String> {
     when (target) {
-        is KtLightClassForFacade -> return listOf(target.fqName.parent().render() + ".*")
+        is KtLightClassForFacadeImpl -> return listOf(target.fqName.parent().render() + ".*")
 
         is KtLightClass -> {
             val kotlinOrigin = target.kotlinOrigin
@@ -144,7 +144,7 @@ private fun convertStaticExplicitImport(fqName: FqName, target: PsiElement?): Li
 
 private fun convertNonStaticImport(fqName: FqName, isOnDemand: Boolean, target: PsiElement?): List<String> {
     when (target) {
-        is KtLightClassForFacade -> return listOf(target.fqName.parent().render() + ".*")
+        is KtLightClassForFacadeImpl -> return listOf(target.fqName.parent().render() + ".*")
 
         is KtLightClass -> {
             if (!isOnDemand) {

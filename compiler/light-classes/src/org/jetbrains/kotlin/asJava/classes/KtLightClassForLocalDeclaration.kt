@@ -41,8 +41,8 @@ open class KtLightClassForLocalDeclaration(
 
                 var createWrapper = forceMethodWrapping
                 // Use PsiClass wrapper instead of package light class to avoid names like "FooPackage" in Type Hierarchy and related views
-                if (containingClass is KtLightClassForFacade) {
-                    containingClass = object : LightClass(containingClass as KtLightClassForFacade, KotlinLanguage.INSTANCE) {
+                if (containingClass is KtLightClassForFacadeImpl) {
+                    containingClass = object : LightClass(containingClass as KtLightClassForFacadeImpl, KotlinLanguage.INSTANCE) {
                         override fun getName(): String? = currentFileName
                     }
                     createWrapper = true

@@ -31,7 +31,7 @@ import com.intellij.psi.infos.MethodCandidateInfo
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -137,7 +137,7 @@ class JavaToJKTreeBuilder constructor(
         val name =
             target.safeAs<KtLightElement<*, *>>()?.kotlinOrigin?.getKotlinFqName()?.asString()
                 ?: target.safeAs<KtLightClass>()?.containingFile?.safeAs<KtFile>()?.packageFqName?.asString()?.let { "$it.*" }
-                ?: target.safeAs<KtLightClassForFacade>()?.fqName?.parent()?.asString()?.let { "$it.*" }
+                ?: target.safeAs<KtLightClassForFacadeImpl>()?.fqName?.parent()?.asString()?.let { "$it.*" }
                 ?: target.safeAs<KtLightClassForDecompiledDeclaration>()?.fqName()?.parent()?.asString()?.let { "$it.*" }
                 ?: rawName
 
@@ -467,7 +467,7 @@ class JavaToJKTreeBuilder constructor(
         fun PsiReferenceExpression.toJK(): JKExpression {
             if (this is PsiMethodReferenceExpression) return toJK()
             val target = resolve()
-            if (target is KtLightClassForFacade
+            if (target is KtLightClassForFacadeImpl
                 || target is KtLightClassForDecompiledDeclaration
             ) return JKStubExpression()
             if (target is KtLightField

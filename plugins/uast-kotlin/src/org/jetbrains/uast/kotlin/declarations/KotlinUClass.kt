@@ -19,7 +19,7 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightPsiClassBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -172,7 +172,7 @@ open class KotlinUClass private constructor(
 
         val ktDeclarations: List<KtDeclaration> = run ktDeclarations@{
             ktClass?.let { return@ktDeclarations it.declarations }
-            (javaPsi as? KtLightClassForFacade)?.let { facade ->
+            (javaPsi as? KtLightClassForFacadeImpl)?.let { facade ->
                 return@ktDeclarations facade.files.flatMap { file -> file.declarations }
             }
             emptyList()

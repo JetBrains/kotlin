@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.idea.debugger.breakpoints.dialog
 
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.psi.KtProperty
 
 fun PsiClass.collectProperties(): Array<DescriptorMemberChooserObject> {
-    if (this is KtLightClassForFacade) {
+    if (this is KtLightClassForFacadeImpl) {
         val result = arrayListOf<DescriptorMemberChooserObject>()
         this.files.forEach {
             it.declarations.filterIsInstance<KtProperty>().forEach {
