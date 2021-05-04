@@ -150,11 +150,6 @@ fun Editor.unblockDocument() {
     }
 }
 
-fun Editor.moveCaret(offset: Int, scrollType: ScrollType = ScrollType.RELATIVE) {
-    caretModel.moveToOffset(offset)
-    scrollingModel.scrollToCaret(scrollType)
-}
-
 private fun findInsertAfterAnchor(editor: Editor?, body: KtClassBody): PsiElement? {
     val afterAnchor = body.lBrace ?: return null
 

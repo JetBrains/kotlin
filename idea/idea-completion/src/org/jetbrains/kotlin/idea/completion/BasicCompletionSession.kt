@@ -13,12 +13,14 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.template.TemplateManager
+import com.intellij.openapi.module.Module
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.idea.core.NotPropertiesService
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
@@ -539,6 +542,11 @@ class BasicCompletionSession(
         override val descriptorKindFilter: DescriptorKindFilter?
             get() = null
 
+        private val keywordCompletion = KeywordCompletion(object : KeywordCompletion.LanguageVersionSettingProvider {
+            override fun getLanguageVersionSetting(element: PsiElement) = element.languageVersionSettings
+            override fun getLanguageVersionSetting(module: Module) = module.languageVersionSettings
+        })
+
         override fun doComplete() {
             val keywordsToSkip = HashSet<String>()
 
@@ -574,7 +582,7 @@ class BasicCompletionSession(
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
-            KeywordCompletion.complete(expression ?: parameters.position, resultSet.prefixMatcher, isJvmModule) { lookupElement ->
+            keywordCompletion.complete(expression ?: parameters.position, resultSet.prefixMatcher, isJvmModule) { lookupElement ->
                 val keyword = lookupElement.lookupString
                 if (keyword in keywordsToSkip) return@complete
 
