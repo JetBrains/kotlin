@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -84,7 +83,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             Type.CLASS -> KClassValue(nameResolver.getClassId(value.classId), value.arrayDimensionCount)
             Type.ENUM -> EnumValue(nameResolver.getClassId(value.classId), nameResolver.getName(value.enumValueId))
             Type.ANNOTATION -> AnnotationValue(deserializeAnnotation(value.annotation, nameResolver))
-            Type.ARRAY -> ConstantValueFactory.createArrayValue(
+            Type.ARRAY -> DeserializedArrayValue(
                 value.arrayElementList.map { resolveValue(builtIns.anyType, it, nameResolver) },
                 expectedType
             )

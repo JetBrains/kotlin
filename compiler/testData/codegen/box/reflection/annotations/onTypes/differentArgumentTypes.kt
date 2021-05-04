@@ -5,6 +5,7 @@ package test
 
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 annotation class Nested(val value: String)
 
@@ -66,14 +67,33 @@ fun f(): @Anno(
 ) Unit {}
 
 fun box(): String {
+    val anno = ::f.returnType.annotations.single() as Anno
     assertEquals(
-        "[@test.Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
+        "@test.Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
                 "ba=[-1], ca=[y], da=[-3.14159], fa=[2.7218], ia=[424242], ja=[239239239239], sa=[-43], za=[false, true], " +
                 "str=lol, k=class java.lang.Number, k2=class [I, e=EXPRESSION, a=@test.Nested(value=1), stra=[lmao], " +
                 "ka=[class java.lang.Double, class kotlin.Unit, class [J, class [Ljava.lang.String;], " +
-                "ea=[TYPEALIAS, FIELD], aa=[@test.Nested(value=2), @test.Nested(value=3)])]",
-        ::f.returnType.annotations.toString()
+                "ea=[TYPEALIAS, FIELD], aa=[@test.Nested(value=2), @test.Nested(value=3)])",
+        anno.toString()
     )
+
+    // Check that array instances have correct types at runtime and not just Object[].
+    assertTrue(anno.ba is ByteArray)
+    assertTrue(anno.ca is CharArray)
+    assertTrue(anno.da is DoubleArray)
+    assertTrue(anno.fa is FloatArray)
+    assertTrue(anno.ia is IntArray)
+    assertTrue(anno.ja is LongArray)
+    assertTrue(anno.sa is ShortArray)
+    assertTrue(anno.za is BooleanArray)
+    val stra = anno.stra
+    assertTrue(stra is Array<*> && stra.isArrayOf<String>())
+    val ka = anno.ka
+    assertTrue(ka is Array<*> && ka.isArrayOf<KClass<*>>())
+    val ea = anno.ea
+    assertTrue(ea is Array<*> && ea.isArrayOf<AnnotationTarget>())
+    val aa = anno.aa
+    assertTrue(aa is Array<*> && aa.isArrayOf<Nested>())
 
     return "OK"
 }

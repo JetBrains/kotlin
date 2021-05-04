@@ -55,7 +55,7 @@ class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDes
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitAnnotationValue(this, data)
 }
 
-class ArrayValue(
+open class ArrayValue(
     value: List<ConstantValue<*>>,
     private val computeType: (ModuleDescriptor) -> KotlinType
 ) : ConstantValue<List<ConstantValue<*>>>(value) {
