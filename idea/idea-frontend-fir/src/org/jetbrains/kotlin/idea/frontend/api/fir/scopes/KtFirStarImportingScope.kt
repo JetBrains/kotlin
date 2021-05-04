@@ -50,18 +50,18 @@ internal class KtFirStarImportingScope(
     }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
-        firScope.getCallableSymbols(getCallableNames().filter(nameFilter), builder)
+        firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), builder)
     }
 
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
-        firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
+        firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
 
     // todo cache?
     @OptIn(ExperimentalStdlibApi::class)
-    override fun getCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import: Import ->
             if (import.relativeClassName == null) { // top level callable
                 packageHelper.getPackageTopLevelCallables(import.packageFqName)
@@ -72,7 +72,7 @@ internal class KtFirStarImportingScope(
         }
     }
 
-    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import ->
             if (import.relativeClassName == null) {
                 packageHelper.getPackageTopLevelClassifiers(import.packageFqName)

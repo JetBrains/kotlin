@@ -32,7 +32,7 @@ internal class KtFirPackageScope(
     private val firScope by weakRef(firScope)
     override val fqName: FqName get() = firScope.fqName
 
-    override fun getCallableNames() = withValidityAssertion {
+    override fun getPossibleCallableNames() = withValidityAssertion {
         hashSetOf<Name>().apply {
             KotlinTopLevelPropertyByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
                 .mapNotNullTo(this) { it.nameAsName }
@@ -41,17 +41,17 @@ internal class KtFirPackageScope(
         }
     }
 
-    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         KotlinTopLevelClassByPackageIndex.getInstance()[fqName.asString(), project, firScope.session.searchScope]
             .mapNotNullTo(hashSetOf()) { it.nameAsName }
     }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
-        firScope.getCallableSymbols(getCallableNames().filter(nameFilter), builder)
+        firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), builder)
     }
 
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
-        firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
+        firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()

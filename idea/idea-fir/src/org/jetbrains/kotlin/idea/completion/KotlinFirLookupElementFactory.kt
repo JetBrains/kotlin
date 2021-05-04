@@ -375,7 +375,7 @@ private fun alreadyHasImport(file: KtFile, nameToImport: CallableId): Boolean {
     withAllowedResolve {
         analyse(file) {
             val scopes = file.getScopeContextForFile().scopes
-            if (!scopes.containsName(nameToImport.callableName)) return false
+            if (!scopes.mayContainName(nameToImport.callableName)) return false
 
             return scopes
                 .getCallableSymbols { it == nameToImport.callableName }

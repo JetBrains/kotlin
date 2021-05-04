@@ -24,21 +24,21 @@ class KtFirCompositeScope(
     override val subScopes: List<KtScope>,
     override val token: ValidityToken
 ) : KtCompositeScope, ValidityTokenOwner {
-    override fun getAllNames(): Set<Name> = withValidityAssertion {
+    override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
         buildSet {
-            subScopes.flatMapTo(this) { it.getAllNames() }
+            subScopes.flatMapTo(this) { it.getAllPossibleNames() }
         }
     }
 
-    override fun getCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         buildSet {
-            subScopes.flatMapTo(this) { it.getCallableNames() }
+            subScopes.flatMapTo(this) { it.getPossibleCallableNames() }
         }
     }
 
-    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         buildSet {
-            subScopes.flatMapTo(this) { it.getClassifierNames() }
+            subScopes.flatMapTo(this) { it.getPossibleClassifierNames() }
         }
     }
 
@@ -66,7 +66,7 @@ class KtFirCompositeScope(
         }
     }
 
-    override fun containsName(name: Name): Boolean = withValidityAssertion {
-        subScopes.any { it.containsName(name) }
+    override fun mayContainName(name: Name): Boolean = withValidityAssertion {
+        subScopes.any { it.mayContainName(name) }
     }
 }

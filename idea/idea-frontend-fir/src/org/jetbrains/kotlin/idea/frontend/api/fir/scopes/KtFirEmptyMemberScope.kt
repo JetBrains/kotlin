@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMember
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirEmptyMemberScope(override val owner: KtSymbolWithMembers) : KtMemberScope, KtDeclaredMemberScope, ValidityTokenOwner {
-    override fun getCallableNames(): Set<Name> = emptySet()
+    override fun getPossibleCallableNames(): Set<Name> = emptySet()
 
-    override fun getClassifierNames(): Set<Name> = emptySet()
+    override fun getPossibleClassifierNames(): Set<Name> = emptySet()
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> =
         emptySequence()
@@ -29,6 +29,8 @@ internal class KtFirEmptyMemberScope(override val owner: KtSymbolWithMembers) : 
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> =
         emptySequence()
+
+    override fun mayContainName(name: Name): Boolean = false
 
     override val token: ValidityToken
         get() = owner.token

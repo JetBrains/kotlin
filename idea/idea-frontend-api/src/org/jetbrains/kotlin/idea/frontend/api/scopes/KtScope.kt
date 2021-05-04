@@ -13,15 +13,32 @@ import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+
 interface KtScope : ValidityTokenOwner {
-    // TODO check that names are accessible
-    // maybe return some kind of lazy set
-    fun getAllNames(): Set<Name> = withValidityAssertion { getCallableNames() + getClassifierNames() }
+    /**
+     * Returns a **subset** of names which current scope may contain.
+     * In other words `ALL_NAMES(scope)` is a subset of `scope.getAllNames()`
+     */
+    fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
+        getPossibleCallableNames() + getPossibleClassifierNames()
+    }
 
-    fun getCallableNames(): Set<Name>
-    fun getClassifierNames(): Set<Name>
+    /**
+     * Returns a **subset** of callable names which current scope may contain.
+     * In other words `ALL_CALLABLE_NAMES(scope)` is a subset of `scope.getCallableNames()`
+     */
+    fun getPossibleCallableNames(): Set<Name>
+
+    /**
+     * Returns a **subset** of classifier names which current scope may contain.
+     * In other words `ALL_CLASSIFIER_NAMES(scope)` is a subset of `scope.getClassifierNames()`
+     */
+    fun getPossibleClassifierNames(): Set<Name>
 
 
+    /**
+     * Return a sequence of all [KtSymbol] which current scope contain
+     */
     fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
         sequence {
             yieldAll(getCallableSymbols())
@@ -30,12 +47,28 @@ interface KtScope : ValidityTokenOwner {
         }
     }
 
+    /**
+     * Return a sequence of [KtCallableSymbol] which current scope contain if declaration name matches [nameFilter]
+     */
     fun getCallableSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtCallableSymbol>
+
+    /**
+     * Return a sequence of [KtClassifierSymbol] which current scope contain if declaration name matches [nameFilter]
+     */
     fun getClassifierSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtClassifierSymbol>
+
+    /**
+     * Return a sequence of [KtConstructorSymbol] which current scope contain
+     */
     fun getConstructors(): Sequence<KtConstructorSymbol>
 
-    fun containsName(name: Name): Boolean = withValidityAssertion {
-        name in getCallableNames() || name in getClassifierNames()
+    /**
+     * return true if the scope may contain name, false otherwise.
+     *
+     * In other words `(mayContainName(name) == false) => (name !in scope)`; vice versa is not always true
+     */
+    fun mayContainName(name: Name): Boolean = withValidityAssertion {
+        name in getPossibleCallableNames() || name in getPossibleClassifierNames()
     }
 }
 

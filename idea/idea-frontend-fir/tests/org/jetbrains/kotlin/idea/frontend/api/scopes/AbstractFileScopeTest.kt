@@ -25,9 +25,9 @@ abstract class AbstractFileScopeTest : KotlinLightCodeInsightFixtureTestCase() {
                 val scope = symbol.getFileScope()
 
                 val renderedSymbol = DebugSymbolRenderer.render(symbol)
-                val callableNames = scope.getCallableNames()
+                val callableNames = scope.getPossibleCallableNames()
                 val renderedCallables = scope.getCallableSymbols().map { DebugSymbolRenderer.render(it) }
-                val classifierNames = scope.getClassifierNames()
+                val classifierNames = scope.getPossibleClassifierNames()
                 val renderedClassifiers = scope.getClassifierSymbols().map { DebugSymbolRenderer.render(it) }
 
                 "FILE SYMBOL:\n" + renderedSymbol +

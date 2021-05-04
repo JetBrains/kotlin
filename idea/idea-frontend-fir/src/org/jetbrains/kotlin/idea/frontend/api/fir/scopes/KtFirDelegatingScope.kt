@@ -29,33 +29,33 @@ internal abstract class KtFirDelegatingScope<S>(
     abstract val firScope: S
 
     private val allNamesCached by cached {
-        getCallableNames() + getClassifierNames()
+        getPossibleCallableNames() + getPossibleClassifierNames()
     }
 
-    override fun getAllNames(): Set<Name> = allNamesCached
+    override fun getAllPossibleNames(): Set<Name> = allNamesCached
 
-    override fun getCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         firScope.getCallableNames()
     }
 
-    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         firScope.getClassifierNames()
     }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
-        firScope.getCallableSymbols(getCallableNames().filter(nameFilter), builder)
+        firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), builder)
     }
 
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
-        firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
+        firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
         firScope.getConstructors(builder)
     }
 
-    override fun containsName(name: Name): Boolean = withValidityAssertion {
-        name in getAllNames()
+    override fun mayContainName(name: Name): Boolean = withValidityAssertion {
+        name in getAllPossibleNames()
     }
 
 }

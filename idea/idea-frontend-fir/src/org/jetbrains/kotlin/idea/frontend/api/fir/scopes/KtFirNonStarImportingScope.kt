@@ -45,20 +45,20 @@ internal class KtFirNonStarImportingScope(
     }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
-        firScope.getCallableSymbols(getCallableNames().filter(nameFilter), builder)
+        firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), builder)
     }
 
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
-        firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
+        firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
 
-    override fun getCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.mapNotNullTo(hashSetOf()) { it.callableName }
     }
 
-    override fun getClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         imports.mapNotNullTo((hashSetOf())) { it.relativeClassName?.shortName() }
     }
 
