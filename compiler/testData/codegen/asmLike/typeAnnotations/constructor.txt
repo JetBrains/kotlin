@@ -2,12 +2,15 @@ public final class foo/Kotlin$foo$1 : java/lang/Object {
     void <init>()
 
     public final foo.Kotlin foo()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 }
 
 public final class foo/Kotlin : java/lang/Object {
     public void <init>(java.lang.String s, java.lang.String p)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="123"]) : METHOD_FORMAL_PARAMETER 1, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 1
 
     private void <init>(java.lang.String s)
       @Lfoo/TypeAnn;([name="private"]) : METHOD_FORMAL_PARAMETER 0, null
