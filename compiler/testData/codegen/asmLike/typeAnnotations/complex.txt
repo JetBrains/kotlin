@@ -24,8 +24,10 @@ public final class foo/Kotlin : java/lang/Object {
     public final void foo(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final foo.Bar foo()
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
       @Lfoo/Ann2;([]) : METHOD_RETURN, 0;
 
@@ -36,8 +38,10 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, [
       @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, [0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final foo.Bar[] fooArray()
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
       @Lfoo/Ann2;([]) : METHOD_RETURN, [
       @Lfoo/Ann3;([]) : METHOD_RETURN, [0;
@@ -47,8 +51,10 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, [
       @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, [[
       @Lfoo/Ann4;([]) : METHOD_FORMAL_PARAMETER 0, [[0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final foo.Bar[][] fooArrayArray()
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
       @Lfoo/Ann2;([]) : METHOD_RETURN, [
       @Lfoo/Ann3;([]) : METHOD_RETURN, [[
@@ -57,4 +63,5 @@ public final class foo/Kotlin : java/lang/Object {
     public final void fooGeneric(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }

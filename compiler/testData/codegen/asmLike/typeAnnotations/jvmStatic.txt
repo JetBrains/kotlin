@@ -1,14 +1,18 @@
 public final class foo/Foo : java/lang/Object {
     public final static foo.Foo INSTANCE
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
     static void <clinit>()
 
     private void <init>()
 
     public final static java.lang.Object foo(java.lang.String s, int x)
+      @Lkotlin/jvm/JvmStatic;([])
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }
 
 public final class foo/FooClass$Companion : java/lang/Object {
@@ -17,22 +21,29 @@ public final class foo/FooClass$Companion : java/lang/Object {
     public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
     public final java.lang.Object foo(java.lang.String s, int x)
+      @Lkotlin/jvm/JvmStatic;([])
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }
 
 public final class foo/FooClass : java/lang/Object {
     public final static foo.FooClass$Companion Companion
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
     static void <clinit>()
 
     public void <init>()
 
     public final static java.lang.Object foo(java.lang.String s, int x)
+      @Lkotlin/jvm/JvmStatic;([])
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/TypeAnn;([name="return"]) : METHOD_RETURN, null
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }
 
 public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {

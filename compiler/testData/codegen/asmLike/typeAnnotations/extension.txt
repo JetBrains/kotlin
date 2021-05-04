@@ -4,6 +4,8 @@ public final class foo/Kotlin : java/lang/Object {
     public final void foo2(java.lang.String $this$foo2, java.lang.String s)
       @Lfoo/TypeAnn;([name="ext"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="param"]) : METHOD_FORMAL_PARAMETER 1, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 1
 }
 
 public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {

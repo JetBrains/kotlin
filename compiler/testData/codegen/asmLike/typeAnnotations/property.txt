@@ -4,40 +4,51 @@ public final class foo/Kotlin$Companion : java/lang/Object {
     public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
     public final java.lang.String getCompanionVarProperty()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final java.lang.String getJvmStatic()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public static void getJvmStatic$annotations()
+      @Lkotlin/jvm/JvmStatic;([])
 
     public final void setCompanionVarProperty(java.lang.String <set-?>)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final void setJvmStatic(java.lang.String <set-?>)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }
 
 public final class foo/Kotlin : java/lang/Object {
     public final static foo.Kotlin$Companion Companion
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
     private static java.lang.String companionVarProperty
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : FIELD, null
       @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
 
     private java.lang.String customSetter
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : FIELD, null
       @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
 
     public java.lang.String jvmField
+      @Lkotlin/jvm/JvmField;([]) // invisible
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : FIELD, null
       @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
 
     private static java.lang.String jvmStatic
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : FIELD, null
       @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
 
@@ -46,10 +57,12 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
 
     private final java.lang.String valProp
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : FIELD, null
       @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
 
     private java.lang.String varProp
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : FIELD, null
       @Lfoo/TypeAnnBinary;([]) : FIELD, null // invisible
 
@@ -70,40 +83,49 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final java.lang.String getCustomSetter()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final static java.lang.String getJvmStatic()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final java.lang.String getLateinitProp()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final int getUnannotatedGetter()
 
     public final java.lang.String getValProp()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final java.lang.String getVarProp()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
       @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final void setCustomSetter(java.lang.String field)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final static void setJvmStatic(java.lang.String <set-?>)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final void setLateinitProp(java.lang.String <set-?>)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final void setVarProp(java.lang.String <set-?>)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }
 
 public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {

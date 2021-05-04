@@ -4,10 +4,13 @@ public final class foo/Kotlin : java/lang/Object {
     public final void foo(java.lang.String s, int x)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 1, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final void fooArray(java.lang.String[] s, java.lang.Integer[] i)
       @Lfoo/TypeAnn;([name="3"]) : METHOD_FORMAL_PARAMETER 0, [
       @Lfoo/TypeAnn;([name="3"]) : METHOD_FORMAL_PARAMETER 1, [
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 1
 }
 
 public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {

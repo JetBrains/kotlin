@@ -22,26 +22,34 @@ public final class foo/Kotlin : java/lang/Object {
     public void <init>()
 
     public final void foo(foo.Outer$Inner s)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final foo.Outer$Inner foo()
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
 
     public final void fooArray(foo.Outer$Inner[] s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final foo.Outer$Inner[] fooArray()
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
 
     public final void fooArrayIn(java.lang.Object[] s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final foo.Outer$Inner[] fooArrayOut()
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
 
     public final void fooGenericIn(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     public final void fooGenericOut(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }
 
 public final class foo/Outer$Inner : java/lang/Object {
