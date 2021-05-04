@@ -336,7 +336,7 @@ abstract class AnnotationCodegen(
         val IrConstructorCall.annotationClass get() = symbol.owner.parentAsClass
     }
 
-    private fun generateTypeAnnotations(
+    internal fun generateTypeAnnotations(
         annotated: IrAnnotationContainer,
         type: IrType?
     ) {

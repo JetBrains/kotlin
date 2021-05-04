@@ -430,6 +430,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("functionTypeParameterBound.kt")
+            public void testFunctionTypeParameterBound() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/typeAnnotations/functionTypeParameterBound.kt");
+            }
+
+            @Test
             @TestMetadata("implicitReturn.kt")
             public void testImplicitReturn() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/typeAnnotations/implicitReturn.kt");
@@ -451,6 +457,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("methodParameters.kt")
             public void testMethodParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/typeAnnotations/methodParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("methodTypeParameters.kt")
+            public void testMethodTypeParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/typeAnnotations/methodTypeParameters.kt");
             }
 
             @Test
