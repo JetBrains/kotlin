@@ -11,7 +11,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.classes.analyseForLightClasses
 import org.jetbrains.kotlin.idea.asJava.classes.createField
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
-import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtDeclarationScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
@@ -35,9 +34,9 @@ import org.jetbrains.kotlin.psi.KtFile
 
 class FirLightClassForFacade(
     manager: PsiManager,
-    private val facadeClassFqName: FqName,
-    private val files: Collection<KtFile>
-) : FirLightClassBase(manager) {
+    override val facadeClassFqName: FqName,
+    override val files: Collection<KtFile>
+) : FirLightClassBase(manager), KtLightClassForFacade {
 
     init {
         require(files.isNotEmpty())
@@ -215,7 +214,7 @@ class FirLightClassForFacade(
 
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
 
-    override fun getName(): String = facadeClassFqName.shortName().asString()
+    override fun getName() = super<KtLightClassForFacade>.getName()
 
     override fun getQualifiedName() = facadeClassFqName.asString()
 
@@ -256,7 +255,7 @@ class FirLightClassForFacade(
 
     override fun hashCode() = facadeClassFqName.hashCode()
 
-    override fun toString() = "${KtLightClassForFacadeImpl::class.java.simpleName}:$facadeClassFqName"
+    override fun toString() = "${FirLightClassForFacade::class.java.simpleName}:$facadeClassFqName"
 
     override val originKind: LightClassOriginKind
         get() = LightClassOriginKind.SOURCE

@@ -47,10 +47,10 @@ import javax.swing.Icon
 
 open class KtLightClassForFacadeImpl constructor(
     manager: PsiManager,
-    protected val facadeClassFqName: FqName,
+    override val facadeClassFqName: FqName,
     myLightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
-    files: Collection<KtFile>
-) : KtLazyLightClass(manager) {
+    override val files: Collection<KtFile>
+) : KtLazyLightClass(manager), KtLightClassForFacade {
 
     protected open val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade> = myLightClassDataCache
 
@@ -59,8 +59,6 @@ open class KtLightClassForFacadeImpl constructor(
 
     override val lightClassData
         get() = lightClassDataCache.value.findDataForFacade(facadeClassFqName)
-
-    val files: Collection<KtFile> = files.toSet()
 
     private val firstFileInFacade by lazyPub { files.iterator().next() }
 
@@ -138,7 +136,7 @@ open class KtLightClassForFacadeImpl constructor(
 
     override fun getRBrace(): PsiElement? = null
 
-    override fun getName() = facadeClassFqName.shortName().asString()
+    override fun getName() = super<KtLightClassForFacade>.getName()
 
     override fun setName(name: String): PsiElement? {
         for (file in files) {
@@ -184,13 +182,14 @@ open class KtLightClassForFacadeImpl constructor(
 
     override fun isValid() = files.all { it.isValid && it.hasTopLevelCallables() && facadeClassFqName == it.javaFileFacadeFqName }
 
-    override fun copy() = KtLightClassForFacadeImpl(manager, facadeClassFqName, lightClassDataCache, files)
+    override fun copy(): KtLightClassForFacade =
+        KtLightClassForFacadeImpl(manager, facadeClassFqName, lightClassDataCache, files)
 
     override fun getNavigationElement() = firstFileInFacade
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         equals(another) ||
-                (another is KtLightClassForFacadeImpl && another.facadeClassFqName == facadeClassFqName)
+                (another is KtLightClassForFacade && another.facadeClassFqName == facadeClassFqName)
 
     override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
 
@@ -254,7 +253,7 @@ open class KtLightClassForFacadeImpl constructor(
 
     companion object {
 
-        fun createForFacadeNoCache(fqName: FqName, searchScope: GlobalSearchScope, project: Project): KtLightClassForFacadeImpl? {
+        fun createForFacadeNoCache(fqName: FqName, searchScope: GlobalSearchScope, project: Project): KtLightClassForFacade? {
 
             val sources = KotlinAsJavaSupport.getInstance(project).findFilesForFacade(fqName, searchScope)
                 .filterNot { it.isCompiled }
@@ -278,7 +277,7 @@ open class KtLightClassForFacadeImpl constructor(
             manager: PsiManager,
             facadeClassFqName: FqName,
             searchScope: GlobalSearchScope
-        ): KtLightClassForFacadeImpl? {
+        ): KtLightClassForFacade? {
             return FacadeCache.getInstance(manager.project)[facadeClassFqName, searchScope]
         }
 
@@ -286,7 +285,7 @@ open class KtLightClassForFacadeImpl constructor(
             manager: PsiManager,
             facadeClassFqName: FqName,
             file: KtFile
-        ): KtLightClassForFacadeImpl {
+        ): KtLightClassForFacade {
             // TODO: refactor, using cached value doesn't make sense for this case
             val cachedValue = CachedValuesManager.getManager(manager.project).createCachedValue(
                 LightClassDataProviderForFileFacade.ByFile(manager.project, facadeClassFqName, file), false

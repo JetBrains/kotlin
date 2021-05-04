@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -71,7 +72,7 @@ class KtFileClassProviderImpl(val project: Project) : KtFileClassProvider {
         }
 
         facadeClasses.filterTo(result) {
-            it is KtLightClassForFacadeImpl && file in it.files
+            it is KtLightClassForFacade && file in it.files
         }
 
         return result.toTypedArray()

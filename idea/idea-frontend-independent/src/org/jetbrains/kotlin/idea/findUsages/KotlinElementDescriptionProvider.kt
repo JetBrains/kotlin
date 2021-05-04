@@ -27,7 +27,7 @@ import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewLongNameLocation
 import com.intellij.usageView.UsageViewShortNameLocation
 import com.intellij.usageView.UsageViewTypeLocation
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -165,7 +165,7 @@ open class KotlinElementDescriptionProviderBase : ElementDescriptionProvider {
             is KtTypeAlias -> KotlinBundle.message("find.usages.type.alias")
             is KtLabeledExpression -> KotlinBundle.message("find.usages.label")
             is KtImportAlias -> KotlinBundle.message("find.usages.import.alias")
-            is KtLightClassForFacadeImpl -> KotlinBundle.message("find.usages.facade.class")
+            is KtLightClassForFacade -> KotlinBundle.message("find.usages.facade.class")
             else -> {
                 //TODO Implement in FIR
                 when {
