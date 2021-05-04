@@ -58,6 +58,9 @@ public final class foo/Kotlin : java/lang/Object {
     public final void fooGenericOut(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    <T:Lfoo/Bar<Lfoo/Outer$Inner<Lfoo/Outer;>;>;>()V
+    public final void innerClassInBound()
 }
 
 <T:Ljava/lang/Object;>Ljava/lang/Object;

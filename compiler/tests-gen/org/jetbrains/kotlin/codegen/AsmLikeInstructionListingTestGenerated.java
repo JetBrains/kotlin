@@ -130,6 +130,11 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/defaultArgs.kt");
         }
 
+        @TestMetadata("dontEmit.kt")
+        public void testDontEmit() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/dontEmit.kt");
+        }
+
         @TestMetadata("enumClassConstructor.kt")
         public void testEnumClassConstructor() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/enumClassConstructor.kt");
@@ -143,6 +148,11 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/extension.kt");
+        }
+
+        @TestMetadata("functionTypeParameter.kt")
+        public void testFunctionTypeParameter() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/functionTypeParameter.kt");
         }
 
         @TestMetadata("implicit.kt")
@@ -180,6 +190,11 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/property.kt");
         }
 
+        @TestMetadata("propertyTypeParameter.kt")
+        public void testPropertyTypeParameter() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/propertyTypeParameter.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple.kt");
@@ -198,6 +213,16 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
         @TestMetadata("syntheticAccessors.kt")
         public void testSyntheticAccessors() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/syntheticAccessors.kt");
+        }
+
+        @TestMetadata("typeParameter.kt")
+        public void testTypeParameter() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/typeParameter.kt");
+        }
+
+        @TestMetadata("typeParameter16.kt")
+        public void testTypeParameter16() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/typeParameter16.kt");
         }
     }
 }

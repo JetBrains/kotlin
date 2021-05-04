@@ -53,6 +53,8 @@ fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
 
 fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
+fun IrType.isAnnotation() = classOrNull?.owner?.kind == ClassKind.ANNOTATION_CLASS
+
 fun IrType.isFunctionOrKFunction() = isFunction() || isKFunction()
 
 fun IrType.isSuspendFunctionOrKFunction() = isSuspendFunction() || isKSuspendFunction()

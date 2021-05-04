@@ -1,0 +1,29 @@
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    <T::Lfoo/Simple;>(TT;)TT;
+    public final foo.Simple getZ(foo.Simple $this$z)
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/TypeParameterAnn;([]) : METHOD_TYPE_PARAMETER 0, null
+      @Lfoo/TypeAnn;([name="Simple"]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    <T::Lfoo/Simple;>(TT;TT;)V
+    public final void setZ(foo.Simple $this$z, foo.Simple value)
+      @Lfoo/TypeParameterAnn;([]) : METHOD_TYPE_PARAMETER 0, null
+      @Lfoo/TypeAnn;([name="Simple"]) : METHOD_TYPE_PARAMETER_BOUND 0, 1, null
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+        @Lorg/jetbrains/annotations/Nullable;([]) // invisible, parameter 1
+}
+
+public abstract interface foo/Simple : java/lang/Object {
+
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeParameterAnn : java/lang/Object, java/lang/annotation/Annotation {
+
+}

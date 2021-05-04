@@ -1,0 +1,19 @@
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    <T:Ljava/lang/Object;>(TT;)TT;
+    public final java.lang.Object bar(java.lang.Object p)
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    public final void foo(java.lang.String s)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeParameterAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
