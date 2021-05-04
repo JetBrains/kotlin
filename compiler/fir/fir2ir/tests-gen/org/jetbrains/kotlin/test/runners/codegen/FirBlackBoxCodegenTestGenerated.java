@@ -2429,6 +2429,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("inlineArrayConstructors.kt")
+        public void testInlineArrayConstructors() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
+        }
+
+        @Test
         @TestMetadata("javaField.kt")
         public void testJavaField() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/javaField.kt");
@@ -2809,6 +2815,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("array.kt")
             public void testArray() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/array.kt");
+            }
+
+            @Test
+            @TestMetadata("arrayConstructorArgument.kt")
+            public void testArrayConstructorArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/arrayConstructorArgument.kt");
             }
 
             @Test
