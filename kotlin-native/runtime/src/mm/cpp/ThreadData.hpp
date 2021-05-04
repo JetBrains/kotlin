@@ -51,13 +51,13 @@ public:
 
     ThreadState setState(ThreadState state) noexcept { return state_.exchange(state); }
 
-    ObjectFactory<GC>::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
+    ObjectFactory<gc::GC>::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
 
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 
     KStdVector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
 
-    GC::ThreadData& gc() noexcept { return gc_; }
+    gc::GC::ThreadData& gc() noexcept { return gc_; }
 
     void Publish() noexcept {
         // TODO: These use separate locks, which is inefficient.
@@ -79,8 +79,8 @@ private:
     StableRefRegistry::ThreadQueue stableRefThreadQueue_;
     std::atomic<ThreadState> state_;
     ShadowStack shadowStack_;
-    GC::ThreadData gc_;
-    ObjectFactory<GC>::ThreadQueue objectFactoryThreadQueue_;
+    gc::GC::ThreadData gc_;
+    ObjectFactory<gc::GC>::ThreadQueue objectFactoryThreadQueue_;
     KStdVector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
 };
 

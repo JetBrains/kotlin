@@ -5,13 +5,13 @@
 
 #include "SingleThreadMarkAndSweep.hpp"
 
-#include "../GlobalData.hpp"
-#include "../RootSet.hpp"
-#include "../ThreadData.hpp"
-#include "../ThreadRegistry.hpp"
+#include "GlobalData.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
+#include "RootSet.hpp"
 #include "Runtime.h"
+#include "ThreadData.hpp"
+#include "ThreadRegistry.hpp"
 
 using namespace kotlin;
 
@@ -19,57 +19,57 @@ namespace {
 
 struct MarkTraits {
     static bool IsMarked(ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<mm::SingleThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
-        return objectData.color() == mm::SingleThreadMarkAndSweep::ObjectData::Color::kBlack;
+        auto& objectData = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
+        return objectData.color() == gc::SingleThreadMarkAndSweep::ObjectData::Color::kBlack;
     }
 
     static bool TryMark(ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<mm::SingleThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
-        if (objectData.color() == mm::SingleThreadMarkAndSweep::ObjectData::Color::kBlack) return false;
-        objectData.setColor(mm::SingleThreadMarkAndSweep::ObjectData::Color::kBlack);
+        auto& objectData = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::NodeRef::From(object).GCObjectData();
+        if (objectData.color() == gc::SingleThreadMarkAndSweep::ObjectData::Color::kBlack) return false;
+        objectData.setColor(gc::SingleThreadMarkAndSweep::ObjectData::Color::kBlack);
         return true;
     };
 };
 
 struct SweepTraits {
-    using ObjectFactory = mm::ObjectFactory<mm::SingleThreadMarkAndSweep>;
+    using ObjectFactory = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>;
 
     static bool TryResetMark(ObjectFactory::NodeRef node) noexcept {
         auto& objectData = node.GCObjectData();
-        if (objectData.color() == mm::SingleThreadMarkAndSweep::ObjectData::Color::kWhite) return false;
-        objectData.setColor(mm::SingleThreadMarkAndSweep::ObjectData::Color::kWhite);
+        if (objectData.color() == gc::SingleThreadMarkAndSweep::ObjectData::Color::kWhite) return false;
+        objectData.setColor(gc::SingleThreadMarkAndSweep::ObjectData::Color::kWhite);
         return true;
     }
 };
 
 struct FinalizeTraits {
-    using ObjectFactory = mm::ObjectFactory<mm::SingleThreadMarkAndSweep>;
+    using ObjectFactory = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>;
 };
 
 } // namespace
 
-void mm::SingleThreadMarkAndSweep::ThreadData::SafePointFunctionEpilogue() noexcept {
+void gc::SingleThreadMarkAndSweep::ThreadData::SafePointFunctionEpilogue() noexcept {
     if (gc_.GetThreshold() == 0 || safePointsCounter_ % gc_.GetThreshold() == 0) {
         PerformFullGC();
     }
     ++safePointsCounter_;
 }
 
-void mm::SingleThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
+void gc::SingleThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
     if (gc_.GetThreshold() == 0 || safePointsCounter_ % gc_.GetThreshold() == 0) {
         PerformFullGC();
     }
     ++safePointsCounter_;
 }
 
-void mm::SingleThreadMarkAndSweep::ThreadData::SafePointExceptionUnwind() noexcept {
+void gc::SingleThreadMarkAndSweep::ThreadData::SafePointExceptionUnwind() noexcept {
     if (gc_.GetThreshold() == 0 || safePointsCounter_ % gc_.GetThreshold() == 0) {
         PerformFullGC();
     }
     ++safePointsCounter_;
 }
 
-void mm::SingleThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
+void gc::SingleThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
     size_t allocationOverhead =
             gc_.GetAllocationThresholdBytes() == 0 ? allocatedBytes_ : allocatedBytes_ % gc_.GetAllocationThresholdBytes();
     if (allocationOverhead + size >= gc_.GetAllocationThresholdBytes()) {
@@ -78,15 +78,15 @@ void mm::SingleThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) 
     allocatedBytes_ += size;
 }
 
-void mm::SingleThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
+void gc::SingleThreadMarkAndSweep::ThreadData::PerformFullGC() noexcept {
     gc_.PerformFullGC();
 }
 
-void mm::SingleThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
+void gc::SingleThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     PerformFullGC();
 }
 
-void mm::SingleThreadMarkAndSweep::PerformFullGC() noexcept {
+void gc::SingleThreadMarkAndSweep::PerformFullGC() noexcept {
     RuntimeAssert(running_ == false, "Cannot have been called during another collection");
     running_ = true;
 
@@ -106,8 +106,8 @@ void mm::SingleThreadMarkAndSweep::PerformFullGC() noexcept {
         }
     }
 
-    mm::Mark<MarkTraits>(std::move(graySet));
-    auto finalizerQueue = mm::Sweep<SweepTraits>(mm::GlobalData::Instance().objectFactory());
+    gc::Mark<MarkTraits>(std::move(graySet));
+    auto finalizerQueue = gc::Sweep<SweepTraits>(mm::GlobalData::Instance().objectFactory());
 
     running_ = false;
 

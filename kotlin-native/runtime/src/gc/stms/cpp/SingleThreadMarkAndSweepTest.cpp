@@ -8,12 +8,13 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "../ExtraObjectData.hpp"
-#include "../GlobalData.hpp"
-#include "../ObjectOps.hpp"
-#include "../TestSupport.hpp"
+#include "ExtraObjectData.hpp"
 #include "FinalizerHooksTestSupport.hpp"
+#include "GlobalData.hpp"
+#include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
+#include "TestSupport.hpp"
+#include "ThreadData.hpp"
 
 using namespace kotlin;
 
@@ -186,10 +187,10 @@ KStdVector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     return objects;
 }
 
-using Color = mm::SingleThreadMarkAndSweep::ObjectData::Color;
+using Color = gc::SingleThreadMarkAndSweep::ObjectData::Color;
 
 Color GetColor(ObjHeader* objHeader) {
-    auto nodeRef = mm::ObjectFactory<mm::SingleThreadMarkAndSweep>::NodeRef::From(objHeader);
+    auto nodeRef = mm::ObjectFactory<gc::SingleThreadMarkAndSweep>::NodeRef::From(objHeader);
     return nodeRef.GCObjectData().color();
 }
 
@@ -591,7 +592,8 @@ TEST_F(SingleThreadMarkAndSweepTest, PermanentObjects) {
         GlobalPermanentObjectHolder global1{threadData};
         GlobalObjectHolder global2{threadData};
         test_support::Object<Payload> permanentObject{typeHolder.typeInfo()};
-        permanentObject.header()->typeInfoOrMeta_ = setPointerBits(permanentObject.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        permanentObject.header()->typeInfoOrMeta_ =
+                setPointerBits(permanentObject.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
         RuntimeAssert(permanentObject.header()->permanent(), "Must be permanent");
 
         global1->field1 = permanentObject.header();

@@ -68,7 +68,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("provide manifest addend file")
         val MEMORY_MODEL: CompilerConfigurationKey<MemoryModel>
                 = CompilerConfigurationKey.create("memory model")
-        val META_INFO: CompilerConfigurationKey<List<String>> 
+        val META_INFO: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("generate metadata")
         val METADATA_KLIB: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("metadata klib")
@@ -154,6 +154,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("override konan.properties values")
         val DESTROY_RUNTIME_MODE: CompilerConfigurationKey<DestroyRuntimeMode>
                 = CompilerConfigurationKey.create("when to destroy runtime")
+        val GARBAGE_COLLECTOR: CompilerConfigurationKey<GC> = CompilerConfigurationKey.create("gc")
     }
 }
 

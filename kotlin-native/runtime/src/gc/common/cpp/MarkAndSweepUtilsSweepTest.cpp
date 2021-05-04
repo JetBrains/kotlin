@@ -8,8 +8,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "../ObjectFactory.hpp"
 #include "FinalizerHooksTestSupport.hpp"
+#include "ObjectFactory.hpp"
 #include "ObjectTestSupport.hpp"
 
 using namespace kotlin;
@@ -184,7 +184,7 @@ public:
     }
 
     KStdVector<ObjHeader*> Sweep() {
-        auto finalizers = mm::Sweep<SweepTraits>(objectFactory_);
+        auto finalizers = gc::Sweep<SweepTraits>(objectFactory_);
         KStdVector<ObjHeader*> objects;
         for (auto node : finalizers.IterForTests()) {
             objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());

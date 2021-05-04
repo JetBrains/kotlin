@@ -3,10 +3,10 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_MM_MARK_AND_SWEEP_UTILS_H
-#define RUNTIME_MM_MARK_AND_SWEEP_UTILS_H
+#ifndef RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H
+#define RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H
 
-#include "../ExtraObjectData.hpp"
+#include "ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
 #include "Memory.h"
 #include "ObjectTraversal.hpp"
@@ -14,7 +14,7 @@
 #include "Types.h"
 
 namespace kotlin {
-namespace mm {
+namespace gc {
 
 // TODO: Because of `graySet` this implementation may allocate heap memory during GC.
 template <typename Traits>
@@ -73,7 +73,7 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFact
     return finalizerQueue;
 }
 
-} // namespace mm
+} // namespace gc
 } // namespace kotlin
 
-#endif // RUNTIME_MM_MARK_AND_SWEEP_UTILS_H
+#endif // RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H

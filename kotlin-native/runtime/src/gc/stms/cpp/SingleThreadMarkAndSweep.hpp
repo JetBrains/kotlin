@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_MM_GC_SINGLE_THREAD_MARK_AND_SWEEP_H
-#define RUNTIME_MM_GC_SINGLE_THREAD_MARK_AND_SWEEP_H
+#ifndef RUNTIME_GC_STMS_SINGLE_THREAD_MARK_AND_SWEEP_H
+#define RUNTIME_GC_STMS_SINGLE_THREAD_MARK_AND_SWEEP_H
 
 #include <cstddef>
 
@@ -12,7 +12,7 @@
 #include "Utils.hpp"
 
 namespace kotlin {
-namespace mm {
+namespace gc {
 
 // Stop-the-world Mark-and-Sweep for a single mutator
 class SingleThreadMarkAndSweep : private Pinned {
@@ -72,7 +72,7 @@ private:
     size_t allocationThresholdBytes_ = 10000;
 };
 
-} // namespace mm
+} // namespace gc
 } // namespace kotlin
 
-#endif // RUNTIME_MM_GC_SINGLE_THREAD_MARK_AND_SWEEP_H
+#endif // RUNTIME_GC_STMS_SINGLE_THREAD_MARK_AND_SWEEP_H

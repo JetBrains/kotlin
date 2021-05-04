@@ -3,15 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_MM_NOOP_GC_H
-#define RUNTIME_MM_NOOP_GC_H
+#ifndef RUNTIME_GC_NOOP_NOOP_GC_H
+#define RUNTIME_GC_NOOP_NOOP_GC_H
 
 #include <cstddef>
 
 #include "Utils.hpp"
 
 namespace kotlin {
-namespace mm {
+namespace gc {
 
 // No-op GC is a GC that does not free memory.
 // TODO: It can be made more efficient.
@@ -52,7 +52,7 @@ private:
     size_t allocationThresholdBytes_ = 0;
 };
 
-} // namespace mm
+} // namespace gc
 } // namespace kotlin
 
-#endif // RUNTIME_MM_NOOP_GC_H
+#endif // RUNTIME_GC_NOOP_NOOP_GC_H

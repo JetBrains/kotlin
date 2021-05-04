@@ -41,10 +41,13 @@ bitcode {
             "${target}Objc",
             "${target}ExceptionsSupport",
             "${target}LegacyMemoryManager",
-            "${target}ExperimentalMemoryManager"
+            "${target}ExperimentalMemoryManagerNoop",
+            "${target}ExperimentalMemoryManagerStms",
+            "${target}CommonGc",
+            "${target}SingleThreadMsGc",
+            "${target}NoopGc"
         )
         includeRuntime()
-        // TODO: Should depend on the sanitizer.
     }
 
     create("mimalloc") {
@@ -103,7 +106,28 @@ bitcode {
         includeRuntime()
     }
 
-    create("experimental_memory_manager", file("src/mm")) {
+    create("experimental_memory_manager_noop", file("src/mm")) {
+        headersDirs += files("src/gc/noop/cpp", "src/gc/common/cpp")
+        includeRuntime()
+    }
+
+    create("experimental_memory_manager_stms", file("src/mm")) {
+        headersDirs += files("src/gc/stms/cpp", "src/gc/common/cpp")
+        includeRuntime()
+    }
+
+    create("common_gc", file("src/gc/common")) {
+        headersDirs += files("src/mm/cpp")
+        includeRuntime()
+    }
+
+    create("noop_gc", file("src/gc/noop")) {
+        headersDirs += files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp")
+        includeRuntime()
+    }
+
+    create("single_thread_ms_gc", file("src/gc/stms")) {
+        headersDirs += files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp")
         includeRuntime()
     }
 }
@@ -148,12 +172,15 @@ targetList.forEach { targetName ->
             "${targetName}ExperimentalMMMimallocRuntimeTests",
             listOf(
                 "${targetName}Runtime",
-                "${targetName}ExperimentalMemoryManager",
+                "${targetName}ExperimentalMemoryManagerStms",
+                "${targetName}CommonGc",
+                "${targetName}SingleThreadMsGc",
                 "${targetName}Release",
                 "${targetName}Mimalloc",
                 "${targetName}OptAlloc"
             )
     ) {
+        headersDirs += files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp")
         includeRuntime()
     })
 
@@ -163,11 +190,49 @@ targetList.forEach { targetName ->
             "${targetName}ExperimentalMMStdAllocRuntimeTests",
             listOf(
                 "${targetName}Runtime",
-                "${targetName}ExperimentalMemoryManager",
+                "${targetName}ExperimentalMemoryManagerStms",
+                "${targetName}CommonGc",
+                "${targetName}SingleThreadMsGc",
                 "${targetName}Release",
                 "${targetName}StdAlloc"
             )
     ) {
+        headersDirs += files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp")
+        includeRuntime()
+    })
+
+    allTests.addAll(createTestTasks(
+            project,
+            targetName,
+            "${targetName}ExperimentalMMNoOpMimallocRuntimeTests",
+            listOf(
+                "${targetName}Runtime",
+                "${targetName}ExperimentalMemoryManagerNoop",
+                "${targetName}CommonGc",
+                "${targetName}NoopGc",
+                "${targetName}Release",
+                "${targetName}Mimalloc",
+                "${targetName}OptAlloc"
+            )
+    ) {
+        headersDirs += files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp")
+        includeRuntime()
+    })
+
+    allTests.addAll(createTestTasks(
+            project,
+            targetName,
+            "${targetName}ExperimentalMMNoOpStdAllocRuntimeTests",
+            listOf(
+                "${targetName}Runtime",
+                "${targetName}ExperimentalMemoryManagerNoop",
+                "${targetName}CommonGc",
+                "${targetName}NoopGc",
+                "${targetName}Release",
+                "${targetName}StdAlloc"
+            )
+    ) {
+        headersDirs += files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp")
         includeRuntime()
     })
 

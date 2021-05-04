@@ -138,7 +138,7 @@ public:
     void Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
         KStdVector<ObjHeader*> objects;
         for (auto& object : graySet) objects.push_back(object.get().GetObjHeader());
-        mm::Mark<ScopedMarkTraits>(std::move(objects));
+        gc::Mark<ScopedMarkTraits>(std::move(objects));
     }
 
 private:

@@ -13,7 +13,6 @@
 #include "gtest/gtest.h"
 
 #include "FinalizerHooksTestSupport.hpp"
-#include "GC.hpp"
 #include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"

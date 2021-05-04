@@ -47,6 +47,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val memoryModel: MemoryModel get() = configuration.get(KonanConfigKeys.MEMORY_MODEL)!!
     val destroyRuntimeMode: DestroyRuntimeMode get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)!!
+    val gc: GC get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR)!!
 
     val needVerifyIr: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_IR) == true
@@ -161,7 +162,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 add("legacy_memory_manager.bc")
             }
             MemoryModel.EXPERIMENTAL -> {
-                add("experimental_memory_manager.bc")
+                add("common_gc.bc")
+                when (gc) {
+                    GC.SINGLE_THREAD_MARK_SWEEP -> {
+                        add("experimental_memory_manager_stms.bc")
+                        add("single_thread_ms_gc.bc")
+                    }
+                    GC.NOOP -> {
+                        add("experimental_memory_manager_noop.bc")
+                        add("noop_gc.bc")
+                    }
+                }
             }
         }
         if (shouldCoverLibraries || shouldCoverSources) add("profileRuntime.bc")
