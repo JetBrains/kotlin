@@ -78,13 +78,7 @@ class IrLazyClass(
 
     private fun shouldBuildStub(descriptor: DeclarationDescriptor): Boolean =
         descriptor !is DeclarationDescriptorWithVisibility ||
-                !DescriptorVisibilities.isPrivate(descriptor.visibility) ||
-                // Always build lazy IR stubs for inline class primary constructors.
-                // This is needed because primary constructors of inline classes can be private, and prior to 1.5.0, there was no way
-                // to determine the inline class representation other than by loading the single value parameter of the primary constructor
-                // (corresponding metadata entry was added in 1.5.0). Backend still tries to load inline class representation in this way
-                // to support compilation against inline classes compiled with 1.4.30 or earlier.
-                (descriptor is ConstructorDescriptor && isInline)
+                !DescriptorVisibilities.isPrivate(descriptor.visibility)
 
     override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {
