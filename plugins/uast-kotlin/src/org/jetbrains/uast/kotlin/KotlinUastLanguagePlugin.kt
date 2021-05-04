@@ -27,7 +27,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -87,7 +87,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
         if (!element.isJvmElement) return null
         if (element is PsiFile) return convertDeclaration(element, null, elementTypes(requiredType))
-        if (element is KtLightClassForFacadeImpl) return convertDeclaration(element, null, elementTypes(requiredType))
+        if (element is KtLightClassForFacade) return convertDeclaration(element, null, elementTypes(requiredType))
 
         return convertDeclarationOrElement(element, null, elementTypes(requiredType))
     }

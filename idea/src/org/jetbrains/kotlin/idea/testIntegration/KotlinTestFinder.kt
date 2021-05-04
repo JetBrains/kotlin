@@ -26,7 +26,7 @@ import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.testIntegration.JavaTestFinder
 import com.intellij.testIntegration.TestFinderHelper
 import com.intellij.util.CommonProcessors
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacadeImpl
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -68,7 +68,7 @@ class KotlinTestFinder : JavaTestFinder() {
             for (eachClass in cache.getClassesByName(candidateNameWithWeight.first, scope)) {
                 if (eachClass.isAnnotationType || frameworks.isTestClass(eachClass)) continue
 
-                if (eachClass is KtLightClassForFacadeImpl) {
+                if (eachClass is KtLightClassForFacade) {
                     eachClass.files.mapTo(classesWithWeights) { Pair.create(it, candidateNameWithWeight.second) }
                 } else if (eachClass.isPhysical || eachClass is KtLightClassForSourceDeclaration) {
                     classesWithWeights.add(Pair.create(eachClass, candidateNameWithWeight.second))

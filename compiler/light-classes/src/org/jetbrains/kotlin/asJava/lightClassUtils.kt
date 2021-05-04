@@ -56,7 +56,7 @@ fun KtClassOrObject.toFakeLightClass(): KtFakeLightClass = KotlinAsJavaSupport.g
 fun KtFile.findFacadeClass(): KtLightClass? {
     return KotlinAsJavaSupport.getInstance(project)
             .getFacadeClassesInPackage(packageFqName, this.useScope as? GlobalSearchScope ?: GlobalSearchScope.projectScope(project))
-            .firstOrNull { it is KtLightClassForFacadeImpl && this in it.files } as? KtLightClass
+            .firstOrNull { it is KtLightClassForFacade && this in it.files } as? KtLightClass
 }
 
 fun KtScript.toLightClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightClassForScript(this)

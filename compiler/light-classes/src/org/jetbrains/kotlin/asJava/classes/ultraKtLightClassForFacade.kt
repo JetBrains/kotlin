@@ -147,6 +147,6 @@ class KtUltraLightClassForFacade(
 
     override fun getOwnMethods() = _ownMethods
 
-    override fun copy(): KtLightClassForFacadeImpl =
+    override fun copy(): KtLightClassForFacade =
         KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files, filesWithSupports)
 }
