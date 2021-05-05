@@ -333,7 +333,8 @@ include ":compiler:fir:cones",
         ":compiler:fir:checkers:checkers-component-generator",
         ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests",
-        ":compiler:fir:analysis-tests:legacy-fir-tests"
+        ":compiler:fir:analysis-tests:legacy-fir-tests",
+        ":compiler:fir:diagnostics-diff"
 
 include ":compiler:test-infrastructure",
         ":compiler:test-infrastructure-utils",
