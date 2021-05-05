@@ -408,6 +408,22 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CallableReference {
+        @Test
+        @TestMetadata("adaptedReference.kt")
+        public void testAdaptedReference() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/callableReference/adaptedReference.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs")
     @TestDataPath("$PROJECT_ROOT")
     public class CollectionStubs {
@@ -858,6 +874,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("privateSuspendFun.kt")
         public void testPrivateSuspendFun() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/coroutines/privateSuspendFun.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendConversion.kt")
+        public void testSuspendConversion() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/suspendConversion.kt");
         }
 
         @Test
