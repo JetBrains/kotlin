@@ -68,12 +68,16 @@ internal object ConeTypeCompatibilityChecker {
         if (all { with(ctx) { it.isNullableType() } }) return Compatibility.COMPATIBLE
 
         // Next can simply focus on the type hierarchy and don't need to worry about nullability.
-        val compatibilityUpperBound = if (this.all { it.isConcreteType() }) {
-            Compatibility.HARD_INCOMPATIBLE
-        } else {
-            // If any type is not concrete, for example, type parameter, we only report warning for incompatible types. This is to stay
-            // compatible with FE1.0.
-            Compatibility.SOFT_INCOMPATIBLE
+        val compatibilityUpperBound = when {
+            all {
+                it.classId in StandardClassIds.primitiveTypes
+            } -> Compatibility.SOFT_INCOMPATIBLE // TODO: remove after KT-46383 is fixed
+            all {
+                it.isConcreteType()
+            } -> Compatibility.HARD_INCOMPATIBLE
+            // If any type is not concrete, for example, type parameter, we only report warning for incompatible types.
+            // This is to stay compatible with FE1.0.
+            else -> Compatibility.SOFT_INCOMPATIBLE
         }
         return ctx.areCompatible(flatMap { it.collectUpperBounds() }.toSet(), emptySet(), compatibilityUpperBound)
     }

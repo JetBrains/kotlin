@@ -344,7 +344,7 @@ fun case_20(b: Boolean) {
 
 // TESTCASE NUMBER: 21
 fun case_21() {
-    if (<!EQUALITY_NOT_APPLICABLE!>EnumClassWithNullableProperty.B.prop_1 !== null is Boolean<!> == <!USELESS_IS_CHECK!>true !is Boolean<!> != true) {
+    if (<!EQUALITY_NOT_APPLICABLE_WARNING!>EnumClassWithNullableProperty.B.prop_1 !== null is Boolean<!> == <!USELESS_IS_CHECK!>true !is Boolean<!> != true) {
         EnumClassWithNullableProperty.B.prop_1
         EnumClassWithNullableProperty.B.prop_1<!UNSAFE_CALL!>.<!>equals(null)
         EnumClassWithNullableProperty.B.prop_1.propT
@@ -376,7 +376,7 @@ fun case_22(a: (() -> Unit)?) {
 
 // TESTCASE NUMBER: 23
 fun case_23(a: ((Float) -> Int?)?, b: Float?) {
-    if (<!EQUALITY_NOT_APPLICABLE!>a != null !is Boolean<!> && <!EQUALITY_NOT_APPLICABLE!>b !== null is Boolean<!>) {
+    if (<!EQUALITY_NOT_APPLICABLE!>a != null !is Boolean<!> && <!EQUALITY_NOT_APPLICABLE_WARNING!>b !== null is Boolean<!>) {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         if (x != null) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
