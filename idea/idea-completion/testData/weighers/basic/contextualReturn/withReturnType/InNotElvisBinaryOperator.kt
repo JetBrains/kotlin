@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun returnFun(): String = ""
 
 fun usage(a: Int?): Int {

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun reportError(): Nothing
 
 fun usage(a: Int?): Int {
