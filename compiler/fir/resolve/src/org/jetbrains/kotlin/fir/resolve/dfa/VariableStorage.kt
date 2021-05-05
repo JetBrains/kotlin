@@ -138,7 +138,7 @@ class VariableStorage(private val session: FirSession) {
     }
 
     fun removeSyntheticVariable(variable: DataFlowVariable) {
-        if (variable !is SyntheticVariable) return
+        if (!variable.isSynthetic()) return
         syntheticVariables.remove(variable.fir)
     }
 

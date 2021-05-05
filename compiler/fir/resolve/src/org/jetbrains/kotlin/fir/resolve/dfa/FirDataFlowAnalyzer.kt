@@ -16,24 +16,27 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -439,7 +442,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val operandVariable = variableStorage.getOrCreateVariable(node.previousFlow, operand)
         // expression == const -> expression != null
         flow.addImplication((expressionVariable eq isEq) implies (operandVariable notEq null))
-        if (operandVariable is RealVariable) {
+        if (operandVariable.isReal()) {
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeEq any))
         }
 
@@ -504,7 +507,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
         flow.addImplication((expressionVariable notEq isEq) implies (operandVariable notEq null))
 
-        if (operandVariable is RealVariable) {
+        if (operandVariable.isReal()) {
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeNotEq any))
             flow.addImplication((expressionVariable notEq isEq) implies (operandVariable typeEq any))
 
@@ -778,7 +781,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 ?: return@let
 
             val variable = variableStorage.getOrCreateVariable(flow, receiver)
-            if (variable is RealVariable) {
+            if (variable.isReal()) {
                 if (shouldFork) {
                     flow = logicSystem.forkFlow(flow)
                 }
