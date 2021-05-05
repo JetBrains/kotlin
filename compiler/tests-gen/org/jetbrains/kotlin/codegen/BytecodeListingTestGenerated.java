@@ -60,6 +60,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/callableNameIntrinsic.kt");
     }
 
+    @TestMetadata("callableReferenceArrayConstructorArguments.kt")
+    public void testCallableReferenceArrayConstructorArguments() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/callableReferenceArrayConstructorArguments.kt");
+    }
+
     @TestMetadata("cloneable.kt")
     public void testCloneable() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/cloneable.kt");
