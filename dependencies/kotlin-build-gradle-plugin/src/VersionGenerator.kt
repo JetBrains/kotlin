@@ -76,7 +76,7 @@ open class VersionGenerator: DefaultTask() {
     open val meta = (project.findProperty("konanMetaVersion") as? String ?: kotlinNativeProperties["konanMetaVersion"])?.let{ MetaVersion.valueOf(it.toString().toUpperCase()) } ?: MetaVersion.DEV
 
     private val versionPattern = Pattern.compile(
-        "^(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-M(\\p{Digit}))?(?:-(\\p{Alpha}\\p{Alnum}*))?(?:-(\\d+))?$"
+        "^(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}\\p{Alnum}*))?(?:-(\\d+))?$"
     )
 
     fun defaultVersionFileLocation() {
@@ -94,8 +94,6 @@ open class VersionGenerator: DefaultTask() {
         val minor = matcher.group(2).toInt()
         val maintenanceStr = matcher.group(3)
         val maintenance = maintenanceStr?.toInt() ?: 0
-        val milestoneStr = matcher.group(4)
-        val milestone = milestoneStr?.toInt() ?: -1
         project.logger.info("BUILD_NUMBER: $buildNumber")
         var build = -1
         if (buildNumber != null) {
@@ -103,10 +101,8 @@ open class VersionGenerator: DefaultTask() {
             build = buildNumberSplit[buildNumberSplit.size - 1].toInt() // //7-dev-buildcount
         }
 
-        val versionObject = CompilerVersionImpl(meta, major, minor, maintenance, milestone, build)
+        val versionObject = CompilerVersionImpl(meta, major, minor, maintenance, build)
         versionObject.serialize()
-
-
     }
 
     private fun CompilerVersion.serialize() {
@@ -118,7 +114,7 @@ open class VersionGenerator: DefaultTask() {
                     """|package org.jetbrains.kotlin.konan
                        |internal val currentCompilerVersion: CompilerVersion =
                        |CompilerVersionImpl($meta, $major, $minor,
-                       |                    $maintenance, $milestone, $build)
+                       |                    $maintenance, $build)
                        |val CompilerVersion.Companion.CURRENT: CompilerVersion
                        |get() = currentCompilerVersion""".trimMargin()
                 )
