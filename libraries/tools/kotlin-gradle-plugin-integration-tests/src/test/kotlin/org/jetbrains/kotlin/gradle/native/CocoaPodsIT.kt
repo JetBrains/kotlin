@@ -781,6 +781,28 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testUseDynamicFramework() {
+        with(project) {
+            gradleBuildScript().appendToCocoapodsBlock("useDynamicFramework()")
+
+            hooks.addHook {
+                // Check that an output framework is a dynamic framework
+                val framework = fileInWorkingDir("build/cocoapods/framework/cocoapods.framework/cocoapods")
+                with(runProcess(listOf("file", framework.absolutePath), projectDir)) {
+                    assertTrue(isSuccessful)
+                    assertTrue(output.contains("dynamically linked shared library"))
+                }
+            }
+
+            test(
+                "syncFramework",
+                "-Pkotlin.native.cocoapods.target=ios_x64",
+                "-Pkotlin.native.cocoapods.configuration=DEBUG"
+            )
+        }
+    }
+
     // paths
 
     private fun CompiledProject.url() = externalSources().resolve("url")
