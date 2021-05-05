@@ -22,9 +22,15 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFromJava
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
+import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
+import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 
 object JvmIrMangler : IrBasedKotlinManglerImpl() {
     private class JvmIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
@@ -37,6 +43,12 @@ object JvmIrMangler : IrBasedKotlinManglerImpl() {
 
         override fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean =
             irFunction.isFromJava()
+
+        override fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {
+            if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
+                tBuilder.append(MangleConstant.ENHANCED_NULLABILITY_MARK)
+            }
+        }
     }
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> = JvmIrExportChecker(compatibleMode)
@@ -77,6 +89,13 @@ class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : De
             // In general, having module descriptor as `containingDeclaration` for regular declaration is considered an error (in JS/Native)
             // because there should be `PackageFragmentDescriptor` in between
             // but on JVM there is `SyntheticJavaPropertyDescriptor` whose parent is a module. So let just skip it.
+        }
+
+        override fun mangleTypePlatformSpecific(type: UnwrappedType, tBuilder: StringBuilder) {
+            // Disambiguate between 'double' and '@NotNull java.lang.Double' types in mixed Java/Kotlin class hierarchies
+            if (SimpleClassicTypeSystemContext.hasEnhancedNullability(type)) {
+                tBuilder.appendSignature(MangleConstant.ENHANCED_NULLABILITY_MARK)
+            }
         }
     }
 

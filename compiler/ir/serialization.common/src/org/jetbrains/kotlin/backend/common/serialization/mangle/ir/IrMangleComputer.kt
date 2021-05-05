@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -192,15 +190,15 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
                 if (type.hasQuestionMark) tBuilder.appendSignature(MangleConstant.Q_MARK)
 
-                if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
-                    tBuilder.append(MangleConstant.ENHANCED_NULLABILITY_MARK)
-                }
+                mangleTypePlatformSpecific(type, tBuilder)
             }
             is IrDynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
             is IrErrorType -> tBuilder.appendSignature(MangleConstant.ERROR_MARK)
             else -> error("Unexpected type $type")
         }
     }
+
+    protected open fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {}
 
     override fun visitElement(element: IrElement) =
         error("unexpected element ${element.render()}")

@@ -12,9 +12,6 @@ dependencies {
     implementation(project(":compiler:psi"))
     compileOnly(project(":kotlin-reflect-api"))
 
-    // TODO: move usages of JvmAnnotationNames and hasEnhancedNullability to ir.serialization.jvm and remove this dependency.
-    implementation(project(":core:compiler.common.jvm"))
-
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
