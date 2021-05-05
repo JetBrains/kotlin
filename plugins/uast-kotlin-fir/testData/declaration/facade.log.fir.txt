@@ -1,1 +1,7 @@
 UFile (package = declaration)
+    UClass (name = Utils)
+        UMethod (name = foo)
+            [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+        UMethod (name = buzz)
+            UParameter (name = $this$buzz)
+            [!] FirUnknownKotlinExpression (BLOCK)

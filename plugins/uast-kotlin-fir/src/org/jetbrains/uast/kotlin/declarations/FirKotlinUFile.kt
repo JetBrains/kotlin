@@ -6,6 +6,8 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.findFacadeClass
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
@@ -34,12 +36,12 @@ class FirKotlinUFile(
         sourcePsi.importDirectives.map { FirKotlinUImportStatement(it, this) }
     }
 
-    override val classes: List<UClass>
-        get() {
-            // TODO: Script
-            // TODO: Facade: getOrCreateFirLightFacade()
-            return sourcePsi.declarations.mapNotNull { (it as? KtClassOrObject)?.toUClass() }
-        }
+    override val classes: List<UClass> by lz {
+        val facadeOrScriptClass = if (sourcePsi.isScript()) sourcePsi.script?.toLightClass() else sourcePsi.findFacadeClass()
+        val facadeOrScriptUClass = facadeOrScriptClass?.toUClass()?.let { listOf(it) } ?: emptyList()
+        val classes = sourcePsi.declarations.mapNotNull { (it as? KtClassOrObject)?.toUClass() }
+        facadeOrScriptUClass + classes
+    }
 
     private fun PsiElement.toUClass() = languagePlugin.convertOpt<UClass>(this, this@FirKotlinUFile)
 }

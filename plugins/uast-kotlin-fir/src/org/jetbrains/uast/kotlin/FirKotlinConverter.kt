@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toPsiParameters
 import org.jetbrains.kotlin.psi.*
@@ -55,6 +56,9 @@ internal object FirKotlinConverter {
             when (original) {
                 is KtFile -> {
                     convertKtFile(original, givenParent, requiredTypes).firstOrNull()
+                }
+                is FakeFileForLightClass -> {
+                    el<UFile> { FirKotlinUFile(original.navigationElement) }
                 }
 
                 is KtLightClass -> {
@@ -109,8 +113,8 @@ internal object FirKotlinConverter {
         return requiredTypes.accommodate(
             // File
             alternative { FirKotlinUFile(element) },
-            // TODO: Facade
-            // alternative { element.findFacadeClass()?.let { AbstractFirKotlinUClass.create(it, givenParent) } }
+            // Facade
+            alternative { element.findFacadeClass()?.let { AbstractFirKotlinUClass.create(it, givenParent) } }
         )
     }
 
