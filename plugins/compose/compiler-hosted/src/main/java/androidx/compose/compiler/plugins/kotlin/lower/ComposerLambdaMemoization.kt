@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.builders.irInt
-import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
@@ -686,9 +685,6 @@ class ComposerLambdaMemoization(
             // which means that it will never change, thus does not need to be tracked.
             val shouldBeTracked = collector.captures.isNotEmpty()
             putValueArgument(index++, irBuilder.irBoolean(shouldBeTracked))
-
-            // sourceInformation parameter
-            putValueArgument(index++, irBuilder.irNull())
 
             // ComposableLambdaN requires the arity
             if (useComposableLambdaN) {

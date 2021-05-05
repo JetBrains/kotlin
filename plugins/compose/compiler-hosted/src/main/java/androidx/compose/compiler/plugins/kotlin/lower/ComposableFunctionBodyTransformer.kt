@@ -515,13 +515,6 @@ class ComposableFunctionBodyTransformer(
             }
     }
 
-    private val startReplaceableSourceFunction by guardedLazy {
-        composerIrClass.functions
-            .first {
-                it.name.identifier == "startReplaceableGroup" && it.valueParameters.size == 2
-            }
-    }
-
     private val endReplaceableFunction by guardedLazy {
         composerIrClass.functions
             .first {
@@ -550,13 +543,6 @@ class ComposableFunctionBodyTransformer(
             }
     }
 
-    private val startMovableSourceFunction by guardedLazy {
-        composerIrClass.functions
-            .first {
-                it.name.identifier == "startMovableGroup" && it.valueParameters.size == 3
-            }
-    }
-
     private val endMovableFunction by guardedLazy {
         composerIrClass.functions
             .first {
@@ -572,19 +558,30 @@ class ComposableFunctionBodyTransformer(
             }
     }
 
-    private val startRestartGroupSourceFunction by guardedLazy {
-        composerIrClass.functions
-            .first {
-                it.name == KtxNameConventions.STARTRESTARTGROUP && it.valueParameters.size == 2
-            }
-    }
-
     private val endRestartGroupFunction by guardedLazy {
         composerIrClass
             .functions
             .first {
                 it.name == KtxNameConventions.ENDRESTARTGROUP && it.valueParameters.size == 0
             }
+    }
+
+    private val sourceInformationFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATION)
+        ).map { it.owner }.first()
+    }
+
+    private val sourceInformationMarkerStartFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATIONMARKERSTART)
+        ).map { it.owner }.first()
+    }
+
+    private val sourceInformationMarkerEndFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATIONMARKEREND)
+        ).map { it.owner }.first()
     }
 
     private val IrType.arguments: List<IrTypeArgument>
@@ -768,7 +765,7 @@ class ComposableFunctionBodyTransformer(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.shouldElideGroups(): Boolean {
-        return (!collectSourceInformation && descriptor.hasReadonlyComposableAnnotation()) ||
+        return descriptor.hasReadonlyComposableAnnotation() ||
             descriptor.hasExplicitGroupsAnnotation()
     }
 
@@ -822,17 +819,31 @@ class ComposableFunctionBodyTransformer(
             body.startOffset,
             body.endOffset,
             listOfNotNull(
-                if (!elideGroups)
-                    irStartReplaceableGroup(
-                        body,
-                        scope,
-                        declaration.irSourceKey()
-                    )
-                else
-                    null,
+                when {
+                    !elideGroups ->
+                        irStartReplaceableGroup(
+                            body,
+                            scope,
+                            declaration.irSourceKey()
+                        )
+                    collectSourceInformation &&
+                        !declaration.descriptor.hasExplicitGroupsAnnotation() ->
+                        irSourceInformationMarkerStart(
+                            body,
+                            scope,
+                            declaration.irSourceKey()
+                        )
+                    else -> null
+                },
                 *bodyPreamble.statements.toTypedArray(),
                 *transformed.statements.toTypedArray(),
-                if (!elideGroups) irEndReplaceableGroup() else null,
+                when {
+                    !elideGroups -> irEndReplaceableGroup()
+                    collectSourceInformation &&
+                        !declaration.descriptor.hasExplicitGroupsAnnotation() ->
+                        irSourceInformationMarkerEnd(body)
+                    else -> null
+                },
                 returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
             )
         )
@@ -855,8 +866,14 @@ class ComposableFunctionBodyTransformer(
         // no group, since composableLambda should already create one
         // no default logic
         val body = declaration.body!!
+        val sourceInformationPreamble = mutableStatementContainer()
         val skipPreamble = mutableStatementContainer()
         val bodyPreamble = mutableStatementContainer()
+
+        // First generate the source information call
+        if (collectSourceInformation && !scope.isInlinedLambda) {
+            sourceInformationPreamble.statements.add(irSourceInformation(scope))
+        }
 
         // we start off assuming that we *can* skip execution of the function
         var canSkipExecution = declaration.returnType.isUnit() &&
@@ -927,6 +944,7 @@ class ComposableFunctionBodyTransformer(
                     if (collectSourceInformation && scope.isInlinedLambda)
                         irStartReplaceableGroup(body, scope)
                     else null,
+                    *sourceInformationPreamble.statements.toTypedArray(),
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformedBody,
@@ -941,6 +959,7 @@ class ComposableFunctionBodyTransformer(
                 body.startOffset,
                 body.endOffset,
                 listOfNotNull(
+                    *sourceInformationPreamble.statements.toTypedArray(),
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformed,
@@ -1740,16 +1759,61 @@ class ComposableFunctionBodyTransformer(
         scope: Scope.BlockScope,
         key: IrExpression = element.irSourceKey()
     ): IrExpression {
-        val startDescriptor = if (scope.hasSourceInformation)
-            startReplaceableSourceFunction else startReplaceableFunction
-        return irMethodCall(
-            irCurrentComposer(),
-            startDescriptor
+        return irWithSourceInformation(
+            irMethodCall(
+                irCurrentComposer(),
+                startReplaceableFunction
+            ).also {
+                it.putValueArgument(0, key)
+            },
+            scope
+        )
+    }
+
+    private fun irWithSourceInformation(
+        startGroup: IrExpression,
+        scope: Scope.BlockScope
+    ): IrExpression {
+        return if (scope.hasSourceInformation) {
+            irBlock(statements = listOf(startGroup, irSourceInformation(scope)))
+        } else startGroup
+    }
+
+    private fun irSourceInformation(scope: Scope.BlockScope): IrExpression {
+        val sourceInformation = irCall(
+            sourceInformationFunction
         ).also {
-            it.putValueArgument(0, key)
-            if (scope.hasSourceInformation) {
-                recordSourceParameter(it, 1, scope)
-            }
+            it.putValueArgument(0, irCurrentComposer())
+        }
+        recordSourceParameter(sourceInformation, 1, scope)
+        return sourceInformation
+    }
+
+    private fun irSourceInformationMarkerStart(
+        element: IrElement,
+        scope: Scope.BlockScope,
+        key: IrExpression = element.irSourceKey(),
+    ): IrExpression {
+        return irCall(
+            sourceInformationMarkerStartFunction,
+            element.startOffset,
+            element.endOffset
+        ).also {
+            it.putValueArgument(0, irCurrentComposer())
+            it.putValueArgument(1, key)
+            recordSourceParameter(it, 2, scope)
+        }
+    }
+
+    private fun irSourceInformationMarkerEnd(
+        element: IrElement,
+    ): IrExpression {
+        return irCall(
+            sourceInformationMarkerEndFunction,
+            element.startOffset,
+            element.endOffset
+        ).also {
+            it.putValueArgument(0, irCurrentComposer())
         }
     }
 
@@ -1767,21 +1831,19 @@ class ComposableFunctionBodyTransformer(
         scope: Scope.BlockScope,
         key: IrExpression = element.irSourceKey()
     ): IrExpression {
-        val startDescriptor = if (scope.hasSourceInformation)
-            startRestartGroupSourceFunction else startRestartGroupFunction
-        return irSet(
-            nearestComposer(),
-            irMethodCall(
-                irCurrentComposer(),
-                startDescriptor,
-                element.startOffset,
-                element.endOffset
-            ).also {
-                it.putValueArgument(0, key)
-                if (scope.hasSourceInformation) {
-                    recordSourceParameter(it, 1, scope)
+        return irWithSourceInformation(
+            irSet(
+                nearestComposer(),
+                irMethodCall(
+                    irCurrentComposer(),
+                    startRestartGroupFunction,
+                    element.startOffset,
+                    element.endOffset
+                ).also {
+                    it.putValueArgument(0, key)
                 }
-            }
+            ),
+            scope
         )
     }
 
@@ -1854,23 +1916,18 @@ class ComposableFunctionBodyTransformer(
         joinedData: IrExpression,
         scope: Scope.BlockScope
     ): IrExpression {
-        val startFunction = if (scope.hasSourceInformation) {
-            startMovableSourceFunction
-        } else {
-            startMovableFunction
-        }
-        return irMethodCall(
-            irCurrentComposer(),
-            startFunction,
-            element.startOffset,
-            element.endOffset
-        ).also {
-            it.putValueArgument(0, element.irSourceKey())
-            it.putValueArgument(1, joinedData)
-            if (scope.hasSourceInformation) {
-                recordSourceParameter(it, 2, scope)
-            }
-        }
+        return irWithSourceInformation(
+            irMethodCall(
+                irCurrentComposer(),
+                startMovableFunction,
+                element.startOffset,
+                element.endOffset
+            ).also {
+                it.putValueArgument(0, element.irSourceKey())
+                it.putValueArgument(1, joinedData)
+            },
+            scope
+        )
     }
 
     private fun irEndMovableGroup(): IrExpression {
@@ -2372,17 +2429,6 @@ class ComposableFunctionBodyTransformer(
                     expression
                 }
             }
-            collectSourceInformation &&
-                expression.symbol.descriptor.fqNameSafe == ComposeFqNames.composableLambda -> {
-                // For calls to `composableLambda` we introduce a scope to collect the source
-                // locations on the top level of the lambda as the startRestartGroup is in the
-                // composable lambda wrapper.
-                val composableLambdaScope = withScope(Scope.ComposableLambdaScope()) {
-                    expression.transformChildrenVoid()
-                }
-                recordSourceParameter(expression, 3, composableLambdaScope)
-                return expression
-            }
             expression.isComposableSingletonGetter() -> {
                 // This looks like `ComposableSingletonClass.lambda-123`, which is a static/saved
                 // call of composableLambdaInstance. We want to transform the property here now
@@ -2392,18 +2438,6 @@ class ComposableFunctionBodyTransformer(
                 val property = getter.correspondingPropertySymbol?.owner
                 property?.transformChildrenVoid()
                 return super.visitCall(expression)
-            }
-            collectSourceInformation &&
-                expression.symbol.descriptor.fqNameSafe ==
-                ComposeFqNames.composableLambdaInstance -> {
-                // For calls to `composableLambdaInstance` that are not singletons we introduce a
-                // scope to collect the source locations on the top level of the lambda as the
-                // startRestartGroup is in the composable lambda wrapper.
-                val composableLambdaScope = withScope(Scope.ComposableLambdaScope()) {
-                    expression.transformChildrenVoid()
-                }
-                recordSourceParameter(expression, 2, composableLambdaScope)
-                return expression
             }
             else -> return super.visitCall(expression)
         }
@@ -3329,13 +3363,9 @@ class ComposableFunctionBodyTransformer(
 
             override fun calculateSourceInfo(sourceInformationEnabled: Boolean): String? =
                 if (sourceInformationEnabled) {
-                    if (function.isLambda() && !isInlinedLambda) {
-                        super.calculateSourceInfo(sourceInformationEnabled)
-                    } else {
-                        "${callInformation()}${parameterInformation()}${
-                        super.calculateSourceInfo(sourceInformationEnabled) ?: ""
-                        }:${sourceFileInformation()}"
-                    }
+                    "${callInformation()}${parameterInformation()}${
+                    super.calculateSourceInfo(sourceInformationEnabled) ?: ""
+                    }:${sourceFileInformation()}"
                 } else {
                     if (function.visibility.isPublicAPI) {
                         "${callInformation()}${parameterInformation()}"
