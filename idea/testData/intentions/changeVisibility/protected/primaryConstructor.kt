@@ -1,0 +1,1 @@
+class RegularClass <caret>private constructor()
