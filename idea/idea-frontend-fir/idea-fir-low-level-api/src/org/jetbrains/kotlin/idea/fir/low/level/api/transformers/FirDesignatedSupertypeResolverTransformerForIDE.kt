@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSu
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePhase
 
 internal class FirDesignatedSupertypeResolverTransformerForIDE(
-    private val designation: FirDeclarationDesignation,
+    private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
@@ -26,7 +27,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private val supertypeComputationSession = SupertypeComputationSession()
 
     override fun transformDeclaration() {
-        designation.ensurePhase(FirResolvePhase.SUPER_TYPES, exceptLast = true)
+        designation.ensurePhase(FirResolvePhase.SUPER_TYPES, exceptTarget = true)
 
         val resolver = FirSupertypeResolverVisitor(
             session = session,

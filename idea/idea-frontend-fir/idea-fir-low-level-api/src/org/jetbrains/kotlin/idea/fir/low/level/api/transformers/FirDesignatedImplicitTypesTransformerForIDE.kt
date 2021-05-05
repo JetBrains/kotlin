@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
 
 internal class FirDesignatedImplicitTypesTransformerForIDE(
-    private val firFile: FirFile,
-    designation: FirDeclarationDesignation,
+    private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession(),
@@ -36,17 +35,17 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
     )
 ) {
-    private val ideDeclarationTransformer = IDEDeclarationTransformer(designation.toDesignationIterator())
+    private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
     @Suppress("NAME_SHADOWING")
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
-        ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) { declaration, data ->
+        ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = ideDeclarationTransformer.needReplacePhase(firDeclaration)
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = ideDeclarationTransformer.needReplacePhase
 
     override fun transformDeclaration() {
-        firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextDependent)
+        designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextDependent)
     }
 }

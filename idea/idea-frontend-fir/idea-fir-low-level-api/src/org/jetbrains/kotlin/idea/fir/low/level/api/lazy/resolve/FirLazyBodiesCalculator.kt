@@ -24,7 +24,7 @@ internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesInside(element: FirElement, designation: FirDeclarationDesignation) {
         element.transform<FirElement, MutableList<FirDeclaration>>(
             FirLazyBodiesCalculatorTransformer,
-            designation.fullDesignation.toMutableList()
+            designation.toSequence(includeTarget = true).toMutableList()
         )
     }
 

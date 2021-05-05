@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 
 internal interface FirLazyTransformerForIDE {
     fun transformDeclaration()
@@ -16,10 +16,10 @@ internal interface FirLazyTransformerForIDE {
             override fun transformDeclaration() = Unit
         }
 
-        fun FirDeclarationDesignation.ensurePhase(firResolvePhase: FirResolvePhase, exceptLast: Boolean) {
-            val designationList = if (exceptLast) path else fullDesignation
-            designationList.forEach { firDeclaration ->
-                check (firDeclaration.resolvePhase >= firResolvePhase) {
+        fun FirDeclarationDesignationWithFile.ensurePhase(firResolvePhase: FirResolvePhase, exceptTarget: Boolean) {
+            val designationIterator = toSequence(includeTarget = !exceptTarget)
+            designationIterator.forEach { firDeclaration ->
+                check(firDeclaration.resolvePhase >= firResolvePhase) {
                     "Designation element phase required to be $firResolvePhase but element resolved to ${firDeclaration.resolvePhase}"
                 }
             }

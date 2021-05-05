@@ -196,7 +196,9 @@ internal class ConeTypeIdeRenderer(
         }
 
         val classToRender = classSymbolToRender.fir
-        val designation = classToRender.collectDesignation().fullDesignation
+        val designation = classToRender.collectDesignation()
+            .toSequence(includeTarget = true)
+            .toList()
 
         var typeParametersLeft = type.typeArguments.count()
         fun needToRenderTypeParameters(index: Int): Boolean {

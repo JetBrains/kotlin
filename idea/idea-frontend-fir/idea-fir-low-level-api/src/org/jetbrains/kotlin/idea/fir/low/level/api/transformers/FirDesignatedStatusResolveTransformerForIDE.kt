@@ -13,27 +13,43 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirDesignatedStatusResolveT
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePhase
 
 class FirDesignatedStatusResolveTransformerForIDE(
-    private val designation: FirDeclarationDesignation,
+    private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
 ): FirLazyTransformerForIDE {
+
+    private val firstItemInDesignation = designation.path.firstOrNull() ?: designation.declaration
 
     private fun resolveClass(targetClass: FirClass<*>) {
         val transformer = FirDesignatedStatusResolveTransformer(
             session = session,
             scopeSession = scopeSession,
-            designation = designation.fullDesignation.iterator(),
+            designation = designation.toSequence(includeTarget = true).iterator(),
             targetClass = targetClass,
             statusComputationSession = StatusComputationSession.Regular(),
             designationMapForLocalClasses = emptyMap(),
-            scopeForLocalClass = null)
+            scopeForLocalClass = null
+        )
 
-        val firstClass = designation.fullDesignation.first()
-        firstClass.transformSingle(transformer, null)
+        firstItemInDesignation.transformSingle(transformer, null)
+    }
+
+    private fun resolveTypeAlias(targetClass: FirTypeAlias) {
+        val transformer = FirDesignatedStatusResolveTransformer(
+            session = session,
+            scopeSession = scopeSession,
+            designation = designation.toSequence(includeTarget = true).iterator(),
+            targetClass = targetClass,
+            statusComputationSession = StatusComputationSession.Regular(),
+            designationMapForLocalClasses = emptyMap(),
+            scopeForLocalClass = null
+        )
+
+        firstItemInDesignation.transformSingle(transformer, null)
     }
 
     private fun resolveTopLevelMethod(targetCallable: FirCallableDeclaration<*>) {
@@ -50,11 +66,12 @@ class FirDesignatedStatusResolveTransformerForIDE(
         val transformer = object : FirDesignatedStatusResolveTransformer(
             session = session,
             scopeSession = scopeSession,
-            designation = designation.fullDesignation.iterator(),
+            designation = designation.toSequence(includeTarget = true).iterator(),
             targetClass = containingClass,
             statusComputationSession = StatusComputationSession.Regular(),
             designationMapForLocalClasses = emptyMap(),
-            scopeForLocalClass = null) {
+            scopeForLocalClass = null
+        ) {
 
             override fun <F : FirClass<F>> transformClass(
                 klass: FirClass<F>,
@@ -66,25 +83,25 @@ class FirDesignatedStatusResolveTransformerForIDE(
             }
         }
 
-        val firstClass = designation.fullDesignation.first()
-        firstClass.transformSingle(transformer, null)
+        firstItemInDesignation.transformSingle(transformer, null)
     }
 
     override fun transformDeclaration() {
-        designation.ensurePhase(FirResolvePhase.STATUS, exceptLast = true)
-        when(val resolveTarget = designation.declaration) {
+        designation.ensurePhase(FirResolvePhase.STATUS, exceptTarget = true)
+        when (val resolveTarget = designation.declaration) {
             is FirClass<*> -> resolveClass(resolveTarget)
+            is FirTypeAlias -> resolveTypeAlias(resolveTarget)
             is FirCallableDeclaration<*> -> {
                 val containingClass = designation.path.lastOrNull()
                 if (containingClass == null) {
-                    check(designation.fullDesignation.size == 1) { "Invalid designation - should be single element designation for top level declaration" }
+                    check(designation.path.isEmpty()) { "Invalid designation - should be single element designation for top level declaration" }
                     resolveTopLevelMethod(resolveTarget)
                 } else {
                     check(containingClass is FirClass<*>) { "Invalid designation - the parent of callable is not a class" }
                     resolveClassMember(containingClass, resolveTarget)
                 }
             }
-            else -> error("Declaration should be ${FirClass::class.simpleName} but given ${resolveTarget::class.simpleName}")
+            else -> error("Unexpected declaration to resolve ${resolveTarget::class.simpleName}")
         }
     }
 }

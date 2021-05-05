@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 
-abstract class ContextByDesignationCollector<C : Any>(private val designation: FirDeclarationDesignation, var firFile: FirFile) {
+abstract class ContextByDesignationCollector<C : Any>(private val designation: FirDeclarationDesignation) {
     private var context: C? = null
-    private val designationState = FirDesignationState(designation, firFile)
+    private val designationState = FirDesignationState(designation)
 
     protected abstract fun getCurrentContext(): C
     protected abstract fun goToNestedDeclaration(declaration: FirDeclaration)
@@ -37,7 +38,7 @@ abstract class ContextByDesignationCollector<C : Any>(private val designation: F
     }
 }
 
-private class FirDesignationState(val designation: FirDeclarationDesignation, val firFile: FirFile) {
+private class FirDesignationState(val designation: FirDeclarationDesignation) {
     /**
      * Holds current declaration index
      * if `currentIndex in [0, designation.path.lastIndex]` then current declaration is in path

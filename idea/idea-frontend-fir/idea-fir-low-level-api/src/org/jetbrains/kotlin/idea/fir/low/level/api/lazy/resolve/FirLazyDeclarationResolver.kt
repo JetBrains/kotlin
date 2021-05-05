@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -143,7 +144,7 @@ internal class FirLazyDeclarationResolver(
         resolveFileAnnotations(containerFirFile, moduleFileCache, scopeSession)
 
         val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider, moduleFileCache)
-        val designation = nonLocalDeclarationToResolve.collectDesignation()
+        val designation = nonLocalDeclarationToResolve.collectDesignation(containerFirFile)
 
         executeWithoutPCE {
             calculateLazyBodies(firDeclarationToResolve, designation)
@@ -156,7 +157,6 @@ internal class FirLazyDeclarationResolver(
             if (currentPhase.pluginPhase) continue
             if (checkPCE) checkCanceled()
             runLazyResolvePhase(
-                containerFirFile,
                 currentPhase,
                 scopeSession,
                 towerDataContextCollector,
@@ -167,20 +167,18 @@ internal class FirLazyDeclarationResolver(
     }
 
     private fun runLazyResolvePhase(
-        containerFirFile: FirFile,
         phase: FirResolvePhase,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
-        designation: FirDeclarationDesignation
+        designation: FirDeclarationDesignationWithFile
     ) {
-        if (designation.fullDesignation.all { it.resolvePhase >= phase }) {
+        if (designation.toSequence(includeTarget = true).all { it.resolvePhase >= phase }) {
             return
         }
 
         val transformer = phase.createLazyTransformer(
             designation,
-            containerFirFile,
             scopeSession,
             towerDataContextCollector,
             firProviderInterceptor,
@@ -192,46 +190,41 @@ internal class FirLazyDeclarationResolver(
     }
 
     private fun FirResolvePhase.createLazyTransformer(
-        designation: FirDeclarationDesignation,
-        containerFirFile: FirFile,
+        designation: FirDeclarationDesignationWithFile,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
     ): FirLazyTransformerForIDE = when (this) {
         FirResolvePhase.SUPER_TYPES -> FirDesignatedSupertypeResolverTransformerForIDE(
             designation,
-            containerFirFile.moduleData.session,
+            designation.firFile.moduleData.session,
             scopeSession,
             firProviderInterceptor,
         )
         FirResolvePhase.SEALED_CLASS_INHERITORS -> FirLazyTransformerForIDE.EMPTY
         FirResolvePhase.TYPES -> FirDesignatedTypeResolverTransformerForIDE(
-            containerFirFile,
             designation,
-            containerFirFile.moduleData.session,
+            designation.firFile.moduleData.session,
             scopeSession,
         )
         FirResolvePhase.STATUS -> FirDesignatedStatusResolveTransformerForIDE(
             designation,
-            containerFirFile.moduleData.session,
+            designation.firFile.moduleData.session,
             scopeSession
         )
         FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
-            containerFirFile,
             designation,
-            containerFirFile.moduleData.session,
+            designation.firFile.moduleData.session,
             scopeSession,
         )
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> FirDesignatedImplicitTypesTransformerForIDE(
-            containerFirFile,
             designation,
-            containerFirFile.moduleData.session,
+            designation.firFile.moduleData.session,
             scopeSession
         )
         FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
-            containerFirFile,
             designation,
-            containerFirFile.moduleData.session,
+            designation.firFile.moduleData.session,
             scopeSession,
             towerDataContextCollector,
             firProviderInterceptor

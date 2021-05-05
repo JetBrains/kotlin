@@ -11,26 +11,25 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
 
 internal class FirDesignatedContractsResolveTransformerForIDE(
-    private val firFile: FirFile,
-    designation: FirDeclarationDesignation,
+    private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
 ) : FirLazyTransformerForIDE, FirContractResolveTransformer(session, scopeSession) {
-    private val ideDeclarationTransformer = IDEDeclarationTransformer(designation.toDesignationIterator())
+    private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
     @Suppress("NAME_SHADOWING")
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
-        ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) { declaration, data ->
+        ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             super.transformDeclarationContent(declaration, data)
         }
 
 
-    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = ideDeclarationTransformer.needReplacePhase(firDeclaration)
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = ideDeclarationTransformer.needReplacePhase
 
     override fun transformDeclaration() {
-        firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextDependent)
+        designation.firFile.transform<FirFile, ResolutionMode>(this, ResolutionMode.ContextDependent)
     }
 }

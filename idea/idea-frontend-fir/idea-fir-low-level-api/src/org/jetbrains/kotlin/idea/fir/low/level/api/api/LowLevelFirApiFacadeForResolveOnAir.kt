@@ -61,16 +61,14 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
     }
 
-    private fun <T : KtElement> onAirResolveElement(
+    fun <T : KtElement> onAirResolveElement(
         state: FirModuleResolveState,
         place: T,
         elementToResolve: T,
-    ): FirModuleResolveState {
+    ): FirElement {
         require(state is FirModuleResolveStateImpl)
         require(place.isPhysical)
-        require(!elementToResolve.isPhysical)
 
-        val collector = FirTowerDataContextAllElementsCollector()
         val declaration = runResolveBodyResolveOnAir(
             state = state,
             replacement = RawFirReplacement(place, elementToResolve),
@@ -88,10 +86,9 @@ object LowLevelFirApiFacadeForResolveOnAir {
                 element.acceptChildren(this)
             }
         }
-        declaration.accept(expressionLocator)
 
-        val recordedMap = FirElementsRecorder.recordElementsFrom(declaration, FirElementsRecorder())
-        return FirModuleResolveStateDepended(state, collector, recordedMap)
+        declaration.accept(expressionLocator)
+        return expressionLocator.result ?: error("Resolved on-air element was not found in containing declaration")
     }
 
     fun onAirGetTowerContextProvider(
