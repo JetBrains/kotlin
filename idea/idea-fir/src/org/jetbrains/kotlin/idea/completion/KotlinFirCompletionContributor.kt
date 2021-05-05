@@ -143,10 +143,11 @@ private class KotlinCommonCompletionProvider(
     fun addCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
         val isJvmModule = TargetPlatformDetector.getPlatform(originalFile).isJvm()
+        val project = originalFile.project
 
         recordOriginalFile(parameters)
 
-        FirKeywordCompletion.completeKeywords(result, parameters.position, prefixMatcher, isJvmModule = isJvmModule)
+        FirKeywordCompletion.completeKeywords(result, parameters, parameters.position, prefixMatcher, project, isJvmModule = isJvmModule)
 
         val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
         val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression } ?: return

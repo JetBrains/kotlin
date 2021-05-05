@@ -20,12 +20,10 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
@@ -581,10 +579,16 @@ class BasicCompletionSession(
             )
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
-            val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
             keywordCompletion.complete(expression ?: parameters.position, resultSet.prefixMatcher, isJvmModule) { lookupElement ->
                 val keyword = lookupElement.lookupString
                 if (keyword in keywordsToSkip) return@complete
+
+                val completionKeywordHandler = DefaultCompletionKeywordHandlers.defaultHandlers.getHandlerForKeyword(keyword)
+                if (completionKeywordHandler != null) {
+                    val lookups = completionKeywordHandler.createLookups(parameters, expression, lookupElement, project)
+                    collector.addElements(lookups)
+                    return@complete
+                }
 
                 when (keyword) {
                     // if "this" is parsed correctly in the current context - insert it and all this@xxx items
@@ -610,12 +614,6 @@ class BasicCompletionSession(
                         }
                     }
 
-                    "break", "continue" -> {
-                        if (expression != null) {
-                            collector.addElements(breakOrContinueExpressionItems(expression, keyword))
-                        }
-                    }
-
                     "override" -> {
                         collector.addElement(lookupElement)
 
@@ -627,40 +625,6 @@ class BasicCompletionSession(
                             collector.addElement(lookupElement)
                         }
                     }
-
-                    "get" -> {
-                        collector.addElement(lookupElement)
-
-                        if (!isUseSiteAnnotationTarget) {
-                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "val v:Int get()=caret"))
-                            collector.addElement(
-                                createKeywordConstructLookupElement(
-                                    project,
-                                    keyword,
-                                    "val v:Int get(){caret}",
-                                    trimSpacesAroundCaret = true
-                                )
-                            )
-                        }
-                    }
-
-                    "set" -> {
-                        collector.addElement(lookupElement)
-
-                        if (!isUseSiteAnnotationTarget) {
-                            collector.addElement(createKeywordConstructLookupElement(project, keyword, "var v:Int set(value)=caret"))
-                            collector.addElement(
-                                createKeywordConstructLookupElement(
-                                    project,
-                                    keyword,
-                                    "var v:Int set(value){caret}",
-                                    trimSpacesAroundCaret = true
-                                )
-                            )
-                        }
-                    }
-
-                    "contract" -> { }
 
                     else -> collector.addElement(lookupElement)
                 }

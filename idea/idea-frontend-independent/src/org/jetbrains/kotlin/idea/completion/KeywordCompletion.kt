@@ -48,6 +48,7 @@ open class KeywordLookupObject {
     override fun hashCode(): Int = javaClass.hashCode()
 }
 
+
 class KeywordCompletion(private val languageVersionSettingProvider: LanguageVersionSettingProvider) {
     interface LanguageVersionSettingProvider {
         fun getLanguageVersionSetting(element: PsiElement): LanguageVersionSettings
