@@ -1,6 +1,12 @@
 import java.lang.Runnable
 import java.lang.Thread
 
+public final class ObjectsKt {
+    private static final var topRunnable: java.lang.Runnable = [!] FirUnknownKotlinExpression (OBJECT_LITERAL)
+    public static final fun getTopRunnable() : java.lang.Runnable = UastEmptyExpression
+    public static final fun main() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}
+
 public final class RunnableManager {
     public static final var INSTANCE: RunnableManager
     private final var tasks: java.util.List<java.lang.Runnable> = [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
