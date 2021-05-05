@@ -65,6 +65,11 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         val superTypes = (listOf(clazz.superName) + clazz.interfaces).filterNotNull()
 
         return buildString {
+            if (renderAnnotations) {
+                clazz.signature?.let {
+                    append(it).append("\n")
+                }
+            }
             renderVisibilityModifiers(clazz.access)
             renderModalityModifiers(clazz.access)
             append(if ((clazz.access and ACC_INTERFACE) != 0) "interface " else "class ")
@@ -92,6 +97,11 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
     }
 
     private fun renderField(field: FieldNode, renderAnnotations: Boolean) = buildString {
+        if (renderAnnotations) {
+            field.signature?.let {
+                append(it).append("\n")
+            }
+        }
         renderVisibilityModifiers(field.access)
         renderModalityModifiers(field.access)
         append(Type.getType(field.desc).className).append(' ')
@@ -126,6 +136,12 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         showLocalVariables: Boolean,
         renderAnnotations: Boolean
     ) = buildString {
+        if (renderAnnotations) {
+            method.signature?.let {
+                append(it).append("\n")
+            }
+        }
+
         renderVisibilityModifiers(method.access)
         renderModalityModifiers(method.access)
         val (returnType, parameterTypes) = with(Type.getMethodType(method.desc)) { returnType to argumentTypes }
@@ -140,6 +156,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         if (renderAnnotations) {
             val textifier = Textifier()
             val visitor = TraceMethodVisitor(textifier)
+
             method.visibleAnnotations?.forEach {
                 it.accept(visitor.visitAnnotation(it.desc, true))
             }

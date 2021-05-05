@@ -14,6 +14,7 @@ public abstract interface foo/Ann4 : java/lang/Object, java/lang/annotation/Anno
 
 }
 
+<T:Ljava/lang/Object;>Ljava/lang/Object;
 public final class foo/Bar : java/lang/Object {
     public void <init>()
 }
@@ -21,22 +22,26 @@ public final class foo/Bar : java/lang/Object {
 public final class foo/Kotlin : java/lang/Object {
     public void <init>()
 
+    (Lfoo/Outer$NestedStatic<Ljava/lang/String;>;)V
     public final void foo(foo.Outer$NestedStatic s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, 0;
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
+    ()Lfoo/Outer$NestedStatic<Ljava/lang/String;>;
     public final foo.Outer$NestedStatic foo()
       @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
       @Lfoo/Ann2;([]) : METHOD_RETURN, 0;
 
+    ([Lfoo/Outer$NestedStatic<Ljava/lang/String;>;)V
     public final void fooArray(foo.Outer$NestedStatic[] s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, [
       @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, [0;
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
+    ()[Lfoo/Outer$NestedStatic<Ljava/lang/String;>;
     public final foo.Outer$NestedStatic[] fooArray()
       @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
@@ -47,19 +52,23 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
+    ()[Lfoo/Outer$NestedStatic<Ljava/lang/String;>;
     public final foo.Outer$NestedStatic[] fooArrayOut()
       @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
 
+    <T:Ljava/lang/Object;>(Lfoo/Bar<-TT;>;)V
     public final void fooGenericIn(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
+    <T:Ljava/lang/Object;>(Lfoo/Bar<+TT;>;)V
     public final void fooGenericOut(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }
 
+<T:Ljava/lang/Object;>Ljava/lang/Object;
 public final class foo/Outer$NestedStatic : java/lang/Object {
     public void <init>()
 }
