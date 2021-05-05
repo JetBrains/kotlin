@@ -373,6 +373,24 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReference extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        @TestMetadata("adaptedReference.kt")
+        public void testAdaptedReference() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/callableReference/adaptedReference.kt");
+        }
+
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -767,6 +785,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("privateSuspendFun.kt")
         public void testPrivateSuspendFun() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/coroutines/privateSuspendFun.kt");
+        }
+
+        @TestMetadata("suspendConversion.kt")
+        public void testSuspendConversion() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/suspendConversion.kt");
         }
 
         @TestMetadata("suspendImpl.kt")
