@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public final class SuspendConversionKt {
+    // source: 'suspendConversion.kt'
+    public final static method myApply(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static method test(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
+}
