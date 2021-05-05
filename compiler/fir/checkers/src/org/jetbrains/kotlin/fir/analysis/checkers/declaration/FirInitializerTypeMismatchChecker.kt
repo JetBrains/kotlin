@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isComponentCall
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -25,7 +25,7 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker() {
         val initializer = declaration.initializer ?: return
         val source = declaration.source ?: return
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) return
-        if (initializer.isComponentCall) return
+        if (initializer is FirComponentCall) return
         if (declaration.returnTypeRef.source?.kind != FirRealSourceElementKind) return
         val propertyType = declaration.returnTypeRef.coneType
         val expressionType = initializer.typeRef.coneTypeSafe<ConeKotlinType>() ?: return

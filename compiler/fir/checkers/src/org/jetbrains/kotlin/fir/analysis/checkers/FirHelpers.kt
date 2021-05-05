@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirComponentCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
@@ -290,16 +288,6 @@ fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? 
     return null
 }
 
-/**
- * Returns KtModifierToken by Modality
- */
-fun Modality.toToken(): KtModifierKeywordToken = when (this) {
-    Modality.FINAL -> KtTokens.FINAL_KEYWORD
-    Modality.SEALED -> KtTokens.SEALED_KEYWORD
-    Modality.OPEN -> KtTokens.OPEN_KEYWORD
-    Modality.ABSTRACT -> KtTokens.ABSTRACT_KEYWORD
-}
-
 val FirFunctionCall.isIterator
     get() = this.calleeReference.name.asString() == "<iterator>"
 
@@ -394,15 +382,16 @@ private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinTy
 
 fun FirMemberDeclaration.isInlineOnly(): Boolean = isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)
 
-val FirExpression.isComponentCall
-    get() = this is FirComponentCall
-
 fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
     return AbstractTypeChecker.isSubtypeOf(context, subtype, supertype)
             || isSubtypeOfForFunctionalTypeReturningUnit(context.session.typeContext, subtype, supertype)
 }
 
-fun isSubtypeOfForFunctionalTypeReturningUnit(context: ConeInferenceContext, subtype: ConeKotlinType, supertype: ConeKotlinType): Boolean {
+private fun isSubtypeOfForFunctionalTypeReturningUnit(
+    context: ConeInferenceContext,
+    subtype: ConeKotlinType,
+    supertype: ConeKotlinType
+): Boolean {
     if (!supertype.isBuiltinFunctionalType(context.session)) return false
     val functionalTypeReturnType = supertype.typeArguments.lastOrNull()
     if ((functionalTypeReturnType as? ConeClassLikeType)?.isUnit == true) {
@@ -485,7 +474,7 @@ fun FirCallableMemberDeclaration<*>.getImplementationStatus(sessionHolder: Sessi
 }
 
 
-fun FirIntersectionCallableSymbol.subjectToManyNotImplemented(sessionHolder: SessionHolder): Boolean {
+private fun FirIntersectionCallableSymbol.subjectToManyNotImplemented(sessionHolder: SessionHolder): Boolean {
     var nonAbstractCountInClass = 0
     var nonAbstractCountInInterface = 0
     var abstractCountInInterface = 0
