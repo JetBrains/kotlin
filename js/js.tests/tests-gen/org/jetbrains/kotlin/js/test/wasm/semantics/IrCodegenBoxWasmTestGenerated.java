@@ -1363,11 +1363,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
 
-            @TestMetadata("arrayConstructorArgument.kt")
-            public void testArrayConstructorArgument() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/bound/arrayConstructorArgument.kt");
-            }
-
             @TestMetadata("captureVarInInitBlock.kt")
             public void testCaptureVarInInitBlock() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/captureVarInInitBlock.kt");
