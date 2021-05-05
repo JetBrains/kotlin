@@ -1,4 +1,3 @@
-// FIR_COMPARISON
 var v: Int
     get(){}
     set(v<caret>)

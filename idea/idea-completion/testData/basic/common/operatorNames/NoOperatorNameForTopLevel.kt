@@ -1,4 +1,3 @@
-// FIR_COMPARISON
 operator fun <caret>() {
 
 }
