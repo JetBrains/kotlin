@@ -97,7 +97,10 @@ open class ChangeVisibilityModifierIntention protected constructor(val modifier:
         else -> null
     }
 
-    class Public : ChangeVisibilityModifierIntention(KtTokens.PUBLIC_KEYWORD), HighPriorityAction
+    class Public : ChangeVisibilityModifierIntention(KtTokens.PUBLIC_KEYWORD), HighPriorityAction {
+        override fun applicabilityRange(element: KtDeclaration): TextRange? =
+            if (element.canBePublic()) super.applicabilityRange(element) else null
+    }
 
     class Private : ChangeVisibilityModifierIntention(KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
         override fun applicabilityRange(element: KtDeclaration): TextRange? =

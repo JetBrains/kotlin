@@ -14,7 +14,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.FrontendInternals
@@ -358,6 +357,8 @@ fun KtModifierListOwner.canBePrivate(): Boolean {
     return true
 }
 
+fun KtModifierListOwner.canBePublic(): Boolean = !isSealedClassConstructor()
+
 fun KtModifierListOwner.canBeProtected(): Boolean {
     val parent = when (this) {
         is KtPropertyAccessor -> this.property.parent
@@ -376,11 +377,17 @@ fun KtModifierListOwner.canBeInternal(): Boolean {
         val objectDeclaration = getStrictParentOfType<KtObjectDeclaration>() ?: return false
         if (objectDeclaration.isCompanion() && hasJvmFieldAnnotation()) return false
     }
-    return !isAnnotationClassPrimaryConstructor()
+    return !isAnnotationClassPrimaryConstructor() && !isSealedClassConstructor()
 }
 
 private fun KtModifierListOwner.isAnnotationClassPrimaryConstructor(): Boolean =
     this is KtPrimaryConstructor && (this.parent as? KtClass)?.hasModifier(KtTokens.ANNOTATION_KEYWORD) ?: false
+
+private fun KtModifierListOwner.isSealedClassConstructor(): Boolean {
+    if (this !is KtConstructor<*>) return false
+    val ktClass = getContainingClassOrObject().safeAs<KtClass>() ?: return false
+    return ktClass.isSealed()
+}
 
 fun KtClass.isInheritable(): Boolean {
     return when (getModalityFromDescriptor()) {

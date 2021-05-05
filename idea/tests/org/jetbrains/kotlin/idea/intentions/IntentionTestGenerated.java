@@ -3402,6 +3402,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/changeVisibility/internal/notForAnnotationClassPrimaryConstructor.kt");
             }
 
+            @TestMetadata("notForSealedPrimaryConstructor.kt")
+            public void testNotForSealedPrimaryConstructor() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/internal/notForSealedPrimaryConstructor.kt");
+            }
+
+            @TestMetadata("notForSealedSecondaryConstructor.kt")
+            public void testNotForSealedSecondaryConstructor() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/internal/notForSealedSecondaryConstructor.kt");
+            }
+
             @TestMetadata("propertySetter.kt")
             public void testPropertySetter() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/internal/propertySetter.kt");
@@ -3724,6 +3734,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("destructuringPropertyException.kt")
             public void testDestructuringPropertyException() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/public/destructuringPropertyException.kt");
+            }
+
+            @TestMetadata("notForSealedPrimaryConstructor.kt")
+            public void testNotForSealedPrimaryConstructor() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/public/notForSealedPrimaryConstructor.kt");
+            }
+
+            @TestMetadata("notForSealedSecondaryConstructor.kt")
+            public void testNotForSealedSecondaryConstructor() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/public/notForSealedSecondaryConstructor.kt");
             }
 
             @TestMetadata("primaryConstructor.kt")
