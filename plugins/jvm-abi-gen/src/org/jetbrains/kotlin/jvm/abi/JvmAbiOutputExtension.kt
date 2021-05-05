@@ -108,7 +108,7 @@ class JvmAbiOutputExtension(
                                 val delegate = super.visitAnnotation(descriptor, visible)
                                 if (descriptor != JvmAnnotationNames.METADATA_DESC)
                                     return delegate
-                                return abiMetadataProcessor(internalName, abiClassInfos.keys, delegate)
+                                return abiMetadataProcessor(delegate)
                             }
 
                             override fun visitEnd() {
