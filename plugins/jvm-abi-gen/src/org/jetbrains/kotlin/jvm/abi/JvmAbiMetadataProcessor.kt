@@ -18,7 +18,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  * Wrap the visitor for a Kotlin Metadata annotation to strip out private and local
  * functions, properties, and type aliases as well as local delegated properties.
  */
-fun abiMetadataProcessor(internalName: String, publicClasses: Set<String>, annotationVisitor: AnnotationVisitor): AnnotationVisitor =
+fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
         // update the metadata version if we encounter older metadata annotations.
@@ -27,7 +27,7 @@ fun abiMetadataProcessor(internalName: String, publicClasses: Set<String>, annot
         val newHeader = when (val metadata = KotlinClassMetadata.read(header)) {
             is KotlinClassMetadata.Class -> {
                 val writer = KotlinClassMetadata.Class.Writer()
-                metadata.accept(AbiKmClassVisitor(internalName, publicClasses, writer))
+                metadata.accept(AbiKmClassVisitor(writer))
                 writer.write(metadataVersion, header.extraInt).header
             }
             is KotlinClassMetadata.FileFacade -> {
@@ -121,7 +121,7 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
-private class AbiKmClassVisitor(private val internalName: String, private val publicClasses: Set<String>, delegate: KmClassVisitor) : KmClassVisitor(delegate) {
+private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(delegate) {
     override fun visitConstructor(flags: Flags): KmConstructorVisitor? {
         if (!isPrivateDeclaration(flags))
             return super.visitConstructor(flags)
@@ -138,16 +138,6 @@ private class AbiKmClassVisitor(private val internalName: String, private val pu
         if (!isPrivateDeclaration(flags))
             return super.visitProperty(flags, name, getterFlags, setterFlags)
         return null
-    }
-
-    override fun visitNestedClass(name: String) {
-        if ("$internalName\$$name" in publicClasses)
-            super.visitNestedClass(name)
-    }
-
-    override fun visitCompanionObject(name: String) {
-        if ("$internalName\$$name" in publicClasses)
-            super.visitCompanionObject(name)
     }
 
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
