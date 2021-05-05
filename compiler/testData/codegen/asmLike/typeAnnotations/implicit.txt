@@ -1,3 +1,4 @@
+Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;
 final class foo/Kotlin$foo4$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
     final foo.Kotlin this$0
 

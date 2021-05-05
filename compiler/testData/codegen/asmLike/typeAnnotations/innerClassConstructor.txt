@@ -1,6 +1,7 @@
 public final class foo/Kotlin$Inner : java/lang/Object {
     final foo.Kotlin this$0
 
+    (Ljava/lang/String;)V
     public void <init>(foo.Kotlin this$0, java.lang.String s)
       @Lfoo/TypeAnn;([]) : METHOD_FORMAL_PARAMETER 0, null
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0

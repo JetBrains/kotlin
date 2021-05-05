@@ -1,9 +1,11 @@
 final class foo/Kotlin$A : foo/Kotlin {
+    ()V
     void <init>(java.lang.String $enum$name, int $enum$ordinal)
 
     public final void foo()
 }
 
+Ljava/lang/Enum<Lfoo/Kotlin;>;
 public class foo/Kotlin : java/lang/Enum {
     private final static foo.Kotlin[] $VALUES
 
@@ -11,6 +13,7 @@ public class foo/Kotlin : java/lang/Enum {
 
     static void <clinit>()
 
+    (Ljava/lang/String;)V
     private void <init>(java.lang.String $enum$name, int $enum$ordinal, java.lang.String s)
       @Lfoo/TypeAnn;([]) : METHOD_FORMAL_PARAMETER 0, null
 
