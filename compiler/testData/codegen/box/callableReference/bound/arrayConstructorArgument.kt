@@ -1,5 +1,6 @@
 // WITH_RUNTIME
-
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BINDING_RECEIVERS
 class C(val x: String) {
     fun foo(i: Int): Char = x[i]
 }
