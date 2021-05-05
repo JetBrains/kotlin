@@ -131,7 +131,7 @@ data class KotlinProjectStructureMetadata(
 
 internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjectStructureMetadata? {
     val topLevelExtensionOrNull = project.topLevelExtensionOrNull
-    require(topLevelExtensionOrNull is KotlinMultiplatformExtension) { "this function only works with the stable plugin" }
+    require(topLevelExtensionOrNull !is KotlinPm20ProjectExtension) { "this function only works with the stable plugin" }
 
     val sourceSetsWithMetadataCompilations =
         project.multiplatformExtensionOrNull?.targets?.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME)?.compilations?.associate {
