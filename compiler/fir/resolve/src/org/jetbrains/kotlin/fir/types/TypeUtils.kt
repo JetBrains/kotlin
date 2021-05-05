@@ -56,11 +56,11 @@ fun ConeDefinitelyNotNullType.Companion.create(original: ConeKotlinType): ConeDe
     }
 }
 
-fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(): ConeKotlinType {
+fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(typeContext: ConeInferenceContext): ConeKotlinType {
     if (this is ConeIntersectionType) {
-        return ConeIntersectionType(intersectedTypes.map { it.makeConeTypeDefinitelyNotNullOrNotNull() })
+        return ConeIntersectionType(intersectedTypes.map { it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext) })
     }
-    return ConeDefinitelyNotNullType.create(this) ?: this.withNullability(ConeNullability.NOT_NULL)
+    return ConeDefinitelyNotNullType.create(this) ?: this.withNullability(ConeNullability.NOT_NULL, typeContext)
 }
 
 fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {
@@ -95,7 +95,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
 
 fun <T : ConeKotlinType> T.withNullability(
     nullability: ConeNullability,
-    typeContext: ConeInferenceContext? = null,
+    typeContext: ConeInferenceContext,
     attributes: ConeAttributes = this.attributes,
 ): T {
     if (this.nullability == nullability && this.attributes == attributes) {
@@ -123,7 +123,7 @@ fun <T : ConeKotlinType> T.withNullability(
         is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor, attributes)
         is ConeIntersectionType -> when (nullability) {
             ConeNullability.NULLABLE -> this.mapTypes {
-                it.withNullability(nullability)
+                it.withNullability(nullability, typeContext)
             }
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> this
@@ -140,7 +140,7 @@ fun <T : ConeKotlinType> T.withNullability(
 }
 
 fun coneFlexibleOrSimpleType(
-    typeContext: ConeInferenceContext?,
+    typeContext: ConeInferenceContext,
     lowerBound: ConeKotlinType,
     upperBound: ConeKotlinType,
 ): ConeKotlinType {
@@ -151,15 +151,8 @@ fun coneFlexibleOrSimpleType(
         return coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
     }
     return when {
-        typeContext != null && AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> {
-            lowerBound
-        }
-        typeContext == null && lowerBound == upperBound -> {
-            lowerBound
-        }
-        else -> {
-            ConeFlexibleType(lowerBound, upperBound)
-        }
+        AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> lowerBound
+        else -> ConeFlexibleType(lowerBound, upperBound)
     }
 }
 

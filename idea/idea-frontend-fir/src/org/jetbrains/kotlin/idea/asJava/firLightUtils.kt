@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -76,8 +77,13 @@ internal fun KtNamedClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElemen
     return types.coneType.asPsiType(session, firRef.resolveState, TypeMappingMode.DEFAULT, psiElement)
 }
 
-private class AnonymousTypesSubstitutor(private val session: FirSession, private val state: FirModuleResolveState) :
-    AbstractConeSubstitutor() {
+private class AnonymousTypesSubstitutor(
+    private val session: FirSession,
+    private val state: FirModuleResolveState
+) : AbstractConeSubstitutor() {
+    override val typeInferenceContext: ConeInferenceContext
+        get() = session.inferenceComponents.ctx
+
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
 
         if (type !is ConeClassLikeType) return null

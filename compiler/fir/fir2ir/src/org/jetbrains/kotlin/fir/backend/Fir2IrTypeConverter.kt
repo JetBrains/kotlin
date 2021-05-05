@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.typeContext
@@ -222,6 +223,9 @@ class Fir2IrTypeConverter(
     private fun approximateType(type: ConeKotlinType): ConeKotlinType {
         if (type is ConeClassLikeType && type.typeArguments.isEmpty()) return type
         val substitutor = object : AbstractConeSubstitutor() {
+            override val typeInferenceContext: ConeInferenceContext
+                get() = session.inferenceComponents.ctx
+
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 return if (type is ConeIntersectionType) {
                     type.alternativeType?.let { substituteOrSelf(it) }

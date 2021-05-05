@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolv
 import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -274,7 +275,7 @@ private fun computeRawProjection(
     session: FirSession,
     parameter: FirTypeParameter,
     attr: TypeComponentPosition,
-    erasedUpperBound: ConeKotlinType = parameter.getErasedUpperBound()
+    erasedUpperBound: ConeKotlinType = parameter.getErasedUpperBound(session)
 ) = when (attr) {
     // Raw(List<T>) => (List<Any?>..List<*>)
     // Raw(Enum<T>) => (Enum<Enum<*>>..Enum<out Enum<*>>)
@@ -306,6 +307,7 @@ private fun computeRawProjection(
 // ErasedUpperBound(T : A) = A // UpperBound(T) is a type A without arguments
 // ErasedUpperBound(T : F) = UpperBound(F) // UB(T) is another type parameter F
 private fun FirTypeParameter.getErasedUpperBound(
+    session: FirSession,
     // Calculation of `potentiallyRecursiveTypeParameter.upperBounds` may recursively depend on `this.getErasedUpperBound`
     // E.g. `class A<T extends A, F extends A>`
     // To prevent recursive calls return defaultValue() instead
@@ -318,10 +320,11 @@ private fun FirTypeParameter.getErasedUpperBound(
 
     val firstUpperBound = this.bounds.first().coneType
 
-    return getErasedVersionOfFirstUpperBound(firstUpperBound, mutableSetOf(this, potentiallyRecursiveTypeParameter), defaultValue)
+    return getErasedVersionOfFirstUpperBound(session, firstUpperBound, mutableSetOf(this, potentiallyRecursiveTypeParameter), defaultValue)
 }
 
 private fun getErasedVersionOfFirstUpperBound(
+    session: FirSession,
     firstUpperBound: ConeKotlinType,
     alreadyVisitedParameters: MutableSet<FirTypeParameter?>,
     defaultValue: () -> ConeKotlinType
@@ -332,18 +335,18 @@ private fun getErasedVersionOfFirstUpperBound(
 
         is ConeFlexibleType -> {
             val lowerBound =
-                getErasedVersionOfFirstUpperBound(firstUpperBound.lowerBound, alreadyVisitedParameters, defaultValue)
+                getErasedVersionOfFirstUpperBound(session, firstUpperBound.lowerBound, alreadyVisitedParameters, defaultValue)
                     .lowerBoundIfFlexible()
             if (firstUpperBound.upperBound is ConeTypeParameterType) {
                 // Avoid exponential complexity
                 ConeFlexibleType(
                     lowerBound,
-                    lowerBound.withNullability(ConeNullability.NULLABLE)
+                    lowerBound.withNullability(ConeNullability.NULLABLE, session.inferenceComponents.ctx)
                 )
             } else {
                 ConeFlexibleType(
                     lowerBound,
-                    getErasedVersionOfFirstUpperBound(firstUpperBound.upperBound, alreadyVisitedParameters, defaultValue)
+                    getErasedVersionOfFirstUpperBound(session, firstUpperBound.upperBound, alreadyVisitedParameters, defaultValue)
                 )
             }
         }
@@ -352,7 +355,7 @@ private fun getErasedVersionOfFirstUpperBound(
 
             if (alreadyVisitedParameters.add(current)) {
                 val nextUpperBound = current.bounds.first().coneType
-                getErasedVersionOfFirstUpperBound(nextUpperBound, alreadyVisitedParameters, defaultValue)
+                getErasedVersionOfFirstUpperBound(session, nextUpperBound, alreadyVisitedParameters, defaultValue)
             } else {
                 defaultValue()
             }
@@ -433,7 +436,7 @@ private fun FirRegularClass.createRawArguments(
     defaultArgs: List<ConeStarProjection>,
     position: TypeComponentPosition
 ): List<ConeTypeProjection> = typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
-    val erasedUpperBound = typeParameter.getErasedUpperBound {
+    val erasedUpperBound = typeParameter.getErasedUpperBound(session) {
         defaultType().withArguments(defaultArgs.toTypedArray())
     }
     computeRawProjection(session, typeParameter, position, erasedUpperBound)

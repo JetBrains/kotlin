@@ -228,12 +228,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        return makeConeTypeDefinitelyNotNullOrNotNull()
+        return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext)
     }
 
     override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        return makeConeTypeDefinitelyNotNullOrNotNull() as SimpleTypeMarker
+        return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext) as SimpleTypeMarker
     }
 
     override fun createCapturedType(

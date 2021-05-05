@@ -665,6 +665,9 @@ class CallAndReferenceGenerator(
     }
 
     private val starProjectionApproximator = object : AbstractConeSubstitutor() {
+        override val typeInferenceContext: ConeInferenceContext
+            get() = session.inferenceComponents.ctx
+
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
             if (type !is ConeClassLikeType || type.typeArguments.none { it == ConeStarProjection }) return null
             val fir = type.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner ?: return null

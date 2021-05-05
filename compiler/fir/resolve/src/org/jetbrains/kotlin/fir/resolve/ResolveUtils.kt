@@ -299,7 +299,9 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(nullableReceiver
 
     val expandedReceiverType = if (receiverType is ConeClassLikeType) receiverType.fullyExpandedType(session) else receiverType
 
-    val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull())
+    val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(
+        expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.inferenceComponents.ctx)
+    )
     replaceTypeRef(resolvedTypeRef)
     session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, null)
 }
