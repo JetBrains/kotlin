@@ -50,7 +50,7 @@ inline val FirCall.resolvedArgumentMapping: Map<FirExpression, FirValueParameter
         else -> null
     }
 
-inline val FirCall.argumentMapping: Map<FirExpression, FirValueParameter>?
+inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
         is FirResolvedArgumentList -> argumentList.mapping
         is FirPartiallyResolvedArgumentList -> argumentList.mapping
