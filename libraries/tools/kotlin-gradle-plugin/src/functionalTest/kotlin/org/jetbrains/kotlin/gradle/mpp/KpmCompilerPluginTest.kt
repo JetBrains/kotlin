@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:Suppress("invisible_reference", "invisible_member", "FunctionName")
+
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.Project
@@ -14,8 +15,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerPluginData
 import org.jetbrains.kotlin.project.model.*
-import org.junit.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class KpmCompilerPluginTest {
     @Test
@@ -83,11 +83,46 @@ class KpmCompilerPluginTest {
         }
     }
 
+    @Test
+    fun `compiler plugins should be applied lazily`() {
+        val project = buildProjectWithKPM {
+            plugins.apply(TestPluginWithListeners::class.java)
+
+            projectModel {
+                main {
+                    jvm
+                }
+            }
+        }
+
+        with(TestPluginWithListeners.Companion) {
+            onGetKpmCompilerPlugin = { throw AssertionError("KPM Compiler Plugin should not be obtained on project evaluate") }
+            onPluginDataGet = { throw AssertionError("Plugin data should not be requested on project evaluate") }
+        }
+        project.evaluate()
+
+        // Getting task shouldn't trigger plugin initialization as well (lazy all the way)
+        val task = project.tasks.getByName("compileKotlinJvm") as AbstractKotlinCompile<*>
+
+        var pluginInitialized = false
+        var pluginDataObtainCount = 0
+        with(TestPluginWithListeners.Companion) {
+            onGetKpmCompilerPlugin = { pluginInitialized = true }
+            onPluginDataGet = { pluginDataObtainCount++ }
+        }
+
+        // Upon pluginData request plugins should be initialized and obtained only once
+        repeat(5) { task.kotlinPluginData!!.get() }
+
+        assertTrue(pluginInitialized)
+        assertEquals(1, pluginDataObtainCount)
+    }
+
     private fun Project.pluginDataOfTask(taskName: String) = this
         .tasks
         .getByName(taskName)
         .let {
-            when(it) {
+            when (it) {
                 is AbstractKotlinCompile<*> -> it.kotlinPluginData
                 is AbstractKotlinNativeCompile<*, *> -> it.kotlinPluginData
                 else -> error("Unknown task type: $it")
@@ -128,4 +163,19 @@ class KpmCompilerPluginTest {
         override fun forPlatformCompilation(variant: KotlinModuleVariant) = platformArtifact?.let(::pluginData)
 
     }
+
+    open class TestPluginWithListeners : KpmCompilerPlugin, GradleKpmCompilerPlugin {
+        override val kpmCompilerPlugin: KpmCompilerPlugin get() = this.also { onGetKpmCompilerPlugin() }
+        override fun apply(target: Project) = onApply()
+        override fun forMetadataCompilation(fragment: KotlinModuleFragment): PluginData? = null.also { onPluginDataGet() }
+        override fun forNativeMetadataCompilation(fragment: KotlinModuleFragment): PluginData? = null.also { onPluginDataGet() }
+        override fun forPlatformCompilation(variant: KotlinModuleVariant): PluginData? = null.also { onPluginDataGet() }
+
+        companion object {
+            var onApply: () -> Unit = {}
+            var onGetKpmCompilerPlugin: () -> Unit = {}
+            var onPluginDataGet: () -> Unit = {}
+        }
+    }
+
 }
