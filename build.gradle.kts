@@ -252,6 +252,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:incremental-compilation-impl",
     ":compiler:compiler.version",
     ":js:js.ast",
+    ":js:js.sourcemap",
     ":js:js.serializer",
     ":js:js.parser",
     ":js:js.config",

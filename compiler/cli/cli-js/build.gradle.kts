@@ -17,6 +17,7 @@ dependencies {
     compile(project(":js:js.translator"))
     compile(project(":js:js.serializer"))
     compile(project(":js:js.dce"))
+    compile(project(":js:js.sourcemap"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
