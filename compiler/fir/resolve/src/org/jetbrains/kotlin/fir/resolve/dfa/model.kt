@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import kotlin.contracts.ExperimentalContracts
@@ -31,8 +28,6 @@ data class Identifier(
 }
 
 sealed class DataFlowVariable(private val variableIndexForDebug: Int) {
-    abstract val isStable: Boolean
-
     final override fun toString(): String {
         return "d$variableIndexForDebug"
     }
@@ -44,24 +39,6 @@ class RealVariable(
     val explicitReceiverVariable: DataFlowVariable?,
     variableIndexForDebug: Int
 ) : DataFlowVariable(variableIndexForDebug) {
-    override val isStable: Boolean by lazy {
-        when (val symbol = identifier.symbol) {
-            is FirPropertySymbol -> {
-                val property = symbol.fir
-                when {
-                    property.isLocal -> true
-                    property.isVar -> false
-                    property.modality != Modality.FINAL -> false
-                    property.receiverTypeRef != null -> false
-                    property.getter != null -> false
-                    // TODO: getters, delegates
-                    else -> true
-                }
-            }
-            else -> true
-        }
-    }
-
     override fun equals(other: Any?): Boolean {
         return this === other
     }
@@ -96,8 +73,6 @@ class RealVariableAndType(val variable: RealVariable, val originalType: ConeKotl
 }
 
 class SyntheticVariable(val fir: FirElement, variableIndexForDebug: Int) : DataFlowVariable(variableIndexForDebug) {
-    override val isStable: Boolean get() = true
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
