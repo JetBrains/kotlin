@@ -135,6 +135,11 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/enumClassConstructor.kt");
         }
 
+        @TestMetadata("enumClassConstructor_ir.kt")
+        public void testEnumClassConstructor_ir() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/enumClassConstructor_ir.kt");
+        }
+
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/extension.kt");
@@ -143,6 +148,11 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
         @TestMetadata("implicit.kt")
         public void testImplicit() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/implicit.kt");
+        }
+
+        @TestMetadata("implicit_ir.kt")
+        public void testImplicit_ir() throws Exception {
+            runTest("compiler/testData/codegen/asmLike/typeAnnotations/implicit_ir.kt");
         }
 
         @TestMetadata("innerClassConstructor.kt")
