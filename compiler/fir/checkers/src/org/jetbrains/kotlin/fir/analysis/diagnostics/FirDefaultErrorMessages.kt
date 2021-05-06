@@ -245,6 +245,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPES_FOR_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE
@@ -778,6 +779,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, "Private setters are not allowed for abstract properties")
             map.put(PRIVATE_SETTER_FOR_OPEN_PROPERTY, "Private setters are not allowed for open properties")
             map.put(VAL_WITH_SETTER, "A 'val'-property cannot have a setter")
+            map.put(SETTER_PARAMETER_WITH_DEFAULT_VALUE, "Setter parameters cannot have default values")
             map.put(
                 WRONG_SETTER_PARAMETER_TYPE,
                 "Setter parameter type must be equal to the type of the property, i.e. ''{0}''",

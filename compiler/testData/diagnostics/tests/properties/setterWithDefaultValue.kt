@@ -1,0 +1,4 @@
+var err: Int
+    set(<!WRONG_MODIFIER_TARGET!>value<!><!SYNTAX, SYNTAX!><!> = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!><!SYNTAX!>)<!> <!FUNCTION_DECLARATION_WITH_NO_NAME!><!SYNTAX!><!>{
+        <!UNRESOLVED_REFERENCE!>field<!> = <!UNRESOLVED_REFERENCE!>value<!>
+    }<!>

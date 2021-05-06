@@ -21389,6 +21389,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 runTest("compiler/testData/diagnostics/tests/properties/lateinitOnTopLevel.kt");
             }
 
+            @Test
+            @TestMetadata("setterWithDefaultValue.kt")
+            public void testSetterWithDefaultValue() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/setterWithDefaultValue.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters")
             @TestDataPath("$PROJECT_ROOT")

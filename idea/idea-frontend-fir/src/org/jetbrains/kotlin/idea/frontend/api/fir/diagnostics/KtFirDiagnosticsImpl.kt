@@ -1818,6 +1818,13 @@ internal class ValWithSetterImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class SetterParameterWithDefaultValueImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SetterParameterWithDefaultValue(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ConstValNotTopLevelOrObjectImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,

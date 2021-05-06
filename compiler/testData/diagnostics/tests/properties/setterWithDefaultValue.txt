@@ -1,0 +1,4 @@
+package
+
+public var err: kotlin.Int
+public fun <no name provided>(): kotlin.Unit

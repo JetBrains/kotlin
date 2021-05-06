@@ -1594,6 +1594,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.SETTER_PARAMETER_WITH_DEFAULT_VALUE) { firDiagnostic ->
+        SetterParameterWithDefaultValueImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT) { firDiagnostic ->
         ConstValNotTopLevelOrObjectImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

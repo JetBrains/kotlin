@@ -33,13 +33,16 @@ object FirPropertyAccessorChecker : FirPropertyChecker() {
 
     private fun checkSetter(property: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val setter = property.setter ?: return
-
         withSuppressedDiagnostics(setter, context) {
             if (property.isVal) {
                 reporter.reportOn(setter.source, FirErrors.VAL_WITH_SETTER, context)
             }
 
             val valueSetterParameter = setter.valueParameters.first()
+            // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
+            if (valueSetterParameter.defaultValue != null) {
+                reporter.reportOn(valueSetterParameter.defaultValue!!.source, FirErrors.SETTER_PARAMETER_WITH_DEFAULT_VALUE, context)
+            }
             if (valueSetterParameter.isVararg) {
                 return
             }

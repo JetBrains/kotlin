@@ -552,6 +552,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val PRIVATE_SETTER_FOR_OPEN_PROPERTY by error<KtModifierListOwner>(PositioningStrategy.PRIVATE_MODIFIER)
         val EXPECTED_PRIVATE_DECLARATION by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val VAL_WITH_SETTER by error<KtPropertyAccessor>()
+        val SETTER_PARAMETER_WITH_DEFAULT_VALUE by error<KtExpression>()
         val CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT by error<KtProperty>(PositioningStrategy.CONST_MODIFIER)
         val CONST_VAL_WITH_GETTER by error<KtProperty>()
         val CONST_VAL_WITH_DELEGATE by error<KtPropertyDelegate>()
