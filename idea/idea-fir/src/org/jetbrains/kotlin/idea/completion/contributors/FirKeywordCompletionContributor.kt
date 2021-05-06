@@ -5,20 +5,19 @@
 
 package org.jetbrains.kotlin.idea.completion.contributors
 
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.idea.completion.DefaultCompletionKeywordHandlers
-import org.jetbrains.kotlin.idea.completion.KeywordCompletion
+import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
+import org.jetbrains.kotlin.idea.completion.contributors.keywords.ReturnKeywordHandler
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtExpressionWithLabel
-import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
+import org.jetbrains.kotlin.psi.*
 
 internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionContext) : FirCompletionContributorBase(basicContext) {
     private val keywordCompletion = KeywordCompletion(object : KeywordCompletion.LanguageVersionSettingProvider {
@@ -39,17 +38,41 @@ internal class FirKeywordCompletionContributor(basicContext: FirBasicCompletionC
             }
             is FirUnknownPositionContext -> null
         }
-        completeKeywordsWithoutAnalysisSessionContext(expression ?: positionContext.position, expression)
+        completeWithResolve(expression ?: positionContext.position, expression)
     }
 
-    fun completeKeywordsWithoutAnalysisSessionContext(position: PsiElement, expression: KtExpression?) {
-        keywordCompletion.complete(position, prefixMatcher, targetPlatform.isJvm()) { lookupElement ->
-            val keyword = lookupElement.lookupString
-            val completionKeywordHandler = DefaultCompletionKeywordHandlers.defaultHandlers.getHandlerForKeyword(keyword)
-            val lookups = completionKeywordHandler
+    fun KtAnalysisSession.completeWithResolve(position: PsiElement, expression: KtExpression?) {
+        complete(position, expression) { lookupElement, keyword ->
+            val lookups = DefaultCompletionKeywordHandlers.defaultHandlers.getHandlerForKeyword(keyword)
+                ?.createLookups(parameters, expression, lookupElement, project)
+                ?: ResolveDependentCompletionKeywordHandlers.handlers.getHandlerForKeyword(keyword)?.run {
+                    createLookups(parameters, expression, lookupElement, project)
+                }
+                ?: listOf(lookupElement)
+            result.addAllElements(lookups)
+        }
+    }
+
+    fun completeDefaultKeywordsWithoutResolve(position: PsiElement, expression: KtExpression?) {
+        complete(position, expression) { lookupElement, keyword ->
+            val lookups = DefaultCompletionKeywordHandlers.defaultHandlers.getHandlerForKeyword(keyword)
                 ?.createLookups(parameters, expression, lookupElement, project)
                 ?: listOf(lookupElement)
             result.addAllElements(lookups)
         }
     }
+
+    private inline fun complete(position: PsiElement, expression: KtExpression?, crossinline complete: (LookupElement, String) -> Unit) {
+        keywordCompletion.complete(position, prefixMatcher, targetPlatform.isJvm()) { lookupElement ->
+            val keyword = lookupElement.lookupString
+            complete(lookupElement, keyword)
+        }
+    }
 }
+
+private object ResolveDependentCompletionKeywordHandlers {
+    val handlers = CompletionKeywordHandlers(
+        ReturnKeywordHandler
+    )
+}
+

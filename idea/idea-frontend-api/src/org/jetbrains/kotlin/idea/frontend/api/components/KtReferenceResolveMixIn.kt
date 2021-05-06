@@ -17,7 +17,7 @@ interface KtReferenceResolveMixIn : KtAnalysisSessionMixIn {
         return analysisSession.resolveToSymbols()
     }
 
-    fun KtSimpleReference<*>.resolveToSymbol(): KtSymbol? {
+    fun KtReference.resolveToSymbol(): KtSymbol? {
         check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference but was ${this::class}" }
         return resolveToSymbols().singleOrNull()
     }

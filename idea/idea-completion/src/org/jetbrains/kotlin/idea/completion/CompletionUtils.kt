@@ -305,25 +305,6 @@ private fun KtDeclarationWithBody.returnType(bindingContext: BindingContext): Ko
 }
 
 
-private fun createKeywordElementWithSpace(
-    keyword: String,
-    tail: String = "",
-    addSpaceAfter: Boolean = false,
-    lookupObject: KeywordLookupObject = KeywordLookupObject()
-): LookupElement {
-    val element = createKeywordElement(keyword, tail, lookupObject)
-    return if (addSpaceAfter) {
-        object : LookupElementDecorator<LookupElement>(element) {
-            override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.SPACE.handleInsert(context, delegate)
-            }
-        }
-    } else {
-        element
-    }
-}
-
-
 
 fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): LookupElement? {
     if (type.isError) return null
