@@ -58,7 +58,7 @@ class K(x: Int) {
     constructor() : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>() {}
 }
 
-class M {
+open class M {
     constructor(m: Int)
 }
 

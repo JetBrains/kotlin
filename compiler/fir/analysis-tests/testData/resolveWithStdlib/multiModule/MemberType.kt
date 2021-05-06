@@ -11,7 +11,7 @@ open class Wrapper(val list: MyList)
 // MODULE: m1-jvm(m1-common)
 // FILE: jvm.kt
 
-actual class MyList {
+actual open class MyList {
     actual fun get(i: Int): Int = i
 
     fun set(i: Int, v: Int) {}

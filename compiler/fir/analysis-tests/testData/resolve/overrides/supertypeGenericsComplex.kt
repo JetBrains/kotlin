@@ -1,4 +1,4 @@
-class Out<out T>
+open class Out<out T>
 
 interface X : <!INTERFACE_WITH_SUPERCLASS!>Out<String><!>
 

@@ -1,4 +1,4 @@
-class A(x: Int) {
+open class A(x: Int) {
     constructor(z: String) : this(10)
 }
 

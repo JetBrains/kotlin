@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package toplevelObjectDeclarations
 
 object CObj {}

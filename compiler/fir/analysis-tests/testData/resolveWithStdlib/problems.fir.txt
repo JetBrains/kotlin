@@ -38,7 +38,7 @@ FILE: problems.kt
         public get(): R|kotlin/String|
     public final val p: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/String|>(Int(0), String())
         public get(): R|kotlin/Pair<kotlin/Int, kotlin/String>|
-    public final class Base<T> : R|kotlin/Any| {
+    public open class Base<T> : R|kotlin/Any| {
         public constructor<T>(x: R|T|): R|Base<T>| {
             super<R|kotlin/Any|>()
         }

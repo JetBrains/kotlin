@@ -19,7 +19,7 @@ FILE: common.kt
     }
 Module: m1-jvm
 FILE: jvm.kt
-    public final actual class MyList : R|kotlin/Any| {
+    public open actual class MyList : R|kotlin/Any| {
         public constructor(): R|MyList| {
             super<R|kotlin/Any|>()
         }

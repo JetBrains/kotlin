@@ -1,5 +1,5 @@
 FILE: interfaceWithSuperclass.kt
-    public final class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -9,7 +9,7 @@ FILE: interfaceWithSuperclass.kt
     }
     public abstract interface C : R|kotlin/Any| {
     }
-    public final class D : R|kotlin/Any| {
+    public open class D : R|kotlin/Any| {
         public constructor(): R|D| {
             super<R|kotlin/Any|>()
         }

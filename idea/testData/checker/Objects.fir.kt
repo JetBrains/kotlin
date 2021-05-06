@@ -13,7 +13,7 @@ package toplevelObjectDeclarations
     }
   }
 
-  object B : A {}
+  object B : <error descr="[SINGLETON_IN_SUPERTYPE] Cannot inherit from a singleton">A</error> {}
 
   val x = A.foo()
 

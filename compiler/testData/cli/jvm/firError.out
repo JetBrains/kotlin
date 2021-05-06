@@ -7,6 +7,9 @@ compiler/testData/cli/jvm/firError.kt:5:13: error: variable 'x' must be initiali
 compiler/testData/cli/jvm/firError.kt:10:16: error: public subclass exposes its private-in-file supertype 'Private'
 class Public : Private() {
                ^
+compiler/testData/cli/jvm/firError.kt:10:16: error: this type is final, so it cannot be inherited from
+class Public : Private() {
+               ^
 compiler/testData/cli/jvm/firError.kt:11:5: error: property must be initialized or be abstract
     val x: Private
     ^

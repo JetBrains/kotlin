@@ -35,7 +35,7 @@ fun List<Int>.single(): Int = 2
 
 fun listOf(): List<String> {}
 
-public class LightMember<D> : Member<D>, Light() {
+public open class LightMember<D> : Member<D>, Light() {
     override fun getName(): String = "Light"
 }
 

@@ -1,5 +1,5 @@
 interface A
-interface X: A?? {
+interface X: A?<!NULLABLE_SUPERTYPE!>?<!> {
 
 }
 

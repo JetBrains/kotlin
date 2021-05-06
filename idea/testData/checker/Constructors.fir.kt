@@ -18,7 +18,7 @@ class WithPC1(a : Int) {
 }
 
 
-class Foo() : WithPC0(), <error descr="Type expected"><error descr="[SYNTAX] Syntax error"><error descr="[SYNTAX] Syntax error">this</error></error></error>() {
+class Foo() : <error descr="[FINAL_SUPERTYPE] This type is final, so it cannot be inherited from">WithPC0</error>(), <error descr="Type expected"><error descr="[SYNTAX] Syntax error"><error descr="[SYNTAX] Syntax error">this</error></error></error>() {
 
 }
 

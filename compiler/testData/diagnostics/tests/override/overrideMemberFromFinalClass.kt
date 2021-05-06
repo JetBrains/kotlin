@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Foo {
     <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> fun openFoo() {}
     fun finalFoo() {}

@@ -237,4 +237,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.RESERVED_UNDERSCORE,
         PositioningStrategies.RESERVED_UNDERSCORE
     )
+
+    val QUESTION_MARK_BY_TYPE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.QUESTION_MARK_BY_TYPE,
+        PositioningStrategies.QUESTION_MARK_BY_TYPE
+    )
 }

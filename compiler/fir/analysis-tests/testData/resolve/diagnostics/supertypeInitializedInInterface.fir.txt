@@ -3,7 +3,7 @@ FILE: supertypeInitializedInInterface.kt
     }
     public abstract interface B : R|A| {
     }
-    public final class C : R|kotlin/Any| {
+    public open class C : R|kotlin/Any| {
         public constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

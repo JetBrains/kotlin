@@ -1,5 +1,5 @@
 FILE: supertypeGenericsComplex.kt
-    public final class Out<out T> : R|kotlin/Any| {
+    public open class Out<out T> : R|kotlin/Any| {
         public constructor<out T>(): R|Out<T>| {
             super<R|kotlin/Any|>()
         }

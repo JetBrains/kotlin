@@ -69,6 +69,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     SUSPEND_MODIFIER,
     FUN_INTERFACE,
     RESERVED_UNDERSCORE,
+    QUESTION_MARK_BY_TYPE,
 
     ;
 

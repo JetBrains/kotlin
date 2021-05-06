@@ -14,7 +14,7 @@ class WithPC1(a : Int) {
 }
 
 
-class Foo() : WithPC0, <!SYNTAX!>this<!>() {
+class Foo() : <!FINAL_SUPERTYPE!>WithPC0<!>, <!SYNTAX!>this<!>() {
 
 }
 

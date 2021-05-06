@@ -7,12 +7,12 @@ FILE: Test.kt
     }
     public final fun listOf(): R|kotlin/collections/List<kotlin/String>| {
     }
-    public final class LightMember<D> : R|Member<D>|, R|Light| {
+    public open class LightMember<D> : R|Member<D>|, R|Light| {
         public constructor<D>(): R|LightMember<D>| {
             super<R|Light|>()
         }
 
-        public final override fun getName(): R|kotlin/String| {
+        public open override fun getName(): R|kotlin/String| {
             ^getName String(Light)
         }
 

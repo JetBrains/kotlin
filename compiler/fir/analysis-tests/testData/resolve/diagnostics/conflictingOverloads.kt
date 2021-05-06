@@ -1,3 +1,5 @@
+// FIR_IDE_IGNORE
+
 <!CONFLICTING_OVERLOADS!>fun test(x: Int)<!> {}
 
 <!CONFLICTING_OVERLOADS!>fun test(y: Int)<!> {}
@@ -16,7 +18,7 @@ fun test(z: Int, c: Char) {}
 
 }<!>
 
-<!REDECLARATION!>class B : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
+<!REDECLARATION!>class B : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>A<!> {
     <!CONFLICTING_OVERLOADS!>override fun rest(s: String)<!> {}
 
     <!CONFLICTING_OVERLOADS!>fun rest(s: String)<!> {}

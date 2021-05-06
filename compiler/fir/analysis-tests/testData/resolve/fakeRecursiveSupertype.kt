@@ -1,7 +1,7 @@
 import incorrect.directory.My
 
-class My : <!OTHER_ERROR!>My<!>()
+open class My : <!OTHER_ERROR!>My<!>()
 
-class Your : His()
+open class Your : His()
 
-class His : <!OTHER_ERROR!>Your<!>()
+open class His : <!OTHER_ERROR!>Your<!>()

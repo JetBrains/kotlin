@@ -9,7 +9,7 @@ fun test() {
     a <!ARGUMENT_TYPE_MISMATCH!>{}<!>
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Ext<!> : String.() -> Unit {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Ext<!> : <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>String.() -> Unit<!> {
 }
 
 fun test2() {

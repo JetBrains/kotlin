@@ -100,17 +100,24 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val RECURSION_IN_SUPERTYPES by error<PsiElement>()
         val NOT_A_SUPERTYPE by error<PsiElement>()
         val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error<PsiElement>()
-        val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error<PsiElement> {
+        val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error<KtTypeReference> {
             parameter<FirClass<*>>("otherSuperType")
         }
-        val SUPERTYPE_INITIALIZED_IN_INTERFACE by error<PsiElement>()
-        val INTERFACE_WITH_SUPERCLASS by error<PsiElement>()
-        val CLASS_IN_SUPERTYPE_FOR_ENUM by error<PsiElement>()
-        val SEALED_SUPERTYPE by error<PsiElement>()
-        val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error<PsiElement>()
+        val SUPERTYPE_INITIALIZED_IN_INTERFACE by error<KtTypeReference>()
+        val INTERFACE_WITH_SUPERCLASS by error<KtTypeReference>()
+        val FINAL_SUPERTYPE by error<KtTypeReference>()
+        val SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE by error<KtTypeReference>()
+        val SINGLETON_IN_SUPERTYPE by error<KtTypeReference>()
+        val NULLABLE_SUPERTYPE by error<KtTypeReference>(PositioningStrategy.QUESTION_MARK_BY_TYPE)
+        val MANY_CLASSES_IN_SUPERTYPE_LIST by error<KtTypeReference>()
+        val SUPERTYPE_APPEARS_TWICE by error<KtTypeReference>()
+        val CLASS_IN_SUPERTYPE_FOR_ENUM by error<KtTypeReference>()
+        val SEALED_SUPERTYPE by error<KtTypeReference>()
+        val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error<KtTypeReference>()
         val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error<KtElement> {
             parameter<String>("reason")
         }
+
     }
 
     val CONSTRUCTOR_PROBLEMS by object : DiagnosticGroup("Constructor problems") {

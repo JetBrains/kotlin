@@ -1,5 +1,5 @@
 FILE: supertypeInitializedWithoutPrimaryConstructor.kt
-    public final class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -11,7 +11,7 @@ FILE: supertypeInitializedWithoutPrimaryConstructor.kt
         }
 
     }
-    public final class C : R|kotlin/Any| {
+    public open class C : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|C| {
             super<R|kotlin/Any|>()
         }

@@ -17,7 +17,7 @@ val String.bar get() = "987"
 
 val p = Pair(0, "")
 
-class Base<T>(val x: T)
+open class Base<T>(val x: T)
 class Derived : Base<Int>(10)
 val xx = Derived().x + 1
 

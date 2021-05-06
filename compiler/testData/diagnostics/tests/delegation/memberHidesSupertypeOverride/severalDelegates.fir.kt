@@ -23,6 +23,6 @@ public abstract class MyClass : Base1, Base2 {
     }
 }
 
-<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class A<!> : MyClass(), Base1 by Delegate1(), Base1 by Delegate2() {
+<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class A<!> : MyClass(), Base1 by Delegate1(), <!SUPERTYPE_APPEARS_TWICE!>Base1<!> by Delegate2() {
 
 }

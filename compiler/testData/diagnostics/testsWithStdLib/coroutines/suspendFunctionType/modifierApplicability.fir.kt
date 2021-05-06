@@ -29,7 +29,7 @@ interface Supertype1 : suspend () -> Unit {
 
 }
 
-interface Supertype2 : suspend String.() -> Unit {
+interface Supertype2 : <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>suspend String.() -> Unit<!> {
 
 }
 

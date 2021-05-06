@@ -125,7 +125,7 @@ FILE: cyclicConstructorDelegationCall.kt
         }
 
     }
-    public final class M : R|kotlin/Any| {
+    public open class M : R|kotlin/Any| {
         public constructor(m: R|kotlin/Int|): R|M| {
             super<R|kotlin/Any|>()
         }

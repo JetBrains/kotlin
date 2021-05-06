@@ -1,4 +1,4 @@
-class A {
+open class A {
     fun f() {}
 }
 

@@ -220,28 +220,52 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SuperclassNotAccessibleFromInterface::class
     }
 
-    abstract class QualifiedSupertypeExtendedByOtherSupertype : KtFirDiagnostic<PsiElement>() {
+    abstract class QualifiedSupertypeExtendedByOtherSupertype : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = QualifiedSupertypeExtendedByOtherSupertype::class
         abstract val otherSuperType: KtClassLikeSymbol
     }
 
-    abstract class SupertypeInitializedInInterface : KtFirDiagnostic<PsiElement>() {
+    abstract class SupertypeInitializedInInterface : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = SupertypeInitializedInInterface::class
     }
 
-    abstract class InterfaceWithSuperclass : KtFirDiagnostic<PsiElement>() {
+    abstract class InterfaceWithSuperclass : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = InterfaceWithSuperclass::class
     }
 
-    abstract class ClassInSupertypeForEnum : KtFirDiagnostic<PsiElement>() {
+    abstract class FinalSupertype : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = FinalSupertype::class
+    }
+
+    abstract class SupertypeIsExtensionFunctionType : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = SupertypeIsExtensionFunctionType::class
+    }
+
+    abstract class SingletonInSupertype : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = SingletonInSupertype::class
+    }
+
+    abstract class NullableSupertype : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = NullableSupertype::class
+    }
+
+    abstract class ManyClassesInSupertypeList : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = ManyClassesInSupertypeList::class
+    }
+
+    abstract class SupertypeAppearsTwice : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = SupertypeAppearsTwice::class
+    }
+
+    abstract class ClassInSupertypeForEnum : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = ClassInSupertypeForEnum::class
     }
 
-    abstract class SealedSupertype : KtFirDiagnostic<PsiElement>() {
+    abstract class SealedSupertype : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = SealedSupertype::class
     }
 
-    abstract class SealedSupertypeInLocalClass : KtFirDiagnostic<PsiElement>() {
+    abstract class SealedSupertypeInLocalClass : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = SealedSupertypeInLocalClass::class
     }
 
