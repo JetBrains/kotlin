@@ -18,13 +18,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        expression.argumentMapping?.let {
-            for ((arg, _) in it) {
-                val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
+        val argumentMapping = expression.argumentMapping ?: return
+        for ((arg, _) in argumentMapping) {
+            val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
 
-                checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
-                    ?.let { reporter.reportOn(argExpression.source, it, context) }
-            }
+            checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
+                ?.let { reporter.reportOn(argExpression.source, it, context) }
         }
     }
 
