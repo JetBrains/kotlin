@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 annotation class MyReceiverAnnotation(val name: String = "")
 
 fun @receiver:MyReceiverAnnotation String.foo() = this.length

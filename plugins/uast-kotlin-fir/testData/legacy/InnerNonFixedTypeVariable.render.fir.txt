@@ -1,0 +1,7 @@
+public final class InnerNonFixedTypeVariableKt {
+    public static final fun test(list: java.util.List<? extends java.lang.Object>) : void = [!] FirUnknownKotlinExpression (BLOCK)
+}
+
+public final class Some {
+    public fun Some() = UastEmptyExpression
+}

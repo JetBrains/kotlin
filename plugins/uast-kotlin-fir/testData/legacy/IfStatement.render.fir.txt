@@ -1,0 +1,3 @@
+public final class IfStatementKt {
+    public static final fun foo() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

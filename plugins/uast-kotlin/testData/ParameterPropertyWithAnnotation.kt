@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 annotation class MyAnnotation
 annotation class MyAnnotation2
 annotation class MyAnnotation3

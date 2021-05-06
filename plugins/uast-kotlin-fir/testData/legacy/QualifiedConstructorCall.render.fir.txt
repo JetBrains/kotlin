@@ -1,0 +1,10 @@
+package A.B.C
+
+public final class Foo {
+    public fun Foo() = UastEmptyExpression
+}
+
+public final class Bar {
+    public fun Bar() = UastEmptyExpression
+    public final fun getFoo() : A.B.C.Foo = [!] FirUnknownKotlinExpression (BLOCK)
+}

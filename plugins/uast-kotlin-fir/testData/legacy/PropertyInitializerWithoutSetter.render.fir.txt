@@ -1,0 +1,5 @@
+public final class PropertyInitializerWithoutSetterKt {
+    private static var withoutSetter: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
+    public static final fun getWithoutSetter() : java.lang.String = [!] FirUnknownKotlinExpression (REFERENCE_EXPRESSION)
+    public static final fun setWithoutSetter(value: java.lang.String) : void = UastEmptyExpression
+}

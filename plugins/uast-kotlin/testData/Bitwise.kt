@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 fun foo(): Int {
     val mask: Int = 0x7f
     val x: Int = 0b1010_1010_1010_1010_1010_1010_1010_1010

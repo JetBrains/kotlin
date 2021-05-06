@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 val bar: Any
     get() = Unresolved(id(42))
 

@@ -1,0 +1,7 @@
+public abstract interface Foo {
+    public fun bar() : java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
+}
+
+public final class Baz : null {
+    public fun Baz() = UastEmptyExpression
+}

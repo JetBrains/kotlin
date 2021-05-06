@@ -1,0 +1,9 @@
+public final class MethodReferenceKt {
+    private static final var x: kotlin.reflect.KFunction<? extends kotlin.Unit> = [!] FirUnknownKotlinExpression (CALLABLE_REFERENCE_EXPRESSION)
+    public static final fun getX() : kotlin.reflect.KFunction<? extends kotlin.Unit> = UastEmptyExpression
+}
+
+public final class Foo {
+    public fun Foo() = UastEmptyExpression
+    public final fun bar() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

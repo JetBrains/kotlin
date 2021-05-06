@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 annotation class TestAnnotation
 
 @TestAnnotation

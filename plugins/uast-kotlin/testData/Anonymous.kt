@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 import java.io.Closeable
 import java.io.InputStream
 

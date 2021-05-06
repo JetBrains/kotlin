@@ -1,4 +1,3 @@
-// !IGNORE_FIR
 
 interface Foo {
     fun bar() = "Hello!"

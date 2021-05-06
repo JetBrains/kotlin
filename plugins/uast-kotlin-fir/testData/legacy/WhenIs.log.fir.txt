@@ -1,0 +1,5 @@
+UFile (package = )
+    UClass (name = WhenIsKt)
+        UMethod (name = foo)
+            UParameter (name = bar)
+            [!] FirUnknownKotlinExpression (WHEN)

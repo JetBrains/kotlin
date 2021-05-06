@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 fun main(args: Array<String>) { // Error
 
     data class TestUsed(val parameter: CharSequence) {

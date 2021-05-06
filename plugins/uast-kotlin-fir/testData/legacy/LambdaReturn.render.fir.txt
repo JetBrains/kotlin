@@ -1,0 +1,5 @@
+package org.jetbrains.uast.kotlin
+
+public final class LambdaReturnKt {
+    public static final fun foo() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

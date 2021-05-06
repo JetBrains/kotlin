@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 class Foo {
     fun bar() {
     }

@@ -1,0 +1,4 @@
+UFile (package = )
+    UClass (name = AssertionKt)
+        UMethod (name = foo)
+            [!] FirUnknownKotlinExpression (BLOCK)

@@ -1,0 +1,5 @@
+UFile (package = )
+    UClass (name = LocalVariableWithAnnotationKt)
+        UMethod (name = foo)
+            [!] FirUnknownKotlinExpression (BLOCK)
+    UClass (name = TestAnnotation)

@@ -1,0 +1,5 @@
+UFile (package = )
+    UClass (name = WhenAndDestructingKt)
+        UMethod (name = getElementsAdditionalResolve)
+            UParameter (name = string)
+            [!] FirUnknownKotlinExpression (BLOCK)

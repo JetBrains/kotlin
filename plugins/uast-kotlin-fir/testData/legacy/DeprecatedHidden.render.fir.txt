@@ -1,0 +1,6 @@
+package test.pkg
+
+public final class Test {
+    public fun Test() = UastEmptyExpression
+    public final fun test1() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

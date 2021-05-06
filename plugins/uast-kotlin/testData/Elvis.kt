@@ -1,4 +1,3 @@
-// !IGNORE_FIR
 
 fun foo(bar: String): String? = null
 

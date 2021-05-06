@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 @Test
 class A
 

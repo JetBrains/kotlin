@@ -1,0 +1,5 @@
+UFile (package = )
+    UClass (name = DestructuringDeclarationKt)
+        UMethod (name = foo)
+            UParameter (name = data)
+            [!] FirUnknownKotlinExpression (BLOCK)

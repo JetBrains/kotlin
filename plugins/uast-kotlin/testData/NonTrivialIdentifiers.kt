@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 class A {
 
     operator fun invoke(){

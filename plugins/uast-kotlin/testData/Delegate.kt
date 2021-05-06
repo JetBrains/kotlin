@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 class MyColor(val x: Int, val y: Int, val z: Int)
 
 class Some {

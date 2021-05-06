@@ -1,0 +1,15 @@
+public final class TryCatch {
+    public fun TryCatch() = UastEmptyExpression
+    public final fun catches() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun body() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun catcher() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun finalizer() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}
+
+public final class TryCatchAnnotations {
+    public fun TryCatchAnnotations() = UastEmptyExpression
+    public final fun catches() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun body() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun catcher() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public final fun finalizer() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

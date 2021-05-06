@@ -1,0 +1,3 @@
+public final class ReifiedResolveKt {
+    public static final fun resolve() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}
