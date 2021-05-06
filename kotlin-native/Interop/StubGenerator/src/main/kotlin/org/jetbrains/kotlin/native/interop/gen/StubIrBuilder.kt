@@ -246,6 +246,12 @@ open class StubsBuildingContextImpl(
         return classifier
     }
 
+    open fun isCppClass(spelling: String): Boolean =
+            error("Only meaningful with a proper cpp plugin")
+
+    open fun managedWrapperClassifier(cppClassifier: Classifier): Classifier? =
+            error("Only meaningful with a proper cpp plugin")
+
     open inner class DeclarationMapperImpl : DeclarationMapper {
         override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier {
             val baseName = structDecl.kotlinName
@@ -277,7 +283,6 @@ open class StubsBuildingContextImpl(
                 KotlinPlatform.NATIVE -> true
             }
     }
-
 }
 
 data class StubIrBuilderResult(

@@ -1,6 +1,8 @@
 language = C++
 compilerOpts = -std=c++17
 plugin = org.jetbrains.kotlin.native.interop.skia
+package = org.jetbrains.skiko.skia.native
+headers = stdio.h
 
 ---
 // TODO: this one checks the syntactic aspect for now.
@@ -22,20 +24,64 @@ template <typename T> sk_sp<T> sk_ref_sp(T* obj) {
     return sk_sp<T>(obj);
 }
 
-class Value {
-public:
-    int data;
+class SkValue {
+    public:
+        SkValue() {
+            printf("SkValue()\n");
+        };
+
+        void unref() {
+            printf("unref\n");
+        };
+
+        int data;
+        void setData(int val) {
+            data = val;
+        };
 };
 
-class Foo {
-public:
-    Foo() { }
+class SkData {
+    public:
+        SkData() {
+            printf("SkData()\n");
+        };
 
-    virtual sk_sp<Value> foo(Value *obj) {
-        return sk_sp<Value>(obj);
-    }
+        ~SkData() {
+            printf("~SkData()\n");
+        };
 
-    virtual Value* bar(sk_sp<Value> obj) {
-        return obj.release();
-    }
+        int data;
+
+        void setData(int val) {
+            data = val;
+        };
 };
+
+class SkFoo {
+public:
+    SkFoo() {
+        printf("SkFoo()\n");
+    };
+
+    ~SkFoo() {
+        printf("~SkFoo()\n");
+    };
+
+    virtual sk_sp<SkValue> foo(SkData *obj) {
+        SkValue* value = new SkValue();
+        value->setData(obj->data);
+        return sk_sp<SkValue>(value);
+    };
+
+    virtual SkData* bar(sk_sp<SkValue> obj) {
+        SkValue* value = obj.release();
+        SkData* data = new SkData();
+        data->setData(value->data);
+        return data;
+    };
+
+    virtual SkData* qux() {
+        return new SkData();
+    };
+};
+

@@ -490,6 +490,8 @@ class StubIrTextEmitter(
             "@CStruct(${annotationStub.struct.quoteAsKotlinLiteral()})"
         is AnnotationStub.CNaturalStruct ->
             "@CNaturalStruct(${annotationStub.members.joinToString { it.name.quoteAsKotlinLiteral() }})"
+        is AnnotationStub.CStruct.CPlusPlusClass ->
+            "@CStruct.CPlusPlusClass"
         is AnnotationStub.CStruct.ManagedType ->
             "@CStruct.ManagedType"
         is AnnotationStub.CLength ->
