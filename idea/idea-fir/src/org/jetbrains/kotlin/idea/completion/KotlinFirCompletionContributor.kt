@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionCont
 import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContextDetector
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
 import org.jetbrains.kotlin.idea.completion.contributors.FirCompletionContributorBase
+import org.jetbrains.kotlin.idea.completion.contributors.FirKeywordCompletionContributor
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
@@ -53,25 +54,23 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         recordOriginalFile(basicContext)
         val positionContext = FirPositionCompletionContextDetector.detect(basicContext)
 
-        FirKeywordCompletion.completeKeywords(
-            result,
-            parameters,
-            parameters.position,
-            resultSet.prefixMatcher,
-            basicContext.project,
-            isJvmModule = basicContext.targetPlatform.isJvm()
-        )
+        val keywordContributor = FirKeywordCompletionContributor(basicContext)
 
-
-        FirPositionCompletionContextDetector.analyseInContext(basicContext, positionContext) {
-            when (positionContext) {
-                is FirNameReferencePositionContext -> with(
-                    KotlinWithNameReferenceCompletionProvider(basicContext, indexHelper)
-                ) {
-                    addCompletions(positionContext)
-                }
-                is FirUnknownPositionContext -> {
-                    // TODO
+        if (positionContext is FirUnknownPositionContext) {
+            // TODO unify when LL API will be able to handle more context for completion
+            keywordContributor.completeKeywordsWithoutAnalysisSessionContext(positionContext.position, expression = null)
+        } else {
+            FirPositionCompletionContextDetector.analyseInContext(basicContext, positionContext) {
+                with(keywordContributor) { completeKeywords(positionContext) }
+                when (positionContext) {
+                    is FirNameReferencePositionContext -> with(
+                        KotlinWithNameReferenceCompletionProvider(basicContext, indexHelper)
+                    ) {
+                        addCompletions(positionContext)
+                    }
+                    is FirUnknownPositionContext -> {
+                        // TODO remove when hack when LL API will be able to handle more context for completion
+                    }
                 }
             }
         }
@@ -138,7 +137,7 @@ internal fun interface CompletionVisibilityChecker {
 private class KotlinWithNameReferenceCompletionProvider(
     basicContext: FirBasicCompletionContext,
     private val indexHelper: IndexHelper
-): FirCompletionContributorBase(basicContext) {
+) : FirCompletionContributorBase(basicContext) {
     private val lookupElementFactory = KotlinFirLookupElementFactory()
     private val typeNamesProvider = TypeNamesProvider(indexHelper)
 
