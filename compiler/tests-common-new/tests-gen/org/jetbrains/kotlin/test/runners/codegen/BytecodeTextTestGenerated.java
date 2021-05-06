@@ -743,6 +743,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("suspendBoxing.kt")
+        public void testSuspendBoxing() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/suspendBoxing.kt");
+        }
+
+        @Test
         @TestMetadata("unsafeRemoving.kt")
         public void testUnsafeRemoving() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/unsafeRemoving.kt");
