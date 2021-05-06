@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirReservedUndersco
 object CommonDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
-            FirAnnotationArgumentChecker,
             FirModifierChecker,
             FirConflictsChecker,
             FirConflictingProjectionChecker,

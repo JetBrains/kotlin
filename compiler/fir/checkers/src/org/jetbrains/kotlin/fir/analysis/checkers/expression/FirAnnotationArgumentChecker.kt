@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.checkers.declaration
+package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkConstantArguments
@@ -14,19 +13,17 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.psi.KtExpression
 
-object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirAnnotationContainer) return
-        for (declarationOfAnnotation in declaration.annotations) {
-            for ((arg, _) in declarationOfAnnotation.argumentMapping ?: continue) {
-                val expression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
+object FirAnnotationArgumentChecker : FirAnnotationCallChecker() {
+    override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+        expression.argumentMapping?.let {
+            for ((arg, _) in it) {
+                val argExpression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
 
-                checkAnnotationArgumentWithSubElements(expression, context.session, reporter, context)
-                    ?.let { reporter.reportOn(expression.source, it, context) }
+                checkAnnotationArgumentWithSubElements(argExpression, context.session, reporter, context)
+                    ?.let { reporter.reportOn(argExpression.source, it, context) }
             }
         }
     }
