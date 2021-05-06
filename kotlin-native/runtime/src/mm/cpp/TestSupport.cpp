@@ -6,6 +6,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
+#include "GC.hpp"
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
 #include "TestSupport.hpp"
@@ -48,7 +49,7 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     auto threads = mm::ThreadRegistry::Instance().Iter();
 
     EXPECT_THAT(collect<ObjHeader**>(globals), testing::UnorderedElementsAre());
-    EXPECT_THAT(collect<mm::ObjectFactory<mm::GC>::NodeRef>(objects), testing::UnorderedElementsAre());
+    EXPECT_THAT(collect<mm::ObjectFactory<gc::GC>::NodeRef>(objects), testing::UnorderedElementsAre());
     EXPECT_THAT(collect<ObjHeader*>(stableRefs), testing::UnorderedElementsAre());
     EXPECT_THAT(collect(threads), testing::UnorderedElementsAre());
 }
