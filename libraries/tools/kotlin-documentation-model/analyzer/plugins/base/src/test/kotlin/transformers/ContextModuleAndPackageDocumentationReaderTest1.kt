@@ -14,7 +14,6 @@ import org.junit.jupiter.api.assertThrows
 import testApi.testRunner.TestDokkaConfigurationBuilder
 import testApi.testRunner.dModule
 import testApi.testRunner.dPackage
-import java.lang.IllegalStateException
 
 class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAndPackageDocumentationReaderTest() {
 
@@ -30,11 +29,11 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
             This is moduleA
             
             # Package sample.a
-            This is package sample.a
+            This is package sample.a\r\n
             
             # Package noise.b
             This will just add some noise
-            """.trimIndent()
+            """.trimIndent().replace("\n", "\r\n")
         )
 
         includeSourceSetB.writeText(
@@ -114,9 +113,11 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
     fun `assert moduleA with unknown source set`() {
         assertThrows<IllegalStateException>(
             "Expected no documentation received for module with unknown sourceSet"
-        ) { reader[
-                dModule("moduleA", sourceSets = setOf(configurationBuilder.unattachedSourceSet { name = "unknown" }))
-        ]}
+        ) {
+            reader[
+                    dModule("moduleA", sourceSets = setOf(configurationBuilder.unattachedSourceSet { name = "unknown" }))
+            ]
+        }
     }
 
     @Test
@@ -140,7 +141,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
         val documentation = reader[dPackage(DRI("sample.a"), sourceSets = setOf(sourceSetA))]
         assertEquals(1, documentation.keys.size, "Expected only one entry from sourceSetA")
         assertEquals(sourceSetA, documentation.keys.single(), "Expected only one entry from sourceSetA")
-        assertEquals("This is package sample.a", documentation.texts.single())
+        assertEquals("This is package sample.a\\r\\n", documentation.texts.single())
     }
 
     @Test
