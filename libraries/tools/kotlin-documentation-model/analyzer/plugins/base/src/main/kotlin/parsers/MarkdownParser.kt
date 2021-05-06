@@ -12,8 +12,24 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.jetbrains.dokka.base.parsers.factories.DocTagsFromIElementFactory
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.dokka.model.doc.Author
+import org.jetbrains.dokka.model.doc.Constructor
+import org.jetbrains.dokka.model.doc.CustomTagWrapper
+import org.jetbrains.dokka.model.doc.Description
+import org.jetbrains.dokka.model.doc.DocTag
+import org.jetbrains.dokka.model.doc.DocumentationLink
+import org.jetbrains.dokka.model.doc.DocumentationNode
+import org.jetbrains.dokka.model.doc.Param
+import org.jetbrains.dokka.model.doc.Property
+import org.jetbrains.dokka.model.doc.Receiver
+import org.jetbrains.dokka.model.doc.Return
+import org.jetbrains.dokka.model.doc.Sample
+import org.jetbrains.dokka.model.doc.See
+import org.jetbrains.dokka.model.doc.Since
 import org.jetbrains.dokka.model.doc.Suppress
+import org.jetbrains.dokka.model.doc.TagWrapper
+import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.dokka.model.doc.Throws
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
@@ -23,7 +39,7 @@ import org.intellij.markdown.parser.MarkdownParser as IntellijMarkdownParser
 
 open class MarkdownParser(
     private val externalDri: (String) -> DRI?,
-    private val kdocLocation: String?
+    private val kdocLocation: String?,
 ) : Parser() {
 
     private lateinit var destinationLinksMap: Map<String, String>
@@ -37,7 +53,7 @@ open class MarkdownParser(
         return visitNode(markdownAstRoot)
     }
 
-    override fun preparse(text: String) = text
+    override fun preparse(text: String) = text.replace("\r\n", "\n").replace("\r", "\n")
 
     override fun parseTagWithBody(tagName: String, content: String): TagWrapper =
         when (tagName) {
@@ -347,27 +363,32 @@ open class MarkdownParser(
             MarkdownElementTypes.ATX_3,
             MarkdownElementTypes.ATX_4,
             MarkdownElementTypes.ATX_5,
-            MarkdownElementTypes.ATX_6 -> headersHandler(node)
+            MarkdownElementTypes.ATX_6,
+            -> headersHandler(node)
             MarkdownTokenTypes.HORIZONTAL_RULE -> horizontalRulesHandler(node)
             MarkdownElementTypes.STRONG -> strongHandler(node)
             MarkdownElementTypes.EMPH -> emphasisHandler(node)
             MarkdownElementTypes.FULL_REFERENCE_LINK,
-            MarkdownElementTypes.SHORT_REFERENCE_LINK -> referenceLinksHandler(node)
+            MarkdownElementTypes.SHORT_REFERENCE_LINK,
+            -> referenceLinksHandler(node)
             MarkdownElementTypes.INLINE_LINK -> inlineLinksHandler(node)
             MarkdownElementTypes.AUTOLINK -> autoLinksHandler(node)
             MarkdownElementTypes.BLOCK_QUOTE -> blockquotesHandler(node)
             MarkdownElementTypes.UNORDERED_LIST,
-            MarkdownElementTypes.ORDERED_LIST -> listsHandler(node)
+            MarkdownElementTypes.ORDERED_LIST,
+            -> listsHandler(node)
             MarkdownElementTypes.CODE_BLOCK -> codeBlocksHandler(node)
             MarkdownElementTypes.CODE_FENCE -> codeFencesHandler(node)
             MarkdownElementTypes.CODE_SPAN -> codeSpansHandler(node)
             MarkdownElementTypes.IMAGE -> imagesHandler(node)
             MarkdownElementTypes.HTML_BLOCK,
             MarkdownTokenTypes.HTML_TAG,
-            MarkdownTokenTypes.HTML_BLOCK_CONTENT -> rawHtmlHandler(node)
+            MarkdownTokenTypes.HTML_BLOCK_CONTENT,
+            -> rawHtmlHandler(node)
             MarkdownTokenTypes.HARD_LINE_BREAK -> DocTagsFromIElementFactory.getInstance(node.type)
             MarkdownTokenTypes.CODE_FENCE_CONTENT,
-            MarkdownTokenTypes.CODE_LINE -> codeLineHandler(node)
+            MarkdownTokenTypes.CODE_LINE,
+            -> codeLineHandler(node)
             MarkdownTokenTypes.TEXT -> textHandler(node)
             MarkdownElementTypes.MARKDOWN_FILE -> markdownFileHandler(node)
             GFMElementTypes.STRIKETHROUGH -> strikeThroughHandler(node)
@@ -482,7 +503,7 @@ open class MarkdownParser(
         fun parseFromKDocTag(
             kDocTag: KDocTag?,
             externalDri: (String) -> DRI?,
-            kdocLocation: String?
+            kdocLocation: String?,
         ): DocumentationNode {
             return if (kDocTag == null) {
                 DocumentationNode(emptyList())
