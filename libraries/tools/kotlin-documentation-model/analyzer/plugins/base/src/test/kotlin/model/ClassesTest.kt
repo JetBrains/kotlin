@@ -553,4 +553,38 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             }
         }
     }
+
+    @Test
+    fun `inline classes`() {
+        inlineModelTest(
+            """
+               | inline class X(val example: String)
+               | 
+               | @JvmInline
+               | value class InlineTest(val x: String)  
+            """.trimMargin()
+        ) {
+            val classlike = packages.flatMap { it.classlikes }.first() as DClass
+            classlike.name equals "X"
+            classlike.properties.first().name equals "example"
+            classlike.extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Inline
+        }
+    }
+
+    @Test
+    fun `value classes`() {
+        inlineModelTest(
+            """
+               | @JvmInline
+               | value class InlineTest(val example: String)  
+            """.trimMargin()
+        ) {
+            val classlike = packages.flatMap { it.classlikes }.first() as DClass
+            classlike.name equals "InlineTest"
+            classlike.properties.first().name equals "example"
+            classlike.extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Value
+        }
+    }
 }

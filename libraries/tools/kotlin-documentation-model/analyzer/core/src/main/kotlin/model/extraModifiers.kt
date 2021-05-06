@@ -4,6 +4,7 @@ sealed class ExtraModifiers(val name: String) {
 
     sealed class KotlinOnlyModifiers(name: String) : ExtraModifiers(name) {
         object Inline : KotlinOnlyModifiers("inline")
+        object Value : KotlinOnlyModifiers("value")
         object Infix : KotlinOnlyModifiers("infix")
         object External : KotlinOnlyModifiers("external")
         object Suspend : KotlinOnlyModifiers("suspend")
@@ -34,6 +35,7 @@ sealed class ExtraModifiers(val name: String) {
     companion object {
         fun valueOf(str: String) = when (str) {
             "inline" -> KotlinOnlyModifiers.Inline
+            "value" -> KotlinOnlyModifiers.Value
             "infix" -> KotlinOnlyModifiers.Infix
             "external" -> KotlinOnlyModifiers.External
             "suspend" -> KotlinOnlyModifiers.Suspend
