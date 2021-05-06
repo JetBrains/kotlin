@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
 import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContextDetector
 import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
+import org.jetbrains.kotlin.idea.completion.contributors.FirCompletionContributorBase
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
@@ -48,7 +49,7 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
             parameters.position.getModuleInfo().contentScope()
         )
 
-        val basicContext = FirBasicCompletionContext.createFromParameters(parameters, result) ?: return
+        val basicContext = FirBasicCompletionContext.createFromParameters(parameters, resultSet) ?: return
         recordOriginalFile(basicContext)
         val positionContext = FirPositionCompletionContextDetector.detect(basicContext)
 
@@ -65,9 +66,9 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         FirPositionCompletionContextDetector.analyseInContext(basicContext, positionContext) {
             when (positionContext) {
                 is FirNameReferencePositionContext -> with(
-                    KotlinWithNameReferenceCompletionProvider(resultSet.prefixMatcher, indexHelper)
+                    KotlinWithNameReferenceCompletionProvider(basicContext, indexHelper)
                 ) {
-                    addCompletions(basicContext, positionContext)
+                    addCompletions(positionContext)
                 }
                 is FirUnknownPositionContext -> {
                     // TODO
@@ -135,9 +136,9 @@ internal fun interface CompletionVisibilityChecker {
  * TODO refactor it, try to split into several classes, or decompose it into several classes.
  */
 private class KotlinWithNameReferenceCompletionProvider(
-    private val prefixMatcher: PrefixMatcher,
+    basicContext: FirBasicCompletionContext,
     private val indexHelper: IndexHelper
-) {
+): FirCompletionContributorBase(basicContext) {
     private val lookupElementFactory = KotlinFirLookupElementFactory()
     private val typeNamesProvider = TypeNamesProvider(indexHelper)
 
@@ -165,20 +166,19 @@ private class KotlinWithNameReferenceCompletionProvider(
     }
 
     fun KtAnalysisSession.addCompletions(
-        basicContext: FirBasicCompletionContext,
         positionContext: FirNameReferencePositionContext
     ) = with(positionContext) {
-        val fileSymbol = basicContext.originalKtFile.getFileSymbol()
+        val fileSymbol = originalKtFile.getFileSymbol()
         val expectedType = nameExpression.getExpectedType()
 
-        val scopesContext = basicContext.originalKtFile.getScopeContextForPosition(nameExpression)
+        val scopesContext = originalKtFile.getScopeContextForPosition(nameExpression)
 
         val extensionChecker = ExtensionApplicabilityChecker {
-            it.checkExtensionIsSuitable(basicContext.originalKtFile, nameExpression, explicitReceiver)
+            it.checkExtensionIsSuitable(originalKtFile, nameExpression, explicitReceiver)
         }
 
         val visibilityChecker = CompletionVisibilityChecker {
-            basicContext.parameters.invocationCount > 1 || isVisible(
+            parameters.invocationCount > 1 || isVisible(
                 it,
                 fileSymbol,
                 positionContext.explicitReceiver,
@@ -188,14 +188,12 @@ private class KotlinWithNameReferenceCompletionProvider(
 
         when {
             nameExpression.parent is KtUserType -> collectTypesCompletion(
-                basicContext.result,
                 scopesContext.scopes,
                 expectedType,
                 visibilityChecker
             )
             explicitReceiver != null -> {
                 collectDotCompletion(
-                    basicContext.result,
                     scopesContext.scopes,
                     explicitReceiver,
                     expectedType,
@@ -204,13 +202,12 @@ private class KotlinWithNameReferenceCompletionProvider(
                 )
             }
 
-            else -> collectDefaultCompletion(basicContext.result, scopesContext, expectedType, extensionChecker, visibilityChecker)
+            else -> collectDefaultCompletion(scopesContext, expectedType, extensionChecker, visibilityChecker)
         }
     }
 
 
     private fun KtAnalysisSession.collectTypesCompletion(
-        result: CompletionResultSet,
         implicitScopes: KtScope,
         expectedType: KtType?,
         visibilityChecker: CompletionVisibilityChecker,
@@ -229,7 +226,6 @@ private class KotlinWithNameReferenceCompletionProvider(
     }
 
     private fun KtAnalysisSession.collectDotCompletion(
-        result: CompletionResultSet,
         implicitScopes: KtCompositeScope,
         explicitReceiver: KtExpression,
         expectedType: KtType?,
@@ -250,7 +246,6 @@ private class KotlinWithNameReferenceCompletionProvider(
     }
 
     private fun KtAnalysisSession.collectDefaultCompletion(
-        result: CompletionResultSet,
         implicitScopesContext: KtScopeContext,
         expectedType: KtType?,
         extensionChecker: ExtensionApplicabilityChecker,
@@ -275,7 +270,7 @@ private class KotlinWithNameReferenceCompletionProvider(
         collectTopLevelExtensionsFromIndices(implicitReceiversTypes, extensionChecker, visibilityChecker)
             .forEach { addSymbolToCompletion(result, expectedType, it) }
 
-        collectTypesCompletion(result, implicitScopes, expectedType, visibilityChecker)
+        collectTypesCompletion(implicitScopes, expectedType, visibilityChecker)
     }
 
     private fun KtAnalysisSession.collectTopLevelExtensionsFromIndices(
