@@ -12,13 +12,14 @@ import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
+import org.jetbrains.kotlin.idea.completion.context.FirNameReferencePositionContext
+import org.jetbrains.kotlin.idea.completion.context.FirPositionCompletionContextDetector
+import org.jetbrains.kotlin.idea.completion.context.FirUnknownPositionContext
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
-import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
-import org.jetbrains.kotlin.idea.frontend.api.analyseInFakeAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
@@ -27,11 +28,9 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
@@ -49,7 +48,39 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
             parameters.position.getModuleInfo().contentScope()
         )
 
-        KotlinCommonCompletionProvider(resultSet.prefixMatcher, indexHelper).addCompletions(parameters, resultSet)
+        val basicContext = FirBasicCompletionContext.createFromParameters(parameters, result) ?: return
+        recordOriginalFile(basicContext)
+        val positionContext = FirPositionCompletionContextDetector.detect(basicContext)
+
+        FirKeywordCompletion.completeKeywords(
+            result,
+            parameters,
+            parameters.position,
+            resultSet.prefixMatcher,
+            basicContext.project,
+            isJvmModule = basicContext.targetPlatform.isJvm()
+        )
+
+
+        FirPositionCompletionContextDetector.analyseInContext(basicContext, positionContext) {
+            when (positionContext) {
+                is FirNameReferencePositionContext -> with(
+                    KotlinWithNameReferenceCompletionProvider(resultSet.prefixMatcher, indexHelper)
+                ) {
+                    addCompletions(basicContext, positionContext)
+                }
+                is FirUnknownPositionContext -> {
+                    // TODO
+                }
+            }
+        }
+    }
+
+
+    private fun recordOriginalFile(basicCompletionContext: FirBasicCompletionContext) {
+        val originalFile = basicCompletionContext.originalKtFile
+        val fakeFile = basicCompletionContext.fakeKtFile
+        fakeFile.originalKtFile = originalFile
     }
 
     private fun createResultSet(parameters: CompletionParameters, result: CompletionResultSet): CompletionResultSet =
@@ -103,7 +134,7 @@ internal fun interface CompletionVisibilityChecker {
  *
  * TODO refactor it, try to split into several classes, or decompose it into several classes.
  */
-private class KotlinCommonCompletionProvider(
+private class KotlinWithNameReferenceCompletionProvider(
     private val prefixMatcher: PrefixMatcher,
     private val indexHelper: IndexHelper
 ) {
@@ -133,62 +164,50 @@ private class KotlinCommonCompletionProvider(
         with(Weighers) { applyWeighsToLookupElement(lookupElement, symbol, expectedType) }
     }
 
-    private fun recordOriginalFile(basicCompletionContext: FirBasicCompletionContext) {
-        val originalFile = basicCompletionContext.originalKtFile
-        val fakeFile = basicCompletionContext.fakeKtFile
-        fakeFile.originalKtFile = originalFile
-    }
+    fun KtAnalysisSession.addCompletions(
+        basicContext: FirBasicCompletionContext,
+        positionContext: FirNameReferencePositionContext
+    ) = with(positionContext) {
+        val fileSymbol = basicContext.originalKtFile.getFileSymbol()
+        val expectedType = nameExpression.getExpectedType()
 
-    @OptIn(InvalidWayOfUsingAnalysisSession::class)
-    fun addCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
-        val basicContext = FirBasicCompletionContext.createFromParameters(parameters, result) ?: return
-        recordOriginalFile(basicContext)
+        val scopesContext = basicContext.originalKtFile.getScopeContextForPosition(nameExpression)
 
-        FirKeywordCompletion.completeKeywords(
-            result,
-            parameters,
-            parameters.position,
-            prefixMatcher,
-            basicContext.project,
-            isJvmModule = basicContext.targetPlatform.isJvm()
-        )
+        val extensionChecker = ExtensionApplicabilityChecker {
+            it.checkExtensionIsSuitable(basicContext.originalKtFile, nameExpression, explicitReceiver)
+        }
 
-        val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
-        val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression } ?: return
+        val visibilityChecker = CompletionVisibilityChecker {
+            basicContext.parameters.invocationCount > 1 || isVisible(
+                it,
+                fileSymbol,
+                positionContext.explicitReceiver,
+                positionContext.position
+            )
+        }
 
-        val explicitReceiver = nameExpression.getReceiverExpression()
-
-        analyseInFakeAnalysisSession(basicContext.originalKtFile, nameExpression) {
-            val fileSymbol = basicContext.originalKtFile.getFileSymbol()
-            val expectedType = nameExpression.getExpectedType()
-
-            val scopesContext = basicContext.originalKtFile.getScopeContextForPosition(nameExpression)
-
-            val extensionChecker = ExtensionApplicabilityChecker {
-                it.checkExtensionIsSuitable(basicContext.originalKtFile, nameExpression, explicitReceiver)
+        when {
+            nameExpression.parent is KtUserType -> collectTypesCompletion(
+                basicContext.result,
+                scopesContext.scopes,
+                expectedType,
+                visibilityChecker
+            )
+            explicitReceiver != null -> {
+                collectDotCompletion(
+                    basicContext.result,
+                    scopesContext.scopes,
+                    explicitReceiver,
+                    expectedType,
+                    extensionChecker,
+                    visibilityChecker,
+                )
             }
 
-            val visibilityChecker = CompletionVisibilityChecker {
-                parameters.invocationCount > 1 || isVisible(it, fileSymbol, explicitReceiver, parameters.position)
-            }
-
-            when {
-                nameExpression.parent is KtUserType -> collectTypesCompletion(result, scopesContext.scopes, expectedType, visibilityChecker)
-                explicitReceiver != null -> {
-                    collectDotCompletion(
-                        result,
-                        scopesContext.scopes,
-                        explicitReceiver,
-                        expectedType,
-                        extensionChecker,
-                        visibilityChecker,
-                    )
-                }
-
-                else -> collectDefaultCompletion(result, scopesContext, expectedType, extensionChecker, visibilityChecker)
-            }
+            else -> collectDefaultCompletion(basicContext.result, scopesContext, expectedType, extensionChecker, visibilityChecker)
         }
     }
+
 
     private fun KtAnalysisSession.collectTypesCompletion(
         result: CompletionResultSet,
