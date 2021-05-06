@@ -526,6 +526,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             runTest("compiler/testData/diagnostics/tests/RecursiveTypeInference.kt");
         }
 
+        @TestMetadata("RecursiveTypeParameterEqualityCheck.kt")
+        public void testRecursiveTypeParameterEqualityCheck() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/RecursiveTypeParameterEqualityCheck.kt");
+        }
+
         @TestMetadata("ReserveYield.kt")
         public void testReserveYield() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ReserveYield.kt");
@@ -7893,6 +7898,11 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestMetadata("starImportNestedClassAndEntries.kt")
             public void testStarImportNestedClassAndEntries() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/starImportNestedClassAndEntries.kt");
+            }
+
+            @TestMetadata("typeCompatibility.kt")
+            public void testTypeCompatibility() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/typeCompatibility.kt");
             }
 
             @TestMetadata("typeParametersInEnum.kt")
