@@ -223,6 +223,8 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
 
+        println("VISIT: ${declaration.name}")
+
         if (declaration.isInlined()) {
             if (declaration.isUsedAsBoxClass()) {
                 if (declaration.isNativePrimitiveType()) {

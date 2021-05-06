@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.backend.konan.ir.interop
 
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
@@ -187,4 +188,6 @@ internal fun IrSymbol.findCStructDescriptor(interopBuiltIns: InteropBuiltIns): C
         descriptor.findCStructDescriptor(interopBuiltIns)
 
 internal fun DeclarationDescriptor.findCStructDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
-        parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull { it.inheritsFromCStructVar(interopBuiltIns) }
+        parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull {
+            it.inheritsFromCStructVar(interopBuiltIns) || it.annotations.hasAnnotation(RuntimeNames.managedType)
+        }

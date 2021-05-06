@@ -773,6 +773,10 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             return transformSecondaryCppConstructorCall(expression)
         }
 
+        if (expression.symbol.owner.constructedClass.hasAnnotation(RuntimeNames.managedType)) {
+            return transformManagedSecondaryCppConstructorCall(expression)
+        }
+
         val callee = expression.symbol.owner
         val inlinedClass = callee.returnType.getInlinedClassNative()
         require(inlinedClass?.descriptor != interop.cPointer) { renderCompilerError(expression) }
@@ -855,6 +859,44 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         return irBlock
     }
 
+    private fun transformManagedSecondaryCppConstructorCall(expression: IrConstructorCall): IrExpression {
+        val irConstructor = expression.symbol.owner
+        val irClass = irConstructor.constructedClass
+        val primaryConstructor = irClass.primaryConstructor!!.symbol
+
+        val correspondingCppClass = primaryConstructor.owner.valueParameters.single().type.classOrNull?.owner!!
+
+        val correspondingCppConstructor = correspondingCppClass
+                .declarations
+                .filterIsInstance<IrConstructor>()
+                .filter { it.valueParameters.size == irConstructor.valueParameters.size}
+                .single {
+                    it.valueParameters.mapIndexed() { index, initParameter ->
+                        initParameter.type == irConstructor.valueParameters[index].type
+                    }.all{ it }
+                }
+
+        val irBlock = builder.at(expression)
+                .irBlock {
+                    val cppConstructorCall = irCall(correspondingCppConstructor.symbol).apply {
+                        for (index in 0 until expression.valueArgumentsCount) {
+                            putValueArgument(index, expression.getValueArgument(index)!!)
+                        }
+                    }
+                    val call = irCall(primaryConstructor).also {
+                        it.putValueArgument(0, transformSecondaryCppConstructorCall(cppConstructorCall))
+                    }
+                    +call
+                    //val tmp = irTemporary(call)
+                    //+irGet(tmp)
+                }.also {
+                    println("CONSTRUCTOR CALL")
+                    println(ir2stringWhole(it))
+                }
+
+        return irBlock
+    }
+
     /**
      * Handle `const val`s that come from interop libraries.
      *
@@ -890,6 +932,9 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
+
+
+
         val intrinsicType = tryGetIntrinsicType(expression)
         if (intrinsicType == IntrinsicType.OBJC_INIT_BY) {
             // Need to do this separately as otherwise [expression.transformChildrenVoid(this)] would be called
@@ -931,6 +976,10 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
         if (function.annotations.hasAnnotation(RuntimeNames.cCall)) {
             return generateCCall(expression)
+        }
+
+        if (expression.dispatchReceiver?.type?.classOrNull?.owner?.hasAnnotation(RuntimeNames.managedType) ?: false) {
+            return transformManagedCall(expression)
         }
 
         val failCompilation = { msg: String -> error(irFile, expression, msg) }
@@ -1075,6 +1124,43 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 }
             else -> expression
         }
+    }
+
+    private fun transformManagedCall(expression: IrCall): IrExpression {
+        val function = expression.symbol.owner
+
+        val irClass = function.dispatchReceiverParameter!!.type.classOrNull!!.owner
+        val cppProperty = irClass.declarations
+                .filterIsInstance<IrProperty>()
+                .filter { it.name.toString() == "cpp" }
+                .single()
+
+        if (function == cppProperty.getter) return expression
+
+        val cppField = cppProperty.backingField!!
+
+        val newFunction = cppField.type.classOrNull!!.owner.declarations
+                .filterIsInstance<IrSimpleFunction>()
+                .filter { it.name == function.name }
+                .filter { it.valueParameters.size == function.valueParameters.size }
+                .filter {
+                    it.valueParameters.mapIndexed() { index, parameter ->
+                        parameter.type == function.valueParameters[index].type
+                    }.all { it }
+                }.single()
+
+        //return builder.at(expression).irBlock {
+        val newCall = with (builder.at(expression)) {
+            irCall(newFunction).apply {
+                dispatchReceiver = irGetField(expression.dispatchReceiver, cppField)
+                for (index in 0 until expression.valueArgumentsCount) {
+                    putValueArgument(index, expression.getValueArgument(index))
+                }
+            }
+        }
+        return generateCCall(newCall as IrCall)
+          //  +newCall
+        //}
     }
 
     private fun IrBuilderWithScope.irConvertInteger(

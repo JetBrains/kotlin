@@ -158,6 +158,8 @@ sealed class StubOrigin {
     class TypeDef(val typedefDef: TypedefDef) : StubOrigin()
 
     class VarOf(val typeOrigin: StubOrigin) : StubOrigin()
+
+    object Other : StubOrigin() // TODO: what do we need here?
 }
 
 interface StubElementWithOrigin : StubIrElement {
@@ -210,6 +212,8 @@ sealed class AnnotationStub(val classifier: Classifier) {
         class VarType(val size: Long, val align: Int) : AnnotationStub(cStructClassifier.nested("VarType"))
 
         object ManagedType : AnnotationStub(cStructClassifier.nested("ManagedType"))
+
+        object CPlusPlusClass : AnnotationStub(cStructClassifier.nested("CPlusPlusClass"))
     }
 
     class CNaturalStruct(val members: List<StructMember>) :
@@ -318,11 +322,11 @@ sealed class ClassStub : StubContainer(), StubElementWithOrigin, AnnotationHolde
     abstract val companion : Companion?
     abstract val classifier: Classifier
 
-    class Simple(
+    open class Simple(
             override val classifier: Classifier,
             val modality: ClassStubModality,
-            constructors: List<ConstructorStub> = emptyList(),
-            methods: List<FunctionStub> = emptyList(),
+            val constructors: List<ConstructorStub> = emptyList(),
+            val methods: List<FunctionStub> = emptyList(),
             override val superClassInit: SuperClassInit? = null,
             override val interfaces: List<StubType> = emptyList(),
             override val properties: List<PropertyStub> = emptyList(),

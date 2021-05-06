@@ -14,6 +14,7 @@ object RuntimeNames {
     val cStructArrayMemberAt = FqName("kotlinx.cinterop.internal.CStruct.ArrayMemberAt")
     val cStructBitField = FqName("kotlinx.cinterop.internal.CStruct.BitField")
     val cStruct = FqName("kotlinx.cinterop.internal.CStruct")
+    val cppClass = FqName("kotlinx.cinterop.internal.CStruct.CPlusPlusClass")
     val managedType = FqName("kotlinx.cinterop.internal.CStruct.ManagedType")
     val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
     val objCMethodImp = FqName("kotlinx.cinterop.ObjCMethodImp")
@@ -22,4 +23,5 @@ object RuntimeNames {
     val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
     val associatedObjectKey = FqName("kotlin.reflect.AssociatedObjectKey")
     val typedIntrinsicAnnotation = FqName("kotlin.native.internal.TypedIntrinsic")
+    val cleaner = FqName("kotlin.native.internal.Cleaner")
 }
