@@ -418,6 +418,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.WHOLE_ELEMENT) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<FirSimpleFunction>("targetFunction")
         }
 
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()

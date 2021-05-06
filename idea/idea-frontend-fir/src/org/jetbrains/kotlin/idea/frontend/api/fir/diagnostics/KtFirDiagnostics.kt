@@ -910,6 +910,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ReturnTypeMismatch::class
         abstract val expectedType: KtType
         abstract val actualType: KtType
+        abstract val targetFunction: KtSymbol
     }
 
     abstract class CyclicGenericUpperBound : KtFirDiagnostic<PsiElement>() {

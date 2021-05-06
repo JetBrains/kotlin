@@ -1813,4 +1813,140 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
             runTest("idea/testData/quickfix/wrapWithSafeLetCall/wrapAllNonNullablePositions6.kt");
         }
     }
+
+    @TestMetadata("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ComponentFunctionReturnTypeMismatch extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInComponentFunctionReturnTypeMismatch() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("componentFunctionReturnTypeMismatch1.kt")
+        public void testComponentFunctionReturnTypeMismatch1() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/componentFunctionReturnTypeMismatch1.kt");
+        }
+
+        @TestMetadata("componentFunctionReturnTypeMismatch2.kt")
+        public void testComponentFunctionReturnTypeMismatch2() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/componentFunctionReturnTypeMismatch2.kt");
+        }
+
+        @TestMetadata("componentFunctionReturnTypeMismatch3.kt")
+        public void testComponentFunctionReturnTypeMismatch3() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/componentFunctionReturnTypeMismatch3.kt");
+        }
+
+        @TestMetadata("componentFunctionReturnTypeMismatch4.kt")
+        public void testComponentFunctionReturnTypeMismatch4() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/componentFunctionReturnTypeMismatch4.kt");
+        }
+
+        @TestMetadata("componentFunctionReturnTypeMismatch5.kt")
+        public void testComponentFunctionReturnTypeMismatch5() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/componentFunctionReturnTypeMismatch5.kt");
+        }
+
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch/dataClass.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeMismatchOnReturnedExpression extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeMismatchOnReturnedExpression() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("assignmentTypeMismatch.kt")
+        public void testAssignmentTypeMismatch() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/assignmentTypeMismatch.kt");
+        }
+
+        @TestMetadata("changeFunctionReturnTypeToFunctionType.kt")
+        public void testChangeFunctionReturnTypeToFunctionType() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/changeFunctionReturnTypeToFunctionType.kt");
+        }
+
+        @TestMetadata("changeFunctionReturnTypeToMatchReturnTypeOfReturnedLiteral.kt")
+        public void testChangeFunctionReturnTypeToMatchReturnTypeOfReturnedLiteral() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/changeFunctionReturnTypeToMatchReturnTypeOfReturnedLiteral.kt");
+        }
+
+        @TestMetadata("dontChangeFunctionReturnTypeToErrorType.kt")
+        public void testDontChangeFunctionReturnTypeToErrorType() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/dontChangeFunctionReturnTypeToErrorType.kt");
+        }
+
+        @TestMetadata("literalPropertyWithGetter.kt")
+        public void testLiteralPropertyWithGetter() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/literalPropertyWithGetter.kt");
+        }
+
+        @TestMetadata("multiFakeOverride.kt")
+        public void testMultiFakeOverride() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/multiFakeOverride.kt");
+        }
+
+        @TestMetadata("multiFakeOverrideForOperatorConvention.kt")
+        public void testMultiFakeOverrideForOperatorConvention() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/multiFakeOverrideForOperatorConvention.kt");
+        }
+
+        @TestMetadata("nonLocalReturnRuntime.kt")
+        public void testNonLocalReturnRuntime() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/nonLocalReturnRuntime.kt");
+        }
+
+        @TestMetadata("nonLocalReturnWithLabelRuntime.kt")
+        public void testNonLocalReturnWithLabelRuntime() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/nonLocalReturnWithLabelRuntime.kt");
+        }
+
+        @TestMetadata("notApplicableToConstructor.kt")
+        public void testNotApplicableToConstructor() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/notApplicableToConstructor.kt");
+        }
+
+        @TestMetadata("propertyGetterInitializerTypeMismatch.kt")
+        public void testPropertyGetterInitializerTypeMismatch() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/propertyGetterInitializerTypeMismatch.kt");
+        }
+
+        @TestMetadata("returnedExpressionTypeMismatchFunctionParameterType.kt")
+        public void testReturnedExpressionTypeMismatchFunctionParameterType() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/returnedExpressionTypeMismatchFunctionParameterType.kt");
+        }
+
+        @TestMetadata("typeMismatchInIfStatementReturnedByFunction.kt")
+        public void testTypeMismatchInIfStatementReturnedByFunction() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/typeMismatchInIfStatementReturnedByFunction.kt");
+        }
+
+        @TestMetadata("typeMismatchInIfStatementReturnedByLiteral.kt")
+        public void testTypeMismatchInIfStatementReturnedByLiteral() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/typeMismatchInIfStatementReturnedByLiteral.kt");
+        }
+
+        @TestMetadata("typeMismatchInInitializer.kt")
+        public void testTypeMismatchInInitializer() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/typeMismatchInInitializer.kt");
+        }
+
+        @TestMetadata("typeMismatchInReturnStatement.kt")
+        public void testTypeMismatchInReturnStatement() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/typeMismatchInReturnStatement.kt");
+        }
+    }
 }

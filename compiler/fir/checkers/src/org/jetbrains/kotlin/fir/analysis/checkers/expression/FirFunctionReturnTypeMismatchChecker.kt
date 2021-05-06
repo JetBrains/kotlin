@@ -36,7 +36,10 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             if (resultExpression.isNullLiteral && functionReturnType.nullability == ConeNullability.NOT_NULL) {
                 reporter.reportOn(resultExpression.source, NULL_FOR_NONNULL_TYPE, context)
             } else {
-                reporter.report(RETURN_TYPE_MISMATCH.on(returnExpressionSource, functionReturnType, returnExpressionType), context)
+                reporter.report(
+                    RETURN_TYPE_MISMATCH.on(returnExpressionSource, functionReturnType, returnExpressionType, targetElement),
+                    context
+                )
             }
         }
     }

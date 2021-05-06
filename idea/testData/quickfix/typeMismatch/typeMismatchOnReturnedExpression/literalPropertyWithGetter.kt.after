@@ -2,3 +2,4 @@
 
 val complex: (Int) -> Long
     get() = { it.toLong() }
+/* IGNORE_FIR */

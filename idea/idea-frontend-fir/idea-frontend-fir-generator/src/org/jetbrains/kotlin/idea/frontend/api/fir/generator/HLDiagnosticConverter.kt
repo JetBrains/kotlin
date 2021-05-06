@@ -217,6 +217,11 @@ private object FirToKtConversionCreator {
             KtSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
         ),
+        FirSimpleFunction::class to HLFunctionCallConversion(
+            "firSymbolBuilder.buildSymbol({0})",
+            KtSymbol::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirSimpleFunction")
+        ),
         FirNamedFunctionSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol({0}.fir)",
             KtFunctionLikeSymbol::class.createType(),

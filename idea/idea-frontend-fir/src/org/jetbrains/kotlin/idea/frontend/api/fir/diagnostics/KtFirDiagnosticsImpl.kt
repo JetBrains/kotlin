@@ -1471,6 +1471,7 @@ internal class TypeParameterOfPropertyNotUsedInReceiverImpl(
 internal class ReturnTypeMismatchImpl(
     override val expectedType: KtType,
     override val actualType: KtType,
+    override val targetFunction: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ReturnTypeMismatch(), KtAbstractFirDiagnostic<KtExpression> {
