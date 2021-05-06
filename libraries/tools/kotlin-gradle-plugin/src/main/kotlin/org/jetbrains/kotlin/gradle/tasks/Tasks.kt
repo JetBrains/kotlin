@@ -375,7 +375,7 @@ class KotlinJvmCompilerArgumentsProvider
     val friendPaths: FileCollection = taskProvider.friendPaths
     val compileClasspath: Iterable<File> = taskProvider.classpath
     val destinationDir: File = taskProvider.destinationDir
-    internal val kotlinOptions: List<KotlinJvmOptionsImpl?> = listOfNotNull(
+    internal val kotlinOptions: List<KotlinJvmOptionsImpl> = listOfNotNull(
         taskProvider.parentKotlinOptionsImpl.orNull as? KotlinJvmOptionsImpl,
         taskProvider.kotlinOptions as KotlinJvmOptionsImpl
     )
