@@ -1,1 +1,1 @@
-class RegularClass <caret>private constructor()
+open class RegularClass <caret>private constructor()

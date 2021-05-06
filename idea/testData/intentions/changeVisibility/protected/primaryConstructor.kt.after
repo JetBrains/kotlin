@@ -1,1 +1,1 @@
-class RegularClass <caret>protected constructor()
+open class RegularClass <caret>protected constructor()

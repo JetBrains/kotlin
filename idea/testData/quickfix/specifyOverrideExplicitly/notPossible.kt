@@ -2,7 +2,6 @@
 // ACTION: Create test
 // ACTION: Make primary constructor internal
 // ACTION: Make primary constructor private
-// ACTION: Make primary constructor protected
 // ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Extract 'C' from current file
 // ACTION: Rename file to C.kt
