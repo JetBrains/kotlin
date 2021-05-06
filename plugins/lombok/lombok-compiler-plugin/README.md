@@ -1,10 +1,10 @@
-Kotlin plugin to support Lombok annotations in the same compilation unit with kotlin
+Experimental Kotlin plugin to support Lombok annotations in the same compilation unit with kotlin
 
-Features support:
+### Features support:
 
 [~] [Config files](https://projectlombok.org/features/configuration)
 
- - [x] Basic support - single config file
+ - [x] Basic support - single config file. Need to be specified explicitly by plugin config 
  - [ ] Import other config files
  - [ ] Config files discovery and bubbling
 
@@ -28,7 +28,7 @@ Features support:
 [~] [@With](https://projectlombok.org/features/With)
   
   - [x] Basic support
-  - [ ] Copy annotations
+  - [ ] Copy annotations (probably don't need it, because annotations don't affect members' resolution)
   
 [x] [@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor](https://projectlombok.org/features/constructor)
  - [x] @NoArgsConstructor
@@ -41,7 +41,7 @@ Features support:
   - [x] generate getters and constructors
   - [ ] make class final, make fields private and final
 
-[ ] [@Builder](https://projectlombok.org/features/Builder)
+[ ] [@Builder](https://projectlombok.org/features/Builder) - will not be supported in the current prototype.  
 
 
 Other todos:
@@ -49,10 +49,6 @@ Other todos:
  - [x] Actually run compiled code 
  - [x] Don't generate members that already exist (if having a duplicate is a problem)
  - [x] Gradle integration (as subplugin or just a way to enable lombok support)
- - [ ] Gradle plugin integration test
- - [ ] Maven integration (as subplugin or just a way to enable lombok support)
+ - [x] Gradle plugin integration test
+ - [x] Maven integration (as subplugin or just a way to enable lombok support)
  - [x] Nullability from annotations. Check if it is inherited from variable definition
-
-
-
- 
