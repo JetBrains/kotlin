@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.daemon.client
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -49,7 +50,7 @@ object KotlinCompilerClient {
     val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
     val DAEMON_CONNECT_CYCLE_ATTEMPTS = 3
 
-    val verboseReporting = CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value != null
+    val verboseReporting = CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.toBooleanLenient()
 
     fun getOrCreateClientFlagFile(daemonOptions: DaemonOptions): File =
             // for jps property is passed from IDEA to JPS in KotlinBuildProcessParametersProvider

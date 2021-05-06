@@ -504,7 +504,7 @@ class KotlinCoreEnvironment private constructor(
                 }
                 // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
                 // breaks a lot of tests, therefore it is disabled for production and enabled for tests
-                if (CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true) {
+                if (!CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.toBooleanLenient()) {
                     // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
                     // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
                     Disposer.register(parentDisposable, Disposable {

@@ -973,6 +973,7 @@ Finished executing task ':$taskName'|
             if (supportFailingBuildOnWarning && notUsingAgpWithWarnings && options.warningMode == WarningMode.Fail) {
                 add("--warning-mode=${WarningMode.Fail.name.toLowerCase()}")
             }
+
             addAll(options.freeCommandLineArgs)
         }
 

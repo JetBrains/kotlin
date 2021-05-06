@@ -36,7 +36,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
     static {
         boolean colorEnabled = false;
         // TODO: investigate why ANSI escape codes on Windows only work in REPL for some reason
-        if (!PropertiesKt.isWindows() && "true".equals(CompilerSystemProperties.KOTLIN_COLORS_ENABLED_PROPERTY.getValue())) {
+        if (!PropertiesKt.isWindows() && CompilerSystemProperties.KOTLIN_COLORS_ENABLED_PROPERTY.toBooleanLenient(false)) {
             try {
                 // AnsiConsole doesn't check isatty() for stderr (see https://github.com/fusesource/jansi/pull/35).
                 colorEnabled = CLibrary.isatty(CLibrary.STDERR_FILENO) != 0;

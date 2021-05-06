@@ -57,12 +57,12 @@ object LookupSymbolKeyDescriptor : KeyDescriptor<LookupSymbolKey> {
     override fun save(output: DataOutput, value: LookupSymbolKey) {
         if (storeFullFqName) {
             output.writeByte(0)
-            output.writeUTF(value.name)
-            output.writeUTF(value.scope)
-        } else {
-            output.writeByte(1)
             output.writeInt(value.nameHash)
             output.writeInt(value.scopeHash)
+        } else {
+            output.writeByte(1)
+            output.writeUTF(value.name)
+            output.writeUTF(value.scope)
         }
     }
 

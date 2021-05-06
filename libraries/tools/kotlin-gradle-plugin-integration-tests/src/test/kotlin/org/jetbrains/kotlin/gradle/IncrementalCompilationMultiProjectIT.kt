@@ -176,6 +176,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         )
     }
 
+
     @Test
     fun testMoveFunctionFromLibToApp() {
         doTest(
@@ -186,6 +187,38 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 barUseABKt.delete()
             },
             expectedAffectedFileNames = listOf("fooCallUseAB.kt", "barUseAB.kt")
+        )
+    }
+
+//val abiSnapshotFile: File by project.provider {
+//    File(taskBuildDirectory, IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
+//}
+//
+//val abiSnapshotRelativePath: String by project.provider {
+//    //TODO update to support any jar changes
+//    "$taskName/${IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME}"
+//}
+
+    @Test
+    fun testAddNewMethodToLib() {
+        doTest(
+            options = defaultBuildOptions().copy(abiSnapshot = true),
+            { project ->
+                val aKt = project.projectDir.getFileByName("A.kt")
+                aKt.writeText(
+                    """
+package bar
+
+open class A {
+    fun a() {}
+    fun newA() {}
+}
+"""
+                )
+            },
+            //TODO for abi-snapshot "BB.kt" should not be recompiled
+            expectedAffectedFileNames = listOf("A.kt", "B.kt", "AA.kt", "BB.kt", "AAA.kt)
+        )
         )
     }
 
@@ -255,7 +288,7 @@ open class A {
         }
 
         //don't need to recompile app classes because lib's proto stays the same
-        project.build("build") {
+        project.build("build", "") {
             assertSuccessful()
             val affectedSources = project.projectDir.allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
@@ -437,12 +470,14 @@ open class A {
     fun testMoveFunctionFromLibWithRemappedBuildDirs() {
         val project = defaultProject()
         project.setupWorkingDir()
-        project.projectDir.resolve("build.gradle").appendText("""
+        project.projectDir.resolve("build.gradle").appendText(
+            """
 
             allprojects {
                 it.buildDir = new File(rootDir,  "../out" + it.path.replace(":", "/") + "/build")
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
         project.build("build") {
             assertSuccessful()
         }

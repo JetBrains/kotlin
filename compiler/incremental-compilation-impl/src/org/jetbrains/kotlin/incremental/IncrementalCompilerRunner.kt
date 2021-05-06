@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
@@ -63,7 +62,7 @@ abstract class IncrementalCompilerRunner<
     protected open val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 
     //TODO(valtman) temporal measure to ensure quick disable, should be deleted after successful release
-    protected val withSnapshot: Boolean = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SHAPSHOTS.value.toBooleanLenient() ?: false
+    protected val withSnapshot: Boolean = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SHAPSHOTS.toBooleanLenient()
 
     protected abstract fun isICEnabled(): Boolean
     protected abstract fun createCacheManager(args: Args, projectDir: File?): CacheManager
@@ -151,8 +150,8 @@ abstract class IncrementalCompilerRunner<
                                 messageCollector,
                                 withSnapshot,
                                 abiSnapshot,
-                                classpathAbiSnapshot
-                            )
+                                classpathAbiSnapshot)
+
                         } else {
                             rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
                         }

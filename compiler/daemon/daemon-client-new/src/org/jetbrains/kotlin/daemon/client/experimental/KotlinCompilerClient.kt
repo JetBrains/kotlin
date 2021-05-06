@@ -13,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.daemon.client.CompileServiceSessionAsync
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
@@ -45,7 +46,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
     val DAEMON_CONNECT_CYCLE_ATTEMPTS = 3
 
-    val verboseReporting = CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value != null
+    val verboseReporting = CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.toBooleanLenient()
 
     private val log = Logger.getLogger("KotlinCompilerClient")
 

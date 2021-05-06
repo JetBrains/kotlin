@@ -20,23 +20,25 @@ package org.jetbrains.kotlin.cli.common
  * @param alwaysDirectAccess Gradle has a list of properties that can be read without declaring, see https://github.com/gradle/gradle/blob/f191a61cec61afe308f2b45184cb303d32706a6f/subprojects/configuration-cache/src/main/kotlin/org/gradle/configurationcache/SystemPropertyAccessListener.kt#L32
  */
 enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess: Boolean = false) {
+    // Flags with boolean values
     COMPILE_DAEMON_ENABLED_PROPERTY("kotlin.daemon.enabled"),
+    COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY("kotlin.daemon.verbose"),
+    COMPILE_DAEMON_REPORT_PERF_PROPERTY("kotlin.daemon.perf"),
+    KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
+    COMPILE_INCREMENTAL_WITH_CLASSPATH_SHAPSHOTS("kotlin.incremental.classpath.snapshot.enabled"),
+    KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
+
     COMPILE_DAEMON_JVM_OPTIONS_PROPERTY("kotlin.daemon.jvm.options"),
     COMPILE_DAEMON_OPTIONS_PROPERTY("kotlin.daemon.options"),
     COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY("kotlin.daemon.client.options"),
     COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY("kotlin.daemon.client.alive.path"),
     COMPILE_DAEMON_LOG_PATH_PROPERTY("kotlin.daemon.log.path"),
-    COMPILE_DAEMON_REPORT_PERF_PROPERTY("kotlin.daemon.perf"),
-    COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY("kotlin.daemon.verbose"),
     COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY("kotlin.daemon.startup.timeout"),
     JAVA_RMI_SERVER_HOSTNAME("java.rmi.server.hostname"),
     DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY("kotlin.daemon.socket.backlog.size"),
     DAEMON_RMI_SOCKET_CONNECT_ATTEMPTS_PROPERTY("kotlin.daemon.socket.connect.attempts"),
     DAEMON_RMI_SOCKET_CONNECT_INTERVAL_PROPERTY("kotlin.daemon.socket.connect.interval"),
-    KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
-    COMPILE_INCREMENTAL_WITH_CLASSPATH_SHAPSHOTS("kotlin.incremental.classpath.snapshot.enabled"),
-    KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
 
     KOTLIN_STAT_ENABLED_PROPERTY("kotlin.plugin.stat.enabled"),
     KOTLIN_STAT_ENDPOINT_PROPERTY("kotlin.plugin.stat.endpoint"),
@@ -77,6 +79,8 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
 
         var systemPropertyCleaner: ((String) -> String?)? = null
     }
+
+    fun toBooleanLenient(defaultValue: Boolean = false): Boolean = this.value?.toBooleanLenient() ?: defaultValue
 }
 
 val isWindows: Boolean

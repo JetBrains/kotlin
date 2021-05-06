@@ -21,6 +21,9 @@ fun File.allJavaFiles(): Iterable<File> =
 fun File.allFilesWithExtension(ext: String): Iterable<File> =
     walk().filter { it.isFile && it.extension.equals(ext, ignoreCase = true) }.toList()
 
+fun File.allFilesWithExtensions(vararg exts: String): Iterable<File> =
+    walk().filter { it.isFile && exts.any { ext ->  it.extension.equals(ext, ignoreCase = true) }}.toList()
+
 fun File.modify(transform: (String) -> String) {
     writeText(transform(readText()))
 }

@@ -320,9 +320,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             // To prevent this, we backup outputs before incremental build and restore when exception is thrown
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputs.isIncremental)
-                    metrics.measure(BuildTime.BACKUP_OUTPUT) {
-                        TaskOutputsBackup(allOutputFiles())
-                    }
+                    TaskOutputsBackup(allOutputFiles())
                 else null
 
             if (!isIncrementalCompilationEnabled()) {
