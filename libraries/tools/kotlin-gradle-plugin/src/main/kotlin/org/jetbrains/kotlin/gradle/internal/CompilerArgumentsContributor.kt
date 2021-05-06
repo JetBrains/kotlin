@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.internal
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -103,6 +103,40 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         }
         args.destinationAsFile = destinationDir
 
-        kotlinOptions.forEach { it?.updateArguments(args) }
+        warnJdkHomeNotUsed(kotlinOptions)
+
+        kotlinOptions.forEach { it.updateArguments(args) }
+    }
+
+    private fun warnJdkHomeNotUsed(kotlinOptions: List<KotlinJvmOptionsImpl>) {
+        kotlinOptions
+            .firstOrNull { it.jdkHome != null }
+            ?.run {
+                logger.warn(
+                    """
+                    'kotlinOptions.jdkHome' is deprecated and will ignored in Kotlin 1.6! 
+                    
+                    Consider using KotlinJavaToolchain:
+                    - Kotlin DSL:
+                    project.tasks
+                        .withType<UsesKotlinJavaToolchain>()
+                        .configureEach {
+                            it.kotlinJavaToolchain.setJdkHome(
+                                "/path/to/your/jdk",
+                                JavaVersion.<JDK_VERSION>
+                            )
+                        }
+                    - Groovy DSL
+                    project.tasks
+                        .withType(UsesKotlinJavaToolchain.class)
+                        .configureEach {
+                             it.kotlinJavaToolchain.setJdkHome(
+                                 '/path/to/your/jdk',
+                                 JavaVersion.<JDK_VERSION>
+                             )
+                        }
+                    """.trimIndent()
+                )
+            }
     }
 }

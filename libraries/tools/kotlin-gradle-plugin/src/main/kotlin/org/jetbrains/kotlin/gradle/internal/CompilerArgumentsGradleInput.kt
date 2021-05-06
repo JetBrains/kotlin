@@ -51,7 +51,7 @@ internal object CompilerArgumentsGradleInput {
         K2JVMCompilerArguments::destination, // handled by destinationDir
         K2JVMCompilerArguments::classpath, // handled by classpath of the Gradle tasks
         K2JVMCompilerArguments::friendPaths, // is part of the classpath
-        K2JVMCompilerArguments::jdkHome, // JDK can be both placed differently and contain different files on user machines
+        K2JVMCompilerArguments::jdkHome, // Gradle takes care of running Kotlin compilation with user specified JDK
         K2JVMCompilerArguments::buildFile, // in Gradle build, these XMLs are transient and provide no useful info
         K2JVMCompilerArguments::pluginOptions, // handled specially in the task
         K2JVMCompilerArguments::pluginClasspaths, // handled in the task as classpath

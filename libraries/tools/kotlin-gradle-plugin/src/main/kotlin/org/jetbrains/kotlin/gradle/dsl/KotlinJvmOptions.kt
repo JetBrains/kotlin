@@ -21,6 +21,7 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Include a custom JDK from the specified location into the classpath instead of the default JAVA_HOME
      * Default value: null
      */
+    @Deprecated(message = "This option is not working well with Gradle caching and will be removed in the future.", level = DeprecationLevel.WARNING)
      var jdkHome: kotlin.String?
 
     /**
