@@ -26,11 +26,16 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
             return defaultCallTransform()
         }
 
+        if (designationPassed) {
+            return declaration
+        }
+
         if (designationWithoutTargetIterator.hasNext()) {
             designationWithoutTargetIterator.next().visitNoTransform(transformer, data)
         } else {
             try {
                 isInsideTargetDeclaration = true
+                designationPassed = true
                 designation.declaration.visitNoTransform(transformer, data)
             } finally {
                 isInsideTargetDeclaration = false
@@ -41,6 +46,11 @@ internal class IDEDeclarationTransformer(private val designation: FirDeclaration
     }
 
     val needReplacePhase: Boolean get() = isInsideTargetDeclaration
+    private var designationPassed: Boolean = false
+
+    fun ensureDesignationPassed() {
+        check(designationPassed) { "Designation not passed for declaration ${designation.declaration::class.simpleName}" }
+    }
 }
 
 private fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {

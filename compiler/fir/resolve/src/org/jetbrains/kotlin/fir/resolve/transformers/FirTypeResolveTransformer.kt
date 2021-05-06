@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -38,7 +39,7 @@ fun <F : FirClassLikeDeclaration<F>> F.runTypeResolvePhaseForLocalClass(
 }
 
 open class FirTypeResolveTransformer(
-    override val session: FirSession,
+    final override val session: FirSession,
     scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList()
 ) : FirAbstractTreeTransformerWithSuperTypes(

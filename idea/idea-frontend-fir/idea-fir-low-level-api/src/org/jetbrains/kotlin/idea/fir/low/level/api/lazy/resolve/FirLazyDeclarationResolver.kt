@@ -173,9 +173,7 @@ internal class FirLazyDeclarationResolver(
         firProviderInterceptor: FirProviderInterceptorForSupertypeResolver?,
         designation: FirDeclarationDesignationWithFile
     ) {
-        if (designation.toSequence(includeTarget = true).all { it.resolvePhase >= phase }) {
-            return
-        }
+        if (designation.declaration.resolvePhase >= phase) return
 
         val transformer = phase.createLazyTransformer(
             designation,
@@ -220,7 +218,8 @@ internal class FirLazyDeclarationResolver(
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> FirDesignatedImplicitTypesTransformerForIDE(
             designation,
             designation.firFile.moduleData.session,
-            scopeSession
+            scopeSession,
+            towerDataContextCollector
         )
         FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
             designation,

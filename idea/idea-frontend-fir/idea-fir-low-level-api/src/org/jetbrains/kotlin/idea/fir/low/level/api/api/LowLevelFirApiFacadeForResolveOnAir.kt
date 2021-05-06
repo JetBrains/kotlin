@@ -69,7 +69,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(state is FirModuleResolveStateImpl)
         require(place.isPhysical)
 
-        val declaration = runResolveBodyResolveOnAir(
+        val declaration = runBodyResolveOnAir(
             state = state,
             replacement = RawFirReplacement(place, elementToResolve),
             collector = null,
@@ -102,7 +102,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             FileTowerProvider(place, onAirGetTowerContextForFile(state, place))
         } else {
             FirTowerDataContextAllElementsCollector().also {
-                runResolveBodyResolveOnAir(state, collector = it, replacement = RawFirReplacement(place, place))
+                runBodyResolveOnAir(state, collector = it, replacement = RawFirReplacement(place, place))
             }
         }
     }
@@ -152,7 +152,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         )
 
         val collector = FirTowerDataContextAllElementsCollector()
-        val copiedFirDeclaration = runResolveBodyResolveOnAir(
+        val copiedFirDeclaration = runBodyResolveOnAir(
             originalState,
             collector = collector,
             replacement = RawFirReplacement(sameDeclarationInOriginalFile, dependencyNonLocalDeclaration),
@@ -163,7 +163,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         return FirModuleResolveStateDepended(originalState, collector, recordedMap)
     }
 
-    private fun <T : KtElement> runResolveBodyResolveOnAir(
+    private fun <T : KtElement> runBodyResolveOnAir(
         state: FirModuleResolveStateImpl,
         replacement: RawFirReplacement<T>,
         collector: FirTowerDataContextCollector? = null,

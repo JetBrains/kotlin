@@ -52,7 +52,7 @@ open class FirContractResolveTransformer(
         return annotationCall
     }
 
-    private class FirDeclarationsContractResolveTransformer(transformer: FirBodyResolveTransformer) : FirDeclarationsResolveTransformer(transformer) {
+    protected open class FirDeclarationsContractResolveTransformer(transformer: FirBodyResolveTransformer) : FirDeclarationsResolveTransformer(transformer) {
         override fun transformSimpleFunction(
             simpleFunction: FirSimpleFunction,
             data: ResolutionMode
@@ -224,11 +224,15 @@ open class FirContractResolveTransformer(
             }
         }
 
+        open fun transformDeclarationContent(firClass: FirClass<*>, data: ResolutionMode) {
+            firClass.transformDeclarations(this, data)
+        }
+
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
             regularClass.updatePhase()
             regularClass.transformCompanionObject(this, data)
             context.withRegularClass(regularClass, components, forContracts = true) {
-                regularClass.transformDeclarations(this, data)
+                transformDeclarationContent(regularClass, data)
             }
             return regularClass
         }
@@ -239,7 +243,7 @@ open class FirContractResolveTransformer(
         ): FirStatement {
             anonymousObject.updatePhase()
             context.withAnonymousObject(anonymousObject, components) {
-                anonymousObject.transformDeclarations(this, data)
+                transformDeclarationContent(anonymousObject, data)
             }
             return anonymousObject
         }

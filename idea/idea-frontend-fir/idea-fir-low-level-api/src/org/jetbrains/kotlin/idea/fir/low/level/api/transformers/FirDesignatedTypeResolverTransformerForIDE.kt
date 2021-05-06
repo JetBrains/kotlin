@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.transformers
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePathPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhaseIfClass
 
 class FirDesignatedTypeResolverTransformerForIDE(
     private val designation: FirDeclarationDesignationWithFile,
@@ -21,22 +25,21 @@ class FirDesignatedTypeResolverTransformerForIDE(
 
     private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
 
-    @Suppress("NAME_SHADOWING")
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
-        return ideDeclarationTransformer.transformDeclarationContent(this, regularClass, data) {
-            super.transformRegularClass(regularClass, data) as FirRegularClass
-        }
-    }
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+        if (element !is FirRegularClass && element !is FirAnonymousObject && element !is FirFile)
+            return super.transformElement(element, data)
 
-    @Suppress("NAME_SHADOWING")
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
-        return ideDeclarationTransformer.transformDeclarationContent(this, anonymousObject, data) {
-            super.transformAnonymousObject(anonymousObject, data) as FirAnonymousObject
+        return ideDeclarationTransformer.transformDeclarationContent(this, element, data) {
+            super.transformElement(element, data)
         }
     }
 
     override fun transformDeclaration() {
-        designation.ensurePhase(FirResolvePhase.TYPES, exceptTarget = true)
+        if (designation.declaration.resolvePhase >= FirResolvePhase.TYPES) return
+        designation.ensurePathPhase(FirResolvePhase.TYPES)
+        designation.ensureTargetPhaseIfClass(FirResolvePhase.SUPER_TYPES)
         designation.firFile.transform<FirFile, Any?>(this, null)
+        ideDeclarationTransformer.ensureDesignationPassed()
+        designation.ensureTargetPhase(FirResolvePhase.TYPES)
     }
 }

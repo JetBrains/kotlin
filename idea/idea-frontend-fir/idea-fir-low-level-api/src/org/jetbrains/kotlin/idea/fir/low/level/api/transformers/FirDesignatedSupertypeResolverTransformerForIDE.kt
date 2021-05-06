@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirApplySupertypesTransform
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptorForSupertypeResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensurePathPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.transformers.FirLazyTransformerForIDE.Companion.ensureTargetPhaseIfClass
 
 internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private val designation: FirDeclarationDesignationWithFile,
@@ -27,7 +28,8 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private val supertypeComputationSession = SupertypeComputationSession()
 
     override fun transformDeclaration() {
-        designation.ensurePhase(FirResolvePhase.SUPER_TYPES, exceptTarget = true)
+        if (designation.declaration.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
+        designation.ensurePathPhase(FirResolvePhase.SUPER_TYPES)
 
         val resolver = FirSupertypeResolverVisitor(
             session = session,
@@ -40,5 +42,6 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         designation.declaration.accept(resolver, null)
         val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
         designation.declaration.transform<FirElement, Void?>(applySupertypesTransformer, null)
+        designation.ensureTargetPhaseIfClass(FirResolvePhase.SUPER_TYPES)
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.RawFirFragmentForLazyBodiesBuilder
 import org.jetbrains.kotlin.fir.builder.RawFirReplacement
@@ -14,8 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
-import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 
 object DeclarationCopyBuilder {
@@ -59,6 +58,12 @@ object DeclarationCopyBuilder {
         val originalFunction = rootNonLocalDeclaration.getOrBuildFirOfType<FirSimpleFunction>(state)
         val builtFunction = createCopy(rootNonLocalDeclaration, originalFunction, replacement)
 
+        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
+        val functionBlock = rootNonLocalDeclaration.bodyBlockExpression
+        if (functionBlock == null || !PsiTreeUtil.isAncestor(functionBlock, replacement.from, true)) {
+            return builtFunction
+        }
+
         // right now we can't resolve builtFunction header properly, as it built right in air,
         // without file, which is now required for running stages other then body resolve, so we
         // take original function header (which is resolved) and copy replacing body with body from builtFunction
@@ -77,6 +82,12 @@ object DeclarationCopyBuilder {
         val originalFirClass = rootNonLocalDeclaration.getOrBuildFirOfType<FirRegularClass>(state)
         val builtClass = createCopy(rootNonLocalDeclaration, originalFirClass, replacement)
 
+        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
+        val classBody = rootNonLocalDeclaration.body
+        if (classBody == null || !PsiTreeUtil.isAncestor(classBody, replacement.from, true)) {
+            return builtClass
+        }
+
         return buildRegularClassCopy(originalFirClass) {
             declarations.clear()
             declarations.addAll(builtClass.declarations)
@@ -94,12 +105,13 @@ object DeclarationCopyBuilder {
 
         val originalFirTypeAlias = rootNonLocalDeclaration.getOrBuildFirOfType<FirTypeAlias>(state)
         val builtTypeAlias = createCopy(rootNonLocalDeclaration, originalFirTypeAlias, replacement)
+        return builtTypeAlias
 
-        return buildTypeAliasCopy(originalFirTypeAlias) {
-            expandedTypeRef = builtTypeAlias.expandedTypeRef
-            symbol = builtTypeAlias.symbol
-            initDeclaration(originalFirTypeAlias, builtTypeAlias, state)
-        }
+//        return buildTypeAliasCopy(originalFirTypeAlias) {
+//            expandedTypeRef = builtTypeAlias.expandedTypeRef
+//            symbol = builtTypeAlias.symbol
+//            initDeclaration(originalFirTypeAlias, builtTypeAlias, state)
+//        }
     }
 
     private fun <T : KtElement> createPropertyCopy(
@@ -109,6 +121,18 @@ object DeclarationCopyBuilder {
     ): FirProperty {
         val originalProperty = rootNonLocalDeclaration.getOrBuildFirOfType<FirProperty>(state)
         val builtProperty = createCopy(rootNonLocalDeclaration, originalProperty, replacement)
+
+        //TODO Check do we really need this optimisation? Maybe it is not optimisation at all because of Kt travers?
+        val insideGetterBody = rootNonLocalDeclaration.getter?.bodyBlockExpression?.let {
+            PsiTreeUtil.isAncestor(it, replacement.from, true)
+        } ?: false
+        if (!insideGetterBody) {
+            val insideSetterBody = rootNonLocalDeclaration.setter?.bodyBlockExpression?.let {
+                PsiTreeUtil.isAncestor(it, replacement.from, true)
+            } ?: false
+
+            if (!insideSetterBody) return builtProperty
+        }
 
         val originalSetter = originalProperty.setter
         val builtSetter = builtProperty.setter
