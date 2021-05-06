@@ -1,33 +1,22 @@
 package model
 
-import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.Platform
-import org.jetbrains.dokka.base.transformers.documentables.InheritorsExtractorTransformer
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
+import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DInterface
-import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
 import utils.assertNotNull
 
 class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", "inheritors") {
 
-    object InheritorsPlugin : DokkaPlugin() {
-        val inheritors by extending {
-            CoreExtensions.documentableTransformer with InheritorsExtractorTransformer()
-        }
-    }
-
-    @Disabled("reenable after fixing subtypes")
     @Test
     fun simple() {
         inlineModelTest(
             """|interface A{}
                |class B() : A {}
             """.trimMargin(),
-            pluginsOverrides = listOf(InheritorsPlugin)
         ) {
             with((this / "inheritors" / "A").cast<DInterface>()) {
                 val map = extra[InheritorsInfo].assertNotNull("InheritorsInfo").value
@@ -40,7 +29,26 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
         }
     }
 
-    @Disabled("reenable after fixing subtypes")
+    @Test
+    fun sealed() {
+        inlineModelTest(
+            """|sealed class A {}
+               |class B() : A() {}
+               |class C() : A() {}
+               |class D()
+            """.trimMargin(),
+        ) {
+            with((this / "inheritors" / "A").cast<DClass>()) {
+                val map = extra[InheritorsInfo].assertNotNull("InheritorsInfo").value
+                with(map.keys.also { it counts 1 }.find { it.analysisPlatform == Platform.jvm }.assertNotNull("jvm key").let { map[it]!! }
+                ) {
+                    this counts 2
+                    mapNotNull { it.classNames }.sorted() equals listOf("B", "C")
+                }
+            }
+        }
+    }
+
     @Test
     fun multiplatform() {
         val configuration = dokkaConfiguration {
@@ -71,7 +79,6 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
         """.trimMargin(),
             configuration,
             cleanupOutput = false,
-            pluginOverrides = listOf(InheritorsPlugin)
         ) {
             documentablesTransformationStage = { m ->
                 with((m / "inheritors" / "A").cast<DInterface>()) {
