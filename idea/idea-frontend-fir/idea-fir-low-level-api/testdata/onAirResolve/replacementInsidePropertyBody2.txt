@@ -1,0 +1,2 @@
+public? final? [BODY_RESOLVE] val inSetter: R|kotlin/Int| = R|<local>/value|
+    [BODY_RESOLVE] public? get(): R|kotlin/Int|

@@ -1,0 +1,2 @@
+public? final? [BODY_RESOLVE] val z: R|kotlin/String| = R|<local>/qqq|
+    [BODY_RESOLVE] public? get(): R|kotlin/String|
