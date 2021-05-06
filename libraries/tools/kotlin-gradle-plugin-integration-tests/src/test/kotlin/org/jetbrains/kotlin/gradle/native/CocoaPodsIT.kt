@@ -781,6 +781,14 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testCocoapodsWithRegularFrameworkDefinition() {
+        with(project) {
+            gradleBuildScript().appendToKotlinBlock("iosX64(\"iOS\") {binaries.framework{}}")
+            testImport()
+        }
+    }
+
     // paths
 
     private fun CompiledProject.url() = externalSources().resolve("url")
