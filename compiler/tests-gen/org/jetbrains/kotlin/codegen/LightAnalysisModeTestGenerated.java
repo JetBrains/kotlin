@@ -5236,6 +5236,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/collections/inSetWithSmartCast.kt");
         }
 
+        @TestMetadata("inheritFromAbstractMutableListInt.kt")
+        public void testInheritFromAbstractMutableListInt() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/inheritFromAbstractMutableListInt.kt");
+        }
+
         @TestMetadata("inheritFromHashtable.kt")
         public void testInheritFromHashtable() throws Exception {
             runTest("compiler/testData/codegen/box/collections/inheritFromHashtable.kt");

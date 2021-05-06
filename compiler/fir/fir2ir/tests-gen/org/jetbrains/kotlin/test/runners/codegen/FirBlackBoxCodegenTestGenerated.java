@@ -5993,6 +5993,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("inheritFromAbstractMutableListInt.kt")
+        public void testInheritFromAbstractMutableListInt() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/inheritFromAbstractMutableListInt.kt");
+        }
+
+        @Test
         @TestMetadata("inheritFromHashtable.kt")
         public void testInheritFromHashtable() throws Exception {
             runTest("compiler/testData/codegen/box/collections/inheritFromHashtable.kt");
