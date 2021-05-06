@@ -83,6 +83,7 @@ internal fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuilt
 
 internal fun IrType.isCPointer(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCPointer
 internal fun IrType.isCValue(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValue
+internal fun IrType.isCValuesRef(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValuesRef
 
 internal fun IrType.isNativePointed(symbols: KonanSymbols): Boolean = isSubtypeOfClass(symbols.nativePointed)
 

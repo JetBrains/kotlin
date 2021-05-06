@@ -3848,6 +3848,15 @@ createInterop("cppSkia") {
     it.defFile 'interop/cpp/skia.def'
 }
 
+createInterop("cppSkiaSignature") {
+    it.defFile 'interop/cpp/skiaSignature.def'
+}
+
+createInterop("threadStates") {
+    it.defFile "interop/threadStates/threadStates.def"
+    it.extraOpts "-Xcompile-source", "$projectDir/interop/threadStates/threadStates.cpp"
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4220,10 +4229,24 @@ interopTest("interop_cppTypes") {
 }
 
 interopTest("interop_cppSkia") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32' || // No interop for wasm yet.
+                isExperimentalMM)
     source = "interop/cpp/skia.kt"
     interop = 'cppSkia'
-    goldValue = "17 17\n"
+    goldValue =
+            "SkFoo()\nSkData()\nSkData()\nSkValue()\nSkData()\n" +
+            "MANAGED: f: true, a: true, b: false, v: true, c: false\n" +
+            "DATA: 17 19 17 17\n" +
+            "unref\n~SkData()\n~SkFoo()\n"
+}
+
+interopTest("interop_cppSkiaSignature") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/cpp/skiaSignature.kt"
+    interop = "cppSkiaSignature"
+    goldValue =
+            "SkData()\nSkData(19)\nSkData(SkData*)\nSkData(SkData*, SkData*)\nSkData(200)\nSkData(436)\n"+
+            "true true true true true\n"
 }
 
 /*

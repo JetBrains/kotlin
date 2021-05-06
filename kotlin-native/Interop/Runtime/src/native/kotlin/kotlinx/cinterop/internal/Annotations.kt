@@ -26,6 +26,10 @@ annotation class CStruct(val spelling: String) {
 
     @Target(AnnotationTarget.CLASS)
     @Retention(AnnotationRetention.BINARY)
+    annotation class CPlusPlusClass
+
+    @Target(AnnotationTarget.CLASS)
+    @Retention(AnnotationRetention.BINARY)
     annotation class ManagedType
 }
 
