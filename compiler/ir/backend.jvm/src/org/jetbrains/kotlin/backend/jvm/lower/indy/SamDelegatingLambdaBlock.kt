@@ -167,7 +167,13 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
                 .irBlockBody {
                     +irReturn(
                         irCall(invokeFunction).also { invokeCall ->
-                            invokeCall.dispatchReceiver = irGet(tmp)
+                            // We need to cast receiver to the function type because it might have an imaginary type like KFunction2 which
+                            // is mapped to KFunction in the codegen by default, which has no 'invoke'. Looks like correct type arguments
+                            // are not needed here, so we use "raw" type for simplicity. If that stops working, we'll need to compute the
+                            // correct substitution of invocableFunctionClass by visiting tmp.type's hierarchy.
+                            val rawFunctionType = invocableFunctionClass.typeWith()
+
+                            invokeCall.dispatchReceiver = irImplicitCast(irGet(tmp), rawFunctionType)
                             var parameterIndex = 0
                             invokeFunction.extensionReceiverParameter?.let {
                                 invokeCall.extensionReceiver = irGet(lambda.valueParameters[parameterIndex++])
