@@ -80,7 +80,7 @@ internal class StructStubBuilder(
         }
         val managedAnnotation = if (context.configuration.library.language == Language.CPP
                 && def.kind == StructDef.Kind.CLASS) {
-            AnnotationStub.CStruct.ManagedType
+            AnnotationStub.CStruct.CPlusPlusClass
         } else {
             null
         }
@@ -100,7 +100,15 @@ internal class StructStubBuilder(
                         } catch (e: Throwable) {
                             null
                         }
-                    }.filterNotNull()
+                    }.filterNotNull() + FunctionStub(
+                        name = "__destroy__",
+                        returnType = ClassifierStubType(Classifier("kotlin", "Unit")),
+                        parameters = emptyList(),
+                        origin = StubOrigin.Synthetic.Other,
+                        annotations = emptyList(),
+                        receiver = null, // ReceiverParameterStub()
+                        modality = MemberStubModality.FINAL
+                    )
 
         val fields: List<PropertyStub?> = def.fields.map { field ->
             try {
@@ -214,17 +222,19 @@ internal class StructStubBuilder(
                         }.filterNotNull()
 
         // Here's what we have for C++.
-        // Note that we account for constructors twice.
+        // Note that we account for constructors and the destructor twice.
         // class XXX {
-        //    // These go into `methods`
-        //    foo()
-        //    bar(x, y)
         //
         //    // These are in the `secondaryConstructors` variable.
         //    // their signatures match the signatures of __init__ modulo `self` parameters.
         //    // The primary constructor will be created for the class the same way as for interop structs.
         //    constructor(z)
         //    constructor(t, u)
+        //    __destroy__()
+        //
+        //    // These go into `methods`
+        //    foo()
+        //    bar(x, y)
         //
         //    Companion {
         //      // These all go to `classMethods`
@@ -256,7 +266,20 @@ internal class StructStubBuilder(
             properties = classFields,
             methods = classMethods
         )
-        return listOf(ClassStub.Simple(
+
+        val interfaces = if (context.configuration.library.language == Language.CPP && def.kind == StructDef.Kind.CLASS) {
+            listOfNotNull(
+                    ClassifierStubType(Classifier.topLevel("kotlinx.cinterop", "CPlusPlusClass")),
+                    // TODO: Only if skia plugin is active!
+                    if (methods.any { it.name == "unref" }) {
+                        ClassifierStubType(Classifier.topLevel("kotlinx.cinterop", "SkiaRefCnt"))
+                    } else {
+                        null
+                    }
+            )
+        } else emptyList()
+
+        val classStub = ClassStub.Simple(
                 classifier,
                 origin = origin,
                 properties = fields.filterNotNull() + if (platform == KotlinPlatform.NATIVE) bitFields else emptyList(),
@@ -265,8 +288,80 @@ internal class StructStubBuilder(
                 modality = ClassStubModality.NONE,
                 annotations = structAnnotations,
                 superClassInit = superClassInit,
-                companion = companion
-        ))
+                companion = companion,
+                interfaces = interfaces
+        )
+
+        return if (context.configuration.library.language == Language.CPP && def.kind == StructDef.Kind.CLASS) {
+            try {
+                listOfNotNull(classStub, buildManagedWrapper(classStub))
+            } catch (e: Throwable) {
+                emptyList()
+            }
+        } else {
+            listOf(classStub)
+        }
+    }
+
+    private fun buildManagedWrapper(classStub: ClassStub.Simple): ClassStub.Simple? {
+        val copier = DeepCopyForManagedWrapper(classStub, context)
+
+        val managedName = copier.managedWrapperClassifier(classStub.classifier) ?: run {
+            return null
+        }
+
+        val wrappee = PropertyStub(
+                name = "cpp",
+                type = ClassifierStubType(classStub.classifier),
+                kind = PropertyStub.Kind.Val(getter = PropertyAccessor.Getter.SimpleGetter()),
+                modality = MemberStubModality.FINAL,
+                origin = StubOrigin.Synthetic.Other
+        )
+
+        val managed = PropertyStub(
+                name = "managed",
+                type = ClassifierStubType(Classifier.topLevel("kotlin", "Boolean")),
+                kind = PropertyStub.Kind.Val(getter = PropertyAccessor.Getter.SimpleGetter()),
+                modality = MemberStubModality.FINAL,
+                origin = StubOrigin.Synthetic.Other
+        )
+
+        val cleaner = PropertyStub(
+                name = "cleaner",
+                type = ClassifierStubType(Classifier.topLevel("kotlin.native.internal", "Cleaner"), nullable=true),
+                kind = PropertyStub.Kind.Val(getter = PropertyAccessor.Getter.SimpleGetter()),
+                modality = MemberStubModality.FINAL,
+                origin = StubOrigin.Synthetic.Other
+        )
+
+        val constructors = classStub.constructors.map { copier.visitConstructor(it) }
+
+        val managedWrapper = ClassStub.Simple(
+                managedName,
+                classStub.modality,
+                constructors,
+                classStub.methods.map { copier.visitFunction(it) } ,
+                superClassInit = SuperClassInit(
+                        ClassifierStubType(
+                                Classifier.topLevel("kotlinx.cinterop", "ManagedType"),
+                                listOf(TypeArgumentStub(ClassifierStubType(classStub.classifier)))
+                        ),
+                        listOf( GetConstructorParameter(constructors.single { it.isPrimary }.parameters.first()) )
+                ),
+                interfaces = emptyList(),
+                properties = listOf(wrappee, managed, cleaner) + classStub.properties.map { copier.visitProperty(it) },
+                classStub.origin,
+                annotations = listOf(AnnotationStub.CStruct.ManagedType),
+                childrenClasses = emptyList(),
+                companion = ClassStub.Companion(
+                        classifier = managedName.nested("Companion"),
+                        methods = classStub.companion!!.methods
+                                .filterNot { it.name == "__init__" || it.name == "__destroy__" }
+                                .map { copier.visitFunction(it) },
+                        //superClassInit = SuperClassInit(ClassifierStubType(Classifier.topLevel("kotlin", "Any")))
+                )
+        )
+        return managedWrapper
     }
 
     private fun getArrayLength(type: ArrayType): Long {

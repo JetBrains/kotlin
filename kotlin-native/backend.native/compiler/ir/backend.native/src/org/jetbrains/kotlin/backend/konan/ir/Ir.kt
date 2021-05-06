@@ -210,6 +210,12 @@ internal class KonanSymbols(
 
     val interopGetPtr = symbolTable.referenceSimpleFunction(context.interopBuiltIns.interopGetPtr)
 
+    val interopGetPointed = symbolTable.referenceSimpleFunction(context.interopBuiltIns.interopGetPointed)
+
+    val interopManagedType = symbolTable.referenceClass(context.interopBuiltIns.managedType)
+    val interopCPlusPlusClass = symbolTable.referenceClass(context.interopBuiltIns.cPlusPlusClass)
+    val interopSkiaRefCnt = symbolTable.referenceClass(context.interopBuiltIns.skiaRefCnt)
+
     val readBits = interopFunction("readBits")
     val writeBits = interopFunction("writeBits")
 
