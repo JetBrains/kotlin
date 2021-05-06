@@ -204,7 +204,7 @@ abstract class AbstractOverrideImplementTest<T : ClassMember> : KotlinLightCodeI
             Assert.assertTrue(resultFile.exists())
             val errorLines = myFixture.dumpErrorLines()
             val file = myFixture.file as KtFile
-            val fileLines = file.text.split(System.lineSeparator())
+            val fileLines = file.text.lines()
             val newTextContent = if (firIdenticalIsPresent) {
                 // Ensure the directive is the first line
                 val fileLinesWithoutFirIdentical = fileLines.filter { it != IgnoreTests.DIRECTIVES.FIR_IDENTICAL }
