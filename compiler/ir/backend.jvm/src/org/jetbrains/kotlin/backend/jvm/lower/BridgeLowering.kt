@@ -205,20 +205,23 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // can contain a static replacement for a function 'remove', which forces value parameter boxing
             // in order to avoid signature clash with 'remove(int)' method in 'java.util.List'.
             // We should rewrite this static replacement as well ('remove' function itself is handled during special bridge processing).
-            for (irFunction in declaration.functions) {
-                val originalFunction = context.inlineClassReplacements.originalFunctionForStaticReplacement[irFunction]
-                    ?: continue
-                if (context.methodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(originalFunction)) {
-                    val oldValueParameter1 = irFunction.valueParameters[1]
-                    val newValueParameter1 = oldValueParameter1.copyTo(irFunction, type = oldValueParameter1.type.makeNullable())
-                    irFunction.valueParameters = listOf(irFunction.valueParameters[0], newValueParameter1)
-                    irFunction.body?.transform(VariableRemapper(mapOf(oldValueParameter1 to newValueParameter1)), null)
-                    break
-                }
+            val remove = declaration.functions.find {
+                val original = context.inlineClassReplacements.originalFunctionForStaticReplacement[it]
+                original != null && context.methodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(original)
+            }
+            if (remove != null) {
+                makeLastParameterNullable(remove)
             }
         }
 
         return super.visitClass(declaration)
+    }
+
+    private fun makeLastParameterNullable(irFunction: IrSimpleFunction) {
+        val oldValueParameter = irFunction.valueParameters.last()
+        val newValueParameter = oldValueParameter.copyTo(irFunction, type = oldValueParameter.type.makeNullable())
+        irFunction.valueParameters = irFunction.valueParameters.dropLast(1) + newValueParameter
+        irFunction.body?.transform(VariableRemapper(mapOf(oldValueParameter to newValueParameter)), null)
     }
 
     private fun generateBridges() {
@@ -478,6 +481,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
 
             if (specialBridge.isOverriding) {
                 overriddenSymbols = listOf(specialBridge.overridden.symbol)
+            }
+
+            if (context.methodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(this)) {
+                makeLastParameterNullable(this)
             }
         }
 
