@@ -1,6 +1,19 @@
 Change Log
 ==========
 
+## Version 0.8.0
+
+_2021-05-06_
+
+**New**
+* Compile against Kotlin 1.5.0 (#40).
+* Support generic parameter diagramming (#39).
+  * Added support for `assertFalse` style functions.
+  * Added support for non-boolean functions.
+* Support multiple parameter functions (#41).
+  * Added support for `assertEquals` style functions.
+  * Function signature must still end with a `String` or `() -> String` accepting parameter.
+
 ## Version 0.7.0
 
 _2021-02-04_

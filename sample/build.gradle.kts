@@ -1,6 +1,6 @@
 plugins {
   kotlin("multiplatform") version "1.5.0"
-  id("com.bnorm.power.kotlin-power-assert") version "0.7.0"
+  id("com.bnorm.power.kotlin-power-assert") version "0.8.0"
 }
 
 repositories {
@@ -8,14 +8,7 @@ repositories {
 }
 
 kotlin {
-  jvm {
-    compilations.all {
-      kotlinOptions {
-        kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.useIR = true
-      }
-    }
-  }
+  jvm()
   js(IR) {
     browser()
     nodejs()
