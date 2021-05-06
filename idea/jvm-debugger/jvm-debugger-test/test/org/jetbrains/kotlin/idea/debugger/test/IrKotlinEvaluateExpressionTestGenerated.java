@@ -683,6 +683,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("colorBug.kt")
+            public void testColorBug() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/colorBug.kt");
+            }
+
             @TestMetadata("constructor.kt")
             public void testConstructor() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/constructor.kt");
