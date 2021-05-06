@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -47,8 +48,9 @@ internal abstract class AbstractValueUsageTransformer(
 
     protected open fun IrExpression.useAsValue(value: IrValueDeclaration): IrExpression = this.useAs(value.type)
 
-    protected open fun IrExpression.useAsArgument(parameter: IrValueParameter): IrExpression =
-            this.useAsValue(parameter)
+    protected open fun IrExpression.useAsArgument(parameter: IrValueParameter): IrExpression {
+        return this.useAsValue(parameter)
+    }
 
     protected open fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression =
             this.useAsArgument(expression.symbol.owner.dispatchReceiverParameter!!)

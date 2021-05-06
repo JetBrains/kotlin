@@ -246,6 +246,11 @@ open class StubsBuildingContextImpl(
         return classifier
     }
 
+    fun isClass(spelling: String): Boolean {
+        val decl = nativeIndex.structs.firstOrNull { it.spelling == spelling } ?: return false
+        return decl.def?.kind == StructDef.Kind.CLASS
+    }
+
     open inner class DeclarationMapperImpl : DeclarationMapper {
         override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier {
             val baseName = structDecl.kotlinName
@@ -277,7 +282,6 @@ open class StubsBuildingContextImpl(
                 KotlinPlatform.NATIVE -> true
             }
     }
-
 }
 
 data class StubIrBuilderResult(

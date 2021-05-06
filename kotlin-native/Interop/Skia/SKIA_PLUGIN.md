@@ -15,6 +15,33 @@ plugin = org.jetbrains.kotlin.native.cinterop.plugin.skia
 language = C++
 ```
 
+Interop
+-------
+
+There are two kinds of C++ classes used in Skia.
+The ones with ref()/unref() reference counting are abstracted with SkiaRefCnt interface.
+The ones without are abstracted with CPlusPlusClass interface.
+
+So, for example, for SkPaint one has
+
+class SkPaint(rawPtr) : CStructVar(rawPtr), CPlusPlusClass {
+    // A C interop-like function having methods,
+    // as well as low level __init__ and __destroy__
+}
+
+class Paint(cpp: SkPaint, managed: Boolean)  ManagedType(cpp) {
+    // A wrapper capable of garbage collection delegating all calls and fields to SkPaint
+}
+
+
+    * pointer returned from C++ -> Wrapper(cpp, managed = false)
+    * sk_sp returned from C++ -> calls .release() ; Wrapper(cpp, managed = true)
+    * pointer passed to C++ -> kotlin.cpp.ptr
+    * sk_sp passed to C++ -> sk_ref_sp(kotlin.cpp.ptr)
+    * constructor call -> allocate Cpp; Wrapper(cpp, managed = true)
+    * garbage collection -> calls __destroy__() for CPluaPlusClass or unref() for SkiaRefCnt
+
+
 Implementation details
 ======================
 

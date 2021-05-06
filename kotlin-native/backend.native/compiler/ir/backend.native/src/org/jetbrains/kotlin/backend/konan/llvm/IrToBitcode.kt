@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.ir.allParametersCount
+import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
@@ -228,7 +229,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      * During function code generation [FunctionScope] should be set up.
      */
     private object TopLevelCodeContext : CodeContext {
-        private fun unsupported(any: Any? = null): Nothing = throw UnsupportedOperationException(any?.toString() ?: "")
+        private fun unsupported(any: Any? = null): Nothing = throw UnsupportedOperationException(if (any is IrElement) any.render() else any?.toString() ?: "")
 
         override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) = unsupported(target)
 
@@ -731,7 +732,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         using(VariableScope()) usingVariableScope@{
                             recordCoverage(body)
                             if (declaration.isReifiedInline) {
-                                callDirect(context.ir.symbols.throwIllegalStateExceptionWithMessage.owner,
+                                callDirect(context.ir.symbols.
+                                throwIllegalStateExceptionWithMessage.owner,
                                         listOf(context.llvm.staticData.kotlinStringLiteral(
                                                 "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`").llvm),
                                         Lifetime.IRRELEVANT)
@@ -909,13 +911,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef =
-            functionGenerationContext.getObjectValue(
-                    value.symbol.owner,
-                    currentCodeContext.exceptionHandler,
-                    value.startLocation,
-                    value.endLocation
-            )
+    private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef {
+        return functionGenerationContext.getObjectValue(
+                value.symbol.owner,
+                currentCodeContext.exceptionHandler,
+                value.startLocation,
+                value.endLocation
+        )
+    }
 
 
     //-------------------------------------------------------------------------//
