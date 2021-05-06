@@ -5,10 +5,16 @@
 
 package org.jetbrains.uast.common.kotlin
 
+private const val FE10_SUFFIX = ".fe10"
+private const val FIR_SUFFIX = ".fir"
+
 interface FirUastPluginSelection {
     // Whether this is FIR UAST plugin or FE 1.0 UAST plugin
     val isFirUastPlugin: Boolean
 
     val pluginSuffix: String
-        get() = if (isFirUastPlugin) ".fir" else ".fe10"
+        get() = if (isFirUastPlugin) FIR_SUFFIX else FE10_SUFFIX
+
+    val counterpartSuffix: String
+        get() = if (isFirUastPlugin) FE10_SUFFIX else FIR_SUFFIX
 }
