@@ -9,9 +9,8 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
@@ -21,11 +20,11 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.dsl.copyFreeCompilerArgsToArgs
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.gradle.tasks.SourceRoots
 import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
 import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
-import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 import javax.inject.Inject
@@ -43,9 +41,9 @@ import javax.inject.Inject
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
     objectFactory: ObjectFactory
-): Kotlin2JsCompile(KotlinJsOptionsImpl(), objectFactory) {
+) : Kotlin2JsCompile(KotlinJsOptionsImpl(), objectFactory) {
 
-    class Configurator(compilation: KotlinCompilationData<*>): Kotlin2JsCompile.Configurator<KotlinJsIrLink>(compilation) {
+    class Configurator(compilation: KotlinCompilationData<*>) : Kotlin2JsCompile.Configurator<KotlinJsIrLink>(compilation) {
 
         override fun configure(task: KotlinJsIrLink) {
             super.configure(task)
@@ -59,7 +57,7 @@ abstract class KotlinJsIrLink @Inject constructor(
 
     @Transient
     @get:Internal
-    internal lateinit var compilation: KotlinCompilation<*>
+    internal lateinit var compilation: KotlinCompilationData<*>
 
     @get:Input
     internal val incrementalJsIr: Boolean = PropertiesProvider(project).incrementalJsIr
@@ -75,10 +73,6 @@ abstract class KotlinJsIrLink @Inject constructor(
     override fun getSource(): FileTree = super.getSource()
 
     private val buildDir = project.buildDir
-
-    private val compileClasspathConfiguration by lazy {
-        project.configurations.getByName(compilation.compileDependencyConfigurationName)
-    }
 
     @get:SkipWhenEmpty
     @get:InputDirectory
@@ -106,15 +100,15 @@ abstract class KotlinJsIrLink @Inject constructor(
                 buildDir,
                 kotlinOptions,
                 libraryFilter,
-                compilerRunner,
+                compilerRunner.get(),
                 { createCompilerArgs() },
                 { objects.fileCollection() },
                 computedCompilerClasspath,
                 logger,
                 reportingSettings
             )
-            val cacheArgs = visitAssociated(
-                compilation,
+            val cacheArgs = visitCompilation(
+                compilation as KotlinCompilation<*>,
                 cacheBuilder,
                 visitedCompilations,
                 allCacheDirectories
@@ -127,19 +121,19 @@ abstract class KotlinJsIrLink @Inject constructor(
         super.callCompilerAsync(args, sourceRoots, changedFiles)
     }
 
-    private fun visitAssociated(
-        associated: KotlinCompilation<*>,
+    private fun visitCompilation(
+        compilation: KotlinCompilation<*>,
         cacheBuilder: CacheBuilder,
         visitedCompilations: MutableSet<KotlinCompilation<*>>,
         visitedCacheDirectories: MutableSet<File>
     ): List<File> {
-        if (associated in visitedCompilations) return emptyList()
-        visitedCompilations.add(associated)
+        if (compilation in visitedCompilations) return emptyList()
+        visitedCompilations.add(compilation)
 
-        val associatedCaches = associated.associateWith
-            .flatMap { compilation ->
-                visitAssociated(
-                    compilation,
+        val associatedCaches = compilation.associateWith
+            .flatMap {
+                visitCompilation(
+                    it,
                     cacheBuilder,
                     visitedCompilations,
                     visitedCacheDirectories
@@ -148,12 +142,10 @@ abstract class KotlinJsIrLink @Inject constructor(
 
         return cacheBuilder
             .buildCompilerArgs(
-                project.configurations.getByName(associated.compileDependencyConfigurationName),
-                associated.output.classesDirs,
+                project.configurations.getByName(compilation.compileDependencyConfigurationName),
+                compilation.output.classesDirs,
                 associatedCaches
             )
-//            .filter { it !in visitedCacheDirectories }
-//            .also { visitedCacheDirectories.addAll(it) }
     }
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
@@ -182,7 +174,7 @@ internal class CacheBuilder(
     private val compilerRunner: GradleCompilerRunner,
     private val compilerArgsFactory: () -> K2JSCompilerArguments,
     private val objectFilesFactory: () -> FileCollection,
-    private val computedCompilerClasspath: List<File>,
+    private val computedCompilerClasspath: FileCollection,
     private val logger: Logger,
     private val reportingSettings: ReportingSettings
 ) {
