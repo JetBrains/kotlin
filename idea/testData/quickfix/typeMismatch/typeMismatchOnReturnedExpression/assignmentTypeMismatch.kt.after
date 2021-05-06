@@ -5,3 +5,4 @@ fun foo() {
         x += 21<caret>
     }
 }
+/* IGNORE_FIR */

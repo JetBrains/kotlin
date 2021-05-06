@@ -2,3 +2,4 @@
 
 val complex: (Int) -> String
     get() = { it.toLong()<caret> }
+/* IGNORE_FIR */

@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -74,8 +73,8 @@ abstract class ChangeCallableReturnTypeFix(
         val element = element!!
         if (element.name == null) return null
         val container = element.unsafeResolveToDescriptor().containingDeclaration as? ClassDescriptor
-        val containerName = container?.name?.takeUnless { it.isSpecial }
-        return StringPresentation.functionOrConstructorParameterPresentation(element, containerName)
+        val containerName = container?.name?.takeUnless { it.isSpecial }?.asString()
+        return ChangeTypeFixUtils.functionOrConstructorParameterPresentation(element, containerName)
     }
 
     class OnType(element: KtFunction, type: KotlinType) : ChangeCallableReturnTypeFix(element, type), HighPriorityAction {
@@ -104,7 +103,7 @@ abstract class ChangeCallableReturnTypeFix(
     class ForOverridden(element: KtFunction, type: KotlinType) : ChangeCallableReturnTypeFix(element, type) {
         override fun functionPresentation(): String? {
             val presentation = super.functionPresentation() ?: return null
-            return StringPresentation.baseFunctionOrConstructorParameterPresentation(presentation)
+            return ChangeTypeFixUtils.baseFunctionOrConstructorParameterPresentation(presentation)
         }
     }
 
@@ -115,10 +114,10 @@ abstract class ChangeCallableReturnTypeFix(
             return changeFunctionLiteralReturnTypeFix.text
         }
 
-        return StringPresentation.getTextForQuickFix(element, functionPresentation(), isUnitType, typePresentation)
+        return ChangeTypeFixUtils.getTextForQuickFix(element, functionPresentation(), isUnitType, typePresentation)
     }
 
-    override fun getFamilyName(): String = StringPresentation.familyName()
+    override fun getFamilyName(): String = ChangeTypeFixUtils.familyName()
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         return !typeContainsError &&
@@ -232,60 +231,6 @@ abstract class ChangeCallableReturnTypeFix(
             val multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtDestructuringDeclaration::class.java)
                 ?: error("COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration")
             return multiDeclaration.entries[componentIndex - 1]
-        }
-    }
-
-    object StringPresentation {
-        fun familyName(): String = KotlinBundle.message("fix.change.return.type.family")
-
-        fun functionOrConstructorParameterPresentation(element: KtCallableDeclaration, containerName: Name?): String? {
-            val name = element.name
-            return if (name != null) {
-                val fullName = if (containerName != null) "'${containerName.asString()}.$name'" else "'$name'"
-                when (element) {
-                    is KtParameter -> KotlinBundle.message("fix.change.return.type.presentation.property", fullName)
-                    is KtProperty -> KotlinBundle.message("fix.change.return.type.presentation.property", fullName)
-                    else -> KotlinBundle.message("fix.change.return.type.presentation.function", fullName)
-                }
-            } else null
-        }
-
-
-        fun baseFunctionOrConstructorParameterPresentation(presentation: String): String =
-            KotlinBundle.message("fix.change.return.type.presentation.base", presentation)
-
-        fun baseFunctionOrConstructorParameterPresentation(element: KtCallableDeclaration, containerName: Name?): String? {
-            val presentation = functionOrConstructorParameterPresentation(element, containerName) ?: return null
-            return baseFunctionOrConstructorParameterPresentation(presentation)
-        }
-
-        fun getTextForQuickFix(
-            element: KtCallableDeclaration,
-            presentation: String?,
-            isUnitType: Boolean,
-            typePresentation: String
-        ): String {
-            if (isUnitType && element is KtFunction && element.hasBlockBody()) {
-                return if (presentation == null)
-                    KotlinBundle.message("fix.change.return.type.remove.explicit.return.type")
-                else
-                    KotlinBundle.message("fix.change.return.type.remove.explicit.return.type.of", presentation)
-            }
-
-            return when (element) {
-                is KtFunction -> {
-                    if (presentation != null)
-                        KotlinBundle.message("fix.change.return.type.return.type.text.of", presentation, typePresentation)
-                    else
-                        KotlinBundle.message("fix.change.return.type.return.type.text", typePresentation)
-                }
-                else -> {
-                    if (presentation != null)
-                        KotlinBundle.message("fix.change.return.type.type.text.of", presentation, typePresentation)
-                    else
-                        KotlinBundle.message("fix.change.return.type.type.text", typePresentation)
-                }
-            }
         }
     }
 }

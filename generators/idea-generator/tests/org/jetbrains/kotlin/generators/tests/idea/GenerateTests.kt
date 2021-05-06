@@ -1148,6 +1148,8 @@ fun main(args: Array<String>) {
                 model("quickfix/variables/changeMutability", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/when", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/wrapWithSafeLetCall", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/typeMismatch/componentFunctionReturnTypeMismatch", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/typeMismatch/typeMismatchOnReturnedExpression", pattern = pattern, filenameStartsLowerCase = true)
             }
 
             testClass<AbstractHighLevelQuickFixMultiFileTest> {

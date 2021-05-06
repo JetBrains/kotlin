@@ -10,3 +10,4 @@ fun foo() {
         }
     }
 }
+/* IGNORE_FIR */
