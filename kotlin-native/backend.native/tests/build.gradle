@@ -4220,10 +4220,13 @@ interopTest("interop_cppTypes") {
 }
 
 interopTest("interop_cppSkia") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (
+        (project.testTarget == 'wasm32') || // No interop for wasm yet.
+        isExperimentalMM  // The test uses cleaners. Disable for now.
+    )
     source = "interop/cpp/skia.kt"
     interop = 'cppSkia'
-    goldValue = "17 17\n"
+    "a: true, f: true, b: false\na: true, f: true, b: false\n refcount = 100 100\nrefcount = 100 100 100\ndata = 17 17 17\nSkFoo()\nSkValue()\nSkValue()"
 }
 
 /*

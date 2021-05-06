@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.native.interop.gen.Classifier
 import org.jetbrains.kotlin.native.interop.gen.StubIrContext
 import org.jetbrains.kotlin.native.interop.gen.StubsBuildingContextImpl
 import org.jetbrains.kotlin.native.interop.indexer.StructDecl
+import org.jetbrains.kotlin.native.interop.indexer.StructDef
 
 class SkiaStubsBuildingContextImpl(stubIrContext: StubIrContext) : StubsBuildingContextImpl(stubIrContext) {
     override val declarationMapper = SkiaDeclarationMapperImpl()
