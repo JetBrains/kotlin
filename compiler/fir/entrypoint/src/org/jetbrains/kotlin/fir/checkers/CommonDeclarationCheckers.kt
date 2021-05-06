@@ -75,7 +75,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirDelegationSuperCallInEnumConstructorChecker,
             FirDelegationInInterfaceSyntaxChecker,
             FirEnumClassSimpleChecker,
-            FirInterfaceWithSuperclassChecker,
+            FirSupertypesChecker,
             FirLocalEntityNotAllowedChecker,
             FirManyCompanionObjectsChecker,
             FirMethodOfAnyImplementedInInterfaceChecker,
