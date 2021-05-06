@@ -17835,6 +17835,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt45084.kt")
+        public void testKt45084() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt45084.kt");
+        }
+
+        @Test
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt");

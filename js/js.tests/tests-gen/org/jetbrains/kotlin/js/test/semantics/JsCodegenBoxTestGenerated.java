@@ -12487,6 +12487,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/kt44867.kt");
         }
 
+        @TestMetadata("kt45084.kt")
+        public void testKt45084() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt45084.kt");
+        }
+
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt");
