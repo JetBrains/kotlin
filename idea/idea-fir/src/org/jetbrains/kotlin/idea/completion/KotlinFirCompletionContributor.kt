@@ -11,6 +11,7 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.completion.context.FirBasicCompletionContext
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -82,11 +82,11 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
     }
 }
 
-private fun interface ExtensionApplicabilityChecker {
+internal fun interface ExtensionApplicabilityChecker {
     fun isApplicable(symbol: KtCallableSymbol): Boolean
 }
 
-private fun interface CompletionVisibilityChecker {
+internal fun interface CompletionVisibilityChecker {
     fun isVisible(symbol: KtSymbolWithVisibility): Boolean
 
     fun isVisible(symbol: KtCallableSymbol): Boolean {
@@ -133,35 +133,39 @@ private class KotlinCommonCompletionProvider(
         with(Weighers) { applyWeighsToLookupElement(lookupElement, symbol, expectedType) }
     }
 
-    private fun recordOriginalFile(completionParameters: CompletionParameters) {
-        val originalFile = completionParameters.originalFile as? KtFile ?: return
-        val fakeFile = completionParameters.position.containingFile as? KtFile ?: return
+    private fun recordOriginalFile(basicCompletionContext: FirBasicCompletionContext) {
+        val originalFile = basicCompletionContext.originalKtFile
+        val fakeFile = basicCompletionContext.fakeKtFile
         fakeFile.originalKtFile = originalFile
     }
 
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     fun addCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
-        val originalFile = parameters.originalFile as? KtFile ?: return
-        val isJvmModule = TargetPlatformDetector.getPlatform(originalFile).isJvm()
-        val project = originalFile.project
+        val basicContext = FirBasicCompletionContext.createFromParameters(parameters, result) ?: return
+        recordOriginalFile(basicContext)
 
-        recordOriginalFile(parameters)
-
-        FirKeywordCompletion.completeKeywords(result, parameters, parameters.position, prefixMatcher, project, isJvmModule = isJvmModule)
+        FirKeywordCompletion.completeKeywords(
+            result,
+            parameters,
+            parameters.position,
+            prefixMatcher,
+            basicContext.project,
+            isJvmModule = basicContext.targetPlatform.isJvm()
+        )
 
         val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
         val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression } ?: return
 
         val explicitReceiver = nameExpression.getReceiverExpression()
 
-        analyseInFakeAnalysisSession(originalFile, nameExpression) {
-            val fileSymbol = originalFile.getFileSymbol()
+        analyseInFakeAnalysisSession(basicContext.originalKtFile, nameExpression) {
+            val fileSymbol = basicContext.originalKtFile.getFileSymbol()
             val expectedType = nameExpression.getExpectedType()
 
-            val scopesContext = originalFile.getScopeContextForPosition(nameExpression)
+            val scopesContext = basicContext.originalKtFile.getScopeContextForPosition(nameExpression)
 
             val extensionChecker = ExtensionApplicabilityChecker {
-                it.checkExtensionIsSuitable(originalFile, nameExpression, explicitReceiver)
+                it.checkExtensionIsSuitable(basicContext.originalKtFile, nameExpression, explicitReceiver)
             }
 
             val visibilityChecker = CompletionVisibilityChecker {
