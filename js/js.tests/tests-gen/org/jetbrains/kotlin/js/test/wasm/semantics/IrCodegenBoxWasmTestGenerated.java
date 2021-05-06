@@ -5431,6 +5431,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/funInterface/contravariantIntersectionTypeWithNonTrivialCommonSupertype2.kt");
         }
 
+        @TestMetadata("kt46512_indyFunInterfaceOverCallableReference.kt")
+        public void testKt46512_indyFunInterfaceOverCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/kt46512_indyFunInterfaceOverCallableReference.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/funInterface/equality")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

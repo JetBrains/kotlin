@@ -10811,6 +10811,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/funInterface/kt45444_privateFunInterface.kt");
         }
 
+        @TestMetadata("kt46512_indyFunInterfaceOverCallableReference.kt")
+        public void testKt46512_indyFunInterfaceOverCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/kt46512_indyFunInterfaceOverCallableReference.kt");
+        }
+
         @TestMetadata("multimodule.kt")
         public void testMultimodule() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
