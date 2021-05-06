@@ -91,8 +91,11 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             )
 
             // Add vararg invoke bridge
-            val invokeFunction = declaration.functions.single {
-                it.name.asString() == "invoke" && it.valueParameters.size == superType.arguments.size - if (it.isSuspend) 0 else 1
+            val invokeFunction = declaration.functions.single { function ->
+                val overridesInvoke = function.overriddenSymbols.any { symbol ->
+                    symbol.owner.name.asString() == "invoke"
+                }
+                overridesInvoke && function.valueParameters.size == superType.arguments.size - if (function.isSuspend) 0 else 1
             }
             invokeFunction.overriddenSymbols = emptyList()
             declaration.addBridge(invokeFunction, functionNInvokeFun.owner)
