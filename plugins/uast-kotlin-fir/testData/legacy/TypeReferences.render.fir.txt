@@ -1,0 +1,4 @@
+public final class TypeReferencesKt {
+    public static final fun foo(parameter: int) : java.lang.String = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun parameterizedFoo(arg: T) : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

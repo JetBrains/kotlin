@@ -1,0 +1,8 @@
+UFile (package = )
+    UClass (name = ElvisTypeKt)
+        UMethod (name = foo)
+            UParameter (name = text)
+            [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
+        UMethod (name = bar)
+            UParameter (name = o)
+            [!] FirUnknownKotlinExpression (BLOCK)

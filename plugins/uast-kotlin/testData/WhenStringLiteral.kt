@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 val a = readLine()
 
 val b = when(a) {

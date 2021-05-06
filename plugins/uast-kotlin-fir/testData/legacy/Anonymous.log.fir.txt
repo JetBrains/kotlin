@@ -1,0 +1,8 @@
+UFile (package = )
+    UImportStatement (isOnDemand = false)
+    UImportStatement (isOnDemand = false)
+    UClass (name = AnonymousKt)
+        UMethod (name = foo)
+            [!] FirUnknownKotlinExpression (BLOCK)
+        UMethod (name = withErr)
+            [!] FirUnknownKotlinExpression (BLOCK)

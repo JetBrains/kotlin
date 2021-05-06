@@ -1,0 +1,8 @@
+public final class CycleInTypeParametersKt {
+    private static final var a: Device<?> = [!] FirUnknownKotlinExpression (BINARY_WITH_TYPE)
+    public static final fun getA() : Device<?> = UastEmptyExpression
+}
+
+public final class Device {
+    public fun Device() = UastEmptyExpression
+}

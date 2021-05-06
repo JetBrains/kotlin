@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 package test.pkg
 class Test {
     fun test1() { }

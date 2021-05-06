@@ -1,0 +1,6 @@
+public final class StringTemplateWithVarKt {
+    private static final var bar: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
+    private static final var f: java.lang.String = [!] FirUnknownKotlinExpression (STRING_TEMPLATE)
+    public static final fun getBar() : java.lang.String = UastEmptyExpression
+    public static final fun getF() : java.lang.String = UastEmptyExpression
+}

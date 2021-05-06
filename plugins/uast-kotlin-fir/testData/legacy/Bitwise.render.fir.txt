@@ -1,0 +1,4 @@
+public final class BitwiseKt {
+    public static final fun foo() : int = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun bar() : long = [!] FirUnknownKotlinExpression (BLOCK)
+}

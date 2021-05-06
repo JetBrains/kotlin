@@ -1,0 +1,3 @@
+public final class AssertionKt {
+    public static final fun foo() : java.lang.String = [!] FirUnknownKotlinExpression (BLOCK)
+}

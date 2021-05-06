@@ -1,0 +1,6 @@
+UFile (package = )
+    UClass (name = Demo)
+        UField (name = foo)
+            [!] FirUnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+        UMethod (name = Demo)
+        UMethod (name = getFoo)

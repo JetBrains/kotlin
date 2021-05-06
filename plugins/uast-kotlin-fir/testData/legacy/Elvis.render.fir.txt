@@ -1,0 +1,5 @@
+public final class ElvisKt {
+    public static final fun foo(bar: java.lang.String) : java.lang.String = [!] FirUnknownKotlinExpression (NULL)
+    public static final fun bar() : int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+    public static final fun baz() : java.lang.String = [!] FirUnknownKotlinExpression (BLOCK)
+}

@@ -1,0 +1,5 @@
+public final class PropertyDelegateKt {
+    public static final fun getSdCardPath() : java.lang.String = UastEmptyExpression
+    public static final fun localPropertyTest() : void = [!] FirUnknownKotlinExpression (BLOCK)
+    public static final fun getAnnotatedDelegate() : int = UastEmptyExpression
+}

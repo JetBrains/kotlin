@@ -1,0 +1,7 @@
+public final class WhenStringLiteralKt {
+    private static final var a: java.lang.String = [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
+    private static final var b: int = [!] FirUnknownKotlinExpression (WHEN)
+    public static final fun getA() : java.lang.String = UastEmptyExpression
+    public static final fun getB() : int = UastEmptyExpression
+    public static final fun <no name provided>() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

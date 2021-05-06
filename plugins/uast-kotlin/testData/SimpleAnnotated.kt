@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 class SimpleAnnotated {
     @Suppress("abc")
     fun method() {

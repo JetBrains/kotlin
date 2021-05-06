@@ -10,13 +10,13 @@ UFile (package = )
                         USimpleNameReferenceExpression (identifier = bar, resolvesTo = null)
                         UExpressionList (elvis)
                             UDeclarationsExpression
-                                ULocalVariable (name = var63c49860)
+                                ULocalVariable (name = var63c495f9)
                                     USimpleNameReferenceExpression (identifier = text)
                             UIfExpression
                                 UBinaryExpression (operator = !=)
-                                    USimpleNameReferenceExpression (identifier = var63c49860)
+                                    USimpleNameReferenceExpression (identifier = var63c495f9)
                                     ULiteralExpression (value = null)
-                                USimpleNameReferenceExpression (identifier = var63c49860)
+                                USimpleNameReferenceExpression (identifier = var63c495f9)
                                 UReturnExpression
         UMethod (name = bar)
             UParameter (name = o)

@@ -1,0 +1,9 @@
+public final enum Style {
+    private final var value: java.lang.String
+    public static final var SYSTEM: Style
+    public static final var USER: Style
+    public static final var INTERNAL: Style
+    public static final var UNKNOWN: Style
+    private fun Style(value: java.lang.String) = UastEmptyExpression
+    public final fun getValue() : java.lang.String = UastEmptyExpression
+}

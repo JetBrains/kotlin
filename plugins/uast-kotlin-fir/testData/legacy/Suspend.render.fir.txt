@@ -1,0 +1,11 @@
+package test.pkg
+
+public final class SuspendKt {
+    public static final fun top() : int = [!] FirUnknownKotlinExpression (DOT_QUALIFIED_EXPRESSION)
+}
+
+public final class Context {
+    public fun Context() = UastEmptyExpression
+    public final fun inner() : int = [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
+    private final fun suspendPrivate() : int = [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
+}

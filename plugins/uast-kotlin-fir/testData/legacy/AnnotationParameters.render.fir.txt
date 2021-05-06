@@ -1,0 +1,27 @@
+public final class AnnotationParametersKt {
+    public static final fun foo() : int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+    public static final fun bar() : void = [!] FirUnknownKotlinExpression (REFERENCE_EXPRESSION)
+    public static final fun fooWithArrLiteral() : int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+    public static final fun fooWithStrArrLiteral() : int = [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+}
+
+public abstract annotation IntRange {
+    public abstract fun from() : long = UastEmptyExpression
+    public abstract fun to() : long = UastEmptyExpression
+}
+
+public abstract annotation RequiresPermission {
+    public abstract fun anyOf() : int[] = UastEmptyExpression
+}
+
+public abstract annotation RequiresStrPermission {
+    public abstract fun strs() : java.lang.String[] = UastEmptyExpression
+}
+
+public abstract annotation WithDefaultValue {
+    public abstract fun value() : int = UastEmptyExpression
+}
+
+public abstract annotation SuppressLint {
+    public abstract fun value() : java.lang.String[] = UastEmptyExpression
+}

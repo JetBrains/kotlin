@@ -1,0 +1,7 @@
+UFile (package = A.B.C)
+    UClass (name = Foo)
+        UMethod (name = Foo)
+    UClass (name = Bar)
+        UMethod (name = Bar)
+        UMethod (name = getFoo)
+            [!] FirUnknownKotlinExpression (BLOCK)

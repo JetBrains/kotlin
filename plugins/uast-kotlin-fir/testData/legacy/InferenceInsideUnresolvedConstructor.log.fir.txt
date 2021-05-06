@@ -1,0 +1,7 @@
+UFile (package = )
+    UClass (name = InferenceInsideUnresolvedConstructorKt)
+        UMethod (name = getBar)
+            [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
+        UMethod (name = id)
+            UParameter (name = x)
+            [!] FirUnknownKotlinExpression (REFERENCE_EXPRESSION)

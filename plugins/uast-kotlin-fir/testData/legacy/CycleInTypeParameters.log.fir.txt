@@ -1,0 +1,7 @@
+UFile (package = )
+    UClass (name = CycleInTypeParametersKt)
+        UField (name = a)
+            [!] FirUnknownKotlinExpression (BINARY_WITH_TYPE)
+        UMethod (name = getA)
+    UClass (name = Device)
+        UMethod (name = Device)

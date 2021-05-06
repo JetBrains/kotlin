@@ -1,0 +1,8 @@
+public final class Ea101715Kt {
+    public static final fun a() : void = [!] FirUnknownKotlinExpression (BLOCK)
+}
+
+public final class Obj {
+    public static final var INSTANCE: Obj
+    private fun Obj() = UastEmptyExpression
+}

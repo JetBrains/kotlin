@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 fun foo(data: Any) {
     val (a, b) = "foo" to 1
 

@@ -1,0 +1,4 @@
+public final class ElvisTypeKt {
+    public static final fun foo(text: java.lang.String) : void = [!] FirUnknownKotlinExpression (CALL_EXPRESSION)
+    public static final fun bar(o: java.lang.Object) : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

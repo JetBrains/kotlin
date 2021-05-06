@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 open class A(val str: String) {
 
     constructor(i: Int) : this(i.toString())

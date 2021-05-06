@@ -1,0 +1,8 @@
+UFile (package = )
+    UClass (name = TypeReferencesKt)
+        UMethod (name = foo)
+            UParameter (name = parameter)
+            [!] FirUnknownKotlinExpression (BLOCK)
+        UMethod (name = parameterizedFoo)
+            UParameter (name = arg)
+            [!] FirUnknownKotlinExpression (BLOCK)

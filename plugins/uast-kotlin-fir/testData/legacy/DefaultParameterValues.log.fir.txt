@@ -1,0 +1,8 @@
+UFile (package = )
+    UClass (name = DefaultParameterValuesKt)
+        UMethod (name = foo)
+            UParameter (name = a)
+                [!] FirUnknownKotlinExpression (INTEGER_CONSTANT)
+            UParameter (name = foo)
+                [!] FirUnknownKotlinExpression (NULL)
+            [!] FirUnknownKotlinExpression (BLOCK)

@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 enum class Style(val value: String?) {
     SYSTEM("system"),
     USER("user"),

@@ -1,0 +1,7 @@
+UFile (package = )
+    UClass (name = AnnotatedExpressionsKt)
+        UMethod (name = foo)
+            [!] FirUnknownKotlinExpression (BLOCK)
+        UMethod (name = annotatedSwitch)
+            UParameter (name = str)
+            [!] FirUnknownKotlinExpression (WHEN)

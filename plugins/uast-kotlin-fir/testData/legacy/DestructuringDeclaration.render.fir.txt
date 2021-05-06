@@ -1,0 +1,3 @@
+public final class DestructuringDeclarationKt {
+    public static final fun foo(data: java.lang.Object) : void = [!] FirUnknownKotlinExpression (BLOCK)
+}

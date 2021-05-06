@@ -1,0 +1,7 @@
+UFile (package = )
+    UClass (name = InnerNonFixedTypeVariableKt)
+        UMethod (name = test)
+            UParameter (name = list)
+            [!] FirUnknownKotlinExpression (BLOCK)
+    UClass (name = Some)
+        UMethod (name = Some)

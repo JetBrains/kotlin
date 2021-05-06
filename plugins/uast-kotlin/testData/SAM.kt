@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 import java.lang.Thread
 import java.lang.Runnable
 

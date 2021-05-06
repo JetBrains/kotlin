@@ -1,0 +1,28 @@
+public final class SuperCallsKt {
+    private static final var anon: A = [!] FirUnknownKotlinExpression (OBJECT_LITERAL)
+    public static final fun getAnon() : A = UastEmptyExpression
+    public static final fun cons(a: A) : void = [!] FirUnknownKotlinExpression (BLOCK)
+}
+
+public class A {
+    private final var str: java.lang.String
+    public fun A(str: java.lang.String) = UastEmptyExpression
+    public fun A(i: int) = UastEmptyExpression
+    public final fun getStr() : java.lang.String = UastEmptyExpression
+    public fun foo(a: long) : void = [!] FirUnknownKotlinExpression (BLOCK)
+}
+
+public final class B : null {
+    public fun B(param: java.lang.String) = UastEmptyExpression
+}
+
+public final class C : null {
+    public fun C(p: java.lang.String) = UastEmptyExpression
+    public fun C(i: int) = [!] FirUnknownKotlinExpression (BLOCK)
+    public fun foo(a: long) : void = [!] FirUnknownKotlinExpression (BLOCK)
+}
+
+public final class O : null {
+    public static final var INSTANCE: O
+    private fun O() = UastEmptyExpression
+}

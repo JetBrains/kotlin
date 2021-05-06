@@ -1,5 +1,3 @@
-// !IGNORE_FIR
-
 class A(init: Int) {
     private var privateProp = 0 // accesses should be field accesses
     var mutableProp: Int
