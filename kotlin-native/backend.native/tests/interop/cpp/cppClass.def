@@ -1,6 +1,6 @@
 language = C++
 compilerOpts = -std=c++14
-
+plugin = org.jetbrains.kotlin.native.interop.skia
 
 ---
 class CppTest {

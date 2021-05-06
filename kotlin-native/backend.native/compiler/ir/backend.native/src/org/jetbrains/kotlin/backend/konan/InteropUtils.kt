@@ -118,6 +118,10 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     val CreateNSStringFromKString = packageScope.getContributedFunctions("CreateNSStringFromKString").single()
     val nativeHeap = packageScope.getContributedClass("nativeHeap")
     val cPointed = packageScope.getContributedClass("CPointed")
+    val managedType = packageScope.getContributedClass("ManagedType")
+    val cPlusPlusClass = packageScope.getContributedClass("CPlusPlusClass")
+    val skiaRefCnt = packageScope.getContributedClass("SkiaRefCnt")
+
     val interopGetPtr = packageScope.getContributedVariables("ptr").single {
         val singleTypeParameter = it.typeParameters.singleOrNull()
         val singleTypeParameterUpperBound = singleTypeParameter?.upperBounds?.singleOrNull()
@@ -127,6 +131,17 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
         extensionReceiverParameter != null &&
         TypeUtils.getClassDescriptor(singleTypeParameterUpperBound) == cPointed &&
         extensionReceiverParameter.type == singleTypeParameter.defaultType
+    }.getter!!
+
+    val interopManagedGetPtr = packageScope.getContributedVariables("ptr").single {
+        val singleTypeParameter = it.typeParameters.singleOrNull()
+        val singleTypeParameterUpperBound = singleTypeParameter?.upperBounds?.singleOrNull()
+        val extensionReceiverParameter = it.extensionReceiverParameter
+
+        singleTypeParameterUpperBound != null &&
+        extensionReceiverParameter != null &&
+        TypeUtils.getClassDescriptor(singleTypeParameterUpperBound) == cStructVar &&
+        TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == managedType
     }.getter!!
 }
 

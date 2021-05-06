@@ -20,3 +20,27 @@ interface StubIrVisitor<T, R> {
 
     fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer, data: T): R
 }
+
+
+interface StubIrTransformer {
+    fun visitClass(element: ClassStub): ClassStub
+
+    fun visitTypealias(element: TypealiasStub): TypealiasStub
+
+    fun visitFunction(element: FunctionStub): FunctionStub
+
+    fun visitProperty(element: PropertyStub): PropertyStub
+
+    fun visitConstructor(constructorStub: ConstructorStub): ConstructorStub
+
+    fun visitPropertyAccessor(propertyAccessor: PropertyAccessor): PropertyAccessor
+
+    fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer): SimpleStubContainer
+
+    fun visitFunctionParameter(element: FunctionParameterStub): FunctionParameterStub
+
+    fun visitAnnotation(element: AnnotationStub): AnnotationStub
+
+    fun visitReceiverParameter(element: ReceiverParameterStub): ReceiverParameterStub
+
+}
