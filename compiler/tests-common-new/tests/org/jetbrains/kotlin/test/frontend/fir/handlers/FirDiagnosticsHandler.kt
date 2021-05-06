@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestFile
@@ -75,6 +76,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             var diagnostics = diagnosticsPerFile[firFile] ?: continue
             if (AdditionalFilesDirectives.CHECK_TYPE in module.directives) {
                 diagnostics = diagnostics.filter { it.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
+            }
+            if (LanguageSettingsDirectives.API_VERSION in module.directives) {
+                diagnostics = diagnostics.filter { it.factory.name != FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
             }
             val diagnosticsMetadataInfos = diagnostics.mapNotNull { diagnostic ->
                 if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name)) return@mapNotNull null

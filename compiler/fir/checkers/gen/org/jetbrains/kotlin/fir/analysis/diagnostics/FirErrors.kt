@@ -162,6 +162,7 @@ object FirErrors {
     val SUPERTYPES_FOR_ANNOTATION_CLASS by error0<KtClass>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
     val ANNOTATION_USED_AS_ANNOTATION_ARGUMENT by error0<KtAnnotation>()
     val ILLEGAL_KOTLIN_VERSION_STRING_VALUE by error0<KtExpression>()
+    val NEWER_VERSION_IN_SINCE_KOTLIN by warning1<KtExpression, String>()
 
     // Exposed visibility
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<KtNamedDeclaration, EffectiveVisibility, FirMemberDeclaration, EffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
