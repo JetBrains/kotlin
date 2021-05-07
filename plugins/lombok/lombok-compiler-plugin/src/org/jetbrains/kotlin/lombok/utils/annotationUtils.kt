@@ -26,11 +26,12 @@ fun AnnotationDescriptor.getStringArgument(argumentName: String): String? {
     return extractString(argument)
 }
 
-fun AnnotationDescriptor.getStringArrayArgument(argumentName: String): List<String>? {
-    val argument = allValueArguments[Name.identifier(argumentName)] ?: return emptyList()
-    if (argument !is ArrayValue) throw RuntimeException("Argument should be ArrayValue, got $argument")
-    return argument.value.map(::extractString)
-}
+fun AnnotationDescriptor.getStringArrayArgument(argumentName: String): List<String>? =
+    when (val argument = allValueArguments[Name.identifier(argumentName)]) {
+        null -> null
+        is ArrayValue -> argument.value.map(::extractString)
+        else -> throw RuntimeException("Argument should be ArrayValue, got $argument")
+    }
 
 private fun extractString(argument: ConstantValue<*>) = when (argument) {
     is EnumValue -> argument.enumEntryName.identifier
