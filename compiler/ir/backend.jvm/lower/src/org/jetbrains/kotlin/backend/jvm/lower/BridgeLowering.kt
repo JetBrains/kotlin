@@ -200,8 +200,16 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // Track final overrides and bridges to avoid clashes
         val blacklist = mutableSetOf<Method>()
 
-        // Add the current method to the blacklist if it is concrete or final.
-        val targetMethod = (irFunction.resolveFakeOverride() ?: irFunction).jvmMethod
+        // Don't generate bridges for default argument stubs. This is a workaround for a
+        // frontend bug (KT-36188). Ideally, the frontend should not allow inheriting from
+        // multiple different default argument stubs, but for now we need this special case
+        // to avoid a ClassCastException in the inliner (KT-46389).
+        val targetFunction = irFunction.resolveFakeOverride() ?: irFunction
+        if (targetFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+            return
+        }
+        // Add the current method to the blacklist if it is concrete or final
+        val targetMethod = targetFunction.jvmMethod
         if (!irFunction.isFakeOverride || irFunction.modality == Modality.FINAL)
             blacklist += targetMethod
 

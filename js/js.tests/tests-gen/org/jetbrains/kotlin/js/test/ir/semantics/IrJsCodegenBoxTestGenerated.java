@@ -1273,6 +1273,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/bridges/kt42137.kt");
         }
 
+        @TestMetadata("kt46389.kt")
+        public void testKt46389() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/kt46389.kt");
+        }
+
+        @TestMetadata("kt46389_jvmDefault.kt")
+        public void testKt46389_jvmDefault() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/kt46389_jvmDefault.kt");
+        }
+
         @TestMetadata("longChainOneBridge.kt")
         public void testLongChainOneBridge() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");
