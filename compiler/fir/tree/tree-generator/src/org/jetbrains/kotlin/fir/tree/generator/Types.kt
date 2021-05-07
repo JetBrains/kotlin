@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 
 val sourceElementType = type("fir", "FirSourceElement")
@@ -31,6 +32,7 @@ val nameType = type(Name::class)
 val visibilityType = type(Visibility::class)
 val effectiveVisibilityType = type("descriptors", "EffectiveVisibility")
 val modalityType = type(Modality::class)
+val smartcastStabilityType = type(SmartcastStability::class)
 val fqNameType = type(FqName::class)
 val classIdType = type(ClassId::class)
 val annotationUseSiteTargetType = type(AnnotationUseSiteTarget::class)

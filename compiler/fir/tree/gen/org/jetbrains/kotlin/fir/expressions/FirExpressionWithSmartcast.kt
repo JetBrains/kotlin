@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
@@ -31,6 +32,9 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
     abstract val originalExpression: FirQualifiedAccessExpression
     abstract val typesFromSmartCast: Collection<ConeKotlinType>
     abstract val originalType: FirTypeRef
+    abstract val smartcastType: FirTypeRef
+    abstract val isRequiredToResolve: Boolean
+    abstract val smartcastStability: SmartcastStability?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcast(this, data)
 
@@ -48,6 +52,10 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+
+    abstract fun replaceIsRequiredToResolve(newIsRequiredToResolve: Boolean)
+
+    abstract fun replaceSmartcastStability(newSmartcastStability: SmartcastStability?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast
 

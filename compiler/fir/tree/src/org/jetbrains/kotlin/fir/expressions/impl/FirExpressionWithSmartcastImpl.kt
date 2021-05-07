@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.types.SmartcastStability
 
 internal class FirExpressionWithSmartcastImpl(
     override var originalExpression: FirQualifiedAccessExpression,
-    override val typeRef: FirTypeRef,
-    override val typesFromSmartCast: Collection<ConeKotlinType>
+    override val smartcastType: FirTypeRef,
+    override val typesFromSmartCast: Collection<ConeKotlinType>,
+    override var smartcastStability: SmartcastStability?
 ) : FirExpressionWithSmartcast() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)
@@ -37,6 +39,9 @@ internal class FirExpressionWithSmartcastImpl(
     override val extensionReceiver: FirExpression get() = originalExpression.extensionReceiver
     override val calleeReference: FirReference get() = originalExpression.calleeReference
     override val originalType: FirTypeRef get() = originalExpression.typeRef
+    override val typeRef: FirTypeRef get() = if (smartcastStability == SmartcastStability.STABLE_VALUE || smartcastStability == null) smartcastType else originalType
+    override var isRequiredToResolve: Boolean = false
+        private set
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
         originalExpression = originalExpression.transformSingle(transformer, data)
@@ -81,6 +86,14 @@ internal class FirExpressionWithSmartcastImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         throw IllegalStateException()
+    }
+
+    override fun replaceIsRequiredToResolve(newIsRequiredToResolve: Boolean) {
+        isRequiredToResolve = newIsRequiredToResolve
+    }
+
+    override fun replaceSmartcastStability(newSmartcastStability: SmartcastStability?) {
+        smartcastStability = newSmartcastStability
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
