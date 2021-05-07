@@ -56,7 +56,7 @@ afterEvaluate {
 
 android {
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
     }
     lintOptions {
         disable("SyntheticAccessor")
