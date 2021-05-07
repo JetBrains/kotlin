@@ -181,6 +181,8 @@ object IgnoreTests {
 
         const val FIX_ME = "// FIX_ME: "
         const val FIR_IDENTICAL = "// FIR_IDENTICAL"
+
+        const val IGNORE_FE10_BINDING_BY_FIR = "// IGNORE_FE10_BINDING_BY_FIR"
     }
 
     enum class DirectivePosition {

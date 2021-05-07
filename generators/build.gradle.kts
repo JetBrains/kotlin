@@ -49,6 +49,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-fir-performance-tests"))
     testCompile(projectTests(":idea:idea-frontend-fir"))
     testCompile(projectTests(":idea:idea-frontend-fir:idea-fir-low-level-api"))
+    testCompile(projectTests(":idea:idea-fir-fe10-binding"))
     testCompile(projectTests(":j2k"))
     testCompile(projectTests(":nj2k"))
     if (Ide.IJ()) {

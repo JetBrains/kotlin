@@ -850,7 +850,8 @@ tasks {
             ":idea:idea-frontend-api:test",
             ":idea:idea-frontend-fir:test",
             ":idea:idea-frontend-fir:idea-fir-low-level-api:test",
-            ":plugins:uast-kotlin-fir:test"
+            ":plugins:uast-kotlin-fir:test",
+            ":idea:idea-fir-fe10-binding:test"
         )
     }
 

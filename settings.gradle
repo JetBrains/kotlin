@@ -344,6 +344,7 @@ include ":compiler:test-infrastructure",
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
 include ":idea:idea-frontend-fir:idea-frontend-fir-generator"
 include ":idea:idea-fir-performance-tests"
+include ":idea:idea-fir-fe10-binding"
 
 include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-ide",

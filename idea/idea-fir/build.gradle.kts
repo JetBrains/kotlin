@@ -9,6 +9,7 @@ dependencies {
     compile(project(":idea:formatter"))
     compile(intellijDep())
     compile(intellijCoreDep())
+    implementation(project(":idea:idea-fir-fe10-binding"))
 
 // <temp>
     compile(project(":idea:idea-core"))
@@ -26,6 +27,7 @@ dependencies {
 
     testCompileOnly(intellijDep())
     testRuntime(intellijDep())
+    testImplementation(project(":idea:idea-fir-fe10-binding"))
 
     compile(intellijPluginDep("java"))
 }

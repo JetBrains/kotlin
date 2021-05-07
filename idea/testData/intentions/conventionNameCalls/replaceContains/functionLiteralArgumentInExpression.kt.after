@@ -1,3 +1,4 @@
+// IGNORE_FE10_BINDING_BY_FIR
 fun <T> doSomething(a: T) {}
 
 fun test() {
