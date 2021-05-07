@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -146,10 +147,11 @@ interface ExitNodeMarker
 
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
-sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<E>(owner, level, id) {
+sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int, id: Int) :
+    CFGNode<E>(owner, level, id) {
     private val _subGraphs = mutableListOf<ControlFlowGraph>()
 
-    fun addSubGraph(graph: ControlFlowGraph){
+    fun addSubGraph(graph: ControlFlowGraph) {
         _subGraphs += graph
     }
 
@@ -158,19 +160,33 @@ sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: Contro
     }
 }
 
+sealed class PossibleConcurrentForkingNode<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int, id: Int) :
+    CFGNodeWithCfgOwner<E>(owner, level, id) {
+    val assignedLocalVariablesByExecutionPath: MutableMap<CFGNode<*>, MutableMap<FirProperty, MutableSet<ConeKotlinType>>> = mutableMapOf()
+    val isConcurrentFork: Boolean
+        get() {
+            return followingNodes.count { outgoingEdges[it]?.kind?.usedInCfa != false } > 1
+        }
+}
+
 // ----------------------------------- Named function -----------------------------------
 
-class FunctionEnterNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) : CFGNode<FirFunction<*>>(owner, level, id), EnterNodeMarker {
+class FunctionEnterNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) :
+    CFGNode<FirFunction<*>>(owner, level, id), EnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFunctionEnterNode(this, data)
     }
 }
-class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) : CFGNode<FirFunction<*>>(owner, level, id), ExitNodeMarker {
+
+class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) :
+    CFGNode<FirFunction<*>>(owner, level, id), ExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFunctionExitNode(this, data)
     }
 }
-class LocalFunctionDeclarationNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) : CFGNodeWithCfgOwner<FirFunction<*>>(owner, level, id) {
+
+class LocalFunctionDeclarationNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) :
+    PossibleConcurrentForkingNode<FirFunction<*>>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitLocalFunctionDeclarationNode(this, data)
     }
@@ -179,7 +195,8 @@ class LocalFunctionDeclarationNode(owner: ControlFlowGraph, override val fir: Fi
 
 // ----------------------------------- Default arguments -----------------------------------
 
-class EnterDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNodeWithCfgOwner<FirValueParameter>(owner, level, id), EnterNodeMarker {
+class EnterDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) :
+    CFGNodeWithCfgOwner<FirValueParameter>(owner, level, id), EnterNodeMarker {
     init {
         owner.enterNode = this
     }
@@ -201,12 +218,15 @@ class ExitDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirVal
 
 // ----------------------------------- Anonymous function -----------------------------------
 
-class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNodeWithCfgOwner<FirAnonymousFunction>(owner, level, id) {
+class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) :
+    PossibleConcurrentForkingNode<FirAnonymousFunction>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPostponedLambdaEnterNode(this, data)
     }
 }
-class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNode<FirAnonymousFunction>(owner, level, id) {
+
+class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) :
+    CFGNode<FirAnonymousFunction>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPostponedLambdaExitNode(this, data)
     }
