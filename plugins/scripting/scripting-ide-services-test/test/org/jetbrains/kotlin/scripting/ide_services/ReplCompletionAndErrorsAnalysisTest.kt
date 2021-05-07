@@ -110,6 +110,24 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     @Test
+    fun testFunctionArgumentNames() = test {
+        run {
+            doCompile
+            code = """fun _sf(_someInt: Int = 42, _someString: String = "s") = 1"""
+        }
+        run {
+            doComplete
+            code = """_sf(_s"""
+            cursor = code.length
+            expect {
+                addCompletion("_sf(", "_sf(Int = ..., String = ...)", "Int", "method")
+                addCompletion("_someInt = ", "_someInt", "Int", "parameter")
+                addCompletion("_someString = ", "_someString", "String", "parameter")
+            }
+        }
+    }
+
+    @Test
     fun testExtensionMethods() = test {
         run {
             doCompile

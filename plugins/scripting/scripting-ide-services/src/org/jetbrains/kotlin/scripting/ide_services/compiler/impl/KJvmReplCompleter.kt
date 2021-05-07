@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
 import java.io.File
-import java.util.*
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCodeCompletionVariant
 
@@ -115,21 +115,35 @@ private class KJvmReplCompleter(
                 ) return@gen
             }
 
+            val containingCallId = simpleExpression.getParentOfType<KtCallExpression>(true)?.calleeExpression?.text
+            fun Name.test(checkAgainstContainingCall: Boolean): Boolean {
+                if (isSpecial) return false
+                if (nameFilter(identifier, prefix)) return true
+                return checkAgainstContainingCall && containingCallId?.let { nameFilter(identifier, it) } == true
+            }
+
             isSortNeeded = false
-            descriptors = ReferenceVariantsHelper(
-                bindingContext,
-                resolutionFacade,
-                moduleDescriptor,
-                VisibilityFilter(inDescriptor)
-            ).getReferenceVariants(
-                simpleExpression,
-                DescriptorKindFilter.ALL,
-                { name: Name -> !name.isSpecial && nameFilter(name.identifier, prefix) },
-                filterOutJavaGettersAndSetters = true,
-                filterOutShadowed = filterOutShadowedDescriptors, // setting to true makes it slower up to 4 times
-                excludeNonInitializedVariable = true,
-                useReceiverType = null
-            )
+            descriptors = ArrayList<DeclarationDescriptor>().also { result ->
+                ReferenceVariantsHelper(
+                    bindingContext,
+                    resolutionFacade,
+                    moduleDescriptor,
+                    VisibilityFilter(inDescriptor)
+                ).getReferenceVariants(
+                    simpleExpression,
+                    DescriptorKindFilter.ALL,
+                    { it.test(true) },
+                    filterOutJavaGettersAndSetters = true,
+                    filterOutShadowed = filterOutShadowedDescriptors, // setting to true makes it slower up to 4 times
+                    excludeNonInitializedVariable = true,
+                    useReceiverType = null
+                ).forEach { descriptor ->
+                    if (descriptor.name.test(false)) result.add(descriptor)
+                    if (descriptor is CallableDescriptor && containingCallId == descriptor.name.identifier) {
+                        descriptor.valueParameters.filterTo(result) { it.name.test(false) }
+                    }
+                }
+            }
 
         } else if (element is KtStringTemplateExpression) {
             if (element.hasInterpolation()) {
@@ -348,7 +362,7 @@ private class KJvmReplCompleter(
             is ClassDescriptor -> "class"
             is PackageFragmentDescriptor -> "package"
             is PackageViewDescriptor -> "package"
-            is ValueParameterDescriptor -> "genericValue"
+            is ValueParameterDescriptor -> "parameter"
             is TypeParameterDescriptorImpl -> "class"
             else -> ""
         }
@@ -396,13 +410,17 @@ private class KJvmReplCompleter(
                 val outType =
                     descriptor.type
                 typeText = RENDERER.renderType(outType)
+                if (descriptor is ValueParameterDescriptor) {
+                    completionText = "$rawDescriptorName = "
+                }
             } else if (descriptor is ClassDescriptor) {
                 val declaredIn = descriptor.containingDeclaration
                 tailText = " (" + DescriptorUtils.getFqName(declaredIn) + ")"
             } else {
                 typeText = RENDERER.render(descriptor)
             }
-            tailText = if (typeText.isEmpty()) tailText else typeText
+
+            tailText = typeText.ifEmpty { tailText }
 
             if (completionText.isEmpty()) {
                 completionText = presentableText
