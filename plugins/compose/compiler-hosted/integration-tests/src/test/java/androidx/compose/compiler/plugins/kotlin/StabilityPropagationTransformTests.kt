@@ -61,7 +61,8 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
         """
         @Composable
         fun Test(x: Foo, %composer: Composer?, %changed: Int) {
-          %composer = %composer.startRestartGroup(<>, "C(Test)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")
+          %composer = %composer.startRestartGroup(<>)
+          sourceInformation(%composer, "C(Test)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")
           val %dirty = %changed
           if (%changed and 0b1110 === 0) {
             %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -102,7 +103,8 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(x: Foo, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(Test)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")
               A(x, %composer, 0b1000)
               A(Foo(0), %composer, 0b1000)
               A(remember({
@@ -130,7 +132,8 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>, "C(Example)<A(list...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Example)<A(list...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 A(listOf("a"), %composer, 0)
               } else {
