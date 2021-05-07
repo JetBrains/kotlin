@@ -261,8 +261,8 @@ class ResolvedAtomCompleter(
             }
         }
 
-        val substitutedValueParameterTypes = descriptor.valueParameters.mapIndexed { i, valueParameter ->
-            valueParameterTypes[i].substituteAndApproximate(substitutor).also {
+        val substitutedValueParameterTypes = descriptor.valueParameters.mapIndexedNotNull { i, valueParameter ->
+            valueParameterTypes.getOrNull(i)?.substituteAndApproximate(substitutor)?.also {
                 if (valueParameter is ValueParameterDescriptorImpl && valueParameter.type.shouldBeUpdated()) {
                     valueParameter.setOutType(it.approximatedType)
                 }
