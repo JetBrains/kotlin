@@ -95,22 +95,20 @@ class DarwinArm64AbiInfo : ObjCAbiInfo {
     }
 }
 
+private fun StructDef.hasIntegerLikeLayout(): Boolean {
+    return size <= 4 &&
+            members.all {
+                when (it) {
+                    is BitField -> it.type.isIntegerLikeType()
+                    is Field -> it.offset == 0L && it.type.isIntegerLikeType()
+                    is AnonymousInnerRecord -> it.offset == 0L && it.def.hasIntegerLikeLayout()
+                    is IncompleteField, -> false
+                }
+            }
+}
+
 private fun Type.isIntegerLikeType(): Boolean = when (this) {
-    is RecordType -> {
-        val def = this.decl.def
-        if (def == null) {
-            false
-        } else {
-            def.size <= 4 &&
-                    def.members.all {
-                        when (it) {
-                            is BitField -> it.type.isIntegerLikeType()
-                            is Field -> it.offset == 0L && it.type.isIntegerLikeType()
-                            is IncompleteField -> false
-                        }
-                    }
-        }
-    }
+    is RecordType -> decl.def?.hasIntegerLikeLayout() ?: false
     is ObjCPointer, is PointerType, CharType, is BoolType -> true
     is IntegerType -> this.size <= 4
     is Typedef -> this.def.aliased.isIntegerLikeType()
@@ -122,7 +120,7 @@ private fun Type.isIntegerLikeType(): Boolean = when (this) {
 private fun Type.hasUnalignedMembers(): Boolean = when (this) {
     is Typedef -> this.def.aliased.hasUnalignedMembers()
     is RecordType -> this.decl.def!!.let { def ->
-        def.fields.any {
+        def.fields.any { // TODO: what about bitfields?
             !it.isAligned ||
                     // Check members of fields too:
                     it.type.hasUnalignedMembers()

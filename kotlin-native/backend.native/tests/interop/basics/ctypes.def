@@ -1,4 +1,5 @@
 ---
+
 // KT-28065
 struct StructWithConstFields {
     int x;

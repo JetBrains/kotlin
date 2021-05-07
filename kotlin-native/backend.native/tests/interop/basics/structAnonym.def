@@ -1,0 +1,187 @@
+---
+//#include <stddef.h>
+#include <inttypes.h>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winitializer-overrides"
+
+union _GLKVector3
+{
+    struct { float x, y, z; };
+    struct { float r, g, b; };
+    struct { float s, t, p; };
+    float v[3];
+};
+
+static union _GLKVector3 get_GLKVector3() {
+    union _GLKVector3 ret = {{1, 2, 3}};
+    return ret;
+}
+
+static float hash_GLKVector3(union _GLKVector3 x) {
+    union _GLKVector3 ret = {{1, 2, 3}};
+    return x.x + 2.0f * x.y + 4.0f * x.z;
+}
+
+// trivial alignment: member is already aligned, but this implies explicit alignment of the root struct
+struct Trivial {
+    int32_t a[4];
+    struct {
+        int b  __attribute__((aligned(16)));
+    };
+};
+
+static struct Trivial get_Trivial() {
+    struct Trivial t = {
+        .a = {1,2,3,4},
+        .b = 42
+    };
+    return t;
+}
+
+struct S {
+    char a;
+    struct {
+        __attribute__((aligned(4)))
+        char x;
+    };
+};
+
+static struct S get_S() {
+    struct S t = {
+        .a = 'a',
+        .x = 'x'
+    };
+    return t;
+}
+
+// Deep nesting
+
+struct S0 {
+    int x;
+    union { // implicitly aligned to 8 bytes
+        int a[2];
+        struct {
+            int64_t b;
+        };
+    };
+    char z;
+    double y;
+};
+
+static struct S0 retByValue() {
+	struct S0 c = {
+	};
+	c.x = 37;
+	c.b = 42;
+	c.a[1] = 1;
+	return c;
+}
+
+static int sendByValue(struct S0 c) {
+	return c.a[0] + 2 * c.a[1];
+}
+
+// Basic, 2 levels
+
+struct S1 {
+	char first; // __attribute__((aligned(16)));
+	union {
+		int a[2];
+		union { char c1; int c2; };
+		struct { char b1; int64_t b2; };  // implicit 64-bits alignment
+	};
+	char second __attribute__((aligned(16)));
+	struct {
+	    char x;
+		struct { int64_t b11, b12; } Y2;
+		float f  __attribute__((aligned(16)));
+	}; // __attribute__((aligned(16)));
+	char last;
+};
+
+#define INIT(T, x) 	struct T x = \
+{ \
+    .first = 'a', \
+    .b1 = 'b', \
+    .b2 = 42, \
+    .second = 's', \
+    .last = 'z', \
+    .f = 3.14, \
+    .Y2 = {11, 12} \
+}
+
+static struct S1 ret_S1() {
+	INIT(S1, c);
+	return c;
+}
+
+struct S2 {
+	char first;
+	union {
+		int a[2];
+		union { char c1; int c2; };
+		struct { char b1; int64_t b2; };
+	};
+	char second;
+	struct {
+	    char x;
+		struct { int64_t b11, b12; } Y2;
+		float f;
+	} __attribute__((aligned(16)));
+	char last;
+} __attribute__ ((packed));
+
+static struct S2 ret_S2() {
+	INIT(S2, c);
+	return c;
+}
+
+// Nested struct may be packed too
+#pragma pack(1)
+struct S3 {
+	char first;
+	union {
+		int a[2];
+		union { char c1; int c2; };
+		struct { char b1; int64_t b2; };
+	};
+	char second;
+	struct {
+	    char x;
+		struct { int64_t b11, b12; } Y2;
+		float f  __attribute__((aligned(16)));
+	}; // __attribute__((aligned(16)));
+	char last;
+} __attribute__ ((packed));
+#pragma pack()
+
+static struct S3 ret_S3() {
+	INIT(S3, c);
+	return c;
+}
+
+#pragma pack(2)
+struct S4 {
+	char first;
+	union {
+		int a[2];
+		union { char c1; int c2; };
+		struct { char b1; int64_t b2; };
+	};
+	char second;
+	struct {
+	    char x;
+		struct { int64_t b11, b12; } Y2;
+		float f  __attribute__((aligned(16)));
+	}; // __attribute__((aligned(16)));
+	char last;
+} __attribute__ ((packed));
+#pragma pack()
+
+static struct S4 ret_S4() {
+	INIT(S4, c);
+	return c;
+}
+
+#pragma clang diagnostic pop
