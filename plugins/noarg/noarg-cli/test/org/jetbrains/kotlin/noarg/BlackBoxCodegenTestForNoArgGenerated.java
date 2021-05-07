@@ -69,4 +69,9 @@ public class BlackBoxCodegenTestForNoArgGenerated extends AbstractBlackBoxCodege
     public void testSimple() throws Exception {
         runTest("plugins/noarg/noarg-cli/testData/box/simple.kt");
     }
+
+    @TestMetadata("subclass.kt")
+    public void testSubclass() throws Exception {
+        runTest("plugins/noarg/noarg-cli/testData/box/subclass.kt");
+    }
 }
