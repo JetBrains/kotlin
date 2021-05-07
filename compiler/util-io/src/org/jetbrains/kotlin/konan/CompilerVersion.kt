@@ -12,6 +12,7 @@ interface CompilerVersion : Serializable {
     val major: Int
     val minor: Int
     val maintenance: Int
+    val milestone: Int
     val build: Int
 
     fun toString(showMeta: Boolean, showBuild: Boolean): String
@@ -30,6 +31,7 @@ interface CompilerVersion : Serializable {
                 major.toInt(),
                 minor.toInt(),
                 maintenance.toIntOrNull() ?: 0,
+                -1,
                 build.toIntOrNull() ?: -1
             )
         }
@@ -43,6 +45,7 @@ data class CompilerVersionImpl(
     override val major: Int,
     override val minor: Int,
     override val maintenance: Int,
+    override val milestone: Int = -1,
     override val build: Int = -1
 ) : CompilerVersion {
 
